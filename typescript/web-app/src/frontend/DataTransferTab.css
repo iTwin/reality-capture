@@ -1,0 +1,22 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
+.rds-controls-group {
+    text-align: left;
+    align-items: left;
+    margin-left: 10px;
+    margin-top: 10px;
+    max-width: 500px;
+}
+
+.rds-control {
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.rds-sep {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}

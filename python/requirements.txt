@@ -1,0 +1,6 @@
+python-dateutil~=2.8.2
+azure-storage-blob
+bottle~=0.12.23
+requests
+pyOpenSSL
+oauthlib~=3.2.1
