@@ -1,2 +1,2 @@
 # reality-apis-samples
-New repository for RDAS sample code
+Repository for Reality APIs samples
