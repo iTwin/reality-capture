@@ -18,7 +18,7 @@ After creating an application and a ProjectWise project if you didn't have one, 
 
 To run an example file you will need to change the `config.py` file on the examples folder: `client_id` should be the id of your application and `project_id` the id of your ProjectWise project. To retrieve the id of your project, click on the `ContextShare` button bellow the name of your project at [CONNECT Center](https://connect.bentley.com/) and copy the **contextId** string on the address bar. 
 
-You will also need to change the `ccimage_collections`, `photos` or `orthophotos`, `detector` and `output_dir` variables on the example file you’re running so that they reflect the images collections, contextScene and detector you want to use znd where yu want to save the results. You can download the detectors available as well as example datasets [here](https://communities.bentley.com/products/3d_imaging_and_point_cloud_software/w/wiki/54656/context-insights-detectors-download-page). Don't forget to change the ContextScene file and change the reference path to the images used.
+You will also need to change the `ccimage_collections`, `photos` or `orthophotos`, `detector` and `output_dir` variables on the example file you’re running so that they reflect the CCImageCollections, ContextScenes and ContextDetectors you want to use znd where you want to save the results. You can download the detectors available as well as example datasets [here](https://communities.bentley.com/products/3d_imaging_and_point_cloud_software/w/wiki/54656/context-insights-detectors-download-page). Don't forget to change the ContextScene file and change the reference path to the images used.
 
 
 # Software dependencies
