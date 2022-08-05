@@ -1,0 +1,8 @@
+.viewport {
+    position: relative;
+    margin-top: 10px;
+}
+
+.viewer-container {
+    height: 100vh;
+}

@@ -1,0 +1,15 @@
+.rdas-controls-group {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.rdas-control {
+    margin-left: 10px;
+}
+
+.rdas-progress {
+    margin-left: 10px;
+    width: 600px;
+}
