@@ -1,0 +1,21 @@
+
+.photo-viewer-canvas canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.photo-viewer-canvas {
+    position: relative;
+    margin-top: 25px;
+}
+
+.photo-viewer-controls-group {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.photo-viewer-control {
+    margin-left: 10px;
+}
