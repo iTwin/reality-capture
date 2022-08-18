@@ -17,10 +17,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-      - name: Install dependancies
+      - name: Install dependencies
         run: npm install
       - name: Typescript compiler
         uses: iCrawl/action-tsc@v1
+        with:
+          project: ./typescript
       - name: EsLint
         working-directory: ./typescript
-        run: eslint ./src --ext .ts,.tsx 
+        run: npm run lint
