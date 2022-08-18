@@ -20,6 +20,6 @@ jobs:
       - name: Install dependancies
         run: npm install
       - name: Build
-        run: npm run build
+        run: tsc
       - name: EsLint
         run: eslint ./src --ext .ts,.tsx 

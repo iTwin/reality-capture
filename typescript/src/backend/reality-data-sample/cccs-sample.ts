@@ -4,12 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { ContextCaptureCloud } from "../reality-data/Cccs";
-import { getTokenFromEnv } from "../reality-data/Utils";
 import { IModelHost } from "@itwin/core-backend";
 import { AccessToken } from "@itwin/core-bentley";
 import { RealityDataClientBase } from "../reality-data/Rds";
 import { RealityDataTransfer } from "../reality-data/RealityDataTransfer";
 import { ApiUtils } from "../reality-data/ApiUtils";
+import { getTokenFromEnv } from "../reality-data/Utils";
 
 export class ContextCaptureCloudSample extends ContextCaptureCloud {
     private imageCollectionId : string|undefined;
