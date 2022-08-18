@@ -20,9 +20,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Typescript compiler
-        uses: iCrawl/action-tsc@v1
-        with:
-          project: ./typescript
+        run: npx tsc
       - name: EsLint
         working-directory: ./typescript
         run: npm run lint
