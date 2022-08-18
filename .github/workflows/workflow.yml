@@ -21,7 +21,7 @@ jobs:
         run: npm install
       - name: Build
         working-directory: ./typescript
-        run: npm run build
+        run: tsc
       - name: EsLint
         working-directory: ./typescript
         run: eslint ./src --ext .ts,.tsx 
