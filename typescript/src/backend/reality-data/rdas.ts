@@ -1,12 +1,13 @@
-/*
- * Copyright © Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- */
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
 
-import { AppAccess, AppUtil } from "./utils.js";
 import { AccessToken } from "@itwin/core-bentley";
+import { ApiUtils } from "./ApiUtils";
+import { BaseAppAccess } from "./BaseAppAccess";
 
-export class RealityDataAnalysis extends AppAccess
+export class RealityDataAnalysis extends BaseAppAccess
 {
     private currentJobId = "";
 
@@ -26,10 +27,10 @@ export class RealityDataAnalysis extends AppAccess
         let complete = false;
         while(!complete)
         {
-            const res = await AppUtil.SubmitRequest(undefined, this.headers, this.getRDASBase() + "jobs/" + this.currentJobId + "/progress", "GET", [200]) as any;
+            const res = await ApiUtils.SubmitRequest(undefined, this.headers, this.getRDASBase() + "jobs/" + this.currentJobId + "/progress", "GET", [200]) as any;
             console.log("PERCENT:", res.progress.percentage, "; STEP:", res.progress.step);
             if (res.progress.state == "active")
-                await AppUtil.Sleep(10000);
+                await ApiUtils.Sleep(10000);
             else
                 complete = true;
         }
@@ -41,19 +42,19 @@ export class RealityDataAnalysis extends AppAccess
      */
     public async monitorJobRDASBrowser(): Promise<string[]>
     {
-        await AppUtil.Sleep(6000);
+        await ApiUtils.Sleep(6000);
         if(!this.currentJobId)
             return ["Prepare job", "0"];
 
         // Necessary : cancelled jobs still returns "active" in /progress
-        const resGetJob = await AppUtil.SubmitRequest(undefined, this.headers, this.getRDASBase() + "jobs/" + this.currentJobId, "GET", [200]) as any;
+        const resGetJob = await ApiUtils.SubmitRequest(undefined, this.headers, this.getRDASBase() + "jobs/" + this.currentJobId, "GET", [200]) as any;
         if(resGetJob.job.state === "failed")
             return ["Failed", ""];
 
         if(resGetJob.job.state === "cancelled")
             return ["Cancelled", ""];
         
-        const res = await AppUtil.SubmitRequest(undefined, this.headers, this.getRDASBase() + "jobs/" + this.currentJobId + "/progress", "GET", [200]) as any;
+        const res = await ApiUtils.SubmitRequest(undefined, this.headers, this.getRDASBase() + "jobs/" + this.currentJobId + "/progress", "GET", [200]) as any;
         if (res.progress.state == "active")
             console.log("PERCENT:", res.progress.percentage, "; STEP:", res.progress.step);           
         else
@@ -85,7 +86,7 @@ export class RealityDataAnalysis extends AppAccess
         });
 
         // Create RDAS job
-        let res = await AppUtil.SubmitRequest("RDAS job creation", this.headers, this.getRDASBase() + "jobs", "POST", [201],
+        let res = await ApiUtils.SubmitRequest("RDAS job creation", this.headers, this.getRDASBase() + "jobs", "POST", [201],
             {
                 name : "RDAS sample app",
                 iTwinId : this.projectId,
@@ -97,7 +98,7 @@ export class RealityDataAnalysis extends AppAccess
             }) as any;
 
         // Add data for job cost estimate
-        await AppUtil.SubmitRequest("RDAS job : add cost estimate ", this.headers, this.getRDASBase() + "jobs/" + res.job.id, "PATCH", [200],
+        await ApiUtils.SubmitRequest("RDAS job : add cost estimate ", this.headers, this.getRDASBase() + "jobs/" + res.job.id, "PATCH", [200],
             {
                 costEstimationParameters: {
                     numberOfPhotos,
@@ -106,7 +107,7 @@ export class RealityDataAnalysis extends AppAccess
             });
 
         // Submit job
-        await AppUtil.SubmitRequest("RDAS job submission", this.headers, this.getRDASBase() + "jobs/" + res.job.id, "PATCH", [200],
+        await ApiUtils.SubmitRequest("RDAS job submission", this.headers, this.getRDASBase() + "jobs/" + res.job.id, "PATCH", [200],
             {
                 state: "active"
             });
@@ -118,7 +119,7 @@ export class RealityDataAnalysis extends AppAccess
             await this.monitorJobRDAS();
 
         // Get job result
-        res = await AppUtil.SubmitRequest("Get job result", this.headers, this.getRDASBase() + "jobs/" + this.currentJobId, "GET", [200]) as any;
+        res = await ApiUtils.SubmitRequest("Get job result", this.headers, this.getRDASBase() + "jobs/" + this.currentJobId, "GET", [200]) as any;
         
         const outputIds: string[] = [];
         res.job.settings.outputs.forEach((output: any) => {
@@ -135,7 +136,7 @@ export class RealityDataAnalysis extends AppAccess
         if(!this.currentJobId)
             return;
 
-        await AppUtil.SubmitRequest("RDAS job : cancel ", this.headers, this.getRDASBase() + "jobs/" + this.currentJobId, "PATCH", [200],
+        await ApiUtils.SubmitRequest("RDAS job : cancel ", this.headers, this.getRDASBase() + "jobs/" + this.currentJobId, "PATCH", [200],
             {
                 state: "cancelled",
             });

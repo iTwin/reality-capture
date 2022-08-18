@@ -1,14 +1,15 @@
-/*
- * Copyright © Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- */
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
 
-import { ContextCaptureCloud } from "../reality-data/cccs";
-import { AppUtil, getTokenFromEnv } from "../reality-data/utils";
+import { ContextCaptureCloud } from "../reality-data/Cccs";
+import { getTokenFromEnv } from "../reality-data/Utils";
 import { IModelHost } from "@itwin/core-backend";
-import * as dotenv from "dotenv";
 import { AccessToken } from "@itwin/core-bentley";
-import { RealityDataClientBase } from "../reality-data/rds-client-base";
+import { RealityDataClientBase } from "../reality-data/Rds";
+import { RealityDataTransfer } from "../reality-data/RealityDataTransfer";
+import { ApiUtils } from "../reality-data/ApiUtils";
 
 export class ContextCaptureCloudSample extends ContextCaptureCloud {
     private imageCollectionId : string|undefined;
@@ -33,7 +34,7 @@ export class ContextCaptureCloudSample extends ContextCaptureCloud {
             console.log("Image collection RealityData created: ", ic.id);
             console.log("Uploading image collection to RealityData");
             imageCollectionId = ic.id as string;
-            await this.realityDataClient.uploadRealityData(imageCollectionId, localPath!);
+            await RealityDataTransfer.Instance.uploadRealityData(imageCollectionId, localPath!, this.realityDataClient);
         }
         this.imageCollectionId = imageCollectionId;
     }
@@ -46,7 +47,7 @@ export class ContextCaptureCloudSample extends ContextCaptureCloud {
             if (typeof calibrationJobId === "undefined")
             {
                 //--- Create CCS calibration job
-                const res = await AppUtil.SubmitRequest("CCS calibration job creation", this.headers, this.getCCSBase() + "jobs", "POST", [201],
+                const res = await ApiUtils.SubmitRequest("CCS calibration job creation", this.headers, this.getCCSBase() + "jobs", "POST", [201],
                     {
                         type : "Calibration",
                         name : "CCS sample app calibration job",
@@ -74,7 +75,7 @@ export class ContextCaptureCloudSample extends ContextCaptureCloud {
                 //--- Add data for Job estimate -- TODO
 
                 //--- Submit job
-                await AppUtil.SubmitRequest("CCS Calibration job submission", this.headers, this.getCCSBase() + "jobs/" + calibrationJobId, "PATCH", [200],
+                await ApiUtils.SubmitRequest("CCS Calibration job submission", this.headers, this.getCCSBase() + "jobs/" + calibrationJobId, "PATCH", [200],
                     {
                         state: "active"
                     });
@@ -84,7 +85,7 @@ export class ContextCaptureCloudSample extends ContextCaptureCloud {
             }
 
             // Get job result
-            const res = await AppUtil.SubmitRequest("Get job result", this.headers, this.getCCSBase() + "jobs/" + calibrationJobId, "GET", [200]) as any;
+            const res = await ApiUtils.SubmitRequest("Get job result", this.headers, this.getCCSBase() + "jobs/" + calibrationJobId, "GET", [200]) as any;
             console.log("CCS calibration job result:", res.job);
             ccOrientationsId_calib = res.job.jobSettings.outputs[0].id;
         }
@@ -103,7 +104,7 @@ export class ContextCaptureCloudSample extends ContextCaptureCloud {
             console.log("Image orientation RealityData created: ", ic.id);
             console.log("Uploading image orientation to RealityData");
             ccOriId = ic.id as string;
-            await this.realityDataClient.uploadRealityData(ccOriId, localPath!);
+            await RealityDataTransfer.Instance.uploadRealityData(ccOriId, localPath!, this.realityDataClient);
         }
         if (isInput)
             this.ccOrientationsId_start = ccOriId;
@@ -113,7 +114,7 @@ export class ContextCaptureCloudSample extends ContextCaptureCloud {
 
     public async finalizeOutputData(realityDataId : string, projectId : string)
     {
-        AppUtil.SubmitRequest("Associate Project", this.headers, this.realityDataClient.getRDSBase() + realityDataId + "/projects/" + projectId, "PUT", [201], {});
+        ApiUtils.SubmitRequest("Associate Project", this.headers, this.realityDataClient.getRDSBase() + realityDataId + "/projects/" + projectId, "PUT", [201], {});
     }
 
     public async runJob(doCalibration : boolean, doReconstruction : boolean) 

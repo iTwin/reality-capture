@@ -1,9 +1,14 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
 "use strict";
 
 import { ContainerClient } from "@azure/storage-blob";
 import { Color, ContextScene } from "../../common/models";
 import { serverRdsSample } from "./RealityDataApi";
-const { DOMParser } = require("xmldom"); // eslint-disable-line @typescript-eslint/no-var-requires
+import { DOMParser } from "@xmldom/xmldom";
 
 
 export async function streamToBuffer(readableStream: NodeJS.ReadableStream): Promise<Buffer> 
