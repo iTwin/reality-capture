@@ -13,12 +13,12 @@ jobs:
       matrix:
         operating-system: [windows-latest]
     steps:
-      - run: npm config set @bentley:registry=https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
-      - run: npm config set always-auth=true
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
+      - run: npm config set @bentley:registry=https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
+      - run: npm config set always-auth=true
       - name: Install dependencies
         working-directory: typescript
         run: npm install
