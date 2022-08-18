@@ -1,0 +1,25 @@
+name: Main workflow
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest, windows-latest, macOS-latest]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+      - name: Install dependancies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: EsLint
+        run: eslint ./src --ext .ts,.tsx 
