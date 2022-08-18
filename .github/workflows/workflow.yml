@@ -21,7 +21,7 @@ jobs:
         run: npm install
       - name: Build
         working-directory: ./typescript
-        run: iCrawl/action-tsc@v1
+        uses: iCrawl/action-tsc@v1
       - name: EsLint
         working-directory: ./typescript
         run: eslint ./src --ext .ts,.tsx 
