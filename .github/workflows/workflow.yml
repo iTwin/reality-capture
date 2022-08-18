@@ -18,7 +18,6 @@ jobs:
         with:
           node-version: '14'
       - name: Install dependancies
-        working-directory: ./typescript
         run: npm install
       - name: Build
         working-directory: ./typescript
