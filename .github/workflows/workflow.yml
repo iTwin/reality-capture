@@ -13,9 +13,8 @@ jobs:
       matrix:
         operating-system: [windows-latest]
     steps:
-      - bash: |
-        npm config set @bentley:registry=https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
-        npm config set always-auth=true
+      - run: npm config set @bentley:registry=https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
+      - run: npm config set always-auth=true
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
