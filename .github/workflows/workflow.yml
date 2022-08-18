@@ -19,6 +19,8 @@ jobs:
           node-version: '14'
       - name: Install dependancies
         run: npm install
+      - name: Install typescript
+        run: npm install -g typescript
       - name: Build
         working-directory: ./typescript
         run: tsc
