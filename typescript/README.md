@@ -3,7 +3,7 @@
 Copyright © Bentley Systems, Incorporated. All rights reserved. See 
 [LICENSE.md](./LICENSE.md) for license terms and full copyright notice.
 
-This is a simple node based console and browser app that illustrates usage of the RealityData API.
+This is a simple node based console and browser apps that illustrate usage of the RealityData API.
 
 ## Table of contents
 
@@ -11,7 +11,10 @@ This is a simple node based console and browser app that illustrates usage of th
   - [Resources](#resources)
   - [Client registration](#client-registration)
 - [Getting started](#getting-started)
-  - [Project Structure](#project-structure)
+  - [Run samples (no UI)](#run-samples-no-ui)
+  - [Debug the app](#debug-the-app)
+  - [Data samples](#data-samples)
+- [Project Structure](#project-structure)
 
 ## Pre-reqs
 
@@ -46,7 +49,7 @@ If you don't have one already, follow these steps to create an application.
 10. Click the Save button.
 
 You will receive a client id for the app. Put it in the .env file (AUTHORIZATION_CLIENT_ID)
-with issuerUrl, redirectUrl and the proper scopes: `realitydata:modify itwins:read library:read profile openid imodelaccess:read itwins:modify storage:read imodels:modify realitydataanalysis:modify realitydata:read contextcapture:modify realitydataanalysis:read mesh-export:modify itwinjs contextcapture:read storage:modify mesh-export:read organization users:read library:modify projects:read projects:modify imodels:read`
+with issuerUrl, redirectUrl and the proper scopes: `contextcapture:modify contextcapture:read itwinjs realitydataanalysis:read realitydataanalysis:modify realitydata:read realitydata:modify`
 
 ## Getting started
 
@@ -75,7 +78,7 @@ with issuerUrl, redirectUrl and the proper scopes: `realitydata:modify itwins:re
 ### Run samples (no UI)
 
 To run the console application, it is almost the same process.
-You need to register another Application. Select application type "Service" instead of "SPA", use these scopes : `contextcapture:modify imodelaccess:read itwinjs mesh-export:modify mesh-export:read realitydataanalysis:read realitydataanalysis:modify storage:read realitydata:read realitydata:modify library:read library:modify imodels:read imodels:modify users:read projects:read projects:modify contextcapture:read storage:modify` 
+You need to register another Application. Select application type "Service" instead of "SPA", use these scopes : `contextcapture:modify contextcapture:read itwinjs realitydataanalysis:read realitydataanalysis:modify realitydata:read realitydata:modify` 
 
 - Build and run the project
 
@@ -84,7 +87,7 @@ You need to register another Application. Select application type "Service" inst
   npm run start:sample
   ```
 
-## Debug the app
+### Debug the app
 
 To debug the frontend, run
 ```
@@ -92,6 +95,10 @@ To debug the frontend, run
 ```
 Then, in "Run and debug", run "Debug chrome" configuration.
 To debug the backend, run the other configuration : "Attach by process ID", and select "node --inspect lib/backend/main.js"
+
+### Data samples
+
+To run rdas jobs, you can download datasets and detectors here : https://communities.bentley.com/products/3d_imaging_and_point_cloud_software/w/wiki/54656/context-insights-detectors-download-page
 
 ## Project Structure
 
@@ -102,13 +109,14 @@ The full folder structure of this app is explained below:
 | Name                     | Description                                                                                  |
 | ------------------------ | ---------------------------------------------------------------------------------------------|
 | **.vscode**              | Contains VS Code specific settings                                                           |
-| **.github**              | Contains Github related files                                                                |
-| **build**                | Contains the distributable (or output) from your TypeScript build. This is the code you ship |
+| **data**                 | Integration tests input data                                                                 |  
+| **lib**                  | Contains the distributable (or output) from your TypeScript build. This is the code you ship |
 | **src**                  | Contains source code that will be compiled to the build dir                                  |
-| **src/backend/index.ts** | Main entry point for executing RealityData API Requests (console app)                        |
+| .env                     | Settings for authentication and project IDs required for running the RealityData sample      |
+| .eslintrc.json           | Configuration file for ESLint                                                                |
+| .npmrc                   | npm configuration settings file                                                              |
+| certa.json               | Certa configuration file for integration tests                                               |  
 | package.json             | File that contains npm dependencies as well as build scripts                                 |
 | tsconfig.json            | Config settings for compiling server code written in TypeScript                              |
-| .env                     | Settings for authentication and project IDs required for running the RealityData sample      |
 | template.env             | template environment file. Mist be copied, renamed and filled to run the apps                |
-| eslintrc.json            | Configuration file for ESLint                                                                |
-| .npmrc                   | npm configuration settings file                                                              |
+| webpack.config.js        | webpack configuration to run integration tests                                               |

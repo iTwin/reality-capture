@@ -1,7 +1,7 @@
-/*
- * Copyright © Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- */
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
 
 "use strict";
 
@@ -15,58 +15,6 @@ dotenv.config();
 
 const projectId = process.env.IMJS_PROJECT_ID as string;
 const projectId2 = process.env.IMJS_PROJECT_ID2 as string;
-
-// const realityData: RealityData = 
-// {
-//     "displayName": "RealityData Sample App",
-//     "classification": "Model",
-//     "type": "3mx",
-//     "rootDocument":"samples/sample.3mx",
-//     "description": "Description of the reality data",
-//     "dataset": "Dataset",
-//     "group": "GroupId",
-//     "acquisition": {
-//         "startDateTime": "2021-05-12T20:03:12Z",
-//         "endDateTime": "2021-05-15T05:07:18Z",
-//         "acquirer": "Data Acquisition Inc."
-//     },
-// 	"extent":
-// 	{
-// 		"southWest":
-// 		{
-// 			"latitude":50.1171,
-// 			"longitude":-122.9543
-// 		},
-// 		"northEast":
-// 		{
-// 			"latitude":50.1172,
-//             "longitude":-122.9543
-// 		}
-//     },
-//     "authoring": false
-// }
-
-// const realityDataPayload: RealityDataPayload = {
-//     projectId: projectId,
-//     realityData: realityData
-// }
-
-// class RealityDataSample_base
-// {
-// 	private headers: Headers;
-
-//     constructor(accessToken : AccessToken) 
-// 	{
-//         //set headers for all RealityData API HTTP requests
-// 		const headers = 
-//         {
-//             'Content-Type': 'application/json',
-//             'Accept': 'application/vnd.bentley.v1+json',
-//             "Authorization": accessToken.toTokenString(IncludePrefix.Yes)
-// 		};
-// 		this.headers = new Headers(headers);
-// 	}
-// }
 
 export class RealityDataSampleLIB
 {

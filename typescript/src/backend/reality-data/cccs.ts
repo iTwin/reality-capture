@@ -1,16 +1,13 @@
-/*
- * Copyright © Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- */
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
 
 import { AccessToken } from "@itwin/core-bentley";
-import * as dotenv from "dotenv";
-import { AppAccess, AppUtil } from "./utils";
+import { ApiUtils } from "./ApiUtils";
+import { BaseAppAccess } from "./BaseAppAccess";
 
-// Load the .env file if it exists
-dotenv.config();
-
-export class ContextCaptureCloud extends AppAccess {
+export class ContextCaptureCloud extends BaseAppAccess {
     private _workspaceId: string = "";
     private reconstructionJobId: string = "";
 
@@ -28,7 +25,7 @@ export class ContextCaptureCloud extends AppAccess {
      */
     public async createWorkspaceCCS(workspaceId: string): Promise<void> {
         if (!workspaceId) {
-            const res = await AppUtil.SubmitRequest("PrepareWorkspaceCCS", this.headers, this.getCCSBase() + "workspaces/", "POST", [201],
+            const res = await ApiUtils.SubmitRequest("PrepareWorkspaceCCS", this.headers, this.getCCSBase() + "workspaces/", "POST", [201],
                 {
                     name: "CCS sample app workspace",
                     iTwinId: this.projectId,
@@ -48,10 +45,10 @@ export class ContextCaptureCloud extends AppAccess {
         let complete = false;
 
         while (!complete) {
-            const res = await AppUtil.SubmitRequest(undefined, this.headers, this.getCCSBase() + "jobs/" + jobId + "/progress", "GET", [200]) as any;
+            const res = await ApiUtils.SubmitRequest(undefined, this.headers, this.getCCSBase() + "jobs/" + jobId + "/progress", "GET", [200]) as any;
             console.log("PERCENT:", res.jobProgress.percentage, "; STEP:", res.jobProgress.step);
             if (res.jobProgress.state === "Active")
-                await AppUtil.Sleep(10000);
+                await ApiUtils.Sleep(10000);
             else
                 complete = true;
         }
@@ -62,19 +59,19 @@ export class ContextCaptureCloud extends AppAccess {
      * @return the progress, send back to the frontend as progress request response.
      */
     public async monitorJobCCSBrowser(): Promise<string[]> {
-        await AppUtil.Sleep(6000);
+        await ApiUtils.Sleep(6000);
         if (!this.reconstructionJobId)
             return ["Prepare job", "0"];
 
         // Necessary : cancelled jobs still returns "active" in /progress
-        const resGetJob = await AppUtil.SubmitRequest(undefined, this.headers, this.getCCSBase() + "jobs/" + this.reconstructionJobId, "GET", [200]) as any;
+        const resGetJob = await ApiUtils.SubmitRequest(undefined, this.headers, this.getCCSBase() + "jobs/" + this.reconstructionJobId, "GET", [200]) as any;
         if (resGetJob.job.state === "failed")
             return ["Failed", ""];
 
         if (resGetJob.job.state === "cancelled")
             return ["Cancelled", ""];
 
-        const res = await AppUtil.SubmitRequest(undefined, this.headers, this.getCCSBase() + "jobs/" + this.reconstructionJobId + "/progress", "GET", [200]) as any;
+        const res = await ApiUtils.SubmitRequest(undefined, this.headers, this.getCCSBase() + "jobs/" + this.reconstructionJobId + "/progress", "GET", [200]) as any;
         if (res.jobProgress.state === "Active")
             console.log("PERCENT:", res.jobProgress.percentage, "; STEP:", res.jobProgress.step);
         else
@@ -105,7 +102,7 @@ export class ContextCaptureCloud extends AppAccess {
         });
 
         //--- Create CCS reconstruction job   
-        let res = await AppUtil.SubmitRequest("CCS reconstruction job creation", this.headers, this.getCCSBase() + "jobs", "POST", [201],
+        let res = await ApiUtils.SubmitRequest("CCS reconstruction job creation", this.headers, this.getCCSBase() + "jobs", "POST", [201],
             {
                 type: jobType,
                 name: "CCS sample app reconstruction job",
@@ -123,7 +120,7 @@ export class ContextCaptureCloud extends AppAccess {
         //--- Add data for Job estimate - not necessary
 
         //--- Submit job
-        res = await AppUtil.SubmitRequest(`CCS ${jobType} job submission`, this.headers, this.getCCSBase() + "jobs/" + this.reconstructionJobId, "PATCH", [200],
+        res = await ApiUtils.SubmitRequest(`CCS ${jobType} job submission`, this.headers, this.getCCSBase() + "jobs/" + this.reconstructionJobId, "PATCH", [200],
             {
                 state: "active"
             });
@@ -133,7 +130,7 @@ export class ContextCaptureCloud extends AppAccess {
         await this.monitorJobCCS(this.reconstructionJobId);
 
         // Get job result
-        res = await AppUtil.SubmitRequest("Get job result", this.headers, this.getCCSBase() + "jobs/" + this.reconstructionJobId, "GET", [200]) as any;
+        res = await ApiUtils.SubmitRequest("Get job result", this.headers, this.getCCSBase() + "jobs/" + this.reconstructionJobId, "GET", [200]) as any;
         console.log(`CCS ${jobType} job result:`, res.job);
 
         const outputIds: string[] = [];
@@ -150,7 +147,7 @@ export class ContextCaptureCloud extends AppAccess {
         if (!this.reconstructionJobId)
             return;
 
-        await AppUtil.SubmitRequest("CCS job : cancel ", this.headers, this.getCCSBase() + "jobs/" + this.reconstructionJobId, "PATCH", [200],
+        await ApiUtils.SubmitRequest("CCS job : cancel ", this.headers, this.getCCSBase() + "jobs/" + this.reconstructionJobId, "PATCH", [200],
             {
                 state: "cancelled",
             });

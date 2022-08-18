@@ -1,14 +1,19 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
 import { ContainerClient } from "@azure/storage-blob";
 import path from "path";
 import * as dotenv from "dotenv";
 import * as fs from "fs";
 import { ITwinRealityData } from "@itwin/reality-data-client";
 import { IModelHost } from "@itwin/core-backend";
-import { RealityDataAnalysis } from "../reality-data/rdas";
-import { ContextCaptureCloud } from "../reality-data/cccs";
-import { RealityDataClientBase, streamToBuffer } from "../reality-data/rds-client-base";
-const serializer = new (require("xmldom")).XMLSerializer; // eslint-disable-line @typescript-eslint/no-var-requires
-const { DOMParser } = require("xmldom"); // eslint-disable-line @typescript-eslint/no-var-requires
+import { RealityDataAnalysis } from "../reality-data/Rdas";
+import { ContextCaptureCloud } from "../reality-data/Cccs";
+import { RealityDataClientBase, streamToBuffer } from "../reality-data/Rds";
+import { DOMParser, XMLSerializer  } from "@xmldom/xmldom";
+import { RealityDataTransfer } from "../reality-data/RealityDataTransfer";
 
 
 const localPathToRdId: Map<string, string> = new Map();
@@ -41,35 +46,59 @@ export async function getRealityDataUrl(realityDataId: string): Promise<string> 
     return await serverRdsSample.getRealityDataUrl(realityDataId);
 }
 
-export function replacePathsInScene(inPath: string, outPath: string, toPatch: Map<string, string>, doSave = true)
+export function replacePathsInScene(inPath: string, outPath: string, toPatch: Map<string, string>, isContextScene = true, doSave: boolean = true)
 {
     const fileContent = fs.readFileSync(inPath, {encoding:"utf8", flag:"r"}).toString();
     const parser = new DOMParser();
     const xmlDoc: XMLDocument = parser.parseFromString(fileContent, "text/xml");
 
-    const references = xmlDoc.getElementsByTagName("Reference");
+    const references = xmlDoc.getElementsByTagName(isContextScene ? "Reference" : "Photo");
     for (let i = 0; i < references.length; i++) {
-        const path = references[i].getElementsByTagName("Path");
-        if(path.length === 0)
+        const referencePath = references[i].getElementsByTagName(isContextScene ? "Path" : "ImagePath");
+        if(referencePath.length === 0)
             continue; // No path in reference
 
-        let pathValue = path[0].textContent;
+        let pathValue = referencePath[0].textContent;
         if(!pathValue)
             continue; // No text content in reference path
 
+        const fileName = pathValue.split("/").pop();
         pathValue = pathValue.replace(/\\/g, "/");
-        if(toPatch.has(pathValue)) {
-            path[0].textContent = toPatch.get(pathValue)!;
-        }
+        toPatch.forEach((value: string, key: string) => {
+            if(!pathValue)
+                return; // No text content in reference path
+
+            if(pathValue.includes("../")) { // Relative path
+                let relativePath = key + "/" + pathValue;
+                let absolutePath = path.normalize(relativePath);
+                pathValue = absolutePath.replace("/lib", "");
+                pathValue = pathValue.replace(/\\/g, "/");
+
+                // For CCOrientations, remove the file name;
+                if(!isContextScene) {
+                    pathValue = pathValue.substring(0, pathValue.lastIndexOf("/"));
+                }
+            }
+            if(key === pathValue) {
+                // For CCOrientations, remove "rds:";
+                if(!isContextScene) {
+                    referencePath[0].textContent = value.substring("rds:".length, value.length) + "/" + fileName;
+                }
+                else
+                    referencePath[0].textContent = value;
+                
+                return;
+            }
+        });
     }
 
     if (doSave) {
-        const newXmlStr = serializer.serializeToString(xmlDoc);
+        const newXmlStr = new XMLSerializer().serializeToString(xmlDoc);
         fs.writeFileSync(outPath, newXmlStr);
     }
 }
 
-export async function patchScene(scenePath: string): Promise<string> {
+export async function patch(scenePath: string): Promise<string> {
     // Get the scene in the folder
     let fileNames: string[] = [];
     if (fs.lstatSync(scenePath).isDirectory())
@@ -81,7 +110,12 @@ export async function patchScene(scenePath: string): Promise<string> {
     const fileName = path.join(scenePath, fileNames[0]);
 
     const fileOutput = path.join(path.dirname(fileName), path.basename(fileName, path.extname(fileName)) + ".xml");
-    await replacePathsInScene(fileName, fileOutput, localPathToRdId, true);
+    if(fileName.includes("ContextScene.xml"))
+        await replacePathsInScene(fileName, fileOutput, localPathToRdId, true);
+
+    if(fileName.includes("Orientations.xml"))
+        await replacePathsInScene(fileName, fileOutput, localPathToRdId, false, true);
+    
     return fileOutput;
 }
 
@@ -119,6 +153,13 @@ export async function getOPCRootDocument(dataPath: string) : Promise<string> {
 export async function uploadRealityData(dataPath: string, type: string): Promise<string> {
     if(!serverRdsSample)
         return "";
+
+    // Used for integration tests : can't use node native modules as "path", so the data path is provided relative to the project folder
+    if(dataPath.startsWith("/data")) {
+        let projectPath = path.resolve("./");
+        projectPath = projectPath.replace(/\\/g, "/");
+        dataPath = projectPath + dataPath;
+    }
     
     let rootDocument: string|undefined = undefined;
     if(type === "Cesium3DTiles") {
@@ -136,11 +177,11 @@ export async function uploadRealityData(dataPath: string, type: string): Promise
     if(type === "CCImageCollection" || type === "3MX")
         localPathToRdId.set(dataPath, "rds:" + createdItemId);
     
-    else if(type === "ContextScene") {
-        dataPath = await patchScene(dataPath);
+    else if(type === "ContextScene" || "CCOrientations") {
+        dataPath = await patch(dataPath);
     }
 
-    await serverRdsSample.uploadRealityData(createdItemId, dataPath);
+    await RealityDataTransfer.Instance.uploadRealityData(createdItemId, dataPath, serverRdsSample);
     return createdItemId;
 }
 
@@ -255,7 +296,7 @@ export async function download(id: string, targetPath: string): Promise<void> {
     if(!serverRdsSample)
         return;
     
-    const containsContextScene = await serverRdsSample.downloadRealityData(id, targetPath);
+    const containsContextScene = await RealityDataTransfer.Instance.downloadRealityData(id, serverRdsSample, targetPath);
     realityDataIdToPath.set("rds:" + id, targetPath);
 
     if(containsContextScene)
@@ -269,7 +310,7 @@ export async function getProgressUpload(): Promise<string> {
     if(!serverRdsSample)
         return "";
     
-    const progress = await serverRdsSample.monitorUpload();
+    const progress = await RealityDataTransfer.Instance.monitorUpload();
     return progress;
 }
 

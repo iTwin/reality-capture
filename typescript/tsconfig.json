@@ -9,12 +9,11 @@
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "module": "commonjs",
     "target": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "types": [
-      "@bentley/react-scripts"
+      "@bentley/react-scripts", "chai-as-promised", "mocha"
     ],
     "lib": [
       "dom",

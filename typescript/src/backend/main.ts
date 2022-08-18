@@ -1,4 +1,9 @@
 
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
 import express from "express";
 import { Request, Response } from "express";
 import cors from "cors";
@@ -66,7 +71,6 @@ router.post("/rdas", async (req: Request, res: Response) => {
 });
 
 router.get("/accesstoken/:token", async (req: Request, res: Response) => {
-    console.log("set backend token");
     await setAccessToken(req.params.token);
     return res.status(200).json({
         id: "test"

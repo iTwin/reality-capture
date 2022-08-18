@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
 import React, { useMemo } from "react";
 import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import "./Viewer3D.css";

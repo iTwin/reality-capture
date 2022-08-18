@@ -1,13 +1,13 @@
-/*
- * Copyright © Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- */
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
 
 "use strict";
 
 import { RealityDataSampleREST } from "./rds-sample-REST.js";
 import { RealityDataSampleLIB } from "./rds-sample-LIB.js";
-import { getTokenFromEnv } from "../reality-data/utils.js";
+import { getTokenFromEnv } from "../reality-data/Utils.js";
 import { AccessToken } from "@itwin/core-bentley";
 import { IModelHost } from "@itwin/core-backend";
 

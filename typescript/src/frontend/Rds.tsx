@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
 import { Button, LabeledInput, Select, SelectOption } from "@itwin/itwinui-react";
 import React from "react";
 import "./Rds.css";

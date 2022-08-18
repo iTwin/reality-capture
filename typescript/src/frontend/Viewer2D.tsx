@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
 import { Button, LabeledInput } from "@itwin/itwinui-react";
 import { decode } from "fast-png";
 import React, { MutableRefObject, useEffect, useRef } from "react";

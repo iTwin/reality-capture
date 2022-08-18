@@ -1,17 +1,18 @@
-/*
- * Copyright © Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- */
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
 
 "use strict";
 
 import { AccessToken } from "@itwin/core-bentley";
 import { IModelHost } from "@itwin/core-backend";
-import { getTokenFromEnv } from "../reality-data/utils";
-import { RealityDataAnalysis } from "../reality-data/rdas";
+import { getTokenFromEnv } from "../reality-data/Utils";
+import { RealityDataAnalysis } from "../reality-data/Rdas";
 import * as fs from "fs";
 import * as path from "path";
-import { RealityDataClientBase } from "../reality-data/rds-client-base";
+import { RealityDataClientBase } from "../reality-data/Rds";
+import { RealityDataTransfer } from "../reality-data/RealityDataTransfer";
 
 export class RealityDataAnalysisSample extends RealityDataAnalysis {
     private imageCollectionId  = "";
@@ -66,7 +67,7 @@ export class RealityDataAnalysisSample extends RealityDataAnalysis {
             console.log("Image collection RealityData created: ", imageCollectionRd.id);
             console.log("Uploading image collection to RealityData");
             this.imageCollectionId = imageCollectionRd.id as string;
-            await this.realityDataClient.uploadRealityData(this.imageCollectionId, "D:/RDASImages/Motos");
+            await RealityDataTransfer.Instance.uploadRealityData(this.imageCollectionId, "D:/RDASImages/Motos", this.realityDataClient);
         }
 
         // Detector
@@ -76,7 +77,7 @@ export class RealityDataAnalysisSample extends RealityDataAnalysis {
             console.log("Detector RealityData created: ", dectectorRd.id);
             console.log("Uploading detector to RealityData");
             this.detectorId = dectectorRd.id as string;
-            await this.realityDataClient.uploadRealityData(this.detectorId, "D:/RDASImages/Coco2017_v1.19");
+            await RealityDataTransfer.Instance.uploadRealityData(this.detectorId, "D:/RDASImages/Coco2017_v1.19", this.realityDataClient);
         }
 
         // Context scene
@@ -92,7 +93,7 @@ export class RealityDataAnalysisSample extends RealityDataAnalysis {
             console.log("ContextScene RealityData Created: ", sceneRd.id);
             this.inputSceneId = sceneRd.id as string;
             const scenePath = await this.patchInputPhotoSceneFile([this.imageCollectionId], "D:/RDASImages/Scene/ContextScene.xml", true) as string;
-            await this.realityDataClient.uploadRealityData(this.inputSceneId, scenePath); // Has to be this name for RDAS to work
+            await RealityDataTransfer.Instance.uploadRealityData(this.inputSceneId, scenePath, this.realityDataClient); // Has to be this name for RDAS to work
         }
 
         console.log("Input reality data available for processing");
@@ -109,7 +110,7 @@ export class RealityDataAnalysisSample extends RealityDataAnalysis {
         // download the result
         if (!fs.existsSync(tmpDirection))
             fs.mkdirSync(tmpDirection);
-        await this.realityDataClient.downloadRealityData(this.outputSceneId, tmpDirection);
+        await RealityDataTransfer.Instance.downloadRealityData(this.outputSceneId, this.realityDataClient, tmpDirection);
 
         if (fs.existsSync(destPath))
             fs.rmSync(destPath);
@@ -131,9 +132,9 @@ export class RealityDataAnalysisSample extends RealityDataAnalysis {
 
     public async runJobRDASSample(): Promise<void> {
         // Check that all the input data is on RDS (list blobs without download)
-        await this.realityDataClient.downloadRealityData(this.imageCollectionId);
-        await this.realityDataClient.downloadRealityData(this.detectorId);
-        await this.realityDataClient.downloadRealityData(this.inputSceneId);
+        await RealityDataTransfer.Instance.downloadRealityData(this.imageCollectionId, this.realityDataClient);
+        await RealityDataTransfer.Instance.downloadRealityData(this.detectorId, this.realityDataClient);
+        await RealityDataTransfer.Instance.downloadRealityData(this.inputSceneId, this.realityDataClient);
 
         if (this.outputSceneId)
         {
