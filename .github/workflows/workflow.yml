@@ -17,14 +17,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-      - name: test
-        working-directory: ./typescript
-        run: | 
-          npm install -g vsts-npm-auth --registry https://registry.npmjs.com --always-auth false
-          vsts-npm-auth -config .npmrc
       - name: Install dependencies
         working-directory: ./typescript
-        run: npm install
+        run: npm ci
       - name: Typescript compiler
         working-directory: ./typescript
         run: npx tsc
