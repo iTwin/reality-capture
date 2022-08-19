@@ -22,8 +22,7 @@ jobs:
       - run: npm config set always-auth=true
       - run: npm install -g vsts-npm-auth --registry https://registry.npmjs.com --always-auth false
       - name: Install
-        working-directory: ./typescript
-        run: vsts-npm-auth -config .npmrc -f -n
+        run: vsts-npm-auth -config ./typescript/.npmrc -f
       - name: Install
         working-directory: ./typescript
         run: npm install
