@@ -18,6 +18,8 @@ jobs:
         with:
           node-version: '14'
           registry-url: https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
+      - name: test
+        run: //https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:auth_token=${{ secrets.AZURE_ARTIFACTS_PAT }} 
       - name: Install
         working-directory: ./typescript
         run: npm install
