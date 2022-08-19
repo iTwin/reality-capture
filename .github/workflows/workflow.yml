@@ -17,9 +17,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
+          registry-url: https://registry.npmjs.org/
       - name: Install dependencies
         working-directory: ./typescript
-        run: npm ci
+        run: yarn install
       - name: Typescript compiler
         working-directory: ./typescript
         run: npx tsc
