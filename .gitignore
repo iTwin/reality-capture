@@ -143,5 +143,4 @@ v_env
 
 # Typescript
 node_modules/
-package-lock.json
 lib/
