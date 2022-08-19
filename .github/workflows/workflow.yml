@@ -17,13 +17,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-      - run: npm config set registry=https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
-      - run: npm config set always-auth=true
-      - run: npm install -g vsts-npm-auth --registry https://registry.npmjs.com --always-auth false
-      - run: vsts-npm-auth -config .npmrc -f
-        working-directory: typescript
+        working-directory: ./typescript
       - name: Install dependencies
-        working-directory: typescript
+        working-directory: ./typescript
         run: npm install
       - name: Typescript compiler
         run: npx tsc
