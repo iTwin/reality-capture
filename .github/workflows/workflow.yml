@@ -19,7 +19,6 @@ jobs:
           node-version: '14'
       - run: npm config set registry=https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
       - run: npm config set always-auth=true
-      - run: cd /d %UserProfile%
       - run: npm install -g vsts-npm-auth --registry https://registry.npmjs.com --always-auth false
       - run: vsts-npm-auth -config .npmrc -f
       - name: Install dependencies
