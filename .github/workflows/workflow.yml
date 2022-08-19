@@ -20,7 +20,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - name: Install
         working-directory: ./typescript
-        run: npm run build
+        run: npm install
       - name: Typescript compiler
         working-directory: ./typescript
         run: npx tsc
