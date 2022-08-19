@@ -20,9 +20,9 @@ jobs:
           registry-url: https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
       - name: test
         run: | 
-          //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:username=VssSessionToken
-          //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:_password="anhveTdhZzJpN2V1YWlmdDJlaG1teWJ4NDJiNGw0aDR4aWl6NXJkeHR3cTNiczVoZm5kcQ=="
-          //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:email=not-used@example.com
+          npm config set //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:username=VssSessionToken
+          npm config set //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:_password="anhveTdhZzJpN2V1YWlmdDJlaG1teWJ4NDJiNGw0aDR4aWl6NXJkeHR3cTNiczVoZm5kcQ=="
+          npm config set //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:email=not-used@example.com
       - name: Install
         working-directory: ./typescript
         run: npm install
