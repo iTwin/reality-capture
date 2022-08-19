@@ -18,12 +18,9 @@ jobs:
         with:
           node-version: '14'
           registry-url: https://registry.npmjs.org/
-      - run: npm config set registry https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
-      - run: npm config set always-auth=true
-      - run: npm config set registry https://registry.npmjs.org/
       - name: Install dependencies
         working-directory: ./typescript
-        run: yarn install
+        run: yarn install --frozen-lockfile
       - name: Typescript compiler
         working-directory: ./typescript
         run: npx tsc
