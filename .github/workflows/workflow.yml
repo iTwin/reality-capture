@@ -17,12 +17,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-          registry-url: https://registry.npmjs.org/
-      - run: npm config set @bentley:registry=https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
-      - run: npm config set always-auth=true
-      - run: npm install -g vsts-npm-auth --registry https://registry.npmjs.com --always-auth false
-      - name: Install
-        run: vsts-npm-auth -config ./typescript/.npmrc -f
+          registry-url: https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
       - name: Install
         working-directory: ./typescript
         run: npm install
