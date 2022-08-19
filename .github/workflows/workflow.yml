@@ -17,11 +17,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-        working-directory: ./typescript
       - name: Install dependencies
         working-directory: ./typescript
         run: npm install
       - name: Typescript compiler
+        working-directory: ./typescript
         run: npx tsc
       - name: EsLint
         working-directory: ./typescript
