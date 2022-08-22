@@ -19,7 +19,7 @@ jobs:
           node-version: '14'
       - name: Install
         working-directory: ./typescript
-        run: npm install
+        run: npm ci
       - name: Typescript compiler
         working-directory: ./typescript
         run: npx tsc
