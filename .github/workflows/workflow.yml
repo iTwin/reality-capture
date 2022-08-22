@@ -17,13 +17,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-      - name: test
-        run: | 
-          echo registry=https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/ > .npmrc
-          echo @bentley:registry=https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/ >> .npmrc
-          echo @itwin:registry=https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/ >> .npmrc
-          echo always-auth=true >> .npmrc
-          vsts-npm-auth -config ./typescript/.npmrc -f
       - name: Install
         working-directory: ./typescript
         run: npm install
