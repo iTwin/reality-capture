@@ -11,15 +11,25 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [ubuntu-latest, windows-latest, macOS-latest]
+        operating-system: [windows-latest]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-      - name: Install dependancies
-        run: npm install
-      - name: Build
-        run: npm run build
+      - name: Setup Azure Artifacts Authentication
+        run: |
+          npm config set @bentley:registry https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
+          npm config set @itwin:registry https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
+          npm config set //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:username=VssSessionToken
+          npm config set //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:_password=${{ secrets.NPM_TOKEN }}
+          npm config set //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:email=not-used@example.com
+      - name: Install
+        working-directory: ./typescript
+        run: npm install --no-save
+      - name: Typescript compiler
+        working-directory: ./typescript
+        run: npx tsc
       - name: EsLint
-        run: eslint ./src --ext .ts,.tsx 
+        working-directory: ./typescript
+        run: npm run lint

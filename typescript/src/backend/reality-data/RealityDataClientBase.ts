@@ -7,10 +7,11 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import * as Utils from "./utils.js";
 import { ContainerClient } from "@azure/storage-blob";
 import { AccessToken } from "@itwin/core-bentley";
 import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
+import { BaseAppAccess } from "./BaseAppAccess.js";
+import { ApiUtils } from "./ApiUtils.js";
 
 
 // taken from Microsoft's Azure sdk samples.
@@ -37,7 +38,7 @@ interface UploadInfo {
     state: "Progress" | "Fail" | "Done";
 }
 
-export class RealityDataClientBase extends Utils.AppAccess
+export class RealityDataClientBase extends BaseAppAccess
 {
     private static uploadingFileConcurrency = 100;
     private uploadInfo: UploadInfo;
@@ -173,7 +174,7 @@ export class RealityDataClientBase extends Utils.AppAccess
      * @returns progress, send back to the frontend as progress request response. 
      */
     public async monitorUpload(): Promise<string> {
-        await Utils.AppUtil.Sleep(1000);
+        await ApiUtils.Sleep(1000);
         if(this.uploadInfo.state !== "Progress")
             return this.uploadInfo.state;
         
