@@ -24,13 +24,13 @@ describe("RDAS", () => {
 
         response = await fetch("http://localhost:3001/requests/upload/" + "ContextScene" + "/" + "/data/O2D/Scene");
         json = await response.json();
-        let sceneId = json.id;
+        const sceneId = json.id;
         expect(sceneId).is.not.undefined;
         expect(sceneId).to.have.lengthOf(36);
 
         response = await fetch("http://localhost:3001/requests/upload/" + "ContextDetector" + "/" + "/data/O2D/Coco2017_v1.19");
         json = await response.json();
-        let detectorId = json.id;
+        const detectorId = json.id;
         expect(detectorId).is.not.undefined;
         expect(detectorId).to.have.lengthOf(36);
 
@@ -79,13 +79,13 @@ describe("RDAS", () => {
 
         response = await fetch("http://localhost:3001/requests/upload/" + "ContextScene" + "/" + "/data/S2D/Scene");
         json = await response.json();
-        let sceneId = json.id;
+        const sceneId = json.id;
         expect(sceneId).is.not.undefined;
         expect(sceneId).to.have.lengthOf(36);
 
         response = await fetch("http://localhost:3001/requests/upload/" + "ContextDetector" + "/" + "/data/S2D/CracksAppliedAI_v1");
         json = await response.json();
-        let detectorId = json.id;
+        const detectorId = json.id;
         expect(detectorId).is.not.undefined;
         expect(detectorId).to.have.lengthOf(36);
 
@@ -134,7 +134,7 @@ describe("RDAS", () => {
 
         response = await fetch("http://localhost:3001/requests/upload/" + "ContextScene" + "/" + "/data/L3D/MeshScene");
         json = await response.json();
-        let meshId = json.id;
+        const meshId = json.id;
         expect(json.id).is.not.undefined;
         expect(json.id).to.have.lengthOf(36);
 
@@ -145,13 +145,13 @@ describe("RDAS", () => {
 
         response = await fetch("http://localhost:3001/requests/upload/" + "ContextScene" + "/" + "/data/L3D/OrientedPhotos");
         json = await response.json();
-        let sceneId = json.id;
+        const sceneId = json.id;
         expect(sceneId).is.not.undefined;
         expect(sceneId).to.have.lengthOf(36);
 
         response = await fetch("http://localhost:3001/requests/upload/" + "ContextDetector" + "/" + "/data/L3D/CracksA_v1");
         json = await response.json();
-        let detectorId = json.id;
+        const detectorId = json.id;
         expect(detectorId).is.not.undefined;
         expect(detectorId).to.have.lengthOf(36);
 

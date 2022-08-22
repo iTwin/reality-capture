@@ -46,7 +46,7 @@ export async function getRealityDataUrl(realityDataId: string): Promise<string> 
     return await serverRdsSample.getRealityDataUrl(realityDataId);
 }
 
-export function replacePathsInScene(inPath: string, outPath: string, toPatch: Map<string, string>, isContextScene = true, doSave: boolean = true)
+export function replacePathsInScene(inPath: string, outPath: string, toPatch: Map<string, string>, isContextScene = true, doSave = true)
 {
     const fileContent = fs.readFileSync(inPath, {encoding:"utf8", flag:"r"}).toString();
     const parser = new DOMParser();
@@ -69,8 +69,8 @@ export function replacePathsInScene(inPath: string, outPath: string, toPatch: Ma
                 return; // No text content in reference path
 
             if(pathValue.includes("../")) { // Relative path
-                let relativePath = key + "/" + pathValue;
-                let absolutePath = path.normalize(relativePath);
+                const relativePath = key + "/" + pathValue;
+                const absolutePath = path.normalize(relativePath);
                 pathValue = absolutePath.replace("/lib", "");
                 pathValue = pathValue.replace(/\\/g, "/");
 
@@ -177,7 +177,7 @@ export async function uploadRealityData(dataPath: string, type: string): Promise
     if(type === "CCImageCollection" || type === "3MX")
         localPathToRdId.set(dataPath, "rds:" + createdItemId);
     
-    else if(type === "ContextScene" || "CCOrientations") {
+    else if(type === "ContextScene" || type === "CCOrientations") {
         dataPath = await patch(dataPath);
     }
 

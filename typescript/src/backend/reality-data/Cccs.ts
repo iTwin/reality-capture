@@ -8,8 +8,8 @@ import { ApiUtils } from "./ApiUtils";
 import { BaseAppAccess } from "./BaseAppAccess";
 
 export class ContextCaptureCloud extends BaseAppAccess {
-    private _workspaceId: string = "";
-    private reconstructionJobId: string = "";
+    private _workspaceId = "";
+    private reconstructionJobId = "";
 
     constructor(accessToken: AccessToken) {
         super(accessToken);
