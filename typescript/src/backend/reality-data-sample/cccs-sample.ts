@@ -127,7 +127,7 @@ export class ContextCaptureCloudSample extends ContextCaptureCloud {
         let ccOrientationsId_calib: string|undefined;
         let ccOrientations_calib_LocalPath: string|undefined;
 
-        let workspaceId: string = "";
+        const workspaceId = "";
         let calibrationJobId: string|undefined;
 
         // to re-use existing reality data and avoid uploading : uncomment some or all lines below + replace id's

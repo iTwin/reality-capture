@@ -66,7 +66,7 @@ export class RealityDataTransfer {
      * @param containerClient container client to upload the file.
      * @returns the filename, to handle it in case of error.
      */
-     public async uploadSingleRealityData(dataPath: string, fileName: string, containerClient: ContainerClient): Promise<string> {
+    public async uploadSingleRealityData(dataPath: string, fileName: string, containerClient: ContainerClient): Promise<string> {
         const blockBlobClient = containerClient.getBlockBlobClient(fileName);
         const uploadBlobResponse = await blockBlobClient.uploadFile(dataPath + "/" + fileName, {concurrency: 20});
         if (uploadBlobResponse.errorCode === undefined) {
