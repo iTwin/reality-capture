@@ -21,10 +21,10 @@ jobs:
         run: |
           npm config set @bentley:registry https://bentleycs.pkgs.visualstudio.com/_packaging/Packages/npm/registry/
           npm config set //bentleycs.pkgs.visualstudio.com/_packaging/Packages/npm/registry/:username Packages
-          npm config set //bentleycs.pkgs.visualstudio.com/_packaging/Packages/npm/registry/:_password ${{ secrets.AZURE_ARTIFACTS_PAT }}
+          npm config set //bentleycs.pkgs.visualstudio.com/_packaging/Packages/npm/registry/:_password ${{ secrets.NPM_TOKEN }}
           npm config set //bentleycs.pkgs.visualstudio.com/_packaging/Packages/npm/registry/:email "not used"
           npm config set //bentleycs.pkgs.visualstudio.com/_packaging/Packages/npm/:username Packages
-          npm config set //bentleycs.pkgs.visualstudio.com/_packaging/Packages/npm/:_password ${{ secrets.AZURE_ARTIFACTS_PAT }}
+          npm config set //bentleycs.pkgs.visualstudio.com/_packaging/Packages/npm/:_password ${{ secrets.NPM_TOKEN }}
           npm config set //bentleycs.pkgs.visualstudio.com/_packaging/Packages/npm/:email "not used"
       - name: Install
         working-directory: ./typescript
