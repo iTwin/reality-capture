@@ -95,6 +95,10 @@ const RealityDataWidget = () => {
         };
         list.push(model);
         
+        // Set the blank iModel connection when the first reality data is loaded.
+        if(list.length === 1)
+            RealityData.onRealityDataAdd.emit({ realityDataId: control.value });
+        
         setAvailableRealityModels(list);
         setRealityDataId(control.value);
     };

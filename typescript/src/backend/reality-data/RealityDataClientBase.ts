@@ -10,8 +10,8 @@ import * as path from "path";
 import { ContainerClient } from "@azure/storage-blob";
 import { AccessToken } from "@itwin/core-bentley";
 import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
-import { BaseAppAccess } from "./BaseAppAccess.js";
-import { ApiUtils } from "./ApiUtils.js";
+import { BaseAppAccess } from "./BaseAppAccess";
+import { ApiUtils } from "./ApiUtils";
 
 
 // taken from Microsoft's Azure sdk samples.

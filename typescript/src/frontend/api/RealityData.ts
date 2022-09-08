@@ -2,10 +2,19 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
+import { UiEvent } from "@itwin/appui-abstract";
 import { ContextRealityModelProps, FeatureAppearance } from "@itwin/core-common";
 import { ScreenViewport } from "@itwin/core-frontend";
 
+interface RealityDataAddEventArgs {
+    realityDataId: string;
+}
+
+class RealityDataAdd extends UiEvent<RealityDataAddEventArgs> { }
+
 export default class RealityData {
+
+    public static readonly onRealityDataAdd = new RealityDataAdd();
 
     public static toggleRealityModel(crmProp: ContextRealityModelProps, viewPort: ScreenViewport, show?: boolean) {
         const crmName = crmProp.name ? crmProp.name : "";
