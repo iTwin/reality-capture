@@ -14,10 +14,9 @@ interface BlankContextRealityModelProps {
 /**
  * Query BlankConnectionProps from context reality data.
  *
- * @param accessToken the access token string
- * @param extents [optional] The volume of interest, in meters, centered around `location`, will use reality data range if not provided
+ * @param realityDataId reality data id.
+ * @param accessToken the access token string.
  * @returns blank connection with extent and location
- * @memberof RealityContextCreator
  */
 export async function getBlankConnection(realityDataId : string, accessToken: string): Promise<BlankConnectionProps> {
     const blankContextRealityModel = await getBlankContextRealityModel(accessToken, realityDataId);
@@ -37,14 +36,15 @@ export async function getBlankConnection(realityDataId : string, accessToken: st
 }
 
 /**
- * Extracts reality data info from a json file
+ * Extracts reality data info from a json file.
  * @private
- * @param json json file containing info to extract
- * @param rdUrl reality data url to use to create reality data attachment in iModel
- * @param rdName reality data name to use in attachment
- * @returns context reality data info
+ * @param json json file containing info to extract.
+ * @param realityDataName name of the reality data to read.
+ * @param realityDataId [optional] id of the reality data to read.
+ * @param realityDataType [optional] type of the reality data to read.
+ * @returns context reality data info.
  */
-function realityModelFromJson(json: any, rdName: string, rdId?: string, rdType?: string): BlankContextRealityModelProps {
+function realityModelFromJson(json: any, realityDataName: string, realityDataId?: string, realityDataType?: string): BlankContextRealityModelProps {
     const worldRange = new Range3d();
     let location: Cartographic | EcefLocationProps = Cartographic.createZero();
 
@@ -107,15 +107,15 @@ function realityModelFromJson(json: any, rdName: string, rdId?: string, rdType?:
         }
     }
     const provider = RealityDataProvider.ContextShare;
-    const format = rdType === "OPC" ? RealityDataFormat.OPC : RealityDataFormat.ThreeDTile;
-    const rdSourceKey: RealityDataSourceKey = rdId ? { provider, format, id: rdId } : RealityDataSource.createKeyFromUrl(
-        "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata/" + rdId + "?projectId=" + process.env.IMJS_PROJECT_ID);
+    const format = realityDataType === "OPC" ? RealityDataFormat.OPC : RealityDataFormat.ThreeDTile;
+    const rdSourceKey: RealityDataSourceKey = realityDataId ? { provider, format, id: realityDataId } : RealityDataSource.createKeyFromUrl(
+        "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata/" + realityDataId + "?projectId=" + process.env.IMJS_PROJECT_ID);
 
     const realityModel: ContextRealityModelProps = { 
         rdSourceKey, 
-        tilesetUrl: "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata/" + rdId + "?projectId=" + process.env.IMJS_PROJECT_ID, 
-        name: rdName, 
-        realityDataId: rdId
+        tilesetUrl: "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata/" + realityDataId + "?projectId=" + process.env.IMJS_PROJECT_ID, 
+        name: realityDataName, 
+        realityDataId: realityDataId
     };
 
     const blankContextrealityModel: BlankContextRealityModelProps = { realityModel, location, worldRange };
@@ -125,10 +125,8 @@ function realityModelFromJson(json: any, rdName: string, rdId?: string, rdType?:
 /**
  * Gets a root document in json format from a root document url
  * @private
- * @param accessToken the access token string
  * @param rootDocUrl document url
  * @returns a json containing reality data info
- * @memberof RealityContextCreator
  */
 async function getRootDocJson(rootDocUrl: string): Promise<any> {
     let rootDocjson: any;
@@ -143,6 +141,15 @@ async function getRootDocJson(rootDocUrl: string): Promise<any> {
     return rootDocjson;
 }
 
+/**
+ * Extracts reality data info from an OPC file.
+ * @private
+ * @param blobFileURL the BlobSasUrl to the file.
+ * @param realityDataUrl url of the reality data to read.
+ * @param realityDataName name of the reality data to read.
+ * @param realityDataId [optional] id of the reality data to read.
+ * @returns context reality data info.
+ */
 async function realityModelFromOPC(blobFileURL: string, rdUrl: string, rdName: string, rdId?: string): Promise<BlankContextRealityModelProps> {
     let worldRange = new Range3d();
     let location: Cartographic | EcefLocationProps;
@@ -196,6 +203,13 @@ async function realityModelFromOPC(blobFileURL: string, rdUrl: string, rdName: s
     return blankContextrealityModel;
 }
 
+/**
+ * Extracts reality data info from reality data url.
+ * @private
+ * @param accessToken the access token string.
+ * @param realityDataId id of the reality data to read.
+ * @returns array of context reality data info.
+ */
 async function getBlankContextRealityModel(accessToken: string, realityDataId: string): Promise<BlankContextRealityModelProps[]> {
     const blankContextRealityModels: BlankContextRealityModelProps[] = [];
   
@@ -206,51 +220,63 @@ async function getBlankContextRealityModel(accessToken: string, realityDataId: s
     const rdUrl = await rdaClient.getRealityDataUrl(process.env.IMJS_PROJECT_ID, realityDataId);
     
     // The dataset came from RDS
-    const rd = await rdaClient.getRealityData(accessToken, process.env.IMJS_PROJECT_ID, realityDataId);
-    if(!rd)
+    const realityData = await rdaClient.getRealityData(accessToken, process.env.IMJS_PROJECT_ID, realityDataId);
+    if(!realityData)
         return blankContextRealityModels;
     
-    const rdName = rd.displayName !== undefined ? rd.displayName : "Reality Data";
-    const rootDoc = rd.rootDocument !== undefined ? rd.rootDocument : `${rdName  }.json`;
-    const url = await rd.getBlobUrl(accessToken, rootDoc);
+    const rdName = realityData.displayName !== undefined ? realityData.displayName : "Reality Data";
+    const rootDoc = realityData.rootDocument !== undefined ? realityData.rootDocument : `${rdName  }.json`;
+    const url = await realityData.getBlobUrl(accessToken, rootDoc);
     const rootDocUrl = url.toString();
     
     // handle supported reality data types
-    if (rd.type && (rd.type === "OPC"))  {
+    if (realityData.type && (realityData.type === "OPC"))  {
         // Get the reality data root document to extract info needed to create reality data model and view in iModel
         const blankContextRealityModel = await realityModelFromOPC(rootDocUrl, rdUrl, rdName, realityDataId);
         blankContextRealityModels.push(blankContextRealityModel); 
     } 
-    else if (rd.type && rd.type === "Cesium3DTiles") {
+    else if (realityData.type && realityData.type === "Cesium3DTiles") {
         // Get the reality data root document to extract info needed to create reality data model and view in iModel
         const rootDocjson: any = await getRootDocJson(rootDocUrl);
-        const blankContextRealityModel = realityModelFromJson(rootDocjson, rdName, rd.id, rd.type);
+        const blankContextRealityModel = realityModelFromJson(rootDocjson, rdName, realityData.id, realityData.type);
         blankContextRealityModels.push(blankContextRealityModel);
 
     } else {
-        // this is an unknown reality data type
-        // const message = RealityData.getLocalizedString("error.InvalidData", {defaultValue: "Invalid Data"});
-        // 422 is invalid data in our ErrorMessage
-        // const getMetaData: GetMetaDataFunction = () => {return { type: rd.type };};
-        // const error  = new ResponseError(422, message, getMetaData); // Convert error returned by Axios into ResponseError
-        // return Promise.reject(error);
+        throw new Error("Invalid reality data type : " + realityData.type!);
     }
     
     return blankContextRealityModels;
 }
 
-export async function createBlankViewState(accessToken: AccessToken, iModelC: IModelConnection, realityDataId: string): Promise<SpatialViewState> {
+/**
+ * Create a new *blank* SpatialViewState. The returned SpatialViewState will have non-persistent empty [[CategorySelectorState]] and [[ModelSelectorState]],
+ * and a non-persistent [[DisplayStyle3dState]] with default values for all of its components. Generally after creating a blank SpatialViewState,
+ * callers will modify the state to suit specific needs.
+ * @param accessToken the access token string.
+ * @param iModelConnection The IModelConnection for the new SpatialViewState.
+ * @param realityDataId id of the reality data to read.
+ * @returns 
+ */
+export async function createBlankViewState(accessToken: AccessToken, iModelConnection: IModelConnection, realityDataId: string): Promise<SpatialViewState> {
     const blankContextRealityModel = await getBlankContextRealityModel(accessToken, realityDataId);
-    const rdViewState = createRealityContextViewState(iModelC, blankContextRealityModel);
+    const rdViewState = createRealityContextViewState(iModelConnection, blankContextRealityModel);
     return rdViewState;
 }
 
-function createRealityContextViewState(iModel: IModelConnection, blankContextRealityModels: BlankContextRealityModelProps[]): SpatialViewState {
-    const ext = iModel.projectExtents;
+/**
+ * create a new spatial view initialized to show the project extents from top view. Model and
+ * category selectors are empty, so this is useful for showing backgroundMaps, reality models, terrain, etc.
+ * @private
+ * @param iModelConnection The IModelConnection for the new SpatialViewState.
+ * @param blankContextRealityModels array of context reality data info.
+ * @returns 
+ */
+function createRealityContextViewState(iModelConnection: IModelConnection, blankContextRealityModels: BlankContextRealityModelProps[]): SpatialViewState {
+    const ext = iModelConnection.projectExtents;
     const rotation = Matrix3d.createStandardWorldToView(StandardViewIndex.Iso);
 
     // start with a new "blank" spatial view to show the extents of the project, from top view
-    const realityContextViewState = SpatialViewState.createBlank(iModel, ext.low, ext.high.minus(ext.low), rotation);
+    const realityContextViewState = SpatialViewState.createBlank(iModelConnection, ext.low, ext.high.minus(ext.low), rotation);
     const style = realityContextViewState.displayStyle;
     blankContextRealityModels.forEach((rmElement) => {
         style.attachRealityModel(rmElement.realityModel);
