@@ -47,6 +47,7 @@ router.get("/realityData/:id", async (req: Request, res: Response) => {
         json = JSON.stringify(contextScene, replacer);
     }
     else if(realityData.type === "CCImageCollection") {
+        // TODO : create a context scene in tmp.
         const imageUrls = await getImageCollectionUrls(id, azureBlobUrl);
         json = JSON.stringify(imageUrls);
     }

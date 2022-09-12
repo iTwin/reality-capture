@@ -14,6 +14,8 @@ import { ContextCaptureCloud } from "../reality-data/Cccs";
 import { RealityDataClientBase, streamToBuffer } from "../reality-data/Rds";
 import { DOMParser, XMLSerializer  } from "@xmldom/xmldom";
 import { RealityDataTransfer } from "../reality-data/RealityDataTransfer";
+import { v4 as uuidv4 } from "uuid";
+import * as os from "os";
 
 
 const localPathToRdId: Map<string, string> = new Map();
@@ -108,8 +110,13 @@ export async function patch(scenePath: string): Promise<string> {
         return scenePath; // Not a folder or does't contain any file. TODO : throw an error or return something else to handle the error.
 
     const fileName = path.join(scenePath, fileNames[0]);
+    const fileOutput = path.join(os.tmpdir(), "Bentley/ContextCapture Internal/", uuidv4(), path.basename(fileName));
+    fs.mkdir(path.dirname(fileOutput), (error) => {
+        if(error)
+            console.log("Can't create tmp dir.");
+    });
+    fs.copyFileSync(fileName, fileOutput);
 
-    const fileOutput = path.join(path.dirname(fileName), path.basename(fileName, path.extname(fileName)) + ".xml");
     if(fileName.includes("ContextScene.xml"))
         await replacePathsInScene(fileName, fileOutput, localPathToRdId, true);
 
