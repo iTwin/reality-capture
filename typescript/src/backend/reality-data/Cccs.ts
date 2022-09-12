@@ -114,7 +114,7 @@ export class ContextCaptureCloud extends BaseAppAccess {
                     outputs: outputTypes
                 }
             }) as any;
-        console.log("CCS reconstruction job creation result: ", res.job);
+        console.log("CCS reconstruction job creation result: ", res.job.jobSettings.outputs);
         this.reconstructionJobId = res.job.id;
 
         //--- Add data for Job estimate - not necessary

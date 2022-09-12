@@ -43,20 +43,19 @@ export class RealityDataTransfer {
      * @param currentFolder current explored folder.
      */
     public async getFiles(root: string, currentFolder?: string): Promise<void> {      
-        const path = currentFolder ? root + "/" + currentFolder : root;
-        const files = fs.readdirSync(path);
-
-        files.forEach(async (file) => {
-            const fileDirFromRoot = currentFolder ? currentFolder + "/" + file : file;
-            if (fs.lstatSync(path + "/" + file).isDirectory()) {
+        const exploredPath = currentFolder ? path.join(root, currentFolder) : root;
+        const files = fs.readdirSync(exploredPath);
+        for(let i = 0; i < files.length; i++) {
+            const fileDirFromRoot = currentFolder ? path.join(currentFolder, files[i]) : files[i];
+            const stats = fs.lstatSync(path.join(exploredPath, files[i]));
+            if (stats.isDirectory()) {
                 await this.getFiles(root, fileDirFromRoot);
             }
             else {
-                const stats = fs.statSync(path + "/" + file);
                 this.uploadInfo.filesToUpload.push(fileDirFromRoot);
                 this.uploadInfo.totalSizeToUpload += stats.size;
             }
-        });
+        }
     }
 
     /**
