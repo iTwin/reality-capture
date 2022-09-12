@@ -42,20 +42,20 @@ def main():
     print(f"Created reality data {reality_data.name()} [{reality_data.id()}]")
 
     print("Uploading files...")
-    lap = time.clock()
+    lap = time.perf_counter()
     code = client.upload_files(reality_data.id(), project_id, images_to_upload)
     if not code.success():
         print("Failed to upload reality data:", code)
         exit(1)
-    print(f"Files were successfully uploaded in {round(time.clock() - lap,1)}s")
+    print(f"Files were successfully uploaded in {round(time.perf_counter() - lap,1)}s")
 
     print("Downloading files...")
-    lap = time.clock()
+    lap = time.perf_counter()
     code = client.download_files(reality_data.id(), project_id, where_to_download)
     if not code.success():
         print("Failed to download reality data:", code)
         exit(1)
-    print(f"Files were successfully downloaded in {round(time.clock() - lap,1)}s")
+    print(f"Files were successfully downloaded in {round(time.perf_counter() - lap,1)}s")
 
     print(f"Deleting reality data {reality_data.id()}")
     code = client.delete_reality_data(reality_data.id())

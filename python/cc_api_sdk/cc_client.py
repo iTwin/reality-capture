@@ -58,12 +58,13 @@ class ContextCaptureClient:
         return code, AccessInfo(data["accessInfo"]["processingAllowed"],
                                 AccessStatus.from_str(data["accessInfo"]["accessStatus"]))
 
-    def estimate_cost(self, processing_info: ProcessingInformation) -> (Code, typing.Optional[BillableResources]):
+    def estimate_cost(self, job_id: str, processing_info: ProcessingInformation) -> Code:
         """
         Estimate the cost of a job
 
+        :param job_id: job to patch
         :param processing_info: Processing information of the job
-        :return: Code with status and possible error details, BillableResources requested if successful (None otherwise)
+        :return: Code with status and possible error details
         """
         pi_dict = {"gigaPixels": processing_info.giga_pixels(),
                    "megaPoints": processing_info.mega_points(),
@@ -72,7 +73,7 @@ class ContextCaptureClient:
                    "formats": processing_info.formats(),
                    "jobType": processing_info.job_type()}
         json_data = json.dumps(pi_dict)
-        self._connection.request("POST", "/contextcapture/cost/estimate", json_data, self._headers_read())
+        self._connection.request("PATCH", f"/contextcapture/jobs/{job_id}", json_data, self._headers_read())
         response = self._connection.getresponse()
 
         code = Code(response)
@@ -80,8 +81,7 @@ class ContextCaptureClient:
             return code, None
 
         data = code.response()
-        return code, BillableResources(data["billableResources"]["processingUnits"],
-                                       data["billableResources"]["storageGB"])
+        return code
 
     def get_engines_limit(self, project_id: typing.Optional[str]) -> (Code, typing.Optional[int]):
         self._connection.request("GET", "/contextcapture/limits/engines{}".format(
@@ -104,7 +104,7 @@ class ContextCaptureClient:
         """
         wc_dict = {"name": workspace_creation.name()}
         if workspace_creation.project_id() is not None:
-            wc_dict["projectId"] = workspace_creation.project_id()
+            wc_dict["iTwinId"] = workspace_creation.project_id()
         json_data = json.dumps(wc_dict)
         self._connection.request("POST", "/contextcapture/workspaces", json_data, self._headers_modify())
         response = self._connection.getresponse()
@@ -114,8 +114,7 @@ class ContextCaptureClient:
             return code, None
 
         data = code.response()
-        return code, Workspace(data["workspace"]["id"], data["workspace"]["creationDateTime"],
-                               data["workspace"]["name"], data["workspace"]["projectId"])
+        return code, Workspace(data["workspace"]["id"], data["workspace"]["name"], data["workspace"]["iTwinId"])
 
     def get_workspace(self, workspace_id: str) -> (Code, typing.Optional[Workspace]):
         """
@@ -132,8 +131,7 @@ class ContextCaptureClient:
             return code, None
 
         data = code.response()
-        return code, Workspace(data["workspace"]["id"], data["workspace"]["creationDateTime"],
-                               data["workspace"]["name"], data["workspace"]["projectId"])
+        return code, Workspace(data["workspace"]["id"], data["workspace"]["name"], data["workspace"]["projectId"])
 
     def delete_workspace(self, workspace_id: str) -> Code:
         """
@@ -150,7 +148,7 @@ class ContextCaptureClient:
     def _json_to_job(j_dict: dict) -> Job:
         # Handles execution information
         exec_info = None
-        if j_dict["executionInformation"] is not None:
+        if "executionInformation" in j_dict:
             outcome = JobOutcome.from_str(j_dict["executionInformation"]["outcome"]) \
                 if "outcome" in j_dict["executionInformation"].keys() else None
 
@@ -168,19 +166,20 @@ class ContextCaptureClient:
                   for i in j_dict["inputs"]]
 
         # Handles settings
-        outputs = [JobOutput(i["realityDataId"], Format.from_str(i["format"]))
-                   for i in j_dict["settings"]["outputs"]]
+        # outputs = [JobOutput(i["realityDataId"], Format.from_str(i["format"])) for i in j_dict["jobSettings"]["outputs"]]
+        outputs = [JobOutput("", Format.from_str(i["format"])) for i in
+                   j_dict["jobSettings"]["outputs"]]
         cache_settings = None
-        if "cacheSettings" in j_dict["settings"].keys() and j_dict["settings"]["cacheSettings"] is not None:
-            cache_settings = CacheSettings(j_dict["settings"]["cacheSettings"].get("createCache"),
-                                           j_dict["settings"]["cacheSettings"].get("useCache"))
-        settings = JobSettings(MeshQuality.from_str(j_dict["settings"]["meshQuality"]),
-                               j_dict["settings"]["processingEngines"],
+        if "cacheSettings" in j_dict["jobSettings"].keys() and j_dict["jobSettings"]["cacheSettings"] is not None:
+            cache_settings = CacheSettings(j_dict["jobSettings"]["cacheSettings"].get("createCache"),
+                                           j_dict["jobSettings"]["cacheSettings"].get("useCache"))
+        settings = JobSettings(MeshQuality.from_str(j_dict["jobSettings"]["quality"]),
+                               j_dict["jobSettings"]["processingEngines"],
                                outputs,
                                cache_settings)
 
         return Job(j_dict["id"], j_dict["name"], JobType.from_str(j_dict["type"]),
-                   JobState.from_str(j_dict["state"]), j_dict["creationDateTime"], j_dict["location"],
+                   JobState.from_str(j_dict["state"]), j_dict["createdDateTime"], j_dict["location"],
                    j_dict["workspaceId"], j_dict["email"], exec_info, inputs, settings)
 
     def create_job(self, job_create: JobCreate) -> (Code, typing.Optional[Job]):
@@ -249,14 +248,19 @@ class ContextCaptureClient:
         response = self._connection.getresponse()
         return Code(response)
 
-    def submit_job(self, job_id: str) -> (Code, typing.Optional[Job]):
+    def submit_job(self, job_id: str) -> Code:
         """
         Submit a job
 
         :param job_id: Job id
-        :return: Code with status and possible error details, submitted Job if successful (None otherwise)
+        :return: Code with status and possible error details
         """
-        self._connection.request("POST", f"/contextcapture/jobs/{job_id}/submit", None, self._headers_modify())
+
+        jc_dict = {
+            "state": "active",
+        }
+        job_json = json.dumps(jc_dict)
+        self._connection.request("PATCH", f"/contextcapture/jobs/{job_id}", job_json, self._headers_modify())
         response = self._connection.getresponse()
 
         code = Code(response)
@@ -264,7 +268,7 @@ class ContextCaptureClient:
             return code, None
 
         data = code.response()
-        return code, self._json_to_job(data["job"])
+        return code
 
     def cancel_job(self, job_id: str) -> Code:
         """
@@ -273,7 +277,13 @@ class ContextCaptureClient:
         :param job_id: Job id
         :return: Code with status and possible error details
         """
-        self._connection.request("POST", f"/contextcapture/jobs/{job_id}/cancel", None, self._headers_modify())
+
+        jc_dict = {
+            "state": "cancelled",
+        }
+        job_json = json.dumps(jc_dict)
+
+        self._connection.request("PATCH", f"/contextcapture/jobs/{job_id}", job_json, self._headers_modify())
         response = self._connection.getresponse()
         return Code(response)
 

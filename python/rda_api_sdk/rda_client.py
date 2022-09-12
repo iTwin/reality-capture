@@ -45,7 +45,7 @@ class RealityDataAnalysClient:
         jc_dict = {
             "type": job_create.settings().job_type(),
             "name": job_create.job_name(),
-            "projectId": job_create.project_id(),
+            "iTwinId": job_create.project_id(),
             "settings": job_create.settings().to_jdict()
         }
 
