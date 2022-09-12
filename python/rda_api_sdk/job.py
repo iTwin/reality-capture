@@ -521,7 +521,7 @@ class Job:
                    JobCostEstimation.from_json(j_dict["costEstimation"])
                    if "costEstimation" in j_dict.keys() else None,
                    j_dict["dataCenter"],
-                   j_dict["projectId"],
+                   j_dict["iTwinId"],
                    j_dict["email"],
                    JobExecutionInformation.from_json(j_dict["executionInformation"])
                    if "executionInformation" in j_dict.keys() else None,

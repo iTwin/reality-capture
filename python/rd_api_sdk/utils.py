@@ -67,6 +67,55 @@ def replace_references(context_scene_path: str, reference_table: Dict[str, str],
     return True, new_scene_path
 
 
+def replace_local_paths(ccorientation_path: str, reference_table: Dict[str, str], in_place: bool = False) -> (bool, str):
+    """
+    Replace ImagePath local paths in CCorientations
+    Used to translated paths from/to local folders to/from their corresponding Reality Data ID
+    If in_place is false (default), the created CCorientations is named "Orientations.xml" in a tmp dir
+    Else the created CCorientations replaces the existent one
+
+    :param ccorientation_path: Path of the CCorientations to update
+    :param reference_table: Map folder paths from/to reality data id for every entry in the CCorientations
+    :param in_place: If false the created CCorientations is named "Orientations.xml" in a tmp dir else replaces the existent one
+    :return: Boolean to indicate success, path to the orientations with replacement
+    """
+    try:
+        root = ET.parse(ccorientation_path).getroot()
+    except Exception as e:
+        print("Failed to parse xml:", e)
+        return False, ""
+
+    for imagePath_node in root.findall(".//ImagePath"):
+        image_dir = os.path.dirname(imagePath_node.text)
+        if image_dir not in reference_table:
+            return False, ""
+        imagePath_node.text = reference_table[image_dir]
+
+    new_orientation_path = os.path.join(tempfile.mkdtemp(), "Orientations.xml")
+
+    # Save the CCOrientations with reality data references
+    try:
+        with open(new_orientation_path, 'wb') as f:
+            f.write(ET.tostring(root))
+    except Exception as e:
+        print(f"Cannot create {new_orientation_path}")
+        return False, ""
+    if in_place:
+        try:
+            shutil.copyfile(new_orientation_path, ccorientation_path)
+        except Exception as e:
+            print(f"Cannot overwrite {ccorientation_path}")
+            return False, ""
+        try:
+            shutil.rmtree(os.path.dirname(new_orientation_path))
+        except Exception as e:
+            print(f"Cannot delete {new_orientation_path}")
+            return False, ""
+        new_orientation_path = ccorientation_path
+    print("References successfully replaced")
+    return True, new_orientation_path
+
+
 def upload_image_collection(rd_client: RealityDataClient, project_id: str, image_collection_path: str,
                             image_collection_name: str) -> Optional[RealityData]:
     """
@@ -249,3 +298,95 @@ def upload_context_scene_and_dependencies(rd_client: RealityDataClient, project_
         return None, None, None
 
     return context_scene_reality_data, local_to_rds_table, rds_to_local_table
+
+
+def upload_ccorientations_and_dependencies(rd_client: RealityDataClient, project_id: str, ccorientations_path: str,
+                                          image_collections):
+    """
+    Upload image collections and store their reality data id in a reference table, then update and upload the CCOrientations
+    using the reference tables created.
+    :param rd_client: Reality Data Client
+    :param project_id: Project id
+    :param ccorientations_path: Path to CCOrientations to be uploaded
+    :param image_collections: list of paths to image collections to be uploaded
+    :return: RealityData if successful (None otherwise), maps from folder paths to reality data id for every entry in the
+    ccorientations and vice-versa
+    """
+    local_to_rds_table = dict()
+    rds_to_local_table = dict()
+
+    for image_collection in image_collections:
+        reality_data = upload_image_collection(rd_client=rd_client,
+                                               project_id=project_id,
+                                               image_collection_path=image_collection,
+                                               image_collection_name=os.path.basename(image_collection))
+        if reality_data is None:
+            print("Could not upload", image_collection)
+            return None, None, None
+        # Reality Data ids in ccorientations should be prefixed with "rds:"
+        local_to_rds_table[os.path.normpath(image_collection)] = "rds:" + reality_data.id()
+        rds_to_local_table["rds:" + reality_data.id()] = os.path.normpath(image_collection)
+    print("All image collections were successfully uploaded")
+
+    # Upload CCorientations using reference table
+    ccorientation_reality_data = upload_ccorientation(rd_client=rd_client,
+                                                      project_id=project_id,
+                                                      ccorientation_path=ccorientations_path,
+                                                      ccorientation_name=os.path.basename(
+                                                          os.path.dirname(ccorientations_path)),
+                                                      reference_table=local_to_rds_table)
+    if ccorientation_reality_data is None:
+        print("Could not upload", ccorientations_path)
+        return None, None, None
+
+    return ccorientation_reality_data, local_to_rds_table, rds_to_local_table
+
+
+def upload_ccorientation(rd_client: RealityDataClient, project_id: str, ccorientation_path: str,
+                         ccorientation_name: str,
+                         reference_table: Dict[str, str]) -> Optional[RealityData]:
+    """
+    Upload a CCOrientations
+
+    :param rd_client: Reality Data Client
+    :param project_id: Project id
+    :param ccorientation_path: Path to CCorientations to be uploaded
+    :param ccorientation_name: Name for this CCOrientation
+    :param reference_table: Map from folder paths to reality data id for every entry in the ccorientation
+    :return: RealityData if successful (None otherwise)
+    """
+
+    # First local paths in CCorientation to their corresponding reality data id, and save this new ccorientation to a temporary location
+    print("Replacing local paths...")
+    success, rds_ccorientation_path = replace_local_paths(ccorientation_path, reference_table)
+    if not success:
+        print("Could not replace local paths. Aborting upload")
+        return None
+
+    rd_create = RealityDataCreate(ccorientation_name, Classification.UNDEFINED, "CCorientations",
+                                  description="CCorientations")
+    print(f"Creating a new reality data {rd_create.name()} for project {project_id}...")
+    code, reality_data = rd_client.create_reality_data(rd_create, project_id)
+    if not code.success():
+        print("Failed to create reality data:", code)
+        return None
+    print(f"Created reality data {reality_data.name()} [{reality_data.id()}]")
+
+    print("Uploading CCorientations...")
+    # Upload the ccorientation
+    code = rd_client.upload_files(reality_data.id(), project_id, os.path.dirname(rds_ccorientation_path))
+    if not code.success():
+        print("Failed to upload data:", code)
+        return None
+    # Upload all files in ccorientation directory, except the ccorientations before the replacement of references
+    code = rd_client.upload_files(reality_data.id(), project_id, os.path.dirname(ccorientation_path),
+                                  ignore_files=[ccorientation_path])
+    if not code.success():
+        print("Failed to upload data:", code)
+        return None
+
+    shutil.rmtree(os.path.dirname(rds_ccorientation_path))
+
+    print("CCOrientations was successfully uploaded")
+
+    return reality_data

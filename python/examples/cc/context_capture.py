@@ -5,6 +5,7 @@ import time
 import cc_api_sdk
 from token_factory.token_factory import TokenFactory
 
+
 # ============================================
 ims_server = "qa-ims.bentley.com"
 api_server = "qa-api.bentley.com"
@@ -17,10 +18,10 @@ class ContextCaptureTokens(TokenFactory):
         super().__init__(auth_point, token_point, redirect_url, client_id)
 
     def get_read_token(self):
-        return self.get_token(["contextcapture:modify", "contextcapture:read", "offline_access"])
+        return self.get_token(["contextcapture:modify", "contextcapture:read", "realitydata:modify", "realitydata:read", "offline_access"])
 
     def get_modify_token(self):
-        return self.get_token(["contextcapture:modify", "contextcapture:read", "offline_access"])
+        return self.get_token(["contextcapture:modify", "contextcapture:read", "realitydata:modify", "realitydata:read", "offline_access"])
 
 
 def main():
@@ -34,33 +35,13 @@ def main():
 
     client = cc_api_sdk.ContextCaptureClient(token_factory, api_server)
 
-    # First we check that we have full access to the service
-    code, access_info = client.get_user_access(None)
-    if not code.success():
-        print("Request failed:", code)
-        exit(1)
-    print(access_info)
-    if not access_info.has_access():
-        exit(1)
-
     # Create workspace
     code, workspace = client.create_workspace(cc_api_sdk.WorkspaceCreate("My Python Workspace",
-                                                                         "a39783dc-6fa6-4652-85a3-f84633dfa293"))
+                                                                         "ad14b27c-91ea-4492-9433-1e2d6903b5e4"))
     if not code.success():
         print("Workspace creation failed:", code)
         exit(1)
     print("Workspace:", workspace)
-
-    # Let's estimate the cost of our processing
-    code, bill = client.estimate_cost(cc_api_sdk.ProcessingInformation(5.2, 0, 1.,
-                                                                       cc_api_sdk.MeshQuality.MEDIUM,
-                                                                       [cc_api_sdk.Format.CC_ORIENTATIONS,
-                                                                        cc_api_sdk.Format.POD],
-                                                                       cc_api_sdk.JobType.FULL))
-    if not code.success():
-        print("Cost estimation failed:", code)
-        exit(1)
-    print("Cost estimate:", bill)
 
     # How many engines can we use?
     code, engines = client.get_engines_limit(workspace.project_id())
@@ -80,8 +61,8 @@ def main():
         cc_api_sdk.JobType.CALIBRATION,
         "Calib with Python",
         workspace.id(),
-        [cc_api_sdk.JobInput("2a9f0ad9-abcc-4916-a3f1-c858107fdadf", "CC Orientations"),
-         cc_api_sdk.JobInput("16375671-cf3c-4562-9fac-aae6cff638e4", "CC Image Collection")],
+        [cc_api_sdk.JobInput("29073d0f-530f-40c7-91de-1c44d82dc0b7", "CC Orientations"),
+         cc_api_sdk.JobInput("d0509257-bc0d-4201-b005-48af9f5b3b5a", "CC Image Collection")],
         settings
     )
     code, job = client.create_job(job_create)
@@ -112,8 +93,18 @@ def main():
         exit(1)
     print(f"Job {job.name()} [{job.id()}] created")
 
+    # Let's estimate the cost of our processing
+    code = client.estimate_cost(job.id(), cc_api_sdk.ProcessingInformation(5.2, 0, 1.,
+                                                                       cc_api_sdk.MeshQuality.MEDIUM,
+                                                                       [cc_api_sdk.Format.CC_ORIENTATIONS,
+                                                                        cc_api_sdk.Format.POD],
+                                                                       cc_api_sdk.JobType.FULL))
+    if not code.success():
+        print("Cost estimation failed:", code)
+        exit(1)
+
     # Submit job
-    code, job = client.submit_job(job.id())
+    code = client.submit_job(job.id())
     if not code.success():
         print("Job submission failed:", code)
         exit(1)
@@ -142,8 +133,18 @@ def main():
         exit(1)
     print(f"Job {job.name()} [{job.id()}] created")
 
+    # Let's estimate the cost of our processing
+    code = client.estimate_cost(job.id(), cc_api_sdk.ProcessingInformation(5.2, 0, 1.,
+                                                                       cc_api_sdk.MeshQuality.MEDIUM,
+                                                                       [cc_api_sdk.Format.CC_ORIENTATIONS,
+                                                                        cc_api_sdk.Format.POD],
+                                                                       cc_api_sdk.JobType.FULL))
+    if not code.success():
+        print("Cost estimation failed:", code)
+        exit(1)
+
     # Submit job
-    code, job = client.submit_job(job.id())
+    code = client.submit_job(job.id())
     if not code.success():
         print("Job submission failed:", code)
         exit(1)
@@ -155,7 +156,8 @@ def main():
     state = job.state()
     progress = -1
     error_count = 0
-    while state != cc_api_sdk.JobState.COMPLETED and error_count < 10:
+    while state != cc_api_sdk.JobState.COMPLETED and state is not None and error_count < 10:
+        print(state)
         code, job_progress = client.get_job_progress(job.id())
         if not code.success():
             print(code)
