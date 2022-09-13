@@ -1,3 +1,6 @@
+# Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+# See LICENSE.md in the project root for license terms and full copyright notice.
+
 # Sample creating and submitting a ContextCapture job
 
 import time
@@ -9,7 +12,7 @@ from token_factory.token_factory import TokenFactory
 # ============================================
 ims_server = "qa-ims.bentley.com"
 api_server = "qa-api.bentley.com"
-client_id = "my_client_id"
+client_id = "native-bcFvNuaZstcASjVGxTyQ3QY19"
 # ============================================
 
 
@@ -156,8 +159,7 @@ def main():
     state = job.state()
     progress = -1
     error_count = 0
-    while state != cc_api_sdk.JobState.COMPLETED and state is not None and error_count < 10:
-        print(state)
+    while state != cc_api_sdk.JobState.COMPLETED and progress < 100 and error_count < 10:
         code, job_progress = client.get_job_progress(job.id())
         if not code.success():
             print(code)
@@ -176,6 +178,7 @@ def main():
 
     # Get job outcome
     code, job = client.get_job(job.id())
+    print("state", job.state())
     if not code.success():
         print("Job retrieval failed:", code)
         exit(1)

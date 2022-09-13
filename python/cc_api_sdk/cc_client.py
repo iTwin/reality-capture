@@ -1,3 +1,6 @@
+# Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+# See LICENSE.md in the project root for license terms and full copyright notice.
+
 import http.client
 import typing
 import json
@@ -152,13 +155,12 @@ class ContextCaptureClient:
             outcome = JobOutcome.from_str(j_dict["executionInformation"]["outcome"]) \
                 if "outcome" in j_dict["executionInformation"].keys() else None
 
-            units = j_dict["executionInformation"]["units"]
             exec_info = JobExecutionInformation(
-                j_dict["executionInformation"]["submissionDateTime"],
+                j_dict["executionInformation"]["submittedDateTime"],
                 j_dict["executionInformation"].get("startDateTime"),
                 j_dict["executionInformation"].get("endDateTime"),
                 outcome,
-                units
+                j_dict["executionInformation"].get("units")
             )
 
         # Handles inputs

@@ -1,8 +1,5 @@
 # Introduction
 
-Copyright © Bentley Systems, Incorporated. All rights reserved. See 
-[LICENSE.md](./LICENSE.md) for license terms and full copyright notice.
-
 This is a simple node based console and browser apps that illustrate usage of the RealityData API.
 
 ## Table of contents

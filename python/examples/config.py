@@ -1,3 +1,6 @@
+# Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+# See LICENSE.md in the project root for license terms and full copyright notice.
+
 ims_server = "ims.bentley.com"
 rd_api_server = "api.bentley.com"
 rda_api_server = "api.bentley.com"
