@@ -1,3 +1,6 @@
+# Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+# See LICENSE.md in the project root for license terms and full copyright notice.
+
 # Sample creating and submitting a ContextCapture job
 
 import time
@@ -156,8 +159,7 @@ def main():
     state = job.state()
     progress = -1
     error_count = 0
-    while state != cc_api_sdk.JobState.COMPLETED and state is not None and error_count < 10:
-        print(state)
+    while state != cc_api_sdk.JobState.COMPLETED and error_count < 10:
         code, job_progress = client.get_job_progress(job.id())
         if not code.success():
             print(code)
@@ -174,6 +176,7 @@ def main():
         backoff_interval = min(backoff_interval * 2, 120)
         time.sleep(backoff_interval)
 
+    # TODO : "state" is still None, so this part of he code is never reached
     # Get job outcome
     code, job = client.get_job(job.id())
     if not code.success():

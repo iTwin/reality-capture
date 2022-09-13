@@ -1,3 +1,6 @@
+# Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+# See LICENSE.md in the project root for license terms and full copyright notice.
+
 from typing import List
 
 from cc_api_sdk.enums import MeshQuality, JobType, AccessStatus, Format

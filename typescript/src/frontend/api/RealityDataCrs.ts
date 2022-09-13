@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
 import { AccessToken, JsonUtils } from "@itwin/core-bentley";
 import { Cartographic, EcefLocationProps, EcefLocation, RealityDataProvider, RealityDataFormat, RealityDataSourceKey, ContextRealityModelProps } from "@itwin/core-common";
 import { BlankConnectionProps, RealityModelTileUtils, RealityDataSource, IModelConnection, SpatialViewState } from "@itwin/core-frontend";
