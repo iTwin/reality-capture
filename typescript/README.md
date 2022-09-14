@@ -1,6 +1,13 @@
 # Introduction
 
-This is a simple node based console and browser apps that illustrate usage of the RealityData API.
+Reality-data-samples in typescript is a web/console application to show how reality iTwin services are working and display Reality Data Analysis outputs, such as Cesium 3D Tiles and Context Scenes.
+
+- [Reality Data](https://developer.bentley.com/apis/reality-data/) provides the ability to retrieve information about the reality data that is associated with an infrastructure project.
+- [Reality Data Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
+ is a service that runs Artificial Intelligence/Machine Learning (AI/ML) on photos, maps, meshes or point clouds. It can detect objects or features in 2D and 3D for defect analysis, image anonymization, image indexing, asset management, mobile mapping, aerial surveying, and more.
+- [Context Capture](https://developer.bentley.com/apis/contextcapture/) is a service that turns images and point clouds into reality meshes, orthophotos and other by-products.
+
+It has been tested with Node 14.18.1 and should work with Node 14.18.1 and newer.
 
 ## Table of contents
 
@@ -22,7 +29,7 @@ To build and run this app locally you will need a few things:
 
 ### Resources
 
-To successfully run this sample, you will need to have an access to two projects. If you don't
+To successfully run this sample, you will need to have an access to at least one project. If you don't
 have one already, contact one of your Organization Administrators or take some time to go through the following tutorial:
 
 - Create a [Project](https://developer.bentley.com/tutorials/create-and-query-projects-guide).
