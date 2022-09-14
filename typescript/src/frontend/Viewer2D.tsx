@@ -24,8 +24,6 @@ let contextScene: ContextScene = {
     references: new Map(),
     labels: new Map(),
 };
-
-let imageCollectionUrls: string[] = [];
   
 export function Viewer2D(props: Viewer2DProps) {
 
@@ -75,9 +73,6 @@ export function Viewer2D(props: Viewer2DProps) {
         const currentPhoto = contextScene.photos.get(props.imageIndex);
         if(currentPhoto)
             return currentPhoto.path;
-        
-        if(imageCollectionUrls.length > props.imageIndex)
-            return imageCollectionUrls[props.imageIndex];
 
         return "";
     };
@@ -193,11 +188,8 @@ export function Viewer2D(props: Viewer2DProps) {
         if(newImageIndex < 0) {
             if(contextScene.photos.size)
                 props.onImageIndexChange(contextScene.photos.size - 1);
-            else if(imageCollectionUrls.length)
-                props.onImageIndexChange(imageCollectionUrls.length - 1);
         }
-        else if((contextScene.photos.size && newImageIndex > contextScene.photos.size - 1) 
-        || (imageCollectionUrls.length && newImageIndex > imageCollectionUrls.length - 1))
+        else if((contextScene.photos.size && newImageIndex > contextScene.photos.size - 1))
             props.onImageIndexChange(0);
         else
             props.onImageIndexChange(newImageIndex); 
@@ -216,17 +208,6 @@ export function Viewer2D(props: Viewer2DProps) {
         const photo = contextScene.photos.get(props.imageIndex);
         if(photo)
             return photo.name;
-        
-        if(imageCollectionUrls.length > 0)
-        {
-            const splitByAccess = imageCollectionUrls[props.imageIndex].split("?sv");
-            if(splitByAccess.length < 2)
-                return "";
-            
-            const splitDirectory = splitByAccess[0].split("/");
-            const fileName = splitDirectory.pop();
-            return fileName ?? "";
-        }
 
         return "";
     };
@@ -246,22 +227,12 @@ export function Viewer2D(props: Viewer2DProps) {
         contextScene.photos.clear();
         contextScene.labels.clear();
         contextScene.references.clear();
-        // Reset image collection
-        imageCollectionUrls = [];
 
         const id = props.idToDisplay;
         const response = await fetch("http://localhost:3001/requests/realityData/" + id);
         const responseJson = await response.json();
-        if(responseJson.type === "ContextScene")
-        {
-            contextScene = JSON.parse(responseJson.res, reviver);               
-            onImageIndexChange(0);
-        }
-        else if(responseJson.type === "CCImageCollection")
-        {
-            imageCollectionUrls = JSON.parse(responseJson.res);              
-            onImageIndexChange(0);
-        }
+        contextScene = JSON.parse(responseJson.res, reviver);               
+        onImageIndexChange(0);
     };
 
     return(

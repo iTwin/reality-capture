@@ -9,8 +9,8 @@ import { Request, Response } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { parseContextScene } from "./server/ContextSceneParser";
-import { getRealityData, getRealityDataUrl, getImageCollectionUrls, uploadRealityData, runRDAS, setAccessToken, getProgress, getProgressCCS, 
-    getProgressUpload, cancelJobRDAS, cancelJobCCS, runCCS, download } from "./server/RealityDataApi";
+import { getRealityData, getRealityDataUrl, uploadRealityData, runRDAS, setAccessToken, getProgress, getProgressCCS, 
+    getProgressUpload, cancelJobRDAS, cancelJobCCS, runCCS, download, writeTempSceneFromImageCollection } from "./server/RealityDataApi";
 
 const app = express();
 const port = 3001;
@@ -47,12 +47,11 @@ router.get("/realityData/:id", async (req: Request, res: Response) => {
         json = JSON.stringify(contextScene, replacer);
     }
     else if(realityData.type === "CCImageCollection") {
-        // TODO : create a context scene in tmp.
-        const imageUrls = await getImageCollectionUrls(id, azureBlobUrl);
-        json = JSON.stringify(imageUrls);
+        const output = await writeTempSceneFromImageCollection(id, azureBlobUrl);
+        const contextScene = await parseContextScene(output, true);
+        json = JSON.stringify(contextScene, replacer);
     }
     return res.status(200).json({
-        type: realityData.type,
         res: json
     });
 });
