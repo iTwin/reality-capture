@@ -10,7 +10,7 @@ You will need a [Cloud Services Subscription](https://www.bentley.com/en/subscri
 
 If you don’t have a ProjectWise project you will need to create one. [This video](https://learn.bentley.com/app/VideoPlayer/LinkToIndividualCourse?LearningPathID=109270&CourseId=114330&MediaID=5006537") shows a step by step of how to do this at [CONNECT Center](https://connect.bentley.com/).
 
-A general tutorial of how to register to the iTwin platform and how to create an application can be found [here](https://developer.bentley.com/tutorials/register-and-modify-application/). When creating the application for the RDA service, choose **Digital Twin Management** and **Reporting & Insights** as API associations. It should have at least `realitydataanalysis:modify`, `realitydata:read`, `realitydata:modify` and `realitydataanalysis:read` as Allowed scopes. Other scopes won’t interfere with the service. 
+A general tutorial of how to register to the iTwin platform and how to create an application can be found [here](https://developer.bentley.com/tutorials/register-and-modify-application/). When creating the application for the RDA service, choose **Reality Capture**, **Digital Twin Management** and **Reporting & Insights** as API associations. It should have at least `contextcapture:modify`, `contextcapture:read`,`realitydataanalysis:modify`, `realitydataanalysis:read`, `realitydata:modify` and `realitydata:read` as Allowed scopes. Other scopes won’t interfere with the service. 
 
 Choose the Application type as `Desktop/Mobile` and as redirect URIs register both `http://127.0.0.1:8080/sign-oidc` and `http://localhost:8080/sign-oidc`. 
 

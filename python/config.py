@@ -2,6 +2,7 @@
 # See LICENSE.md in the project root for license terms and full copyright notice.
 
 ims_server = "ims.bentley.com"
+cc_api_server = "api.bentley.com"
 rd_api_server = "api.bentley.com"
 rda_api_server = "api.bentley.com"
 
