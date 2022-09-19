@@ -2,189 +2,194 @@
 # See LICENSE.md in the project root for license terms and full copyright notice.
 
 # Sample creating and submitting a ContextCapture job
-
+import os
 import time
+import shutil
 
-import cc_api_sdk
-from token_factory.token_factory import TokenFactory
-
-
-# ============================================
-ims_server = "qa-ims.bentley.com"
-api_server = "qa-api.bentley.com"
-client_id = "my_client_id"
-# ============================================
-
-
-class ContextCaptureTokens(TokenFactory):
-    def __init__(self, auth_point, token_point, redirect_url, client_id):
-        super().__init__(auth_point, token_point, redirect_url, client_id)
-
-    def get_read_token(self):
-        return self.get_token(["contextcapture:modify", "contextcapture:read", "realitydata:modify", "realitydata:read", "offline_access"])
-
-    def get_modify_token(self):
-        return self.get_token(["contextcapture:modify", "contextcapture:read", "realitydata:modify", "realitydata:read", "offline_access"])
+import cc_api_sdk as cc
+import rd_api_sdk as rd
+from token_factory.token_factory import ServiceTokenFactory
+from config import project_id, ims_server, client_id, cc_api_server, rd_api_server
 
 
 def main():
+    # we need to upload a CCimagecollection and a CCorientation file for this example
+    # you should change the variables bellow to reflect the image collection and orientation you want to use
+    # you can use the files from the example Photo Segmentation / Cracks3d located on our download page
+    ###############################
+    # ccimage_collections = r"C:\RDAS_Demo_Set\Image_Object-Face_License_Plates\images"
+    # cc_orientation = r"C:\Orientations.xml"
+
+    ccimage_collections = r"D:\test_sdk\Images"
+    cc_orientation = r"D:\test_sdk\orientations"
+    ###############################
+
+    # necessary scopes for the service
+    scope_list = ["contextcapture:modify", "contextcapture:read", "realitydata:modify", "realitydata:read",
+                  "offline_access"]
+
     print("Context Capture API sample")
 
-    token_factory = ContextCaptureTokens("https://"+ims_server+"/connect/authorize",
-                                      "https://"+ims_server+"/connect/token",
-                                      "http://localhost:8080/sign-oidc",
-                                      client_id
-                                      )
+    # creating token
+    token_factory = ServiceTokenFactory(client_id, ims_server, scope_list)
 
-    client = cc_api_sdk.ContextCaptureClient(token_factory, api_server)
+    # creating clients for each service we will use
+    cc_client = cc.ContextCaptureClient(token_factory, cc_api_server)
+    rd_client = rd.RealityDataClient(token_factory, rd_api_server)
 
-    # Create workspace
-    code, workspace = client.create_workspace(cc_api_sdk.WorkspaceCreate("My Python Workspace",
-                                                                         "ad14b27c-91ea-4492-9433-1e2d6903b5e4"))
+    # uploading images
+    img_rd_create = rd.RealityDataCreate("My Image Collection", rd.Classification.UNDEFINED,
+                                         "CCImageCollection", description="Some Image collection")
+    code, img_reality_data = rd_client.create_reality_data(img_rd_create, project_id)
+    if not code.success():
+        print("Failed to create reality data:", code)
+        exit(1)
+    lap = time.perf_counter()
+    code = rd_client.upload_files(img_reality_data.id(), project_id, ccimage_collections)
+    if not code.success():
+        print("Failed to upload reality data:", code)
+        exit(1)
+    print(f"Files were successfully uploaded in {round(time.perf_counter() - lap, 1)}s")
+
+    # correcting cc_orientation paths
+    # paths on the orientation file should point to the id of the CCimagecollection you want to use
+    # this part of the code replaces the string "ReplaceWithCCImageCollectionsId" for the id of the CCimagecollection we just uploaded
+    # opening the file in read mode
+    file = open(os.path.join(cc_orientation, "orientations.xml"), "r")
+    replacement = ""
+    for line in file:
+        line = line.strip()
+        changes = line.replace("ReplaceWithCCImageCollectionsId", img_reality_data.id())
+        replacement = replacement + changes + "\n"
+    file.close()
+    # writing new file
+    if os.path.exists(os.path.join(cc_orientation, "temp")):
+        shutil.rmtree(os.path.join(cc_orientation, "temp"))
+    os.makedirs(os.path.join(cc_orientation, "temp"))
+    fout = open(os.path.join(cc_orientation, "temp", "orientations.xml"), "w")
+    fout.write(replacement)
+    fout.close()
+
+    # uploading cc_orientation
+    or_rd_create = rd.RealityDataCreate("My CC orientation", rd.Classification.UNDEFINED,
+                                        "CCOrientations", description="a cc orientation file")
+    code, or_reality_data = rd_client.create_reality_data(or_rd_create, project_id)
+    if not code.success():
+        print("Failed to create reality data:", code)
+        exit(1)
+    # uploading file
+    lap = time.perf_counter()
+    code = rd_client.upload_files(or_reality_data.id(), project_id, os.path.join(cc_orientation, "temp"))
+    if not code.success():
+        print("Failed to upload reality data:", code)
+        exit(1)
+    print(f"Files were successfully uploaded in {round(time.perf_counter() - lap, 1)}s")
+
+    # creating workspace
+    workspace_name = "My Python Workspace"
+    code, workspace = cc_client.create_workspace(cc.WorkspaceCreate(workspace_name, project_id))
     if not code.success():
         print("Workspace creation failed:", code)
         exit(1)
     print("Workspace:", workspace)
 
-    # How many engines can we use?
-    code, engines = client.get_engines_limit(workspace.project_id())
+    # lets see how many engines we can use
+    code, engines = cc_client.get_engines_limit(workspace.project_id())
     if not code.success():
         print("Failed to get engines limit:", code)
         exit(1)
     print(f"{engines} engines can be used for a job")
 
-    # Create job
-    settings = cc_api_sdk.JobCreateSettings(
-        cc_api_sdk.MeshQuality.DRAFT,
-        [cc_api_sdk.Format.CC_ORIENTATIONS],
-        None,
-        engines
-    )
-    job_create = cc_api_sdk.JobCreate(
-        cc_api_sdk.JobType.CALIBRATION,
-        "Calib with Python",
-        workspace.id(),
-        [cc_api_sdk.JobInput("29073d0f-530f-40c7-91de-1c44d82dc0b7", "CC Orientations"),
-         cc_api_sdk.JobInput("d0509257-bc0d-4201-b005-48af9f5b3b5a", "CC Image Collection")],
-        settings
-    )
-    code, job = client.create_job(job_create)
+    # creating settings for a job
+    settings = cc.JobCreateSettings(cc.MeshQuality.DRAFT, [cc.Format.CC_ORIENTATIONS], None, engines)
+
+    # creating a job
+    job_type = cc.JobType.CALIBRATION
+    job_name = "Calib with Python"
+    job_inputs = [cc.JobInput(or_reality_data.id(), "CC Orientations"),
+                  cc.JobInput(img_reality_data.id(), "CC Image Collection")]
+    job_create = cc.JobCreate(job_type, job_name, workspace.id(), job_inputs, settings)
+    code, job = cc_client.create_job(job_create)
     if not code.success():
         print("Job creation failed:", code)
         exit(1)
     print(f"Job {job.name()} [{job.id()}] created")
 
-    # Realized we made a mistake! We want a full workflow!
-    code = client.delete_job(job.id())
+    # We want a full workflow, let's delete this job
+    code = cc_client.delete_job(job.id())
     if not code.success():
         print("Job deletion failed:", code)
         exit(1)
     print(f"Job {job.name()} was deleted!")
 
-    job_create.job_type(cc_api_sdk.JobType.FULL)
-    job_create.job_name("Full with Python")
-    settings = cc_api_sdk.JobCreateSettings(
-        cc_api_sdk.MeshQuality.DRAFT,
-        [cc_api_sdk.Format.CC_ORIENTATIONS, cc_api_sdk.Format.THREEMX],
-        None,
-        engines
-    )
+    # creating new settings
+    settings = cc.JobCreateSettings(cc.MeshQuality.MEDIUM,
+                                    [cc.Format.CC_ORIENTATIONS, cc.Format.THREEMX, cc.Format.THREESM,
+                                     cc.Format.WEB_SCALABLE_MESH], None, 0)
+
+    # changing the job_create object
+    job_create.job_type(cc.JobType.FULL)
+    job_create.job_name("Full medium with Python")
     job_create.settings(settings)
-    code, job = client.create_job(job_create)
+
+    # creating new job
+    code, job = cc_client.create_job(job_create)
     if not code.success():
         print("Job creation failed:", code)
         exit(1)
     print(f"Job {job.name()} [{job.id()}] created")
 
-    # Let's estimate the cost of our processing
-    code = client.estimate_cost(job.id(), cc_api_sdk.ProcessingInformation(5.2, 0, 1.,
-                                                                       cc_api_sdk.MeshQuality.MEDIUM,
-                                                                       [cc_api_sdk.Format.CC_ORIENTATIONS,
-                                                                        cc_api_sdk.Format.POD],
-                                                                       cc_api_sdk.JobType.FULL))
+    # let's estimate the cost of our processing
+    code = cc_client.estimate_cost(job.id(), cc.ProcessingInformation(5.2, 0, 1.,
+                                                                      cc.MeshQuality.MEDIUM,
+                                                                      [cc.Format.CC_ORIENTATIONS,
+                                                                       cc.Format.POD],
+                                                                      cc.JobType.FULL))
     if not code.success():
         print("Cost estimation failed:", code)
         exit(1)
 
-    # Submit job
-    code = client.submit_job(job.id())
+    print("estimation:", code.response()['job']['estimatedCost'])
+
+    # submit job
+    code = cc_client.submit_job(job.id())
     if not code.success():
         print("Job submission failed:", code)
         exit(1)
     print(f"Job {job.name()} submitted")
     time.sleep(5)
 
-    # Whoops, we forgot about the quality, let's cancel the job
-    code = client.cancel_job(job.id())
-    if not code.success():
-        print("Job cancellation failed:", code)
-        exit(1)
-    print(f"Job {job.name()} was cancelled!")
-
-    # Now we have exactly all the parameters we need
-    settings = cc_api_sdk.JobCreateSettings(
-        cc_api_sdk.MeshQuality.MEDIUM,
-        [cc_api_sdk.Format.CC_ORIENTATIONS, cc_api_sdk.Format.THREEMX, cc_api_sdk.Format.THREESM, cc_api_sdk.Format.WEB_SCALABLE_MESH],
-        None,
-        0
-    )
-    job_create.settings(settings)
-    job_create.job_name("Full Medium Python")
-    code, job = client.create_job(job_create)
-    if not code.success():
-        print("Job creation failed:", code)
-        exit(1)
-    print(f"Job {job.name()} [{job.id()}] created")
-
-    # Let's estimate the cost of our processing
-    code = client.estimate_cost(job.id(), cc_api_sdk.ProcessingInformation(5.2, 0, 1.,
-                                                                       cc_api_sdk.MeshQuality.MEDIUM,
-                                                                       [cc_api_sdk.Format.CC_ORIENTATIONS,
-                                                                        cc_api_sdk.Format.POD],
-                                                                       cc_api_sdk.JobType.FULL))
-    if not code.success():
-        print("Cost estimation failed:", code)
-        exit(1)
-
-    # Submit job
-    code = client.submit_job(job.id())
-    if not code.success():
-        print("Job submission failed:", code)
-        exit(1)
-    print(f"Job {job.name()} submitted")
-    time.sleep(5)
-
-    # Track job progress
-    backoff_interval = 7.5
-    state = job.state()
+    # track job progress
+    backoff_interval = 2
+    state = cc.JobState.ACTIVE
     progress = -1
     error_count = 0
-    while state != cc_api_sdk.JobState.COMPLETED and error_count < 10:
-        code, job_progress = client.get_job_progress(job.id())
+
+    while (state == cc.JobState.ACTIVE) and error_count < 10:
+        time.sleep(backoff_interval)
+        code, job_progress = cc_client.get_job_progress(job.id())
         if not code.success():
             print(code)
             error_count += 1
-            backoff_interval = min(backoff_interval * 2, 120)
-            time.sleep(backoff_interval)
-            continue
-        error_count = 0
-        state = job_progress.state()
-        if job_progress.percentage() != progress:
-            progress = job_progress.percentage()
-            print(f"{job.name()}: {progress}% - Step {job_progress.step()}")
-            backoff_interval = 7.5
-        backoff_interval = min(backoff_interval * 2, 120)
-        time.sleep(backoff_interval)
+            backoff_interval = min(backoff_interval * 1.2, 15)
+        else:
+            error_count = 0
+            if state != job_progress.state() or progress != job_progress.percentage():
+                state = job_progress.state()
+                progress = job_progress.percentage()
+                print(f"Job {job.id()}: state={state} progress={progress}% step={job_progress.step()}")
+                backoff_interval = 2
+            else:
+                backoff_interval = min(backoff_interval * 1.2, 15)
 
-    # TODO : "state" is still None, so this part of he code is never reached
-    # Get job outcome
-    code, job = client.get_job(job.id())
+    # get job outcome
+    code, job = cc_client.get_job(job.id())
     if not code.success():
+        # Cannot retrieve. In this simple sample, we act as if it failed
         print("Job retrieval failed:", code)
         exit(1)
 
-    print(f"{job.name()} finished with outcome {job.execution_information().outcome().value}")
-    exit(0)
+    print(f"{job.name()} finished.")
 
 
 if __name__ == "__main__":
