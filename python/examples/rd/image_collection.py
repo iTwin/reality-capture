@@ -5,38 +5,35 @@
 
 import time
 
-import rd_api_sdk
-from token_factory.token_factory import TokenFactory
-
-from examples.config import *
-
-class RealityDataTokens(TokenFactory):
-    def __init__(self, auth_point, token_point, redirect_url, client_id):
-        super().__init__(auth_point, token_point, redirect_url, client_id)
-
-    def get_read_token(self):
-        return self.get_token(["realitydata:modify", "realitydata:read", "offline_access"])
-
-    def get_modify_token(self):
-        return self.get_token(["realitydata:modify", "realitydata:read", "offline_access"])
+import rd_api_sdk as rd
+from config import project_id, rd_api_server, ims_server, client_id
+from token_factory.token_factory import ServiceTokenFactory
 
 
 def main():
+    # you should change these variables to reflect the image collection you want to use
+    # output_dir is the folder where files will be saved in your computer from the service
+    ###############################
+    # ccimage_collections = r"C:\RDAS_Demo_Set\Image_Object-Face_License_Plates\images"
+    # name = "My Image Collection"
+    # rd_type = "CCImageCollection"
+    # output_dir = r"C:\output"
+    ##############################
+
+    # necessary scopes for the services we will use
+    scope_list = ["realitydata:modify", "realitydata:read", "offline_access"]
+
     print("Reality Data API sample")
 
-    project_id = "ad14b27c-91ea-4492-9433-1e2d6903b5e4"
-    images_to_upload = "Q:\Analyze\RAS\Motos"
-    where_to_download = "F:\RDAS\out\Motos"
+    # creating token
+    token_factory = ServiceTokenFactory(client_id, ims_server, scope_list)
 
-    token_factory = RealityDataTokens("https://"+ims_server+"/connect/authorize",
-                                      "https://"+ims_server+"/connect/token",
-                                      "http://localhost:8080/sign-oidc",
-                                      client_id
-                                      )
-    client = rd_api_sdk.RealityDataClient(token_factory, rd_api_server)
+    # creating client for the service
+    client = rd.RealityDataClient(token_factory, rd_api_server)
 
-    rd_create = rd_api_sdk.RealityDataCreate("My Image Collection", rd_api_sdk.Classification.UNDEFINED,
-                                             "CCImageCollection", description="Some Image collection")
+    # creating a new reality data object
+    rd_create = rd.RealityDataCreate(name, rd.Classification.UNDEFINED,
+                                     rd_type, description="Some Image collection")
     print(f"Creating a new reality data {rd_create.name()} for project {project_id}...")
     code, reality_data = client.create_reality_data(rd_create, project_id)
     if not code.success():
@@ -44,22 +41,25 @@ def main():
         exit(1)
     print(f"Created reality data {reality_data.name()} [{reality_data.id()}]")
 
+    # uploading images
     print("Uploading files...")
     lap = time.perf_counter()
-    code = client.upload_files(reality_data.id(), project_id, images_to_upload)
+    code = client.upload_files(reality_data.id(), project_id, ccimage_collections)
     if not code.success():
         print("Failed to upload reality data:", code)
         exit(1)
-    print(f"Files were successfully uploaded in {round(time.perf_counter() - lap,1)}s")
+    print(f"Files were successfully uploaded in {round(time.perf_counter() - lap, 1)}s")
 
+    # downloading images
     print("Downloading files...")
     lap = time.perf_counter()
-    code = client.download_files(reality_data.id(), project_id, where_to_download)
+    code = client.download_files(reality_data.id(), project_id, output_dir)
     if not code.success():
         print("Failed to download reality data:", code)
         exit(1)
-    print(f"Files were successfully downloaded in {round(time.perf_counter() - lap,1)}s")
+    print(f"Files were successfully downloaded in {round(time.perf_counter() - lap, 1)}s")
 
+    # deleting images from the service
     print(f"Deleting reality data {reality_data.id()}")
     code = client.delete_reality_data(reality_data.id())
     if not code.success():
