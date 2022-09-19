@@ -287,7 +287,7 @@ class Segmentation2DJobCreateSettings(JobCreateSettings):
     def __init__(self,
                  photos_scene_id: str = None, photo_segmentation_detector_id: str = None,
                  orthophoto_scene_id: str = None, orthophoto_segmentation_detector_id: str = None,
-                 export_contours: bool = False):
+                 export_polygons_2D: bool = False, export_lines_2D: bool = False):
         """
         Constructor
 
@@ -295,6 +295,7 @@ class Segmentation2DJobCreateSettings(JobCreateSettings):
         :param photo_segmentation_detector_id: Photo segmentation detector for the job
         :param orthophoto_scene_id: Scene containing orthophoto for the job
         :param orthophoto_segmentation_detector_id: orthophoto segmentation detector for the job
+
         """
         super().__init__()
         self._job_type = JobType.SEGMENTATION2D
@@ -308,8 +309,12 @@ class Segmentation2DJobCreateSettings(JobCreateSettings):
                             JobRealityData("orthophotoSegmentationDetector", orthophoto_segmentation_detector_id)
                             ]
             self._outputs = ["segmentation2D"]
-            if export_contours:
-                self._outputs.append("exportedContours")
+            if export_polygons_2D:
+                self._outputs.append("polygons2D")
+                self._outputs.append("exportedPolygons2DSHP")
+            if export_lines_2D:
+                self._outputs.append("lines2D")
+
         else:
             print("Invalid S2D create settings")
 
