@@ -80,10 +80,7 @@ class ContextCaptureClient:
         response = self._connection.getresponse()
 
         code = Code(response)
-        if not code.success():
-            return code, None
 
-        data = code.response()
         return code
 
     def get_engines_limit(self, project_id: typing.Optional[str]) -> (Code, typing.Optional[int]):
