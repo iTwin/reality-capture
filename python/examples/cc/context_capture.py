@@ -6,8 +6,8 @@ import os
 import time
 import shutil
 
-import cc_api_sdk as cc
-import rd_api_sdk as rd
+import cc_api_wrapper as cc
+import rd_api_wrapper as rd
 from token_factory.token_factory import ServiceTokenFactory
 from config import project_id, ims_server, client_id, cc_api_server, rd_api_server
 
@@ -19,9 +19,7 @@ def main():
     ###############################
     # ccimage_collections = r"C:\RDAS_Demo_Set\Image_Object-Face_License_Plates\images"
     # cc_orientation = r"C:\Orientations.xml"
-
-    ccimage_collections = r"D:\test_sdk\Images"
-    cc_orientation = r"D:\test_sdk\orientations"
+    # output_dir = r"C:\output"
     ###############################
 
     # necessary scopes for the service
@@ -188,8 +186,21 @@ def main():
         # Cannot retrieve. In this simple sample, we act as if it failed
         print("Job retrieval failed:", code)
         exit(1)
-
     print(f"{job.name()} finished.")
+
+    # downloading files
+    print("Downloading files...")
+    # After a completed job, the rd_client connection may not work anymore. Use a new client.
+    rd_client2 = rd.RealityDataClient(token_factory, rd_api_server)
+    for outputs in job.settings().outputs():
+        lap = time.perf_counter()
+        code = rd_client2.download_files(outputs.reality_data_id(), project_id, os.path.join(output_dir, outputs.format()))
+        if not code.success():
+            print("Failed to download reality data:", code)
+            exit(1)
+        print(f"File was successfully downloaded in {round(time.perf_counter() - lap, 1)}s")
+
+    print("download finished.")
 
 
 if __name__ == "__main__":

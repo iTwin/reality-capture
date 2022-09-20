@@ -3,8 +3,8 @@
 
 # Sample creating and submitting a Reality Data Analysis job detecting 2D objects
 
-import rd_api_sdk as rd
-import rda_api_sdk as rda
+import rd_api_wrapper as rd
+import rda_api_wrapper as rda
 from config import project_id, rda_api_server, rd_api_server, ims_server, client_id
 from token_factory.token_factory import ServiceTokenFactory
 

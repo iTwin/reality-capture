@@ -5,8 +5,8 @@ from typing import List, Optional
 from datetime import datetime
 from dateutil import parser
 
-from rda_api_sdk.enums import JobState
-from rda_api_sdk.enums import JobType
+from rda_api_wrapper.enums import JobState
+from rda_api_wrapper.enums import JobType
 
 
 class JobRealityData:

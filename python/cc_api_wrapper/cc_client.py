@@ -5,11 +5,11 @@ import http.client
 import typing
 import json
 
-from cc_api_sdk.utils import *
-from cc_api_sdk.workspace import WorkspaceCreate, Workspace
-from cc_api_sdk.job import JobCreate, Job, CacheSettings, JobExecutionInformation, JobInput, JobSettings, JobOutput, \
+from cc_api_wrapper.utils import *
+from cc_api_wrapper.workspace import WorkspaceCreate, Workspace
+from cc_api_wrapper.job import JobCreate, Job, CacheSettings, JobExecutionInformation, JobInput, JobSettings, JobOutput, \
     JobProgress
-from cc_api_sdk.enums import JobType, JobState, JobOutcome, AccessStatus, \
+from cc_api_wrapper.enums import JobType, JobState, JobOutcome, AccessStatus, \
     Format, MeshQuality
 from apim_utils.code import Code
 
@@ -146,18 +146,15 @@ class ContextCaptureClient:
 
     @staticmethod
     def _json_to_job(j_dict: dict) -> Job:
+
         # Handles execution information
         exec_info = None
         if "executionInformation" in j_dict:
-            outcome = JobOutcome.from_str(j_dict["executionInformation"]["outcome"]) \
-                if "outcome" in j_dict["executionInformation"].keys() else None
-
             exec_info = JobExecutionInformation(
                 j_dict["executionInformation"]["submittedDateTime"],
-                j_dict["executionInformation"].get("startDateTime"),
-                j_dict["executionInformation"].get("endDateTime"),
-                outcome,
-                j_dict["executionInformation"].get("units")
+                j_dict["executionInformation"].get("startedDateTime"),
+                j_dict["executionInformation"].get("endedDateTime"),
+                j_dict["executionInformation"].get("estimatedUnits")
             )
 
         # Handles inputs
@@ -166,7 +163,7 @@ class ContextCaptureClient:
 
         # Handles settings
         # outputs = [JobOutput(i["realityDataId"], Format.from_str(i["format"])) for i in j_dict["jobSettings"]["outputs"]]
-        outputs = [JobOutput("", Format.from_str(i["format"])) for i in
+        outputs = [JobOutput(Format.from_str(i["format"]), i.get("id", "")) for i in
                    j_dict["jobSettings"]["outputs"]]
         cache_settings = None
         if "cacheSettings" in j_dict["jobSettings"].keys() and j_dict["jobSettings"]["cacheSettings"] is not None:

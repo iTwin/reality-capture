@@ -5,7 +5,7 @@
 
 import time
 
-import rd_api_sdk as rd
+import rd_api_wrapper as rd
 from config import project_id, rd_api_server, ims_server, client_id
 from token_factory.token_factory import ServiceTokenFactory
 

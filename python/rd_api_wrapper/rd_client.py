@@ -12,7 +12,7 @@ from azure.storage.blob import ContainerClient
 from dateutil import parser
 
 from apim_utils.code import Code
-from rd_api_sdk.reality_data import RealityData, RealityDataCreate, RealityDataUpdate, Extent, Coordinate, \
+from rd_api_wrapper.reality_data import RealityData, RealityDataCreate, RealityDataUpdate, Extent, Coordinate, \
     Classification, Acquisition
 
 

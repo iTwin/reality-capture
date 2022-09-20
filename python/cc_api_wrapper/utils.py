@@ -3,7 +3,7 @@
 
 from typing import List
 
-from cc_api_sdk.enums import MeshQuality, JobType, AccessStatus, Format
+from cc_api_wrapper.enums import MeshQuality, JobType, AccessStatus, Format
 
 
 class ProcessingInformation:

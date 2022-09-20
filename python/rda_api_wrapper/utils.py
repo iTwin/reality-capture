@@ -5,8 +5,8 @@
 
 import os
 import time
-import rd_api_sdk
-from rda_api_sdk import JobCreate, JobState, JobCostEstimation
+import rd_api_wrapper
+from rda_api_wrapper import JobCreate, JobState, JobCostEstimation
 
 
 def create_job(rda_client, project_id, job_settings, job_name):
@@ -128,7 +128,7 @@ def download_job_outputs(rd_client, rda_client, job, output_dir_path, reference_
         return False
     for output in job.settings().outputs():
         output_path = os.path.join(output_dir_path, output.name())
-        if not rd_api_sdk.download_reality_data_and_replace_references(
+        if not rd_api_wrapper.download_reality_data_and_replace_references(
                 rd_client=rd_client,
                 rd_id=output.reality_data_id(),
                 project_id=job.project_id(),
