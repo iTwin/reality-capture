@@ -7,8 +7,8 @@ import tempfile
 import xml.etree.ElementTree as ET
 from typing import Optional, Dict
 
-from rd_api_sdk.rd_client import RealityDataClient
-from rd_api_sdk.reality_data import RealityData, RealityDataCreate, Classification
+from rd_api_wrapper.rd_client import RealityDataClient
+from rd_api_wrapper.reality_data import RealityData, RealityDataCreate, Classification
 
 
 def replace_references(context_scene_path: str, reference_table: Dict[str, str], in_place: bool = False) -> (bool, str):

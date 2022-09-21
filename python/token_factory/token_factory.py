@@ -141,3 +141,17 @@ class TokenFactory:
         token = self._get_token_from_data(json.loads(r.content.decode()))
         self._tokens[joined_scopes] = token
         return token.get_auth()
+
+
+class ServiceTokenFactory(TokenFactory):
+    def __init__(self, client_id, ims_server, scope_list):
+        super().__init__("https://" + ims_server + "/connect/authorize", "https://" + ims_server + "/connect/token",
+                            "http://localhost:8080/sign-oidc", client_id)
+        self.scope_list = scope_list
+
+    def get_read_token(self):
+        return self.get_token(self.scope_list)
+
+    def get_modify_token(self):
+        return self.get_token(self.scope_list)
+
