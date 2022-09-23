@@ -7,7 +7,7 @@
 
 import { RealityDataSampleREST } from "./rds-sample-REST.js";
 import { RealityDataSampleLIB } from "./rds-sample-LIB.js";
-import { getTokenFromEnv } from "../reality-data/Utils.js";
+import { getTokenFromEnv } from "../reality-apis-wrappers/Utils.js";
 import { AccessToken } from "@itwin/core-bentley";
 import { IModelHost } from "@itwin/core-backend";
 

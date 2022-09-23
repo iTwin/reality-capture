@@ -9,11 +9,11 @@ import * as dotenv from "dotenv";
 import * as fs from "fs";
 import { ITwinRealityData } from "@itwin/reality-data-client";
 import { IModelHost } from "@itwin/core-backend";
-import { RealityDataAnalysis } from "../reality-data/Rdas";
-import { ContextCaptureCloud } from "../reality-data/Cccs";
-import { RealityDataClientBase, streamToBuffer } from "../reality-data/Rds";
+import { RealityDataAnalysis } from "../reality-apis-wrappers/Rdas";
+import { ContextCaptureCloud } from "../reality-apis-wrappers/Cccs";
+import { RealityDataClientBase, streamToBuffer } from "../reality-apis-wrappers/Rds";
 import { DOMParser, XMLSerializer  } from "@xmldom/xmldom";
-import { RealityDataTransfer } from "../reality-data/RealityDataTransfer";
+import { RealityDataTransfer } from "../reality-apis-wrappers/RealityDataTransfer";
 import { v4 as uuidv4 } from "uuid";
 import * as os from "os";
 

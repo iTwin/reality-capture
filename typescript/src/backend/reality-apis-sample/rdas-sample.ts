@@ -7,12 +7,12 @@
 
 import { AccessToken } from "@itwin/core-bentley";
 import { IModelHost } from "@itwin/core-backend";
-import { getTokenFromEnv } from "../reality-data/Utils";
-import { RealityDataAnalysis } from "../reality-data/Rdas";
+import { getTokenFromEnv } from "../reality-apis-wrappers/Utils";
+import { RealityDataAnalysis } from "../reality-apis-wrappers/Rdas";
 import * as fs from "fs";
 import * as path from "path";
-import { RealityDataClientBase } from "../reality-data/Rds";
-import { RealityDataTransfer } from "../reality-data/RealityDataTransfer";
+import { RealityDataClientBase } from "../reality-apis-wrappers/Rds";
+import { RealityDataTransfer } from "../reality-apis-wrappers/RealityDataTransfer";
 
 export class RealityDataAnalysisSample extends RealityDataAnalysis {
     private imageCollectionId  = "";

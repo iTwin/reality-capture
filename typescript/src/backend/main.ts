@@ -10,7 +10,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { parseContextScene } from "./server/ContextSceneParser";
 import { getRealityData, getRealityDataUrl, getImageCollectionUrls, uploadRealityData, runRDAS, setAccessToken, getProgress, getProgressCCS, 
-    getProgressUpload, cancelJobRDAS, cancelJobCCS, runCCS, download } from "./server/RealityDataApi";
+    getProgressUpload, cancelJobRDAS, cancelJobCCS, runCCS, download } from "./server/RealityApisWrapper";
 
 const app = express();
 const port = 3001;

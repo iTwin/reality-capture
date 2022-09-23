@@ -3,13 +3,13 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { ContextCaptureCloud } from "../reality-data/Cccs";
-import { getTokenFromEnv } from "../reality-data/Utils";
+import { ContextCaptureCloud } from "../reality-apis-wrappers/Cccs";
+import { getTokenFromEnv } from "../reality-apis-wrappers/Utils";
 import { IModelHost } from "@itwin/core-backend";
 import { AccessToken } from "@itwin/core-bentley";
-import { RealityDataClientBase } from "../reality-data/Rds";
-import { RealityDataTransfer } from "../reality-data/RealityDataTransfer";
-import { ApiUtils } from "../reality-data/ApiUtils";
+import { RealityDataClientBase } from "../reality-apis-wrappers/Rds";
+import { RealityDataTransfer } from "../reality-apis-wrappers/RealityDataTransfer";
+import { ApiUtils } from "../reality-apis-wrappers/ApiUtils";
 
 export class ContextCaptureCloudSample extends ContextCaptureCloud {
     private imageCollectionId : string|undefined;

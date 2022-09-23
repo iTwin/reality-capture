@@ -8,7 +8,7 @@
 import { rds_sample_main } from "./rds-sample-main";
 import { rdas_sample_main } from "./rdas-sample";
 import { ccs_sample_main } from "./cccs-sample";
-import { getTokenFromEnv } from "../reality-data/Utils";
+import { getTokenFromEnv } from "../reality-apis-wrappers/Utils";
 
 async function sample_main()
 {
