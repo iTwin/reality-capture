@@ -26,7 +26,6 @@
 	"license": "MIT",
 	"dependencies": {
 		"@azure/storage-blob": "^12.8.0",
-		"@bentley/react-scripts": "^5.0.0-dev.3",
 		"@itwin/appui-abstract": "^3.2.4",
 		"@itwin/appui-layout-react": "^3.2.2",
 		"@itwin/appui-react": "^3.2.2",

@@ -25,20 +25,39 @@ export let serverRdas: RealityDataAnalysis | undefined = undefined;
 export let serverCCSample: ContextCaptureCloud | undefined = undefined;
 export let serverRdsSample: RealityDataClientBase | undefined = undefined;
 
-
-export async function getImageCollectionUrls(id: string, collectionUrl: string): Promise<string[]> {
+/**
+ * Create a context scene in user temp file from the image collection url.
+ * @param id image collection id.
+ * @param collectionUrl image collection url on azure storage.
+ * @returns the new scene.
+ */
+export async function writeTempSceneFromImageCollection(id: string, collectionUrl: string): Promise<string> {
+    const fileOutput = path.join(os.tmpdir(), "Bentley/ContextCapture Internal/", uuidv4(), "ContextScene.xml");
+    fs.mkdirSync(path.dirname(fileOutput), { recursive: true });
     const containerClient = new ContainerClient(collectionUrl);
     const iter = containerClient.listBlobsFlat();
-    const imageUrls: string[] = [];
 
-    if(!serverRdsSample)
-        return [];
-
+    fs.appendFileSync(fileOutput, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+    fs.appendFileSync(fileOutput, "<ContextScene version=\"3.0\">\n");
+    fs.appendFileSync(fileOutput, "\t<PhotoCollection>\n");
+    fs.appendFileSync(fileOutput, "\t\t<Photos>\n");
+    let i = 0;
     for await (const blob of iter) 
     {
-        imageUrls.push(await serverRdsSample.getRealityDataUrl(id, blob.name));
+        fs.appendFileSync(fileOutput, "\t\t\t<Photo id=\"" + i + "\">\n");
+        fs.appendFileSync(fileOutput, "\t\t\t\t<ImagePath>0:" + blob.name + "</ImagePath>\n");
+        fs.appendFileSync(fileOutput, "\t\t\t</Photo>\n");
+        i++;
     }
-    return imageUrls;
+    fs.appendFileSync(fileOutput, "\t\t</Photos>\n");
+    fs.appendFileSync(fileOutput, "\t</PhotoCollection>\n");
+    fs.appendFileSync(fileOutput, "\t<References>\n");
+    fs.appendFileSync(fileOutput, "\t\t<Reference id=\"0\">\n");
+    fs.appendFileSync(fileOutput, "\t\t\t<Path>rds:" + id + "</Path>\n");
+    fs.appendFileSync(fileOutput, "\t\t</Reference>\n");
+    fs.appendFileSync(fileOutput, "\t</References>\n");
+    fs.appendFileSync(fileOutput, "</ContextScene>\n");
+    return fileOutput;
 }
 
 export async function getRealityDataUrl(realityDataId: string): Promise<string> {
@@ -295,7 +314,7 @@ export async function runCCS(inputs: string[][], jobType: string): Promise<strin
     for(let i = 0; i < inputs.length; i++) {
         inputsMap.set(inputs[i][0], inputs[i][1]);
     }
-    const createdItemIds = await serverCCSample.runReconstructionJobCCS(jobType === "Full" ? true : false, inputsMap);
+    const createdItemIds = await serverCCSample.runReconstructionJobCCS(false, jobType === "Full" ? true : false, inputsMap);
     return createdItemIds;
 }
 

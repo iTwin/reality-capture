@@ -6,7 +6,7 @@ import typing
 import json
 
 from apim_utils.code import Code
-from rda_api_sdk.job import JobProgress, Job, JobCreate, JobCostEstimation
+from rda_api_wrapper.job import JobProgress, Job, JobCreate, JobCostEstimation
 
 
 class RealityDataAnalysClient:

@@ -5,7 +5,7 @@ from typing import List, Optional
 from datetime import datetime
 from dateutil import parser
 
-from cc_api_sdk.enums import MeshQuality, Format, JobType, JobOutcome, JobState
+from cc_api_wrapper.enums import MeshQuality, Format, JobType, JobOutcome, JobState
 
 
 class JobInput:
@@ -204,7 +204,6 @@ class JobExecutionInformation:
     def __init__(self, submission_date_time_str: str,
                  start_date_time_str: Optional[str],
                  end_date_time_str: Optional[str],
-                 outcome: Optional[JobOutcome],
                  estimated_units: Optional[float]):
         """
         Constructor
@@ -212,13 +211,11 @@ class JobExecutionInformation:
         :param submission_date_time_str: Submission date time, cannot be empty
         :param start_date_time_str: Optional start date time string
         :param end_date_time_str: Optional end date time string
-        :param outcome: Optional job outcome
         :param estimated_units: Optional estimated units
         """
         self._submission_date_time = parser.parse(submission_date_time_str)
         self._start_date_time = parser.parse(start_date_time_str) if start_date_time_str is not None else None
         self._end_date_time = parser.parse(end_date_time_str) if end_date_time_str is not None else None
-        self._outcome = outcome if outcome is not None else None
         self._estimated_units = estimated_units if estimated_units is not None else None
 
     def submission_date_time(self) -> datetime:

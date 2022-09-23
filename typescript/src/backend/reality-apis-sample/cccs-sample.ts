@@ -159,7 +159,7 @@ export class ContextCaptureCloudSample extends ContextCaptureCloud {
         const jobInputs = new Map();
         jobInputs.set(this.imageCollectionId, "CCS sample app image collection");
         jobInputs.set(isFull ? this.ccOrientationsId_start : this.ccOrientationsId_calib, "CCS sample app CCOrientation");
-        const outputs = await this.runReconstructionJobCCS(isFull, jobInputs);
+        const outputs = await this.runReconstructionJobCCS(true, isFull, jobInputs);
         /// TODO: CHECK IF JOB FAILED
         if (isFull)
         {

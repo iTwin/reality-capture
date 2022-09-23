@@ -86,7 +86,7 @@ export class ContextCaptureCloud extends BaseAppAccess {
      * @param inputs job inputs.
      * @returns the outputs ids.
      */
-    public async runReconstructionJobCCS(isFull: boolean, inputs: Map<string, string>): Promise<string[]> {
+    public async runReconstructionJobCCS(backendMonitor: boolean, isFull: boolean, inputs: Map<string, string>): Promise<string[]> {
         await this.createWorkspaceCCS(this.workspaceId);
         this.reconstructionJobId = "";
         const jobType: string = isFull ? "Full" : "Reconstruction";
@@ -114,7 +114,6 @@ export class ContextCaptureCloud extends BaseAppAccess {
                     outputs: outputTypes
                 }
             }) as any;
-        console.log("CCS reconstruction job creation result: ", res.job.jobSettings.outputs);
         this.reconstructionJobId = res.job.id;
 
         //--- Add data for Job estimate - not necessary
@@ -124,15 +123,13 @@ export class ContextCaptureCloud extends BaseAppAccess {
             {
                 state: "active"
             });
-        console.log("CCS reconstruction job submission result: ", res.job);
 
         //--- Monitor calibration job
-        await this.monitorJobCCS(this.reconstructionJobId);
+        if(backendMonitor)
+            await this.monitorJobCCS(this.reconstructionJobId);
 
         // Get job result
         res = await ApiUtils.SubmitRequest("Get job result", this.headers, this.getCCSBase() + "jobs/" + this.reconstructionJobId, "GET", [200]) as any;
-        console.log(`CCS ${jobType} job result:`, res.job);
-
         const outputIds: string[] = [];
         res.job.jobSettings.outputs.forEach((output: any) => {
             outputIds.push(output.id);
