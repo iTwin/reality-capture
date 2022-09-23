@@ -173,7 +173,7 @@ export class RealityDataTransfer {
     async downloadSingleRealityData(outDir: string, fileName: string, containerClient: ContainerClient): Promise<string> {
         const dir = outDir + (outDir[outDir.length - 1] === "/" || outDir[outDir.length - 1] === "\\" ? "" : "/") + fileName.substring(0, fileName.lastIndexOf("/"));
         if (!fs.existsSync(dir)){
-            fs.mkdirSync(dir, {recursive: true});
+            fs.mkdirSync(path.normalize(dir).replace(/^(\.\.(\/|\\|$))+/, ""), {recursive: true});
         }
         
         const blobContent = await containerClient.getBlockBlobClient(fileName).download(0);
