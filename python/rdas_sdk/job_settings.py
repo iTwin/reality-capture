@@ -1,7 +1,8 @@
 from __future__ import annotations
-
 from typing import TypeVar
-from rdas_sdk.utils import JobType, ReturnValue
+
+from rdas_sdk.rdas_utils import JobType
+from utils import ReturnValue
 
 
 class O2DJobSettings:
@@ -621,10 +622,3 @@ JobSettings = TypeVar("JobSettings",
                       L3DJobSettings,
                       ChangeDetectionJobSettings)
 
-# def json_to_job_settings(job_json: dict) -> ReturnValue[JobSettings]:
-#     if job_json["type"] == "objects2D":
-#         return ReturnValue(value=O2DJobSettings.from_json(job_json["settings"]), error="")
-#     if job_json["type"] == "segmentation2D":
-#         return ReturnValue(value=S2DJobSettings.from_json(job_json["settings"]), error="")
-#     else:
-#         return ReturnValue(value=None, error="")

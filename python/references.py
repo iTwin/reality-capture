@@ -1,8 +1,6 @@
 import os
-import copy
 from collections import defaultdict
 
-import job_settings
 from utils import ReturnValue
 
 
@@ -98,29 +96,11 @@ class ReferenceTable:
             return ReturnValue(value="", error="")
         return self.get_cloud_id_from_local_path(path)
 
-    def _translate_output_path(self, path: str) -> str:
+    @staticmethod
+    def _translate_output_path(path: str) -> str:
         if path:
             return "<requested>"
         return path
-
-    def convert_to_cloud_settings(self, settings: job_settings.JobSettings) -> ReturnValue[job_settings.JobSettings]:
-        """
-        Takes settings filled with local paths, and changes those paths to their corresponding cloud ID
-
-        Only input settings are properly converted, this should only be used to convert settings before submission
-
-        :param settings: Settings containing local paths that should be converted
-        :return: Settings filled with corresponding cloud IDs, and a potential error message
-        """
-        new_settings = copy.deepcopy(settings)
-        for name, value in vars(settings.inputs).items():
-            trans_input = self._translate_input_path(value)
-            if trans_input.is_error():
-                return ReturnValue(value=new_settings, error=trans_input.error)
-            new_settings.inputs.__setattr__(name, trans_input.value)
-        for name, value in vars(settings.outputs).items():
-            new_settings.outputs.__setattr__(name, self._translate_output_path(value))
-        return ReturnValue(value=new_settings, error="")
 
     def get_cloud_id_from_local_path(self, local_path: str) -> ReturnValue[str]:
         """

@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import NamedTuple, TypeVar, Generic
+from typing import NamedTuple
 
 
 class JobStatus(Enum):
@@ -25,33 +25,6 @@ class JobType(Enum):
     S3D = "Segmentation3D"
     ChangeDetection = "changeDetection"
     L3D = "lines3D"
-
-
-T = TypeVar("T")
-
-
-class ReturnValue(tuple, Generic[T]):
-    """
-    A tuple containing relevant data, and a potential error message
-
-    When no error was encountered, the error message will be empty
-    """
-    value: T
-    error: str
-
-    def __new__(cls, value: T, error: str):
-        self = tuple.__new__(cls, (value, error))
-        self.value = value
-        self.error = error
-        return self
-
-    def is_error(self) -> bool:
-        """
-        Checks whether this return value contains an error
-
-        :return: True if the return value contains an error
-        """
-        return len(self.error) > 0
 
 
 class JobProgress(NamedTuple):
