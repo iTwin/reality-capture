@@ -108,7 +108,7 @@ export function Rds(props: RdsProps) {
         realityData.type = props.uploadedDataType;
         const iTwinRealityData = await rdaClient.createRealityData(props.accessToken, process.env.IMJS_PROJECT_ID, realityData);
         return iTwinRealityData;
-    }
+    };
 
     const onUploadFiles = async (): Promise<void> => {
         // TODO : improve scene upload (see backend upload)
