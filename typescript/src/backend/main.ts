@@ -9,8 +9,8 @@ import { Request, Response } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { parseContextScene } from "./server/ContextSceneParser";
-import { getRealityData, getRealityDataUrl, uploadRealityData, runRDAS, setAccessToken, getProgress, getProgressCCS, 
-    getProgressUpload, cancelJobRDAS, cancelJobCCS, runCCS, download, writeTempSceneFromImageCollection } from "./server/RealityApisWrapper";
+import { getRealityData, getRealityDataUrl, runRDAS, setAccessToken, getProgress, getProgressCCS,
+     cancelJobRDAS, cancelJobCCS, runCCS, download, writeTempSceneFromImageCollection } from "./server/RealityApisWrapper";
 
 
 const app = express();
@@ -57,13 +57,6 @@ router.get("/realityData/:id", async (req: Request, res: Response) => {
     });
 });
 
-router.get("/upload/:type/*", async (req: Request, res: Response) => {
-    const realityDataId = await uploadRealityData(req.params[0], req.params.type);
-    return res.status(200).json({
-        id: realityDataId
-    });
-});
-
 router.post("/rdas", async (req: Request, res: Response) => {
     const realityDataIds = await runRDAS(req.body.inputs, req.body.outputTypes, req.body.jobType);
     return res.status(200).json({
@@ -102,13 +95,6 @@ router.get("/progressCCS", async (_req: Request, res: Response) => {
         step: progress[0],
         percentage: progress[1],
     });
-});
-
-router.get("/progressUpload", async (_req: Request, res: Response) => {
-    const progress = await getProgressUpload();
-    return res.status(200).json({
-        progress
-    }); 
 });
 
 router.post("/cancelJobRDAS", async (_req: Request, res: Response) => {

@@ -175,42 +175,6 @@ export async function getOPCRootDocument(dataPath: string) : Promise<string> {
     return "";
 }
 
-
-export async function uploadRealityData(dataPath: string, type: string): Promise<string> {
-    if(!serverRdsSample)
-        return "";
-
-    // Used for integration tests : can't use node native modules as "path", so the data path is provided relative to the project folder
-    if(dataPath.startsWith("/data")) {
-        let projectPath = path.resolve("./");
-        projectPath = projectPath.replace(/\\/g, "/");
-        dataPath = projectPath + dataPath;
-    }
-    
-    let rootDocument: string|undefined = undefined;
-    if(type === "Cesium3DTiles") {
-        rootDocument = await getCesiumRootDocument(dataPath);
-    }
-
-    if(type === "OPC") {
-        rootDocument = await getOPCRootDocument(dataPath);
-    }
-
-    const realityData = await serverRdsSample.createItemRDS("RDAS Sample App", type, "Uploaded with web app", rootDocument);
-    const createdItemId = realityData.id as string;
-
-    // Save the local path and uploaded data id, to patch the context scene later
-    if(type === "CCImageCollection" || type === "3MX")
-        localPathToRdId.set(dataPath, "rds:" + createdItemId);
-    
-    else if(type === "ContextScene" || type === "CCOrientations") {
-        dataPath = await patch(dataPath);
-    }
-
-    await RealityDataTransfer.Instance.uploadRealityData(createdItemId, dataPath, serverRdsSample);
-    return createdItemId;
-}
-
 export async function runRDAS(inputs: string[][], outputTypes: string[], jobType: string): Promise<string[]> {
     if(!serverRdas)
         return [];
@@ -330,14 +294,6 @@ export async function download(id: string, targetPath: string): Promise<void> {
         const fullPath = targetPath + (targetPath[targetPath.length - 1] === "/" || targetPath[targetPath.length - 1] === "\\" ? "" : "/") + "ContextScene.xml";
         replacePathsInScene(fullPath, fullPath, realityDataIdToPath);
     }
-}
-
-export async function getProgressUpload(): Promise<string> {
-    if(!serverRdsSample)
-        return "";
-    
-    const progress = await RealityDataTransfer.Instance.monitorUpload();
-    return progress;
 }
 
 export async function getNumberOfPhotos(contextScene: string): Promise<number> {

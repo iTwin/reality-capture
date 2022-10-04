@@ -93,22 +93,7 @@ export function Rds(props: RdsProps) {
         return root;
     };
 
-    const onUploadFiles = async (): Promise<void> => {
-        // TODO : patch scene and orientations
-        if(!props.uploadedDataType)
-            return;
-
-        console.log("1");
-        const input = document.getElementById("files") as HTMLInputElement;
-        let root = "";
-        if(props.uploadedDataType === "Cesium3DTiles") {            
-            root = await findRootDocument(input.files!, ".json");
-        }
-        else if(props.uploadedDataType === "OPC") {
-            root = await findRootDocument(input.files!, ".opc");
-        }
-
-        console.log("2");
+    const createRealityData = async (root?: string): Promise<ITwinRealityData> => {
         const realityDataClientOptions: RealityDataClientOptions = {
             baseUrl: "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata",
         };
@@ -119,21 +104,40 @@ export function Rds(props: RdsProps) {
         realityData.classification = "Undefined";
         realityData.rootDocument = root;
         realityData.type = props.uploadedDataType;
-        const iTwinRealityData: ITwinRealityData = await rdaClient.createRealityData(props.accessToken, process.env.IMJS_PROJECT_ID, realityData);
-        const realityDataId = iTwinRealityData.id;
-        props.onUploadedDataIdChange(realityDataId);
-        console.log("3 : created rd : ", realityDataId);
+        const iTwinRealityData = await rdaClient.createRealityData(props.accessToken, process.env.IMJS_PROJECT_ID, realityData);
+        return iTwinRealityData;
+    }
 
-        const blobUrl = await iTwinRealityData.getBlobUrl(props.accessToken, "", true);
+    const onUploadFiles = async (): Promise<void> => {
+        // TODO : improve scene upload (see backend upload)
+        // TODO : upload progress
+        if(!props.uploadedDataType)
+            return;
+
+        const input = document.getElementById("files") as HTMLInputElement;
+        if(!input.files || !input.files.length)
+            return;
+        
+        let root = "";
+        if(props.uploadedDataType === "Cesium3DTiles") {            
+            root = await findRootDocument(input.files!, ".json");
+        }
+        else if(props.uploadedDataType === "OPC") {
+            root = await findRootDocument(input.files!, ".opc");
+        }
+
+        const realityData = await createRealityData(root);
+        props.onUploadedDataIdChange(realityData.id);
+
+        const blobUrl = await realityData.getBlobUrl(props.accessToken, "", true);
         const containerClient = new ContainerClient(blobUrl.toString());
-        for(let i = 0; i < input.files!.length; i++) {
+        for(let i = 0; i < input.files.length; i++) {
             // remove selected folder from path
-            const blobName = input.files![i].webkitRelativePath.split("/").slice(1).join("/");
+            const blobName = input.files[i].webkitRelativePath.split("/").slice(1).join("/");
             const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-            console.log("upload file : ", blobName);
 
             if(blobName.includes(".xml")) {
-                let text = await input.files![i].text();
+                let text = await input.files[i].text();
                 
                 if(blobName.includes("ContextScene.xml")) {
                     text = await patch(text);
@@ -146,15 +150,14 @@ export function Rds(props: RdsProps) {
                 const uploadBlobResponse = await blockBlobClient.uploadData(blob);
             }
             else {
-                const buffer = await input.files![i].arrayBuffer();
+                const buffer = await input.files[i].arrayBuffer();
                 const uploadBlobResponse = await blockBlobClient.uploadData(buffer);
             }
         }
 
         if(props.uploadedDataType !== "ContextScene" && props.uploadedDataType !== "CCOrientations") {
-            localPathToRdId.set(uploadedItemCount, realityDataId);
+            localPathToRdId.set(uploadedItemCount, realityData.id);
             setUploadedItemCount(uploadedItemCount + 1);
-            console.log("localPathToRdId : ",localPathToRdId);
         }
     };
 
