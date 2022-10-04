@@ -7,6 +7,8 @@ import { ContainerClient } from "@azure/storage-blob";
 import { Button, LabeledInput, Select, SelectOption } from "@itwin/itwinui-react";
 import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
 import React, { ChangeEvent } from "react";
+import JSZip from "jszip";
+import FileSaver from "file-saver";
 import "./Rds.css";
 
 
@@ -170,19 +172,29 @@ export function Rds(props: RdsProps) {
     };
 
     const onDownloadFiles = async (): Promise<void> => {
-        if(!props.downloadTargetPath || !props.downloadedDataId)
+        //TODO : patch scene and orientations
+        if(!props.downloadedDataId)
             return;
-                
-        const response = await fetch("http://localhost:3001/requests/download", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                id: props.downloadedDataId,
-                targetPath: props.downloadTargetPath,
-            })
+
+        const realityDataClientOptions: RealityDataClientOptions = {
+            baseUrl: "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata",
+        };
+        const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
+        const rd = await rdaClient.getRealityData(props.accessToken, process.env.IMJS_PROJECT_ID, props.downloadedDataId);
+        const blobUrl = await rd.getBlobUrl(props.accessToken, "", true);
+        const containerClient = new ContainerClient(blobUrl.toString());
+
+        const zip = new JSZip();
+        const iter = await containerClient.listBlobsFlat();
+        for await (const blob of iter) 
+        {
+            const blobContent = await containerClient.getBlockBlobClient(blob.name).download(0);
+            const blobBody = await blobContent.blobBody;
+            const text = await blobBody!.text();
+            zip.file(blob.name, text.toString());
+        }
+        zip.generateAsync({ type: "blob" }).then(function (content) {
+            FileSaver.saveAs(content, rd.displayName);
         });
     };
 

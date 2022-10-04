@@ -10,7 +10,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { parseContextScene } from "./server/ContextSceneParser";
 import { getRealityData, getRealityDataUrl, runRDAS, setAccessToken, getProgress, getProgressCCS,
-     cancelJobRDAS, cancelJobCCS, runCCS, download, writeTempSceneFromImageCollection } from "./server/RealityApisWrapper";
+     cancelJobRDAS, cancelJobCCS, runCCS, writeTempSceneFromImageCollection } from "./server/RealityApisWrapper";
 
 
 const app = express();
@@ -115,13 +115,6 @@ router.post("/contextCapture", async (req: Request, res: Response) => {
     const realityDataId = await runCCS(req.body.inputs, req.body.type);
     return res.status(200).json({
         outputIds: realityDataId
-    });
-});
-
-router.post("/download", async (req: Request, res: Response) => {
-    await download(req.body.id, req.body.targetPath);
-    return res.status(200).json({
-        id: "test"
     });
 });
 
