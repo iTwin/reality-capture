@@ -2,7 +2,7 @@
 
 Reality-data-samples in typescript is a web application to show how reality iTwin services are working and display Reality Data Analysis outputs, such as Cesium 3D Tiles and Context Scenes.
 
-- [Reality Data](https://developer.bentley.com/apis/reality-apis-wrappers/) provides the ability to retrieve information about the reality data that is associated with an infrastructure project.
+- [Reality Data](https://developer.bentley.com/apis/reality-data/) provides the ability to retrieve information about the reality data that is associated with an infrastructure project.
 - [Reality Data Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
  is a service that runs Artificial Intelligence/Machine Learning (AI/ML) on photos, maps, meshes or point clouds. It can detect objects or features in 2D and 3D for defect analysis, image anonymization, image indexing, asset management, mobile mapping, aerial surveying, and more.
 - [Context Capture](https://developer.bentley.com/apis/contextcapture/) is a service that turns images and point clouds into reality meshes, orthophotos and other by-products.
