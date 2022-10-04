@@ -26,12 +26,10 @@ interface RdsProps {
     uploadedDataType: string;
     uploadedDataId: string;
     downloadedDataId: string;
-    downloadTargetPath: string,
     accessToken: string,
     onUploadedDataTypeChange: (type: string) => void;
     onUploadedDataIdChange: (id: string) => void;
     onDownloadedIdChange: (id: React.ChangeEvent<HTMLInputElement>) => void;
-    onDownloadTargetPathChange: (path: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const localPathToRdId: Map<number, string> = new Map();
@@ -72,14 +70,16 @@ export function Rds(props: RdsProps) {
             if(!pathValue)
                 continue; // No text content in reference path
     
-            const fileName = pathValue.split("/").pop();
-            const uploadedDataIndex = parseInt(pathValue);
+            // The first character of Path/ImagePath should be the index of the uploaded image collection
+            const uploadedDataIndex = parseInt(pathValue[0]);
             const realityDataId = localPathToRdId.get(uploadedDataIndex);
-            if(isContextScene)
+            if(isContextScene) {
                 referencePath[0].textContent = "rds:" + realityDataId!;
-            else
-                referencePath[0].textContent = realityDataId! + "/" + fileName; // TO TEST
-            
+            }
+            else {
+                const fileName = pathValue.split("/").pop();
+                referencePath[0].textContent = realityDataId! + "/" + fileName;
+            }
         }
         const newXmlStr = new XMLSerializer().serializeToString(xmlDoc);
         return newXmlStr;
@@ -111,7 +111,7 @@ export function Rds(props: RdsProps) {
     };
 
     const onUploadFiles = async (): Promise<void> => {
-        // TODO : improve scene upload (see backend upload)
+        // TODO : improve data upload (see backend upload)
         // TODO : upload progress
         if(!props.uploadedDataType)
             return;
@@ -172,7 +172,7 @@ export function Rds(props: RdsProps) {
     };
 
     const onDownloadFiles = async (): Promise<void> => {
-        //TODO : patch scene and orientations
+        // Can't patch the downloaded files.
         if(!props.downloadedDataId)
             return;
 
@@ -213,7 +213,6 @@ export function Rds(props: RdsProps) {
             <hr className="rds-sep"/>
             <div className="rds-controls-group">
                 <LabeledInput className="rds-control" displayStyle="inline" label="Data to download" placeholder="Id to download" onChange={props.onDownloadedIdChange}/>
-                <LabeledInput className="rds-control" displayStyle="inline" label="To" placeholder="Target local path" onChange={props.onDownloadTargetPathChange}/>
                 <Button className="rds-control" onClick={onDownloadFiles}>Download</Button>
             </div>
         </div>

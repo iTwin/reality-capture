@@ -25,11 +25,9 @@ export function TabMenu(props: TabMenu) {
 
     // RDS
     const [uploadedDataType, setUploadedDataType] = React.useState<string>("");
-    const [uploadedDataSource, setUploadedDataSource] = React.useState<string>("");
     const [uploadedDataId, setUploadedDataId] = React.useState<string>("");
 
     const [downloadedDataId, setDownloadedDataId] = React.useState<string>("");
-    const [downloadTargetPath, setDownloadTargetPath] = React.useState<string>("");
 
     // 2D
     const [imageIndex, setImageIndex] = React.useState<number>(-1);
@@ -64,17 +62,13 @@ export function TabMenu(props: TabMenu) {
         setDownloadedDataId(id.target.value);
     };
 
-    const onDownloadTargetPathChange = async (path: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-        setDownloadTargetPath(path.target.value);
-    };
-
     const getTabs = () => {
         switch (tabIndex) {
         case 0:
             return <Rds uploadedDataType={uploadedDataType} uploadedDataId={uploadedDataId}
-                downloadedDataId={downloadedDataId} downloadTargetPath={downloadTargetPath}               
+                downloadedDataId={downloadedDataId}           
                 onUploadedDataTypeChange={onUploadedDataTypeChange} accessToken={props.accessToken}
-                onUploadedDataIdChange={onUploadedDataIdChange} onDownloadedIdChange={onDownloadedIdChange} onDownloadTargetPathChange={onDownloadTargetPathChange}/>;
+                onUploadedDataIdChange={onUploadedDataIdChange} onDownloadedIdChange={onDownloadedIdChange}/>;
         case 1:
             return <Rdas/>;
         case 2:

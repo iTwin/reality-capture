@@ -10,7 +10,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { parseContextScene } from "./server/ContextSceneParser";
 import { getRealityData, getRealityDataUrl, runRDAS, setAccessToken, getProgress, getProgressCCS,
-     cancelJobRDAS, cancelJobCCS, runCCS, writeTempSceneFromImageCollection } from "./server/RealityApisWrapper";
+    cancelJobRDAS, cancelJobCCS, runCCS, writeTempSceneFromImageCollection } from "./server/RealityApisWrapper";
 
 
 const app = express();

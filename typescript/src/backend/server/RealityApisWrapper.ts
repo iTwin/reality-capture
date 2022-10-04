@@ -12,12 +12,9 @@ import { IModelHost } from "@itwin/core-backend";
 import { RealityDataAnalysis } from "../reality-apis-wrappers/Rdas";
 import { ContextCaptureCloud } from "../reality-apis-wrappers/Cccs";
 import { RealityDataClientBase, streamToBuffer } from "../reality-apis-wrappers/Rds";
-import { DOMParser, XMLSerializer  } from "@xmldom/xmldom";
+import { DOMParser } from "@xmldom/xmldom";
 import { v4 as uuidv4 } from "uuid";
 import * as os from "os";
-
-
-const localPathToRdId: Map<string, string> = new Map();
 
 export let serverRdas: RealityDataAnalysis | undefined = undefined;
 export let serverCCSample: ContextCaptureCloud | undefined = undefined;
@@ -110,6 +107,16 @@ export async function initCCS(accessTokenString: string): Promise<void>
         return;
     }
     serverCCSample = new ContextCaptureCloud(accessTokenString);
+}
+
+export async function initRds(accessTokenString: string): Promise<void>
+{
+    if(serverRdsSample)
+    {
+        serverRdsSample.accessToken = accessTokenString;
+        return;
+    }
+    serverRdsSample = new RealityDataClientBase(accessTokenString);
 }
 
 export async function setAccessToken(accessToken: string) {
