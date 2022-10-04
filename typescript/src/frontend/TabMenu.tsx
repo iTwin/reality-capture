@@ -52,10 +52,6 @@ export function TabMenu(props: TabMenu) {
         setIdViewer2D(event.target.value);
     };
 
-    const onUploadedDataSourceChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setUploadedDataSource(event.target.value);
-    };
-
     const onUploadedDataTypeChange = (select: string): void => {
         setUploadedDataType(select);
     };
@@ -75,9 +71,9 @@ export function TabMenu(props: TabMenu) {
     const getTabs = () => {
         switch (tabIndex) {
         case 0:
-            return <Rds uploadedDataType={uploadedDataType} uploadedDataSource={uploadedDataSource} uploadedDataId={uploadedDataId}
+            return <Rds uploadedDataType={uploadedDataType} uploadedDataId={uploadedDataId}
                 downloadedDataId={downloadedDataId} downloadTargetPath={downloadTargetPath}               
-                onUploadedDataTypeChange={onUploadedDataTypeChange} onUploadedDataSourceChange={onUploadedDataSourceChange} 
+                onUploadedDataTypeChange={onUploadedDataTypeChange} accessToken={props.accessToken}
                 onUploadedDataIdChange={onUploadedDataIdChange} onDownloadedIdChange={onDownloadedIdChange} onDownloadTargetPathChange={onDownloadTargetPathChange}/>;
         case 1:
             return <Rdas/>;
