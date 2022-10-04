@@ -9,8 +9,9 @@ import { Request, Response } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { parseContextScene } from "./server/ContextSceneParser";
-import { getRealityData, getRealityDataUrl, uploadRealityData, runRDAS, setAccessToken, getProgress, getProgressCCS, 
-    getProgressUpload, cancelJobRDAS, cancelJobCCS, runCCS, download, writeTempSceneFromImageCollection } from "./server/RealityDataApi";
+import { getRealityData, getRealityDataUrl, runRDAS, setAccessToken, getProgress, getProgressCCS,
+    cancelJobRDAS, cancelJobCCS, runCCS, writeTempSceneFromImageCollection } from "./server/RealityApisWrapper";
+
 
 const app = express();
 const port = 3001;
@@ -56,13 +57,6 @@ router.get("/realityData/:id", async (req: Request, res: Response) => {
     });
 });
 
-router.get("/upload/:type/*", async (req: Request, res: Response) => {
-    const realityDataId = await uploadRealityData(req.params[0], req.params.type);
-    return res.status(200).json({
-        id: realityDataId
-    });
-});
-
 router.post("/rdas", async (req: Request, res: Response) => {
     const realityDataIds = await runRDAS(req.body.inputs, req.body.outputTypes, req.body.jobType);
     return res.status(200).json({
@@ -103,13 +97,6 @@ router.get("/progressCCS", async (_req: Request, res: Response) => {
     });
 });
 
-router.get("/progressUpload", async (_req: Request, res: Response) => {
-    const progress = await getProgressUpload();
-    return res.status(200).json({
-        progress
-    }); 
-});
-
 router.post("/cancelJobRDAS", async (_req: Request, res: Response) => {
     await cancelJobRDAS();
     return res.status(200).json({
@@ -128,13 +115,6 @@ router.post("/contextCapture", async (req: Request, res: Response) => {
     const realityDataId = await runCCS(req.body.inputs, req.body.type);
     return res.status(200).json({
         outputIds: realityDataId
-    });
-});
-
-router.post("/download", async (req: Request, res: Response) => {
-    await download(req.body.id, req.body.targetPath);
-    return res.status(200).json({
-        id: "test"
     });
 });
 

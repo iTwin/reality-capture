@@ -7,7 +7,7 @@
 
 import { ContainerClient } from "@azure/storage-blob";
 import { Color, ContextScene } from "../../common/models";
-import { serverRdsSample } from "./RealityDataApi";
+import { serverRdsSample } from "./RealityApisWrapper";
 import { DOMParser } from "@xmldom/xmldom";
 import * as fs from "fs";
 
