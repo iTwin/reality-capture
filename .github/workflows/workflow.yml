@@ -33,3 +33,6 @@ jobs:
       - name: EsLint
         working-directory: ./typescript
         run: npm run lint
+      - name: Run web app
+        working-directory: ./typescript
+        run: npm run start:webapp
