@@ -3,9 +3,15 @@ import { getRealityData, submitRequest } from "./ApiUtils";
 
 function getRDASBase(): string { return "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydataanalysis/"; }
 
-async function getNumberOfPhotos(contextScene: string, accessToken: string): Promise<number> {
+/**
+ * Get number of photos in the context scene
+ * @param contextSceneId id of the context scene.
+ * @param accessToken access token to allow the app to access the API.
+ * @returns number of photos.
+ */
+async function getNumberOfPhotos(contextSceneId: string, accessToken: string): Promise<number> {
     let numberOfPhotos = 0;
-    const realityData = await getRealityData(contextScene, accessToken);
+    const realityData = await getRealityData(contextSceneId, accessToken);
     const blobUrl = await realityData.getBlobUrl(accessToken, "", true);
     const containerClient = new ContainerClient(blobUrl.toString());
 
@@ -29,8 +35,12 @@ async function getNumberOfPhotos(contextScene: string, accessToken: string): Pro
 }
 
 /**
- * Run and monitor RDAS job.
- * @returns 
+ * Run RDA job and returns its id.
+ * @param rdasJobType job type (O2D, S2D, L3D).
+ * @param inputs job inputs.
+ * @param outputTypes job requested outputs.
+ * @param accessToken access token to allow the app to access the API.
+ * @returns created job id.
  */
 export async function runRDASJob(rdasJobType: string, inputs: Map<string, string>, outputTypes: string[], accessToken: string): Promise<string> {
     console.log("RunJobRDAS");
@@ -79,9 +89,10 @@ export async function runRDASJob(rdasJobType: string, inputs: Map<string, string
 }
 
 /**
- * Run and monitor RDAS job.
- * @param jobId activate backend monitor.
- * @returns 
+ * Run RDA job output ids.
+ * @param jobId job to get the result.
+ * @param accessToken access token to allow the app to access the API.
+ * @returns output ids.
  */
 export async function getRDASResult(jobId: string, accessToken: string): Promise<string[]> {
     // Get job result
@@ -95,8 +106,10 @@ export async function getRDASResult(jobId: string, accessToken: string): Promise
 }
 
 /**
- * Monitor current job until it is finished. Display the result in the browser.
- * @return the progress, send back to the frontend as progress request response.
+ * Get the progress of @see {@link jobId}.
+ * @param jobId requested job id.
+ * @param accessToken access token to allow the app to access the API.
+ * @return job progress. 
  */
 export async function getRDASProgress(jobId: string, accessToken: string): Promise<any> {
     if(!jobId)
@@ -119,6 +132,11 @@ export async function getRDASProgress(jobId: string, accessToken: string): Promi
     return {state: res.progress.step, progress: res.progress.percentage};
 }
 
+/**
+ * Cancel RDA job @see {@link jobId}.
+ * @param jobId job to cancel
+ * @param accessToken access token to allow the app to access the API.
+ */
 export async function cancelRDASJob(jobId: string, accessToken: string): Promise<void> {
     await submitRequest("RDAS job : cancel ", accessToken, getRDASBase() + "jobs/" + jobId, "PATCH", [200],
         {

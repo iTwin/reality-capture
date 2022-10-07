@@ -86,7 +86,6 @@ To debug the frontend, run
   npm run start:webapp
 ```
 Then, in "Run and debug", run "Debug chrome" configuration.
-To debug the backend, run the other configuration : "Attach by process ID", and select "node --inspect lib/backend/main.js"
 
 ### Data samples
 

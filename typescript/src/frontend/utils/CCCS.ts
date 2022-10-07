@@ -90,10 +90,10 @@ export async function runReconstructionJob(inputs: Map<string, string>, accessTo
 }
 
 /**
- * Run reconstruction job and return the outputs.
+ * Get reconstruction job output ids.
  * @param jobId job to get the result.
  * @param accessToken access token to allow the app to access the API.
- * @returns the outputs ids.
+ * @returns outputs ids.
  */
 export async function getReconstructionResult(jobId: string, accessToken: string): Promise<string[]> {
     const res = await submitRequest("Get job result", accessToken, getCCCSBase() + "jobs/" + jobId, "GET", [200]);

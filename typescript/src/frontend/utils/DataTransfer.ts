@@ -4,6 +4,13 @@ import { getRealityData } from "./ApiUtils";
 import JSZip from "jszip";
 import FileSaver from "file-saver";
 
+/**
+ * Patch context scenes and orientation
+ * @param toPatch context scene to patch.
+ * @param localPathToRdId previous uploaded data.
+ * @param isContextScene true if the file is a context scene.
+ * @returns modified context scene (local paths replaced with reality data id).
+ */
 async function patch(toPatch: File, localPathToRdId: Map<number, string>, isContextScene = true): Promise<string> {
     const text = await toPatch.text();
     const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
@@ -35,6 +42,12 @@ async function patch(toPatch: File, localPathToRdId: Map<number, string>, isCont
     return newXmlStr;
 }
 
+/**
+ * Find cesium root document.
+ * @param files cesium files.
+ * @param fileName root file name.
+ * @returns root document path.
+ */
 async function findCesiumRootDocument(files: FileList, fileName: string) : Promise<string> {
     let root = "";
     for(let i = 0; i < files.length; i++) {
@@ -45,6 +58,12 @@ async function findCesiumRootDocument(files: FileList, fileName: string) : Promi
     return root;
 }
 
+/**
+ * Find opc and mesh root document.
+ * @param files files to upload.
+ * @param extension extension of the root document.
+ * @returns 
+ */
 async function findRootDocument(files: FileList, extension: string): Promise<string> {
     let root = "";
     for(let i = 0; i < files.length; i++) {
@@ -55,6 +74,14 @@ async function findRootDocument(files: FileList, extension: string): Promise<str
     return root;
 }
 
+/**
+ * Create a reality data.
+ * @param realityDataType reality data type.
+ * @param uploadedDataName reality data name. 
+ * @param root reality data root document.
+ * @param accessToken access token to allow the app to access the API.
+ * @returns created reality data.
+ */
 async function createRealityData(realityDataType: string, uploadedDataName: string, root = "", accessToken: string): Promise<ITwinRealityData> {
     const realityDataClientOptions: RealityDataClientOptions = {
         baseUrl: "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata",
@@ -70,6 +97,16 @@ async function createRealityData(realityDataType: string, uploadedDataName: stri
     return iTwinRealityData;
 }
 
+/**
+ * Upload a list of files to Context Share.
+ * @param files files to upload.
+ * @param realityDataType reality data type.
+ * @param uploadedDataName reality data name. 
+ * @param localPathToRdId previous uploaded data.
+ * @param accessToken access token to allow the app to access the API.
+ * @param cesiumFileName name of the cesium root document (optional).
+ * @returns 
+ */
 export async function uploadFileList(files: FileList, realityDataType: string, uploadedDataName: string, 
     localPathToRdId: Map<number, string>, accessToken: string, cesiumFileName = ""): Promise<ITwinRealityData> {
     // TODO : improve data upload (see backend upload)
@@ -104,7 +141,6 @@ export async function uploadFileList(files: FileList, realityDataType: string, u
                 text = await files[i].text();
             }
 
-
             const blob = new Blob([text] , { type: "text/xml"});
             const uploadBlobResponse = await blockBlobClient.uploadData(blob);
         }
@@ -116,6 +152,11 @@ export async function uploadFileList(files: FileList, realityDataType: string, u
     return realityData;
 }
 
+/**
+ * Download reality data from Context Share.
+ * @param realityDataId reality data to upload.
+ * @param accessToken access token to allow the app to access the API.
+ */
 export async function downloadRealityData(realityDataId: string, accessToken: string): Promise<void> {
     // Can't patch the downloaded files.
     const rd = await getRealityData(realityDataId, accessToken);
