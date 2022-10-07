@@ -5,7 +5,9 @@
 
 import { Button, LabeledInput, ProgressLinear, Select, SelectOption } from "@itwin/itwinui-react";
 import React from "react";
-import "./Rdas.css";
+import { sleep, submitRequest } from "./utils/ApiUtils";
+import "./RDASTab.css";
+import { getRDASProgress, getRDASResult, runRDASJob } from "./utils/RDAS";
 
 enum RdasJobTypes {
     O2D = "objects2D",
@@ -13,7 +15,11 @@ enum RdasJobTypes {
     L3D = "lines3D",
 }
 
-export function Rdas() {
+interface RdasProps {
+    accessToken: string;
+}
+
+export function Rdas(props: RdasProps) {
 
     const [rdasJobType, setRdasJobType] = React.useState<string>("");
     const [inputs, setInputs] = React.useState<Map<string, string>>(new Map());
@@ -23,11 +29,15 @@ export function Rdas() {
     const [step, setStep] = React.useState<string>("");
     const [percentage, setPercentage] = React.useState<string>("");
 
+    const [jobToCancel, setJobToCancel] = React.useState<string>("");
+
     const selectOptions: SelectOption<RdasJobTypes>[] = [
         { value: RdasJobTypes.O2D, label: RdasJobTypes.O2D },
         { value: RdasJobTypes.S2D, label: RdasJobTypes.S2D },
         { value: RdasJobTypes.L3D, label: RdasJobTypes.L3D },
     ];
+
+    const getRDASBase = () : string => { return "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydataanalysis/"; };
 
     const onRdasJobTypeChange = (selectedValue: string): void => {
         setRdasJobType(selectedValue);
@@ -39,43 +49,30 @@ export function Rdas() {
         }
         setOutputTypes(newOutputs);
     };
-
+ 
     const onJobRun = async (): Promise<void> => {
         setPercentage("0");
         setStep("Prepare step");
-        const response = fetch("http://localhost:3001/requests/rdas", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                inputs: [...inputs],
-                outputTypes,
-                jobType: rdasJobType,
-            })
-        });
+
+        const jobId = await runRDASJob(rdasJobType, inputs, outputTypes, props.accessToken); // TODO : compute number of photos
+        const outputs = getRDASResult(jobId, props.accessToken);
         let state = "";
         while(state !== "Failed" && state !== "Done" && state !== "Cancelled") {
-            const progress = await fetch("http://localhost:3001/requests/progress");
-            const progressJson = await progress.json();
-            setPercentage(progressJson.percentage);
-            state = progressJson.step ?? progressJson.error;
-            setStep(state);           
+            await sleep(10000);
+            const progress = await getRDASProgress(jobId, props.accessToken);
+            setPercentage(progress.progress);
+            state = progress.state;
+            setStep(progress.state);           
         }
-        const resolved = await response;
-        const responseJson = await resolved.json();
-        setOutputIds(responseJson.outputIds);
+        const resolvedOutputs = await outputs;
+        setOutputIds(resolvedOutputs);
     };
 
     const onJobCancel = async (): Promise<void> => {
-        await fetch("http://localhost:3001/requests/cancelJobRDAS", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-        });
+        await submitRequest("RDAS job : cancel ", props.accessToken, getRDASBase() + "jobs/" + jobToCancel, "PATCH", [200],
+            {
+                state: "cancelled",
+            });
     };
 
     const getJobDiv = () => {
@@ -138,9 +135,13 @@ export function Rdas() {
             {step && (
                 <div className="rdas-controls-group">
                     <ProgressLinear className="rdas-progress" value={parseInt(percentage)} labels={[step, percentage + "%"]}/>
-                    <Button className="rdas-control" disabled={!step || step === "Done" || step === "Error"} onClick={onJobCancel}>Cancel</Button> 
                 </div>
             )}
+            <div className="ccs-controls-group">
+                <LabeledInput className="ccs-control" displayStyle="inline" label="job to cancel" placeholder="Enter id here..." 
+                    onChange={(id: React.ChangeEvent<HTMLInputElement>): void => {setJobToCancel(id.target.value);}}/>
+                <Button className="ccs-control" disabled={jobToCancel === ""} onClick={onJobCancel}>Cancel</Button> 
+            </div>
             <div className="rdas-controls-group">
                 {getOutputs()}
             </div>           

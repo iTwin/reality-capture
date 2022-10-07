@@ -5,10 +5,15 @@
 
 import { Button, LabeledInput, ProgressLinear } from "@itwin/itwinui-react";
 import React from "react";
-import "./ContextCapture.css";
+import { sleep } from "./utils/ApiUtils";
+import "./CCCSTab.css";
+import { cancelCCCSJob, getCCCSProgress, getReconstructionResult, runReconstructionJob } from "./utils/CCCS";
 
+interface ContextCaptureProps {
+    accessToken: string;
+}
 
-export function ContextCapture() {
+export function ContextCapture(props: ContextCaptureProps) {
 
     const [inputs, setInputs] = React.useState<Map<string, string>>(new Map());
     const [outputIds, setOutputIds] = React.useState<string[]>([]);
@@ -16,41 +21,29 @@ export function ContextCapture() {
     const [step, setStep] = React.useState<string>("");
     const [percentage, setPercentage] = React.useState<string>("");
 
+    const [jobToCancel, setJobToCancel] = React.useState<string>("");
+
     const onJobRun = async (): Promise<void> => {
+        // TO TEST
         setPercentage("0");
         setStep("Prepare step");
-        const response = fetch("http://localhost:3001/requests/contextCapture", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                type: "Full",
-                inputs: [...inputs],
-            })
-        });
+
+        const jobId = await runReconstructionJob(inputs, props.accessToken, true);
+        const outputs = getReconstructionResult(jobId, props.accessToken);
         let state = "";
         while(state !== "Failed" && state !== "Done" && state !== "Cancelled") {
-            const progress = await fetch("http://localhost:3001/requests/progressCCS");
-            const progressJson = await progress.json();
-            setPercentage(progressJson.percentage);
-            state = progressJson.step ?? progressJson.error;
-            setStep(state);           
+            await sleep(10000);
+            const progress = await getCCCSProgress(jobId, props.accessToken);
+            setPercentage(progress.progress);
+            state = progress.state;
+            setStep(progress.state);           
         }
-        const resolved = await response;
-        const responseJson = await resolved.json();
-        setOutputIds(responseJson.outputIds);
+        const resolvedOutputs = await outputs;
+        setOutputIds(resolvedOutputs);
     };
 
     const onJobCancel = async (): Promise<void> => {
-        await fetch("http://localhost:3001/requests/cancelJobCSS", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-        });
+        cancelCCCSJob(jobToCancel, props.accessToken);
     };
 
     return(
@@ -65,9 +58,13 @@ export function ContextCapture() {
             {step && (
                 <div className="ccs-controls-group">
                     <ProgressLinear className="ccs-progress" value={parseInt(percentage)} labels={[step, percentage + "%"]}/>
-                    <Button className="ccs-control" disabled={!step || step === "Done" || step === "Error"} onClick={onJobCancel}>Cancel</Button> 
                 </div>
             )}
+            <div className="ccs-controls-group">
+                <LabeledInput className="ccs-control" displayStyle="inline" label="job to cancel" placeholder="Enter id here..." 
+                    onChange={(id: React.ChangeEvent<HTMLInputElement>): void => {setJobToCancel(id.target.value);}}/>
+                <Button className="ccs-control" disabled={jobToCancel === ""} onClick={onJobCancel}>Cancel</Button> 
+            </div>
             <div className="ccs-controls-group">
                 <LabeledInput className="ccs-control" displayStyle="inline" label="CCorientation" disabled={true} value={outputIds[0] ?? ""}/>                  
                 <LabeledInput className="ccs-control" displayStyle="inline" label="Cesium 3D tiles" disabled={true} value={outputIds[1] ?? ""}/>

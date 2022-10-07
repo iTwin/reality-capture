@@ -34,7 +34,7 @@ export default class RealityData {
             transparency = 0;
 
         vp.displayStyle.settings.contextRealityModels.models.forEach((model) => {
-            if (model.matchesNameAndUrl(crmProp.name!, crmProp.tilesetUrl))
+            if (model.matchesNameAndUrl(crmProp.name ?? "", crmProp.tilesetUrl))
             {
                 model.appearanceOverrides = model.appearanceOverrides ? model.appearanceOverrides.clone({ transparency }) : FeatureAppearance.fromJSON({ transparency });
             }

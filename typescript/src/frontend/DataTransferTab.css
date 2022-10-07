@@ -4,14 +4,16 @@
 *--------------------------------------------------------------------------------------------*/
 
 .rds-controls-group {
-    display: flex;
-    align-items: center;
+    text-align: left;
+    align-items: left;
     margin-left: 10px;
     margin-top: 10px;
+    max-width: 500px;
 }
 
 .rds-control {
     margin-left: 10px;
+    margin-top: 10px;
 }
 
 .rds-sep {

@@ -6,30 +6,90 @@
 "use strict";
 
 import { ContainerClient } from "@azure/storage-blob";
-import { Color, ContextScene } from "../../common/models";
-import { serverRdsSample } from "./RealityApisWrapper";
 import { DOMParser } from "@xmldom/xmldom";
-import * as fs from "fs";
+import { getRealityData } from "./ApiUtils";
 
-
-export async function streamToBuffer(readableStream: NodeJS.ReadableStream): Promise<Buffer> 
-{
-    return new Promise((resolve, reject) => {
-        const chunks: Buffer[] = [];
-        readableStream.on("data", (data: Buffer | string) => {
-            chunks.push(data instanceof Buffer ? data : Buffer.from(data));
-        });
-        readableStream.on("end", () => {
-            resolve(Buffer.concat(chunks));
-        });
-        readableStream.on("error", reject);
-    });
+interface Object2D {
+    labelId : number;
+    xmin : number;
+    ymin : number;
+    xmax : number;
+    ymax : number;
 }
 
-async function parseReferences(xmlDoc: XMLDocument, contextScene: ContextScene) {
-    if(!serverRdsSample)
-        return;
-    
+interface Segmentation2D {
+    id : number;
+    path : string;
+}
+
+interface AnnotatedPhoto {
+    path: string;
+    name: string;
+    objects2D: Object2D[];
+    segmentation2D: Segmentation2D;
+}
+
+interface Reference {
+    collectionId: string;
+    collectionStorageUrl: string;
+}
+
+interface Color {
+    r: number;
+    g: number;
+    b: number;
+}
+
+export interface ContextScene {
+    photos: Map<number, AnnotatedPhoto>;
+    lines3D: string;
+    references: Map<number, Reference>;
+    labels: Map<number, Color>;
+}
+
+/**
+ * Create a temporary context scene from the image collection url.
+ * @param id image collection id.
+ * @param collectionUrl image collection url on azure storage.
+ */
+export async function writeTempSceneFromImageCollection(id: string, collectionUrl: string): Promise<void> {
+    const containerClient = new ContainerClient(collectionUrl);
+    const iter = containerClient.listBlobsFlat();
+
+    let tmpFileContent = "";
+    tmpFileContent += "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+    tmpFileContent += "<ContextScene version=\"3.0\">\n";
+    tmpFileContent += "\t<PhotoCollection>\n";
+    tmpFileContent += "\t\t<Photos>\n";
+    let i = 0;
+    for await (const blob of iter) 
+    {
+        console.log(blob.name);
+        if(blob.name.endsWith("jpg") || blob.name.endsWith("png")) {
+            tmpFileContent += "\t\t\t<Photo id=\"" + i + "\">\n";
+            tmpFileContent += "\t\t\t\t<ImagePath>0:" + blob.name + "</ImagePath>\n";
+            tmpFileContent += "\t\t\t</Photo>\n";
+            i++;
+        }
+    }
+    tmpFileContent += "\t\t</Photos>\n";
+    tmpFileContent += "\t</PhotoCollection>\n";
+    tmpFileContent += "\t<References>\n";
+    tmpFileContent += "\t\t<Reference id=\"0\">\n";
+    tmpFileContent += "\t\t\t<Path>rds:" + id + "</Path>\n";
+    tmpFileContent += "\t\t</Reference>\n";
+    tmpFileContent += "\t</References>\n";
+    tmpFileContent += "</ContextScene>\n";
+    localStorage.setItem("tmpContextSceneFromImages", tmpFileContent);
+}
+
+/**
+ * Parse references in @see {@link xmlDoc}.
+ * @param xmlDoc context scene to parse.
+ * @param contextScene parsed context scene.
+ * @param accessToken access token to allow the app to access the API.
+ */
+async function parseReferences(xmlDoc: XMLDocument, contextScene: ContextScene, accessToken: string) {
     // Not safe because tags "Reference" may exist elsewhere
     const references = xmlDoc.getElementsByTagName("Reference");
     for (let i = 0; i < references.length; i++) {
@@ -47,11 +107,18 @@ async function parseReferences(xmlDoc: XMLDocument, contextScene: ContextScene) 
         
         pathValue = pathValue.replace("rds:", "");
 
-        const azureBlobUrl = await serverRdsSample.getRealityDataUrl(pathValue);
-        contextScene.references.set(parseInt(id), {collectionId: pathValue, collectionStorageUrl: azureBlobUrl});
+        // const azureBlobUrl = await serverRdsSample.getRealityDataUrl(pathValue);
+        const realityData = await getRealityData(pathValue, accessToken);
+        const azureBlobUrl = await realityData.getBlobUrl(accessToken, "");
+        contextScene.references.set(parseInt(id), {collectionId: pathValue, collectionStorageUrl: azureBlobUrl.toString()});
     }
 }
 
+/**
+ * Parse image collection in @see {@link xmlDoc}.
+ * @param xmlDoc context scene to parse.
+ * @param contextScene access token to allow the app to access the API.
+ */
 function parsePhotoCollection(xmlDoc: XMLDocument, contextScene: ContextScene) {
     // Not safe because tags "photo" may exist elsewhere
     const photos = xmlDoc.getElementsByTagName("Photo");
@@ -93,6 +160,11 @@ function parsePhotoCollection(xmlDoc: XMLDocument, contextScene: ContextScene) {
     }
 }
 
+/**
+ * Parse 2D objects in @see {@link xmlDoc}.
+ * @param xmlDoc context scene to parse.
+ * @param contextScene access token to allow the app to access the API.
+ */
 function parseObjects2D(xmlDoc: XMLDocument, contextScene: ContextScene) {
     // Not safe because tags "photo" may exist elsewhere
     const objectsInPhoto = xmlDoc.getElementsByTagName("ObjectsInPhoto");
@@ -132,6 +204,11 @@ function parseObjects2D(xmlDoc: XMLDocument, contextScene: ContextScene) {
     }
 }
 
+/**
+ * Parse labels in @see {@link xmlDoc}.
+ * @param xmlDoc context scene to parse.
+ * @param contextScene access token to allow the app to access the API.
+ */
 function parseLabels(xmlDoc: XMLDocument, contextScene: ContextScene) {
     const colors: Color[] = [
         {r: 102, g: 102, b: 0},
@@ -170,6 +247,12 @@ function parseLabels(xmlDoc: XMLDocument, contextScene: ContextScene) {
     }
 }
 
+/**
+ * Parse 2D segmentation in @see {@link xmlDoc}.
+ * @param xmlDoc context scene to parse.
+ * @param contextScene access token to allow the app to access the API.
+ * @param docUrl
+ */
 function parseSegmentation2D(xmlDoc: XMLDocument, contextScene: ContextScene, docUrl:string) {
     const segmentation2D = xmlDoc.getElementsByTagName("PhotoSegmentation");
 
@@ -220,46 +303,7 @@ function parseSegmentation2D(xmlDoc: XMLDocument, contextScene: ContextScene, do
     }
 }
 
-function parseLines3D(xmlDoc: XMLDocument, contextScene: ContextScene) {
-    const lines3D = xmlDoc.getElementsByTagName("Lines3D");
-    if(lines3D.length === 0)
-        return;
-
-    const path = lines3D[0].getElementsByTagName("Path");
-    if(path.length === 0)
-        return;
-    
-    const pathValue = path[0].textContent;
-    if(!pathValue)
-        return; // No text content in reference path
-        
-    const linesPathParts = pathValue.split(":");
-    if(linesPathParts.length === 2) {
-        const referenceId = parseInt(linesPathParts[0]);
-        const reference = contextScene.references.get(referenceId);
-        if(reference === undefined)
-            return; // Reference doesn't exist.
-        
-        // Add the image name in the full azure storage image collection url so it can be displayed in the frontend.
-        const referenceParts = reference.collectionStorageUrl.split(reference.collectionId);
-        if(referenceParts.length < 2)
-            return; // The reference is supposed to be split in two parts : azure storage url and the file access.
-
-        let access = referenceParts[1];
-        if(access[0] === "/")
-            access = access.substring(1);
-
-        const imageStorageUrl = referenceParts[0] + reference.collectionId + "/" + linesPathParts[1] + access;
-        contextScene.lines3D = imageStorageUrl;
-    }
-    else {
-        // TODO : test file with absolute paths
-        
-    }
-
-}
-
-export async function parseContextScene(url: string, isLocal = false): Promise<ContextScene> {
+export async function parseContextScene(accessToken: string, sceneId: string, isFile = true): Promise<ContextScene> {
     const contextScene: ContextScene = {
         photos: new Map(),
         lines3D: "",
@@ -268,12 +312,18 @@ export async function parseContextScene(url: string, isLocal = false): Promise<C
     };
 
     let xmlDoc: Document | undefined = undefined;
-    if(isLocal) {
-        const file = fs.readFileSync(url, "utf-8");
-        xmlDoc = new DOMParser().parseFromString(file, "text/xml");
+    const realityData = await getRealityData(sceneId, accessToken);
+    const azureBlobUrl = await realityData.getBlobUrl(accessToken, "");
+    if(!isFile) {
+        writeTempSceneFromImageCollection(sceneId, azureBlobUrl.toString());
+        const content = localStorage.getItem("tmpContextSceneFromImages");
+        if(!content)
+            throw new Error("Can't find any scene to parse.");
+
+        xmlDoc = new DOMParser().parseFromString(content, "text/xml");
     }
     else {
-        const containerClient = new ContainerClient(url);
+        const containerClient = new ContainerClient(azureBlobUrl.toString());
         const iter = await containerClient.listBlobsFlat();
         for await (const blob of iter) 
         {
@@ -281,19 +331,18 @@ export async function parseContextScene(url: string, isLocal = false): Promise<C
                 continue;
             
             const blobContent = await containerClient.getBlockBlobClient(blob.name).download(0);
-            const buffer = await streamToBuffer(blobContent.readableStreamBody!);
-            xmlDoc = new DOMParser().parseFromString(buffer.toString(), "text/xml");
+            const blobBody = await blobContent.blobBody;
+            const text = await blobBody!.text();
+            xmlDoc = new DOMParser().parseFromString(text, "text/xml");
         }
         if(!xmlDoc) 
-            throw new Error("Can't find any ContextScene at : " + url);
+            throw new Error("Can't find " + sceneId);
     }
 
-    await parseReferences(xmlDoc, contextScene);
+    await parseReferences(xmlDoc, contextScene, accessToken);
     parsePhotoCollection(xmlDoc, contextScene);
     parseLabels(xmlDoc, contextScene);
     parseObjects2D(xmlDoc, contextScene);
-    parseLines3D(xmlDoc, contextScene);
-    parseSegmentation2D(xmlDoc, contextScene, url);
-    console.log("test : ", contextScene.photos.get(0)!.name);
+    parseSegmentation2D(xmlDoc, contextScene, azureBlobUrl.toString());
     return contextScene;
 }
