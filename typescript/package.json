@@ -71,6 +71,7 @@
 		"fast-png": "^6.1.0",
 		"fast-sass-loader": "^2.0.1",
 		"file-saver": "^2.0.5",
+		"iobuffer": "5.1.0",
 		"jshint": "^2.13.1",
 		"jszip": "^3.10.1",
 		"node-fetch": "^2.1.0",
