@@ -7,7 +7,12 @@ from sdk.utils import ReturnValue
 
 class O2DJobSettings:
     """
-    Settings for Object Detection 2D jobs
+    Settings for Object Detection 2D jobs.
+
+    Attributes:
+        type: Type of job settings.
+        inputs: Possible inputs for this job.
+        outputs: Possible outputs for this job.
     """
 
     def __init__(self) -> None:
@@ -16,12 +21,25 @@ class O2DJobSettings:
         self.outputs = self.Outputs()
 
     def to_json(self) -> dict:
+        """
+        Transform settings into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with settings values.
+        """
         json_dict = {}
         json_dict["inputs"] = []
         if self.inputs.photos:
-            json_dict["inputs"].append({"name": "photos", "realityDataId": self.inputs.photos})
+            json_dict["inputs"].append(
+                {"name": "photos", "realityDataId": self.inputs.photos}
+            )
         if self.inputs.photo_object_detector:
-            json_dict["inputs"].append({"name": "photoObjectDetector", "realityDataId": self.inputs.photo_object_detector})
+            json_dict["inputs"].append(
+                {
+                    "name": "photoObjectDetector",
+                    "realityDataId": self.inputs.photo_object_detector,
+                }
+            )
         json_dict["outputs"] = []
         if self.outputs.objects2D:
             json_dict["outputs"].append("objects2D")
@@ -29,6 +47,14 @@ class O2DJobSettings:
 
     @classmethod
     def from_json(cls, settings_json: dict) -> ReturnValue[O2DJobSettings]:
+        """
+        Transform json received from cloud service into settings.
+
+        Args:
+            settings_json: Dictionary with settings received from cloud service.
+        Returns:
+            New settings.
+        """
         new_job_settings = cls()
         try:
             inputs_json = settings_json["inputs"]
@@ -36,32 +62,58 @@ class O2DJobSettings:
                 if input_dict["name"] == "photos":
                     new_job_settings.inputs.photos = input_dict["realityDataId"]
                 elif input_dict["name"] == "photoObjectDetector":
-                    new_job_settings.inputs.photo_object_detector = input_dict["realityDataId"]
+                    new_job_settings.inputs.photo_object_detector = input_dict[
+                        "realityDataId"
+                    ]
                 else:
-                    raise TypeError("found non expected input name:", input_dict["name"])
+                    raise TypeError(
+                        "found non expected input name:", input_dict["name"]
+                    )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
                 if output_dict["name"] == "objects2D":
                     new_job_settings.outputs.objects2D = output_dict["realityDataId"]
                 else:
-                    raise TypeError("found non expected output name", output_dict["name"])
+                    raise TypeError(
+                        "found non expected output name", output_dict["name"]
+                    )
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_settings, error="")
 
     class Inputs:
+        """
+        Possible inputs for an Object Detection 2D job.
+
+        Attributes:
+            photos: Path to ContextScene with photos to analyze.
+            photo_object_detector: Path to photo object detector to apply.
+        """
+
         def __init__(self) -> None:
             self.photos: str = ""
             self.photo_object_detector: str = ""
 
     class Outputs:
+        """
+        Possible outputs for an Object Detection 2D job.
+
+        Attributes:
+            objects2D: Objects detected in photos.
+        """
+
         def __init__(self) -> None:
             self.objects2D: str = ""
 
 
 class S2DJobSettings:
     """
-    Settings for Segmentation 2D jobs
+    Settings for Segmentation 2D jobs.
+
+    Attributes:
+        type: Type of job settings.
+        inputs: Possible inputs for this job.
+        outputs: Possible outputs for this job.
     """
 
     def __init__(self) -> None:
@@ -70,16 +122,36 @@ class S2DJobSettings:
         self.outputs = self.Outputs()
 
     def to_json(self) -> dict:
+        """
+        Transform settings into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with settings values.
+        """
         json_dict = {}
         json_dict["inputs"] = []
         if self.inputs.photos:
-            json_dict["inputs"].append({"name": "photos", "realityDataId": self.inputs.photos})
+            json_dict["inputs"].append(
+                {"name": "photos", "realityDataId": self.inputs.photos}
+            )
         if self.inputs.photo_segmentation_detector:
-            json_dict["inputs"].append({"name": "photoSegmentationDetector", "realityDataId": self.inputs.photo_segmentation_detector})
+            json_dict["inputs"].append(
+                {
+                    "name": "photoSegmentationDetector",
+                    "realityDataId": self.inputs.photo_segmentation_detector,
+                }
+            )
         if self.inputs.orthophoto:
-            json_dict["inputs"].append({"name": "orthophoto", "realityDataId": self.inputs.orthophoto})
+            json_dict["inputs"].append(
+                {"name": "orthophoto", "realityDataId": self.inputs.orthophoto}
+            )
         if self.inputs.orthophoto_segmentation_detector:
-            json_dict["inputs"].append({"name": "orthophotoSegmentationDetector", "realityDataId": self.inputs.orthophoto_segmentation_detector})
+            json_dict["inputs"].append(
+                {
+                    "name": "orthophotoSegmentationDetector",
+                    "realityDataId": self.inputs.orthophoto_segmentation_detector,
+                }
+            )
         json_dict["outputs"] = []
         if self.outputs.segmentation2D:
             json_dict["outputs"].append("segmentation2D")
@@ -95,6 +167,14 @@ class S2DJobSettings:
 
     @classmethod
     def from_json(cls, settings_json: dict) -> ReturnValue[S2DJobSettings]:
+        """
+        Transform json received from cloud service into settings.
+
+        Args:
+            settings_json: Dictionary with settings received from cloud service.
+        Returns:
+            New settings.
+        """
         new_job_settings = cls()
         try:
             inputs_json = settings_json["inputs"]
@@ -102,32 +182,54 @@ class S2DJobSettings:
                 if input_dict["name"] == "photos":
                     new_job_settings.inputs.photos = input_dict["realityDataId"]
                 elif input_dict["name"] == "photoSegmentationDetector":
-                    new_job_settings.inputs.photo_segmentation_detector = input_dict["realityDataId"]
+                    new_job_settings.inputs.photo_segmentation_detector = input_dict[
+                        "realityDataId"
+                    ]
                 elif input_dict["name"] == "orthophoto":
                     new_job_settings.inputs.orthophoto = input_dict["realityDataId"]
                 elif input_dict["name"] == "orthophotoSegmentationDetector":
-                    new_job_settings.inputs.orthophoto_segmentation_detector = input_dict["realityDataId"]
+                    new_job_settings.inputs.orthophoto_segmentation_detector = (
+                        input_dict["realityDataId"]
+                    )
                 else:
-                    raise TypeError("found non expected input name:", input_dict["name"])
+                    raise TypeError(
+                        "found non expected input name:", input_dict["name"]
+                    )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
                 if output_dict["name"] == "segmentation2D":
-                    new_job_settings.outputs.segmentation2D = output_dict["realityDataId"]
+                    new_job_settings.outputs.segmentation2D = output_dict[
+                        "realityDataId"
+                    ]
                 # elif output_dict["name"] == "segmentedPhotos":
                 #     new_job_settings.outputs.segmented_photos = output_dict["realityDataId"]
                 elif output_dict["name"] == "polygons2D":
                     new_job_settings.outputs.polygons2D = output_dict["realityDataId"]
                 elif output_dict["name"] == "exportedPolygons2DSHP":
-                    new_job_settings.outputs.exported_polygons2D_SHP = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_polygons2D_SHP = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "lines2D":
                     new_job_settings.outputs.lines2D = output_dict["realityDataId"]
                 else:
-                    raise TypeError("found non expected output name:", output_dict["name"])
+                    raise TypeError(
+                        "found non expected output name:", output_dict["name"]
+                    )
         except (TypeError, KeyError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_settings, error="")
 
     class Inputs:
+        """
+        Possible inputs for a Segmentation 2D job.
+
+        Attributes:
+            photos: Path to ContextScene with photos to analyze.
+            photo_segmentation_detector: Path to photo segmentation detector to apply.
+            orthophoto: Path to orthophoto to analyse.
+            orthophoto_segmentation_detector: Path to orthophoto segmentation detector to apply.
+        """
+
         def __init__(self) -> None:
             self.photos: str = ""
             self.photo_segmentation_detector: str = ""
@@ -135,6 +237,16 @@ class S2DJobSettings:
             self.orthophoto_segmentation_detector: str = ""
 
     class Outputs:
+        """
+        Possible outputs for a Segmentation 2D job.
+
+        Attributes:
+            segmentation2D: Segmented photos.
+            polygons2D: Detected 2D polygons.
+            exported_polygons_2D_SHP: 2D polygons exported to ESRI shapefile.
+            lines2D: Detected 2D lines.
+        """
+
         def __init__(self) -> None:
             self.segmentation2D: str = ""
             # self.segmented_photos: str = ""
@@ -145,7 +257,16 @@ class S2DJobSettings:
 
 class O3DJobSettings:
     """
-    Settings for Object Detection 3D jobs
+    Settings for Object Detection 3D jobs.
+
+    Attributes:
+        type: Type of job settings.
+        inputs: Possible inputs for this job.
+        outputs: Possible outputs for this job.
+        use_tie_points: Improve detection using tie points in orientedPhotos.
+        min_photos: Minimum number of 2D objects to generate a 3D object.
+        max_dist: Maximum distance between photos and 3D objects.
+        export_srs: SRS used by exports.
     """
 
     def __init__(self) -> None:
@@ -154,20 +275,37 @@ class O3DJobSettings:
         self.outputs = self.Outputs()
         self.use_tie_points: bool = False
         self.min_photos: int = 0
-        self.max_dist: float = 0.
+        self.max_dist: float = 0.0
         self.export_srs: str = ""
 
     def to_json(self) -> dict:
+        """
+        Transform settings into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with settings values.
+        """
         json_dict = {}
         json_dict["inputs"] = []
         if self.inputs.oriented_photos:
-            json_dict["inputs"].append({"name": "orientedPhotos", "realityDataId": self.inputs.oriented_photos})
+            json_dict["inputs"].append(
+                {"name": "orientedPhotos", "realityDataId": self.inputs.oriented_photos}
+            )
         if self.inputs.photo_object_detector:
-            json_dict["inputs"].append({"name": "photoObjectDetector", "realityDataId": self.inputs.photo_object_detector})
+            json_dict["inputs"].append(
+                {
+                    "name": "photoObjectDetector",
+                    "realityDataId": self.inputs.photo_object_detector,
+                }
+            )
         if self.inputs.objects2D:
-            json_dict["inputs"].append({"name": "objects2D", "realityDataId": self.inputs.objects2D})
+            json_dict["inputs"].append(
+                {"name": "objects2D", "realityDataId": self.inputs.objects2D}
+            )
         if self.inputs.point_clouds:
-            json_dict["inputs"].append({"name": "pointClouds", "realityDataId": self.inputs.point_clouds})
+            json_dict["inputs"].append(
+                {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
+            )
         json_dict["outputs"] = []
         if self.outputs.objects2D:
             json_dict["outputs"].append("objects2D")
@@ -191,20 +329,34 @@ class O3DJobSettings:
 
     @classmethod
     def from_json(cls, settings_json: dict) -> ReturnValue[O3DJobSettings]:
+        """
+        Transform json received from cloud service into settings.
+
+        Args:
+            settings_json: Dictionary with settings received from cloud service.
+        Returns:
+            New settings.
+        """
         new_job_settings = cls()
         try:
             inputs_json = settings_json["inputs"]
             for input_dict in inputs_json:
                 if input_dict["name"] == "orientedPhotos":
-                    new_job_settings.inputs.oriented_photos = input_dict["realityDataId"]
+                    new_job_settings.inputs.oriented_photos = input_dict[
+                        "realityDataId"
+                    ]
                 elif input_dict["name"] == "photoObjectDetector":
-                    new_job_settings.inputs.photo_object_detector = input_dict["realityDataId"]
+                    new_job_settings.inputs.photo_object_detector = input_dict[
+                        "realityDataId"
+                    ]
                 elif input_dict["name"] == "pointClouds":
                     new_job_settings.inputs.point_clouds = input_dict["realityDataId"]
                 elif input_dict["name"] == "objects2D":
                     new_job_settings.inputs.objects2D = input_dict["realityDataId"]
                 else:
-                    raise TypeError("found non expected input name:", input_dict["name"])
+                    raise TypeError(
+                        "found non expected input name:", input_dict["name"]
+                    )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
                 if output_dict["name"] == "objects2D":
@@ -212,13 +364,21 @@ class O3DJobSettings:
                 elif output_dict["name"] == "objects3D":
                     new_job_settings.outputs.objects3D = output_dict["realityDataId"]
                 elif output_dict["name"] == "exportedObjects3DDGN":
-                    new_job_settings.outputs.exported_objects3D_DGN = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_objects3D_DGN = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "exportedObjects3DCesium":
-                    new_job_settings.outputs.exported_objects3D_cesium = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_objects3D_cesium = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "exportedLocations3DSHP":
-                    new_job_settings.outputs.exported_locations3D_SHP = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_locations3D_SHP = output_dict[
+                        "realityDataId"
+                    ]
                 else:
-                    raise TypeError("found non expected output name", output_dict["name"])
+                    raise TypeError(
+                        "found non expected output name", output_dict["name"]
+                    )
             if "exportSrs" in settings_json:
                 new_job_settings.export_srs = settings_json["exportSrs"]
             if "minPhotos" in settings_json:
@@ -232,6 +392,16 @@ class O3DJobSettings:
         return ReturnValue(value=new_job_settings, error="")
 
     class Inputs:
+        """
+        Possible inputs for an Object Detection 3D job.
+
+        Attributes:
+            oriented_photos: Path to ContextScene with oriented photos to analyze.
+            point_clouds: Collection of point clouds.
+            photo_object_detector: Path to photo object detector to apply.
+            objects2D: Given 2D objects.
+        """
+
         def __init__(self) -> None:
             self.oriented_photos: str = ""
             self.point_clouds: str = ""
@@ -239,6 +409,17 @@ class O3DJobSettings:
             self.objects2D: str = ""
 
     class Outputs:
+        """
+        Possible outputs for an Object Detection 3D job.
+
+        Attributes:
+            objects2D: 2D objects detected by current job.
+            objects3D: Detected 3D objects.
+            exported_objects3D_DGN: DGN file export with 3D objects.
+            exported_objects3D_cesium: Cesium 3D Tiles file export with 3D objects.
+            exported_locations3D_SHP: ESRI SHP file export with locations of the 3D objects.
+        """
+
         def __init__(self) -> None:
             self.objects2D: str = ""
             self.objects3D: str = ""
@@ -249,7 +430,14 @@ class O3DJobSettings:
 
 class S3DJobSettings:
     """
-    Settings for Segmentation 3D jobs
+    Settings for Segmentation 3D jobs.
+
+    Attributes:
+        type: Type of job settings.
+        inputs: Possible inputs for this job settings.
+        outputs: Possible outputs for this job settings.
+        save_confidence: If confidence is saved on output files or not.
+        export_srs: SRS used by exports.
     """
 
     def __init__(self) -> None:
@@ -260,22 +448,48 @@ class S3DJobSettings:
         self.export_srs: str = ""
 
     def to_json(self) -> dict:
+        """
+        Transform settings into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with settings values.
+        """
         json_dict = {}
         json_dict["inputs"] = []
         if self.inputs.point_clouds:
-            json_dict["inputs"].append({"name": "pointClouds", "realityDataId": self.inputs.point_clouds})
+            json_dict["inputs"].append(
+                {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
+            )
         if self.inputs.meshes:
-            json_dict["inputs"].append({"name": "meshes", "realityDataId": self.inputs.meshes})
+            json_dict["inputs"].append(
+                {"name": "meshes", "realityDataId": self.inputs.meshes}
+            )
         if self.inputs.point_cloud_segmentation_detector:
-            json_dict["inputs"].append({"name": "pointCloudSegmentationDetector", "realityDataId": self.inputs.point_cloud_segmentation_detector})
+            json_dict["inputs"].append(
+                {
+                    "name": "pointCloudSegmentationDetector",
+                    "realityDataId": self.inputs.point_cloud_segmentation_detector,
+                }
+            )
         if self.inputs.segmentation3D:
-            json_dict["inputs"].append({"name": "segmentation3D", "realityDataId": self.inputs.segmentation3D})
+            json_dict["inputs"].append(
+                {"name": "segmentation3D", "realityDataId": self.inputs.segmentation3D}
+            )
         if self.inputs.oriented_photos:
-            json_dict["inputs"].append({"name": "orientedPhotos", "realityDataId": self.inputs.oriented_photos})
+            json_dict["inputs"].append(
+                {"name": "orientedPhotos", "realityDataId": self.inputs.oriented_photos}
+            )
         if self.inputs.photo_object_detector:
-            json_dict["inputs"].append({"name": "photoObjectDetector", "realityDataId": self.inputs.photo_object_detector})
+            json_dict["inputs"].append(
+                {
+                    "name": "photoObjectDetector",
+                    "realityDataId": self.inputs.photo_object_detector,
+                }
+            )
         if self.inputs.objects2D:
-            json_dict["inputs"].append({"name": "objects2D", "realityDataId": self.inputs.objects2D})
+            json_dict["inputs"].append(
+                {"name": "objects2D", "realityDataId": self.inputs.objects2D}
+            )
         json_dict["outputs"] = []
         if self.outputs.segmentation3D:
             json_dict["outputs"].append("segmentation3D")
@@ -307,6 +521,14 @@ class S3DJobSettings:
 
     @classmethod
     def from_json(cls, settings_json: dict) -> ReturnValue[S3DJobSettings]:
+        """
+        Transform json received from cloud service into settings.
+
+        Args:
+            settings_json: Dictionary with settings received from cloud service.
+        Returns:
+            New settings.
+        """
         new_job_settings = cls()
         try:
             inputs_json = settings_json["inputs"]
@@ -316,43 +538,71 @@ class S3DJobSettings:
                 elif input_dict["name"] == "meshes":
                     new_job_settings.inputs.meshes = input_dict["realityDataId"]
                 elif input_dict["name"] == "pointCloudSegmentationDetector":
-                    new_job_settings.inputs.point_cloud_segmentation_detector = input_dict["realityDataId"]
+                    new_job_settings.inputs.point_cloud_segmentation_detector = (
+                        input_dict["realityDataId"]
+                    )
                 elif input_dict["name"] == "segmentation3D":
                     new_job_settings.inputs.segmentation3D = input_dict["realityDataId"]
                 elif input_dict["name"] == "orientedPhotos":
-                    new_job_settings.inputs.oriented_photos = input_dict["realityDataId"]
+                    new_job_settings.inputs.oriented_photos = input_dict[
+                        "realityDataId"
+                    ]
                 elif input_dict["name"] == "photoObjectDetector":
-                    new_job_settings.inputs.photo_object_detector = input_dict["realityDataId"]
+                    new_job_settings.inputs.photo_object_detector = input_dict[
+                        "realityDataId"
+                    ]
                 elif input_dict["name"] == "objects2D":
                     new_job_settings.inputs.objects2D = input_dict["realityDataId"]
                 else:
-                    raise TypeError("found non expected input name:", input_dict["name"])
+                    raise TypeError(
+                        "found non expected input name:", input_dict["name"]
+                    )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
                 if output_dict["name"] == "segmentation3D":
-                    new_job_settings.outputs.segmentation3D = output_dict["realityDataId"]
+                    new_job_settings.outputs.segmentation3D = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "segmentedPointCloud":
-                    new_job_settings.outputs.segmented_point_cloud = output_dict["realityDataId"]
+                    new_job_settings.outputs.segmented_point_cloud = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "objects2D":
                     new_job_settings.outputs.objects2D = output_dict["realityDataId"]
                 elif output_dict["name"] == "exportedSegmentation3DPOD":
-                    new_job_settings.outputs.exported_segmentation3D_POD = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_segmentation3D_POD = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "exportedSegmentation3DLAS":
-                    new_job_settings.outputs.exported_segmentation3D_LAS = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_segmentation3D_LAS = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "exportedSegmentation3DLAZ":
-                    new_job_settings.outputs.exported_segmentation3D_LAZ = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_segmentation3D_LAZ = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "exportedSegmentation3DPLY":
-                    new_job_settings.outputs.exported_segmentation3D_PLY = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_segmentation3D_PLY = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "objects3D":
                     new_job_settings.outputs.objects3D = output_dict["realityDataId"]
                 elif output_dict["name"] == "exportedObjects3DDGN":
-                    new_job_settings.outputs.exported_objects3D_DGN = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_objects3D_DGN = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "exportedObjects3DCesium":
-                    new_job_settings.outputs.exported_objects3D_cesium = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_objects3D_cesium = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "exportedLocations3DSHP":
-                    new_job_settings.outputs.exported_locations3D_SHP = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_locations3D_SHP = output_dict[
+                        "realityDataId"
+                    ]
                 else:
-                    raise TypeError("found non expected output name:", output_dict["name"])
+                    raise TypeError(
+                        "found non expected output name:", output_dict["name"]
+                    )
             if "saveConfidence" in settings_json:
                 new_job_settings.save_confidence = bool(settings_json["saveConfidence"])
             if "exportSrs" in settings_json:
@@ -362,6 +612,19 @@ class S3DJobSettings:
         return ReturnValue(value=new_job_settings, error="")
 
     class Inputs:
+        """
+        Possible inputs for a Segmentation 3D job.
+
+        Attributes:
+            point_clouds: Collection of point clouds.
+            meshes: Collection of meshes.
+            point_cloud_segmentation_detector: Point cloud segmentation detector.
+            segmentation3D: Given 3D segmentation.
+            oriented_photos: Photos and their orientation.
+            photo_object_detector: Object detector to analyze oriented photos.
+            objects2D: Given 2D objects.
+        """
+
         def __init__(self) -> None:
             self.point_clouds: str = ""
             self.meshes: str = ""
@@ -372,6 +635,23 @@ class S3DJobSettings:
             self.objects2D: str = ""
 
     class Outputs:
+        """
+        Possible outputs for a Segmentation 3D job.
+
+        Attributes:
+            segmentation3D: 3D segmentation computed by current job.
+            segmented_point_cloud: 3D segmentation as an OPC file.
+            objects2D: 2D objects detected by current job.
+            exported_segmentation3D_POD: 3D segmentation exported as a POD file.
+            exported_segmentation3D_LAS: 3D segmentation exported as a LAS file.
+            exported_segmentation3D_LAZ: 3D segmentation exported as a LAZ file.
+            exported_segmentation3D_PLY: 3D segmentation exported as a PLY file.
+            objects3D: 3D objects inferred from 3D segmentation.
+            exported_objects3D_DGN: DGN file export with 3D objects.
+            exported_objects3D_cesium: Cesium 3D Tiles file export with 3D objects
+            exported_locations3D_SHP: ESRI SHP file export with locations of the 3D objects
+        """
+
         def __init__(self) -> None:
             self.segmentation3D: str = ""
             self.segmented_point_cloud: str = ""
@@ -388,7 +668,15 @@ class S3DJobSettings:
 
 class L3DJobSettings:
     """
-    Settings for Line Detection 3D jobs
+    Settings for Line Detection 3D jobs.
+
+    Attributes:
+        type: Type of job settings.
+        inputs: Possible inputs for this job settings.
+        outputs: Possible outputs for this job settings.
+        compute_line_width: Estimation 3D line width at each vertex.
+        remove_small_components: Remove 3D lines with total length smaller than this value.
+        export_srs: SRS used by exports.
     """
 
     def __init__(self) -> None:
@@ -396,26 +684,52 @@ class L3DJobSettings:
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
         self.compute_line_width: bool = False
-        self.remove_small_components: float = 0.
+        self.remove_small_components: float = 0.0
         self.export_srs: str = ""
 
     def to_json(self) -> dict:
+        """
+        Transform settings into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with settings values.
+        """
         json_dict = {}
         json_dict["inputs"] = []
         if self.inputs.point_clouds:
-            json_dict["inputs"].append({"name": "pointClouds", "realityDataId": self.inputs.point_clouds})
+            json_dict["inputs"].append(
+                {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
+            )
         if self.inputs.meshes:
-            json_dict["inputs"].append({"name": "meshes", "realityDataId": self.inputs.meshes})
+            json_dict["inputs"].append(
+                {"name": "meshes", "realityDataId": self.inputs.meshes}
+            )
         if self.inputs.point_cloud_segmentation_detector:
-            json_dict["inputs"].append({"name": "pointCloudSegmentationDetector", "realityDataId": self.inputs.point_cloud_segmentation_detector})
+            json_dict["inputs"].append(
+                {
+                    "name": "pointCloudSegmentationDetector",
+                    "realityDataId": self.inputs.point_cloud_segmentation_detector,
+                }
+            )
         if self.inputs.segmentation3D:
-            json_dict["inputs"].append({"name": "segmentation3D", "realityDataId": self.inputs.segmentation3D})
+            json_dict["inputs"].append(
+                {"name": "segmentation3D", "realityDataId": self.inputs.segmentation3D}
+            )
         if self.inputs.oriented_photos:
-            json_dict["inputs"].append({"name": "orientedPhotos", "realityDataId": self.inputs.oriented_photos})
+            json_dict["inputs"].append(
+                {"name": "orientedPhotos", "realityDataId": self.inputs.oriented_photos}
+            )
         if self.inputs.photo_segmentation_detector:
-            json_dict["inputs"].append({"name": "photoSegmentationDetector", "realityDataId": self.inputs.photo_segmentation_detector})
+            json_dict["inputs"].append(
+                {
+                    "name": "photoSegmentationDetector",
+                    "realityDataId": self.inputs.photo_segmentation_detector,
+                }
+            )
         if self.inputs.segmentation2D:
-            json_dict["inputs"].append({"name": "segmentation2D", "realityDataId": self.inputs.segmentation2D})
+            json_dict["inputs"].append(
+                {"name": "segmentation2D", "realityDataId": self.inputs.segmentation2D}
+            )
         json_dict["outputs"] = []
         if self.outputs.segmentation3D:
             json_dict["outputs"].append("segmentation3D")
@@ -441,6 +755,14 @@ class L3DJobSettings:
 
     @classmethod
     def from_json(cls, settings_json: dict) -> ReturnValue[L3DJobSettings]:
+        """
+        Transform json received from cloud service into settings.
+
+        Args:
+            settings_json: Dictionary with settings received from cloud service.
+        Returns:
+            New settings.
+        """
         new_job_settings = cls()
         try:
             inputs_json = settings_json["inputs"]
@@ -450,39 +772,63 @@ class L3DJobSettings:
                 elif input_dict["name"] == "meshes":
                     new_job_settings.inputs.meshes = input_dict["realityDataId"]
                 elif input_dict["name"] == "pointCloudSegmentationDetector":
-                    new_job_settings.inputs.point_cloud_segmentation_detector = input_dict["realityDataId"]
+                    new_job_settings.inputs.point_cloud_segmentation_detector = (
+                        input_dict["realityDataId"]
+                    )
                 elif input_dict["name"] == "segmentation3D":
                     new_job_settings.inputs.segmentation3D = input_dict["realityDataId"]
                 elif input_dict["name"] == "orientedPhotos":
-                    new_job_settings.inputs.oriented_photos = input_dict["realityDataId"]
+                    new_job_settings.inputs.oriented_photos = input_dict[
+                        "realityDataId"
+                    ]
                 elif input_dict["name"] == "photoSegmentationDetector":
-                    new_job_settings.inputs.photo_segmentation_detector = input_dict["realityDataId"]
+                    new_job_settings.inputs.photo_segmentation_detector = input_dict[
+                        "realityDataId"
+                    ]
                 elif input_dict["name"] == "segmentation2D":
                     new_job_settings.inputs.segmentation2D = input_dict["realityDataId"]
                 else:
-                    raise TypeError("found non expected input name:", input_dict["name"])
+                    raise TypeError(
+                        "found non expected input name:", input_dict["name"]
+                    )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
                 if output_dict["name"] == "segmentation3D":
-                    new_job_settings.outputs.segmentation3D = output_dict["realityDataId"]
+                    new_job_settings.outputs.segmentation3D = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "segmentedPointCloud":
-                    new_job_settings.outputs.segmented_point_cloud = output_dict["realityDataId"]
+                    new_job_settings.outputs.segmented_point_cloud = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "segmentation2D":
-                    new_job_settings.outputs.segmentation2D = output_dict["realityDataId"]
+                    new_job_settings.outputs.segmentation2D = output_dict[
+                        "realityDataId"
+                    ]
                 # elif output_dict["name"] == "segmentedPhotos":
                 #     new_job_settings.outputs.segmented_photos = output_dict["realityDataId"]
                 elif output_dict["name"] == "lines3D":
                     new_job_settings.outputs.lines3D = output_dict["realityDataId"]
                 elif output_dict["name"] == "exportedLines3DDGN":
-                    new_job_settings.outputs.exported_lines3D_DGN = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_lines3D_DGN = output_dict[
+                        "realityDataId"
+                    ]
                 elif output_dict["name"] == "exportedLines3DCesium":
-                    new_job_settings.outputs.exported_lines3D_cesium = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_lines3D_cesium = output_dict[
+                        "realityDataId"
+                    ]
                 else:
-                    raise TypeError("found non expected output name:", output_dict["name"])
+                    raise TypeError(
+                        "found non expected output name:", output_dict["name"]
+                    )
             if "computeLineWidth" in settings_json:
-                new_job_settings.compute_line_width = bool(settings_json["computeLineWidth"])
+                new_job_settings.compute_line_width = bool(
+                    settings_json["computeLineWidth"]
+                )
             if "removeSmallComponents" in settings_json:
-                new_job_settings.remove_small_components = float(settings_json["removeSmallComponents"])
+                new_job_settings.remove_small_components = float(
+                    settings_json["removeSmallComponents"]
+                )
             if "exportSrs" in settings_json:
                 new_job_settings.export_srs = settings_json["exportSrs"]
         except (KeyError, TypeError) as e:
@@ -490,6 +836,19 @@ class L3DJobSettings:
         return ReturnValue(value=new_job_settings, error="")
 
     class Inputs:
+        """
+        Possible inputs for a Line Detection 3D job.
+
+        Attributes:
+            point_clouds: Collection of point clouds.
+            meshes: Collection of meshes.
+            point_cloud_segmentation_detector: Point cloud segmentation detector.
+            segmentation3D: Given 3D segmentation.
+            oriented_photos: Photos and their orientation.
+            photo_segmentation_detector: Segmentation detector to apply to oriented photos.
+            segmentation2D: Given 2D segmentation.
+        """
+
         def __init__(self) -> None:
             self.point_clouds: str = ""
             self.meshes: str = ""
@@ -500,6 +859,18 @@ class L3DJobSettings:
             self.segmentation2D: str = ""
 
     class Outputs:
+        """
+        Possible outputs for a Line Detection 3D job.
+
+        Attributes:
+            segmentation3D: 3D segmentation performed by current job.
+            segmented_point_cloud: 3D segmentation as an OPC file.
+            segmentation2D: 2D segmentation performed by current job.
+            lines3D: Detected 3D lines.
+            exported_lines3D_DGN: DGN file export with 3D lines.
+            exported_lines3D_cesium: Cesium 3D Tiles file export with 3D lines.
+        """
+
         def __init__(self) -> None:
             self.segmentation3D: str = ""
             self.segmented_point_cloud: str = ""
@@ -512,32 +883,58 @@ class L3DJobSettings:
 
 class ChangeDetectionJobSettings:
     """
-    Settings for Change Detection jobs
+    Settings for Change Detection jobs.
+
+    Attributes:
+        type: Type of job settings.
+        inputs: Possible inputs for this job settings.
+        outputs: Possible outputs for this job settings.
+        color_threshold_low: Low threshold to detect color changes (hysteresis detection).
+        color_threshold_high: High threshold to detect color changes (hysteresis detection).
+        dist_threshold_low: Low threshold to detect spatial changes (hysteresis detection).
+        dist_threshold_high: High threshold to detect spatial changes (hysteresis detection).
+        resolution: Target point cloud resolution when starting from meshes.
+        min_points: Minimum number of points in a region to be considered as a change.
+        export_srs: SRS used by exports.
     """
 
     def __init__(self) -> None:
         self.type = JobType.ChangeDetection
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
-        self.color_threshold_low: float = 0.
-        self.color_threshold_high: float = 0.
-        self.dist_threshold_low: float = 0.
-        self.dist_threshold_high: float = 0.
-        self.resolution: float = 0.
+        self.color_threshold_low: float = 0.0
+        self.color_threshold_high: float = 0.0
+        self.dist_threshold_low: float = 0.0
+        self.dist_threshold_high: float = 0.0
+        self.resolution: float = 0.0
         self.min_points: int = 0
         self.export_srs: str = ""
 
     def to_json(self) -> dict:
+        """
+        Transform settings into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with settings values.
+        """
         json_dict = {}
         json_dict["inputs"] = []
         if self.inputs.point_clouds1:
-            json_dict["inputs"].append({"name": "pointClouds1", "realityDataId": self.inputs.point_clouds1})
+            json_dict["inputs"].append(
+                {"name": "pointClouds1", "realityDataId": self.inputs.point_clouds1}
+            )
         if self.inputs.point_clouds2:
-            json_dict["inputs"].append({"name": "pointClouds2", "realityDataId": self.inputs.point_clouds2})
+            json_dict["inputs"].append(
+                {"name": "pointClouds2", "realityDataId": self.inputs.point_clouds2}
+            )
         if self.inputs.meshes1:
-            json_dict["inputs"].append({"name": "meshes1", "realityDataId": self.inputs.meshes1})
+            json_dict["inputs"].append(
+                {"name": "meshes1", "realityDataId": self.inputs.meshes1}
+            )
         if self.inputs.meshes2:
-            json_dict["inputs"].append({"name": "meshes2", "realityDataId": self.inputs.meshes2})
+            json_dict["inputs"].append(
+                {"name": "meshes2", "realityDataId": self.inputs.meshes2}
+            )
         json_dict["outputs"] = []
         if self.outputs.objects3D:
             json_dict["outputs"].append("objects3D")
@@ -561,6 +958,14 @@ class ChangeDetectionJobSettings:
 
     @classmethod
     def from_json(cls, settings_json: dict) -> ReturnValue[ChangeDetectionJobSettings]:
+        """
+        Transform json received from cloud service into settings.
+
+        Args:
+            settings_json: Dictionary with settings received from cloud service.
+        Returns:
+            New settings.
+        """
         new_job_settings = cls()
         try:
             inputs_json = settings_json["inputs"]
@@ -574,23 +979,37 @@ class ChangeDetectionJobSettings:
                 elif input_dict["name"] == "meshes2":
                     new_job_settings.inputs.meshes2 = input_dict["realityDataId"]
                 else:
-                    raise TypeError("found non expected input name:", input_dict["name"])
+                    raise TypeError(
+                        "found non expected input name:", input_dict["name"]
+                    )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
                 if output_dict["name"] == "objects3D":
                     new_job_settings.outputs.objects3D = output_dict["realityDataId"]
                 elif output_dict["name"] == "exportedLocations3DSHP":
-                    new_job_settings.outputs.exported_locations3D_SHP = output_dict["realityDataId"]
+                    new_job_settings.outputs.exported_locations3D_SHP = output_dict[
+                        "realityDataId"
+                    ]
                 else:
-                    raise TypeError("found non expected output name:", output_dict["name"])
+                    raise TypeError(
+                        "found non expected output name:", output_dict["name"]
+                    )
             if "colorThresholdLow" in settings_json:
-                new_job_settings.color_threshold_low = float(settings_json["colorThresholdLow"])
+                new_job_settings.color_threshold_low = float(
+                    settings_json["colorThresholdLow"]
+                )
             if "colorThresholdHigh" in settings_json:
-                new_job_settings.color_threshold_high = float(settings_json["colorThresholdHigh"])
+                new_job_settings.color_threshold_high = float(
+                    settings_json["colorThresholdHigh"]
+                )
             if "distThresholdLow" in settings_json:
-                new_job_settings.dist_threshold_low = float(settings_json["distThresholdLow"])
+                new_job_settings.dist_threshold_low = float(
+                    settings_json["distThresholdLow"]
+                )
             if "distThresholdHigh" in settings_json:
-                new_job_settings.dist_threshold_high = float(settings_json["distThresholdHigh"])
+                new_job_settings.dist_threshold_high = float(
+                    settings_json["distThresholdHigh"]
+                )
             if "resolution" in settings_json:
                 new_job_settings.resolution = float(settings_json["resolution"])
             if "minPoints" in settings_json:
@@ -602,6 +1021,16 @@ class ChangeDetectionJobSettings:
         return ReturnValue(value=new_job_settings, error="")
 
     class Inputs:
+        """
+        Possible inputs for a  Change Detection job.
+
+        Attributes:
+            points_clouds_1: First collection of point clouds.
+            points_clouds_2: Second collection of point clouds.
+            meshes1: First collection of meshes.
+            meshes2: Second collection of meshes.
+        """
+
         def __init__(self) -> None:
             self.point_clouds1: str = ""
             self.point_clouds2: str = ""
@@ -609,16 +1038,25 @@ class ChangeDetectionJobSettings:
             self.meshes2: str = ""
 
     class Outputs:
+        """
+        Possible outputs for a  Change Detection job.
+
+        Attributes:
+            objects3D: Regions with changes.
+            exported_locations3D_SHP: ESRI SHP file export with locations of regions with changes.
+        """
+
         def __init__(self) -> None:
             self.objects3D: str = ""
             self.exported_locations3D_SHP: str = ""
 
 
-JobSettings = TypeVar("JobSettings",
-                      O2DJobSettings,
-                      S2DJobSettings,
-                      O3DJobSettings,
-                      S3DJobSettings,
-                      L3DJobSettings,
-                      ChangeDetectionJobSettings)
-
+JobSettings = TypeVar(
+    "JobSettings",
+    O2DJobSettings,
+    S2DJobSettings,
+    O3DJobSettings,
+    S3DJobSettings,
+    L3DJobSettings,
+    ChangeDetectionJobSettings,
+)

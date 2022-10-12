@@ -4,8 +4,9 @@ from typing import NamedTuple
 
 class JobStatus(Enum):
     """
-    Status of a job
+    Possible status for a job.
     """
+
     UNKNOWN = "unknown"
     UNSUBMITTED = "unsubmitted"
     ACTIVE = "active"
@@ -18,11 +19,11 @@ class JobStatus(Enum):
     Running = "active"
 
 
-
 class JobType(Enum):
     """
-    Type of a job
+    Possible types of a job.
     """
+
     NONE = "not recognized"
     O2D = "objects2D"
     S2D = "segmentation2D"
@@ -34,10 +35,11 @@ class JobType(Enum):
 
 class JobProgress(NamedTuple):
     """
-    Progress for the job
-
-    Contains the status for the job, and it's percentage progression as an integer value between 0 and 100
+    Progress of a job.
+    Contains the status of the job, it's percentage progression as an integer value between 0 and 100 and a string
+    with the name of the step it is at when this exists.
     """
+
     status: JobStatus
     progress: int
     step: str

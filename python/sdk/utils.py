@@ -4,8 +4,9 @@ from typing import TypeVar, Generic
 
 class RealityDataType(Enum):
     """
-    Data types used in ProjectWise ContextShare
+    Data types used in ProjectWise ContextShare.
     """
+
     ImageCollection = "ImageCollection"
     ContextScene = "ContextScene"
     ContextDetector = "ContextDetector"
@@ -29,10 +30,10 @@ T = TypeVar("T")
 
 class ReturnValue(tuple, Generic[T]):
     """
-    A tuple containing relevant data, and a potential error message
-
-    When no error was encountered, the error message will be empty
+    A tuple containing relevant data, and a potential error message.
+    When no error was encountered, the error message will be empty.
     """
+
     value: T
     error: str
 
@@ -44,8 +45,9 @@ class ReturnValue(tuple, Generic[T]):
 
     def is_error(self) -> bool:
         """
-        Checks whether this return value contains an error
+        Checks whether this return value contains an error.
 
-        :return: True if the return value contains an error
+        Returns:
+            True if the return value contains an error
         """
         return len(self.error) > 0
