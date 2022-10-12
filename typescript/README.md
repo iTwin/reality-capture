@@ -1,6 +1,6 @@
 # Introduction
 
-Reality-data-samples in typescript is a web/console application to show how reality iTwin services are working and display Reality Data Analysis outputs, such as Cesium 3D Tiles and Context Scenes.
+Reality-data-samples in typescript is a web application to show how reality iTwin services are working and display Reality Data Analysis outputs, such as Cesium 3D Tiles and Context Scenes.
 
 - [Reality Data](https://developer.bentley.com/apis/reality-data/) provides the ability to retrieve information about the reality data that is associated with an infrastructure project.
 - [Reality Data Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
@@ -15,9 +15,9 @@ It has been tested with Node 14.18.1 and should work with Node 14.18.1 and newer
   - [Resources](#resources)
   - [Client registration](#client-registration)
 - [Getting started](#getting-started)
-  - [Run samples (no UI)](#run-samples-no-ui)
   - [Debug the app](#debug-the-app)
   - [Data samples](#data-samples)
+  - [Upload context scenes and orientations](#upload-context-scenes-and-orientations)
 - [Project Structure](#project-structure)
 
 ## Pre-reqs
@@ -79,18 +79,6 @@ with issuerUrl, redirectUrl and the proper scopes: `contextcapture:modify contex
   npm run start:webapp
   ```
 
-### Run samples (no UI)
-
-To run the console application, it is almost the same process.
-You need to register another Application. Select application type "Service" instead of "SPA", use these scopes : `contextcapture:modify contextcapture:read itwinjs realitydataanalysis:read realitydataanalysis:modify realitydata:read realitydata:modify` 
-
-- Build and run the project
-
-  ```sh
-  npm run build
-  npm run start:sample
-  ```
-
 ### Debug the app
 
 To debug the frontend, run
@@ -103,6 +91,14 @@ To debug the backend, run the other configuration : "Attach by process ID", and 
 ### Data samples
 
 To run rdas jobs, you can download datasets and detectors here : https://communities.bentley.com/products/3d_imaging_and_point_cloud_software/w/wiki/54656/context-insights-detectors-download-page
+
+### Upload context scenes and orientations
+
+In order to get consistent context scenes and orientations on Context Share, you have to upload the data referenced in those files first. Indeed, context scenes and orientations contain local paths to image collections, point clouds... however, when the context scene is uploaded, these paths are not valid anymore. To have the paths replaced when the context scene is uploaded, you have to : 
+1. Upload the images first. Provide the images folder, the images should be at the root of this folder, and at the same level (no sub folders).
+2. Edit your context scene to replace reference paths with the reference id. To upload an orientations file it is very similar, but it does not have references. The image paths have to be changed, it should be the index of the image collection in the order it has been uploaded, i.e 0 for the first uploaded image collection, 1 for the second one and so on, followed by / and the image name.
+
+It is very important to upload the image collections before the context scene and set the right index in the context scene, otherwise the job might not be successful.
 
 ## Project Structure
 
