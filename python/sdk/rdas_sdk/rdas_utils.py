@@ -1,45 +1,137 @@
-from enum import Enum
+from __future__ import annotations
 from typing import NamedTuple
 
+from sdk.rdas_sdk.rdas_enums import RDAJobType
+from sdk.rdas_sdk.job_settings import JobSettings, O2DJobSettings
+from sdk.utils import ReturnValue, JobStatus
 
-class JobStatus(Enum):
+
+class RDAJobCostParameters:
     """
-    Possible status for a job.
-    """
+    Parameters for estimating job cost before its processing.
 
-    UNKNOWN = "unknown"
-    UNSUBMITTED = "unsubmitted"
-    ACTIVE = "active"
-    SUCCESS = "success"
-    FAILED = "failed"
-    CANCELLED = "cancelled"
+    Estimated_cost is filled when this object is returned by a function but should only be taken in consideration if you
+    have updated parameters for estimation before by using the get_job_estimated_cost function.
 
-    Completed = "success"
-    Pending = "pending"
-    Running = "active"
-
-
-class JobType(Enum):
-    """
-    Possible types of a job.
-    """
-
-    NONE = "not recognized"
-    O2D = "objects2D"
-    S2D = "segmentation2D"
-    O3D = "objects3D"
-    S3D = "segmentation3D"
-    ChangeDetection = "changeDetection"
-    L3D = "lines3D"
-
-
-class JobProgress(NamedTuple):
-    """
-    Progress of a job.
-    Contains the status of the job, it's percentage progression as an integer value between 0 and 100 and a string
-    with the name of the step it is at when this exists.
+    Args:
+        giga_pixels: Number of giga pixels in inputs.
+        number_photos: Number of photos in inputs.
+        scene_width: Width of the scene.
+        scene_length: Height of the scene.
+        detector_scale: Length of the scene.
+        detector_cost: Scale of the detector.
+        estimated_cost: Estimated cost of the detector.
     """
 
-    status: JobStatus
-    progress: int
-    step: str
+    def __init__(
+        self,
+        giga_pixels: float = 0.0,
+        number_photos: int = 0,
+        scene_width: float = 0.0,
+        scene_height: float = 0.0,
+        scene_length: float = 0.0,
+        detector_scale: float = 0.0,
+        detector_cost: float = 0.0,
+        estimated_cost: float = 0,
+    ) -> None:
+
+        self.giga_pixels = giga_pixels
+        self.number_photos = number_photos
+        self.scene_width = scene_width
+        self.scene_height = scene_height
+        self.scene_length = scene_length
+        self.detector_scale = detector_scale
+        self.detector_cost = detector_cost
+        self.estimated_cost = estimated_cost
+
+    def to_json(self) -> dict:
+        """
+        Transform job cost parameters into a dictionary compatible with json.
+        Doesn't save estimated_cost because it is not a parameter used to estimate cost.
+
+        Returns:
+            Dictionary with cost parameters values.
+        """
+        json_dict = dict()
+        if self.giga_pixels:
+            json_dict["gigaPixels"] = self.giga_pixels
+        if self.number_photos:
+            json_dict["numberOfPhotos"] = self.number_photos
+        if self.scene_width:
+            json_dict["sceneWidth"] = self.scene_width
+        if self.scene_height:
+            json_dict["sceneHeight"] = self.scene_height
+        if self.scene_length:
+            json_dict["sceneLength"] = self.scene_length
+        if self.detector_scale:
+            json_dict["detectorScale"] = self.detector_scale
+        if self.detector_cost:
+            json_dict["detectorCost"] = self.detector_cost
+        return json_dict
+
+    @classmethod
+    def from_json(cls, estimation_json: dict) -> ReturnValue[RDAJobCostParameters]:
+        """
+        Transform json received from cloud service into job cost parameters.
+
+        Args:
+            estimation_json: Dictionary with estimation parameters received from cloud service.
+        Returns:
+            New JobCostEstimation object with actualized estimated cost.
+        """
+        new_estimation = cls()
+        try:
+            for k, v in estimation_json.items():
+                if k == "gigaPixels":
+                    new_estimation.giga_pixels = int(v)
+                elif k == "numberOfPhotos":
+                    new_estimation.number_photos = float(v)
+                elif k == "sceneWidth":
+                    new_estimation.scene_width = float(v)
+                elif k == "sceneHeight":
+                    new_estimation.scene_height = float(v)
+                elif k == "sceneLength":
+                    new_estimation.scene_length = float(v)
+                elif k == "detectorScale":
+                    new_estimation.detector_scale = float(v)
+                elif k == "detectorCost":
+                    new_estimation.detector_cost = float(v)
+                elif k == "estimatedCost":
+                    new_estimation.estimated_cost = float(v)
+                else:
+                    raise TypeError("found non expected cost estimation parameter:", k)
+        except (KeyError, TypeError) as e:
+            return ReturnValue(value=cls(), error=str(e))
+        return ReturnValue(value=new_estimation, error="")
+
+
+class RDAJobExecutionInfo(NamedTuple):
+    """
+    Execution details of a job.
+    """
+
+    exit_code: int = 0
+    submission_date_time: str = ""
+    started_date_time: str = ""
+    ended_date_time: str = ""
+    estimated_units: float = 0.0
+
+
+class RDAJobProperties(NamedTuple):
+    """
+    Properties of a job.
+    Convenience class to stock all properties of a job in a simple way.
+    """
+
+    job_type: RDAJobType = RDAJobType.NONE
+    job_settings: JobSettings = O2DJobSettings()
+    cost_estimation: RDAJobCostParameters = RDAJobCostParameters()
+    created_date_time: str = ""
+    last_modified_date_time: str = ""
+    execution_information: RDAJobExecutionInfo = RDAJobExecutionInfo()
+    job_status: JobStatus = JobStatus.UNKNOWN
+    job_id: str = ""
+    job_name: str = ""
+    iTwin_id: str = ""
+    data_center: str = ""
+    email: str = ""

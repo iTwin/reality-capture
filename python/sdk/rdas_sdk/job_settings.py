@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TypeVar
 
-from sdk.rdas_sdk.rdas_utils import JobType
+from sdk.rdas_sdk.rdas_enums import RDAJobType
 from sdk.utils import ReturnValue
 
 
@@ -16,7 +16,7 @@ class O2DJobSettings:
     """
 
     def __init__(self) -> None:
-        self.type = JobType.O2D
+        self.type = RDAJobType.O2D
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
 
@@ -27,8 +27,8 @@ class O2DJobSettings:
         Returns:
             Dictionary with settings values.
         """
-        json_dict = {}
-        json_dict["inputs"] = []
+        json_dict = dict()
+        json_dict["inputs"] = list()
         if self.inputs.photos:
             json_dict["inputs"].append(
                 {"name": "photos", "realityDataId": self.inputs.photos}
@@ -40,7 +40,7 @@ class O2DJobSettings:
                     "realityDataId": self.inputs.photo_object_detector,
                 }
             )
-        json_dict["outputs"] = []
+        json_dict["outputs"] = list()
         if self.outputs.objects2D:
             json_dict["outputs"].append("objects2D")
         return json_dict
@@ -117,7 +117,7 @@ class S2DJobSettings:
     """
 
     def __init__(self) -> None:
-        self.type = JobType.S2D
+        self.type = RDAJobType.S2D
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
 
@@ -128,8 +128,8 @@ class S2DJobSettings:
         Returns:
             Dictionary with settings values.
         """
-        json_dict = {}
-        json_dict["inputs"] = []
+        json_dict = dict()
+        json_dict["inputs"] = list()
         if self.inputs.photos:
             json_dict["inputs"].append(
                 {"name": "photos", "realityDataId": self.inputs.photos}
@@ -152,7 +152,7 @@ class S2DJobSettings:
                     "realityDataId": self.inputs.orthophoto_segmentation_detector,
                 }
             )
-        json_dict["outputs"] = []
+        json_dict["outputs"] = list()
         if self.outputs.segmentation2D:
             json_dict["outputs"].append("segmentation2D")
         # if self.outputs.segmented_photos:
@@ -243,16 +243,16 @@ class S2DJobSettings:
         Attributes:
             segmentation2D: Segmented photos.
             polygons2D: Detected 2D polygons.
-            exported_polygons_2D_SHP: 2D polygons exported to ESRI shapefile.
+            exported_polygons2D_SHP: 2D polygons exported to ESRI shapefile.
             lines2D: Detected 2D lines.
         """
 
         def __init__(self) -> None:
             self.segmentation2D: str = ""
-            # self.segmented_photos: str = ""
             self.polygons2D: str = ""
             self.exported_polygons2D_SHP: str = ""
             self.lines2D: str = ""
+            # self.segmented_photos: str = ""
 
 
 class O3DJobSettings:
@@ -270,7 +270,7 @@ class O3DJobSettings:
     """
 
     def __init__(self) -> None:
-        self.type = JobType.O3D
+        self.type = RDAJobType.O3D
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
         self.use_tie_points: bool = False
@@ -285,8 +285,8 @@ class O3DJobSettings:
         Returns:
             Dictionary with settings values.
         """
-        json_dict = {}
-        json_dict["inputs"] = []
+        json_dict = dict()
+        json_dict["inputs"] = list()
         if self.inputs.oriented_photos:
             json_dict["inputs"].append(
                 {"name": "orientedPhotos", "realityDataId": self.inputs.oriented_photos}
@@ -306,7 +306,7 @@ class O3DJobSettings:
             json_dict["inputs"].append(
                 {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
             )
-        json_dict["outputs"] = []
+        json_dict["outputs"] = list()
         if self.outputs.objects2D:
             json_dict["outputs"].append("objects2D")
         if self.outputs.objects3D:
@@ -441,7 +441,7 @@ class S3DJobSettings:
     """
 
     def __init__(self) -> None:
-        self.type = JobType.S3D
+        self.type = RDAJobType.S3D
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
         self.save_confidence: bool = False
@@ -454,8 +454,8 @@ class S3DJobSettings:
         Returns:
             Dictionary with settings values.
         """
-        json_dict = {}
-        json_dict["inputs"] = []
+        json_dict = dict()
+        json_dict["inputs"] = list()
         if self.inputs.point_clouds:
             json_dict["inputs"].append(
                 {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
@@ -490,7 +490,7 @@ class S3DJobSettings:
             json_dict["inputs"].append(
                 {"name": "objects2D", "realityDataId": self.inputs.objects2D}
             )
-        json_dict["outputs"] = []
+        json_dict["outputs"] = list()
         if self.outputs.segmentation3D:
             json_dict["outputs"].append("segmentation3D")
         if self.outputs.segmented_point_cloud:
@@ -680,7 +680,7 @@ class L3DJobSettings:
     """
 
     def __init__(self) -> None:
-        self.type = JobType.L3D
+        self.type = RDAJobType.L3D
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
         self.compute_line_width: bool = False
@@ -694,8 +694,8 @@ class L3DJobSettings:
         Returns:
             Dictionary with settings values.
         """
-        json_dict = {}
-        json_dict["inputs"] = []
+        json_dict = dict()
+        json_dict["inputs"] = list()
         if self.inputs.point_clouds:
             json_dict["inputs"].append(
                 {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
@@ -730,7 +730,7 @@ class L3DJobSettings:
             json_dict["inputs"].append(
                 {"name": "segmentation2D", "realityDataId": self.inputs.segmentation2D}
             )
-        json_dict["outputs"] = []
+        json_dict["outputs"] = list()
         if self.outputs.segmentation3D:
             json_dict["outputs"].append("segmentation3D")
         if self.outputs.segmented_point_cloud:
@@ -899,7 +899,7 @@ class ChangeDetectionJobSettings:
     """
 
     def __init__(self) -> None:
-        self.type = JobType.ChangeDetection
+        self.type = RDAJobType.ChangeDetection
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
         self.color_threshold_low: float = 0.0
@@ -917,8 +917,8 @@ class ChangeDetectionJobSettings:
         Returns:
             Dictionary with settings values.
         """
-        json_dict = {}
-        json_dict["inputs"] = []
+        json_dict = dict()
+        json_dict["inputs"] = list()
         if self.inputs.point_clouds1:
             json_dict["inputs"].append(
                 {"name": "pointClouds1", "realityDataId": self.inputs.point_clouds1}
@@ -935,7 +935,7 @@ class ChangeDetectionJobSettings:
             json_dict["inputs"].append(
                 {"name": "meshes2", "realityDataId": self.inputs.meshes2}
             )
-        json_dict["outputs"] = []
+        json_dict["outputs"] = list()
         if self.outputs.objects3D:
             json_dict["outputs"].append("objects3D")
         if self.outputs.exported_locations3D_SHP:
@@ -1025,8 +1025,8 @@ class ChangeDetectionJobSettings:
         Possible inputs for a  Change Detection job.
 
         Attributes:
-            points_clouds_1: First collection of point clouds.
-            points_clouds_2: Second collection of point clouds.
+            point_clouds1: First collection of point clouds.
+            point_clouds2: Second collection of point clouds.
             meshes1: First collection of meshes.
             meshes2: Second collection of meshes.
         """

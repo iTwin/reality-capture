@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, NamedTuple
 
 
 class RealityDataType(Enum):
@@ -23,6 +23,35 @@ class RealityDataType(Enum):
     ThreeSM = "ThreeSM"
     Cesium = "Cesium"
     Unstructured = "Unstructured"
+
+
+class JobStatus(Enum):
+    """
+    Possible status for a job.
+    """
+
+    UNKNOWN = "unknown"
+    UNSUBMITTED = "unsubmitted"
+    ACTIVE = "active"
+    SUCCESS = "success"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+
+    Completed = "success"
+    Pending = "pending"
+    Running = "active"
+
+
+class JobProgress(NamedTuple):
+    """
+    Progress of a job.
+    Contains the status of the job, it's percentage progression as an integer value between 0 and 100 and a string
+    with the name of the step it is at when this exists.
+    """
+
+    status: JobStatus = JobStatus.UNKNOWN
+    progress: int = -1
+    step: str = ""
 
 
 T = TypeVar("T")
