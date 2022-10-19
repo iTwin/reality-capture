@@ -8,13 +8,13 @@ import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import "./Viewer3D.css";
 import { Viewer, ViewerContentToolsProvider, ViewerNavigationToolsProvider } from "@itwin/web-viewer-react";
 import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
-import { RealityDataWidgetProvider } from "./api/RealityDataWidget";
+import { RealityDataWidgetProvider } from "./3dUtils/RealityDataWidget";
 import { Cartographic } from "@itwin/core-common";
 import { Range3d } from "@itwin/core-geometry";
-import RealityData from "./api/RealityData";
+import RealityData from "./3dUtils/RealityData";
 import { BlankConnection, IModelApp } from "@itwin/core-frontend";
 import { UiFramework } from "@itwin/appui-react";
-import { createBlankViewState, getBlankConnection } from "./api/RealityDataCrs";
+import { createBlankViewState, getBlankConnection } from "./3dUtils/RealityDataCrs";
 
 
 interface Viewer3DProps {

@@ -13,7 +13,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "types": [
-      "chai-as-promised", "mocha"
+      "@bentley/react-scripts", "chai-as-promised", "mocha"
     ],
     "lib": [
       "dom",

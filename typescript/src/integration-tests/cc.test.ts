@@ -9,10 +9,10 @@ import { getAccessTokenFromBackend, TestUsers } from "@itwin/oidc-signin-tool/li
 chai.use(chaiAsPromised);
 
 describe("CC", () => {
+    let accessToken = "";
 
     before(async () => {
-        const accessToken = await getAccessTokenFromBackend(TestUsers.regular);
-        await fetch("http://localhost:3001/requests/accesstoken/" + accessToken);
+        accessToken = await getAccessTokenFromBackend(TestUsers.regular);
     });
 
     it("Context capture job", async function () { 

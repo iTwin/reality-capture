@@ -6,13 +6,15 @@
 import { Button, LabeledInput } from "@itwin/itwinui-react";
 import { decode } from "fast-png";
 import React, { MutableRefObject, useEffect, useRef } from "react";
-import { ContextScene } from "../common/models";
+import { getRealityData } from "./utils/ApiUtils";
+import { ContextScene, parseContextScene } from "./utils/ContextSceneParser";
 import "./Viewer2D.css";
 
 interface Viewer2DProps {
     imageIndex: number;
     zoomLevel: number;
     idToDisplay: string;
+    accessToken: string;
     onIdChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onZoomChange: (newZoomLevel: number) => void
     onImageIndexChange: (newImageIndex: number) => void;
@@ -228,10 +230,13 @@ export function Viewer2D(props: Viewer2DProps) {
         contextScene.labels.clear();
         contextScene.references.clear();
 
-        const id = props.idToDisplay;
-        const response = await fetch("http://localhost:3001/requests/realityData/" + id);
-        const responseJson = await response.json();
-        contextScene = JSON.parse(responseJson.res, reviver);               
+        const realityData = await getRealityData(props.idToDisplay, props.accessToken);
+        if(realityData.type === "ContextScene") {
+            contextScene = await parseContextScene(props.accessToken, props.idToDisplay);
+        }
+        else if(realityData.type === "CCImageCollection") {
+            contextScene = await parseContextScene(props.accessToken, props.idToDisplay, false);
+        }             
         onImageIndexChange(0);
     };
 

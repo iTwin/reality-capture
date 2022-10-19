@@ -35,11 +35,6 @@ export function App() {
     );
     
     const login = useCallback(async () => {
-        authClient.onAccessTokenChanged.addListener(async (token) => {
-            if(token) {
-                await fetch("http://localhost:3001/requests/accesstoken/" + token);
-            }
-        });
         try {
             await authClient.signInSilent();            
         } catch {

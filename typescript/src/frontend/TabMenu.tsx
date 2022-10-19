@@ -8,11 +8,11 @@ import { Viewer2D } from "./Viewer2D";
 import { Viewer3D } from "./Viewer3D";
 import "./App.css";
 import { HorizontalTabs, Tab } from "@itwin/itwinui-react";
-import { Rds } from "./Rds";
-import { Rdas } from "./Rdas";
+import { Rds } from "./DataTransferTab";
+import { Rdas } from "./RDASTab";
 import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 import { RealityDataAccessClient } from "@itwin/reality-data-client";
-import { ContextCapture } from "./ContextCapture";
+import { ContextCapture } from "./CCCSTab";
 
 interface TabMenu {
     accessToken: string;
@@ -70,16 +70,16 @@ export function TabMenu(props: TabMenu) {
                 onUploadedDataTypeChange={onUploadedDataTypeChange} accessToken={props.accessToken}
                 onUploadedDataIdChange={onUploadedDataIdChange} onDownloadedIdChange={onDownloadedIdChange}/>;
         case 1:
-            return <Rdas/>;
+            return <Rdas accessToken={props.accessToken!}/>;
         case 2:
-            return <ContextCapture/>;
+            return <ContextCapture accessToken={props.accessToken!}/>;
         case 3:
-            return <Viewer2D imageIndex={imageIndex} zoomLevel={zoomLevel} idToDisplay={idViewer2D}
+            return <Viewer2D imageIndex={imageIndex} zoomLevel={zoomLevel} idToDisplay={idViewer2D} accessToken={props.accessToken}
                 onIdChange={onDisplay2DIdChange} onZoomChange={onZoomChange} onImageIndexChange={onImageIndexChange}/>;
         case 4:
             return <Viewer3D accessToken={props.accessToken!} realityDataAccessClient={props.realityDataAccessClient} authClient={props.authClient}/>;
         default:
-            return <Viewer2D imageIndex={imageIndex} zoomLevel={zoomLevel} idToDisplay={idViewer2D}
+            return <Viewer2D imageIndex={imageIndex} zoomLevel={zoomLevel} idToDisplay={idViewer2D} accessToken={props.accessToken}
                 onIdChange={onDisplay2DIdChange} onZoomChange={onZoomChange} onImageIndexChange={onImageIndexChange}/>;
         }
     };
