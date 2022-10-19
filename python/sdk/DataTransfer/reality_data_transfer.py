@@ -2,15 +2,13 @@ import http.client
 import json
 import os
 import tempfile
-
 from azure.storage.blob import ContainerClient
 from multiprocessing.pool import ThreadPool
 
 from token_factory import token_factory
 from apim_utils.code import Code
-
-from sdk.conversion import replace_context_scene_references
-from sdk.references import ReferenceTable
+from sdk.DataTransfer.conversion import replace_context_scene_references
+from sdk.DataTransfer.references import ReferenceTable
 from sdk.utils import RealityDataType, ReturnValue
 
 

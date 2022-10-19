@@ -3,14 +3,12 @@ import json
 
 from token_factory import token_factory
 from apim_utils.code import Code
-
-from sdk.rdas_sdk.rdas_utils import (
+from sdk.RDAS.rdas_utils import (
     RDAJobCostParameters,
-    RDAJobExecutionInfo,
     RDAJobProperties,
 )
-from sdk.rdas_sdk.rdas_enums import RDAJobType
-from sdk.rdas_sdk.job_settings import (
+from sdk.RDAS.rdas_enums import RDAJobType
+from sdk.RDAS.job_settings import (
     JobSettings,
     O2DJobSettings,
     O3DJobSettings,
@@ -19,7 +17,7 @@ from sdk.rdas_sdk.job_settings import (
     L3DJobSettings,
     ChangeDetectionJobSettings,
 )
-from sdk.utils import ReturnValue, JobProgress, JobStatus
+from sdk.utils import ReturnValue, JobProgress, JobState, JobDateTime
 
 
 class RealityDataAnalysisService:
@@ -31,7 +29,7 @@ class RealityDataAnalysisService:
         client_id: a client ID with at least realitydata and realitydataanalysis scopes.
     """
 
-    def __init__(self, service_URL: str, client_id: str) -> None:
+    def __init__(self, service_URL: str, client_id: str, secret: str = "") -> None:
         # must change url to prod one!
         self._token_factory = token_factory.ServiceTokenFactory(
             client_id,
@@ -45,6 +43,7 @@ class RealityDataAnalysisService:
             ],
         )
         self._connection = http.client.HTTPSConnection(service_URL)
+        self._secret = secret
 
     def _headers_read(self) -> dict:
         r = {
@@ -164,21 +163,21 @@ class RealityDataAnalysisService:
             return ReturnValue(value=RDAJobProperties(), error=code.error_message())
         data = code.response()
         try:
-            job_type = data["job"].get("type", None)
-            if job_type is None:
+            job_type_str = data["job"].get("type", None)
+            if job_type_str is None:
                 return ReturnValue(value=RDAJobProperties(), error="no Job type")
 
-            if job_type == RDAJobType.O2D.value:
+            if job_type_str == RDAJobType.O2D.value:
                 settings = O2DJobSettings.from_json(data["job"].get("settings", {}))
-            elif job_type == RDAJobType.S2D.value:
+            elif job_type_str == RDAJobType.S2D.value:
                 settings = S2DJobSettings.from_json(data["job"].get("settings", {}))
-            elif job_type == RDAJobType.O3D.value:
+            elif job_type_str == RDAJobType.O3D.value:
                 settings = O3DJobSettings.from_json(data["job"].get("settings", {}))
-            elif job_type == RDAJobType.S3D.value:
+            elif job_type_str == RDAJobType.S3D.value:
                 settings = S3DJobSettings.from_json(data["job"].get("settings", {}))
-            elif job_type == RDAJobType.L3D.value:
+            elif job_type_str == RDAJobType.L3D.value:
                 settings = L3DJobSettings.from_json(data["job"].get("settings", {}))
-            elif job_type == RDAJobType.ChangeDetection.value:
+            elif job_type_str == RDAJobType.ChangeDetection.value:
                 settings = ChangeDetectionJobSettings.from_json(
                     data["job"].get("settings", {})
                 )
@@ -202,21 +201,22 @@ class RealityDataAnalysisService:
                 cost_estimation.estimated_cost = estimate.get("estimatedCost", 0.0)
 
             created_date_time = data["job"].get("createdDateTime", "")
-            last_modified_date_time = data["job"].get("lastModifiedDateTime", "")
-
             execution = data["job"].get("executionInformation", None)
             if execution is not None:
-                execution_info = RDAJobExecutionInfo(
-                    exit_code=execution.get("exitCode", 0),
+                job_date_time = JobDateTime(
+                    created_date_time=created_date_time,
                     submission_date_time=execution.get("submissionDateTime", ""),
                     started_date_time=execution.get("startedDateTime", ""),
                     ended_date_time=execution.get("endedDateTime", ""),
-                    estimated_units=execution.get("estimatedUnits", 0.0),
                 )
+                exit_code = execution.get("exitCode", 0)
+                estimated_units = execution.get("estimatedUnits", 0.0)
             else:
-                execution_info = RDAJobExecutionInfo()
+                job_date_time = JobDateTime(created_date_time=created_date_time)
+                exit_code = 0
+                estimated_units = 0.0
 
-            job_status = data["job"].get("state", JobStatus.UNKNOWN)
+            job_state = data["job"].get("state", JobState.UNKNOWN)
             job_name = data["job"].get("name", "")
             itwin_id = data["job"].get("projectId", "")
             data_center = data["job"].get("dataCenter", "")
@@ -226,13 +226,13 @@ class RealityDataAnalysisService:
 
         return ReturnValue(
             value=RDAJobProperties(
-                job_type=RDAJobType(job_type),
+                job_type=RDAJobType(job_type_str),
                 job_settings=settings.value,
-                cost_estimation=cost_estimation,
-                created_date_time=created_date_time,
-                last_modified_date_time=last_modified_date_time,
-                execution_information=execution_info,
-                job_status=job_status,
+                cost_estimation_parameters=cost_estimation,
+                job_date_time=job_date_time,
+                job_state=job_state,
+                estimated_units=estimated_units,
+                exit_code=exit_code,
                 job_id=job_id,
                 job_name=job_name,
                 iTwin_id=itwin_id,
@@ -241,18 +241,6 @@ class RealityDataAnalysisService:
             ),
             error="",
         )
-
-    def get_job_type(self, job_id: str) -> ReturnValue[RDAJobType]:
-        """
-        Get type of a given job.
-
-        Args:
-            job_id: The ID of the relevant job.
-        Returns:
-            The type for the job, and a potential error message.
-        """
-        ret = self.get_job_properties(job_id)
-        return ReturnValue(value=ret.value.job_type, error=ret.error)
 
     def get_job_settings(self, job_id: str) -> ReturnValue[JobSettings]:
         """
@@ -293,17 +281,65 @@ class RealityDataAnalysisService:
         ret = self.get_job_properties(job_id)
         return ReturnValue(value=ret.value.job_name, error=ret.error)
 
-    def get_job_status(self, job_id: str) -> ReturnValue[JobStatus]:
+    def get_job_state(self, job_id: str) -> ReturnValue[JobState]:
         """
-        Get the status of a job.
+        Get the state of a job.
 
         Args:
             job_id: The ID of the relevant job.
         Returns:
-            The status of the job, and a potential error message.
+            The state of the job, and a potential error message.
         """
         ret = self.get_job_properties(job_id)
-        return ReturnValue(value=ret.value.job_status, error=ret.error)
+        return ReturnValue(value=ret.value.job_state, error=ret.error)
+
+    def get_job_dates(self, job_id: str) -> ReturnValue[JobDateTime]:
+        """
+        Get important dates of a job.
+
+        Args:
+            job_id: The ID of the relevant job.
+        Returns:
+            Dates times of the job, and a potential error message.
+        """
+        ret = self.get_job_properties(job_id)
+        return ReturnValue(value=ret.value.job_date_time, error=ret.error)
+
+    def get_job_execution_cost(self, job_id: str) -> ReturnValue[float]:
+        """
+        Get estimated execution cost of an executed job.
+
+        Args:
+            job_id: The ID of the relevant job.
+        Returns:
+            Estimated execution cost of the job, and a potential error message.
+        """
+        ret = self.get_job_properties(job_id)
+        return ReturnValue(value=ret.value.estimated_units, error=ret.error)
+
+    def get_job_exit_code(self, job_id: str) -> ReturnValue[int]:
+        """
+        Get exit code of a given executed job.
+
+        Args:
+            job_id: The ID of the relevant job.
+        Returns:
+            The exit code of the job, and a potential error message.
+        """
+        ret = self.get_job_properties(job_id)
+        return ReturnValue(value=ret.value.exit_code, error=ret.error)
+
+    def get_job_type(self, job_id: str) -> ReturnValue[RDAJobType]:
+        """
+        Get type of a given job.
+
+        Args:
+            job_id: The ID of the relevant job.
+        Returns:
+            The type for the job, and a potential error message.
+        """
+        ret = self.get_job_properties(job_id)
+        return ReturnValue(value=ret.value.job_type, error=ret.error)
 
     def get_job_progress(self, job_id: str) -> ReturnValue[JobProgress]:
         """
@@ -328,14 +364,14 @@ class RealityDataAnalysisService:
         code = Code(response)
         if not code.success():
             return ReturnValue(
-                value=JobProgress(status=JobStatus.UNKNOWN, progress=-1, step=""),
+                value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
                 error=code.error_message(),
             )
         data = code.response()
         dp = data["progress"]
         return ReturnValue(
             value=JobProgress(
-                status=JobStatus(dp["state"]),
+                state=JobState(dp["state"]),
                 progress=int(dp["percentage"]),
                 step=dp["step"],
             ),
@@ -426,41 +462,3 @@ class RealityDataAnalysisService:
             return ReturnValue(value=False, error=code.error_message())
         return ReturnValue(value=True, error="")
 
-    def get_job_execution_info(self, job_id: str) -> ReturnValue[RDAJobExecutionInfo]:
-        """
-        Get the execution information of a job.
-
-        Args:
-            job_id: The ID of the relevant job.
-        Returns:
-            The  execution information of the job, and a potential error message.
-        """
-        ret = self.get_job_properties(job_id)
-        return ReturnValue(value=ret.value.execution_information, error=ret.error)
-
-    def get_job_dates(self, job_id: str) -> ReturnValue[dict]:
-        """
-        Get relevant dates of a job.
-
-        Args:
-            job_id: The ID of the relevant job.
-        Returns:
-            A dictionary with all relevant dates for the job.
-        """
-        ret = self.get_job_properties(job_id)
-        if ret.is_error():
-            return ReturnValue(value=dict(), error=ret.error)
-        dates_dict = {
-            "created_date_time": ret.value.created_date_time,
-            "modified_date_time": ret.value.last_modified_date_time,
-        }
-        exec_info = ret.value.execution_information
-        if exec_info.submission_date_time != "":
-            dates_dict["submission_date_time"] = exec_info.submission_date_time
-        if exec_info.started_date_time != "":
-            dates_dict["started_date_time"] = exec_info.started_date_time
-        if exec_info.ended_date_time != "":
-            dates_dict["ended_date_time"] = exec_info.ended_date_time
-        if exec_info.ended_date_time:
-            dates_dict["ended_date_time"] = exec_info.ended_date_time
-        return ReturnValue(value=dates_dict, error=ret.error)

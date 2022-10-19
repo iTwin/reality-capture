@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TypeVar
 
-from sdk.rdas_sdk.rdas_enums import RDAJobType
+from sdk.RDAS.rdas_enums import RDAJobType
 from sdk.utils import ReturnValue
 
 
@@ -11,8 +11,9 @@ class O2DJobSettings:
 
     Attributes:
         type: Type of job settings.
-        inputs: Possible inputs for this job.
-        outputs: Possible outputs for this job.
+        inputs: Possible inputs for this job. Should be the id of the input in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing it to create_job.
     """
 
     def __init__(self) -> None:
@@ -112,8 +113,9 @@ class S2DJobSettings:
 
     Attributes:
         type: Type of job settings.
-        inputs: Possible inputs for this job.
-        outputs: Possible outputs for this job.
+        inputs: Possible inputs for this job. Should be the id of the input in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing it to create_job.
     """
 
     def __init__(self) -> None:
@@ -261,8 +263,9 @@ class O3DJobSettings:
 
     Attributes:
         type: Type of job settings.
-        inputs: Possible inputs for this job.
-        outputs: Possible outputs for this job.
+        inputs: Possible inputs for this job. Should be the id of the input in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing it to create_job.
         use_tie_points: Improve detection using tie points in orientedPhotos.
         min_photos: Minimum number of 2D objects to generate a 3D object.
         max_dist: Maximum distance between photos and 3D objects.
@@ -434,8 +437,9 @@ class S3DJobSettings:
 
     Attributes:
         type: Type of job settings.
-        inputs: Possible inputs for this job settings.
-        outputs: Possible outputs for this job settings.
+        inputs: Possible inputs for this job. Should be the id of the input in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing it to create_job.
         save_confidence: If confidence is saved on output files or not.
         export_srs: SRS used by exports.
     """
@@ -672,8 +676,9 @@ class L3DJobSettings:
 
     Attributes:
         type: Type of job settings.
-        inputs: Possible inputs for this job settings.
-        outputs: Possible outputs for this job settings.
+        inputs: Possible inputs for this job. Should be the id of the input in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing it to create_job.
         compute_line_width: Estimation 3D line width at each vertex.
         remove_small_components: Remove 3D lines with total length smaller than this value.
         export_srs: SRS used by exports.
@@ -887,8 +892,9 @@ class ChangeDetectionJobSettings:
 
     Attributes:
         type: Type of job settings.
-        inputs: Possible inputs for this job settings.
-        outputs: Possible outputs for this job settings.
+        inputs: Possible inputs for this job. Should be the id of the input in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing it to create_job.
         color_threshold_low: Low threshold to detect color changes (hysteresis detection).
         color_threshold_high: High threshold to detect color changes (hysteresis detection).
         dist_threshold_low: Low threshold to detect spatial changes (hysteresis detection).

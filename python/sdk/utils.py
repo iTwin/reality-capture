@@ -25,9 +25,9 @@ class RealityDataType(Enum):
     Unstructured = "Unstructured"
 
 
-class JobStatus(Enum):
+class JobState(Enum):
     """
-    Possible status for a job.
+    Possible state for a job.
     """
 
     UNKNOWN = "unknown"
@@ -42,14 +42,25 @@ class JobStatus(Enum):
     Running = "active"
 
 
+class JobDateTime(NamedTuple):
+    """
+    Date details of a job.
+    """
+
+    created_date_time: str = ""
+    submission_date_time: str = ""
+    started_date_time: str = ""
+    ended_date_time: str = ""
+
+
 class JobProgress(NamedTuple):
     """
     Progress of a job.
-    Contains the status of the job, it's percentage progression as an integer value between 0 and 100 and a string
+    Contains the state of the job, it's percentage progression as an integer value between 0 and 100 and a string
     with the name of the step it is at when this exists.
     """
 
-    status: JobStatus = JobStatus.UNKNOWN
+    state: JobState = JobState.UNKNOWN
     progress: int = -1
     step: str = ""
 

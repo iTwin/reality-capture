@@ -1,9 +1,8 @@
 from __future__ import annotations
 from typing import NamedTuple
-
-from sdk.rdas_sdk.rdas_enums import RDAJobType
-from sdk.rdas_sdk.job_settings import JobSettings, O2DJobSettings
-from sdk.utils import ReturnValue, JobStatus
+from sdk.RDAS.job_settings import JobSettings, O2DJobSettings
+from sdk.RDAS.rdas_enums import RDAJobType
+from sdk.utils import ReturnValue, JobState, JobDateTime
 
 
 class RDAJobCostParameters:
@@ -32,7 +31,7 @@ class RDAJobCostParameters:
         scene_length: float = 0.0,
         detector_scale: float = 0.0,
         detector_cost: float = 0.0,
-        estimated_cost: float = 0,
+        estimated_cost: float = 0.0,
     ) -> None:
 
         self.giga_pixels = giga_pixels
@@ -105,18 +104,6 @@ class RDAJobCostParameters:
         return ReturnValue(value=new_estimation, error="")
 
 
-class RDAJobExecutionInfo(NamedTuple):
-    """
-    Execution details of a job.
-    """
-
-    exit_code: int = 0
-    submission_date_time: str = ""
-    started_date_time: str = ""
-    ended_date_time: str = ""
-    estimated_units: float = 0.0
-
-
 class RDAJobProperties(NamedTuple):
     """
     Properties of a job.
@@ -125,13 +112,14 @@ class RDAJobProperties(NamedTuple):
 
     job_type: RDAJobType = RDAJobType.NONE
     job_settings: JobSettings = O2DJobSettings()
-    cost_estimation: RDAJobCostParameters = RDAJobCostParameters()
-    created_date_time: str = ""
-    last_modified_date_time: str = ""
-    execution_information: RDAJobExecutionInfo = RDAJobExecutionInfo()
-    job_status: JobStatus = JobStatus.UNKNOWN
+    cost_estimation_parameters: RDAJobCostParameters = RDAJobCostParameters()
+    job_date_time: JobDateTime = JobDateTime()
+    job_state: JobState = JobState.UNKNOWN
+    estimated_units: float = 0.0
+    exit_code: int = 0
     job_id: str = ""
     job_name: str = ""
     iTwin_id: str = ""
     data_center: str = ""
     email: str = ""
+
