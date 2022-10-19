@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Settings.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Settings.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChangeDetectionJobSettings = exports.L3DJobSettings = exports.S3DJobSettings = exports.O3DJobSettings = exports.S2DJobSettings = exports.O2DJobSettings = void 0;
+const Utils_1 = require("./Utils");
+/**
+ * Possible inputs for an Object Detection 2D job.
+ */
+class O2DInputs {
+    constructor() {
+        /**
+         * Path to ContextScene with photos to analyze..
+         * @type {string}
+         */
+        this.photos = "";
+        /**
+         * Path to photo object detector to apply.
+         * @type {string}
+         */
+        this.photoObjectDetector = "";
+    }
+}
+/**
+ * Possible outputs for an Object Detection 2D job.
+ */
+class O2DOutputs {
+    constructor() {
+        /**
+         * Objects detected in photos.
+         * @type {string}
+         */
+        this.objects2D = "";
+    }
+}
+/** Settings for Object Detection 2D jobs. */
+class O2DJobSettings {
+    constructor() {
+        /**
+         * Type of job settings.
+         * @type {RDAJobType}
+         */
+        this.type = Utils_1.RDAJobType.O2D;
+        /**
+         * Possible inputs for this job.
+         * @type {O2DInputs}
+         */
+        this.inputs = new O2DInputs();
+        /**
+         * Possible outputs for this job.
+         * @type {O2DOutputs}
+         */
+        this.outputs = new O2DOutputs();
+    }
+    /**
+     * Transform settings into json.
+     * @returns {any} json with settings values.
+     */
+    toJson() {
+        const json = {};
+        json["inputs"] = [];
+        if (this.inputs.photos)
+            json["inputs"].push({ "name": "photos", "realityDataId": this.inputs.photos });
+        if (this.inputs.photoObjectDetector)
+            json["inputs"].push({ "name": "photoObjectDetector", "realityDataId": this.inputs.photoObjectDetector });
+        json["outputs"] = [];
+        if (this.outputs.objects2D)
+            json["outputs"].push("objects2D");
+        return json;
+    }
+    /**
+     * Transform json received from cloud service into settings.
+     * @param {any} settingsJson Dictionary with settings received from cloud service.
+     * @returns {O2DJobSettings | Error} New settings, or an error message.
+     */
+    static fromJson(settingsJson) {
+        const newJobSettings = new O2DJobSettings();
+        try {
+            const inputsJson = settingsJson["inputs"];
+            for (const input of inputsJson) {
+                if (input["name"] === "photos")
+                    newJobSettings.inputs.photos = input["realityDataId"];
+                else if (input["name"] === "photoObjectDetector")
+                    newJobSettings.inputs.photoObjectDetector = input["realityDataId"];
+                else
+                    return TypeError("found non expected input name:" + input["name"]);
+            }
+            const outputsJson = settingsJson["outputs"];
+            for (const output of outputsJson)
+                if (output["name"] === "objects2D")
+                    newJobSettings.outputs.objects2D = output["realityDataId"];
+                else
+                    return TypeError("found non expected output name" + output["name"]);
+        }
+        catch (e) {
+            return e;
+        }
+        return newJobSettings;
+    }
+}
+exports.O2DJobSettings = O2DJobSettings;
+/**
+ * Possible inputs for a Segmentation 2D job.
+ */
+class S2DInputs {
+    constructor() {
+        /**
+         * Path to ContextScene with photos to analyze.
+         * @type {string}
+         */
+        this.photos = "";
+        /**
+         * Path to photo segmentation detector to apply.
+         * @type {string}
+         */
+        this.photoSegmentationDetector = "";
+        /**
+         * Path to orthophoto to analyse.
+         * @type {string}
+         */
+        this.orthophoto = "";
+        /**
+         * Path to orthophoto segmentation detector to apply.
+         * @type {string}
+         */
+        this.orthophotoSegmentationDetector = "";
+    }
+}
+/**
+ *
+ */
+class S2DOutputs {
+    constructor() {
+        /**
+         * Segmented photos.
+         * @type {string}
+         */
+        this.segmentation2D = "";
+        // this.segmented_photos = "";
+        /**
+         * Detected 2D polygons.
+         * @type {string}
+         */
+        this.polygons2D = "";
+        /**
+         * 2D polygons exported to ESRI shapefile.
+         * @type {string}
+         */
+        this.exportedPolygons2D_SHP = "";
+        /**
+         * Detected 2D lines.
+         * @type {string}
+         */
+        this.lines2D = "";
+    }
+}
+/**
+ * Settings for Segmentation 2D jobs.
+ */
+class S2DJobSettings {
+    constructor() {
+        /**
+         * Type of job settings.
+         * @type {RDAJobType}
+         */
+        this.type = Utils_1.RDAJobType.S2D;
+        /**
+         * Possible inputs for this job.
+         * @type {S2DInputs}
+         */
+        this.inputs = new S2DInputs();
+        /**
+         * Possible outputs for this job.
+         * @type {S2DOutputs}
+         */
+        this.outputs = new S2DOutputs();
+    }
+    /**
+     * Transform settings into json.
+     * @returns {any} json with settings values.
+     */
+    toJson() {
+        const json = {};
+        json["inputs"] = [];
+        if (this.inputs.photos)
+            json["inputs"].push({ "name": "photos", "realityDataId": this.inputs.photos });
+        if (this.inputs.photoSegmentationDetector)
+            json["inputs"].push({ "name": "photoSegmentationDetector", "realityDataId": this.inputs.photoSegmentationDetector });
+        if (this.inputs.orthophoto)
+            json["inputs"].push({ "name": "orthophoto", "realityDataId": this.inputs.orthophoto });
+        if (this.inputs.orthophotoSegmentationDetector)
+            json["inputs"].push({ "name": "orthophotoSegmentationDetector", "realityDataId": this.inputs.orthophotoSegmentationDetector });
+        json["outputs"] = [];
+        if (this.outputs.segmentation2D)
+            json["outputs"].push("segmentation2D");
+        // if(this.outputs.segmented_photos
+        //     json["outputs"].push("segmentedPhotos")
+        if (this.outputs.polygons2D)
+            json["outputs"].push("polygons2D");
+        if (this.outputs.exportedPolygons2D_SHP)
+            json["outputs"].push("exportedPolygons2DSHP");
+        if (this.outputs.lines2D)
+            json["outputs"].push("lines2D");
+        return json;
+    }
+    /**
+     * Transform json received from cloud service into settings.
+     * @param {any} settingsJson Dictionary with settings received from cloud service.
+     * @returns {S2DJobSettings | Error} New settings, or an error message.
+     */
+    static fromJson(settingsJson) {
+        const newJobSettings = new S2DJobSettings();
+        try {
+            const inputsJson = settingsJson["inputs"];
+            for (const input of inputsJson) {
+                if (input["name"] === "photos")
+                    newJobSettings.inputs.photos = input["realityDataId"];
+                else if (input["name"] === "photoSegmentationDetector")
+                    newJobSettings.inputs.photoSegmentationDetector = input["realityDataId"];
+                else if (input["name"] === "orthophoto")
+                    newJobSettings.inputs.orthophoto = input["realityDataId"];
+                else if (input["name"] === "orthophotoSegmentationDetector")
+                    newJobSettings.inputs.orthophotoSegmentationDetector = input["realityDataId"];
+                else
+                    return TypeError("found non expected input name:" + input["name"]);
+            }
+            const outputsJson = settingsJson["outputs"];
+            for (const output of outputsJson)
+                if (output["name"] === "segmentation2D")
+                    newJobSettings.outputs.segmentation2D = output["realityDataId"];
+                // else if(output["name"] === "segmentedPhotos":
+                //     newJobSettings.outputs.segmented_photos = output["realityDataId"];
+                else if (output["name"] === "polygons2D")
+                    newJobSettings.outputs.polygons2D = output["realityDataId"];
+                else if (output["name"] === "exportedPolygons2DSHP")
+                    newJobSettings.outputs.exportedPolygons2D_SHP = output["realityDataId"];
+                else if (output["name"] === "lines2D")
+                    newJobSettings.outputs.lines2D = output["realityDataId"];
+                else
+                    return TypeError("found non expected output name:" + output["name"]);
+        }
+        catch (e) {
+            return e;
+        }
+        return newJobSettings;
+    }
+}
+exports.S2DJobSettings = S2DJobSettings;
+/**
+ * Possible inputs for an Object Detection 3D job.
+ */
+class O3DInputs {
+    constructor() {
+        /**
+         * Path to ContextScene with oriented photos to analyze.
+         * @type {string}
+         */
+        this.orientedPhotos = "";
+        /**
+         * Collection of point clouds.
+         * @type {string}
+         */
+        this.pointClouds = "";
+        /**
+         * Path to photo object detector to apply.
+         * @type {string}
+         */
+        this.photoObjectDetector = "";
+        /**
+         * Given 2D objects.
+         * @type {string}
+         */
+        this.objects2D = "";
+    }
+}
+/**
+ * Possible outputs for an Object Detection 3D job.
+ */
+class O3DOutputs {
+    constructor() {
+        /**
+         * 2D objects detected by current job.
+         * @type {string}
+         */
+        this.objects2D = "";
+        /**
+         * Detected 3D objects.
+         * @type {string}
+         */
+        this.objects3D = "";
+        /**
+         * DGN file export with 3D objects.
+         * @type {string}
+         */
+        this.exportedObjects3D_DGN = "";
+        /**
+         * Cesium 3D Tiles file export with 3D objects.
+         * @type {string}
+         */
+        this.exportedObjects3D_cesium = "";
+        /**
+         * ESRI SHP file export with locations of the 3D objects.
+         * @type {string}
+         */
+        this.exportedLocations3D_SHP = "";
+    }
+}
+/**
+ * Settings for Object Detection 3D jobs.
+ */
+class O3DJobSettings {
+    constructor() {
+        /**
+         * Type of job settings.
+         * @type {RDAJobType}
+         */
+        this.type = Utils_1.RDAJobType.O3D;
+        /**
+         * Possible inputs for this job.
+         * @type {O3DInputs}
+         */
+        this.inputs = new O3DInputs();
+        /**
+         * Possible outputs for this job.
+         * @type {O3DOutputs}
+         */
+        this.outputs = new O3DOutputs();
+        /**
+         * Improve detection using tie points in orientedPhotos.
+         * @type {boolean}
+         */
+        this.useTiePoints = false;
+        /**
+         * Minimum number of 2D objects to generate a 3D object.
+         * @type {number}
+         */
+        this.minPhotos = 0;
+        /**
+         * Maximum distance between photos and 3D objects.
+         * @type {number}
+         */
+        this.maxDist = 0;
+        /**
+         * SRS used by exports.
+         * @type {string}
+         */
+        this.exportSrs = "";
+    }
+    /**
+     * Transform settings into json.
+     * @returns {any} json with settings values.
+     */
+    toJson() {
+        const json = {};
+        json["inputs"] = [];
+        if (this.inputs.orientedPhotos)
+            json["inputs"].push({ "name": "orientedPhotos", "realityDataId": this.inputs.orientedPhotos });
+        if (this.inputs.photoObjectDetector)
+            json["inputs"].push({ "name": "photoObjectDetector", "realityDataId": this.inputs.photoObjectDetector });
+        if (this.inputs.objects2D)
+            json["inputs"].push({ "name": "objects2D", "realityDataId": this.inputs.objects2D });
+        if (this.inputs.pointClouds)
+            json["inputs"].push({ "name": "pointClouds", "realityDataId": this.inputs.pointClouds });
+        json["outputs"] = [];
+        if (this.outputs.objects2D)
+            json["outputs"].push("objects2D");
+        if (this.outputs.objects3D)
+            json["outputs"].push("objects3D");
+        if (this.outputs.exportedObjects3D_DGN)
+            json["outputs"].push("exportedObjects3DDGN");
+        if (this.outputs.exportedObjects3D_cesium)
+            json["outputs"].push("exportedObjects3DCesium");
+        if (this.outputs.exportedLocations3D_SHP)
+            json["outputs"].push("exportedLocations3DSHP");
+        if (this.useTiePoints)
+            json["UseTiePoints"] = "true";
+        if (this.minPhotos)
+            json["MinPhotos"] = this.minPhotos.toString();
+        if (this.maxDist)
+            json["MaxDist"] = this.maxDist.toString();
+        if (this.exportSrs)
+            json["exportSrs"] = this.exportSrs;
+        return json;
+    }
+    /**
+     * Transform json received from cloud service into settings.
+     * @param {any} settingsJson Dictionary with settings received from cloud service.
+     * @returns {O3DJobSettings | Error} New settings, or an error message.
+     */
+    static fromJson(settingsJson) {
+        const newJobSettings = new O3DJobSettings();
+        try {
+            const inputsJson = settingsJson["inputs"];
+            for (const input of inputsJson) {
+                if (input["name"] === "orientedPhotos")
+                    newJobSettings.inputs.orientedPhotos = input["realityDataId"];
+                else if (input["name"] === "photoObjectDetector")
+                    newJobSettings.inputs.photoObjectDetector = input["realityDataId"];
+                else if (input["name"] === "pointClouds")
+                    newJobSettings.inputs.pointClouds = input["realityDataId"];
+                else if (input["name"] === "objects2D")
+                    newJobSettings.inputs.objects2D = input["realityDataId"];
+                else
+                    return TypeError("found non expected input name:" + input["name"]);
+            }
+            const outputsJson = settingsJson["outputs"];
+            for (const output of outputsJson) {
+                if (output["name"] === "objects2D")
+                    newJobSettings.outputs.objects2D = output["realityDataId"];
+                else if (output["name"] === "objects3D")
+                    newJobSettings.outputs.objects3D = output["realityDataId"];
+                else if (output["name"] === "exportedObjects3DDGN")
+                    newJobSettings.outputs.exportedObjects3D_DGN = output["realityDataId"];
+                else if (output["name"] === "exportedObjects3DCesium")
+                    newJobSettings.outputs.exportedObjects3D_cesium = output["realityDataId"];
+                else if (output["name"] === "exportedLocations3DSHP")
+                    newJobSettings.outputs.exportedLocations3D_SHP = output["realityDataId"];
+                else
+                    return TypeError("found non expected output name" + output["name"]);
+            }
+            if ("exportSrs" in settingsJson)
+                newJobSettings.exportSrs = settingsJson["exportSrs"];
+            if ("minPhotos" in settingsJson)
+                newJobSettings.minPhotos = JSON.parse(settingsJson["minPhotos"]);
+            if ("maxDist" in settingsJson)
+                newJobSettings.maxDist = JSON.parse(settingsJson["maxDist"]);
+            if ("useTiePoints" in settingsJson)
+                newJobSettings.useTiePoints = JSON.parse(settingsJson["useTiePoints"]);
+        }
+        catch (e) {
+            return e;
+        }
+        return newJobSettings;
+    }
+}
+exports.O3DJobSettings = O3DJobSettings;
+/**
+ * Possible inputs for a Segmentation 3D job.
+ */
+class S3DInputs {
+    constructor() {
+        /**
+         * Collection of point clouds.
+         * @type {string}
+         */
+        this.pointClouds = "";
+        /**
+         * Collection of meshes.
+         * @type {string}
+         */
+        this.meshes = "";
+        /**
+         * Point cloud segmentation detector.
+         * @type {string}
+         */
+        this.pointCloudSegmentationDetector = "";
+        /**
+         * Given 3D segmentation.
+         * @type {string}
+         */
+        this.segmentation3D = "";
+        /**
+         * Photos and their orientation.
+         * @type {string}
+         */
+        this.orientedPhotos = "";
+        /**
+         * Object detector to analyze oriented photos.
+         * @type {string}
+         */
+        this.photoObjectDetector = "";
+        /**
+         * Given 2D objects.
+         * @type {string}
+         */
+        this.objects2D = "";
+    }
+}
+/**
+ * Possible outputs for a Segmentation 3D job.
+ */
+class S3DOutputs {
+    constructor() {
+        /**
+         * 3D segmentation computed by current job.
+         * @type {string}
+         */
+        this.segmentation3D = "";
+        /**
+         * 3D segmentation as an OPC file.
+         * @type {string}
+         */
+        this.segmentedPointCloud = "";
+        /**
+         * 2D objects detected by current job.
+         * @type {string}
+         */
+        this.objects2D = "";
+        /**
+         * 3D segmentation exported as a POD file.
+         * @type {string}
+         */
+        this.exportedSegmentation3D_POD = "";
+        /**
+         * 3D segmentation exported as a LAS file.
+         * @type {string}
+         */
+        this.exportedSegmentation3D_LAS = "";
+        /**
+         * 3D segmentation exported as a LAZ file.
+         * @type {string}
+         */
+        this.exportedSegmentation3D_LAZ = "";
+        /**
+         * 3D segmentation exported as a PLY file.
+         * @type {string}
+         */
+        this.exportedSegmentation3D_PLY = "";
+        /**
+         * 3D objects inferred from 3D segmentation.
+         * @type {string}
+         */
+        this.objects3D = "";
+        /**
+         * DGN file export with 3D objects.
+         * @type {string}
+         */
+        this.exportedObjects3D_DGN = "";
+        /**
+         * Cesium 3D Tiles file export with 3D objects.
+         * @type {string}
+         */
+        this.exportedObjects3D_cesium = "";
+        /**
+         * ESRI SHP file export with locations of the 3D objects.
+         * @type {string}
+         */
+        this.exportedLocations3D_SHP = "";
+    }
+}
+/**
+ * Settings for Segmentation 3D jobs.
+ */
+class S3DJobSettings {
+    constructor() {
+        /**
+         * Type of job settings.
+         * @type {RDAJobType}
+         */
+        this.type = Utils_1.RDAJobType.S3D;
+        /**
+         * Possible inputs for this job settings.
+         * @type {S3DInputs}
+         */
+        this.inputs = new S3DInputs();
+        /**
+         * Possible outputs for this job settings.
+         * @type {S3DOutputs}
+         */
+        this.outputs = new S3DOutputs();
+        /**
+         * If confidence is saved on output files or not.
+         * @type {boolean}
+         */
+        this.saveConfidence = false;
+        /**
+         * SRS used by exports.
+         * @type {string}
+         */
+        this.exportSrs = "";
+    }
+    /**
+     * Transform settings into json.
+     * @returns {any} json with settings values.
+     */
+    toJson() {
+        const json = {};
+        json["inputs"] = [];
+        if (this.inputs.pointClouds)
+            json["inputs"].push({ "name": "pointClouds", "realityDataId": this.inputs.pointClouds });
+        if (this.inputs.meshes)
+            json["inputs"].push({ "name": "meshes", "realityDataId": this.inputs.meshes });
+        if (this.inputs.pointCloudSegmentationDetector)
+            json["inputs"].push({ "name": "pointCloudSegmentationDetector", "realityDataId": this.inputs.pointCloudSegmentationDetector });
+        if (this.inputs.segmentation3D)
+            json["inputs"].push({ "name": "segmentation3D", "realityDataId": this.inputs.segmentation3D });
+        if (this.inputs.orientedPhotos)
+            json["inputs"].push({ "name": "orientedPhotos", "realityDataId": this.inputs.orientedPhotos });
+        if (this.inputs.photoObjectDetector)
+            json["inputs"].push({ "name": "photoObjectDetector", "realityDataId": this.inputs.photoObjectDetector });
+        if (this.inputs.objects2D)
+            json["inputs"].push({ "name": "objects2D", "realityDataId": this.inputs.objects2D });
+        json["outputs"] = [];
+        if (this.outputs.segmentation3D)
+            json["outputs"].push("segmentation3D");
+        if (this.outputs.segmentedPointCloud)
+            json["outputs"].push("segmentedPointCloud");
+        if (this.outputs.objects2D)
+            json["outputs"].push("objects2D");
+        if (this.outputs.exportedSegmentation3D_POD)
+            json["outputs"].push("exportedSegmentation3DPOD");
+        if (this.outputs.exportedSegmentation3D_LAS)
+            json["outputs"].push("exportedSegmentation3DLAS");
+        if (this.outputs.exportedSegmentation3D_LAZ)
+            json["outputs"].push("exportedSegmentation3DLAZ");
+        if (this.outputs.exportedSegmentation3D_PLY)
+            json["outputs"].push("exportedSegmentation3DPLY");
+        if (this.outputs.objects3D)
+            json["outputs"].push("objects3D");
+        if (this.outputs.exportedObjects3D_DGN)
+            json["outputs"].push("exportedObjects3DDGN");
+        if (this.outputs.exportedObjects3D_cesium)
+            json["outputs"].push("exportedObjects3DCesium");
+        if (this.outputs.exportedLocations3D_SHP)
+            json["outputs"].push("exportedLocations3DSHP");
+        if (this.exportSrs)
+            json["exportSrs"] = this.exportSrs;
+        if (this.saveConfidence)
+            json["saveConfidence"] = "true";
+        return json;
+    }
+    /**
+     * Transform json received from cloud service into settings.
+     * @param {any} settingsJson Dictionary with settings received from cloud service.
+     * @returns {S3DJobSettings | Error} New settings, or an error message.
+     */
+    static fromJson(settingsJson) {
+        const newJobSettings = new S3DJobSettings();
+        try {
+            const inputsJson = settingsJson["inputs"];
+            for (const input of inputsJson) {
+                if (input["name"] === "pointClouds")
+                    newJobSettings.inputs.pointClouds = input["realityDataId"];
+                else if (input["name"] === "meshes")
+                    newJobSettings.inputs.meshes = input["realityDataId"];
+                else if (input["name"] === "pointCloudSegmentationDetector")
+                    newJobSettings.inputs.pointCloudSegmentationDetector = input["realityDataId"];
+                else if (input["name"] === "segmentation3D")
+                    newJobSettings.inputs.segmentation3D = input["realityDataId"];
+                else if (input["name"] === "orientedPhotos")
+                    newJobSettings.inputs.orientedPhotos = input["realityDataId"];
+                else if (input["name"] === "photoObjectDetector")
+                    newJobSettings.inputs.photoObjectDetector = input["realityDataId"];
+                else if (input["name"] === "objects2D")
+                    newJobSettings.inputs.objects2D = input["realityDataId"];
+                else
+                    return TypeError("found non expected input name:" + input["name"]);
+            }
+            const outputsJson = settingsJson["outputs"];
+            for (const output of outputsJson) {
+                if (output["name"] === "segmentation3D")
+                    newJobSettings.outputs.segmentation3D = output["realityDataId"];
+                else if (output["name"] === "segmentedPointCloud")
+                    newJobSettings.outputs.segmentedPointCloud = output["realityDataId"];
+                else if (output["name"] === "objects2D")
+                    newJobSettings.outputs.objects2D = output["realityDataId"];
+                else if (output["name"] === "exportedSegmentation3DPOD")
+                    newJobSettings.outputs.exportedSegmentation3D_POD = output["realityDataId"];
+                else if (output["name"] === "exportedSegmentation3DLAS")
+                    newJobSettings.outputs.exportedSegmentation3D_LAS = output["realityDataId"];
+                else if (output["name"] === "exportedSegmentation3DLAZ")
+                    newJobSettings.outputs.exportedSegmentation3D_LAZ = output["realityDataId"];
+                else if (output["name"] === "exportedSegmentation3DPLY")
+                    newJobSettings.outputs.exportedSegmentation3D_PLY = output["realityDataId"];
+                else if (output["name"] === "objects3D")
+                    newJobSettings.outputs.objects3D = output["realityDataId"];
+                else if (output["name"] === "exportedObjects3DDGN")
+                    newJobSettings.outputs.exportedObjects3D_DGN = output["realityDataId"];
+                else if (output["name"] === "exportedObjects3DCesium")
+                    newJobSettings.outputs.exportedObjects3D_cesium = output["realityDataId"];
+                else if (output["name"] === "exportedLocations3DSHP")
+                    newJobSettings.outputs.exportedLocations3D_SHP = output["realityDataId"];
+                else
+                    return TypeError("found non expected output name:" + output["name"]);
+            }
+            if ("saveConfidence" in settingsJson)
+                newJobSettings.saveConfidence = JSON.parse(settingsJson["saveConfidence"]);
+            if ("exportSrs" in settingsJson)
+                newJobSettings.exportSrs = settingsJson["exportSrs"];
+        }
+        catch (e) {
+            return e;
+        }
+        return newJobSettings;
+    }
+}
+exports.S3DJobSettings = S3DJobSettings;
+/**
+ * Possible inputs for a Line Detection 3D job.
+ */
+class L3DInputs {
+    constructor() {
+        /**
+         * Collection of point clouds.
+         * @type {string}
+         */
+        this.pointClouds = "";
+        /**
+         * Collection of meshes.
+         * @type {string}
+         */
+        this.meshes = "";
+        /**
+         * Point cloud segmentation detector.
+         * @type {string}
+         */
+        this.pointCloudSegmentationDetector = "";
+        /**
+         * Given 3D segmentation.
+         * @type {string}
+         */
+        this.segmentation3D = "";
+        /**
+         * Photos and their orientation.
+         * @type {string}
+         */
+        this.orientedPhotos = "";
+        /**
+         * Segmentation detector to apply to oriented photos.
+         * @type {string}
+         */
+        this.photoSegmentationDetector = "";
+        /**
+         * Given 2D segmentation.
+         * @type {string}
+         */
+        this.segmentation2D = "";
+    }
+}
+/**
+ * Possible outputs for a Line Detection 3D job.
+ */
+class L3DOutputs {
+    constructor() {
+        /**
+         * 3D segmentation performed by current job.
+         * @type {string}
+         */
+        this.segmentation3D = "";
+        /**
+         * 3D segmentation as an OPC file.
+         * @type {string}
+         */
+        this.segmentedPointCloud = "";
+        /**
+         * 2D segmentation performed by current job.
+         * @type {string}
+         */
+        this.segmentation2D = "";
+        // this.segmented_photos = ""
+        /**
+         * Detected 3D lines.
+         * @type {string}
+         */
+        this.lines3D = "";
+        /**
+         * DGN file export with 3D lines.
+         * @type {string}
+         */
+        this.exportedLines3D_DGN = "";
+        /**
+         * Cesium 3D Tiles file export with 3D lines.
+         * @type {string}
+         */
+        this.exportedLines3D_cesium = "";
+    }
+}
+/**
+ * Settings for Line Detection 3D jobs.
+ */
+class L3DJobSettings {
+    constructor() {
+        /**
+         * Type of job settings.
+         * @type {RDAJobType}
+         */
+        this.type = Utils_1.RDAJobType.L3D;
+        /**
+         * Possible inputs for this job settings.
+         * @type {L3DInputs}
+         */
+        this.inputs = new L3DInputs();
+        /**
+         * Possible outputs for this job settings.
+         * @type {L3DOutputs}
+         */
+        this.outputs = new L3DOutputs();
+        /**
+         * Estimation 3D line width at each vertex.
+         * @type {boolean}
+         */
+        this.computeLineWidth = false;
+        /**
+         * Remove 3D lines with total length smaller than this value.
+         * @type {number}
+         */
+        this.removeSmallComponents = 0;
+        /**
+         * SRS used by exports.
+         * @type {string}
+         */
+        this.exportSrs = "";
+    }
+    /**
+     * Transform settings into json.
+     * @returns {any} json with settings values.
+     */
+    toJson() {
+        const json = {};
+        json["inputs"] = [];
+        if (this.inputs.pointClouds)
+            json["inputs"].push({ "name": "pointClouds", "realityDataId": this.inputs.pointClouds });
+        if (this.inputs.meshes)
+            json["inputs"].push({ "name": "meshes", "realityDataId": this.inputs.meshes });
+        if (this.inputs.pointCloudSegmentationDetector)
+            json["inputs"].push({ "name": "pointCloudSegmentationDetector", "realityDataId": this.inputs.pointCloudSegmentationDetector });
+        if (this.inputs.segmentation3D)
+            json["inputs"].push({ "name": "segmentation3D", "realityDataId": this.inputs.segmentation3D });
+        if (this.inputs.orientedPhotos)
+            json["inputs"].push({ "name": "orientedPhotos", "realityDataId": this.inputs.orientedPhotos });
+        if (this.inputs.photoSegmentationDetector)
+            json["inputs"].push({ "name": "photoSegmentationDetector", "realityDataId": this.inputs.photoSegmentationDetector });
+        if (this.inputs.segmentation2D)
+            json["inputs"].push({ "name": "segmentation2D", "realityDataId": this.inputs.segmentation2D });
+        json["outputs"] = [];
+        if (this.outputs.segmentation3D)
+            json["outputs"].push("segmentation3D");
+        if (this.outputs.segmentedPointCloud)
+            json["outputs"].push("segmentedPointCloud");
+        if (this.outputs.segmentation2D)
+            json["outputs"].push("segmentation2D");
+        // if(this.outputs.segmented_photos:
+        //     json["outputs"].push("segmentedPhotos"})
+        if (this.outputs.lines3D)
+            json["outputs"].push("lines3D");
+        if (this.outputs.exportedLines3D_DGN)
+            json["outputs"].push("exportedLines3DDGN");
+        if (this.outputs.exportedLines3D_cesium)
+            json["outputs"].push("exportedLines3DCesium");
+        if (this.computeLineWidth)
+            json["computeLineWidth"] = "true";
+        if (this.removeSmallComponents)
+            json["removeSmallComponents"] = this.removeSmallComponents.toString();
+        if (this.exportSrs)
+            json["exportSrs"] = this.exportSrs;
+        return json;
+    }
+    /**
+     * Transform json received from cloud service into settings.
+     * @param {any} settingsJson Dictionary with settings received from cloud service.
+     * @returns {L3DJobSettings | Error} New settings, or an error message.
+     */
+    static fromJson(settingsJson) {
+        const newJobSettings = new L3DJobSettings();
+        try {
+            const inputsJson = settingsJson["inputs"];
+            for (const input of inputsJson) {
+                if (input["name"] === "pointClouds")
+                    newJobSettings.inputs.pointClouds = input["realityDataId"];
+                else if (input["name"] === "meshes")
+                    newJobSettings.inputs.meshes = input["realityDataId"];
+                else if (input["name"] === "pointCloudSegmentationDetector")
+                    newJobSettings.inputs.pointCloudSegmentationDetector = input["realityDataId"];
+                else if (input["name"] === "segmentation3D")
+                    newJobSettings.inputs.segmentation3D = input["realityDataId"];
+                else if (input["name"] === "orientedPhotos")
+                    newJobSettings.inputs.orientedPhotos = input["realityDataId"];
+                else if (input["name"] === "photoSegmentationDetector")
+                    newJobSettings.inputs.photoSegmentationDetector = input["realityDataId"];
+                else if (input["name"] === "segmentation2D")
+                    newJobSettings.inputs.segmentation2D = input["realityDataId"];
+                else
+                    return TypeError("found non expected input name:" + input["name"]);
+            }
+            const outputsJson = settingsJson["outputs"];
+            for (const output of outputsJson) {
+                if (output["name"] === "segmentation3D")
+                    newJobSettings.outputs.segmentation3D = output["realityDataId"];
+                else if (output["name"] === "segmentedPointCloud")
+                    newJobSettings.outputs.segmentedPointCloud = output["realityDataId"];
+                else if (output["name"] === "segmentation2D")
+                    newJobSettings.outputs.segmentation2D = output["realityDataId"];
+                // else if(output["name"] === "segmentedPhotos")
+                //     newJobSettings.outputs.segmented_photos = output["realityDataId"]
+                else if (output["name"] === "lines3D")
+                    newJobSettings.outputs.lines3D = output["realityDataId"];
+                else if (output["name"] === "exportedLines3DDGN")
+                    newJobSettings.outputs.exportedLines3D_DGN = output["realityDataId"];
+                else if (output["name"] === "exportedLines3DCesium")
+                    newJobSettings.outputs.exportedLines3D_cesium = output["realityDataId"];
+                else
+                    return TypeError("found non expected output name:" + output["name"]);
+            }
+            if ("computeLineWidth" in settingsJson)
+                newJobSettings.computeLineWidth = JSON.parse(settingsJson["computeLineWidth"]);
+            if ("removeSmallComponents" in settingsJson)
+                newJobSettings.removeSmallComponents = JSON.parse(settingsJson["removeSmallComponents"]);
+            if ("exportSrs" in settingsJson)
+                newJobSettings.exportSrs = settingsJson["exportSrs"];
+        }
+        catch (e) {
+            return e;
+        }
+        return newJobSettings;
+    }
+}
+exports.L3DJobSettings = L3DJobSettings;
+/**
+ * Possible inputs for a  Change Detection job.
+ */
+class ChangeDetectionInputs {
+    constructor() {
+        /**
+         * First collection of point clouds.
+         * @type {string}
+         */
+        this.pointClouds1 = "";
+        /**
+         * Second collection of point clouds.
+         * @type {string}
+         */
+        this.pointClouds2 = "";
+        /**
+         * First collection of meshes.
+         * @type {string}
+         */
+        this.meshes1 = "";
+        /**
+         * Second collection of meshes.
+         * @type {string}
+         */
+        this.meshes2 = "";
+    }
+}
+/**
+ * Possible outputs for a  Change Detection job.
+ */
+class ChangeDetectionOutputs {
+    constructor() {
+        /**
+         * Regions with changes.
+         * @type {string}
+         */
+        this.objects3D = "";
+        /**
+         * ESRI SHP file export with locations of regions with changes.
+         * @type {string}
+         */
+        this.exportedLocations3D_SHP = "";
+    }
+}
+/**
+ * Settings for Change Detection jobs.
+ */
+class ChangeDetectionJobSettings {
+    constructor() {
+        /**
+         * Type of job settings.
+         * @type {RDAJobType}
+         */
+        this.type = Utils_1.RDAJobType.ChangeDetection;
+        /**
+         * Possible inputs for this job settings.
+         * @type {ChangeDetectionInputs}
+         */
+        this.inputs = new ChangeDetectionInputs();
+        /**
+         * Possible outputs for this job settings.
+         * @type {ChangeDetectionOutputs}
+         */
+        this.outputs = new ChangeDetectionOutputs();
+        /**
+         * Low threshold to detect color changes (hysteresis detection).
+         * @type {number}
+         */
+        this.colorThresholdLow = 0.;
+        /**
+         * High threshold to detect color changes (hysteresis detection).
+         * @type {number}
+         */
+        this.colorThresholdHigh = 0.;
+        /**
+         * Low threshold to detect spatial changes (hysteresis detection).
+         * @type {number}
+         */
+        this.distThresholdLow = 0.;
+        /**
+         * High threshold to detect spatial changes (hysteresis detection).
+         * @type {number}
+         */
+        this.distThresholdHigh = 0.;
+        /**
+         * Target point cloud resolution when starting from meshes.
+         * @type {number}
+         */
+        this.resolution = 0.;
+        /**
+         * Minimum number of points in a region to be considered as a change.
+         * @type {number}
+         */
+        this.minPoints = 0;
+        /**
+         * SRS used by exports.
+         * @type {string}
+         */
+        this.exportSrs = "";
+    }
+    /**
+     * Transform settings into json.
+     * @returns {any} json with settings values.
+     */
+    toJson() {
+        const json = {};
+        json["inputs"] = [];
+        if (this.inputs.pointClouds1)
+            json["inputs"].push({ "name": "pointClouds1", "realityDataId": this.inputs.pointClouds1 });
+        if (this.inputs.pointClouds2)
+            json["inputs"].push({ "name": "pointClouds2", "realityDataId": this.inputs.pointClouds2 });
+        if (this.inputs.meshes1)
+            json["inputs"].push({ "name": "meshes1", "realityDataId": this.inputs.meshes1 });
+        if (this.inputs.meshes2)
+            json["inputs"].push({ "name": "meshes2", "realityDataId": this.inputs.meshes2 });
+        json["outputs"] = [];
+        if (this.outputs.objects3D)
+            json["outputs"].push("objects3D");
+        if (this.outputs.exportedLocations3D_SHP)
+            json["outputs"].push("exportedLocations3DSHP");
+        if (this.colorThresholdLow)
+            json["colorThresholdLow"] = this.colorThresholdLow.toString();
+        if (this.colorThresholdHigh)
+            json["colorThresholdHigh"] = this.colorThresholdHigh.toString();
+        if (this.distThresholdLow)
+            json["distThresholdLow"] = this.distThresholdLow.toString();
+        if (this.distThresholdHigh)
+            json["distThresholdHigh"] = this.distThresholdHigh.toString();
+        if (this.resolution)
+            json["resolution"] = this.resolution.toString();
+        if (this.minPoints)
+            json["minPoints"] = this.minPoints.toString();
+        if (this.exportSrs)
+            json["exportSrs"] = this.exportSrs;
+        return json;
+    }
+    /**
+     * Transform json received from cloud service into settings.
+     * @param {any} settingsJson Dictionary with settings received from cloud service.
+     * @returns {ChangeDetectionJobSettings | Error} New settings.
+     */
+    static fromJson(settingsJson) {
+        const newJobSettings = new ChangeDetectionJobSettings();
+        try {
+            const inputsJson = settingsJson["inputs"];
+            for (const input of inputsJson) {
+                if (input["name"] === "pointClouds1")
+                    newJobSettings.inputs.pointClouds1 = input["realityDataId"];
+                else if (input["name"] === "pointClouds2")
+                    newJobSettings.inputs.pointClouds2 = input["realityDataId"];
+                else if (input["name"] === "meshes1")
+                    newJobSettings.inputs.meshes1 = input["realityDataId"];
+                else if (input["name"] === "meshes2")
+                    newJobSettings.inputs.meshes2 = input["realityDataId"];
+                else
+                    return TypeError("found non expected input name:" + input["name"]);
+            }
+            const outputsJson = settingsJson["outputs"];
+            for (const output of outputsJson) {
+                if (output["name"] === "objects3D")
+                    newJobSettings.outputs.objects3D = output["realityDataId"];
+                else if (output["name"] === "exportedLocations3DSHP")
+                    newJobSettings.outputs.exportedLocations3D_SHP = output["realityDataId"];
+                else
+                    return TypeError("found non expected output name:" + output["name"]);
+            }
+            if ("colorThresholdLow" in settingsJson)
+                newJobSettings.colorThresholdLow = JSON.parse(settingsJson["colorThresholdLow"]);
+            if ("colorThresholdHigh" in settingsJson)
+                newJobSettings.colorThresholdHigh = JSON.parse(settingsJson["colorThresholdHigh"]);
+            if ("distThresholdLow" in settingsJson)
+                newJobSettings.distThresholdLow = JSON.parse(settingsJson["distThresholdLow"]);
+            if ("distThresholdHigh" in settingsJson)
+                newJobSettings.distThresholdHigh = JSON.parse(settingsJson["distThresholdHigh"]);
+            if ("resolution" in settingsJson)
+                newJobSettings.resolution = JSON.parse(settingsJson["resolution"]);
+            if ("minPoints" in settingsJson)
+                newJobSettings.minPoints = JSON.parse(settingsJson["minPoints"]);
+            if ("exportSrs" in settingsJson)
+                newJobSettings.exportSrs = settingsJson["exportSrs"];
+        }
+        catch (e) {
+            return e;
+        }
+        return newJobSettings;
+    }
+}
+exports.ChangeDetectionJobSettings = ChangeDetectionJobSettings;
+//# sourceMappingURL=Settings.js.map</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ChangeDetectionInputs.html">ChangeDetectionInputs</a></li><li><a href="ChangeDetectionJobSettings.html">ChangeDetectionJobSettings</a></li><li><a href="ChangeDetectionOutputs.html">ChangeDetectionOutputs</a></li><li><a href="L3DInputs.html">L3DInputs</a></li><li><a href="L3DJobSettings.html">L3DJobSettings</a></li><li><a href="L3DOutputs.html">L3DOutputs</a></li><li><a href="O2DInputs.html">O2DInputs</a></li><li><a href="O2DJobSettings.html">O2DJobSettings</a></li><li><a href="O2DOutputs.html">O2DOutputs</a></li><li><a href="O3DInputs.html">O3DInputs</a></li><li><a href="O3DJobSettings.html">O3DJobSettings</a></li><li><a href="O3DOutputs.html">O3DOutputs</a></li><li><a href="S2DInputs.html">S2DInputs</a></li><li><a href="S2DJobSettings.html">S2DJobSettings</a></li><li><a href="S2DOutputs.html">S2DOutputs</a></li><li><a href="S3DInputs.html">S3DInputs</a></li><li><a href="S3DJobSettings.html">S3DJobSettings</a></li><li><a href="S3DOutputs.html">S3DOutputs</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Oct 18 2022 17:23:05 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
