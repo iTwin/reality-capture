@@ -1,0 +1,51 @@
+{
+	"name": "insights-ts-sdk",
+	"version": "1.0.0",
+	"description": "Typescript RDAS, RDS, and CCCS SDK",
+	"main": "./lib/index.js",
+	"scripts": {
+		"build": "npm run clean && tsc",
+		"clean": "rimraf lib build .rush",
+		"lint": "eslint ./src --ext .ts,.tsx ",
+		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
+		"start": "node ./lib/index.js"
+	},
+	"keywords": [],
+	"author": "dbiguenet",
+	"license": "ISC",
+	"dependencies": {
+		"@azure/storage-blob": "^12.8.0",
+		"@itwin/core-backend": "^3.2.7",
+		"@itwin/core-bentley": "^3.2.7",
+		"@itwin/core-geometry": "^3.2.7",
+		"@itwin/reality-data-client": "^0.9.0",
+		"@itwin/service-authorization": "^0.6.2",
+		"@types/uuid": "^8.3.4",
+		"@xmldom/xmldom": "^0.8.2",
+		"dotenv": "^10.0.0",
+		"minimist": "^1.2.6",
+		"node-fetch": "^2.6.0",
+		"uuid": "^8.3.2"
+	},
+	"devDependencies": {
+		"@itwin/build-tools": "^3.2.7",
+		"@types/node": "^16.11.34",
+		"@types/node-fetch": "^2.6.2",
+		"@typescript-eslint/eslint-plugin": "^5.30.6",
+		"@typescript-eslint/parser": "^5.30.6",
+		"cross-env": "^5.1.4",
+		"eslint": "^8.19.0",
+		"rimraf": "^3.0.2",
+		"typescript": "^4.5.1"
+	},
+	"browserslist": [
+		"last 4 chrome version",
+		"last 4 firefox version",
+		"last 4 safari version",
+		"last 4 ios version",
+		"last 4 ChromeAndroid version",
+		"last 4 edge version",
+		"not dead",
+		"not <0.2%"
+	]
+}
