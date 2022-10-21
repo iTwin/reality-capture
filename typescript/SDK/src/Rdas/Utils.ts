@@ -1,16 +1,5 @@
 import { JobDates } from "../CommonData";
-import { JobSettings } from "./Settings";
-
-/** Possible types of a job. */
-export enum RDAJobType {
-    NONE = "not recognized",
-    O2D = "objects2D",
-    S2D = "segmentation2D",
-    O3D = "objects3D",
-    S3D = "segmentation3D",
-    ChangeDetection = "changeDetection",
-    L3D = "lines3D",
-}
+import { JobSettings, RDAJobType } from "./Settings";
 
 /**
  * Parameters for estimating job cost before its processing.
@@ -38,7 +27,7 @@ export interface RDACostParameters {
 
 /**
  * Properties of a job.
- * Convenience class to stock all properties of a job in a simple way.
+ * Convenience interface to stock all properties of a job in a simple way.
  */
 export interface RDAJobProperties {
     name: string;

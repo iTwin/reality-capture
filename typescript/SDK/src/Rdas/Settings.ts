@@ -1,4 +1,14 @@
-import { RDAJobType } from "./Utils";
+
+/** Possible types of a job. */
+export enum RDAJobType {
+    NONE = "not recognized",
+    O2D = "objects2D",
+    S2D = "segmentation2D",
+    O3D = "objects3D",
+    S3D = "segmentation3D",
+    ChangeDetection = "changeDetection",
+    L3D = "lines3D",
+}
 
 /**
  * Possible inputs for an Object Detection 2D job.

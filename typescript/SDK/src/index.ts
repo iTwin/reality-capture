@@ -1,3 +1,6 @@
+import { ContextCaptureService } from "./Cccs/Service";
+import { CCJobSettings } from "./Cccs/Settings";
+import { CCJobType } from "./Cccs/Utils";
 import { RealityDataAnalysisService } from "./Rdas/Service";
 import { O2DJobSettings } from "./Rdas/Settings";
 import { RealityDataTransfer } from "./Utils/RealityDataTransfer";
@@ -38,9 +41,9 @@ async function main() {
 
     // ----------RDS Utils---------------
 
-    const dataTransfer = new RealityDataTransfer("https://qa-api.bentley.com/realitydata/", 
+    /* const dataTransfer = new RealityDataTransfer("https://qa-api.bentley.com/realitydata/", 
         "service-pJ0wfNZEIWcpVD98kt4QuHqQy", 
-        "TcloM9JosQrTnSYhRVoQKdgv4ZR8qU/a37EWuVJKVT4ARSU4JmctyKI32n95tI3C7jm8tLJCDuop1+bR3BMZzg==");
+        "TcloM9JosQrTnSYhRVoQKdgv4ZR8qU/a37EWuVJKVT4ARSU4JmctyKI32n95tI3C7jm8tLJCDuop1+bR3BMZzg=="); */
 
     /* const response = await dataTransfer.uploadRealityData("D:\\O2D-Motos\\images", "O2Dsdk", RealityDataType.CC_IMAGE_COLLECTION, "ad14b27c-91ea-4492-9433-1e2d6903b5e4");
     if(response instanceof Error)
@@ -59,7 +62,7 @@ async function main() {
             console.log("download response : ", response2);
     } */
 
-    const refs = new ReferenceTable();
+    /* const refs = new ReferenceTable();
     refs.addReference("D:\\O2D-Motos\\images", "3a095348-5a5f-4bcd-a93c-3f24151c7e93");
     const response =  await dataTransfer.uploadContextScene("D:\\O2D-Motos\\Scene", "test upload scene sdk (with refs)", 
         "ad14b27c-91ea-4492-9433-1e2d6903b5e4", refs);
@@ -69,8 +72,50 @@ async function main() {
         const response2 = await dataTransfer.downloadContextScene(response, "D:\\output", refs);
         if(response2 instanceof Error)
             console.log("download response : ", response2);
-    }
+    } */
 
+
+    const service = new ContextCaptureService("https://qa-api.bentley.com/contextcapture/", "service-pJ0wfNZEIWcpVD98kt4QuHqQy", 
+        "TcloM9JosQrTnSYhRVoQKdgv4ZR8qU/a37EWuVJKVT4ARSU4JmctyKI32n95tI3C7jm8tLJCDuop1+bR3BMZzg==");
+    await service.connect();
+
+    await service.cancelJob("c15798c0-fb1c-4dba-909c-810319a1e3d5");
+
+    const workspaceId = await service.createWorkspace("test workspace sdk", "ad14b27c-91ea-4492-9433-1e2d6903b5e4");
+    if(workspaceId instanceof Error) {
+        console.log("error while creating workspace");
+        return;
+    }
+    console.log("id : ", workspaceId);
+    let settings = new CCJobSettings();
+    settings.inputs = ["c5da636f-4f9d-480f-b4fc-3aa1f7d1acaf",  "9b110a00-ccbd-4fc0-8b85-4101c967183d"];
+    settings.outputs.threeMX = "threeMX";
+    const jobId = await service.createJob(CCJobType.FULL, settings, "Test CCCS SDK", workspaceId, "ad14b27c-91ea-4492-9433-1e2d6903b5e4");
+    if(jobId instanceof Error) {
+        console.log("error while creating cccs job : " + jobId);
+        return;
+    }
+    console.log("id : ", jobId);
+    const err = await service.submitJob(jobId);
+    if(err instanceof Error) {
+        console.log("error while submiting cccs job : " + err);
+        return;
+    }
+    console.log("job submitted");
+
+    const props = await service.getJobProperties(jobId);
+    if(props instanceof Error) {
+        console.log("error while getting props of cccs job : " + props);
+        return;
+    }
+    console.log("props : ", props);
+
+    const settings2 = await service.getJobSettings(jobId);
+    if(settings2 instanceof Error) {
+        console.log("error while getting settings of cccs job");
+        return;
+    }
+    console.log("get settings : ", settings2);
 }
 
 main();
