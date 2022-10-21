@@ -191,14 +191,14 @@ class RealityDataAnalysisService:
             cost_estimation = RDAJobCostParameters()
             estimate = data["job"].get("costEstimation", None)
             if estimate is not None:
-                cost_estimation.giga_pixels = estimate.get("gigaPixels", 0.0)
-                cost_estimation.number_photos = estimate.get("numberOfPhotos", 0)
-                cost_estimation.scene_width = estimate.get("sceneWidth", 0.0)
-                cost_estimation.scene_height = estimate.get("sceneHeight", 0.0)
-                cost_estimation.scene_length = estimate.get("sceneLength", 0.0)
-                cost_estimation.detector_scale = estimate.get("detectorScale", 0.0)
-                cost_estimation.detector_cost = estimate.get("detectorCost", 0.0)
-                cost_estimation.estimated_cost = estimate.get("estimatedCost", 0.0)
+                cost_estimation.giga_pixels = float(estimate.get("gigaPixels", 0.0))
+                cost_estimation.number_photos = int(estimate.get("numberOfPhotos", 0))
+                cost_estimation.scene_width = float(estimate.get("sceneWidth", 0.0))
+                cost_estimation.scene_height = float(estimate.get("sceneHeight", 0.0))
+                cost_estimation.scene_length = float(estimate.get("sceneLength", 0.0))
+                cost_estimation.detector_scale = float(estimate.get("detectorScale", 0.0))
+                cost_estimation.detector_cost = float(estimate.get("detectorCost", 0.0))
+                cost_estimation.estimated_cost = float(estimate.get("estimatedCost", 0.0))
 
             created_date_time = data["job"].get("createdDateTime", "")
             execution = data["job"].get("executionInformation", None)
@@ -209,8 +209,8 @@ class RealityDataAnalysisService:
                     started_date_time=execution.get("startedDateTime", ""),
                     ended_date_time=execution.get("endedDateTime", ""),
                 )
-                exit_code = execution.get("exitCode", 0)
-                estimated_units = execution.get("estimatedUnits", 0.0)
+                exit_code = int(execution.get("exitCode", 0))
+                estimated_units = float(execution.get("estimatedUnits", 0.0))
             else:
                 job_date_time = JobDateTime(created_date_time=created_date_time)
                 exit_code = 0
@@ -352,7 +352,7 @@ class RealityDataAnalysisService:
         """
         ret = self.connect()
         if ret.is_error():
-            return ReturnValue(value=JobProgress(), error=ret.error)
+            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=ret.error)
         self._connection.request(
             "GET",
             f"/realitydataanalysis/jobs/{job_id}/progress",
@@ -393,7 +393,7 @@ class RealityDataAnalysisService:
         """
         ret = self.connect()
         if ret.is_error():
-            return ReturnValue(value=False, error=ret.error)
+            return ReturnValue(value=-1.0, error=ret.error)
         jc_dict = {"costEstimation": cost_parameters.to_json()}
         job_json = json.dumps(jc_dict)
         self._connection.request(
@@ -405,7 +405,7 @@ class RealityDataAnalysisService:
         response = self._connection.getresponse()
         code = Code(response)
         if not code.success():
-            return ReturnValue(value=RDAJobCostParameters(), error=code.error_message())
+            return ReturnValue(value=-1.0, error=code.error_message())
         data = code.response()
         ret = RDAJobCostParameters.from_json(data["job"]["costEstimation"])
         return ReturnValue(value=ret.value.estimated_cost, error=ret.error)
@@ -461,4 +461,3 @@ class RealityDataAnalysisService:
         if not code.success():
             return ReturnValue(value=False, error=code.error_message())
         return ReturnValue(value=True, error="")
-
