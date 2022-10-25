@@ -1,9 +1,8 @@
 import { IModelHost } from "@itwin/core-backend";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import { JobDates, JobProgress } from "../CommonData";
-import { CCJobSettings } from "./Settings";
 import fetch from "node-fetch";
-import { CCCostParameters, CCJobProperties, CCJobType, CCWorkspaceProperties } from "./Utils";
+import { CCCostParameters, CCJobProperties, CCJobSettings, CCJobType, CCWorkspaceProperties } from "./Utils";
 
 export class ContextCaptureService {
     /** Url of the Context Capture Service. */
@@ -148,15 +147,13 @@ export class ContextCaptureService {
      * @param iTwinId iTwin associated to this job.
      * @returns Created job id, or a potential error message.
      */
-    public async createJob(type: CCJobType, settings: CCJobSettings, name: string, workspaceId: string, 
-        iTwinId: string): Promise<string | Error> {
+    public async createJob(type: CCJobType, settings: CCJobSettings, name: string, workspaceId: string): Promise<string | Error> {
         const settingsJson = settings.toJson();
         const body = {
             "type": type,
             "name": name,
-            "iTwinId": iTwinId,
-            "inputs": settingsJson.inputs, // todo
-            "settings": settingsJson.settings, // todo
+            "inputs": settingsJson.inputs,
+            "settings": settingsJson.settings,
             "workspaceId": workspaceId,
         };
         

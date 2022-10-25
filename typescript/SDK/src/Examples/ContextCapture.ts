@@ -4,8 +4,7 @@ import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
 import { ReferenceTable } from "../Utils/ReferenceTable";
 import * as fs from "fs";
 import { JobState, RealityDataType } from "../CommonData";
-import { CCJobSettings } from "../Cccs/Settings";
-import { CCJobType } from "../Cccs/Utils";
+import { CCJobSettings, CCJobType, CCMeshQuality } from "../Cccs/Utils";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -82,10 +81,11 @@ async function main() {
     let settings = new CCJobSettings();
     settings.inputs = [references.getCloudIdFromLocalPath(ccImageCollection), references.getCloudIdFromLocalPath(ccOrientations)];
     settings.outputs.threeMX = "threeMX";
+    settings.meshQuality = CCMeshQuality.MEDIUM;
 
     console.log("Settings created");
 
-    const jobId = await contextCaptureService.createJob(CCJobType.FULL, settings, jobName, workspaceId, projectId);
+    const jobId = await contextCaptureService.createJob(CCJobType.FULL, settings, jobName, workspaceId);
     if(jobId instanceof Error) {
         console.log("Error in job create:" + jobId);
         return;

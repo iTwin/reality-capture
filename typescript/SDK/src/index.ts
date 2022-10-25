@@ -1,5 +1,4 @@
 import { ContextCaptureService } from "./Cccs/Service";
-import { CCJobSettings } from "./Cccs/Settings";
 import { CCJobType } from "./Cccs/Utils";
 import { RealityDataAnalysisService } from "./Rdas/Service";
 import { O2DJobSettings } from "./Rdas/Settings";

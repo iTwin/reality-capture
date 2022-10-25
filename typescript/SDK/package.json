@@ -1,7 +1,7 @@
 {
-	"name": "insights-ts-sdk",
+	"name": "reality-apis-sdk-ts",
 	"version": "1.0.0",
-	"description": "Typescript RDAS, RDS, and CCCS SDK",
+	"description": "Typescript RDAS and CCCS SDK",
 	"main": "./lib/index.js",
 	"scripts": {
 		"build": "npm run clean && tsc",

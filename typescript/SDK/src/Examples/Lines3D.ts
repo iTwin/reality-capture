@@ -11,7 +11,7 @@ export async function sleep(ms: number) { return new Promise(resolve => setTimeo
 async function runContextCaptureExample() {
     const ccImageCollection = "D:\\Lines3D\\Images";
     const orientedPhotosContextScene = "D:\\Lines3D\\OrientedPhotos";
-    const photoObjectDetector = "D:\\Lines3D\\CracksA_v1";
+    const photoSegmentationDetector = "D:\\Lines3D\\CracksA_v1";
     const mesh = "D:\\Lines3D\\3MX";
     const meshContextScene = "D:\\Lines3D\\Mesh3MX";
     const outputPath = "D:\\output";
@@ -70,15 +70,15 @@ async function runContextCaptureExample() {
     }
 
     // Upload Detector
-    if(!references.hasLocalPath(photoObjectDetector)) {
+    if(!references.hasLocalPath(photoSegmentationDetector)) {
         console.log("No reference to detector found, uploading local files to cloud");
-        const id = await realityDataService.uploadRealityData(photoObjectDetector, detectorName, RealityDataType.CONTEXT_DETECTOR, 
+        const id = await realityDataService.uploadRealityData(photoSegmentationDetector, detectorName, RealityDataType.CONTEXT_DETECTOR, 
             projectId);
         if(id instanceof Error) {
             console.log("Error in upload:", id);
             return;
         }
-        references.addReference(photoObjectDetector, id);
+        references.addReference(photoSegmentationDetector, id);
     }
 
     // Upload Mesh
@@ -113,7 +113,7 @@ async function runContextCaptureExample() {
 
     const settings = new L3DJobSettings();
     settings.inputs.orientedPhotos = references.getCloudIdFromLocalPath(orientedPhotosContextScene);
-    settings.inputs.photoSegmentationDetector = references.getCloudIdFromLocalPath(photoObjectDetector);
+    settings.inputs.photoSegmentationDetector = references.getCloudIdFromLocalPath(photoSegmentationDetector);
     settings.inputs.meshes = references.getCloudIdFromLocalPath(meshContextScene);
     settings.outputs.lines3D = "lines3D";
     settings.outputs.segmentation2D = "segmentation2D";

@@ -362,7 +362,7 @@ export class RealityDataTransfer {
         if(!orientationFiles.length)
             return new Error("The folder to upload doesn't contain any file.");
 
-        if(!orientationFiles[0].includes("ContextScene")) // TODO ask Renaud
+        if(!orientationFiles[0].includes("ContextScene"))
             return new Error("The folder to upload doesn't contain any file named 'ContextScene'.");
         
         let scenePath = path.join(sceneFolderPath, orientationFiles[0]);
@@ -392,7 +392,7 @@ export class RealityDataTransfer {
         if(!orientationFiles.length)
             return new Error("The folder to upload doesn't contain any file.");
 
-        if(!orientationFiles[0].includes("Orientations")) // TODO ask Renaud
+        if(!orientationFiles[0].includes("Orientations"))
             return new Error("The folder to upload doesn't contain any file named 'Orientations'.");
         
         let orientationPath = path.join(orientationFolderPath, orientationFiles[0]);
