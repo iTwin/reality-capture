@@ -1,15 +1,19 @@
 import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
 import { RealityDataType } from "../CommonData";
+import * as dotenv from "dotenv";
+
 
 async function runRealityDataExample() {
     const ccImageCollection = "D:\\O2D-Motos\\images";
     const outputPath = "D:\\output";
     const ccImageCollectionName = "Test Moto Photos";
 
-    const projectId = "ad14b27c-91ea-4492-9433-1e2d6903b5e4";
-    const clientId = "service-pJ0wfNZEIWcpVD98kt4QuHqQy";
-    const secret = "TcloM9JosQrTnSYhRVoQKdgv4ZR8qU/a37EWuVJKVT4ARSU4JmctyKI32n95tI3C7jm8tLJCDuop1+bR3BMZzg==";
-    const serviceUrl = "https://qa-api.bentley.com/realitydata/";
+    dotenv.config();
+
+    const projectId = process.env.IMJS_PROJECT_ID ?? "";
+    const clientId = process.env.IMJS_CLIENT_ID ?? "";
+    const secret = process.env.IMJS_SECRET ?? "";
+    const serviceUrl = process.env.IMJS_RDA_URL ?? "";
 
     console.log("Reality Data Analysis sample job detecting 2D objects");
     const realityDataService = new RealityDataTransfer(serviceUrl, clientId, secret);

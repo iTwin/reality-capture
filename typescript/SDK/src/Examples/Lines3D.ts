@@ -5,6 +5,8 @@ import { L3DJobSettings } from "../Rdas/Settings";
 import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
 import { ReferenceTable } from "../Utils/ReferenceTable";
 import * as fs from "fs";
+import * as dotenv from "dotenv";
+
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -16,6 +18,8 @@ async function runContextCaptureExample() {
     const meshContextScene = "D:\\Lines3D\\Mesh3MX";
     const outputPath = "D:\\output";
 
+    dotenv.config();
+
     const jobName = "L3D job SDK sample";
     const ccImageCollectionName = "Test L3D Photos";
     const orientedPhotosName = "Test L3D oriented photos";
@@ -23,11 +27,11 @@ async function runContextCaptureExample() {
     const contextSceneName = "Test L3D Scene";
     const detectorName = "Test L3D detector";
 
-    const projectId = "ad14b27c-91ea-4492-9433-1e2d6903b5e4";
-    const clientId = "service-pJ0wfNZEIWcpVD98kt4QuHqQy";
-    const secret = "TcloM9JosQrTnSYhRVoQKdgv4ZR8qU/a37EWuVJKVT4ARSU4JmctyKI32n95tI3C7jm8tLJCDuop1+bR3BMZzg==";
-    const rdServiceUrl = "https://qa-api.bentley.com/realitydata/";
-    const rdaServiceUrl = "https://qa-api.bentley.com/realitydataanalysis/";
+    const projectId = process.env.IMJS_PROJECT_ID ?? "";
+    const clientId = process.env.IMJS_CLIENT_ID ?? "";
+    const secret = process.env.IMJS_SECRET ?? "";
+    const rdServiceUrl = process.env.IMJS_RD_URL ?? "";
+    const rdaServiceUrl = process.env.IMJS_RDA_URL ?? "";
 
     console.log("Reality Data Analysis sample job detecting 3D lines");
     const realityDataService = new RealityDataTransfer(rdServiceUrl, clientId, secret);

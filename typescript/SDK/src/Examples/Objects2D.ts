@@ -5,6 +5,8 @@ import path = require("path");
 import * as fs from "fs";
 import { JobState, RealityDataType } from "../CommonData";
 import { O2DJobSettings } from "../Rdas/Settings";
+import * as dotenv from "dotenv";
+
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -14,16 +16,18 @@ async function runObjects2DExample() {
     const photoObjectDetector = "D:\\O2D-Motos\\Coco2017_v1.19";
     const outputPath = "D:\\output";
 
+    dotenv.config();
+
     const jobName = "O2D job new SDK sample";
     const ccImageCollectionName = "Test Moto Photos";
     const contextSceneName = "Test Moto Scene";
     const detectorName = "O2D photos in RAS-QA";
 
-    const projectId = "ad14b27c-91ea-4492-9433-1e2d6903b5e4";
-    const clientId = "service-pJ0wfNZEIWcpVD98kt4QuHqQy";
-    const secret = "TcloM9JosQrTnSYhRVoQKdgv4ZR8qU/a37EWuVJKVT4ARSU4JmctyKI32n95tI3C7jm8tLJCDuop1+bR3BMZzg==";
-    const rdServiceUrl = "https://qa-api.bentley.com/realitydata/";
-    const rdaServiceUrl = "https://qa-api.bentley.com/realitydataanalysis/";
+    const projectId = process.env.IMJS_PROJECT_ID ?? "";
+    const clientId = process.env.IMJS_CLIENT_ID ?? "";
+    const secret = process.env.IMJS_SECRET ?? "";
+    const rdServiceUrl = process.env.IMJS_RD_URL ?? "";
+    const rdaServiceUrl = process.env.IMJS_RDA_URL ?? "";
 
     console.log("Reality Data Analysis sample job detecting 2D objects");
     const realityDataService = new RealityDataTransfer(rdServiceUrl, clientId, secret);

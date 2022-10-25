@@ -5,6 +5,8 @@ import { ReferenceTable } from "../Utils/ReferenceTable";
 import * as fs from "fs";
 import { JobState, RealityDataType } from "../CommonData";
 import { CCJobSettings, CCJobType, CCMeshQuality } from "../Cccs/Utils";
+import * as dotenv from "dotenv";
+
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -13,16 +15,18 @@ async function main() {
     const ccOrientations = "D:\\S2D-3CS-Bridge\\BridgeCCorientation";
     const outputPath = "D:\\output";
 
+    dotenv.config();
+
     const jobName = "CCCS job SDK sample";
     const workspaceName = "CCCS SDK test workspace";
     const ccImageCollectionName = "Test CCCS Photos";
     const ccOrientationsName = "Test CCCS cc orientations";
 
-    const projectId = "ad14b27c-91ea-4492-9433-1e2d6903b5e4";
-    const clientId = "service-pJ0wfNZEIWcpVD98kt4QuHqQy";
-    const secret = "TcloM9JosQrTnSYhRVoQKdgv4ZR8qU/a37EWuVJKVT4ARSU4JmctyKI32n95tI3C7jm8tLJCDuop1+bR3BMZzg==";
-    const rdServiceUrl = "https://qa-api.bentley.com/realitydata/";
-    const ccServiceUrl = "https://qa-api.bentley.com/contextcapture/";
+    const projectId = process.env.IMJS_PROJECT_ID ?? "";
+    const clientId = process.env.IMJS_CLIENT_ID ?? "";
+    const secret = process.env.IMJS_SECRET ?? "";
+    const rdServiceUrl = process.env.IMJS_RD_URL ?? "";
+    const ccServiceUrl = process.env.IMJS_CC_URL ?? "";
 
     console.log("Context capture sample job - Full (Calibration + Reconstruction)");
     const realityDataService = new RealityDataTransfer(rdServiceUrl, clientId, secret);
@@ -53,7 +57,7 @@ async function main() {
         references.addReference(ccImageCollection, id);
     }
 
-    // Upload Oriented photos (contextScene)
+    // Upload Oriented photos (ccOrientations)
     if(!references.hasLocalPath(ccOrientations)) {
         console.log("No reference to cc orientations found, uploading local files to cloud");
         const id = await realityDataService.uploadCCOrientations(ccOrientations, ccOrientationsName, projectId, references);
@@ -99,7 +103,7 @@ async function main() {
     }
     console.log("Job submitted");
 
-    while(true) {
+    /* while(true) {
         const progress = await contextCaptureService.getJobProgress(jobId);
         if(progress instanceof Error) {
             console.log("Error while getting progress:" + jobId);
@@ -122,7 +126,7 @@ async function main() {
         }
         await sleep(6000);
     }
-    console.log("Job done");
+    console.log("Job done");*/
 
     console.log("Retrieving outputs ids");
     const finalSettings = await contextCaptureService.getJobSettings(jobId);
@@ -133,7 +137,7 @@ async function main() {
 
     console.log("Downloading outputs");
     const threeMXId = (finalSettings as CCJobSettings).outputs.threeMX;
-    realityDataService.downloadContextScene(threeMXId, outputPath, references);
+    realityDataService.downloadRealityData(threeMXId, outputPath);
     console.log("Successfully downloaded output");
 }
 
