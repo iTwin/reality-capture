@@ -57,7 +57,7 @@ export class O2DJobSettings {
     inputs: O2DInputs;
     /** 
      * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to create_job. 
+     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
      */
     outputs: O2DOutputs;
 
@@ -74,7 +74,7 @@ export class O2DJobSettings {
         this.inputs = new O2DInputs();
         /** 
          * Possible outputs for this job. 
-         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to create_job. 
+         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
          * @type {O2DOutputs}
          */
         this.outputs = new O2DOutputs();
@@ -174,11 +174,11 @@ class S2DInputs {
 class S2DOutputs {
     /** Segmented photos. */
     segmentation2D: string;
-    // this.segmented_photos: string;
+    // this.segmentedPhotos: string;
     /** Detected 2D polygons. */
     polygons2D: string;
     /** 2D polygons exported to ESRI shapefile. */
-    exportedPolygons2D_SHP: string;
+    exportedPolygons2DSHP: string;
     /** Detected 2D lines. */
     lines2D: string;
 
@@ -188,7 +188,7 @@ class S2DOutputs {
          * @type {string}
          */
         this.segmentation2D = "";
-        // this.segmented_photos = "";
+        // this.segmentedPhotos = "";
         /**
          * Detected 2D polygons.
          * @type {string}
@@ -198,7 +198,7 @@ class S2DOutputs {
          * 2D polygons exported to ESRI shapefile.
          * @type {string}
          */
-        this.exportedPolygons2D_SHP = "";
+        this.exportedPolygons2DSHP = "";
         /**
          * Detected 2D lines.
          * @type {string}
@@ -217,7 +217,7 @@ export class S2DJobSettings {
     inputs: S2DInputs;
     /** 
      * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to create_job.
+     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob.
      */
     outputs: S2DOutputs;
 
@@ -262,11 +262,11 @@ export class S2DJobSettings {
         if(this.outputs.segmentation2D)
             json["outputs"].push("segmentation2D");
         
-        // if(this.outputs.segmented_photos
+        // if(this.outputs.segmentedPhotos
         //     json["outputs"].push("segmentedPhotos")
         if(this.outputs.polygons2D)
             json["outputs"].push("polygons2D");
-        if(this.outputs.exportedPolygons2D_SHP)
+        if(this.outputs.exportedPolygons2DSHP)
             json["outputs"].push("exportedPolygons2DSHP");
         if(this.outputs.lines2D)
             json["outputs"].push("lines2D");
@@ -299,11 +299,11 @@ export class S2DJobSettings {
                 if(output["name"] === "segmentation2D")
                     newJobSettings.outputs.segmentation2D = output["realityDataId"];
                 // else if(output["name"] === "segmentedPhotos":
-                //     newJobSettings.outputs.segmented_photos = output["realityDataId"];
+                //     newJobSettings.outputs.segmentedPhotos = output["realityDataId"];
                 else if(output["name"] === "polygons2D")
                     newJobSettings.outputs.polygons2D = output["realityDataId"];
                 else if(output["name"] === "exportedPolygons2DSHP")
-                    newJobSettings.outputs.exportedPolygons2D_SHP = output["realityDataId"];
+                    newJobSettings.outputs.exportedPolygons2DSHP = output["realityDataId"];
                 else if(output["name"] === "lines2D")
                     newJobSettings.outputs.lines2D = output["realityDataId"];
                 else
@@ -362,11 +362,11 @@ class O3DOutputs {
     /** Detected 3D objects. */
     objects3D: string;
     /** DGN file export with 3D objects. */
-    exportedObjects3D_DGN: string;
+    exportedObjects3DDGN: string;
     /** Cesium 3D Tiles file export with 3D objects. */
-    exportedObjects3D_cesium: string;
+    exportedObjects3DCesium: string;
     /** ESRI SHP file export with locations of the 3D objects. */
-    exportedLocations3D_SHP: string;
+    exportedLocations3DSHP: string;
 
     constructor() {
         /**
@@ -383,17 +383,17 @@ class O3DOutputs {
          * DGN file export with 3D objects.
          * @type {string}
          */
-        this.exportedObjects3D_DGN = "";
+        this.exportedObjects3DDGN = "";
         /**
          * Cesium 3D Tiles file export with 3D objects.
          * @type {string}
          */
-        this.exportedObjects3D_cesium = "";
+        this.exportedObjects3DCesium = "";
         /**
          * ESRI SHP file export with locations of the 3D objects.
          * @type {string}
          */
-        this.exportedLocations3D_SHP = "";
+        this.exportedLocations3DSHP = "";
     }
 }
 
@@ -407,7 +407,7 @@ export class O3DJobSettings {
     inputs: O3DInputs;
     /** 
      * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to create_job. 
+     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
      */
     outputs: O3DOutputs;
     /** Improve detection using tie points in orientedPhotos. */
@@ -432,7 +432,7 @@ export class O3DJobSettings {
         this.inputs = new O3DInputs();
         /**
          * Possible outputs for this job. 
-         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to create_job. 
+         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
          * @type {O3DOutputs}
          */
         this.outputs = new O3DOutputs();
@@ -478,11 +478,11 @@ export class O3DJobSettings {
             json["outputs"].push("objects2D");
         if(this.outputs.objects3D)
             json["outputs"].push("objects3D");
-        if(this.outputs.exportedObjects3D_DGN)
+        if(this.outputs.exportedObjects3DDGN)
             json["outputs"].push("exportedObjects3DDGN");
-        if(this.outputs.exportedObjects3D_cesium)
+        if(this.outputs.exportedObjects3DCesium)
             json["outputs"].push("exportedObjects3DCesium");
-        if(this.outputs.exportedLocations3D_SHP)
+        if(this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
         if(this.useTiePoints)
             json["UseTiePoints"] = "true";
@@ -523,11 +523,11 @@ export class O3DJobSettings {
                 else if(output["name"] === "objects3D")
                     newJobSettings.outputs.objects3D = output["realityDataId"];
                 else if(output["name"] === "exportedObjects3DDGN")
-                    newJobSettings.outputs.exportedObjects3D_DGN = output["realityDataId"];
+                    newJobSettings.outputs.exportedObjects3DDGN = output["realityDataId"];
                 else if(output["name"] === "exportedObjects3DCesium")
-                    newJobSettings.outputs.exportedObjects3D_cesium = output["realityDataId"];
+                    newJobSettings.outputs.exportedObjects3DCesium = output["realityDataId"];
                 else if(output["name"] === "exportedLocations3DSHP")
-                    newJobSettings.outputs.exportedLocations3D_SHP = output["realityDataId"];
+                    newJobSettings.outputs.exportedLocations3DSHP = output["realityDataId"];
                 else
                     return TypeError("found non expected output name" + output["name"]);
             }
@@ -616,21 +616,21 @@ class S3DOutputs {
     /** 2D objects detected by current job. */
     objects2D: string;
     /** 3D segmentation exported as a POD file. */
-    exportedSegmentation3D_POD: string;
+    exportedSegmentation3DPOD: string;
     /** 3D segmentation exported as a LAS file. */
-    exportedSegmentation3D_LAS: string;
+    exportedSegmentation3DLAS: string;
     /** 3D segmentation exported as a LAZ file. */
-    exportedSegmentation3D_LAZ: string;
+    exportedSegmentation3DLAZ: string;
     /** 3D segmentation exported as a PLY file. */
-    exportedSegmentation3D_PLY: string;
+    exportedSegmentation3DPLY: string;
     /** 3D objects inferred from 3D segmentation. */
     objects3D: string;
     /** DGN file export with 3D objects. */
-    exportedObjects3D_DGN: string;
+    exportedObjects3DDGN: string;
     /** Cesium 3D Tiles file export with 3D objects. */
-    exportedObjects3D_cesium: string;
+    exportedObjects3DCesium: string;
     /** ESRI SHP file export with locations of the 3D objects. */
-    exportedLocations3D_SHP: string;
+    exportedLocations3DSHP: string;
 
     constructor() {
         /**
@@ -652,22 +652,22 @@ class S3DOutputs {
          * 3D segmentation exported as a POD file.
          * @type {string}
          */
-        this.exportedSegmentation3D_POD = "";
+        this.exportedSegmentation3DPOD = "";
         /**
          * 3D segmentation exported as a LAS file.
          * @type {string}
          */
-        this.exportedSegmentation3D_LAS = "";
+        this.exportedSegmentation3DLAS = "";
         /**
          * 3D segmentation exported as a LAZ file.
          * @type {string}
          */
-        this.exportedSegmentation3D_LAZ = "";
+        this.exportedSegmentation3DLAZ = "";
         /**
          * 3D segmentation exported as a PLY file.
          * @type {string}
          */
-        this.exportedSegmentation3D_PLY = "";
+        this.exportedSegmentation3DPLY = "";
         /**
          * 3D objects inferred from 3D segmentation.
          * @type {string}
@@ -677,17 +677,17 @@ class S3DOutputs {
          * DGN file export with 3D objects.
          * @type {string}
          */
-        this.exportedObjects3D_DGN = "";
+        this.exportedObjects3DDGN = "";
         /**
          * Cesium 3D Tiles file export with 3D objects.
          * @type {string}
          */
-        this.exportedObjects3D_cesium = "";
+        this.exportedObjects3DCesium = "";
         /**
          * ESRI SHP file export with locations of the 3D objects.
          * @type {string}
          */
-        this.exportedLocations3D_SHP = "";
+        this.exportedLocations3DSHP = "";
     }
 }    
 
@@ -701,7 +701,7 @@ export class S3DJobSettings {
     inputs: S3DInputs;
     /** 
      * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to create_job. 
+     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
      */
     outputs: S3DOutputs;
     /** If confidence is saved on output files or not. */
@@ -722,7 +722,7 @@ export class S3DJobSettings {
         this.inputs = new S3DInputs();
         /**
          * Possible outputs for this job. 
-         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to create_job. 
+         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
          * @type {S3DOutputs}
          */
         this.outputs = new S3DOutputs();
@@ -766,21 +766,21 @@ export class S3DJobSettings {
             json["outputs"].push("segmentedPointCloud");
         if(this.outputs.objects2D)
             json["outputs"].push("objects2D");
-        if(this.outputs.exportedSegmentation3D_POD)
+        if(this.outputs.exportedSegmentation3DPOD)
             json["outputs"].push("exportedSegmentation3DPOD");
-        if(this.outputs.exportedSegmentation3D_LAS)
+        if(this.outputs.exportedSegmentation3DLAS)
             json["outputs"].push("exportedSegmentation3DLAS");
-        if(this.outputs.exportedSegmentation3D_LAZ)
+        if(this.outputs.exportedSegmentation3DLAZ)
             json["outputs"].push("exportedSegmentation3DLAZ");
-        if(this.outputs.exportedSegmentation3D_PLY)
+        if(this.outputs.exportedSegmentation3DPLY)
             json["outputs"].push("exportedSegmentation3DPLY");
         if(this.outputs.objects3D)
             json["outputs"].push("objects3D");
-        if(this.outputs.exportedObjects3D_DGN)
+        if(this.outputs.exportedObjects3DDGN)
             json["outputs"].push("exportedObjects3DDGN");
-        if(this.outputs.exportedObjects3D_cesium)
+        if(this.outputs.exportedObjects3DCesium)
             json["outputs"].push("exportedObjects3DCesium");
-        if(this.outputs.exportedLocations3D_SHP)
+        if(this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
         if(this.exportSrs)
             json["exportSrs"] = this.exportSrs;
@@ -825,21 +825,21 @@ export class S3DJobSettings {
                 else if(output["name"] === "objects2D")
                     newJobSettings.outputs.objects2D = output["realityDataId"];
                 else if(output["name"] === "exportedSegmentation3DPOD")
-                    newJobSettings.outputs.exportedSegmentation3D_POD = output["realityDataId"];
+                    newJobSettings.outputs.exportedSegmentation3DPOD = output["realityDataId"];
                 else if(output["name"] === "exportedSegmentation3DLAS")
-                    newJobSettings.outputs.exportedSegmentation3D_LAS = output["realityDataId"];
+                    newJobSettings.outputs.exportedSegmentation3DLAS = output["realityDataId"];
                 else if(output["name"] === "exportedSegmentation3DLAZ")
-                    newJobSettings.outputs.exportedSegmentation3D_LAZ = output["realityDataId"];
+                    newJobSettings.outputs.exportedSegmentation3DLAZ = output["realityDataId"];
                 else if(output["name"] === "exportedSegmentation3DPLY")
-                    newJobSettings.outputs.exportedSegmentation3D_PLY = output["realityDataId"];
+                    newJobSettings.outputs.exportedSegmentation3DPLY = output["realityDataId"];
                 else if(output["name"] === "objects3D")
                     newJobSettings.outputs.objects3D = output["realityDataId"];
                 else if(output["name"] === "exportedObjects3DDGN")
-                    newJobSettings.outputs.exportedObjects3D_DGN = output["realityDataId"];
+                    newJobSettings.outputs.exportedObjects3DDGN = output["realityDataId"];
                 else if(output["name"] === "exportedObjects3DCesium")
-                    newJobSettings.outputs.exportedObjects3D_cesium = output["realityDataId"];
+                    newJobSettings.outputs.exportedObjects3DCesium = output["realityDataId"];
                 else if(output["name"] === "exportedLocations3DSHP")
-                    newJobSettings.outputs.exportedLocations3D_SHP = output["realityDataId"];
+                    newJobSettings.outputs.exportedLocations3DSHP = output["realityDataId"];
                 else
                     return TypeError("found non expected output name:" + output["name"]);
             }
@@ -926,9 +926,9 @@ class L3DOutputs {
     /** Detected 3D lines. */
     lines3D: string;
     /** DGN file export with 3D lines. */
-    exportedLines3D_DGN: string;
+    exportedLines3DDGN: string;
     /** Cesium 3D Tiles file export with 3D lines. */
-    exportedLines3D_cesium: string;
+    exportedLines3DCesium: string;
 
     constructor() {
         /**
@@ -946,7 +946,7 @@ class L3DOutputs {
          * @type {string}
          */
         this.segmentation2D = "";
-        // this.segmented_photos = ""
+        // this.segmentedPhotos = ""
         /**
          * Detected 3D lines.
          * @type {string}
@@ -956,12 +956,12 @@ class L3DOutputs {
          * DGN file export with 3D lines.
          * @type {string}
          */
-        this.exportedLines3D_DGN = "";
+        this.exportedLines3DDGN = "";
         /**
          * Cesium 3D Tiles file export with 3D lines.
          * @type {string}
          */
-        this.exportedLines3D_cesium = "";
+        this.exportedLines3DCesium = "";
     }
 }
 
@@ -975,7 +975,7 @@ export class L3DJobSettings {
     inputs: L3DInputs;
     /** 
      * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to create_job. 
+     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
      */
     outputs: L3DOutputs;
     /** Estimation 3D line width at each vertex. */
@@ -998,7 +998,7 @@ export class L3DJobSettings {
         this.inputs = new L3DInputs();
         /**
          * Possible outputs for this job. 
-         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to create_job. 
+         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
          * @type {L3DOutputs}
          */
         this.outputs = new L3DOutputs();
@@ -1047,13 +1047,13 @@ export class L3DJobSettings {
             json["outputs"].push("segmentedPointCloud");
         if(this.outputs.segmentation2D)
             json["outputs"].push("segmentation2D");
-        // if(this.outputs.segmented_photos:
+        // if(this.outputs.segmentedPhotos:
         //     json["outputs"].push("segmentedPhotos"})
         if(this.outputs.lines3D)
             json["outputs"].push("lines3D");
-        if(this.outputs.exportedLines3D_DGN)
+        if(this.outputs.exportedLines3DDGN)
             json["outputs"].push("exportedLines3DDGN");
-        if(this.outputs.exportedLines3D_cesium)
+        if(this.outputs.exportedLines3DCesium)
             json["outputs"].push("exportedLines3DCesium");
         if(this.computeLineWidth)
             json["computeLineWidth"] = "true";
@@ -1100,13 +1100,13 @@ export class L3DJobSettings {
                 else if(output["name"] === "segmentation2D")
                     newJobSettings.outputs.segmentation2D = output["realityDataId"];
                 // else if(output["name"] === "segmentedPhotos")
-                //     newJobSettings.outputs.segmented_photos = output["realityDataId"]
+                //     newJobSettings.outputs.segmentedPhotos = output["realityDataId"]
                 else if(output["name"] === "lines3D")
                     newJobSettings.outputs.lines3D = output["realityDataId"];
                 else if(output["name"] === "exportedLines3DDGN")
-                    newJobSettings.outputs.exportedLines3D_DGN = output["realityDataId"];
+                    newJobSettings.outputs.exportedLines3DDGN = output["realityDataId"];
                 else if(output["name"] === "exportedLines3DCesium")
-                    newJobSettings.outputs.exportedLines3D_cesium = output["realityDataId"];
+                    newJobSettings.outputs.exportedLines3DCesium = output["realityDataId"];
                 else
                     return TypeError("found non expected output name:" + output["name"]);
             }
@@ -1168,7 +1168,7 @@ class ChangeDetectionOutputs {
     /** Regions with changes. */
     objects3D: string;
     /** ESRI SHP file export with locations of regions with changes. */
-    exportedLocations3D_SHP: string;
+    exportedLocations3DSHP: string;
 
     constructor() {
         /**
@@ -1180,7 +1180,7 @@ class ChangeDetectionOutputs {
          * ESRI SHP file export with locations of regions with changes.
          * @type {string}
          */
-        this.exportedLocations3D_SHP = "";
+        this.exportedLocations3DSHP = "";
     }
 }
 
@@ -1194,7 +1194,7 @@ export class ChangeDetectionJobSettings {
     inputs: ChangeDetectionInputs;
     /** 
      * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to create_job. 
+     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
      */
     outputs: ChangeDetectionOutputs;
     /** Low threshold to detect color changes (hysteresis detection). */
@@ -1225,7 +1225,7 @@ export class ChangeDetectionJobSettings {
         this.inputs = new ChangeDetectionInputs();
         /**
          * Possible outputs for this job. 
-         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to create_job. 
+         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
          * @type {ChangeDetectionOutputs}
          */
         this.outputs = new ChangeDetectionOutputs();
@@ -1284,7 +1284,7 @@ export class ChangeDetectionJobSettings {
         json["outputs"] = [];
         if(this.outputs.objects3D)
             json["outputs"].push("objects3D");
-        if(this.outputs.exportedLocations3D_SHP)
+        if(this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
         if(this.colorThresholdLow)
             json["colorThresholdLow"] = this.colorThresholdLow.toString();
@@ -1329,7 +1329,7 @@ export class ChangeDetectionJobSettings {
                 if(output["name"] === "objects3D")
                     newJobSettings.outputs.objects3D = output["realityDataId"];
                 else if(output["name"] === "exportedLocations3DSHP")
-                    newJobSettings.outputs.exportedLocations3D_SHP = output["realityDataId"];
+                    newJobSettings.outputs.exportedLocations3DSHP = output["realityDataId"];
                 else
                     return TypeError("found non expected output name:" + output["name"]);
             }

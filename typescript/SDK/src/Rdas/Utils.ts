@@ -1,4 +1,4 @@
-import { JobDates } from "../CommonData";
+import { JobDates, JobState } from "../CommonData";
 import { JobSettings, RDAJobType } from "./Settings";
 
 /**
@@ -37,9 +37,9 @@ export interface RDAJobProperties {
     id: string;
     dataCenter?: string;
     email?: string;
-    state?: string;
+    state?: JobState;
     dates?: JobDates;
     exitCode?: string;
-    executionCost?: string;
+    executionCost?: number;
     costEstimation?: RDACostParameters;
 }

@@ -211,11 +211,11 @@ export class ContextCaptureService {
      */
     public async getJobProgress(id: string): Promise<JobProgress | Error> {
         const response = await this.submitRequest(this.url + `jobs/${id}/progress`, "GET", [200]);
-        const progress = response["progress"];
+        const progress = response["jobProgress"];
         if("message" in response)
             return response as Error;
         
-        return {status: progress["state"], progress: JSON.parse(progress["percentage"]), step: progress["step"]};
+        return {state: progress["state"], progress: JSON.parse(progress["percentage"]), step: progress["step"]};
     }
 
     /**

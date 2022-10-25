@@ -3,7 +3,7 @@ import { ChangeDetectionJobSettings, JobSettings, L3DJobSettings, O2DJobSettings
 import { RDACostParameters, RDAJobProperties } from "./Utils";
 import fetch from "node-fetch";
 import { IModelHost } from "@itwin/core-backend";
-import { JobDates, JobProgress } from "../CommonData";
+import { JobDates, JobProgress, JobState } from "../CommonData";
 
 /**
  * Service handling communication with RealityData Analysis Service
@@ -160,7 +160,7 @@ export class RealityDataAnalysisService {
         if("message" in response)
             return response as Error;
         
-        return {status: progress["state"], progress: JSON.parse(progress["percentage"]), step: progress["step"]};
+        return {state: progress["state"], progress: JSON.parse(progress["percentage"]), step: progress["step"]};
     }
 
     /**
@@ -169,29 +169,11 @@ export class RealityDataAnalysisService {
      * @returns {JobSettings | Error} The settings for the job, or a potential error message.
      */
     public async getJobSettings(id: string): Promise<JobSettings | Error> {
-        const response = await this.submitRequest(this.url + "jobs/" + id, "GET", [200]);
-        if("message" in response)
-            return response as Error;
-
-        if(response["job"]["type"] === RDAJobType.O2D)
-            return O2DJobSettings.fromJson(response["job"]["settings"]);
-
-        if(response["job"]["type"] === RDAJobType.S2D)
-            return S2DJobSettings.fromJson(response["job"]["settings"]);
-
-        if(response["job"]["type"] === RDAJobType.O3D)
-            return O3DJobSettings.fromJson(response["job"]["settings"]);
-
-        if(response["job"]["type"] === RDAJobType.S3D)
-            return S3DJobSettings.fromJson(response["job"]["settings"]);
-
-        if(response["job"]["type"] === RDAJobType.L3D)
-            return L3DJobSettings.fromJson(response["job"]["settings"]);
-
-        if(response["job"]["type"] === RDAJobType.ChangeDetection)
-            return ChangeDetectionJobSettings.fromJson(response["job"]["settings"]);
+        const properties = await this.getJobProperties(id);
+        if("message" in properties)
+            return properties as Error;
         
-        return Error("Can't get job settings of unknown type : " + response["job"]["type"]);
+        return properties.settings;
     }
 
     /**
@@ -319,7 +301,7 @@ export class RealityDataAnalysisService {
      * @param {string} id The ID of the relevant job.
      * @returns {string | undefined | Error} The job state, or a potential error message.
      */
-    public async getJobState(id: string): Promise<string | undefined | Error> {   
+    public async getJobState(id: string): Promise<JobState | undefined | Error> {   
         const properties = await this.getJobProperties(id);
         if("message" in properties)
             return properties as Error;
@@ -332,7 +314,7 @@ export class RealityDataAnalysisService {
      * @param {string} id The ID of the relevant job.
      * @returns {number | undefined | Error} The job execution cost, or a potential error message.
      */
-    public async getJobExecutionCost(id: string): Promise<string | undefined | Error> {   
+    public async getJobExecutionCost(id: string): Promise<number | undefined | Error> {   
         const properties = await this.getJobProperties(id);
         if("message" in properties)
             return properties as Error;
@@ -350,7 +332,7 @@ export class RealityDataAnalysisService {
         if("message" in properties)
             return properties as Error;
                 
-        return properties.executionCost;
+        return properties.exitCode;
     }
 
     /**

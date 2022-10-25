@@ -27,7 +27,7 @@ export interface JobDates {
  * Contains the status for the job, and it's percentage progression as an integer value between 0 and 100
  */
 export interface JobProgress {
-    status: JobState
+    state: JobState
     progress: number;
     step: string;
 };
@@ -46,6 +46,6 @@ export enum RealityDataType {
     PLY = "PLY",
     POINTCLOUD = "PointCloud",
     SCAN_COLLECTION = "ScanCollection",
-    THREEMX = "ThreeMX",
-    THREESM = "ThreeSM",
+    THREEMX = "3MX",
+    THREESM = "3SM",
 };

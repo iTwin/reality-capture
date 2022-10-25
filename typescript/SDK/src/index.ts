@@ -10,11 +10,11 @@ import { ReferenceTable } from "./Utils/ReferenceTable";
 async function main() {
     // ----------RDAS---------------
 
-    /* const service = new RealityDataAnalysisService("https://qa-api.bentley.com/realitydataanalysis/", "service-pJ0wfNZEIWcpVD98kt4QuHqQy", 
+    /*const service = new RealityDataAnalysisService("https://qa-api.bentley.com/realitydataanalysis/", "service-pJ0wfNZEIWcpVD98kt4QuHqQy", 
         "TcloM9JosQrTnSYhRVoQKdgv4ZR8qU/a37EWuVJKVT4ARSU4JmctyKI32n95tI3C7jm8tLJCDuop1+bR3BMZzg=="); */
     
     // cancel job
-    // await service.cancelJob("52bd41de-82e8-4165-8ab5-eda45121559f"); 
+    //await service.cancelJob("1c9e7c6e-23a7-4616-ae89-d66f972d58ef"); 
     // const test = await service.deleteJob("100b81d9-4247-4a98-86d0-248d78af789b"); 
 
     /* let settings = new O2DJobSettings();
@@ -79,9 +79,11 @@ async function main() {
         "TcloM9JosQrTnSYhRVoQKdgv4ZR8qU/a37EWuVJKVT4ARSU4JmctyKI32n95tI3C7jm8tLJCDuop1+bR3BMZzg==");
     await service.connect();
 
-    await service.cancelJob("c15798c0-fb1c-4dba-909c-810319a1e3d5");
+    await service.cancelJob("1db330e1-09c3-4ce1-8cb7-b3b5850b6173");
+    const response = await service.getJobProgress("1db330e1-09c3-4ce1-8cb7-b3b5850b6173");
+    console.log("progress : ", response);
 
-    const workspaceId = await service.createWorkspace("test workspace sdk", "ad14b27c-91ea-4492-9433-1e2d6903b5e4");
+    /* const workspaceId = await service.createWorkspace("test workspace sdk", "ad14b27c-91ea-4492-9433-1e2d6903b5e4");
     if(workspaceId instanceof Error) {
         console.log("error while creating workspace");
         return;
@@ -115,7 +117,7 @@ async function main() {
         console.log("error while getting settings of cccs job");
         return;
     }
-    console.log("get settings : ", settings2);
+    console.log("get settings : ", settings2); */
 }
 
 main();

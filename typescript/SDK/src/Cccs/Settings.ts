@@ -62,7 +62,7 @@ export class CCJobSettings {
     inputs: string[];
     /** 
      * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to create_job. 
+     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
      */
     outputs: CCOutputs;
 
@@ -83,7 +83,7 @@ export class CCJobSettings {
         this.inputs = [];
         /** 
          * Possible outputs for this job. 
-         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to create_job. 
+         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
          * @type {CCOutputs}
          */
         this.outputs = new CCOutputs();
