@@ -214,15 +214,6 @@ export function Viewer2D(props: Viewer2DProps) {
         return "";
     };
 
-    function reviver(_key: any, value: any) {
-        if(typeof value === "object" && value !== null) {
-            if (value.dataType === "Map") {
-                return new Map(value.value);
-            }
-        }
-        return value;
-    }
-
     const onDisplay = async (): Promise<void> => {
         onImageIndexChange(-1);
         // Reset contextScene

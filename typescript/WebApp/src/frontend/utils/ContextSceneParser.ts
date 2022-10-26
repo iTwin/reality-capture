@@ -64,8 +64,7 @@ export async function writeTempSceneFromImageCollection(id: string, collectionUr
     let i = 0;
     for await (const blob of iter) 
     {
-        console.log(blob.name);
-        if(blob.name.endsWith("jpg") || blob.name.endsWith("png")) {
+        if(blob.name.toLowerCase().endsWith("jpg") || blob.name.toLowerCase().endsWith("png")) {
             tmpFileContent += "\t\t\t<Photo id=\"" + i + "\">\n";
             tmpFileContent += "\t\t\t\t<ImagePath>0:" + blob.name + "</ImagePath>\n";
             tmpFileContent += "\t\t\t</Photo>\n";
@@ -315,7 +314,7 @@ export async function parseContextScene(accessToken: string, sceneId: string, is
     const realityData = await getRealityData(sceneId, accessToken);
     const azureBlobUrl = await realityData.getBlobUrl(accessToken, "");
     if(!isFile) {
-        writeTempSceneFromImageCollection(sceneId, azureBlobUrl.toString());
+        await writeTempSceneFromImageCollection(sceneId, azureBlobUrl.toString());
         const content = localStorage.getItem("tmpContextSceneFromImages");
         if(!content)
             throw new Error("Can't find any scene to parse.");
