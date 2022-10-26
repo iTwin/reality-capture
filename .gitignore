@@ -145,3 +145,4 @@ v_env
 node_modules/
 package-lock.json
 lib/
+out/
