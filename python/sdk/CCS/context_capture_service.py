@@ -55,7 +55,7 @@ class ContextCaptureService:
         ret = self.connect()
         if ret.is_error():
             return ReturnValue(value="", error=ret.error)
-        wc_dict = {"name": work_name, "iTwin_id": iTwin_id}
+        wc_dict = {"name": work_name, "iTwinId": iTwin_id}
         if cc_version != "":
             wc_dict["contextCaptureVersion"] = cc_version
         json_data = json.dumps(wc_dict)
@@ -118,7 +118,6 @@ class ContextCaptureService:
             "settings": settings_dict["settings"]
         }
         job_json = json.dumps(jc_dict)
-        print(job_json)
         self._connection.request("POST", "/contextcapture/jobs", job_json, self._headers_modify())
         response = self._connection.getresponse()
 
@@ -126,7 +125,7 @@ class ContextCaptureService:
         if not code.success():
             return ReturnValue(value="", error=code.error_message())
         data = code.response()
-        return ReturnValue(value=data["job"], error="")
+        return ReturnValue(value=data["job"]["id"], error="")
 
     def submit_job(self, job_id: str) -> ReturnValue[bool]:
         ret = self.connect()
@@ -275,14 +274,11 @@ class ContextCaptureService:
             )
         data = code.response()
         dp = data["jobProgress"]
-        return ReturnValue(
-            value=JobProgress(
-                state=JobState(dp["state"]),
-                progress=int(dp["percentage"]),
-                step=dp["step"],
-            ),
-            error="",
-        )
+        try:
+            state = JobState(dp["state"].lower())
+        except Exception as e:
+            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=str(e))
+        return ReturnValue(value=JobProgress(state=state, progress=int(dp["percentage"]), step=dp["step"]), error="")
 
     def get_job_estimated_cost(self, job_id: str, cost_parameters: CCJobCostParameters) -> ReturnValue[float]:
         ret = self.connect()

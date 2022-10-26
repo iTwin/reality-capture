@@ -50,7 +50,7 @@ class RealityDataAnalysisService:
             "Authorization": self._token_factory.get_read_token(),
             "User-Agent": f"RDAS Python SDK/0.0.1",
             "Content-type": "application/json",
-            "Accept": "application/vnd.bentley.v1+json",
+            "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }
         return r
 
@@ -59,7 +59,7 @@ class RealityDataAnalysisService:
             "Authorization": self._token_factory.get_modify_token(),
             "User-Agent": f"RDAS Python SDK/0.0.1",
             "Content-type": "application/json",
-            "Accept": "application/vnd.bentley.v1+json",
+            "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }
         return r
 
@@ -95,9 +95,9 @@ class RealityDataAnalysisService:
             return ReturnValue(value="", error=ret.error)
         # take job_settings and create the json settings we need to send
         jc_dict = {
-            "type": settings.type.value,
             "name": job_name,
             "iTwinId": iTwin_id,
+            "type": settings.type.value,
             "settings": settings.to_json(),
         }
         job_json = json.dumps(jc_dict)
@@ -369,9 +369,13 @@ class RealityDataAnalysisService:
             )
         data = code.response()
         dp = data["progress"]
+        try:
+            state = JobState(dp["state"].lower())
+        except Exception as e:
+            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=str(e))
         return ReturnValue(
             value=JobProgress(
-                state=JobState(dp["state"]),
+                state=JobState(state),
                 progress=int(dp["percentage"]),
                 step=dp["step"],
             ),

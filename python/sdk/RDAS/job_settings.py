@@ -68,7 +68,7 @@ class O2DJobSettings:
                     ]
                 else:
                     raise TypeError(
-                        "found non expected input name:", input_dict["name"]
+                        "found non expected input name:" + input_dict["name"]
                     )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
@@ -76,7 +76,7 @@ class O2DJobSettings:
                     new_job_settings.outputs.objects2D = output_dict["realityDataId"]
                 else:
                     raise TypeError(
-                        "found non expected output name", output_dict["name"]
+                        "found non expected output name" + output_dict["name"]
                     )
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
@@ -195,7 +195,7 @@ class S2DJobSettings:
                     )
                 else:
                     raise TypeError(
-                        "found non expected input name:", input_dict["name"]
+                        "found non expected input name:" + input_dict["name"]
                     )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
@@ -215,7 +215,7 @@ class S2DJobSettings:
                     new_job_settings.outputs.lines2D = output_dict["realityDataId"]
                 else:
                     raise TypeError(
-                        "found non expected output name:", output_dict["name"]
+                        "found non expected output name:" + output_dict["name"]
                     )
         except (TypeError, KeyError) as e:
             return ReturnValue(value=cls(), error=str(e))
@@ -358,7 +358,7 @@ class O3DJobSettings:
                     new_job_settings.inputs.objects2D = input_dict["realityDataId"]
                 else:
                     raise TypeError(
-                        "found non expected input name:", input_dict["name"]
+                        "found non expected input name:" + input_dict["name"]
                     )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
@@ -380,7 +380,7 @@ class O3DJobSettings:
                     ]
                 else:
                     raise TypeError(
-                        "found non expected output name", output_dict["name"]
+                        "found non expected output name" + output_dict["name"]
                     )
             if "exportSrs" in settings_json:
                 new_job_settings.export_srs = settings_json["exportSrs"]
@@ -559,7 +559,7 @@ class S3DJobSettings:
                     new_job_settings.inputs.objects2D = input_dict["realityDataId"]
                 else:
                     raise TypeError(
-                        "found non expected input name:", input_dict["name"]
+                        "found non expected input name:" + input_dict["name"]
                     )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
@@ -605,7 +605,7 @@ class S3DJobSettings:
                     ]
                 else:
                     raise TypeError(
-                        "found non expected output name:", output_dict["name"]
+                        "found non expected output name:" + output_dict["name"]
                     )
             if "saveConfidence" in settings_json:
                 new_job_settings.save_confidence = bool(settings_json["saveConfidence"])
@@ -794,7 +794,7 @@ class L3DJobSettings:
                     new_job_settings.inputs.segmentation2D = input_dict["realityDataId"]
                 else:
                     raise TypeError(
-                        "found non expected input name:", input_dict["name"]
+                        "found non expected input name:" + input_dict["name"]
                     )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
@@ -824,7 +824,7 @@ class L3DJobSettings:
                     ]
                 else:
                     raise TypeError(
-                        "found non expected output name:", output_dict["name"]
+                        "found non expected output name:" + output_dict["name"]
                     )
             if "computeLineWidth" in settings_json:
                 new_job_settings.compute_line_width = bool(
@@ -986,7 +986,7 @@ class ChangeDetectionJobSettings:
                     new_job_settings.inputs.meshes2 = input_dict["realityDataId"]
                 else:
                     raise TypeError(
-                        "found non expected input name:", input_dict["name"]
+                        "found non expected input name:" + input_dict["name"]
                     )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
@@ -998,7 +998,7 @@ class ChangeDetectionJobSettings:
                     ]
                 else:
                     raise TypeError(
-                        "found non expected output name:", output_dict["name"]
+                        "found non expected output name:" + output_dict["name"]
                     )
             if "colorThresholdLow" in settings_json:
                 new_job_settings.color_threshold_low = float(

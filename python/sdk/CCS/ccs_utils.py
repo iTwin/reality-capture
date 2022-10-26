@@ -37,7 +37,7 @@ class CCJobSettings:
     def __init__(self) -> None:
         self.inputs = []
         self.outputs = self.Outputs()
-        self.quality = CCJobQuality.UNKNOWN
+        self.mesh_quality = CCJobQuality.UNKNOWN
         self.engines = 0
         self.cache_settings = CacheSettings()
 
@@ -53,7 +53,7 @@ class CCJobSettings:
             } for i in self.inputs]
         }
         settings_dict = {"settings": {
-            "meshQuality": self.quality.value,
+            "meshQuality": self.mesh_quality.value,
             "processingEngines": self.engines,
             "outputs": list()
             }
@@ -103,44 +103,44 @@ class CCJobSettings:
             outputs_list = settings_json["outputs"]
             for output in outputs_list:
                 if output["format"] == "contextScene":
-                    new_job_settings.outputs.context_scene = output["realityDataId"]
+                    new_job_settings.outputs.context_scene = output["id"]
                 elif output["format"] == "CCOrientations":
-                    new_job_settings.outputs.ccorientation = output["CCOrientations"]
+                    new_job_settings.outputs.ccorientation = output["id"]
                 elif output["format"] == "3MX":
-                    new_job_settings.outputs.threeMX = output["3MX"]
+                    new_job_settings.outputs.threeMX = output["id"]
                 elif output["format"] == "3SM":
-                    new_job_settings.outputs.threeSM = output["3SM"]
+                    new_job_settings.outputs.threeSM = output["id"]
                 elif output["format"] == "WebReady ScalableMesh":
-                    new_job_settings.outputs.web_ready_scalable_mesh = output["WebReady ScalableMesh"]
+                    new_job_settings.outputs.web_ready_scalable_mesh = output["id"]
                 elif output["format"] == "Cesium 3D Tiles":
-                    new_job_settings.outputs.cesium_3D_tiles = output["Cesium 3D Tiles"]
+                    new_job_settings.outputs.cesium_3D_tiles = output["id"]
                 elif output["format"] == "POD":
-                    new_job_settings.outputs.pod = output["POD"]
+                    new_job_settings.outputs.pod = output["id"]
                 elif output["format"] == "Orthophoto/DSM":
-                    new_job_settings.outputs.orthophoto_DSM = output["Orthophoto/DSM"]
+                    new_job_settings.outputs.orthophoto_DSM = output["id"]
                 elif output["format"] == "LAS":
-                    new_job_settings.outputs.las = output["LAS"]
+                    new_job_settings.outputs.las = output["id"]
                 elif output["format"] == "FBX":
-                    new_job_settings.outputs.fbx = output["FBX"]
+                    new_job_settings.outputs.fbx = output["id"]
                 elif output["format"] == "OBJ":
-                    new_job_settings.outputs.obj = output["OBJ"]
+                    new_job_settings.outputs.obj = output["id"]
                 elif output["format"] == "ESRI i3s":
-                    new_job_settings.outputs.esri_i3s = output["ESRI i3s"]
+                    new_job_settings.outputs.esri_i3s = output["id"]
                 elif output["format"] == "DGN":
-                    new_job_settings.outputs.dgn = output["DGN"]
+                    new_job_settings.outputs.dgn = output["id"]
                 elif output["format"] == "LODTreeExport":
-                    new_job_settings.outputs.lod_tree_export = output["LODTreeExport"]
+                    new_job_settings.outputs.lod_tree_export = output["id"]
                 elif output["format"] == "PLY":
-                    new_job_settings.outputs.ply = output["PLY"]
+                    new_job_settings.outputs.ply = output["id"]
                 elif output["format"] == "OPC":
-                    new_job_settings.outputs.opc = output["OPC"]
+                    new_job_settings.outputs.opc = output["id"]
                 else:
                     raise TypeError(
-                        "found non expected output name:", output["format"])
-            new_job_settings.quality = CCJobQuality(settings_json["meshQuality"])
+                        "found non expected output name:" + output["format"])
+            new_job_settings.mesh_quality = CCJobQuality(settings_json["quality"])
             new_job_settings.engines = float(settings_json["processingEngines"])
-            new_job_settings.cache_settings.use_cache = bool(settings_json["useCache"].get("useCache", False))
-            new_job_settings.cache_settings.use_cache = settings_json["cacheSettings"].get("useCache", "")
+            new_job_settings.cache_settings.use_cache = bool(settings_json.get("useCache", False))
+            new_job_settings.cache_settings.use_cache = settings_json.get("useCache", "")
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_settings, error="")

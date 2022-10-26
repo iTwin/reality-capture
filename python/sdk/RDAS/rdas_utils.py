@@ -98,7 +98,7 @@ class RDAJobCostParameters:
                 elif k == "estimatedCost":
                     new_estimation.estimated_cost = float(v)
                 else:
-                    raise TypeError("found non expected cost estimation parameter:", k)
+                    raise TypeError("found non expected cost estimation parameter:" + k)
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_estimation, error="")

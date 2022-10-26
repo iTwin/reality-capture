@@ -6,8 +6,7 @@ class RealityDataType(Enum):
     """
     Data types used in ProjectWise ContextShare.
     """
-
-    ImageCollection = "ImageCollection"
+    ImageCollection = "CCImageCollection"
     ContextScene = "ContextScene"
     ContextDetector = "ContextDetector"
     CCOrientations = "CCOrientations"
@@ -19,8 +18,8 @@ class RealityDataType(Enum):
     LAZ = "LAZ"
     OPC = "OPC"
     PLY = "PLY"
-    ThreeMX = "ThreeMX"
-    ThreeSM = "ThreeSM"
+    ThreeMX = "3MX"
+    ThreeSM = "3SM"
     Cesium = "Cesium"
     Unstructured = "Unstructured"
 
@@ -37,9 +36,13 @@ class JobState(Enum):
     FAILED = "failed"
     CANCELLED = "cancelled"
 
+    # ccmasterkernel
     Completed = "success"
     Pending = "pending"
     Running = "active"
+
+    # ccs
+    Over = "over"
 
 
 class JobDateTime(NamedTuple):

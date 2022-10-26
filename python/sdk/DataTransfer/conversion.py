@@ -198,5 +198,5 @@ def replace_ccorientation_references(
             new_path = ret.value
             image_tag.text = os.path.join(new_path, filename)
 
-        tree.write(new_ccorientation_path, encoding="utf-8")
-        return ReturnValue(value=True, error="")
+    tree.write(new_ccorientation_path, encoding="utf-8", xml_declaration=True)
+    return ReturnValue(value=True, error="")

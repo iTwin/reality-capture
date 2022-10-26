@@ -7,7 +7,7 @@ from multiprocessing.pool import ThreadPool
 
 from token_factory import token_factory
 from apim_utils.code import Code
-from sdk.DataTransfer.conversion import replace_context_scene_references
+from sdk.DataTransfer.conversion import replace_context_scene_references, replace_ccorientation_references
 from sdk.DataTransfer.references import ReferenceTable
 from sdk.utils import RealityDataType, ReturnValue
 
@@ -250,7 +250,7 @@ class RealityDataTransfer:
         if reference_table is not None:
             temp_dir = tempfile.TemporaryDirectory()
             temp_filepath = os.path.join(temp_dir.name, "Orientations.xml")
-            ret = replace_context_scene_references(
+            ret = replace_ccorientation_references(
                 os.path.join(ccorientation_path, "Orientations.xml"),
                 temp_filepath,
                 reference_table,
@@ -371,7 +371,7 @@ class RealityDataTransfer:
             return ret
         if reference_table is not None:
             # change references
-            return replace_context_scene_references(
+            return replace_ccorientation_references(
                 os.path.join(output_path, "Orientation.xml"),
                 os.path.join(output_path, "Orientation.xml"),
                 reference_table,
