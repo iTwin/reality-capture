@@ -1,5 +1,5 @@
 import path = require("path");
-import { RealityDataType, JobState } from "../CommonData";
+import { RealityDataType, JobState, ClientInfo } from "../CommonData";
 import { RealityDataAnalysisService } from "../Rdas/Service";
 import { L3DJobSettings } from "../Rdas/Settings";
 import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
@@ -30,12 +30,12 @@ async function runContextCaptureExample() {
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_SECRET ?? "";
-    const rdServiceUrl = process.env.IMJS_RD_URL ?? "";
-    const rdaServiceUrl = process.env.IMJS_RDA_URL ?? "";
+    const redirectUrl = process.env.IMJS_AUTHORIZATION_REDIRECT_URI ?? "";
 
     console.log("Reality Data Analysis sample job detecting 3D lines");
-    const realityDataService = new RealityDataTransfer(rdServiceUrl, clientId, secret);
-    const realityDataAnalysisService = new RealityDataAnalysisService(rdaServiceUrl, clientId, secret);
+    const clientInfo: ClientInfo = {clientId: clientId, secret: secret, redirectUrl: redirectUrl};
+    const realityDataService = new RealityDataTransfer(clientInfo);
+    const realityDataAnalysisService = new RealityDataAnalysisService(clientInfo);
     console.log("Service initialized");
 
     // Creating reference table and uploading ccimageCollection, oriented photos, mesh, mesh contextScene and detector if necessary (not yet on the cloud)
@@ -153,6 +153,7 @@ async function runContextCaptureExample() {
         }
         else if(progress.state === JobState.CANCELLED) {
             console.log("Job cancelled");
+            return;
         }
         else if(progress.state === JobState.FAILED) {
             console.log("Job failed");

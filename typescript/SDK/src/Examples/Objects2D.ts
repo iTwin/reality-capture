@@ -3,7 +3,7 @@ import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
 import { ReferenceTable } from "../Utils/ReferenceTable";
 import path = require("path");
 import * as fs from "fs";
-import { JobState, RealityDataType } from "../CommonData";
+import { ClientInfo, JobState, RealityDataType } from "../CommonData";
 import { O2DJobSettings } from "../Rdas/Settings";
 import * as dotenv from "dotenv";
 
@@ -26,12 +26,12 @@ async function runObjects2DExample() {
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_SECRET ?? "";
-    const rdServiceUrl = process.env.IMJS_RD_URL ?? "";
-    const rdaServiceUrl = process.env.IMJS_RDA_URL ?? "";
+    const redirectUrl = process.env.IMJS_AUTHORIZATION_REDIRECT_URI ?? "";
 
     console.log("Reality Data Analysis sample job detecting 2D objects");
-    const realityDataService = new RealityDataTransfer(rdServiceUrl, clientId, secret);
-    const realityDataAnalysisService = new RealityDataAnalysisService(rdaServiceUrl, clientId, secret);
+    const clientInfo: ClientInfo = {clientId: clientId, secret: secret, redirectUrl: redirectUrl};
+    const realityDataService = new RealityDataTransfer(clientInfo);
+    const realityDataAnalysisService = new RealityDataAnalysisService(clientInfo);
     console.log("Service initialized");
 
     // Creating reference table and uploading ccimageCollection, contextScene and detector if necessary (not yet on the cloud)
@@ -124,6 +124,7 @@ async function runObjects2DExample() {
         }
         else if(progress.state === JobState.CANCELLED) {
             console.log("Job cancelled");
+            return;
         }
         else if(progress.state === JobState.FAILED) {
             console.log("Job failed");

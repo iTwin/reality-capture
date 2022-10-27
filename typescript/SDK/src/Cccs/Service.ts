@@ -1,50 +1,93 @@
 import { IModelHost } from "@itwin/core-backend";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
-import { JobDates, JobProgress } from "../CommonData";
+import { ClientInfo, JobDates, JobProgress, JobState } from "../CommonData";
 import fetch from "node-fetch";
 import { CCCostParameters, CCJobProperties, CCJobSettings, CCJobType, CCWorkspaceProperties } from "./Utils";
+import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
+import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
 export class ContextCaptureService {
-    /** Url of the Context Capture Service. */
+    /** Url of the RealityData Analysis Service. */
     private url: string;
 
-    /** A client id with realitydata and contextcapture scopes. */
-    private clientId: string;
-
-    /** Service application secret. */
-    private secret: string;
-
+    /** Client information to get access to the service. */
+    private clientInfo: ClientInfo;
+    
     /** Authorization client to generate the access token, automatically refreshed if necessary.*/
-    private authorizationClient?: ServiceAuthorizationClient;
+    private authorizationClient?: ServiceAuthorizationClient | BrowserAuthorizationClient | NodeCliAuthorizationClient;
 
     /**
-     * Create a new ContextCaptureService from provided iModel application.
-     * @param {string} url Url of the Context Capture Service.
-     * @param {string} clientId A client id with realitydata and contextcapture scopes.
-     * @param {string} secret Service application secret.
+     * Create a new RealityDataTransferService from provided iTwin application infos.
+     * @param clientInfo iTwin application infos.
+     * @param url (optional) Url of the RealityData Analysis Service. Default : "https://qa-api.bentley.com/realitydata/" .
      */
-    constructor(url: string, clientId: string, secret?: string) {        
-        this.url = url;
-        this.clientId = clientId;
-        this.secret = secret ?? "";
+    constructor(clientInfo: ClientInfo, url?: string) {
+        this.url = url ?? "https://qa-api.bentley.com/contextcapture/";
+        this.clientInfo = clientInfo;
     }
 
     /**
-     * Connects to Context Capture service.
+     * @private
+     * Get scopes required for this service.
+     * @returns required minimal scopes.
+     */
+    private getScopes(): string {
+        return "realitydata:modify realitydata:read contextcapture:read contextcapture:modify";
+    }
+
+    /**
+     * Connects to the Reality data analysis service.
      * @returns A potential error message.
      */
     public async connect(): Promise<void | Error> {
+        // TODO : will be duplicated in CCCS and RDA : inherit from a parent class?
         try {
-            if(!this.secret)
-                return new Error("Secret is undefined");
+            let env = "";
+            if(this.url.includes("dev-"))
+                env = "dev-";
+            else if(this.url.includes("qa-"))
+                env = "qa-";
             
-            await IModelHost.startup();
-            this.authorizationClient = new ServiceAuthorizationClient ({
-                clientId: this.clientId,
-                clientSecret : this.secret,
-                scope: "realitydata:modify realitydata:read contextcapture:read contextcapture:modify",
-                authority: "https://qa-ims.bentley.com",
-            });
+            const authority = "https://" + env + "ims.bentley.com";
+            
+            if(this.clientInfo.clientId.startsWith("service")) {
+                if(!this.clientInfo.secret)
+                    return new Error("Secret is undefined");
+                
+                await IModelHost.startup();
+                this.authorizationClient = new ServiceAuthorizationClient ({
+                    clientId: this.clientInfo.clientId,
+                    clientSecret : this.clientInfo.secret,
+                    scope: this.getScopes(),
+                    authority: authority,
+                });
+            }
+            else if(this.clientInfo.clientId.startsWith("spa")) {
+                if(!this.clientInfo.redirectUrl)
+                    return new Error("Redirect url is undefined");
+                        
+                this.authorizationClient = new BrowserAuthorizationClient ({
+                    clientId: this.clientInfo.clientId,
+                    scope: this.getScopes(),
+                    authority: authority,
+                    responseType: "code",
+                    redirectUri: this.clientInfo.redirectUrl,
+                });
+                await this.authorizationClient.signInRedirect();
+            }
+            else if(this.clientInfo.clientId.startsWith("native")) {
+                if(!this.clientInfo.redirectUrl)
+                    return new Error("Redirect url is undefined");
+                        
+                this.authorizationClient = new NodeCliAuthorizationClient ({
+                    clientId: this.clientInfo.clientId,
+                    scope: this.getScopes(),
+                    redirectUri: this.clientInfo.redirectUrl,
+                    issuerUrl: authority,
+                });
+                await this.authorizationClient.signIn();
+            }
+            // TODO : traditional Web apps
         }
         catch(error: any) {
             return error;
@@ -102,8 +145,8 @@ export class ContextCaptureService {
             "contextCaptureVersion": contextCaptureVersion
         };
         const response = await this.submitRequest(this.url + "workspaces", "POST", [201], body);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
 
         return response["workspace"]["id"];
     }
@@ -115,8 +158,8 @@ export class ContextCaptureService {
      */
     public async deleteWorkspace(workspaceId: string): Promise<void | Error> {
         const response = await this.submitRequest(this.url + "workspaces/" + workspaceId, "DELETE", [204]);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
     }
 
     /**
@@ -126,8 +169,8 @@ export class ContextCaptureService {
      */
     public async getWorkspace(workspaceId: string): Promise<CCWorkspaceProperties | Error> {
         const response = await this.submitRequest(this.url + "workspaces/" + workspaceId, "GET", [200]);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
 
         return {
             id: response["workspace"]["id"],
@@ -158,8 +201,8 @@ export class ContextCaptureService {
         };
         
         const response = await this.submitRequest(this.url + "jobs/", "POST", [201], body);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
 
         return response["job"]["id"];
     }
@@ -172,8 +215,8 @@ export class ContextCaptureService {
     public async submitJob(jobId: string): Promise<void | Error> {
         const body = {"state": "active"};
         const response = await this.submitRequest(this.url + "jobs/" + jobId, "PATCH", [200], body);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
     }
 
     /**
@@ -186,8 +229,8 @@ export class ContextCaptureService {
             "state": "cancelled",
         };
         const response = await this.submitRequest(this.url + "jobs/" + id, "PATCH", [200], body);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
     }
 
     /**
@@ -197,8 +240,8 @@ export class ContextCaptureService {
      */
     public async deleteJob(id: string): Promise<void | Error> {
         const response = await this.submitRequest(this.url + "jobs/" + id, "DELETE", [204]);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
     }
 
     /**
@@ -209,10 +252,11 @@ export class ContextCaptureService {
     public async getJobProgress(id: string): Promise<JobProgress | Error> {
         const response = await this.submitRequest(this.url + `jobs/${id}/progress`, "GET", [200]);
         const progress = response["jobProgress"];
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
         
-        return {state: progress["state"], progress: JSON.parse(progress["percentage"]), step: progress["step"]};
+        const state = (progress["state"] as string).toLowerCase();
+        return {state: state as JobState, progress: JSON.parse(progress["percentage"]), step: progress["step"]};
     }
 
     /**
@@ -222,8 +266,8 @@ export class ContextCaptureService {
      */
     public async getJobProperties(id: string): Promise<CCJobProperties | Error> {
         const response = await this.submitRequest(this.url + "jobs/" + id, "GET", [200]);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
         
         const job = response["job"];
         const jobProperties: CCJobProperties = {
@@ -315,7 +359,7 @@ export class ContextCaptureService {
      * @param {string} id The ID of the relevant job.
      * @returns {string | Error} The job name, or a potential error message.
      */
-    public async getName(id: string): Promise<string | Error> {   
+    public async getJobName(id: string): Promise<string | Error> {   
         const properties = await this.getJobProperties(id);
         if("message" in properties)
             return properties as Error;
@@ -376,8 +420,8 @@ export class ContextCaptureService {
             }
         }
         const response = await this.submitRequest(this.url + "jobs/" + id, "PATCH", [200], body);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
         
         return response.costEstimation?.estimateCost;
     }

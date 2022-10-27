@@ -3,7 +3,7 @@ import { ContextCaptureService } from "../Cccs/Service";
 import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
 import { ReferenceTable } from "../Utils/ReferenceTable";
 import * as fs from "fs";
-import { JobState, RealityDataType } from "../CommonData";
+import { ClientInfo, JobState, RealityDataType } from "../CommonData";
 import { CCJobSettings, CCJobType, CCMeshQuality } from "../Cccs/Utils";
 import * as dotenv from "dotenv";
 
@@ -25,12 +25,12 @@ async function main() {
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_SECRET ?? "";
-    const rdServiceUrl = process.env.IMJS_RD_URL ?? "";
-    const ccServiceUrl = process.env.IMJS_CC_URL ?? "";
+    const redirectUrl = process.env.IMJS_AUTHORIZATION_REDIRECT_URI ?? "";
 
     console.log("Context capture sample job - Full (Calibration + Reconstruction)");
-    const realityDataService = new RealityDataTransfer(rdServiceUrl, clientId, secret);
-    const contextCaptureService = new ContextCaptureService(ccServiceUrl, clientId, secret);
+    const clientInfo: ClientInfo = {clientId: clientId, secret: secret, redirectUrl: redirectUrl};
+    const realityDataService = new RealityDataTransfer(clientInfo);
+    const contextCaptureService = new ContextCaptureService(clientInfo);
     console.log("Service initialized");
 
     // Creating reference table and uploading ccimageCollection, ccOrientations if necessary (not yet on the cloud)
@@ -103,14 +103,15 @@ async function main() {
     }
     console.log("Job submitted");
 
-    /* while(true) {
+    while(true) {
         const progress = await contextCaptureService.getJobProgress(jobId);
+        console.log("pogress raw : ", progress);
         if(progress instanceof Error) {
             console.log("Error while getting progress:" + jobId);
             return;
         }
 
-        if(progress.state === JobState.SUCCESS) {
+        if(progress.state === JobState.SUCCESS || progress.state === JobState.Over) {
             break;
         }
         else if(progress.state === JobState.ACTIVE) {
@@ -118,6 +119,7 @@ async function main() {
         }
         else if(progress.state === JobState.CANCELLED) {
             console.log("Job cancelled");
+            return;
         }
         else if(progress.state === JobState.FAILED) {
             console.log("Job failed");
@@ -126,7 +128,7 @@ async function main() {
         }
         await sleep(6000);
     }
-    console.log("Job done");*/
+    console.log("Job done");
 
     console.log("Retrieving outputs ids");
     const finalSettings = await contextCaptureService.getJobSettings(jobId);

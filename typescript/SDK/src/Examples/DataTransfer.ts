@@ -1,5 +1,5 @@
 import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
-import { RealityDataType } from "../CommonData";
+import { ClientInfo, RealityDataType } from "../CommonData";
 import * as dotenv from "dotenv";
 
 
@@ -13,10 +13,11 @@ async function runRealityDataExample() {
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_SECRET ?? "";
-    const serviceUrl = process.env.IMJS_RDA_URL ?? "";
+    const redirectUrl = process.env.IMJS_AUTHORIZATION_REDIRECT_URI ?? "";
 
     console.log("Reality Data Analysis sample job detecting 2D objects");
-    const realityDataService = new RealityDataTransfer(serviceUrl, clientId, secret);
+    const clientInfo: ClientInfo = {clientId: clientId, secret: secret, redirectUrl: redirectUrl};
+    const realityDataService = new RealityDataTransfer(clientInfo);
     console.log("Service initialized");
 
     // Upload CCImageCollection

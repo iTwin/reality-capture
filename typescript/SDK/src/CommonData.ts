@@ -1,3 +1,10 @@
+/** Client information to get access to services. */
+export interface ClientInfo {
+    clientId: string,
+    secret?: string,
+    redirectUrl?: string,
+}
+
 /** Status of a job. */
 export enum JobState {
     UNKNOWN = "unknown",
@@ -7,6 +14,7 @@ export enum JobState {
     FAILED = "failed",
     CANCELLED = "cancelled",
 
+    Over = "over",
     Completed = "success",
     Pending = "pending",
     Running = "active",

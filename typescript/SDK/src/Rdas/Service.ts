@@ -3,7 +3,9 @@ import { ChangeDetectionJobSettings, JobSettings, L3DJobSettings, O2DJobSettings
 import { RDACostParameters, RDAJobProperties } from "./Utils";
 import fetch from "node-fetch";
 import { IModelHost } from "@itwin/core-backend";
-import { JobDates, JobProgress, JobState } from "../CommonData";
+import { ClientInfo, JobDates, JobProgress, JobState } from "../CommonData";
+import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
+import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
 /**
  * Service handling communication with RealityData Analysis Service
@@ -12,25 +14,29 @@ export class RealityDataAnalysisService {
     /** Url of the RealityData Analysis Service. */
     private url: string;
 
-    /** A client id with realitydata and realitydataanalysis scopes. */
-    private clientId: string;
-
-    /** Service application secret. */
-    private secret: string;
-
+    /** Client information to get access to the service. */
+    private clientInfo: ClientInfo;
+    
     /** Authorization client to generate the access token, automatically refreshed if necessary.*/
-    private authorizationClient?: ServiceAuthorizationClient;
+    private authorizationClient?: ServiceAuthorizationClient | BrowserAuthorizationClient | NodeCliAuthorizationClient;
 
     /**
-     * Create a new RealityDataAnalysisService from provided iModel application.
-     * @param {string} url Url of the RealityData Analysis Service.
-     * @param {string} clientId A client id with realitydata and realitydataanalysis scopes.
-     * @param {string} secret Service application secret.
+     * Create a new RealityDataTransferService from provided iTwin application infos.
+     * @param clientInfo iTwin application infos.
+     * @param url (optional) Url of the RealityData Analysis Service. Default : "https://qa-api.bentley.com/realitydata/" .
      */
-    constructor(url: string, clientId: string, secret?: string) {        
-        this.url = url;
-        this.clientId = clientId;
-        this.secret = secret ?? "";
+    constructor(clientInfo: ClientInfo, url?: string) {
+        this.url = url ?? "https://qa-api.bentley.com/contextcapture/";
+        this.clientInfo = clientInfo;
+    }
+
+    /**
+     * @private
+     * Get scopes required for this service.
+     * @returns required minimal scopes.
+     */
+    private getScopes(): string {
+        return "realitydata:modify realitydata:read";
     }
 
     /**
@@ -38,17 +44,54 @@ export class RealityDataAnalysisService {
      * @returns A potential error message.
      */
     public async connect(): Promise<void | Error> {
+        // TODO : will be duplicated in CCCS and RDA : inherit from a parent class?
         try {
-            if(!this.secret)
-                return new Error("Secret is undefined");
+            let env = "";
+            if(this.url.includes("dev-"))
+                env = "dev-";
+            else if(this.url.includes("qa-"))
+                env = "qa-";
             
-            await IModelHost.startup();
-            this.authorizationClient = new ServiceAuthorizationClient ({
-                clientId: this.clientId,
-                clientSecret : this.secret,
-                scope: "realitydata:modify realitydata:read realitydataanalysis:read realitydataanalysis:modify",
-                authority: "https://qa-ims.bentley.com",
-            });
+            const authority = "https://" + env + "ims.bentley.com";
+            
+            if(this.clientInfo.clientId.startsWith("service")) {
+                if(!this.clientInfo.secret)
+                    return new Error("Secret is undefined");
+                
+                await IModelHost.startup();
+                this.authorizationClient = new ServiceAuthorizationClient ({
+                    clientId: this.clientInfo.clientId,
+                    clientSecret : this.clientInfo.secret,
+                    scope: this.getScopes(),
+                    authority: authority,
+                });
+            }
+            else if(this.clientInfo.clientId.startsWith("spa")) {
+                if(!this.clientInfo.redirectUrl)
+                    return new Error("Redirect url is undefined");
+                        
+                this.authorizationClient = new BrowserAuthorizationClient ({
+                    clientId: this.clientInfo.clientId,
+                    scope: this.getScopes(),
+                    authority: authority,
+                    responseType: "code",
+                    redirectUri: this.clientInfo.redirectUrl,
+                });
+                await this.authorizationClient.signInRedirect();
+            }
+            else if(this.clientInfo.clientId.startsWith("native")) {
+                if(!this.clientInfo.redirectUrl)
+                    return new Error("Redirect url is undefined");
+                        
+                this.authorizationClient = new NodeCliAuthorizationClient ({
+                    clientId: this.clientInfo.clientId,
+                    scope: this.getScopes(),
+                    redirectUri: this.clientInfo.redirectUrl,
+                    issuerUrl: authority,
+                });
+                await this.authorizationClient.signIn();
+            }
+            // TODO : traditional Web apps
         }
         catch(error: any) {
             return error;
@@ -106,8 +149,8 @@ export class RealityDataAnalysisService {
             "settings": settings.toJson()
         };
         const response = await this.submitRequest(this.url + "jobs", "POST", [201], body);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
 
         return response["job"]["id"];
     }
@@ -120,8 +163,8 @@ export class RealityDataAnalysisService {
     public async submitJob(id: string): Promise<void | Error> {
         const body = {"state": "active"};
         const response = await this.submitRequest(this.url + "jobs/" + id, "PATCH", [200], body);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
     }
     
     /**
@@ -134,8 +177,8 @@ export class RealityDataAnalysisService {
             "state": "cancelled",
         };
         const response = await this.submitRequest(this.url + "jobs/" + id, "PATCH", [200], body);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
     }
 
     /**
@@ -145,8 +188,8 @@ export class RealityDataAnalysisService {
      */
     public async deleteJob(id: string): Promise<void | Error> {
         const response = await this.submitRequest(this.url + "jobs/" + id, "DELETE", [204]);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
     }
 
     /**
@@ -157,10 +200,11 @@ export class RealityDataAnalysisService {
     public async getJobProgress(id: string): Promise<JobProgress | Error> {
         const response = await this.submitRequest(this.url + `jobs/${id}/progress`, "GET", [200]);
         const progress = response["progress"];
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
         
-        return {state: progress["state"], progress: JSON.parse(progress["percentage"]), step: progress["step"]};
+        const state = (progress["state"] as string).toLowerCase();
+        return {state: state as JobState, progress: JSON.parse(progress["percentage"]), step: progress["step"]};
     }
 
     /**
@@ -183,8 +227,8 @@ export class RealityDataAnalysisService {
      */
     public async getJobProperties(id: string): Promise<RDAJobProperties | Error> {
         const response = await this.submitRequest(this.url + "jobs/" + id, "GET", [200]);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
         
         const job = response["job"];
         const jobProperties: RDAJobProperties = {
@@ -288,7 +332,7 @@ export class RealityDataAnalysisService {
      * @param {string} id The ID of the relevant job.
      * @returns {string | Error} The job name, or a potential error message.
      */
-    public async getName(id: string): Promise<string | Error> {   
+    public async getJobName(id: string): Promise<string | Error> {   
         const properties = await this.getJobProperties(id);
         if("message" in properties)
             return properties as Error;
@@ -353,8 +397,8 @@ export class RealityDataAnalysisService {
             }
         }
         const response = await this.submitRequest(this.url + "jobs/" + id, "PATCH", [200], body);
-        if("message" in response)
-            return response as Error;
+        if(response instanceof Error)
+            return response;
         
         return response.costEstimation?.estimateCost;
     }

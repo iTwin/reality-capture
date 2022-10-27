@@ -1,6 +1,8 @@
 import { ContainerClient } from "@azure/storage-blob";
 import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
+import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
+import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 import * as fs from "fs";
 import * as os from "os";
 import path = require("path");
@@ -8,7 +10,7 @@ import { ReferenceTable } from "./ReferenceTable";
 import { v4 as uuidv4 } from "uuid";
 import { IModelHost } from "@itwin/core-backend";
 import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
-import { RealityDataType } from "../CommonData";
+import { ClientInfo, RealityDataType } from "../CommonData";
 
 // taken from Microsoft's Azure sdk samples.
 // https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/storage/storage-blob/samples/typescript/src/basic.ts
@@ -253,19 +255,29 @@ export class RealityDataTransfer {
     /** Url of the RealityData Analysis Service. */
     private url: string;
 
-    /** A client id with realitydata and realitydataanalysis scopes. */
-    private clientId: string;
-    
-    /** Service application secret. */
-    private secret: string;
+    /** Client information to get access to the service. */
+    private clientInfo: ClientInfo;
     
     /** Authorization client to generate the access token, automatically refreshed if necessary.*/
-    private authorizationClient?: ServiceAuthorizationClient;
+    private authorizationClient?: ServiceAuthorizationClient | BrowserAuthorizationClient | NodeCliAuthorizationClient;
 
-    constructor(url: string, clientId: string, secret?: string) {
-        this.url = url;
-        this.clientId = clientId;
-        this.secret = secret ?? "";
+    /**
+     * Create a new RealityDataTransferService from provided iTwin application infos.
+     * @param clientInfo iTwin application infos.
+     * @param url (optional) Url of the RealityData Analysis Service. Default : "https://qa-api.bentley.com/realitydata/" .
+     */
+    constructor(clientInfo: ClientInfo, url?: string) {
+        this.url = url ?? "https://qa-api.bentley.com/realitydata/";
+        this.clientInfo = clientInfo;
+    }
+
+    /**
+     * @private
+     * Get scopes required for this service.
+     * @returns required minimal scopes.
+     */
+    private getScopes(): string {
+        return "realitydata:modify realitydata:read";
     }
 
     /**
@@ -273,17 +285,54 @@ export class RealityDataTransfer {
      * @returns A potential error message.
      */
     public async connect(): Promise<void | Error> {
+        // TODO : will be duplicated in CCCS and RDA : inherit from a parent class?
         try {
-            if(!this.secret)
-                return new Error("Secret is undefined");
+            let env = "";
+            if(this.url.includes("dev-"))
+                env = "dev-";
+            else if(this.url.includes("qa-"))
+                env = "qa-";
             
-            await IModelHost.startup();
-            this.authorizationClient = new ServiceAuthorizationClient ({
-                clientId: this.clientId,
-                clientSecret : this.secret,
-                scope: "realitydata:modify realitydata:read realitydataanalysis:read realitydataanalysis:modify",
-                authority: "https://qa-ims.bentley.com",
-            });
+            const authority = "https://" + env + "ims.bentley.com";
+            
+            if(this.clientInfo.clientId.startsWith("service")) {
+                if(!this.clientInfo.secret)
+                    return new Error("Secret is undefined");
+                
+                await IModelHost.startup();
+                this.authorizationClient = new ServiceAuthorizationClient ({
+                    clientId: this.clientInfo.clientId,
+                    clientSecret : this.clientInfo.secret,
+                    scope: this.getScopes(),
+                    authority: authority,
+                });
+            }
+            else if(this.clientInfo.clientId.startsWith("spa")) {
+                if(!this.clientInfo.redirectUrl)
+                    return new Error("Redirect url is undefined");
+                        
+                this.authorizationClient = new BrowserAuthorizationClient ({
+                    clientId: this.clientInfo.clientId,
+                    scope: this.getScopes(),
+                    authority: authority,
+                    responseType: "code",
+                    redirectUri: this.clientInfo.redirectUrl,
+                });
+                await this.authorizationClient.signInRedirect();
+            }
+            else if(this.clientInfo.clientId.startsWith("native")) {
+                if(!this.clientInfo.redirectUrl)
+                    return new Error("Redirect url is undefined");
+                        
+                this.authorizationClient = new NodeCliAuthorizationClient ({
+                    clientId: this.clientInfo.clientId,
+                    scope: this.getScopes(),
+                    redirectUri: this.clientInfo.redirectUrl,
+                    issuerUrl: authority,
+                });
+                await this.authorizationClient.signIn();
+            }
+            // TODO : traditional Web apps
         }
         catch(error: any) {
             return error;
