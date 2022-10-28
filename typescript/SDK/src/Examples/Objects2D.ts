@@ -1,4 +1,4 @@
-import { RealityDataAnalysisService } from "../Rdas/Service";
+import { RealityDataAnalysisService } from "../Rdas/RealityDataAnalysisService";
 import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
 import { ReferenceTable } from "../Utils/ReferenceTable";
 import path = require("path");
@@ -39,11 +39,7 @@ async function runObjects2DExample() {
     const referencesPath = path.join(outputPath, "test_references_typescript.txt");
     if(fs.existsSync(referencesPath) && fs.lstatSync(referencesPath).isFile()) {
         console.log("Loading preexistent references");
-        const res = references.load(referencesPath);
-        if(res) {
-            console.log("Error while loading preexisting references:" + res);
-            return;
-        }
+        await references.load(referencesPath);
     }
 
     // Upload CCImageCollection
@@ -51,10 +47,6 @@ async function runObjects2DExample() {
         console.log("No reference to CCimage Collections found, uploading local files to cloud");
         const id = await realityDataService.uploadRealityData(ccImageCollection, ccImageCollectionName, 
             RealityDataType.CC_IMAGE_COLLECTION, projectId);
-        if(id instanceof Error) {
-            console.log("Error in upload:", id);
-            return;
-        }
         references.addReference(ccImageCollection, id);
     }
 
@@ -62,10 +54,6 @@ async function runObjects2DExample() {
     if(!references.hasLocalPath(photoContextScene)) {
         console.log("No reference to ContextScene found, uploading local files to cloud");
         const id = await realityDataService.uploadContextScene(photoContextScene, contextSceneName, projectId, references);
-        if(id instanceof Error) {
-            console.log("Error in upload:", id);
-            return;
-        }
         references.addReference(photoContextScene, id);
     }
 
@@ -74,18 +62,10 @@ async function runObjects2DExample() {
         console.log("No reference to detector found, uploading local files to cloud");
         const id = await realityDataService.uploadRealityData(photoObjectDetector, detectorName, RealityDataType.CONTEXT_DETECTOR, 
             projectId);
-        if(id instanceof Error) {
-            console.log("Error in upload:", id);
-            return;
-        }
         references.addReference(photoObjectDetector, id);
     }
 
-    const saveRes = references.save(referencesPath);
-    if(saveRes) {
-        console.log("Error saving references:" + saveRes);
-        return;
-    }
+    references.save(referencesPath);
     console.log("Checked data upload");
 
     const settings = new O2DJobSettings();
@@ -96,26 +76,13 @@ async function runObjects2DExample() {
     console.log("Settings created");
 
     const jobId = await realityDataAnalysisService.createJob(settings, jobName, projectId);
-    if(jobId instanceof Error) {
-        console.log("Error in job create:" + jobId);
-        return;
-    }
     console.log("Job created");
 
-    const submitRes = await realityDataAnalysisService.submitJob(jobId);
-    if(submitRes) {
-        console.log("Error in job submit:" + jobId);
-        return;
-    }
+    await realityDataAnalysisService.submitJob(jobId);
     console.log("Job submitted");
 
     while(true) {
         const progress = await realityDataAnalysisService.getJobProgress(jobId);
-        if(progress instanceof Error) {
-            console.log("Error while getting progress:" + jobId);
-            return;
-        }
-
         if(progress.state === JobState.SUCCESS) {
             break;
         }
@@ -137,11 +104,6 @@ async function runObjects2DExample() {
 
     console.log("Retrieving outputs ids");
     const finalSettings = await realityDataAnalysisService.getJobSettings(jobId);
-    if(finalSettings instanceof Error) {
-        console.log("Error while getting settings:" + finalSettings);
-        return;
-    }
-
     console.log("Downloading outputs");
     const objects2DId = (finalSettings as O2DJobSettings).outputs.objects2D;
     realityDataService.downloadContextScene(objects2DId, outputPath, references);

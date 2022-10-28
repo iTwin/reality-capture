@@ -1,16 +1,13 @@
 import { ContainerClient } from "@azure/storage-blob";
 import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
-import { ServiceAuthorizationClient } from "@itwin/service-authorization";
-import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
-import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 import * as fs from "fs";
 import * as os from "os";
 import path = require("path");
 import { ReferenceTable } from "./ReferenceTable";
 import { v4 as uuidv4 } from "uuid";
-import { IModelHost } from "@itwin/core-backend";
 import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
 import { ClientInfo, RealityDataType } from "../CommonData";
+import { Service } from "../Service";
 
 // taken from Microsoft's Azure sdk samples.
 // https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/storage/storage-blob/samples/typescript/src/basic.ts
@@ -28,144 +25,133 @@ async function streamToBuffer(readableStream: NodeJS.ReadableStream): Promise<Bu
     });
 }
 
-function listFiles(root: string, currentFolder ?: string): string[] {
+async function listFiles(root: string, currentFolder?: string): Promise<string[]> {
     const allSubFiles: string[] = [];
     const path = currentFolder ? root + "/" + currentFolder : root;
-    try {
-        const subFiles = fs.readdirSync(path);
-
-        for (let i = 0; i < subFiles.length; i++) {
-            const fileDirFromRoot = currentFolder ? currentFolder + "/" + subFiles[i] : subFiles[i];
-            if (fs.lstatSync(path + "/" + subFiles[i]).isDirectory()) {
-                allSubFiles.push(...listFiles(root, fileDirFromRoot));
-            }
-            else
-                allSubFiles.push(fileDirFromRoot);
+    const subFiles = await fs.promises.readdir(path);
+    for (let i = 0; i < subFiles.length; i++) {
+        const fileDirFromRoot = currentFolder ? currentFolder + "/" + subFiles[i] : subFiles[i];
+        if ((await fs.promises.lstat(path + "/" + subFiles[i])).isDirectory()) {
+            allSubFiles.push(...await listFiles(root, fileDirFromRoot));
         }
-    }
-    catch (error: any) {
-        throw new Error("Can't list files to upload in " + root + ". " + error);
+        else
+            allSubFiles.push(fileDirFromRoot);
     }
     return allSubFiles;
 }
 
-function getUniqueTmpDir(): string {
+async function getUniqueTmpDir(): Promise<string> {
     const tmpDir = path.join(os.tmpdir(), "Bentley/ContextCapture Internal/", uuidv4());
-    try {
-        fs.mkdirSync(tmpDir);
-    }
-    catch (error: any) {
-        throw new Error("Can't create unique dir : " + tmpDir + " for temporary scene. " + error);
-    }
+    await fs.promises.mkdir(tmpDir);
     return tmpDir;
 }
 
-function createTempScene(scenePath: string): string {
+async function createTempScene(scenePath: string): Promise<string> {
     let newScenePath = scenePath;
-    const localTmpPath = getUniqueTmpDir();
-    if (!localTmpPath)
-        return "";
-
-    try {
-        const files = listFiles(path.dirname(scenePath));
-        files.forEach((file) => {
-            if (!fs.existsSync(path.dirname(path.join(localTmpPath, file)))) {
-                fs.mkdirSync(path.dirname(path.join(localTmpPath, file)));
-            }
-
-            fs.copyFileSync(path.join(path.dirname(scenePath), file), path.join(localTmpPath, file));
-        });
-        newScenePath = path.join(localTmpPath, path.basename(scenePath));
-        return newScenePath;
-    }
-    catch (error: any) {
-        throw new Error("Can't create a temporary scene from " + scenePath + ". " + error);
-    }
-}
-
-function replaceXMLScene(scenePath: string, outputPath: string, references: ReferenceTable, localToCloud: boolean): void | Error {
-    try {
-        const data = fs.readFileSync(scenePath);
-        const text = data.toString();
-        const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
-        const sceneReferences = xmlDoc.getElementsByTagName("Reference");
-        for (let i = 0; i < sceneReferences.length; i++) {
-            const referencePath = sceneReferences[i].getElementsByTagName("Path");
-            if (!referencePath.length)
-                return new Error("Invalid context scene, the reference " + sceneReferences[i] + " has no path.");
-
-            const pathValue = referencePath[0].textContent;
-            if (!pathValue)
-                return new Error("Invalid context scene, the reference " + sceneReferences[i] + " has no path content.");
-
-            if (localToCloud) {
-                const cloudId = references.getCloudIdFromLocalPath(pathValue);
-                if (!cloudId)
-                    return new Error("Can't replace local path with cloud id ");
-
-                referencePath[0].textContent = "rds:" + cloudId;
-            }
-            else {
-                if (pathValue.substring(0, 4) !== "rds:")
-                    return new Error("Invalid context scene, the reference " + pathValue + "doesn't start with 'rds:'.");
-
-                const cloudId = pathValue.substring(4);
-                const localPath = references.getLocalPathFromCloudId(cloudId);
-                if (!localPath)
-                    return new Error("Can't replace cloud id " + cloudId + "path with local path, does not exist in references");
-
-                referencePath[0].textContent = localPath;
-            }
+    const localTmpPath = await getUniqueTmpDir();
+    const files = await listFiles(path.dirname(scenePath));
+    for (let i = 0; i < files.length; i++) {
+        try {
+            await fs.promises.access(path.dirname(path.join(localTmpPath, files[i])), fs.constants.W_OK);
         }
-
-        fs.unlinkSync(outputPath);
-        const newXmlStr = new XMLSerializer().serializeToString(xmlDoc);
-        fs.writeFileSync(outputPath, newXmlStr);
-    }
-    catch (error: any) {
-        return new Error("Can't replace references in xml context scene : " + scenePath + ". " + error);
-    }
+        catch (error: any) {
+            await fs.promises.mkdir(path.dirname(path.join(localTmpPath, files[i])));
+        }
+        await fs.promises.copyFile(path.join(path.dirname(scenePath), files[i]), path.join(localTmpPath, files[i]));
+    };
+    newScenePath = path.join(localTmpPath, path.basename(scenePath));
+    return newScenePath;
 }
 
-function replaceJSONScene(scenePath: string, outputPath: string, references: ReferenceTable, localToCloud: boolean): void | Error {
-    try {
-        const data = fs.readFileSync(scenePath);
-        const text = data.toString();
-        const json = JSON.parse(text);
-        for (const referenceId in json.References) {
-            let referencePath = json.References[referenceId].Path;
+async function replaceXMLScene(scenePath: string, outputPath: string, references: ReferenceTable, localToCloud: boolean): Promise<void> {
+    const data = await fs.promises.readFile(scenePath);
+    const text = data.toString();
+    const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
+    const sceneReferences = xmlDoc.getElementsByTagName("Reference");
+    for (let i = 0; i < sceneReferences.length; i++) {
+        const referencePath = sceneReferences[i].getElementsByTagName("Path");
+        if (!referencePath.length)
+            return Promise.reject(Error(
+                "Invalid context scene" + scenePath + ", the reference " + sceneReferences[i] + " has no path."));
+
+        const pathValue = referencePath[0].textContent;
+        if (!pathValue)
+            return Promise.reject(Error(
+                "Invalid context scene" + scenePath + ", the reference " + sceneReferences[i] + " has no path content."));
+
+        if (localToCloud) {
+            const cloudId = references.getCloudIdFromLocalPath(pathValue);
+            if (!cloudId)
+                return Promise.reject(Error("Can't replace local path with cloud id "));
+
+            referencePath[0].textContent = "rds:" + cloudId;
+        }
+        else {
+            if (pathValue.substring(0, 4) !== "rds:")
+                return Promise.reject(Error(
+                    "Invalid context scene" + scenePath + ", the reference " + pathValue + "doesn't start with 'rds:'."));
+
+            const cloudId = pathValue.substring(4);
+            const localPath = references.getLocalPathFromCloudId(cloudId);
+            if (!localPath)
+                return Promise.reject(Error(
+                    "Can't replace cloud id " + cloudId + "path with local path, does not exist in references"));
+
+            referencePath[0].textContent = localPath;
+        }
+    }
+
+    await fs.promises.unlink(outputPath);
+    const newXmlStr = new XMLSerializer().serializeToString(xmlDoc);
+    await fs.promises.writeFile(outputPath, newXmlStr);
+}
+
+async function replaceJSONScene(scenePath: string, outputPath: string, references:
+    ReferenceTable, localToCloud: boolean): Promise<void> {
+    const data = await fs.promises.readFile(scenePath);
+    const text = data.toString();
+    const json = JSON.parse(text);
+    for (const referenceId in json.References) {
+        let referencePath = json.References[referenceId].Path;
+        referencePath = referencePath.replace(/\//g, "\\");
+        if (localToCloud) {
+            const cloudId = references.getCloudIdFromLocalPath(referencePath);
+            if (!cloudId)
+                return Promise.reject(Error("Can't replace local path " + referencePath + " with cloud id "));
+
+            json.References[referenceId].Path = "rds:" + cloudId;
+        }
+        else {
+            if (referencePath.substring(0, 4) !== "rds:")
+                return Promise.reject(Error(
+                    "Invalid context scene" + scenePath + ", the reference " + path + "doesn't start with 'rds:'."));
+
+            const id = referencePath.substring(4);
+            const localPath = references.getLocalPathFromCloudId(id);
             referencePath = referencePath.replace(/\//g, "\\");
-            if (localToCloud) {
-                const cloudId = references.getCloudIdFromLocalPath(referencePath);
-                if (!cloudId)
-                    return new Error("Can't replace local path with cloud id ");
+            if (!localPath)
+                return Promise.reject(Error("Can't replace cloud id path with local path"));
 
-                json.References[referenceId].Path = "rds:" + cloudId;
-            }
-            else {
-                if (referencePath.substring(0, 4) !== "rds:")
-                    return new Error("Invalid context scene, the reference " + path + "doesn't start with 'rds:'.");
-
-                const id = referencePath.substring(4);
-                const localPath = references.getLocalPathFromCloudId(id);
-                referencePath = referencePath.replace(/\//g, "\\");
-                if (!localPath)
-                    return new Error("Can't replace cloud id path with local path");
-
-                json.References[referenceId].Path = localPath;
-            }
+            json.References[referenceId].Path = localPath;
         }
+    }
 
-        fs.unlinkSync(outputPath);
-        fs.writeFileSync(outputPath, JSON.stringify(json, undefined, 4));
-    }
-    catch (error: any) {
-        return new Error("Can't references in json context scene : " + scenePath + ". " + error);
-    }
+    await fs.promises.unlink(outputPath);
+    await fs.promises.writeFile(outputPath, JSON.stringify(json, undefined, 4));
 }
 
-export function replaceCCOrientationsReferences(scenePath: string, outputPath: string, references: ReferenceTable, localToCloud: boolean): void | Error {
-    const data = fs.readFileSync(scenePath);
+/**
+ * Replaces references on the given CCOrientation by the ones on the reference table.
+ * This function can either replace local paths for reality data IDs or the contrary, according to the value of
+ * localToCloud.
+ * @param {string} ccOrientationPath Path to the CCOrientation.
+ * @param {string} outputPath Path to the new CCOrientation. You can pass the same path twice if you want to replace the file.
+ * @param {ReferenceTable} references A table mapping local path of dependencies to their ID.
+ * @param {boolean} localToCloud  If true, searches for local paths and replaces them for reality data ids, if false does the opposite.
+ */
+export async function replaceCCOrientationsReferences(ccOrientationPath: string, outputPath: string, references: ReferenceTable,
+    localToCloud: boolean): Promise<void> {
+    const data = await fs.promises.readFile(ccOrientationPath);
     const text = data.toString();
     const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
     const photos = xmlDoc.getElementsByTagName("Photo");
@@ -173,199 +159,138 @@ export function replaceCCOrientationsReferences(scenePath: string, outputPath: s
         const imagePath = photos[i].getElementsByTagName("ImagePath");
         const maskPath = photos[i].getElementsByTagName("MaskPath");
         if (!imagePath.length)
-            return new Error("Invalid cc orientations, the image " + photos[i] + " has no path.");
+            return Promise.reject(Error(
+                "Invalid cc orientations " + ccOrientationPath + ", the image " + photos[i] + " has no path."));
 
         const pathValue = imagePath[0].textContent;
-        if(!pathValue)
-            return new Error("Invalid cc orientations, the image " + photos[i] + " has no path content.");
-        
+        if (!pathValue)
+            return Promise.reject(Error(
+                "Invalid cc orientations" + ccOrientationPath + ", the image " + photos[i] + " has no path content."));
+
         if (localToCloud) {
             const cloudId = references.getCloudIdFromLocalPath(path.dirname(pathValue));
             const fileName = path.basename(pathValue);
             if (!cloudId)
-                return new Error("Can't replace local path with cloud id ");
+                return Promise.reject(Error(
+                    "Can't replace local path " + pathValue + " with cloud id : does not exist in reference table"));
 
             imagePath[0].textContent = path.join(cloudId, fileName);
-            if(maskPath.length) {
+            if (maskPath.length) {
                 const maskPathValue = maskPath[0].textContent;
-                if(!maskPathValue)
-                    return new Error("Invalid cc orientations, the mask " + photos[i] + " has no path content.");
+                if (!maskPathValue)
+                    return Promise.reject(Error(
+                        "Invalid cc orientations" + ccOrientationPath + ", the mask " + photos[i] + " has no path content."));
 
                 const maskCloudId = references.getCloudIdFromLocalPath(path.dirname(maskPathValue));
                 if (!maskCloudId)
-                    return new Error("Can't replace local path with mask cloud id ");
+                    return Promise.reject(Error(
+                        "Can't replace local path " + maskPathValue + " with mask cloud id."));
 
                 maskPath[0].textContent = path.join(maskCloudId, path.basename(pathValue));
             }
         }
         else {
             const splittedImagePath = pathValue.split(/(\/\\)+/);
-            if(!splittedImagePath.length)
-                return new Error("Invalid image path, the reference " + pathValue + " is not a path.");
+            if (!splittedImagePath.length)
+                return Promise.reject(Error(
+                    "Invalid image path, the reference " + pathValue + " is not a path."));
 
             const cloudId = splittedImagePath[0];
             const localPath = references.getLocalPathFromCloudId(cloudId);
             if (!localPath)
-                return new Error("Can't replace cloud id " + cloudId + "path with local path, does not exist in references");
+                return Promise.reject(Error(
+                    "Can't replace cloud id " + cloudId + "path with local path, does not exist in references"));
 
             imagePath[0].textContent = localPath;
-            if(maskPath.length) {
+            if (maskPath.length) {
                 const maskPathValue = maskPath[0].textContent;
-                if(!maskPathValue)
-                    return new Error("Invalid cc orientations, the mask " + photos[i] + " has no path content.");
+                if (!maskPathValue)
+                    return Promise.reject(Error(
+                        "Invalid cc orientations " + ccOrientationPath + ", the mask " + photos[i] + " has no path content."));
 
                 const splittedMaskPath = maskPathValue.split(/(\/\\)+/);
-                if(!splittedMaskPath.length)
-                    return new Error("Invalid image path, the reference " + maskPathValue + " is not a path.");
-        
+                if (!splittedMaskPath.length)
+                    return Promise.reject(Error(
+                        "Invalid image path, the reference " + maskPathValue + " is not a path."));
+
                 const maskCloudId = splittedMaskPath[0];
                 const maskLocalPath = references.getLocalPathFromCloudId(maskCloudId);
                 if (!maskLocalPath)
-                    return new Error("Can't replace cloud id " + maskCloudId + "path with local path, does not exist in references");
-        
+                    return Promise.reject(Error(
+                        "Can't replace cloud id " + maskCloudId + "path with local path, does not exist in references"));
+
                 maskPath[0].textContent = maskLocalPath;
             }
         }
     }
 
-    fs.unlinkSync(outputPath);
+    await fs.promises.unlink(outputPath);
     const newXmlStr = new XMLSerializer().serializeToString(xmlDoc);
-    fs.writeFileSync(outputPath, newXmlStr);
+    await fs.promises.writeFile(outputPath, newXmlStr);
 }
 
-export function replaceContextSceneReferences(scenePath: string, outputPath: string, references: ReferenceTable, localToCloud: boolean): void | Error {
-    if (scenePath.endsWith("json")) {
-        const res = replaceJSONScene(scenePath, outputPath, references, localToCloud);
-        if (res)
-            return res;
-    }
-    else {
-        const res = replaceXMLScene(scenePath, outputPath, references, localToCloud);
-        if (res)
-            return res;
-    }
-
-    return;
+/**
+ * Replaces references on the given ContextScene by the ones on the reference table.
+ * This function can either replace local paths for reality data IDs or the contrary, according to the value of localToCloud.
+ * @param {string} scenePath Path to the ContextScene.
+ * @param {string} outputPath Path to the new ContextScene. You can pass the same path twice if you want to replace the file.
+ * @param {ReferenceTable} references A table mapping local path of dependencies to their ID.
+ * @param {boolean} localToCloud If true, searches for local paths and replaces them for reality data ids, if false does the opposite.
+ */
+export async function replaceContextSceneReferences(scenePath: string, outputPath: string, references: ReferenceTable,
+    localToCloud: boolean): Promise<void> {
+    if (scenePath.endsWith("json"))
+        await replaceJSONScene(scenePath, outputPath, references, localToCloud);
+    else
+        await replaceXMLScene(scenePath, outputPath, references, localToCloud);
 }
 
 /**
  * Utility class to upload and download reality data in ContextShare.
  */
-export class RealityDataTransfer {
-    /** Url of the RealityData Analysis Service. */
-    private url: string;
-
-    /** Client information to get access to the service. */
-    private clientInfo: ClientInfo;
-    
-    /** Authorization client to generate the access token, automatically refreshed if necessary.*/
-    private authorizationClient?: ServiceAuthorizationClient | BrowserAuthorizationClient | NodeCliAuthorizationClient;
-
+export class RealityDataTransfer extends Service {
     /**
      * Create a new RealityDataTransferService from provided iTwin application infos.
      * @param clientInfo iTwin application infos.
      * @param url (optional) Url of the RealityData Analysis Service. Default : "https://qa-api.bentley.com/realitydata/" .
      */
     constructor(clientInfo: ClientInfo, url?: string) {
-        this.url = url ?? "https://qa-api.bentley.com/realitydata/";
-        this.clientInfo = clientInfo;
+        super(clientInfo, url ?? "https://qa-api.bentley.com/realitydata/");
     }
 
     /**
-     * @private
+     * @protected
      * Get scopes required for this service.
      * @returns required minimal scopes.
      */
-    private getScopes(): string {
+    protected getScopes(): string {
         return "realitydata:modify realitydata:read";
-    }
-
-    /**
-     * Connects to the Reality data analysis service.
-     * @returns A potential error message.
-     */
-    public async connect(): Promise<void | Error> {
-        // TODO : will be duplicated in CCCS and RDA : inherit from a parent class?
-        try {
-            let env = "";
-            if(this.url.includes("dev-"))
-                env = "dev-";
-            else if(this.url.includes("qa-"))
-                env = "qa-";
-            
-            const authority = "https://" + env + "ims.bentley.com";
-            
-            if(this.clientInfo.clientId.startsWith("service")) {
-                if(!this.clientInfo.secret)
-                    return new Error("Secret is undefined");
-                
-                await IModelHost.startup();
-                this.authorizationClient = new ServiceAuthorizationClient ({
-                    clientId: this.clientInfo.clientId,
-                    clientSecret : this.clientInfo.secret,
-                    scope: this.getScopes(),
-                    authority: authority,
-                });
-            }
-            else if(this.clientInfo.clientId.startsWith("spa")) {
-                if(!this.clientInfo.redirectUrl)
-                    return new Error("Redirect url is undefined");
-                        
-                this.authorizationClient = new BrowserAuthorizationClient ({
-                    clientId: this.clientInfo.clientId,
-                    scope: this.getScopes(),
-                    authority: authority,
-                    responseType: "code",
-                    redirectUri: this.clientInfo.redirectUrl,
-                });
-                await this.authorizationClient.signInRedirect();
-            }
-            else if(this.clientInfo.clientId.startsWith("native")) {
-                if(!this.clientInfo.redirectUrl)
-                    return new Error("Redirect url is undefined");
-                        
-                this.authorizationClient = new NodeCliAuthorizationClient ({
-                    clientId: this.clientInfo.clientId,
-                    scope: this.getScopes(),
-                    redirectUri: this.clientInfo.redirectUrl,
-                    issuerUrl: authority,
-                });
-                await this.authorizationClient.signIn();
-            }
-            // TODO : traditional Web apps
-        }
-        catch(error: any) {
-            return error;
-        }
     }
 
     /**
      * Upload reality data to ProjectWise ContextShare.
      * This function should not be used for ContextScenes or CCOrientations that contain dependencies to other data
      * unless those dependencies are already uploaded and the file you want to upload points to their id. 
-     * Use upload_context_scene or upload_ccorientation instead.
-     * @param dataToUpload Local directory containing the relevant data.
-     * @param name Name of the created entry on ProjectWise ContextShare.
-     * @param type RealityDataType of the data.
-     * @param iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the 
+     * Use uploadContextScene or uploadCCOrientation instead.
+     * @param {string} dataToUpload Local directory containing the relevant data.
+     * @param {string} name Name of the created entry on ProjectWise ContextShare.
+     * @param {RealityDataType} type RealityDataType of the data.
+     * @param {string} iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the 
      * data center where the reality data is stored.
-     * @param rootFile Used to indicate the root document of the reality data. The root document can be in a 
+     * @param {string} rootFile (optional) Used to indicate the root document of the reality data. The root document can be in a 
      * subfolder and is then specified as “Tile_Root.json” or “Folder1/SubFolder1/File.json” for example, with 
      * a relative path to the root folder of the data.
-     * @returns The ID of the uploaded data, and a potential error message.
+     * @returns {string} The ID of the uploaded data.
      */
-    public async uploadRealityData(dataToUpload: string, name: string, type: RealityDataType, 
-        iTwinId: string, rootFile?: string): Promise<string | Error> {
+    public async uploadRealityData(dataToUpload: string, name: string, type: RealityDataType,
+        iTwinId: string, rootFile?: string): Promise<string> {
         // TODO: parallelize
         try {
-            if(!this.authorizationClient) {
-                const err = await this.connect();
-                if(err)
-                    return err;
-            }
+            await this.connect();
 
             const realityDataClientOptions: RealityDataClientOptions = {
                 baseUrl: this.url,
+                authorizationClient: this.authorizationClient,
             };
             const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
             const realityData = new ITwinRealityData(rdaClient, undefined, iTwinId);
@@ -375,22 +300,24 @@ export class RealityDataTransfer {
             realityData.classification = "Undefined";
             realityData.rootDocument = rootFile;
 
-            const iTwinRealityData: ITwinRealityData = await rdaClient.createRealityData(await this.authorizationClient!.getAccessToken(), iTwinId, realityData);
+            const iTwinRealityData: ITwinRealityData = await rdaClient.createRealityData(
+                "", iTwinId, realityData);
             // Then, get the files to upload
-            const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.authorizationClient!.getAccessToken(), "", true);
+            const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl("", "", true);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
 
-            const files = listFiles(dataToUpload);
-            for(let i = 0; i < files.length; i++) {
+            const files = await listFiles(dataToUpload);
+            for (let i = 0; i < files.length; i++) {
                 const blockBlobClient = containerClient.getBlockBlobClient(files[i]);
                 const uploadBlobResponse = await blockBlobClient.uploadFile(path.join(dataToUpload, files[i]));
-                if(uploadBlobResponse.errorCode)
-                    return Error("Can't upload reality data : " + realityData + ", error : " + uploadBlobResponse.errorCode);
+                if (uploadBlobResponse.errorCode)
+                    return Promise.reject(Error(
+                        "Can't upload reality data : " + realityData + ", error : " + uploadBlobResponse.errorCode));
             }
             return iTwinRealityData.id;
         }
-        catch(error: any) {
-            return error;
+        catch (error: any) {
+            return Promise.reject(error);
         }
     }
 
@@ -398,107 +325,107 @@ export class RealityDataTransfer {
      * Upload a ContextScene to ProjectWise ContextShare.
      * Convenience function that replaces references if a reference table is provided and upload the ContextScene.
      * All local dependencies should have been uploaded before, and their IDs provided in the reference table.
-     * @param sceneFolderPath Local directory containing the relevant ContextScene. The file must be called "ContextScene".
-     * @param name Name of the created entry on ProjectWise ContextShare.
-     * @param iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the
+     * @param {string} sceneFolderPath Local directory containing the relevant ContextScene. The file must be called "ContextScene".
+     * @param {string} name Name of the created entry on ProjectWise ContextShare.
+     * @param {string} iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the
      * data center where the reality data is stored.
-     * @param references (optional) A table mapping local path of dependencies to their ID.
-     * @returns The ID of the uploaded ContextScene, and a potential error message.
+     * @param {ReferenceTable} references (optional) A table mapping local path of dependencies to their ID.
+     * @returns {string} The ID of the uploaded ContextScene.
      */
-    public async uploadContextScene(sceneFolderPath: string, name: string, iTwinId: string, 
-        references?: ReferenceTable): Promise<string | Error> {
-        const orientationFiles = listFiles(sceneFolderPath);
-        if(!orientationFiles.length)
-            return new Error("The folder to upload doesn't contain any file.");
+    public async uploadContextScene(sceneFolderPath: string, name: string, iTwinId: string,
+        references?: ReferenceTable): Promise<string> {
+        try {
+            const orientationFiles = await listFiles(sceneFolderPath);
+            if (!orientationFiles[0].includes("ContextScene"))
+                return Promise.reject(Error(
+                    "The folder to upload doesn't contain any file named 'ContextScene'."));
 
-        if(!orientationFiles[0].includes("ContextScene"))
-            return new Error("The folder to upload doesn't contain any file named 'ContextScene'.");
-        
-        let scenePath = path.join(sceneFolderPath, orientationFiles[0]);
-        let newScenePath = createTempScene(scenePath);
-        if(references) {
-            const res = replaceContextSceneReferences(scenePath, newScenePath, references, true);
-            if(res instanceof Error)
-                return res;
+            let scenePath = path.join(sceneFolderPath, orientationFiles[0]);
+            let newScenePath = await createTempScene(scenePath);
+            if (references)
+                await replaceContextSceneReferences(scenePath, newScenePath, references, true);
+
+            return await this.uploadRealityData(path.dirname(newScenePath), name, RealityDataType.CONTEXT_SCENE, iTwinId);
         }
-
-        return await this.uploadRealityData(path.dirname(newScenePath), name, RealityDataType.CONTEXT_SCENE, iTwinId);
+        catch (error: any) {
+            return Promise.reject(error);
+        }
     }
 
     /**
      * Upload a CCOrientation to ProjectWise ContextShare.
      * Convenience function that replaces references if a reference table is provided and upload the file.
      * All local dependencies should have been uploaded before, and their IDs provided in the reference table.
-     * @param orientationFolderPath Local directory containing the relevant CCOrientation. The file must be called
-     * @param name Name of the created entry on ProjectWise ContextShare.
-     * @param iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the 
+     * @param {string} orientationFolderPath Local directory containing the relevant CCOrientation. The file must be called
+     * @param {string} name Name of the created entry on ProjectWise ContextShare.
+     * @param {string} iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the 
      * data center where the reality data is stored.
-     * @param references (optional): A table mapping local path of dependencies to their ID.
-     * @returns The ID of the uploaded CCOrientation, and a potential error message.
+     * @param {ReferenceTable} references (optional): A table mapping local path of dependencies to their ID.
+     * @returns {string} The ID of the uploaded CCOrientation.
      */
-    public async uploadCCOrientations(orientationFolderPath: string, name: string, iTwinId: string, references?: ReferenceTable): Promise<string | Error> {
-        const orientationFiles = listFiles(orientationFolderPath);
-        if(!orientationFiles.length)
-            return new Error("The folder to upload doesn't contain any file.");
+    public async uploadCCOrientations(orientationFolderPath: string, name: string, iTwinId: string,
+        references?: ReferenceTable): Promise<string> {
+        try {
+            const orientationFiles = await listFiles(orientationFolderPath);
+            if (!orientationFiles[0].includes("Orientations"))
+                return Promise.reject(Error(
+                    "The folder to upload doesn't contain any file named 'Orientations'."));
 
-        if(!orientationFiles[0].includes("Orientations"))
-            return new Error("The folder to upload doesn't contain any file named 'Orientations'.");
-        
-        let orientationPath = path.join(orientationFolderPath, orientationFiles[0]);
-        let newOrientationPath = createTempScene(orientationPath);
-        if(references) {
-            const res = replaceCCOrientationsReferences(orientationPath, newOrientationPath, references, true);
-            if(res instanceof Error)
-                return res;
+            let orientationPath = path.join(orientationFolderPath, orientationFiles[0]);
+            let newOrientationPath = await createTempScene(orientationPath);
+            if (references)
+                await replaceCCOrientationsReferences(orientationPath, newOrientationPath, references, true);
+
+            return await this.uploadRealityData(path.dirname(newOrientationPath), name, RealityDataType.CC_ORIENTATIONS, iTwinId);
         }
-
-        return await this.uploadRealityData(path.dirname(newOrientationPath), name, RealityDataType.CC_ORIENTATIONS, iTwinId);
+        catch (error: any) {
+            return Promise.reject(error);
+        }
     }
 
     /**
      * Download reality data from ProjectWise ContextShare.
      * This function should not be used for ContextScenes that contain dependencies to data you have locally as the
      * paths will point to ids in the ProjectWise ContextShare.
-     * Use download_context_scene instead.
-     * @param realityDataId The ID of the data to download.
-     * @param downloadPath The path where downloaded data should be saved.
-     * @returns 
+     * Use downloadContextScene instead.
+     * @param {string} realityDataId The ID of the data to download.
+     * @param {string} downloadPath The path where downloaded data should be saved.
      */
-    public async downloadRealityData(realityDataId: string, downloadPath: string): Promise<void | Error> {
+    public async downloadRealityData(realityDataId: string, downloadPath: string): Promise<void> {
         // TODO: parallelize
         try {
-            if(!this.authorizationClient) {
-                const err = await this.connect();
-                if(err)
-                    return err;
-            }
+            await this.connect();
 
             const realityDataClientOptions: RealityDataClientOptions = {
                 baseUrl: this.url,
+                authorizationClient: this.authorizationClient,
             };
             const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
-            const iTwinRealityData: ITwinRealityData = await rdaClient.getRealityData(await this.authorizationClient!.getAccessToken(), undefined, realityDataId);
-            const azureBlobUrl = await iTwinRealityData.getBlobUrl(await this.authorizationClient!.getAccessToken(), "", false);
+            const iTwinRealityData: ITwinRealityData = await rdaClient.getRealityData("", undefined, realityDataId);
+            const azureBlobUrl = await iTwinRealityData.getBlobUrl("", "", false);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
             const blobNames: string[] = [];
             const iter = await containerClient.listBlobsFlat();
-            for await (const blob of iter) 
-            {
+            for await (const blob of iter) {
                 blobNames.push(blob.name);
             }
             const filesToDownload = [...blobNames];
-        
-            for(let i = 0; i < filesToDownload.length; i++) {
+
+            for (let i = 0; i < filesToDownload.length; i++) {
                 const filePath = path.join(downloadPath, filesToDownload[i]);
-                if (!fs.existsSync(path.dirname(filePath)))
-                    fs.mkdirSync(path.dirname(filePath), {recursive: true});
-                    
+                try {
+                    await fs.promises.access(path.dirname(filePath), fs.constants.W_OK);
+                }
+                catch (error: any) {
+                    await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+                }
+
                 const blobContent = await containerClient.getBlockBlobClient(filesToDownload[i]).download(0);
-                fs.writeFileSync(filePath, await streamToBuffer(blobContent.readableStreamBody!));
+                await fs.promises.writeFile(filePath, await streamToBuffer(blobContent.readableStreamBody!));
             }
         }
-        catch(error: any) {
-            return new Error("Can't download " + realityDataId + ". " + error);
+        catch (error: any) {
+            return Promise.reject(error);
         }
     }
 
@@ -507,28 +434,25 @@ export class RealityDataTransfer {
      * Convenience function that downloads the ContextScene and replaces references if a reference table is provided.
      * All dependencies should have been downloaded before or already be local, and their IDs on the cloud and local
      * paths should be provided in the reference table.
-     * @param realityDataId The ID of the ContextScene to download.
-     * @param downloadPath The path where downloaded ContextScene should be saved.
-     * @param references (optional): A table mapping local path of dependencies to their ID.
-     * @returns True if download was successful, and a potential error message.
+     * @param {string} realityDataId The ID of the ContextScene to download.
+     * @param {string} downloadPath The path where downloaded ContextScene should be saved.
+     * @param {ReferenceTable} references (optional): A table mapping local path of dependencies to their ID.
      */
-    public async downloadContextScene(realityDataId: string, downloadPath: string, 
-        references?: ReferenceTable): Promise<void | Error> {
-        const res = await this.downloadRealityData(realityDataId, downloadPath);
-        if(res)
-            return res;
-        
-        if(references) {
-            const scenePath = path.join(downloadPath, "ContextScene.xml");
-            let res;
-            if (!fs.existsSync(path.dirname(scenePath)))
-                res = replaceContextSceneReferences(path.join(downloadPath, "ContextScene.json"), 
-                    path.join(downloadPath, "ContextScene.json"), references, false);
-            else
-                res = replaceContextSceneReferences(scenePath, scenePath, references, false);
-            
-            if(res instanceof Error)
-                return res;
+    public async downloadContextScene(realityDataId: string, downloadPath: string,
+        references?: ReferenceTable): Promise<void> {
+        try {
+            await this.downloadRealityData(realityDataId, downloadPath);
+            if (references) {
+                const scenePath = path.join(downloadPath, "ContextScene.xml");
+                if (!fs.existsSync(path.dirname(scenePath)))
+                    await replaceContextSceneReferences(path.join(downloadPath, "ContextScene.json"),
+                        path.join(downloadPath, "ContextScene.json"), references, false);
+                else
+                    await replaceContextSceneReferences(scenePath, scenePath, references, false);
+            }
+        }
+        catch (error: any) {
+            return Promise.reject(error);
         }
     }
 
@@ -537,23 +461,21 @@ export class RealityDataTransfer {
      * Convenience function that downloads the CCOrientation and replaces references if a reference table is provided.
      * All dependencies should have been downloaded before or already be local, and their IDs on the cloud and local
      * paths should be provided in the reference table.
-     * @param realityDataId The ID of the CCOrientation to download.
-     * @param downloadPath The path where downloaded file should be saved.
-     * @param references (optional): A table mapping local path of dependencies to their ID.
-     * @returns True if download was successful, and a potential error message.
+     * @param {string} realityDataId The ID of the CCOrientation to download.
+     * @param {string} downloadPath The path where downloaded file should be saved.
+     * @param {ReferenceTable} references (optional): A table mapping local path of dependencies to their ID.
      */
-    public async downloadCCorientations(realityDataId: string, downloadPath: string, 
-        references?: ReferenceTable): Promise<void | Error> {
-        const res = await this.downloadRealityData(realityDataId, downloadPath);
-        if(res)
-            return res;
-        
-        if(references) {
-            const scenePath = path.join(downloadPath, "Orientations.xml");
-            const res = replaceCCOrientationsReferences(scenePath, scenePath, references, false);
-            
-            if(res instanceof Error)
-                return res;
+    public async downloadCCorientations(realityDataId: string, downloadPath: string,
+        references?: ReferenceTable): Promise<void> {
+        try {
+            await this.downloadRealityData(realityDataId, downloadPath);
+            if (references) {
+                const scenePath = path.join(downloadPath, "Orientations.xml");
+                await replaceCCOrientationsReferences(scenePath, scenePath, references, false);
+            }
+        }
+        catch (error: any) {
+            return Promise.reject(error);
         }
     }
 }

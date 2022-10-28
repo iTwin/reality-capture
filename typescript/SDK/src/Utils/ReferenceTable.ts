@@ -20,22 +20,19 @@ export class ReferenceTable {
      * @param fileName target file.
      * @returns true if the references have been saved successfully.
      */
-    public save(fileName: string): void | Error {
-        try {
-            if(!fs.existsSync(path.dirname(fileName))) {
-                fs.mkdirSync(path.dirname(fileName), { recursive: true });
-            }
-            
-            // Reset file
-            if(fs.existsSync(fileName))
-                fs.truncateSync(fileName, 0);
+    public async save(fileName: string): Promise<void> {
+        await fs.promises.mkdir(path.dirname(fileName), { recursive: true });
 
-            this.localToCloud.forEach((value: string, key: string) => {
-                fs.appendFileSync(fileName, key + "," + value + "\n");
-            });
+        // Reset file
+        try {
+            await fs.promises.access(fileName);
         }
-        catch(error: any) {
-            return new Error("Could not save references " + path.dirname(fileName) + ": " + error);
+        catch (error: any) {
+            await fs.promises.truncate(fileName, 0);
+        }
+
+        for (let [key, value] of this.localToCloud) {
+            await fs.promises.appendFile(fileName, key + "," + value + "\n");
         }
     }
 
@@ -44,25 +41,20 @@ export class ReferenceTable {
      * @param fileName target file.
      * @returns true if the references have been successfully loaded.
      */
-    public load(fileName: string): void | Error {
+    public async load(fileName: string): Promise<void> {
         this.localToCloud = new Map();
         this.cloudToLocal = new Map();
 
-        try {
-            const content = fs.readFileSync(fileName);
-            const lines = content.toString().replace(/\r\n/g,"\n").split("\n");
-            
-            let res = true;
-            for(const line of lines) {
-                const [localPath, cloudId] = line.split(",");
-                if(!localPath || !cloudId)
-                    continue;
-                
-                res &&= this.addReference(localPath, cloudId);
-            }
-        }
-        catch(error: any) {
-            return new Error("Could not load references " + path.dirname(fileName) + ": " + error);
+        const content = await fs.promises.readFile(fileName);
+        const lines = content.toString().replace(/\r\n/g, "\n").split("\n");
+
+        let res = true;
+        for (const line of lines) {
+            const [localPath, cloudId] = line.split(",");
+            if (!localPath || !cloudId)
+                continue;
+
+            res &&= this.addReference(localPath, cloudId);
         }
     }
 
@@ -73,10 +65,10 @@ export class ReferenceTable {
      * @returns true if the entry has been added successfully.
      */
     public addReference(localPath: string, cloudId: string): boolean {
-        if(this.localToCloud.has(localPath) && this.cloudToLocal.has(cloudId)) {
-            if(this.localToCloud.get(localPath) === cloudId && this.cloudToLocal.get(cloudId) === localPath)
+        if (this.localToCloud.has(localPath) && this.cloudToLocal.has(cloudId)) {
+            if (this.localToCloud.get(localPath) === cloudId && this.cloudToLocal.get(cloudId) === localPath)
                 console.log("Both " + localPath + " and " + cloudId + " already exist in table and are not mapped to each other");
-            
+
             return false;
         }
 
@@ -109,7 +101,7 @@ export class ReferenceTable {
      * @returns cloud id associated to {@link localPath}.
      */
     public getCloudIdFromLocalPath(localPath: string): string {
-        if(!this.hasLocalPath(localPath)) {
+        if (!this.hasLocalPath(localPath)) {
             console.log("Could not find " + localPath + " in reference table");
             return "";
         }
@@ -122,7 +114,7 @@ export class ReferenceTable {
      * @returns local path associated to {@link cloudId}.
      */
     public getLocalPathFromCloudId(cloudId: string): string {
-        if(!this.hasCloudId(cloudId)) {
+        if (!this.hasCloudId(cloudId)) {
             console.log("Could not find " + cloudId + " in reference table");
             return "";
         }
@@ -135,7 +127,7 @@ export class ReferenceTable {
      * @returns input as cloud id.
      */
     private translateInputPath(inputPath: string): string {
-        if(!inputPath.length)
+        if (!inputPath.length)
             return "";
 
         return this.getCloudIdFromLocalPath(inputPath);

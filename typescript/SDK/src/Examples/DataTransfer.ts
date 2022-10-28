@@ -24,19 +24,11 @@ async function runRealityDataExample() {
     console.log("Uploading CCImagesCollection to cloud");
     const id = await realityDataService.uploadRealityData(ccImageCollection, ccImageCollectionName, 
         RealityDataType.CC_IMAGE_COLLECTION, projectId);
-    if(id instanceof Error) {
-        console.log("Error in upload:", id);
-        return;
-    }
     console.log("CCImagesCollection uploaded successfully");
 
     // Download CCImageCollection
     console.log("Downloading CCImagesCollection");
-    const res = await realityDataService.downloadRealityData(id, outputPath);
-    if(res) {
-        console.log("Error in download:", id);
-        return;
-    }
+    await realityDataService.downloadRealityData(id, outputPath);
     console.log("CCImagesCollection downloaded successfully");
 }
 

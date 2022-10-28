@@ -1,3 +1,4 @@
+
 /** Client information to get access to services. */
 export interface ClientInfo {
     clientId: string,

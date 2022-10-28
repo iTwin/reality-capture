@@ -1,6 +1,6 @@
 import path = require("path");
 import { RealityDataType, JobState, ClientInfo } from "../CommonData";
-import { RealityDataAnalysisService } from "../Rdas/Service";
+import { RealityDataAnalysisService } from "../Rdas/RealityDataAnalysisService";
 import { L3DJobSettings } from "../Rdas/Settings";
 import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
 import { ReferenceTable } from "../Utils/ReferenceTable";
@@ -43,11 +43,7 @@ async function runContextCaptureExample() {
     const referencesPath = path.join(outputPath, "test_references_typescript.txt");
     if(fs.existsSync(referencesPath) && fs.lstatSync(referencesPath).isFile()) {
         console.log("Loading preexistent references");
-        const res = references.load(referencesPath);
-        if(res) {
-            console.log("Error while loading preexisting references:" + res);
-            return;
-        }
+        await references.load(referencesPath);
     }
 
     // Upload CCImageCollection
@@ -55,10 +51,6 @@ async function runContextCaptureExample() {
         console.log("No reference to CCimage Collections found, uploading local files to cloud");
         const id = await realityDataService.uploadRealityData(ccImageCollection, ccImageCollectionName, 
             RealityDataType.CC_IMAGE_COLLECTION, projectId);
-        if(id instanceof Error) {
-            console.log("Error in upload:", id);
-            return;
-        }
         references.addReference(ccImageCollection, id);
     }
 
@@ -66,10 +58,6 @@ async function runContextCaptureExample() {
     if(!references.hasLocalPath(orientedPhotosContextScene)) {
         console.log("No reference to oriented photos ContextScene found, uploading local files to cloud");
         const id = await realityDataService.uploadContextScene(orientedPhotosContextScene, orientedPhotosName, projectId, references);
-        if(id instanceof Error) {
-            console.log("Error in upload:", id);
-            return;
-        }
         references.addReference(orientedPhotosContextScene, id);
     }
 
@@ -78,10 +66,6 @@ async function runContextCaptureExample() {
         console.log("No reference to detector found, uploading local files to cloud");
         const id = await realityDataService.uploadRealityData(photoSegmentationDetector, detectorName, RealityDataType.CONTEXT_DETECTOR, 
             projectId);
-        if(id instanceof Error) {
-            console.log("Error in upload:", id);
-            return;
-        }
         references.addReference(photoSegmentationDetector, id);
     }
 
@@ -90,10 +74,6 @@ async function runContextCaptureExample() {
         console.log("No reference to mesh found, uploading local files to cloud");
         const id = await realityDataService.uploadRealityData(mesh, meshName, RealityDataType.THREEMX, 
             projectId);
-        if(id instanceof Error) {
-            console.log("Error in upload:", id);
-            return;
-        }
         references.addReference(mesh, id);
     }
 
@@ -101,18 +81,10 @@ async function runContextCaptureExample() {
     if(!references.hasLocalPath(meshContextScene)) {
         console.log("No reference to mesh ContextScene found, uploading local files to cloud");
         const id = await realityDataService.uploadContextScene(meshContextScene, contextSceneName, projectId, references);
-        if(id instanceof Error) {
-            console.log("Error in upload:", id);
-            return;
-        }
         references.addReference(meshContextScene, id);
     }
 
-    const saveRes = references.save(referencesPath);
-    if(saveRes) {
-        console.log("Error saving references:" + saveRes);
-        return;
-    }
+    references.save(referencesPath);
     console.log("Checked data upload");
 
     const settings = new L3DJobSettings();
@@ -125,26 +97,13 @@ async function runContextCaptureExample() {
     console.log("Settings created");
 
     const jobId = await realityDataAnalysisService.createJob(settings, jobName, projectId);
-    if(jobId instanceof Error) {
-        console.log("Error in job create:" + jobId);
-        return;
-    }
     console.log("Job created");
 
-    const submitRes = await realityDataAnalysisService.submitJob(jobId);
-    if(submitRes) {
-        console.log("Error in job submit:" + jobId);
-        return;
-    }
+    await realityDataAnalysisService.submitJob(jobId);
     console.log("Job submitted");
 
     while(true) {
         const progress = await realityDataAnalysisService.getJobProgress(jobId);
-        if(progress instanceof Error) {
-            console.log("Error while getting progress:" + jobId);
-            return;
-        }
-
         if(progress.state === JobState.SUCCESS) {
             break;
         }
@@ -166,11 +125,6 @@ async function runContextCaptureExample() {
 
     console.log("Retrieving outputs ids");
     const finalSettings = await realityDataAnalysisService.getJobSettings(jobId);
-    if(finalSettings instanceof Error) {
-        console.log("Error while getting settings:" + finalSettings);
-        return;
-    }
-
     console.log("Downloading outputs");
     const lines3dId = (finalSettings as L3DJobSettings).outputs.lines3D;
     realityDataService.downloadContextScene(lines3dId, outputPath, references);
