@@ -1,29 +1,67 @@
 import { ChangeDetectionJobSettings, JobSettings, L3DJobSettings, O2DJobSettings, O3DJobSettings, RDAJobType, S2DJobSettings, S3DJobSettings } from "./Settings";
 import { RDACostParameters, RDAJobProperties } from "./Utils";
-import { ClientInfo, JobDates, JobProgress, JobState } from "../CommonData";
+import { JobDates, JobProgress, JobState } from "../CommonData";
 import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
-import { Service } from "../Service";
+import { TokenFactory } from "../TokenFactory";
+import fetch from 'node-fetch';
 
 /**
  * Service handling communication with RealityData Analysis Service
  */
-export class RealityDataAnalysisService extends Service {
+export class RealityDataAnalysisService {
+    /** Token factory to make authenticated request to the API. */
+    private tokenFactory: TokenFactory;
+
     /**
-     * Create a new RealityDataTransferService from provided iTwin application infos.
-     * @param clientInfo iTwin application infos.
-     * @param url (optional) Url of the RealityData Analysis Service. Default : "https://qa-api.bentley.com/realitydata/" .
+     * Create a new RealityDataTransferService.
+     * @param {TokenFactory} tokenFactory Token factory to make authenticated request to the API. 
      */
-    constructor(clientInfo: ClientInfo, url?: string) {
-        super(clientInfo, url ?? "https://qa-api.bentley.com/realitydataanalysis/");
+    constructor(tokenFactory: TokenFactory) {
+        this.tokenFactory = tokenFactory;
     }
 
     /**
-     * @protected
-     * Get scopes required for this service.
-     * @returns required minimal scopes.
+     * @private
+     * @param {string} apiOperationUrl API operation url.
+     * @param {string} method HTTP method.
+     * @param {number[]} okRet HTTP expected code.
+     * @param {unknown} payload (optional) Request body.
+     * @returns {any} Request response.
      */
-    protected getScopes(): string {
-        return "realitydata:modify realitydata:read realitydataanalysis:modify realitydataanalysis:read";
+    private async submitRequest(apiOperationUrl: string, method: string, okRet: number[], payload?: unknown): Promise<any> {
+        try {
+            const headers =
+            {
+                "Content-Type": "application/json",
+                "Accept": "application/vnd.bentley.v1+json",
+                "Authorization": await this.tokenFactory.getToken(),
+            };
+            const reqBase = {
+                headers,
+                method
+            };
+            const request = ["POST", "PATCH"].includes(method) ? { ...reqBase, body: JSON.stringify(payload) } : reqBase;
+            console.log("request : ", request);
+            console.log("url : ", this.tokenFactory.getServiceUrl() + "realitydataanalysis/" + apiOperationUrl);
+            const response = await fetch(this.tokenFactory.getServiceUrl() + "realitydataanalysis/" + apiOperationUrl, request);
+
+            if (!okRet.includes(response.status))
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR,
+                    "Error in request: " + response.url + ", return code : " + response.status + " " + response.statusText));
+
+            return await response.json();
+        }
+        catch (error: any) {
+            return Promise.reject(error);
+        }
+    }
+
+    /**
+     * Get scopes required for this service.
+     * @returns {Set<string>} Set of required minimal scopes.
+     */
+    public static getScopes(): Set<string> {
+        return new Set(["realitydataanalysis:modify", "realitydataanalysis:read"]);
     }
 
     /**

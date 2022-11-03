@@ -1,6 +1,7 @@
 import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
 import { ClientInfo, RealityDataType } from "../CommonData";
 import * as dotenv from "dotenv";
+import { ServiceTokenFactory } from "../TokenFactory";
 
 
 async function runRealityDataExample() {
@@ -13,11 +14,16 @@ async function runRealityDataExample() {
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_SECRET ?? "";
-    const redirectUrl = process.env.IMJS_AUTHORIZATION_REDIRECT_URI ?? "";
 
     console.log("Reality Data Analysis sample job detecting 2D objects");
-    const clientInfo: ClientInfo = {clientId: clientId, secret: secret, redirectUrl: redirectUrl};
-    const realityDataService = new RealityDataTransfer(clientInfo);
+    const clientInfo: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
+        secret: secret, env: "qa-"};
+    const tokenFactory = new ServiceTokenFactory(clientInfo);
+    await tokenFactory.getToken();
+    if(!tokenFactory.isOk)
+        console.log("Can't get the access token");
+    
+    const realityDataService = new RealityDataTransfer(tokenFactory);
     console.log("Service initialized");
 
     // Upload CCImageCollection

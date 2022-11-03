@@ -23,13 +23,19 @@ export class ReferenceTable {
     public async save(fileName: string): Promise<void> {
         await fs.promises.mkdir(path.dirname(fileName), { recursive: true });
 
-        // Reset file
-        try {
-            await fs.promises.access(fileName);
+        const fileExist = async (): Promise<boolean> => {
+            try {
+                await fs.promises.access(fileName, fs.constants.F_OK);
+            }
+            catch (error: any) {
+                return false;
+            }
+            return true;
         }
-        catch (error: any) {
-            await fs.promises.truncate(fileName, 0);
-        }
+
+        const exist = await fileExist();
+        if(exist)
+            await fs.promises.truncate(fileName, 0); // Reset file
 
         for (let [key, value] of this.localToCloud) {
             await fs.promises.appendFile(fileName, key + "," + value + "\n");

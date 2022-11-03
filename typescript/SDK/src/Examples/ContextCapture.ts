@@ -6,6 +6,7 @@ import * as fs from "fs";
 import { ClientInfo, JobState, RealityDataType } from "../CommonData";
 import { CCJobSettings, CCJobType, CCMeshQuality } from "../Cccs/Utils";
 import * as dotenv from "dotenv";
+import { ServiceTokenFactory } from "../TokenFactory";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -25,12 +26,17 @@ async function main() {
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_SECRET ?? "";
-    const redirectUrl = process.env.IMJS_AUTHORIZATION_REDIRECT_URI ?? "";
 
     console.log("Context capture sample job - Full (Calibration + Reconstruction)");
-    const clientInfo: ClientInfo = {clientId: clientId, secret: secret, redirectUrl: redirectUrl};
-    const realityDataService = new RealityDataTransfer(clientInfo);
-    const contextCaptureService = new ContextCaptureService(clientInfo);
+    const clientInfo: ClientInfo = {clientId: clientId, scopes: new Set([...ContextCaptureService.getScopes(), 
+        ...RealityDataTransfer.getScopes()]), secret: secret, env: "qa-"};
+    const tokenFactory = new ServiceTokenFactory(clientInfo);
+    await tokenFactory.getToken();
+    if(!tokenFactory.isOk)
+        console.log("Can't get the access token");
+
+    const realityDataService = new RealityDataTransfer(tokenFactory);
+    const contextCaptureService = new ContextCaptureService(tokenFactory);
     console.log("Service initialized");
 
     try {
@@ -57,7 +63,7 @@ async function main() {
             references.addReference(ccOrientations, id);
         }
 
-        references.save(referencesPath);
+        await references.save(referencesPath);
         console.log("Checked data upload");
 
         // Create workspace
