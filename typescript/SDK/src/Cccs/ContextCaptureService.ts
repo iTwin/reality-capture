@@ -1,34 +1,37 @@
-import { ClientInfo, JobDates, JobProgress, JobState } from "../CommonData";
+import { JobDates, JobProgress, JobState } from "../CommonData";
 import { CCCostParameters, CCJobProperties, CCJobSettings, CCJobType, CCWorkspaceProperties } from "./Utils";
-import { Service } from "../Service";
+import { TokenFactory } from "../TokenFactory";
+import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
+import fetch from 'node-fetch';
 
 /**
  * Service handling communication with Context Capture Service
  */
-export class ContextCaptureService extends Service {
+export class ContextCaptureService {
+    /** Token factory to make authenticated request to the API. */
+    private tokenFactory: TokenFactory;
+
     /**
-     * Create a new RealityDataTransferService from provided iTwin application infos.
-     * @param {ClientInfo} clientInfo iTwin application infos.
-     * @param {string} url (optional) Url of the RealityData Analysis Service. Default : "https://qa-api.bentley.com/realitydata/" .
+     * Create a new RealityDataTransferService.
+     * @param {TokenFactory} tokenFactory Token factory to make authenticated request to the API.
      */
-    constructor(clientInfo: ClientInfo, url?: string) {
-        super(clientInfo, url ?? "https://qa-api.bentley.com/contextcapture/");
+    constructor(tokenFactory: TokenFactory) {
+        this.tokenFactory = tokenFactory;
     }
 
     /**
-     * @protected
      * Get scopes required for this service.
-     * @returns {string} required minimal scopes.
+     * @returns {Set<string>} Set of required minimal scopes.
      */
-    protected getScopes(): string {
-        return "realitydata:modify realitydata:read contextcapture:read contextcapture:modify";
+    public static getScopes(): Set<string> {
+        return new Set(["contextcapture:read", "contextcapture:modify"]);
     }
 
     /**
      * Create a workspace corresponding to the given parameters.
      * @param {string} name Workspace name.
      * @param {string} iTwinId iTwinId associated to the workspace.
-     * @param {string} contextCaptureVersion Version of ContextCapture to be used for this workspace.
+     * @param {string} contextCaptureVersion (optional) Version of ContextCapture to be used for this workspace.
      * @returns {string} created workspace id.
      */
     public async createWorkspace(name: string, iTwinId: string, contextCaptureVersion?: string): Promise<string> {
@@ -42,6 +45,40 @@ export class ContextCaptureService extends Service {
             return response["workspace"]["id"];
         }
         catch(error: any) {
+            return Promise.reject(error);
+        }
+    }
+
+    /**
+     * @private
+     * @param {string} apiOperationUrl API operation url.
+     * @param {string} method HTTP method.
+     * @param {number[]} okRet HTTP expected code.
+     * @param {unknown} payload (optional) Request body.
+     * @returns {any} Request response.
+     */
+    private async submitRequest(apiOperationUrl: string, method: string, okRet: number[], payload?: unknown): Promise<any> {
+        try {
+            const headers =
+            {
+                "Content-Type": "application/json",
+                "Accept": "application/vnd.bentley.v1+json",
+                "Authorization": await this.tokenFactory.getToken(),
+            };
+            const reqBase = {
+                headers,
+                method
+            };
+            const request = ["POST", "PATCH"].includes(method) ? { ...reqBase, body: JSON.stringify(payload) } : reqBase;
+            const response = await fetch(this.tokenFactory.getServiceUrl() + "contextcapture" + apiOperationUrl, request);
+
+            if (!okRet.includes(response.status))
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR,
+                    "Error in request: " + response.url + ", return code : " + response.status + " " + response.statusText));
+
+            return await response.json();
+        }
+        catch (error: any) {
             return Promise.reject(error);
         }
     }
