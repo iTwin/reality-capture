@@ -12,7 +12,8 @@ from sdk.DataTransfer.references import ReferenceTable
 from sdk.CCS.ccs_utils import CCJobSettings, CCJobQuality, CCJobType
 from sdk.utils import RealityDataType, JobState
 
-from config import project_id, client_id, cc_api_server, rd_api_server
+from config import project_id, client_id
+from token_factory.token_factory import ClientInfo, SpaDesktopMobileTokenFactory
 
 
 def main():
@@ -28,11 +29,22 @@ def main():
 
     print("Context Capture sample job - Full (Calibration + Reconstruction)")
 
+    scope_set = {
+        "realitydata:modify",
+        "realitydata:read",
+        "contextcapture:modify",
+        "contextcapture:read",
+    }
+    scope_set.add("offline_access")
+
+    client_info = ClientInfo(client_id, scope_set)
+    token_factory = SpaDesktopMobileTokenFactory(client_info)
+
     # initializing cc service
-    service_cc = CCS.ContextCaptureService(cc_api_server, client_id)
+    service_cc = CCS.ContextCaptureService(token_factory)
 
     # initializing data transfer
-    data_transfer = DataTransfer.RealityDataTransfer(rd_api_server, client_id)
+    data_transfer = DataTransfer.RealityDataTransfer(token_factory)
 
     print("Service initialized")
 

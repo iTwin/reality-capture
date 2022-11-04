@@ -4,8 +4,10 @@
 # Sample uploading and downloading a reality data
 
 import sdk.DataTransfer.reality_data_transfer as DataTransfer
+from token_factory.token_factory import ClientInfo, SpaDesktopMobileTokenFactory
+
 from sdk.utils import RealityDataType
-from config import project_id, client_id, rd_api_server
+from config import project_id, client_id
 
 
 def main():
@@ -16,8 +18,19 @@ def main():
 
     print("Data Transfer example: upload and download of files")
 
+    scope_set = {
+                "realitydata:modify",
+                "realitydata:read",
+                "realitydataanalysis:read",
+                "realitydataanalysis:modify",
+            }
+    scope_set.add("offline_access")
+
+    client_info = ClientInfo(client_id, scope_set)
+    token_factory = SpaDesktopMobileTokenFactory(client_info)
+
     # initializing data transfer
-    data_transfer = DataTransfer.RealityDataTransfer(rd_api_server, client_id)
+    data_transfer = DataTransfer.RealityDataTransfer(token_factory)
     print("Data transfer initialized")
 
     # upload ccimageCollection

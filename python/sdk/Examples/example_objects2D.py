@@ -12,7 +12,8 @@ from sdk.DataTransfer.references import ReferenceTable
 from sdk.RDAS.job_settings import O2DJobSettings
 from sdk.utils import RealityDataType, JobState
 
-from config import project_id, client_id, rda_api_server, rd_api_server
+from token_factory.token_factory import ClientInfo, SpaDesktopMobileTokenFactory
+from config import project_id, client_id
 
 
 def main():
@@ -29,11 +30,22 @@ def main():
 
     print("Reality Data Analysis sample job detecting 2D objects")
 
-    # initializing rda service
-    service_rda = RDAS.RealityDataAnalysisService(rda_api_server, client_id)
+    scope_set = {
+        "realitydata:modify",
+        "realitydata:read",
+        "realitydataanalysis:read",
+        "realitydataanalysis:modify",
+    }
+    scope_set.add("offline_access")
+
+    client_info = ClientInfo(client_id, scope_set)
+    token_factory = SpaDesktopMobileTokenFactory(client_info)
 
     # initializing data transfer
-    data_transfer = DataTransfer.RealityDataTransfer(rd_api_server, client_id)
+    data_transfer = DataTransfer.RealityDataTransfer(token_factory)
+
+    # initializing rda service
+    service_rda = RDAS.RealityDataAnalysisService(token_factory)
 
     print("Service initialized")
 

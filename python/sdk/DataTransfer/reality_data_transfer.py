@@ -1,11 +1,10 @@
-import http.client
 import json
 import os
 import tempfile
+import http.client
 from azure.storage.blob import ContainerClient
 from multiprocessing.pool import ThreadPool
 
-from token_factory import token_factory
 from apim_utils.code import Code
 from sdk.DataTransfer.conversion import replace_context_scene_references, replace_ccorientation_references
 from sdk.DataTransfer.references import ReferenceTable
@@ -17,36 +16,31 @@ class RealityDataTransfer:
     Handles communication with RealityData Analysis Service.
 
     Args:
-        service_URL: url of the RealityData Service.
-        client_id: a client ID with at least realitydata scopes.
+        token_factory: An object that implements the abstract functions in AbstractTokenFactory. Used to retrieve the
+        service url and the authorization token used to connect with the service.
     """
 
-    def __init__(self, service_URL: str, client_id: str) -> None:
-        # must change urls to prod ones!
-        self._token_factory = token_factory.ServiceTokenFactory(
-            client_id,
-            "qa-ims.bentley.com",
-            ["realitydata:modify", "realitydata:read", "offline_access"],
-        )
-        self._connection = http.client.HTTPSConnection(service_URL)
+    def __init__(self, token_factory):
 
-    def _headers_read(self) -> dict:
-        r = {
-            "Authorization": self._token_factory.get_read_token(),
+        self._token_factory = token_factory
+        self._connection = http.client.HTTPSConnection(self._token_factory.get_service_url())
+        self._header = {
+            "Authorization": None,
             "User-Agent": f"ContextCapture Python SDK/0.0.1",
             "Content-type": "application/json",
             "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }
-        return r
 
-    def _headers_modify(self) -> dict:
-        r = {
-            "Authorization": self._token_factory.get_modify_token(),
-            "User-Agent": f"ContextCapture Python SDK/0.0.1",
-            "Content-type": "application/json",
-            "Accept": "application/vnd.bentley.itwin-platform.v1+json",
-        }
-        return r
+    def _get_header(self) -> dict:
+        self._header["Authorization"] = self._token_factory.get_token()
+        return self._header
+
+    def _connect(self) -> ReturnValue[bool]:
+        try:
+            self._connection.connect()
+        except Exception as e:
+            return ReturnValue(value=False, error=str(e))
+        return ReturnValue(value=True, error="")
 
     def _create_reality_data(
         self,
@@ -68,7 +62,7 @@ class RealityDataTransfer:
             rd_dict["realityData"]["rootDocument"] = rootfile
         json_data = json.dumps(rd_dict)
         self._connection.request(
-            "POST", "/realitydata/", json_data, self._headers_modify()
+            "POST", "/realitydata/", json_data, self._get_header()
         )
         response = self._connection.getresponse()
         code = Code(response)
@@ -79,13 +73,13 @@ class RealityDataTransfer:
 
     def _update_reality_data(
         self, rd_id: str, update_dict: dict, iTwin_id: str = ""
-    ) -> ReturnValue[bool]:
+    ) -> ReturnValue[str]:
         rd_dict = {"realityData": update_dict}
         if iTwin_id != "":
             rd_dict["projectId"] = iTwin_id
         json_data = json.dumps(rd_dict)
         self._connection.request(
-            "PATCH", f"/realitydata/{rd_id}", json_data, self._headers_modify()
+            "PATCH", f"/realitydata/{rd_id}", json_data, self._get_header()
         )
         response = self._connection.getresponse()
         code = Code(response)
@@ -93,19 +87,6 @@ class RealityDataTransfer:
             return ReturnValue(value="", error=code.error_message())
         data = code.response()
         return ReturnValue(value=data["realityData"]["id"], error="")
-
-    def connect(self) -> ReturnValue[bool]:
-        """
-        Connects to the Reality data service.
-
-        Returns:
-            True if connected to the service, and a potential error message.
-        """
-        try:
-            self._connection.connect()
-        except Exception as e:
-            return ReturnValue(value=False, error=str(e))
-        return ReturnValue(value=True, error="")
 
     def upload_reality_data(
         self,
@@ -134,7 +115,7 @@ class RealityDataTransfer:
         Returns:
             The ID of the uploaded data, and a potential error message.
         """
-        ret = self.connect()
+        ret = self._connect()
         if ret.is_error():
             return ReturnValue(value="", error=ret.error)
         print("Creating new reality data for project:", iTwin_id)
@@ -142,11 +123,12 @@ class RealityDataTransfer:
         if ret.is_error():
             ReturnValue(value=ret.value, error=ret.error)
         print("Uploading files")
+
         self._connection.request(
             "GET",
             f"/realitydata/{ret.value}/container?projectId={iTwin_id}&access=Write",
             None,
-            self._headers_modify(),
+            self._get_header(),
         )
         response = self._connection.getresponse()
         code = Code(response)
@@ -175,12 +157,12 @@ class RealityDataTransfer:
                 pool.map(_upload_file, files)
         except Exception as e:
             return ReturnValue("", "Failed to upload reality data: " + str(e))
-        # Upload done
-        ret_bool = self._update_reality_data(
-            ret.value, update_dict={"authoring": False}, iTwin_id=iTwin_id
-        )
-        if ret_bool.is_error():
-            ReturnValue(value="", error=ret.error)
+        finally:
+            ret_bool = self._update_reality_data(
+                ret.value, update_dict={"authoring": False}, iTwin_id=iTwin_id
+            )
+            if ret_bool.is_error():
+                ReturnValue(value="", error=ret.error)
         return ret
 
     def upload_context_scene(
@@ -266,7 +248,7 @@ class RealityDataTransfer:
         )
 
     def download_reality_data(
-        self, data_id: str, output_path: str
+            self, data_id: str, output_path: str
     ) -> ReturnValue[bool]:
         """
         Download reality data from ProjectWise ContextShare.
@@ -280,15 +262,14 @@ class RealityDataTransfer:
         Returns:
             True if download was successful, and a potential error message.
         """
-        ret = self.connect()
+        ret = self._connect()
         if ret.is_error():
             return ReturnValue(value=False, error=ret.error)
-
         self._connection.request(
             "GET",
             f"/realitydata/{data_id}/container?&access=Read",
             None,
-            self._headers_read(),
+            self._get_header(),
         )
         response = self._connection.getresponse()
         code = Code(response)
@@ -308,7 +289,7 @@ class RealityDataTransfer:
                 file.write(data)
 
         try:
-            ret = self.connect()
+            ret = self._connect()
             if ret.is_error():
                 return ReturnValue(
                     value=False, error="Failed to download reality data:" + ret.error
@@ -320,7 +301,7 @@ class RealityDataTransfer:
         return ReturnValue(value=True, error="")
 
     def download_context_scene(
-        self, data_id: str, output_path: str, reference_table: ReferenceTable = None
+            self, data_id: str, output_path: str, reference_table: ReferenceTable = None
     ) -> ReturnValue[bool]:
         """
         Download a ContextScene from ProjectWise ContextShare.
@@ -350,7 +331,7 @@ class RealityDataTransfer:
         return ret
 
     def download_ccorientation(
-        self, data_id: str, output_path: str, reference_table: ReferenceTable = None
+            self, data_id: str, output_path: str, reference_table: ReferenceTable = None
     ) -> ReturnValue[bool]:
         """
         Download a CCOrientation from ProjectWise ContextShare.

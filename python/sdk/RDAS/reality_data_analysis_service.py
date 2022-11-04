@@ -1,7 +1,6 @@
 import http.client
 import json
 
-from token_factory import token_factory
 from apim_utils.code import Code
 from sdk.RDAS.rdas_utils import (
     RDAJobCostParameters,
@@ -25,45 +24,25 @@ class RealityDataAnalysisService:
     Service handling communication with RealityData Analysis Service.
 
     Args:
-        service_URL: url of the RealityData Analysis Service.
-        client_id: a client ID with at least realitydata and realitydataanalysis scopes.
+        token_factory: An object that implements the abstract functions in AbstractTokenFactory. Used to retrieve the
+        service url and the authorization token used to connect with the service.
     """
 
-    def __init__(self, service_URL: str, client_id: str, secret: str = "") -> None:
-        # must change url to prod one!
-        self._token_factory = token_factory.ServiceTokenFactory(
-            client_id,
-            "qa-ims.bentley.com",
-            [
-                "realitydata:modify",
-                "realitydata:read",
-                "realitydataanalysis:read",
-                "realitydataanalysis:modify",
-                "offline_access",
-            ],
-        )
-        self._connection = http.client.HTTPSConnection(service_URL)
-        self._secret = secret
-
-    def _headers_read(self) -> dict:
-        r = {
-            "Authorization": self._token_factory.get_read_token(),
+    def __init__(self, token_factory) -> None:
+        self._token_factory = token_factory
+        self._connection = http.client.HTTPSConnection(self._token_factory.get_service_url())
+        self._header = {
+            "Authorization": None,
             "User-Agent": f"RDAS Python SDK/0.0.1",
             "Content-type": "application/json",
             "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }
-        return r
 
-    def _headers_modify(self) -> dict:
-        r = {
-            "Authorization": self._token_factory.get_modify_token(),
-            "User-Agent": f"RDAS Python SDK/0.0.1",
-            "Content-type": "application/json",
-            "Accept": "application/vnd.bentley.itwin-platform.v1+json",
-        }
-        return r
+    def _get_header(self) -> dict:
+        self._header["Authorization"] = self._token_factory.get_token()
+        return self._header
 
-    def connect(self) -> ReturnValue[bool]:
+    def _connect(self) -> ReturnValue[bool]:
         """
         Connects to the service.
 
@@ -90,7 +69,7 @@ class RealityDataAnalysisService:
         Returns:
             The ID of the job, and a potential error message.
         """
-        ret = self.connect()
+        ret = self._connect()
         if ret.is_error():
             return ReturnValue(value="", error=ret.error)
         # take job_settings and create the json settings we need to send
@@ -103,7 +82,7 @@ class RealityDataAnalysisService:
         job_json = json.dumps(jc_dict)
         # send the json settings
         self._connection.request(
-            "POST", "/realitydataanalysis/jobs", job_json, self._headers_modify()
+            "POST", "/realitydataanalysis/jobs", job_json, self._get_header()
         )
         response = self._connection.getresponse()
         # if the query was successful we return the id of the job, else we return an empty string and the error message
@@ -123,7 +102,7 @@ class RealityDataAnalysisService:
             True if the job was successfully submitted, and a potential error message.
         """
 
-        ret = self.connect()
+        ret = self._connect()
         if ret.is_error():
             return ReturnValue(value=False, error=ret.error)
         jc_dict = {"state": "active"}
@@ -132,7 +111,7 @@ class RealityDataAnalysisService:
             "PATCH",
             f"/realitydataanalysis/jobs/{job_id}",
             job_json,
-            self._headers_modify(),
+            self._get_header(),
         )
         response = self._connection.getresponse()
         code = Code(response)
@@ -146,16 +125,16 @@ class RealityDataAnalysisService:
         By default this function returns a placeholder empty RDAJobProperties if it hasn't succeeded in retrieving job
         settings. Use is_error() to be sure the return value is valid.
         Args:
-            job_id: job_id: The ID of the relevant job.
+            job_id: The ID of the relevant job.
 
         Returns:
             The properties of the job, and a potential error message.
         """
-        ret = self.connect()
+        ret = self._connect()
         if ret.is_error():
             return ReturnValue(value=RDAJobProperties(), error=ret.error)
         self._connection.request(
-            "GET", f"/realitydataanalysis/jobs/{job_id}", None, self._headers_read()
+            "GET", f"/realitydataanalysis/jobs/{job_id}", None, self._get_header()
         )
         response = self._connection.getresponse()
         code = Code(response)
@@ -350,14 +329,14 @@ class RealityDataAnalysisService:
         Returns:
             The progress for the job, and a potential error message.
         """
-        ret = self.connect()
+        ret = self._connect()
         if ret.is_error():
             return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=ret.error)
         self._connection.request(
             "GET",
             f"/realitydataanalysis/jobs/{job_id}/progress",
             None,
-            self._headers_read(),
+            self._get_header(),
         )
         response = self._connection.getresponse()
 
@@ -395,7 +374,7 @@ class RealityDataAnalysisService:
             The estimated cost of the job, and a potential error
             message.
         """
-        ret = self.connect()
+        ret = self._connect()
         if ret.is_error():
             return ReturnValue(value=-1.0, error=ret.error)
         jc_dict = {"costEstimation": cost_parameters.to_json()}
@@ -404,7 +383,7 @@ class RealityDataAnalysisService:
             "PATCH",
             f"/realitydataanalysis/jobs/{job_id}",
             job_json,
-            self._headers_modify(),
+            self._get_header(),
         )
         response = self._connection.getresponse()
         code = Code(response)
@@ -423,7 +402,7 @@ class RealityDataAnalysisService:
         Returns:
             True if the job was successfully cancelled, and a potential error message.
         """
-        ret = self.connect()
+        ret = self._connect()
         if ret.is_error():
             return ReturnValue(value=False, error=ret.error)
         jc_dict = {
@@ -434,7 +413,7 @@ class RealityDataAnalysisService:
             "PATCH",
             f"/realitydataanalysis/jobs/{job_id}",
             job_json,
-            self._headers_modify(),
+            self._get_header(),
         )
         response = self._connection.getresponse()
         code = Code(response)
@@ -451,14 +430,14 @@ class RealityDataAnalysisService:
         Returns:
             True if the job was successfully deleted, and a potential error message.
         """
-        ret = self.connect()
+        ret = self._connect()
         if ret.is_error():
             return ReturnValue(value=False, error=ret.error)
         self._connection.request(
             "DELETE",
             f"/realitydataanalysis/jobs/{job_id}",
             None,
-            self._headers_modify(),
+            self._get_header(),
         )
         response = self._connection.getresponse()
         code = Code(response)
