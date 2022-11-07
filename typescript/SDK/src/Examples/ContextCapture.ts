@@ -28,15 +28,19 @@ async function main() {
     const secret = process.env.IMJS_SECRET ?? "";
 
     console.log("Context capture sample job - Full (Calibration + Reconstruction)");
-    const clientInfo: ClientInfo = {clientId: clientId, scopes: new Set([...ContextCaptureService.getScopes(), 
-        ...RealityDataTransfer.getScopes()]), secret: secret, env: "qa-"};
-    const tokenFactory = new ServiceTokenFactory(clientInfo);
-    await tokenFactory.getToken();
-    if(!tokenFactory.isOk)
+    const clientInfoRd: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
+        secret: secret, env: "qa-"};
+    const clientInfoCc: ClientInfo = {clientId: clientId, scopes: new Set([...ContextCaptureService.getScopes()]), 
+        secret: secret, env: "qa-"};
+    const tokenFactoryRd = new ServiceTokenFactory(clientInfoRd);
+    const tokenFactoryCc = new ServiceTokenFactory(clientInfoCc);
+    await tokenFactoryRd.getToken();
+    await tokenFactoryCc.getToken();
+    if(!tokenFactoryRd.isOk() || !tokenFactoryCc.isOk())
         console.log("Can't get the access token");
 
-    const realityDataService = new RealityDataTransfer(tokenFactory);
-    const contextCaptureService = new ContextCaptureService(tokenFactory);
+    const realityDataService = new RealityDataTransfer(tokenFactoryRd);
+    const contextCaptureService = new ContextCaptureService(tokenFactoryCc);
     console.log("Service initialized");
 
     try {

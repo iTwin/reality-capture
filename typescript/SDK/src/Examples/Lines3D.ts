@@ -33,15 +33,19 @@ async function runContextCaptureExample() {
     const secret = process.env.IMJS_SECRET ?? "";
 
     console.log("Reality Data Analysis sample job detecting 3D lines");
-    const clientInfo: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataAnalysisService.getScopes(), 
-        ...RealityDataTransfer.getScopes()]), secret: secret, env: "qa-"};
-    const tokenFactory = new ServiceTokenFactory(clientInfo);
-    await tokenFactory.getToken();
-    if(!tokenFactory.isOk)
+    const clientInfoRd: ClientInfo = {clientId: clientId, scopes: new Set([ ...RealityDataTransfer.getScopes()]), 
+        secret: secret, env: "qa-"};
+    const clientInfoRda: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataAnalysisService.getScopes()]), 
+        secret: secret, env: "qa-"};
+    const tokenFactoryRd = new ServiceTokenFactory(clientInfoRd);
+    const tokenFactoryRda = new ServiceTokenFactory(clientInfoRda);
+    await tokenFactoryRd.getToken();
+    await tokenFactoryRda.getToken();
+    if(!tokenFactoryRd.isOk() || !tokenFactoryRda.isOk())
         console.log("Can't get the access token");
     
-    const realityDataService = new RealityDataTransfer(tokenFactory);
-    const realityDataAnalysisService = new RealityDataAnalysisService(tokenFactory);
+    const realityDataService = new RealityDataTransfer(tokenFactoryRd);
+    const realityDataAnalysisService = new RealityDataAnalysisService(tokenFactoryRda);
     console.log("Service initialized");
 
 
