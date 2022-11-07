@@ -20,7 +20,7 @@ async function runRealityDataExample() {
         secret: secret, env: "qa-"};
     const tokenFactory = new ServiceTokenFactory(clientInfo);
     await tokenFactory.getToken();
-    if(!tokenFactory.isOk)
+    if(!tokenFactory.isOk())
         console.log("Can't get the access token");
     
     const realityDataService = new RealityDataTransfer(tokenFactory);

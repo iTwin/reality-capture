@@ -39,7 +39,10 @@ export class ServiceTokenFactory implements TokenFactory {
         if (!this.clientInfo.secret)
             return Promise.reject(Error("Secret is undefined"));
 
-        const env = this.clientInfo.env ?? "";
+        let env = "";
+        if(this.clientInfo.env)
+            env = "qa-";
+        
         const authority = "https://" + env + "ims.bentley.com";
         await IModelHost.startup();
         this.authorizationClient = new ServiceAuthorizationClient({
@@ -82,7 +85,10 @@ export class SPATokenFactory implements TokenFactory {
         if (!this.clientInfo.redirectUrl)
             return Promise.reject(Error("Redirect url is undefined"));
 
-        const env = this.clientInfo.env ?? "";
+        let env = "";
+        if(this.clientInfo.env)
+            env = "qa-";
+            
         const authority = "https://" + env + "ims.bentley.com";
         this.authorizationClient = new BrowserAuthorizationClient({
             clientId: this.clientInfo.clientId,
@@ -126,7 +132,10 @@ export class DesktopTokenFactory implements TokenFactory {
         if (!this.clientInfo.redirectUrl)
             return Promise.reject(Error("Redirect url is undefined"));
 
-        const env = this.clientInfo.env ?? "";
+        let env = "";
+        if(this.clientInfo.env)
+            env = "qa-";
+            
         const authority = "https://" + env + "ims.bentley.com";
         this.authorizationClient = new NodeCliAuthorizationClient({
             clientId: this.clientInfo.clientId,
@@ -168,7 +177,10 @@ export class ElectronTokenFactory implements TokenFactory {
         if (!this.clientInfo.redirectUrl)
             return Promise.reject(Error("Redirect url is undefined"));
 
-        const env = this.clientInfo.env ?? "";
+        let env = "";
+        if(this.clientInfo.env)
+            env = "qa-";
+            
         const authority = "https://" + env + "ims.bentley.com";
         this.authorizationClient = new ElectronMainAuthorization({
             clientId: this.clientInfo.clientId,

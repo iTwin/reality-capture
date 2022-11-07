@@ -279,8 +279,8 @@ export class CCJobSettings {
         if ("cacheSettings" in settingsJson)
             newJobSettings.cacheSettings = JSON.parse(settingsJson["cacheSettings"]);
 
-        if ("exportSrs" in settingsJson)
-            newJobSettings.meshQuality = settingsJson["meshQuality"];
+        if ("quality" in settingsJson)
+            newJobSettings.meshQuality = settingsJson["quality"];
 
         if ("processingEngines" in settingsJson)
             newJobSettings.processingEngines = settingsJson["processingEngines"];

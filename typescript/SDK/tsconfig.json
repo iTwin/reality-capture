@@ -4,6 +4,7 @@
     "declaration": false,
     "declarationMap": false,
     "outDir": "./lib",
+    "esModuleInterop": true
   },
   "include": [
     "./src/**/*.ts*"

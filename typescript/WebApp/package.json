@@ -10,9 +10,6 @@
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
 		"start": "react-scripts start",
-		"test:certa": "certa -r chrome",
-		"test:integration:chrome": "npm run -s webpackTests && npm run -s test:certa",
-		"test:integration": "npm-run-all --parallel test:integration:chrome start:backend",
 		"webpackTests": "webpack --config ./webpack.config.js 1>&2"
 	},
 	"keywords": [],

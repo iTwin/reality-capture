@@ -20,6 +20,42 @@ export class ContextCaptureService {
     }
 
     /**
+     * @private
+     * @param {string} apiOperationUrl API operation url.
+     * @param {string} method HTTP method.
+     * @param {number[]} okRet HTTP expected code.
+     * @param {unknown} payload (optional) Request body.
+     * @returns {any} Request response.
+     */
+    private async submitRequest(apiOperationUrl: string, method: string, okRet: number[], payload?: unknown): Promise<any> {
+        try {
+            const headers =
+            {
+                "Content-Type": "application/json",
+                "Accept": "application/vnd.bentley.v1+json",
+                "Authorization": await this.tokenFactory.getToken(),
+            };
+            const reqBase = {
+                headers,
+                method
+            };
+            const request = ["POST", "PATCH"].includes(method) ? { ...reqBase, body: JSON.stringify(payload) } : reqBase;
+            const response = await fetch(this.tokenFactory.getServiceUrl() + "contextcapture/" + apiOperationUrl, request);
+            if (!okRet.includes(response.status))
+                return Promise.reject(new BentleyError(response.status,
+                    "Error in request: " + response.url + ", return code : " + response.status + " " + response.statusText));
+
+            if(okRet.includes(204))
+                return {};
+            
+            return await response.json();
+        }
+        catch (error: any) {
+            return Promise.reject(error);
+        }
+    }
+
+    /**
      * Get scopes required for this service.
      * @returns {Set<string>} Set of required minimal scopes.
      */
@@ -45,40 +81,6 @@ export class ContextCaptureService {
             return response["workspace"]["id"];
         }
         catch(error: any) {
-            return Promise.reject(error);
-        }
-    }
-
-    /**
-     * @private
-     * @param {string} apiOperationUrl API operation url.
-     * @param {string} method HTTP method.
-     * @param {number[]} okRet HTTP expected code.
-     * @param {unknown} payload (optional) Request body.
-     * @returns {any} Request response.
-     */
-    private async submitRequest(apiOperationUrl: string, method: string, okRet: number[], payload?: unknown): Promise<any> {
-        try {
-            const headers =
-            {
-                "Content-Type": "application/json",
-                "Accept": "application/vnd.bentley.v1+json",
-                "Authorization": await this.tokenFactory.getToken(),
-            };
-            const reqBase = {
-                headers,
-                method
-            };
-            const request = ["POST", "PATCH"].includes(method) ? { ...reqBase, body: JSON.stringify(payload) } : reqBase;
-            const response = await fetch(this.tokenFactory.getServiceUrl() + "contextcapture" + apiOperationUrl, request);
-
-            if (!okRet.includes(response.status))
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR,
-                    "Error in request: " + response.url + ", return code : " + response.status + " " + response.statusText));
-
-            return await response.json();
-        }
-        catch (error: any) {
             return Promise.reject(error);
         }
     }
@@ -232,7 +234,7 @@ export class ContextCaptureService {
             if(job["executionInformation"]) {
                 jobProperties.dates = {
                     createdDateTime: job["createdDateTime"],
-                    submissionDateTime: job["executionInformation"]["submissionDateTime"],
+                    submissionDateTime: job["executionInformation"]["submittedDateTime"],
                     startedDateTime: job["executionInformation"]["startedDateTime"],
                     endedDateTime: job["executionInformation"]["endedDateTime"],             
                 };
@@ -248,7 +250,7 @@ export class ContextCaptureService {
                 jobProperties.costEstimationParameters = {
                     gigaPixels: job["costEstimationParameters"]["gigaPixels"],
                     megaPoints: job["costEstimationParameters"]["megaPoints"],
-                    meshQuality: job["costEstimationParameters"]["meshQuality"],
+                    meshQuality: job["costEstimationParameters"]["quality"],
                 };
             }
 

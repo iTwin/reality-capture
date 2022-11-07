@@ -41,8 +41,6 @@ export class RealityDataAnalysisService {
                 method
             };
             const request = ["POST", "PATCH"].includes(method) ? { ...reqBase, body: JSON.stringify(payload) } : reqBase;
-            console.log("request : ", request);
-            console.log("url : ", this.tokenFactory.getServiceUrl() + "realitydataanalysis/" + apiOperationUrl);
             const response = await fetch(this.tokenFactory.getServiceUrl() + "realitydataanalysis/" + apiOperationUrl, request);
 
             if (!okRet.includes(response.status))
