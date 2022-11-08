@@ -48,6 +48,7 @@ azure-storage-blob==12.9.0
 bottle==0.12.19
 requests~=2.27.1
 pyOpenSSL>=22.0.0
+oauthlib~=3.2.1
 ```
 
 # API references

@@ -19,8 +19,20 @@ from oauthlib.oauth2 import WebApplicationClient, BackendApplicationClient
 
 
 class ClientInfo:
-    def __init__(self, client_id, scope_set, env="",
-                 redirect_url="http://localhost:8080/sign-oidc", secret=""):
+    """
+    Auxiliary class for the creation of token factories. Gathers all client information.
+
+    Args:
+        client_id: The id of the application used.
+        scope_set: Set with the scopes needed for the services. Will be used by the token factory to ask for
+            authorization.
+        env(Optional): Which environment to use. Defaults to prod.
+        redirect_url(Optional): The redirect url to be used with authorizations code flows that need manual
+            interference. Should be the same as the one registered in the application.
+        secret(Optional): Secret used by some authorizations methods.
+    """
+    def __init__(self, client_id: str, scope_set: set(), env: str = "",
+                 redirect_url: str = "http://localhost:8080/sign-oidc", secret: str = ""):
         self.env = env
         self.redirect_url = redirect_url
         self.client_id = client_id
@@ -29,6 +41,15 @@ class ClientInfo:
 
 
 class AccessToken:
+    """
+    Convenience class to keep and retrieve only the important information of an authorization token.
+
+    Args:
+        access: Access token.
+        refresh: Refresh token, when it exists.
+        token_type: Type of the token.
+        valid_until: Date of expiration of the token.
+    """
     def __init__(self, access: str, refresh: str, token_type: str, valid_until: datetime):
         self._access = access
         self._refresh = refresh
@@ -46,24 +67,50 @@ class AccessToken:
 
 
 class AbstractTokenFactory:
+    """
+    Abstract class with the functions that need to be implemented by any factory passed to the services.
+    If you want to code a new token factory, you must inherit from this class and implement those functions.
+    """
 
     @abstractmethod
     def get_token(self):
+        """
+        Getter for the authorization token.
+
+        Returns:
+            String with the authorization token.
+        """
         pass
 
     @abstractmethod
     def get_service_url(self):
+        """
+        Getter for the service url.
+
+        Returns:
+            String with the url services should connect to when doing requests.
+        """
         pass
 
     @abstractmethod
     def is_ok(self):
+        """
+        Test to see if the token factory is ready.
+
+        Returns:
+            True if the token factory is ready to be used, false otherwise.
+        """
         pass
 
 
 class BaseTokenFactory(AbstractTokenFactory):
+    """
+    Base class for the token factories we implement as examples.
+
+    Args:
+        client_info: A ClientInfo object with the necessary information to create a token factory.
+    """
     auth_code = ""
-    qa_auth_code = ""
-    dev_auth_code = ""
 
     def __init__(self, client_info):
         self._client_id = client_info.client_id
@@ -110,6 +157,12 @@ class BaseTokenFactory(AbstractTokenFactory):
 
 
 class SpaDesktopMobileTokenFactory(BaseTokenFactory):
+    """
+    Implementation of a token factory for SPA and Desktop/Mobile applications.
+
+    Args:
+        client_info: A ClientInfo object with the necessary information to create a token factory.
+    """
 
     def __init__(self, client_info):
         super().__init__(client_info)
@@ -168,6 +221,12 @@ class SpaDesktopMobileTokenFactory(BaseTokenFactory):
 
 
 class ServiceTokenFactory(BaseTokenFactory):
+    """
+    Implementation of a token factory for Service applications.
+
+    Args:
+        client_info: A ClientInfo object with the necessary information to create a token factory.
+    """
 
     def __init__(self, client_info):
         super().__init__(client_info)
@@ -188,6 +247,12 @@ class ServiceTokenFactory(BaseTokenFactory):
 
 
 class WebTokenFactory(BaseTokenFactory):
+    """
+    Implementation of a token factory for Web applications.
+
+    Args:
+        client_info: A ClientInfo object with the necessary information to create a token factory.
+    """
 
     def __init__(self, client_info):
         super().__init__(client_info)
