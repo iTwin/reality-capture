@@ -32,7 +32,7 @@ export class ServiceTokenFactory implements TokenFactory {
         this.clientInfo = clientInfo;
     }
 
-    async getToken(): Promise<string> {
+    public async getToken(): Promise<string> {
         if(this.authorizationClient)
             return await this.authorizationClient.getAccessToken();
         
@@ -54,12 +54,12 @@ export class ServiceTokenFactory implements TokenFactory {
         return await this.authorizationClient.getAccessToken();
     }
 
-    isOk(): boolean {
+    public isOk(): boolean {
         return this.authorizationClient !== undefined && this.authorizationClient.hasSignedIn 
             && this.authorizationClient.isAuthorized && !this.authorizationClient.hasExpired; 
     }
 
-    getServiceUrl(): string {
+    public getServiceUrl(): string {
         return "https://" + this.clientInfo.env + "api.bentley.com/"
     }
 }
@@ -78,7 +78,7 @@ export class SPATokenFactory implements TokenFactory {
         this.clientInfo = clientInfo;
     }
 
-    async getToken(): Promise<string> {
+    public async getToken(): Promise<string> {
         if(this.authorizationClient)
             return await this.authorizationClient.getAccessToken();
         
@@ -101,12 +101,12 @@ export class SPATokenFactory implements TokenFactory {
         return await this.authorizationClient.getAccessToken();
     }
 
-    isOk(): boolean {
+    public isOk(): boolean {
         return this.authorizationClient !== undefined && this.authorizationClient.hasSignedIn 
             && this.authorizationClient.isAuthorized && !this.authorizationClient.hasExpired; 
     }
 
-    getServiceUrl(): string {
+    public getServiceUrl(): string {
         return "https://" + this.clientInfo.env + "api.bentley.com/"
     }
 }
@@ -125,7 +125,7 @@ export class DesktopTokenFactory implements TokenFactory {
         this.clientInfo = clientInfo;
     }
 
-    async getToken(): Promise<string> {
+    public async getToken(): Promise<string> {
         if(this.authorizationClient)
             return await this.authorizationClient.getAccessToken();
         
@@ -147,11 +147,11 @@ export class DesktopTokenFactory implements TokenFactory {
         return await this.authorizationClient.getAccessToken();
     }
 
-    isOk(): boolean {
+    public isOk(): boolean {
         return this.authorizationClient !== undefined; 
     }
 
-    getServiceUrl(): string {
+    public getServiceUrl(): string {
         return "https://" + this.clientInfo.env + "api.bentley.com/"
     }
 }
@@ -170,7 +170,7 @@ export class ElectronTokenFactory implements TokenFactory {
         this.clientInfo = clientInfo;
     }
 
-    async getToken(): Promise<string> {
+    public async getToken(): Promise<string> {
         if(this.authorizationClient)
             return await this.authorizationClient.getAccessToken();
         
@@ -192,11 +192,11 @@ export class ElectronTokenFactory implements TokenFactory {
         return await this.authorizationClient.getAccessToken();
     }
 
-    isOk(): boolean {
+    public isOk(): boolean {
         return this.authorizationClient !== undefined; 
     }
 
-    getServiceUrl(): string {
+    public getServiceUrl(): string {
         return "https://" + this.clientInfo.env + "api.bentley.com/"
     }
 }

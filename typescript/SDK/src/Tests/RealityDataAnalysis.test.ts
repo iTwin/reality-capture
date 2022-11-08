@@ -118,7 +118,6 @@ describe("Reality data analysis integration tests", () => {
     it("Get cc job progress", async function () {
         this.timeout(3600000); // 60mn
 
-        // TO TEST
         let jobProgress = await realityDataAnalysisService.getJobProgress(jobId);
         expect(jobProgress.progress).to.equal(0);
         expect(jobProgress.state).to.deep.equal(JobState.ACTIVE);
@@ -126,13 +125,7 @@ describe("Reality data analysis integration tests", () => {
 
         while(true) {
             const progress = await realityDataAnalysisService.getJobProgress(jobId);
-            if(progress.state === JobState.SUCCESS) {
-                break;
-            }
-            else if(progress.state === JobState.CANCELLED) {
-                break;
-            }
-            else if(progress.state === JobState.FAILED) {
+            if(progress.state === JobState.SUCCESS || progress.state === JobState.CANCELLED || progress.state === JobState.FAILED) {
                 break;
             }
             await sleep(10000);

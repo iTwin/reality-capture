@@ -32,7 +32,7 @@ async function runObjects2DExample() {
     const clientInfoRd: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
         secret: secret, env: "qa-"};
     const clientInfoRda: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataAnalysisService.getScopes()]), 
-        secret: secret, env: "qa-"};
+        secret: secret, env: "dev-"};
     const tokenFactoryRd = new ServiceTokenFactory(clientInfoRd);
     const tokenFactoryRda = new ServiceTokenFactory(clientInfoRda);
     await tokenFactoryRd.getToken();

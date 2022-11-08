@@ -31,7 +31,7 @@ async function main() {
     const clientInfoRd: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
         secret: secret, env: "qa-"};
     const clientInfoCc: ClientInfo = {clientId: clientId, scopes: new Set([...ContextCaptureService.getScopes()]), 
-        secret: secret, env: "qa-"};
+        secret: secret, env: "dev-"};
     const tokenFactoryRd = new ServiceTokenFactory(clientInfoRd);
     const tokenFactoryCc = new ServiceTokenFactory(clientInfoCc);
     await tokenFactoryRd.getToken();

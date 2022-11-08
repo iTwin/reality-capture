@@ -130,13 +130,8 @@ describe("Context capture integration tests", () => {
 
         while(true) {
             const progress = await contextCaptureService.getJobProgress(jobId);
-            if(progress.state === JobState.SUCCESS || progress.state === JobState.Over) {
-                break;
-            }
-            if(progress.state === JobState.CANCELLED) {
-                break;
-            }
-            else if(progress.state === JobState.FAILED) {
+            if(progress.state === JobState.SUCCESS || progress.state === JobState.Over || 
+                progress.state === JobState.CANCELLED || progress.state === JobState.FAILED) {
                 break;
             }
             await sleep(10000);
