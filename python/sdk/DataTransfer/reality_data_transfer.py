@@ -30,6 +30,7 @@ class RealityDataTransfer:
             "Content-type": "application/json",
             "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }
+        self._progress_hook = None
 
     def _get_header(self) -> dict:
         self._header["Authorization"] = self._token_factory.get_token()
@@ -43,11 +44,11 @@ class RealityDataTransfer:
         return ReturnValue(value=True, error="")
 
     def _create_reality_data(
-        self,
-        name: str,
-        data_type: RealityDataType,
-        iTwin_id: str = "",
-        rootfile: str = "",
+            self,
+            name: str,
+            data_type: RealityDataType,
+            iTwin_id: str = "",
+            rootfile: str = "",
     ) -> ReturnValue[str]:
         rd_dict = {
             "realityData": {
@@ -61,6 +62,9 @@ class RealityDataTransfer:
         if rootfile != "":
             rd_dict["realityData"]["rootDocument"] = rootfile
         json_data = json.dumps(rd_dict)
+        ret = self._connect()
+        if ret.is_error():
+            return ReturnValue(value="", error=ret.error)
         self._connection.request(
             "POST", "/realitydata/", json_data, self._get_header()
         )
@@ -72,12 +76,15 @@ class RealityDataTransfer:
         return ReturnValue(value=data["realityData"]["id"], error="")
 
     def _update_reality_data(
-        self, rd_id: str, update_dict: dict, iTwin_id: str = ""
+            self, rd_id: str, update_dict: dict, iTwin_id: str = ""
     ) -> ReturnValue[str]:
         rd_dict = {"realityData": update_dict}
         if iTwin_id != "":
             rd_dict["projectId"] = iTwin_id
         json_data = json.dumps(rd_dict)
+        ret = self._connect()
+        if ret.is_error():
+            return ReturnValue(value="", error=ret.error)
         self._connection.request(
             "PATCH", f"/realitydata/{rd_id}", json_data, self._get_header()
         )
@@ -88,13 +95,16 @@ class RealityDataTransfer:
         data = code.response()
         return ReturnValue(value=data["realityData"]["id"], error="")
 
+    def set_progress_hook(self, hook) -> None:
+        self._progress_hook = hook
+
     def upload_reality_data(
-        self,
-        data_path: str,
-        name: str,
-        data_type: RealityDataType,
-        iTwin_id: str,
-        root_file: str = "",
+            self,
+            data_path: str,
+            name: str,
+            data_type: RealityDataType,
+            iTwin_id: str,
+            root_file: str = "",
     ) -> ReturnValue[str]:
         """
         Upload reality data to ProjectWise ContextShare.
@@ -115,15 +125,15 @@ class RealityDataTransfer:
         Returns:
             The ID of the uploaded data, and a potential error message.
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value="", error=ret.error)
         print("Creating new reality data for project:", iTwin_id)
         ret = self._create_reality_data(name, data_type, iTwin_id, root_file)
         if ret.is_error():
             ReturnValue(value=ret.value, error=ret.error)
         print("Uploading files")
 
+        ret_con = self._connect()
+        if ret_con.is_error():
+            return ReturnValue(value="", error=ret_con.error)
         self._connection.request(
             "GET",
             f"/realitydata/{ret.value}/container?projectId={iTwin_id}&access=Write",
@@ -135,11 +145,16 @@ class RealityDataTransfer:
         if not code.success():
             ReturnValue(value="", error=code.error_message())
         sas_uri = code.response()["container"]["_links"]["containerUrl"]["href"]
-        files = [
-            os.path.relpath(os.path.join(dp, f), data_path)
+
+        files_tuple = [
+            (os.path.relpath(os.path.join(dp, f), data_path), os.path.getsize(os.path.join(dp, f)))
             for dp, dn, filenames in os.walk(data_path)
             for f in filenames
         ]
+        total_size = sum(n for _, n in files_tuple)
+        proceed = True
+        uploaded_values = {}
+
         # Notifying we are modifying content
         ret_bool = self._update_reality_data(
             ret.value, update_dict={"authoring": True}, iTwin_id=iTwin_id
@@ -147,14 +162,28 @@ class RealityDataTransfer:
         if ret_bool.is_error():
             ReturnValue(value="", error=ret.error)
 
-        def _upload_file(filename: str):
+        def _upload_file(file_tuple):
+
+            def _upload_callback(current, total):
+                nonlocal uploaded_values
+                uploaded_values[file_tuple[0]] = current
+                percentage = (sum(uploaded_values.values()) / total_size) * 100
+                if self._progress_hook is not None:
+                    nonlocal proceed
+                    proceed = proceed and self._progress_hook(percentage)
+                if not proceed:
+                    raise Exception("Upload interrupted by callback function")
+
             client = ContainerClient.from_container_url(sas_uri)
-            with open(os.path.join(data_path, filename), "rb") as data:
-                client.upload_blob(filename, data, timeout=30, max_concurrency=16)
+            with open(os.path.join(data_path, file_tuple[0]), "rb") as data:
+                client.upload_blob(file_tuple[0], data, connection_timeout=60, max_concurrency=16, retry_total=20,
+                                   retry_connect=10, progress_hook=_upload_callback)
+            nonlocal uploaded_values
+            uploaded_values[file_tuple[0]] = file_tuple[1]
 
         try:
             with ThreadPool(processes=int(4)) as pool:
-                pool.map(_upload_file, files)
+                pool.map(_upload_file, files_tuple)
         except Exception as e:
             return ReturnValue("", "Failed to upload reality data: " + str(e))
         finally:
@@ -166,11 +195,11 @@ class RealityDataTransfer:
         return ret
 
     def upload_context_scene(
-        self,
-        scene_path: str,
-        name: str,
-        iTwin_id: str,
-        reference_table: ReferenceTable = None,
+            self,
+            scene_path: str,
+            name: str,
+            iTwin_id: str,
+            reference_table: ReferenceTable = None,
     ) -> ReturnValue[str]:
         """
         Upload a ContextScene to ProjectWise ContextShare.
@@ -208,11 +237,11 @@ class RealityDataTransfer:
         )
 
     def upload_ccorientation(
-        self,
-        ccorientation_path: str,
-        name: str,
-        iTwin_id: str,
-        reference_table: ReferenceTable = None,
+            self,
+            ccorientation_path: str,
+            name: str,
+            iTwin_id: str,
+            reference_table: ReferenceTable = None,
     ) -> ReturnValue[str]:
         """
         Upload a CCOrientation to ProjectWise ContextShare.
@@ -279,25 +308,41 @@ class RealityDataTransfer:
         client = ContainerClient.from_container_url(sas_uri)
         blobs = client.list_blobs()
 
-        def _download_blob(blob):
+        blobs_tuple = [(blob.name, blob.size) for blob in blobs]
+        total_size = sum(n for _, n in blobs_tuple)
+        proceed = True
+        downloaded_values = {}
+
+        def _download_blob(blob_tuple):
+
+            def _download_callback(current, total):
+                nonlocal downloaded_values
+                downloaded_values[blob_tuple[0]] = current
+                percentage = (sum(downloaded_values.values()) / total_size) * 100
+                if self._progress_hook is not None:
+                    nonlocal proceed
+                    proceed = proceed and self._progress_hook(percentage)
+                if not proceed:
+                    raise Exception("Download interrupted by callback function")
+
             data = client.download_blob(
-                blob, timeout=30, max_concurrency=16, retry_connect=10
-            ).readall()
-            download_file_path = os.path.join(output_path, blob.name)
+                    blob_tuple[0], connection_timeout=60, max_concurrency=16, retry_total=20, retry_connect=10,
+                    progress_hook=_download_callback).readall()
+
+            download_file_path = os.path.join(output_path, blob_tuple[0])
             os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
+
             with open(download_file_path, "wb") as file:
                 file.write(data)
+            nonlocal downloaded_values
+            downloaded_values[blob_tuple[0]] = blob_tuple[1]
 
         try:
-            ret = self._connect()
-            if ret.is_error():
-                return ReturnValue(
-                    value=False, error="Failed to download reality data:" + ret.error
-                )
             with ThreadPool(processes=int(4)) as pool:
-                pool.map(_download_blob, blobs)
+                pool.map(_download_blob, blobs_tuple)
         except Exception as e:
-            ReturnValue(value=False, error="Failed to download reality data:" + str(e))
+            return ReturnValue(value=False, error="Failed to download reality data:" + str(e))
+
         return ReturnValue(value=True, error="")
 
     def download_context_scene(
@@ -359,3 +404,8 @@ class RealityDataTransfer:
                 False,
             )
         return ret
+
+
+def example_hook(percentage):
+    print("percentage: {:.2%}".format(percentage / 100), flush=True)
+    return True
