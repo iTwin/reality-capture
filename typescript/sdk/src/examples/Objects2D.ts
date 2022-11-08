@@ -1,10 +1,10 @@
-import { RealityDataAnalysisService } from "../Rdas/RealityDataAnalysisService";
-import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
-import { ReferenceTable } from "../Utils/ReferenceTable";
+import { RealityDataAnalysisService } from "../rdas/RealityDataAnalysisService";
+import { RealityDataTransfer } from "../utils/RealityDataTransfer";
+import { ReferenceTable } from "../utils/ReferenceTable";
 import path = require("path");
 import * as fs from "fs";
 import { ClientInfo, JobState, RealityDataType } from "../CommonData";
-import { O2DJobSettings } from "../Rdas/Settings";
+import { O2DJobSettings } from "../rdas/Settings";
 import * as dotenv from "dotenv";
 import { ServiceTokenFactory } from "../TokenFactory";
 

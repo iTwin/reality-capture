@@ -1,10 +1,10 @@
 import path = require("path");
-import { ContextCaptureService } from "../Cccs/ContextCaptureService";
-import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
-import { ReferenceTable } from "../Utils/ReferenceTable";
+import { ContextCaptureService } from "../cccs/ContextCaptureService";
+import { RealityDataTransfer } from "../utils/RealityDataTransfer";
+import { ReferenceTable } from "../utils/ReferenceTable";
 import * as fs from "fs";
 import { ClientInfo, JobState, RealityDataType } from "../CommonData";
-import { CCJobSettings, CCJobType, CCMeshQuality } from "../Cccs/Utils";
+import { CCJobSettings, CCJobType, CCMeshQuality } from "../cccs/Utils";
 import * as dotenv from "dotenv";
 import { ServiceTokenFactory } from "../TokenFactory";
 
@@ -106,6 +106,9 @@ async function main() {
             await sleep(6000);
         }
         console.log("Job done");
+
+        const test = await contextCaptureService.getJobProperties(jobId);
+        console.log("test : ", test);
 
         console.log("Retrieving outputs ids");
         const finalSettings = await contextCaptureService.getJobSettings(jobId);

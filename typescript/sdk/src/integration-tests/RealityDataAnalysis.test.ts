@@ -5,11 +5,11 @@ chai.use(chaiAsPromised);
 import path = require("path");
 import * as dotenv from "dotenv";
 import { ClientInfo, JobState, RealityDataType } from "../CommonData";
-import { RealityDataAnalysisService } from "../Rdas/RealityDataAnalysisService";
+import { RealityDataAnalysisService } from "../rdas/RealityDataAnalysisService";
 import { ServiceTokenFactory } from "../TokenFactory";
-import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
-import { ReferenceTable } from "../Utils/ReferenceTable";
-import { O2DJobSettings } from "../Rdas/Settings";
+import { RealityDataTransfer } from "../utils/RealityDataTransfer";
+import { ReferenceTable } from "../utils/ReferenceTable";
+import { O2DJobSettings } from "../rdas/Settings";
 import { BentleyError } from "@itwin/core-bentley";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }

@@ -1,9 +1,9 @@
 import path = require("path");
 import { RealityDataType, JobState, ClientInfo } from "../CommonData";
-import { RealityDataAnalysisService } from "../Rdas/RealityDataAnalysisService";
-import { L3DJobSettings } from "../Rdas/Settings";
-import { RealityDataTransfer } from "../Utils/RealityDataTransfer";
-import { ReferenceTable } from "../Utils/ReferenceTable";
+import { RealityDataAnalysisService } from "../rdas/RealityDataAnalysisService";
+import { L3DJobSettings } from "../rdas/Settings";
+import { RealityDataTransfer } from "../utils/RealityDataTransfer";
+import { ReferenceTable } from "../utils/ReferenceTable";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
 import { ServiceTokenFactory } from "../TokenFactory";

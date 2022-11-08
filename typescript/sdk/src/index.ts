@@ -1,6 +1,6 @@
 import { ClientInfo, RealityDataType } from "./CommonData";
 import { ServiceTokenFactory } from "./TokenFactory";
-import { RealityDataTransfer } from "./Utils/RealityDataTransfer";
+import { RealityDataTransfer } from "./utils/RealityDataTransfer";
 import * as dotenv from "dotenv";
 
 
