@@ -30,7 +30,9 @@ class RealityDataAnalysisService:
 
     def __init__(self, token_factory) -> None:
         self._token_factory = token_factory
-        self._connection = http.client.HTTPSConnection(self._token_factory.get_service_url())
+        self._connection = http.client.HTTPSConnection(
+            self._token_factory.get_service_url()
+        )
         self._header = {
             "Authorization": None,
             "User-Agent": f"RDAS Python SDK/0.0.1",
@@ -175,9 +177,13 @@ class RealityDataAnalysisService:
                 cost_estimation.scene_width = float(estimate.get("sceneWidth", 0.0))
                 cost_estimation.scene_height = float(estimate.get("sceneHeight", 0.0))
                 cost_estimation.scene_length = float(estimate.get("sceneLength", 0.0))
-                cost_estimation.detector_scale = float(estimate.get("detectorScale", 0.0))
+                cost_estimation.detector_scale = float(
+                    estimate.get("detectorScale", 0.0)
+                )
                 cost_estimation.detector_cost = float(estimate.get("detectorCost", 0.0))
-                cost_estimation.estimated_cost = float(estimate.get("estimatedCost", 0.0))
+                cost_estimation.estimated_cost = float(
+                    estimate.get("estimatedCost", 0.0)
+                )
 
             created_date_time = data["job"].get("createdDateTime", "")
             execution = data["job"].get("executionInformation", None)
@@ -331,7 +337,10 @@ class RealityDataAnalysisService:
         """
         ret = self._connect()
         if ret.is_error():
-            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=ret.error)
+            return ReturnValue(
+                value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
+                error=ret.error,
+            )
         self._connection.request(
             "GET",
             f"/realitydataanalysis/jobs/{job_id}/progress",
@@ -351,7 +360,10 @@ class RealityDataAnalysisService:
         try:
             state = JobState(dp["state"].lower())
         except Exception as e:
-            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=str(e))
+            return ReturnValue(
+                value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
+                error=str(e),
+            )
         return ReturnValue(
             value=JobProgress(
                 state=JobState(state),

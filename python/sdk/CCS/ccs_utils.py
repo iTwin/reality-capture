@@ -47,15 +47,12 @@ class CCJobSettings:
             cache["createCache"] = str(self.cache_settings.create_cache)
         if self.cache_settings.use_cache != "":
             cache["useCache"] = self.cache_settings.use_cache
-        input_dict = {
-            "inputs": [{
-                "id": i
-            } for i in self.inputs]
-        }
-        settings_dict = {"settings": {
-            "meshQuality": self.mesh_quality.value,
-            "processingEngines": self.engines,
-            "outputs": list()
+        input_dict = {"inputs": [{"id": i} for i in self.inputs]}
+        settings_dict = {
+            "settings": {
+                "meshQuality": self.mesh_quality.value,
+                "processingEngines": self.engines,
+                "outputs": list(),
             }
         }
         if cache:
@@ -96,7 +93,9 @@ class CCJobSettings:
         return settings_dict, input_dict
 
     @classmethod
-    def from_json(cls, settings_json: dict, inputs_json: dict) -> ReturnValue[CCJobSettings]:
+    def from_json(
+        cls, settings_json: dict, inputs_json: dict
+    ) -> ReturnValue[CCJobSettings]:
         new_job_settings = cls()
         try:
             new_job_settings.inputs = [i["id"] for i in inputs_json]
@@ -136,11 +135,16 @@ class CCJobSettings:
                     new_job_settings.outputs.opc = output["id"]
                 else:
                     raise TypeError(
-                        "found non expected output name:" + output["format"])
+                        "found non expected output name:" + output["format"]
+                    )
             new_job_settings.mesh_quality = CCJobQuality(settings_json["quality"])
             new_job_settings.engines = float(settings_json["processingEngines"])
-            new_job_settings.cache_settings.use_cache = bool(settings_json.get("useCache", False))
-            new_job_settings.cache_settings.use_cache = settings_json.get("useCache", "")
+            new_job_settings.cache_settings.use_cache = bool(
+                settings_json.get("useCache", False)
+            )
+            new_job_settings.cache_settings.use_cache = settings_json.get(
+                "useCache", ""
+            )
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_settings, error="")
@@ -166,8 +170,12 @@ class CCJobSettings:
 
 
 class CCJobCostParameters:
-
-    def __init__(self, giga_pixels: float = 0.0, mega_points: float = 0.0, mesh_quality: CCJobQuality = CCJobQuality.UNKNOWN):
+    def __init__(
+        self,
+        giga_pixels: float = 0.0,
+        mega_points: float = 0.0,
+        mesh_quality: CCJobQuality = CCJobQuality.UNKNOWN,
+    ):
         self.giga_pixels = giga_pixels
         self.mega_points = mega_points
         self.mesh_quality = mesh_quality

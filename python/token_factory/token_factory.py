@@ -31,8 +31,15 @@ class ClientInfo:
             interference. Should be the same as the one registered in the application.
         secret(Optional): Secret used by some authorizations methods.
     """
-    def __init__(self, client_id: str, scope_set: set(), env: str = "",
-                 redirect_url: str = "http://localhost:8080/sign-oidc", secret: str = ""):
+
+    def __init__(
+        self,
+        client_id: str,
+        scope_set: set(),
+        env: str = "",
+        redirect_url: str = "http://localhost:8080/sign-oidc",
+        secret: str = "",
+    ):
         self.env = env
         self.redirect_url = redirect_url
         self.client_id = client_id
@@ -50,7 +57,10 @@ class AccessToken:
         token_type: Type of the token.
         valid_until: Date of expiration of the token.
     """
-    def __init__(self, access: str, refresh: str, token_type: str, valid_until: datetime):
+
+    def __init__(
+        self, access: str, refresh: str, token_type: str, valid_until: datetime
+    ):
         self._access = access
         self._refresh = refresh
         self._tok_type = token_type
@@ -110,6 +120,7 @@ class BaseTokenFactory(AbstractTokenFactory):
     Args:
         client_info: A ClientInfo object with the necessary information to create a token factory.
     """
+
     auth_code = ""
 
     def __init__(self, client_info):
@@ -130,11 +141,15 @@ class BaseTokenFactory(AbstractTokenFactory):
 
     @staticmethod
     def _get_token_from_data(data: dict) -> AccessToken:
-        valid = datetime.now() + timedelta(0, data["expires_in"] - 300)  # 5 minutes safe window
-        return AccessToken(data["access_token"], data.get("refresh_token"), data["token_type"], valid)
+        valid = datetime.now() + timedelta(
+            0, data["expires_in"] - 300
+        )  # 5 minutes safe window
+        return AccessToken(
+            data["access_token"], data.get("refresh_token"), data["token_type"], valid
+        )
 
     @staticmethod
-    @route('/sign-oidc', method='GET')
+    @route("/sign-oidc", method="GET")
     def get_code():
         BaseTokenFactory.auth_code = request.query.get("code")
         if BaseTokenFactory.auth_code is not None:
@@ -168,27 +183,34 @@ class SpaDesktopMobileTokenFactory(BaseTokenFactory):
         super().__init__(client_info)
 
         letters = string.ascii_letters + string.digits
-        self._code_verifier = ''.join(random.choice(letters) for _ in range(50))
+        self._code_verifier = "".join(random.choice(letters) for _ in range(50))
 
         self._port = 8080
         self._token = None
-        self._daemon = threading.Thread(name="Local Server",
-                                        target=run,
-                                        kwargs={'host': 'localhost', 'port': 8080, 'quiet': True})
+        self._daemon = threading.Thread(
+            name="Local Server",
+            target=run,
+            kwargs={"host": "localhost", "port": 8080, "quiet": True},
+        )
         self._daemon.setDaemon(True)
         self._daemon.start()
 
         self._client = WebApplicationClient(self._client_id)
-        self._session = OAuth2Session(client=self._client, redirect_uri=self._redirect_url,
-                                      scope=list(self._scope_set))
+        self._session = OAuth2Session(
+            client=self._client,
+            redirect_uri=self._redirect_url,
+            scope=list(self._scope_set),
+        )
 
     def _get_code_verifier(self) -> str:
         return self._code_verifier
 
     def _get_code_challenge(self) -> str:
-        code_challenge = hashlib.sha256(self._get_code_verifier().encode('utf-8')).digest()
-        code_challenge = base64.urlsafe_b64encode(code_challenge).decode('utf-8')
-        code_challenge = code_challenge.replace('=', '')
+        code_challenge = hashlib.sha256(
+            self._get_code_verifier().encode("utf-8")
+        ).digest()
+        code_challenge = base64.urlsafe_b64encode(code_challenge).decode("utf-8")
+        code_challenge = code_challenge.replace("=", "")
         return code_challenge
 
     def get_token(self):
@@ -196,26 +218,31 @@ class SpaDesktopMobileTokenFactory(BaseTokenFactory):
             return self._token.get_auth()
 
         if self._token is not None and self._token.get_refresh():
-            token_data = self._session.refresh_token(self._token_point,
-                                                     client_id=self._client_id)
+            token_data = self._session.refresh_token(
+                self._token_point, client_id=self._client_id
+            )
             self._token = self._get_token_from_data(token_data)
             return self._token.get_auth()
 
         # token is not usable, we need to ask the user for their consent for a new token
         BaseTokenFactory.auth_code = ""  # Reset code
 
-        authorization_url, _ = self._session.authorization_url(self._auth_point,
-                                                               code_challenge=self._get_code_challenge(),
-                                                               code_challenge_method="S256")
+        authorization_url, _ = self._session.authorization_url(
+            self._auth_point,
+            code_challenge=self._get_code_challenge(),
+            code_challenge_method="S256",
+        )
         webbrowser.open_new(authorization_url)
         # waiting for new authorization code
         while not BaseTokenFactory.auth_code:
             time.sleep(0.5)
 
         # asking for new token
-        token_data = self._session.fetch_token(self._token_point,
-                                               code=BaseTokenFactory.auth_code,
-                                               code_verifier=quote(self._code_verifier, safe=""))
+        token_data = self._session.fetch_token(
+            self._token_point,
+            code=BaseTokenFactory.auth_code,
+            code_verifier=quote(self._code_verifier, safe=""),
+        )
         self._token = self._get_token_from_data(token_data)
         return self._token.get_auth()
 
@@ -240,7 +267,12 @@ class ServiceTokenFactory(BaseTokenFactory):
             return self._token.get_auth()
         # token is not usable, we need a new token
         # asking for new token
-        token_data = self._session.fetch_token(self._token_point, client_secret=self._secret, include_client_id=True, scope=self._scope_set)
+        token_data = self._session.fetch_token(
+            self._token_point,
+            client_secret=self._secret,
+            include_client_id=True,
+            scope=self._scope_set,
+        )
 
         self._token = self._get_token_from_data(token_data)
         return self._token.get_auth()
@@ -259,24 +291,29 @@ class WebTokenFactory(BaseTokenFactory):
 
         self._port = 8080
         self._token = None
-        self._daemon = threading.Thread(name="Local Server",
-                                        target=run,
-                                        kwargs={'host': 'localhost', 'port': 8080, 'quiet': True})
+        self._daemon = threading.Thread(
+            name="Local Server",
+            target=run,
+            kwargs={"host": "localhost", "port": 8080, "quiet": True},
+        )
         self._daemon.setDaemon(True)
         self._daemon.start()
 
         self._client = WebApplicationClient(self._client_id)
-        self._session = OAuth2Session(client=self._client, redirect_uri=self._redirect_url,
-                                      scope=list(self._scope_set))
+        self._session = OAuth2Session(
+            client=self._client,
+            redirect_uri=self._redirect_url,
+            scope=list(self._scope_set),
+        )
 
     def get_token(self):
         if self._token is not None and self._token.is_still_valid():
             return self._token.get_auth()
 
         if self._token is not None and self._token.get_refresh():
-            token_data = self._session.refresh_token(self._token_point,
-                                                     client_id=self._client_id,
-                                                     client_secret=self._secret)
+            token_data = self._session.refresh_token(
+                self._token_point, client_id=self._client_id, client_secret=self._secret
+            )
             self._token = self._get_token_from_data(token_data)
             return self._token.get_auth()
 
@@ -289,10 +326,11 @@ class WebTokenFactory(BaseTokenFactory):
             time.sleep(0.5)
 
         # asking for new token
-        token_data = self._session.fetch_token(self._token_point,
-                                               code=BaseTokenFactory.auth_code,
-                                               client_secret=self._secret,
-                                               include_client_id=True)
+        token_data = self._session.fetch_token(
+            self._token_point,
+            code=BaseTokenFactory.auth_code,
+            client_secret=self._secret,
+            include_client_id=True,
+        )
         self._token = self._get_token_from_data(token_data)
         return self._token.get_auth()
-

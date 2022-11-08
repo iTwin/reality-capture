@@ -12,18 +12,20 @@ from config import project_id, client_id
 
 def main():
 
-    ccimage_collections = r"Q:\Analyze\DataSets\RDAS_Demo_Set\Photo_Object-Face_and_License_Plates\images"
+    ccimage_collections = (
+        r"Q:\Analyze\DataSets\RDAS_Demo_Set\Photo_Object-Face_and_License_Plates\images"
+    )
     output_path = r"D:\test_sdk\new_sdk\O2D"
     ccimage_collections_name = "Test Moto Photos"
 
     print("Data Transfer example: upload and download of files")
 
     scope_set = {
-                "realitydata:modify",
-                "realitydata:read",
-                "realitydataanalysis:read",
-                "realitydataanalysis:modify",
-            }
+        "realitydata:modify",
+        "realitydata:read",
+        "realitydataanalysis:read",
+        "realitydataanalysis:modify",
+    }
     scope_set.add("offline_access")
 
     client_info = ClientInfo(client_id, scope_set)
@@ -34,7 +36,12 @@ def main():
     print("Data transfer initialized")
 
     # upload ccimageCollection
-    ret_up = data_transfer.upload_reality_data(ccimage_collections, ccimage_collections_name, RealityDataType.ImageCollection, project_id)
+    ret_up = data_transfer.upload_reality_data(
+        ccimage_collections,
+        ccimage_collections_name,
+        RealityDataType.ImageCollection,
+        project_id,
+    )
     if ret_up.is_error():
         print("Error in upload:", ret_up.error)
         exit(1)
@@ -43,7 +50,11 @@ def main():
     # download ccimageCollection
     ret_down = data_transfer.download_reality_data(ret_up.value, output_path)
     if ret_down.is_error():
-        print("Error while downloading output with id {}: {}".format(ret_up.value, ret_down.error))
+        print(
+            "Error while downloading output with id {}: {}".format(
+                ret_up.value, ret_down.error
+            )
+        )
         exit(1)
     print("Successfully downloaded output")
 

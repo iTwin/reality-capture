@@ -6,7 +6,10 @@ from azure.storage.blob import ContainerClient
 from multiprocessing.pool import ThreadPool
 
 from apim_utils.code import Code
-from sdk.DataTransfer.conversion import replace_context_scene_references, replace_ccorientation_references
+from sdk.DataTransfer.conversion import (
+    replace_context_scene_references,
+    replace_ccorientation_references,
+)
 from sdk.DataTransfer.references import ReferenceTable
 from sdk.utils import RealityDataType, ReturnValue
 
@@ -23,7 +26,9 @@ class RealityDataTransfer:
     def __init__(self, token_factory):
 
         self._token_factory = token_factory
-        self._connection = http.client.HTTPSConnection(self._token_factory.get_service_url())
+        self._connection = http.client.HTTPSConnection(
+            self._token_factory.get_service_url()
+        )
         self._header = {
             "Authorization": None,
             "User-Agent": f"ContextCapture Python SDK/0.0.1",
@@ -44,11 +49,11 @@ class RealityDataTransfer:
         return ReturnValue(value=True, error="")
 
     def _create_reality_data(
-            self,
-            name: str,
-            data_type: RealityDataType,
-            iTwin_id: str = "",
-            rootfile: str = "",
+        self,
+        name: str,
+        data_type: RealityDataType,
+        iTwin_id: str = "",
+        rootfile: str = "",
     ) -> ReturnValue[str]:
         rd_dict = {
             "realityData": {
@@ -65,9 +70,7 @@ class RealityDataTransfer:
         ret = self._connect()
         if ret.is_error():
             return ReturnValue(value="", error=ret.error)
-        self._connection.request(
-            "POST", "/realitydata/", json_data, self._get_header()
-        )
+        self._connection.request("POST", "/realitydata/", json_data, self._get_header())
         response = self._connection.getresponse()
         code = Code(response)
         if not code.success():
@@ -76,7 +79,7 @@ class RealityDataTransfer:
         return ReturnValue(value=data["realityData"]["id"], error="")
 
     def _update_reality_data(
-            self, rd_id: str, update_dict: dict, iTwin_id: str = ""
+        self, rd_id: str, update_dict: dict, iTwin_id: str = ""
     ) -> ReturnValue[str]:
         rd_dict = {"realityData": update_dict}
         if iTwin_id != "":
@@ -99,12 +102,12 @@ class RealityDataTransfer:
         self._progress_hook = hook
 
     def upload_reality_data(
-            self,
-            data_path: str,
-            name: str,
-            data_type: RealityDataType,
-            iTwin_id: str,
-            root_file: str = "",
+        self,
+        data_path: str,
+        name: str,
+        data_type: RealityDataType,
+        iTwin_id: str,
+        root_file: str = "",
     ) -> ReturnValue[str]:
         """
         Upload reality data to ProjectWise ContextShare.
@@ -147,7 +150,10 @@ class RealityDataTransfer:
         sas_uri = code.response()["container"]["_links"]["containerUrl"]["href"]
 
         files_tuple = [
-            (os.path.relpath(os.path.join(dp, f), data_path), os.path.getsize(os.path.join(dp, f)))
+            (
+                os.path.relpath(os.path.join(dp, f), data_path),
+                os.path.getsize(os.path.join(dp, f)),
+            )
             for dp, dn, filenames in os.walk(data_path)
             for f in filenames
         ]
@@ -163,7 +169,6 @@ class RealityDataTransfer:
             ReturnValue(value="", error=ret.error)
 
         def _upload_file(file_tuple):
-
             def _upload_callback(current, total):
                 nonlocal uploaded_values
                 uploaded_values[file_tuple[0]] = current
@@ -176,8 +181,15 @@ class RealityDataTransfer:
 
             client = ContainerClient.from_container_url(sas_uri)
             with open(os.path.join(data_path, file_tuple[0]), "rb") as data:
-                client.upload_blob(file_tuple[0], data, connection_timeout=60, max_concurrency=16, retry_total=20,
-                                   retry_connect=10, progress_hook=_upload_callback)
+                client.upload_blob(
+                    file_tuple[0],
+                    data,
+                    connection_timeout=60,
+                    max_concurrency=16,
+                    retry_total=20,
+                    retry_connect=10,
+                    progress_hook=_upload_callback,
+                )
             nonlocal uploaded_values
             uploaded_values[file_tuple[0]] = file_tuple[1]
 
@@ -195,11 +207,11 @@ class RealityDataTransfer:
         return ret
 
     def upload_context_scene(
-            self,
-            scene_path: str,
-            name: str,
-            iTwin_id: str,
-            reference_table: ReferenceTable = None,
+        self,
+        scene_path: str,
+        name: str,
+        iTwin_id: str,
+        reference_table: ReferenceTable = None,
     ) -> ReturnValue[str]:
         """
         Upload a ContextScene to ProjectWise ContextShare.
@@ -237,11 +249,11 @@ class RealityDataTransfer:
         )
 
     def upload_ccorientation(
-            self,
-            ccorientation_path: str,
-            name: str,
-            iTwin_id: str,
-            reference_table: ReferenceTable = None,
+        self,
+        ccorientation_path: str,
+        name: str,
+        iTwin_id: str,
+        reference_table: ReferenceTable = None,
     ) -> ReturnValue[str]:
         """
         Upload a CCOrientation to ProjectWise ContextShare.
@@ -277,7 +289,7 @@ class RealityDataTransfer:
         )
 
     def download_reality_data(
-            self, data_id: str, output_path: str
+        self, data_id: str, output_path: str
     ) -> ReturnValue[bool]:
         """
         Download reality data from ProjectWise ContextShare.
@@ -314,7 +326,6 @@ class RealityDataTransfer:
         downloaded_values = {}
 
         def _download_blob(blob_tuple):
-
             def _download_callback(current, total):
                 nonlocal downloaded_values
                 downloaded_values[blob_tuple[0]] = current
@@ -326,8 +337,13 @@ class RealityDataTransfer:
                     raise Exception("Download interrupted by callback function")
 
             data = client.download_blob(
-                    blob_tuple[0], connection_timeout=60, max_concurrency=16, retry_total=20, retry_connect=10,
-                    progress_hook=_download_callback).readall()
+                blob_tuple[0],
+                connection_timeout=60,
+                max_concurrency=16,
+                retry_total=20,
+                retry_connect=10,
+                progress_hook=_download_callback,
+            ).readall()
 
             download_file_path = os.path.join(output_path, blob_tuple[0])
             os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
@@ -341,12 +357,14 @@ class RealityDataTransfer:
             with ThreadPool(processes=int(4)) as pool:
                 pool.map(_download_blob, blobs_tuple)
         except Exception as e:
-            return ReturnValue(value=False, error="Failed to download reality data:" + str(e))
+            return ReturnValue(
+                value=False, error="Failed to download reality data:" + str(e)
+            )
 
         return ReturnValue(value=True, error="")
 
     def download_context_scene(
-            self, data_id: str, output_path: str, reference_table: ReferenceTable = None
+        self, data_id: str, output_path: str, reference_table: ReferenceTable = None
     ) -> ReturnValue[bool]:
         """
         Download a ContextScene from ProjectWise ContextShare.
@@ -376,7 +394,7 @@ class RealityDataTransfer:
         return ret
 
     def download_ccorientation(
-            self, data_id: str, output_path: str, reference_table: ReferenceTable = None
+        self, data_id: str, output_path: str, reference_table: ReferenceTable = None
     ) -> ReturnValue[bool]:
         """
         Download a CCOrientation from ProjectWise ContextShare.

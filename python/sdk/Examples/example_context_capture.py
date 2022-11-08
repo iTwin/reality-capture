@@ -60,8 +60,15 @@ def main():
 
     # upload ccimageCollection
     if not references.has_local_path(ccimage_collections):
-        print("No reference to CCimage Collections found, uploading local files to cloud")
-        ret = data_transfer.upload_reality_data(ccimage_collections, ccimage_collections_name, RealityDataType.ImageCollection, project_id)
+        print(
+            "No reference to CCimage Collections found, uploading local files to cloud"
+        )
+        ret = data_transfer.upload_reality_data(
+            ccimage_collections,
+            ccimage_collections_name,
+            RealityDataType.ImageCollection,
+            project_id,
+        )
         if ret.is_error():
             print("Error in upload:", ret.error)
             exit(1)
@@ -73,7 +80,9 @@ def main():
     # upload ccorientations
     if not references.has_local_path(cc_orientations):
         print("No reference to cc orientations found, uploading local files to cloud")
-        ret = data_transfer.upload_ccorientation(cc_orientations, cc_orientations_name, project_id, references)
+        ret = data_transfer.upload_ccorientation(
+            cc_orientations, cc_orientations_name, project_id, references
+        )
         if ret.is_error():
             print("Error in upload:", ret.error)
             exit(1)
@@ -98,7 +107,10 @@ def main():
 
     # create job settings
     settings = CCJobSettings()
-    settings.inputs = [references.get_cloud_id_from_local_path(ccimage_collections).value, references.get_cloud_id_from_local_path(cc_orientations).value]
+    settings.inputs = [
+        references.get_cloud_id_from_local_path(ccimage_collections).value,
+        references.get_cloud_id_from_local_path(cc_orientations).value,
+    ]
     settings.outputs.threeMX = "threeMX"
     settings.mesh_quality = CCJobQuality.MEDIUM
     print("Settings created")
@@ -123,9 +135,16 @@ def main():
             print("Error while getting progress:", progress_ret.error)
             exit(1)
         job_progress = progress_ret.value
-        if job_progress.state == JobState.SUCCESS or job_progress.state == JobState.Completed or job_progress.state == JobState.Over:
+        if (
+            job_progress.state == JobState.SUCCESS
+            or job_progress.state == JobState.Completed
+            or job_progress.state == JobState.Over
+        ):
             break
-        elif job_progress.state == JobState.ACTIVE or job_progress.state == JobState.Running:
+        elif (
+            job_progress.state == JobState.ACTIVE
+            or job_progress.state == JobState.Running
+        ):
             print(f"Progress: {str(job_progress.progress)}%, step: {job_progress.step}")
         elif job_progress.state == JobState.CANCELLED:
             print("Job cancelled")
@@ -156,4 +175,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

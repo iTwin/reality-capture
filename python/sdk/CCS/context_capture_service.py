@@ -2,8 +2,14 @@ import http.client
 import json
 
 from apim_utils.code import Code
-from sdk.CCS.ccs_utils import CCWorkspaceProperties, CCJobType, CCJobQuality, CCJobSettings, CCJobCostParameters, \
-    CCJobProperties
+from sdk.CCS.ccs_utils import (
+    CCWorkspaceProperties,
+    CCJobType,
+    CCJobQuality,
+    CCJobSettings,
+    CCJobCostParameters,
+    CCJobProperties,
+)
 from sdk.utils import ReturnValue, JobState, JobDateTime, JobProgress
 
 
@@ -18,11 +24,15 @@ class ContextCaptureService:
 
     def __init__(self, token_factory) -> None:
         self._token_factory = token_factory
-        self._connection = http.client.HTTPSConnection(self._token_factory.get_service_url())
-        self._header = {"Authorization": None,
-                        "User-Agent": f"ContextCapture Python SDK/0.0.1",
-                        "Content-type": "application/json",
-                        "Accept": "application/vnd.bentley.itwin-platform.v1+json"}
+        self._connection = http.client.HTTPSConnection(
+            self._token_factory.get_service_url()
+        )
+        self._header = {
+            "Authorization": None,
+            "User-Agent": f"ContextCapture Python SDK/0.0.1",
+            "Content-type": "application/json",
+            "Accept": "application/vnd.bentley.itwin-platform.v1+json",
+        }
 
     def _get_header(self) -> dict:
         self._header["Authorization"] = self._token_factory.get_token()
@@ -41,7 +51,9 @@ class ContextCaptureService:
             return ReturnValue(value=False, error=str(e))
         return ReturnValue(value=True, error="")
 
-    def create_workspace(self, work_name: str, iTwin_id: str, cc_version: str = "") -> ReturnValue[str]:
+    def create_workspace(
+        self, work_name: str, iTwin_id: str, cc_version: str = ""
+    ) -> ReturnValue[str]:
         """
         Creates a workspace.
 
@@ -60,7 +72,9 @@ class ContextCaptureService:
         if cc_version != "":
             wc_dict["contextCaptureVersion"] = cc_version
         json_data = json.dumps(wc_dict)
-        self._connection.request("POST", "/contextcapture/workspaces", json_data, self._get_header())
+        self._connection.request(
+            "POST", "/contextcapture/workspaces", json_data, self._get_header()
+        )
         response = self._connection.getresponse()
 
         # if the query was successful we return the id of the workspace, else we return an empty string
@@ -83,14 +97,18 @@ class ContextCaptureService:
         ret = self._connect()
         if ret.is_error():
             return ReturnValue(value="", error=ret.error)
-        self._connection.request("DELETE", f"/contextcapture/workspaces/{work_id}", None, self._get_header())
+        self._connection.request(
+            "DELETE", f"/contextcapture/workspaces/{work_id}", None, self._get_header()
+        )
         response = self._connection.getresponse()
         code = Code(response)
         if not code.success():
             return ReturnValue(value=False, error=code.error_message())
         return ReturnValue(value=True, error="")
 
-    def get_workspace_properties(self, work_id: str) -> ReturnValue[CCWorkspaceProperties]:
+    def get_workspace_properties(
+        self, work_id: str
+    ) -> ReturnValue[CCWorkspaceProperties]:
         """
         Get all properties of a given workspace.
         By default this function returns a placeholder empty CCWorkspaceProperties if it hasn't succeeded in retrieving
@@ -105,30 +123,42 @@ class ContextCaptureService:
         ret = self._connect()
         if ret.is_error():
             return ReturnValue(value=CCWorkspaceProperties(), error=ret.error)
-        self._connection.request("GET", f"/contextcapture/workspaces/{work_id}", None, self._get_header())
+        self._connection.request(
+            "GET", f"/contextcapture/workspaces/{work_id}", None, self._get_header()
+        )
         response = self._connection.getresponse()
         code = Code(response)
         if not code.success():
-            return ReturnValue(value=CCWorkspaceProperties(), error=code.error_message())
+            return ReturnValue(
+                value=CCWorkspaceProperties(), error=code.error_message()
+            )
         data = code.response()
         return ReturnValue(
-            value=CCWorkspaceProperties(work_id=data["workspace"]["id"], created_date_time=data["workspace"]["id"],
-                                        work_name=data["name"]["id"], iTwin_id=data["iTwinId"]["id"],
-                                        context_capture_version=data["contextCaptureVersion"]["id"]), error="")
+            value=CCWorkspaceProperties(
+                work_id=data["workspace"]["id"],
+                created_date_time=data["workspace"]["id"],
+                work_name=data["name"]["id"],
+                iTwin_id=data["iTwinId"]["id"],
+                context_capture_version=data["contextCaptureVersion"]["id"],
+            ),
+            error="",
+        )
 
-    def create_job(self, job_type: CCJobType, settings: CCJobSettings, job_name: str, work_id: str) -> ReturnValue[str]:
+    def create_job(
+        self, job_type: CCJobType, settings: CCJobSettings, job_name: str, work_id: str
+    ) -> ReturnValue[str]:
         """
-       Creates a job corresponding to the given settings.
+        Creates a job corresponding to the given settings.
 
-       Args:
-           job_type: Type of the job.
-           settings: Settings for the job.
-           job_name: Name of the job.
-           work_id: ID of the workspace to be used.
+        Args:
+            job_type: Type of the job.
+            settings: Settings for the job.
+            job_name: Name of the job.
+            work_id: ID of the workspace to be used.
 
-       Returns:
-           The ID of the job, and a potential error message.
-       """
+        Returns:
+            The ID of the job, and a potential error message.
+        """
         ret = self._connect()
         if ret.is_error():
             return ReturnValue(value="", error=ret.error)
@@ -138,10 +168,12 @@ class ContextCaptureService:
             "name": job_name,
             "inputs": inputs_dict["inputs"],
             "workspaceId": work_id,
-            "settings": settings_dict["settings"]
+            "settings": settings_dict["settings"],
         }
         job_json = json.dumps(jc_dict)
-        self._connection.request("POST", "/contextcapture/jobs", job_json, self._get_header())
+        self._connection.request(
+            "POST", "/contextcapture/jobs", job_json, self._get_header()
+        )
         response = self._connection.getresponse()
 
         code = Code(response)
@@ -167,7 +199,9 @@ class ContextCaptureService:
             "state": "active",
         }
         job_json = json.dumps(jc_dict)
-        self._connection.request("PATCH", f"/contextcapture/jobs/{job_id}", job_json, self._get_header())
+        self._connection.request(
+            "PATCH", f"/contextcapture/jobs/{job_id}", job_json, self._get_header()
+        )
         response = self._connection.getresponse()
 
         code = Code(response)
@@ -193,7 +227,9 @@ class ContextCaptureService:
         }
         job_json = json.dumps(jc_dict)
 
-        self._connection.request("PATCH", f"/contextcapture/jobs/{job_id}", job_json, self._get_header())
+        self._connection.request(
+            "PATCH", f"/contextcapture/jobs/{job_id}", job_json, self._get_header()
+        )
         response = self._connection.getresponse()
         code = Code(response)
         if not code.success():
@@ -213,7 +249,9 @@ class ContextCaptureService:
         ret = self._connect()
         if ret.is_error():
             return ReturnValue(value=False, error=ret.error)
-        self._connection.request("DELETE", f"/contextcapture/jobs/{job_id}", None, self._get_header())
+        self._connection.request(
+            "DELETE", f"/contextcapture/jobs/{job_id}", None, self._get_header()
+        )
         response = self._connection.getresponse()
         code = Code(response)
         if not code.success():
@@ -235,7 +273,9 @@ class ContextCaptureService:
         ret = self._connect()
         if ret.is_error():
             return ReturnValue(value=CCJobProperties(), error=ret.error)
-        self._connection.request("GET", f"/contextcapture/jobs/{job_id}", None, self._get_header())
+        self._connection.request(
+            "GET", f"/contextcapture/jobs/{job_id}", None, self._get_header()
+        )
         response = self._connection.getresponse()
 
         code = Code(response)
@@ -250,10 +290,15 @@ class ContextCaptureService:
             cost_estimation_parameters = CCJobCostParameters()
             estimate = data["job"].get("costEstimationParameters", None)
             if estimate is not None:
-                cost_estimation_parameters.giga_pixels = float(estimate.get("gigaPixels", 0.0))
-                cost_estimation_parameters.mega_points = float(estimate.get("megaPoints", 0.0))
+                cost_estimation_parameters.giga_pixels = float(
+                    estimate.get("gigaPixels", 0.0)
+                )
+                cost_estimation_parameters.mega_points = float(
+                    estimate.get("megaPoints", 0.0)
+                )
                 cost_estimation_parameters.mesh_quality = CCJobQuality(
-                    estimate.get("meshQuality", CCJobQuality.UNKNOWN.value))
+                    estimate.get("meshQuality", CCJobQuality.UNKNOWN.value)
+                )
             estimated_cost = float(data["job"].get("estimatedCost", 0.0))
             created_date_time = data["job"].get("createdDateTime", "")
             execution = data["job"].get("executionInformation", None)
@@ -274,24 +319,31 @@ class ContextCaptureService:
             email = data["job"].get("email", "")
             work_id = data["job"].get("workspaceId", "")
 
-            job_settings = CCJobSettings.from_json(data["job"].get("jobSettings", []), data["job"].get("inputs", []))
+            job_settings = CCJobSettings.from_json(
+                data["job"].get("jobSettings", []), data["job"].get("inputs", [])
+            )
             if job_settings.is_error():
                 return ReturnValue(value=CCJobProperties(), error=job_settings.error)
         except Exception as e:
             return ReturnValue(value=CCJobProperties(), error=str(e))
-        return ReturnValue(value=CCJobProperties(job_id=job_id,
-                                                 job_name=job_name,
-                                                 job_type=job_type,
-                                                 job_state=job_state,
-                                                 job_date_time=job_date_time,
-                                                 iTwin_id=iTwin_id,
-                                                 location=location,
-                                                 email=email,
-                                                 work_id=work_id,
-                                                 estimated_units=estimated_units,
-                                                 job_settings=job_settings.value,
-                                                 cost_estimation_parameters=cost_estimation_parameters,
-                                                 estimated_cost=estimated_cost), error="")
+        return ReturnValue(
+            value=CCJobProperties(
+                job_id=job_id,
+                job_name=job_name,
+                job_type=job_type,
+                job_state=job_state,
+                job_date_time=job_date_time,
+                iTwin_id=iTwin_id,
+                location=location,
+                email=email,
+                work_id=work_id,
+                estimated_units=estimated_units,
+                job_settings=job_settings.value,
+                cost_estimation_parameters=cost_estimation_parameters,
+                estimated_cost=estimated_cost,
+            ),
+            error="",
+        )
 
     def get_job_settings(self, job_id: str) -> ReturnValue[CCJobSettings]:
         """
@@ -322,13 +374,13 @@ class ContextCaptureService:
 
     def get_job_name(self, job_id: str) -> ReturnValue[str]:
         """
-       Get the name of a job.
+        Get the name of a job.
 
-       Args:
-           job_id: The ID of the relevant job.
-       Returns:
-           The name of the job, and a potential error message.
-       """
+        Args:
+            job_id: The ID of the relevant job.
+        Returns:
+            The name of the job, and a potential error message.
+        """
         ret = self.get_job_properties(job_id)
         return ReturnValue(value=ret.value.job_name, error=ret.error)
 
@@ -391,8 +443,13 @@ class ContextCaptureService:
         """
         ret = self._connect()
         if ret.is_error():
-            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=ret.error)
-        self._connection.request("GET", f"/contextcapture/jobs/{job_id}/progress", None, self._get_header())
+            return ReturnValue(
+                value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
+                error=ret.error,
+            )
+        self._connection.request(
+            "GET", f"/contextcapture/jobs/{job_id}/progress", None, self._get_header()
+        )
         response = self._connection.getresponse()
 
         code = Code(response)
@@ -406,10 +463,20 @@ class ContextCaptureService:
         try:
             state = JobState(dp["state"].lower())
         except Exception as e:
-            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=str(e))
-        return ReturnValue(value=JobProgress(state=state, progress=int(dp["percentage"]), step=dp["step"]), error="")
+            return ReturnValue(
+                value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
+                error=str(e),
+            )
+        return ReturnValue(
+            value=JobProgress(
+                state=state, progress=int(dp["percentage"]), step=dp["step"]
+            ),
+            error="",
+        )
 
-    def get_job_estimated_cost(self, job_id: str, cost_parameters: CCJobCostParameters) -> ReturnValue[float]:
+    def get_job_estimated_cost(
+        self, job_id: str, cost_parameters: CCJobCostParameters
+    ) -> ReturnValue[float]:
         """
         Get estimated cost for a given job.
 
@@ -423,12 +490,15 @@ class ContextCaptureService:
         ret = self._connect()
         if ret.is_error():
             return ReturnValue(value=-1.0, error=ret.error)
-        pi_dict = {"gigaPixels": str(cost_parameters.giga_pixels),
-                   "megaPoints": str(cost_parameters.mega_points),
-                   "meshQuality": cost_parameters.mesh_quality.value,
-                   }
+        pi_dict = {
+            "gigaPixels": str(cost_parameters.giga_pixels),
+            "megaPoints": str(cost_parameters.mega_points),
+            "meshQuality": cost_parameters.mesh_quality.value,
+        }
         json_data = json.dumps(pi_dict)
-        self._connection.request("PATCH", f"/contextcapture/jobs/{job_id}", json_data, self._get_header())
+        self._connection.request(
+            "PATCH", f"/contextcapture/jobs/{job_id}", json_data, self._get_header()
+        )
         response = self._connection.getresponse()
         code = Code(response)
         if not code.success():

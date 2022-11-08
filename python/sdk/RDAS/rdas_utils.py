@@ -122,4 +122,3 @@ class RDAJobProperties(NamedTuple):
     iTwin_id: str = ""
     data_center: str = ""
     email: str = ""
-

@@ -18,8 +18,12 @@ from config import project_id, client_id
 
 def main():
 
-    ccimage_collections = r"Q:\Analyze\DataSets\RDAS_Demo_Set\Photo_Object-Face_and_License_Plates\images"
-    photo_context_scene = r"Q:\Analyze\DataSets\RDAS_Demo_Set\Photo_Object-Face_and_License_Plates"
+    ccimage_collections = (
+        r"Q:\Analyze\DataSets\RDAS_Demo_Set\Photo_Object-Face_and_License_Plates\images"
+    )
+    photo_context_scene = (
+        r"Q:\Analyze\DataSets\RDAS_Demo_Set\Photo_Object-Face_and_License_Plates"
+    )
     photo_object_detector = r"C:\Users\Ariana.Carnielli\Downloads\Face_&_License_plates"
     output_path = r"D:\test_sdk\new_sdk\O2D"
 
@@ -61,8 +65,15 @@ def main():
 
     # ccimageCollection
     if not references.has_local_path(ccimage_collections):
-        print("No reference to CCimage Collections found, uploading local files to cloud")
-        ret = data_transfer.upload_reality_data(ccimage_collections, ccimage_collections_name, RealityDataType.ImageCollection, project_id)
+        print(
+            "No reference to CCimage Collections found, uploading local files to cloud"
+        )
+        ret = data_transfer.upload_reality_data(
+            ccimage_collections,
+            ccimage_collections_name,
+            RealityDataType.ImageCollection,
+            project_id,
+        )
         if ret.is_error():
             print("Error in upload:", ret.error)
             exit(1)
@@ -74,7 +85,9 @@ def main():
     # contextScene
     if not references.has_local_path(photo_context_scene):
         print("No reference to ContextScene found, uploading local files to cloud")
-        ret = data_transfer.upload_context_scene(photo_context_scene, context_scene_name, project_id, references)
+        ret = data_transfer.upload_context_scene(
+            photo_context_scene, context_scene_name, project_id, references
+        )
         if ret.is_error():
             print("Error in upload:", ret.error)
             exit(1)
@@ -86,7 +99,12 @@ def main():
     # detector
     if not references.has_local_path(photo_object_detector):
         print("No reference to detector found, uploading local files to cloud")
-        ret = data_transfer.upload_reality_data(photo_object_detector, detector_name, RealityDataType.ContextDetector, project_id)
+        ret = data_transfer.upload_reality_data(
+            photo_object_detector,
+            detector_name,
+            RealityDataType.ContextDetector,
+            project_id,
+        )
         if ret.is_error():
             print("Error in upload:", ret.error)
             exit(1)
@@ -104,8 +122,12 @@ def main():
 
     # creating job settings
     settings = O2DJobSettings()
-    settings.inputs.photos = references.get_cloud_id_from_local_path(photo_context_scene).value
-    settings.inputs.photo_object_detector = references.get_cloud_id_from_local_path(photo_object_detector).value
+    settings.inputs.photos = references.get_cloud_id_from_local_path(
+        photo_context_scene
+    ).value
+    settings.inputs.photo_object_detector = references.get_cloud_id_from_local_path(
+        photo_object_detector
+    ).value
     settings.outputs.objects2D = "true"
     print("Settings created")
 
@@ -129,9 +151,16 @@ def main():
             print("Error while getting progress:", progress_ret.error)
             exit(1)
         job_progress = progress_ret.value
-        if job_progress.state == JobState.SUCCESS or job_progress.state == JobState.Completed or job_progress.state == JobState.Over:
+        if (
+            job_progress.state == JobState.SUCCESS
+            or job_progress.state == JobState.Completed
+            or job_progress.state == JobState.Over
+        ):
             break
-        elif job_progress.state == JobState.ACTIVE or job_progress.state == JobState.Running:
+        elif (
+            job_progress.state == JobState.ACTIVE
+            or job_progress.state == JobState.Running
+        ):
             print(f"Progress: {str(job_progress.progress)}%, step: {job_progress.step}")
         elif job_progress.state == JobState.CANCELLED:
             print("Job cancelled")

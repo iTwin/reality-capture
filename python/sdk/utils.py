@@ -6,6 +6,7 @@ class RealityDataType(Enum):
     """
     Data types used in ProjectWise ContextShare.
     """
+
     ImageCollection = "CCImageCollection"
     ContextScene = "ContextScene"
     ContextDetector = "ContextDetector"
@@ -36,7 +37,6 @@ class JobState(Enum):
     FAILED = "failed"
     CANCELLED = "cancelled"
 
-    # ccmasterkernel
     Completed = "success"
     Pending = "pending"
     Running = "active"
