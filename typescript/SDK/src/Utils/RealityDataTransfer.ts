@@ -1,4 +1,4 @@
-import { BlockBlobParallelUploadOptions, ContainerClient } from "@azure/storage-blob";
+import { BlobDownloadOptions, BlockBlobParallelUploadOptions, ContainerClient } from "@azure/storage-blob";
 import { AbortController } from '@azure/abort-controller';
 import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
 import * as fs from "fs";
@@ -43,7 +43,7 @@ async function listFiles(root: string, currentFolder?: string): Promise<string[]
     return allSubFiles;
 }
 
-async function getUploadFilesInfo(uploadInfo: UploadInfo, root: string, currentFolder?: string): Promise<void> {
+async function getUploadFilesInfo(uploadInfo: DataTransferInfo, root: string, currentFolder?: string): Promise<void> {
     const path = currentFolder ? root + "/" + currentFolder : root;
     const subFiles = await fs.promises.readdir(path);
     for (let i = 0; i < subFiles.length; i++) {
@@ -53,8 +53,8 @@ async function getUploadFilesInfo(uploadInfo: UploadInfo, root: string, currentF
         }
         else {
             const stats = fs.statSync(path + "/" + subFiles[i]);
-            uploadInfo.filesToUpload.push(fileDirFromRoot);
-            uploadInfo.totalSizeToUpload += stats.size;
+            uploadInfo.files.push(fileDirFromRoot);
+            uploadInfo.totalFilesSize += stats.size;
         }
     }
 }
@@ -264,16 +264,16 @@ export async function replaceContextSceneReferences(scenePath: string, outputPat
         await replaceXMLScene(scenePath, outputPath, references, localToCloud);
 }
 
-interface UploadInfo {
-    filesToUpload: string[];
-    totalSizeToUpload: number; // In bytes
-    uploadedSize: number; // In bytes
+interface DataTransferInfo {
+    files: string[];
+    totalFilesSize: number; // In bytes
+    processedFilesSize: number; // In bytes
 }
 
 /**
- * Default hook to display upload progress.
+ * Default hook to display progress.
  * @param progress current progress (percentage).
- * @returns false if the upload has been cancelled.
+ * @returns false if the upload/download has been cancelled.
  */
 export function defaultProgressHook(progress: number): boolean {
     console.log("Current progress : " + progress + "%.");
@@ -291,17 +291,31 @@ export class RealityDataTransfer {
     private abortController: AbortController;
 
     /** 
-     * On progress hook. Displays the upload progress and returns false when the upload is cancelled.
+     * On upload progress hook. Displays the upload progress and returns false when the upload is cancelled.
      * Create your own function or use {@link defaultProgressHook}.
      */
-    private onProgress?: (progress: number) => boolean;
+    private onUploadProgress?: (progress: number) => boolean;
+
+    /** 
+     * On download progress hook. Displays the download progress and returns false when the download is cancelled.
+     * Create your own function or use {@link defaultProgressHook}.
+     */
+    private onDownloadProgress?: (progress: number) => boolean;
 
     /**
-     * Set the progress hook.
+     * Set the upload progress hook.
      * @param onProgress function to display the progress, should returns a boolean (cancelled).
      */
-    public setHook(onProgress: (progress: number) => boolean): void {
-        this.onProgress = onProgress;
+    public setUploadHook(onProgress: (progress: number) => boolean): void {
+        this.onUploadProgress = onProgress;
+    }
+
+    /**
+     * Set the download progress hook.
+     * @param onProgress function to display the progress, should returns a boolean (cancelled).
+     */
+    public setDownloadHook(onProgress: (progress: number) => boolean): void {
+        this.onDownloadProgress = onProgress;
     }
 
     /**
@@ -357,15 +371,15 @@ export class RealityDataTransfer {
             const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.tokenFactory.getToken(), "", true);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
 
-            const uploadInfo = {
-                filesToUpload: [],
-                totalSizeToUpload: 0,
-                uploadedSize: 0
+            const uploadInfo: DataTransferInfo = {
+                files: [],
+                totalFilesSize: 0,
+                processedFilesSize: 0
             };
             await getUploadFilesInfo(uploadInfo, dataToUpload);
             let currentPercentage = -1;
-            for (let i = 0; i < uploadInfo.filesToUpload.length; i++) {
-                const blockBlobClient = containerClient.getBlockBlobClient(uploadInfo.filesToUpload[i]);
+            for (let i = 0; i < uploadInfo.files.length; i++) {
+                const blockBlobClient = containerClient.getBlockBlobClient(uploadInfo.files[i]);
                 const options: BlockBlobParallelUploadOptions = {
                     abortSignal: this.abortController.signal,
                     maxSingleShotSize: 100 * 1024 * 1024, // 100MB
@@ -374,11 +388,12 @@ export class RealityDataTransfer {
                         if (this.abortController.signal.aborted)
                             return;
 
-                        const newPercentage = Math.round(((env.loadedBytes + uploadInfo.uploadedSize) / uploadInfo.totalSizeToUpload * 100));
+                        const newPercentage = Math.round(((env.loadedBytes + uploadInfo.processedFilesSize) 
+                            / uploadInfo.totalFilesSize * 100));
                         if(newPercentage !== currentPercentage) {
                             currentPercentage = newPercentage;
-                            if(this.onProgress) {
-                                const isCancelled = !this.onProgress(currentPercentage);
+                            if(this.onUploadProgress) {
+                                const isCancelled = !this.onUploadProgress(currentPercentage);
                                 if(isCancelled)
                                     this.abortController.abort();
                                 
@@ -387,9 +402,9 @@ export class RealityDataTransfer {
                         }
                     }
                 }
-                const uploadBlobResponse = await blockBlobClient.uploadFile(path.join(dataToUpload, uploadInfo.filesToUpload[i]), options);
-                const stats = fs.statSync(path.join(dataToUpload, uploadInfo.filesToUpload[i]));
-                uploadInfo.uploadedSize += stats.size;
+                const uploadBlobResponse = await blockBlobClient.uploadFile(path.join(dataToUpload, uploadInfo.files[i]), options);
+                const stats = fs.statSync(path.join(dataToUpload, uploadInfo.files[i]));
+                uploadInfo.processedFilesSize += stats.size;
                 if (uploadBlobResponse.errorCode)
                     return Promise.reject(Error(
                         "Can't upload reality data : " + realityData + ", error : " + uploadBlobResponse.errorCode));
@@ -485,15 +500,22 @@ export class RealityDataTransfer {
                 undefined, realityDataId);
             const azureBlobUrl = await iTwinRealityData.getBlobUrl(await this.tokenFactory.getToken(), "", false);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
-            const blobNames: string[] = [];
             const iter = await containerClient.listBlobsFlat();
-            for await (const blob of iter) {
-                blobNames.push(blob.name);
-            }
-            const filesToDownload = [...blobNames];
 
-            for (let i = 0; i < filesToDownload.length; i++) {
-                const filePath = path.join(downloadPath, filesToDownload[i]);
+            const downloadInfo: DataTransferInfo = {
+                files: [],
+                totalFilesSize: 0,
+                processedFilesSize: 0
+            };
+
+            for await (const blob of iter) {
+                downloadInfo.totalFilesSize += blob.properties.contentLength ?? 0;
+                downloadInfo.files.push(blob.name);
+            }
+
+            let currentPercentage = -1;
+            for (let i = 0; i < downloadInfo.files.length; i++) {
+                const filePath = path.join(downloadPath, downloadInfo.files[i]);
                 try {
                     await fs.promises.access(path.dirname(filePath), fs.constants.W_OK);
                 }
@@ -501,8 +523,31 @@ export class RealityDataTransfer {
                     await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
                 }
 
-                const blobContent = await containerClient.getBlockBlobClient(filesToDownload[i]).download(0);
+                const options: BlobDownloadOptions = {
+                    abortSignal: this.abortController.signal,
+                    onProgress: async (env) => {
+                        if (this.abortController.signal.aborted)
+                            return;
+
+                        const newPercentage = Math.round(((env.loadedBytes + downloadInfo.processedFilesSize) 
+                            / downloadInfo.totalFilesSize * 100));
+                        if(newPercentage !== currentPercentage) {
+                            currentPercentage = newPercentage;
+                            if(this.onDownloadProgress) {
+                                const isCancelled = !this.onDownloadProgress(currentPercentage);
+                                if(isCancelled)
+                                    this.abortController.abort();
+                                
+                                // TODO : what to do if no provided hook?
+                            }
+                        }
+                    }
+                }
+
+                const blobContent = await containerClient.getBlockBlobClient(downloadInfo.files[i]).download(0, undefined, options);
                 await fs.promises.writeFile(filePath, await streamToBuffer(blobContent.readableStreamBody!));
+                const stats = fs.statSync(filePath);
+                downloadInfo.processedFilesSize += stats.size;
             }
         }
         catch (error: any) {
