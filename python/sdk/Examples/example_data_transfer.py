@@ -13,19 +13,18 @@ from config import project_id, client_id
 def main():
 
     ccimage_collections = (
-        r"Q:\Analyze\DataSets\RDAS_Demo_Set\Photo_Object-Face_and_License_Plates\images"
+        r"C:\DataTransfer_Demo\images"
     )
-    output_path = r"D:\test_sdk\new_sdk\O2D"
-    ccimage_collections_name = "Test Moto Photos"
+    output_path = r"C:\tests\DataTransfer"
+    ccimage_collections_name = "Test Data Transfer"
 
     print("Data Transfer example: upload and download of files")
 
     scope_set = {
         "realitydata:modify",
         "realitydata:read",
-        "realitydataanalysis:read",
-        "realitydataanalysis:modify",
     }
+    # only for desktop/mobile applications
     scope_set.add("offline_access")
 
     client_info = ClientInfo(client_id, scope_set)

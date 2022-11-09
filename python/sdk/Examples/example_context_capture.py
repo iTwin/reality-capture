@@ -18,9 +18,9 @@ from token_factory.token_factory import ClientInfo, SpaDesktopMobileTokenFactory
 
 def main():
 
-    ccimage_collections = r"C:\Users\Ariana.Carnielli\Downloads\S2D-3CS-Bridge\S2D-3CS-Bridge\BridgeImages"
-    cc_orientations = r"C:\Users\Ariana.Carnielli\Downloads\S2D-3CS-Bridge\S2D-3CS-Bridge\BridgeCCorientation"
-    output_path = r"D:\test_sdk\new_sdk\CCS"
+    ccimage_collections = r"C:\CCS_Demo_Set\S2D-3CS-Bridge\BridgeImages"
+    cc_orientations = r"C:\CCS_Demo_Set\S2D-3CS-Bridge\BridgeCCorientation"
+    output_path = r"C:\tests\CCS"
 
     job_name = "CCCS job SDK sample"
     workspace_name = "CCCS SDK test workspace"
@@ -35,6 +35,7 @@ def main():
         "contextcapture:modify",
         "contextcapture:read",
     }
+    # only for desktop/mobile applications
     scope_set.add("offline_access")
 
     client_info = ClientInfo(client_id, scope_set)

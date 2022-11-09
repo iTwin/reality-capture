@@ -12,17 +12,22 @@ from sdk.DataTransfer.references import ReferenceTable
 from sdk.RDAS.job_settings import L3DJobSettings
 from sdk.utils import RealityDataType, JobState
 
-from config import project_id, client_id, rda_api_server, rd_api_server
+from config import project_id, client_id
+from token_factory.token_factory import ClientInfo, SpaDesktopMobileTokenFactory
 
 
 def main():
 
-    ccimage_collections = r"C:\Users\Ariana.Carnielli\Downloads\Lines3D\Lines3D\Images"
-    oriented_photos_context_scene = r"C:\Users\Ariana.Carnielli\Downloads\Lines3D\Lines3D\OrientedPhotos"
-    photo_segmentation_detector = r"C:\Users\Ariana.Carnielli\Downloads\Lines3D\Lines3D\CracksA_v1"
-    mesh = r"C:\Users\Ariana.Carnielli\Downloads\Lines3D\Lines3D\3MX"
-    mesh_context_scene = r"C:\Users\Ariana.Carnielli\Downloads\Lines3D\Lines3D\Mesh3MX"
-    output_path = r"D:\test_sdk\new_sdk\L3D"
+    ccimage_collections = r"C:\RDAS_Demo_Set\Lines3D\Images"
+    oriented_photos_context_scene = (
+        r"C:\RDAS_Demo_Set\Lines3D\OrientedPhotos"
+    )
+    photo_segmentation_detector = (
+        r"C:\RDAS_Demo_Set\Lines3D\CracksA_v1"
+    )
+    mesh = r"C:\RDAS_Demo_Set\Lines3D\3MX"
+    mesh_context_scene = r"C:\RDAS_Demo_Set\Lines3D\Mesh3MX"
+    output_path = r"C:\tests\L3D"
 
     job_name = "L3D job SDK sample"
     ccimage_collections_name = "Test L3D Photos"
@@ -33,11 +38,23 @@ def main():
 
     print("Reality Data Analysis sample job detecting 3D lines")
 
-    # initializing rda service
-    service_rda = RDAS.RealityDataAnalysisService(rda_api_server, client_id)
+    scope_set = {
+        "realitydata:modify",
+        "realitydata:read",
+        "realitydataanalysis:read",
+        "realitydataanalysis:modify",
+    }
+    # only for desktop/mobile applications
+    scope_set.add("offline_access")
+
+    client_info = ClientInfo(client_id, scope_set)
+    token_factory = SpaDesktopMobileTokenFactory(client_info)
 
     # initializing data transfer
-    data_transfer = DataTransfer.RealityDataTransfer(rd_api_server, client_id)
+    data_transfer = DataTransfer.RealityDataTransfer(token_factory)
+
+    # initializing rda service
+    service_rda = RDAS.RealityDataAnalysisService(token_factory)
 
     print("Service initialized")
 
@@ -53,8 +70,15 @@ def main():
 
     # upload ccimageCollection
     if not references.has_local_path(ccimage_collections):
-        print("No reference to CCimage Collections found, uploading local files to cloud")
-        ret = data_transfer.upload_reality_data(ccimage_collections, ccimage_collections_name, RealityDataType.ImageCollection, project_id)
+        print(
+            "No reference to CCimage Collections found, uploading local files to cloud"
+        )
+        ret = data_transfer.upload_reality_data(
+            ccimage_collections,
+            ccimage_collections_name,
+            RealityDataType.ImageCollection,
+            project_id,
+        )
         if ret.is_error():
             print("Error in upload:", ret.error)
             exit(1)
@@ -63,10 +87,15 @@ def main():
             print("Error adding reference:", ret.error)
             exit(1)
 
-    # upload Oriented photos (contextScene)
+    # upload Oriented photos (ContextScene)
     if not references.has_local_path(oriented_photos_context_scene):
         print("No reference to ContextScene found, uploading local files to cloud")
-        ret = data_transfer.upload_context_scene(oriented_photos_context_scene, oriented_photos_scene_name, project_id, references)
+        ret = data_transfer.upload_context_scene(
+            oriented_photos_context_scene,
+            oriented_photos_scene_name,
+            project_id,
+            references,
+        )
         if ret.is_error():
             print("Error in upload:", ret.error)
             exit(1)
@@ -78,7 +107,12 @@ def main():
     # upload detector
     if not references.has_local_path(photo_segmentation_detector):
         print("No reference to detector found, uploading local files to cloud")
-        ret = data_transfer.upload_reality_data(photo_segmentation_detector, detector_name, RealityDataType.ContextDetector, project_id)
+        ret = data_transfer.upload_reality_data(
+            photo_segmentation_detector,
+            detector_name,
+            RealityDataType.ContextDetector,
+            project_id,
+        )
         if ret.is_error():
             print("Error in upload:", ret.error)
             exit(1)
@@ -90,7 +124,9 @@ def main():
     # upload meshes
     if not references.has_local_path(mesh):
         print("No reference to mesh found, uploading local files to cloud")
-        ret = data_transfer.upload_reality_data(mesh, mesh_name, RealityDataType.ImageCollection, project_id)
+        ret = data_transfer.upload_reality_data(
+            mesh, mesh_name, RealityDataType.ImageCollection, project_id
+        )
         if ret.is_error():
             print("Error in upload:", ret.error)
             exit(1)
@@ -102,7 +138,9 @@ def main():
     # upload Mesh ContextScene
     if not references.has_local_path(mesh_context_scene):
         print("No reference to mesh ContextScene found, uploading local files to cloud")
-        ret = data_transfer.upload_context_scene(mesh_context_scene, mesh_scene_name, project_id, references)
+        ret = data_transfer.upload_context_scene(
+            mesh_context_scene, mesh_scene_name, project_id, references
+        )
         if ret.is_error():
             print("Error in upload:", ret.error)
             exit(1)
@@ -120,9 +158,15 @@ def main():
 
     # creating job settings
     settings = L3DJobSettings()
-    settings.inputs.oriented_photos = references.get_cloud_id_from_local_path(oriented_photos_context_scene).value
-    settings.inputs.photo_segmentation_detector =  references.get_cloud_id_from_local_path(photo_segmentation_detector).value
-    settings.inputs.meshes = references.get_cloud_id_from_local_path(mesh_context_scene).value
+    settings.inputs.oriented_photos = references.get_cloud_id_from_local_path(
+        oriented_photos_context_scene
+    ).value
+    settings.inputs.photo_segmentation_detector = (
+        references.get_cloud_id_from_local_path(photo_segmentation_detector).value
+    )
+    settings.inputs.meshes = references.get_cloud_id_from_local_path(
+        mesh_context_scene
+    ).value
 
     settings.outputs.lines3D = "lines3D"
     settings.outputs.segmentation2D = "segmentation2D"
@@ -148,9 +192,16 @@ def main():
             print("Error while getting progress:", progress_ret.error)
             exit(1)
         job_progress = progress_ret.value
-        if job_progress.state == JobState.SUCCESS or job_progress.state == JobState.Completed or job_progress.state == JobState.Over:
+        if (
+            job_progress.state == JobState.SUCCESS
+            or job_progress.state == JobState.Completed
+            or job_progress.state == JobState.Over
+        ):
             break
-        elif job_progress.state == JobState.ACTIVE or job_progress.state == JobState.Running:
+        elif (
+            job_progress.state == JobState.ACTIVE
+            or job_progress.state == JobState.Running
+        ):
             print(f"Progress: {str(job_progress.progress)}%, step: {job_progress.step}")
         elif job_progress.state == JobState.CANCELLED:
             print("Job cancelled")
