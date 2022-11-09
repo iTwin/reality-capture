@@ -7,7 +7,7 @@ import json
 
 class Code:
     """
-    Code for handling success and errors when interacting with ContextCapture API.
+    Code for handling success and errors when interacting with Services APIs.
 
     Args:
         response: Response from the service.
