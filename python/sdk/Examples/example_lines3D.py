@@ -211,11 +211,11 @@ def main():
 
     # retrieving results
     print("Retrieving outputs ids")
-    ret = service_rda.get_job_settings(job_id)
+    ret = service_rda.get_job_properties(job_id)
     if ret.is_error():
         print("Error while getting settings:", ret.error)
         exit(1)
-    final_settings = ret.value
+    final_settings = ret.value.job_settings
     print("Downloading outputs")
 
     lines3D_id = final_settings.outputs.lines3D
