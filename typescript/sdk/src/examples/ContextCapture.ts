@@ -113,9 +113,9 @@ async function main() {
         console.log("Job done");
 
         console.log("Retrieving outputs ids");
-        const finalSettings = await contextCaptureService.getJobSettings(jobId);
+        const properties = await contextCaptureService.getJobProperties(jobId);
         console.log("Downloading outputs");
-        const threeMXId = (finalSettings as CCJobSettings).outputs.threeMX;
+        const threeMXId = (properties.settings as CCJobSettings).outputs.threeMX;
         realityDataService.downloadRealityData(threeMXId, outputPath);
         console.log("Successfully downloaded output");
     }

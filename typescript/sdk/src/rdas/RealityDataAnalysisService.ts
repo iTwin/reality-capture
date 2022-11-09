@@ -151,21 +151,6 @@ export class RealityDataAnalysisService {
     }
 
     /**
-     * Get settings for a given job.
-     * @param {string} id The ID of the relevant job.
-     * @returns {JobSettings} The settings for the job.
-     */
-    public async getJobSettings(id: string): Promise<JobSettings> {
-        try {
-            const properties = await this.getJobProperties(id);
-            return properties.settings;
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
-    }
-
-    /**
      * Get all properties for a given job.
      * @param {string} id The ID of the relevant job.
      * @returns {RDAJobProperties} The job properties.
@@ -247,96 +232,6 @@ export class RealityDataAnalysisService {
     }
 
     /**
-     * Get type of a given job.
-     * @param {string} id The ID of the relevant job.
-     * @returns {RDAJobType} The type for the job.
-     */
-    public async getJobType(id: string): Promise<RDAJobType> {
-        try {
-            const properties = await this.getJobProperties(id);  
-            return properties.type;
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
-    }
-
-    /**
-     * Get iTwinId of a given job.
-     * @param {string} id The ID of the relevant job.
-     * @returns {string} The job iTwinId.
-     */
-    public async getJobiTwinId(id: string): Promise<string> {
-        try {
-            const properties = await this.getJobProperties(id);         
-            return properties.iTwinId;
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
-    }
-
-    /**
-     * Get name of a given job.
-     * @param {string} id The ID of the relevant job.
-     * @returns {string} The job name.
-     */
-    public async getJobName(id: string): Promise<string> {
-        try {
-            const properties = await this.getJobProperties(id);         
-            return properties.name;
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
-    }
-
-    /**
-     * Get state of a given job.
-     * @param {string} id The ID of the relevant job.
-     * @returns {JobState | undefined} The job state.
-     */
-    public async getJobState(id: string): Promise<JobState | undefined> {   
-        try {
-            const properties = await this.getJobProperties(id);         
-            return properties.state;
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
-    }
-
-    /**
-     * Get the execution cost of a given job.
-     * @param {string} id The ID of the relevant job.
-     * @returns {number | undefined} The job execution cost.
-     */
-    public async getJobExecutionCost(id: string): Promise<number | undefined> {
-        try {
-            const properties = await this.getJobProperties(id);         
-            return properties.executionCost;
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
-    }
-
-    /**
-     * Get the exit code of a given job.
-     * @param {string} id The ID of the relevant job.
-     * @returns {string | undefined} The job exit code.
-     */
-    public async getJobExitCode(id: string): Promise<string | undefined> {
-        try {
-            const properties = await this.getJobProperties(id);     
-            return properties.exitCode;
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
-    }
-
-    /**
      * Get the estimated cost of a given job.
      * @param {string} id The ID of the relevant job.
      * @returns {number | undefined} The job cost estimation.
@@ -356,21 +251,6 @@ export class RealityDataAnalysisService {
         try {
             const response = await this.submitRequest("jobs/" + id, "PATCH", [200], body);     
             return response.costEstimation?.estimateCost;
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
-    }
-
-    /**
-     * Get the creation, start, submission and end dates of the given job.
-     * @param {string} id The ID of the relevant job.
-     * @returns {JobDates | undefined} The job dates.
-     */
-    public async getJobDates(id: string): Promise<JobDates | undefined> {
-        try {
-            const properties = await this.getJobProperties(id);             
-            return properties.dates;
         }
         catch(error: any) {
             return Promise.reject(error);

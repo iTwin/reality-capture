@@ -17,9 +17,9 @@ import { ServiceTokenFactory } from "../TokenFactory";
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function runObjects2DExample() {
-    const ccImageCollection = "D:\\O2D-Motos\\images";
-    const photoContextScene = "D:\\O2D-Motos\\Scene";
-    const photoObjectDetector = "D:\\O2D-Motos\\Coco2017_v1.19";
+    const ccImageCollection = "D:\\Photo_Object-Face_and_License_Plates\\images";
+    const photoContextScene = "D:\\Photo_Object-Face_and_License_Plates\\ContextScene";
+    const photoObjectDetector = "D:\\Photo_Object-Face_and_License_Plates\\Face_&_License_plates_1";
     const outputPath = "D:\\output";
 
     dotenv.config();
@@ -117,9 +117,9 @@ async function runObjects2DExample() {
     console.log("Job done");
 
     console.log("Retrieving outputs ids");
-    const finalSettings = await realityDataAnalysisService.getJobSettings(jobId);
+    const properties = await realityDataAnalysisService.getJobProperties(jobId);
     console.log("Downloading outputs");
-    const objects2DId = (finalSettings as O2DJobSettings).outputs.objects2D;
+    const objects2DId = (properties.settings as O2DJobSettings).outputs.objects2D;
     realityDataService.downloadContextScene(objects2DId, outputPath, references);
     console.log("Successfully downloaded output");
 }
