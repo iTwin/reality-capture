@@ -145,3 +145,7 @@ v_env
 node_modules/
 package-lock.json
 lib/
+python/cc_api_wrapper
+python/rd_api_wrapper
+python/rda_api_wrapper
+python/examples
