@@ -11,9 +11,9 @@ class CCWorkspaceProperties(NamedTuple):
     Convenience class to stock all properties of a job in a simple way.
     """
 
-    work_id: str = ""
+    id: str = ""
     created_date_time: str = ""
-    work_name: str = ""
+    name: str = ""
     iTwin_id: str = ""
     context_capture_version: str = ""
 

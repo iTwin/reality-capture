@@ -99,6 +99,13 @@ class RealityDataTransfer:
         return ReturnValue(value=data["realityData"]["id"], error="")
 
     def set_progress_hook(self, hook) -> None:
+        """
+        Sets a hook function to follow progress of downloads and uploads.
+
+        Args:
+            hook: Function to follow progress. It should take a float (progress) as argument and return a boolean. If
+                False is returned by this function then the operation will stop.
+        """
         self._progress_hook = hook
 
     def upload_reality_data(
@@ -425,5 +432,14 @@ class RealityDataTransfer:
 
 
 def example_hook(percentage):
+    """
+    Example of a hook function to be used by the RealityDataTransfer object.
+
+    Args:
+        percentage: Percentage of download or upload already done.
+
+    Returns:
+        True
+    """
     print("percentage: {:.2%}".format(percentage / 100), flush=True)
     return True
