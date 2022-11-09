@@ -66,8 +66,13 @@ with issuerUrl, redirectUrl and the proper scopes: `contextcapture:modify contex
 - Install dependencies
 
   ```sh
-  cd reality-apis-samples/typescript
+  cd reality-apis-samples/typescript/web-app
   npm install
+  ```
+- If npm install doesn't work with node > 14
+
+  ```sh
+  npm install --legacy-peer-deps
   ```
 
 - Fill in the required fields in the `.env` configuration file.
@@ -76,14 +81,14 @@ with issuerUrl, redirectUrl and the proper scopes: `contextcapture:modify contex
 
   ```sh
   npm run build
-  npm run start:webapp
+  npm run start
   ```
 
 ### Debug the app
 
 To debug the frontend, run
 ```
-  npm run start:webapp
+  npm run start
 ```
 Then, in "Run and debug", run "Debug chrome" configuration.
 
@@ -108,14 +113,11 @@ The full folder structure of this app is explained below:
 | Name                     | Description                                                                                  |
 | ------------------------ | ---------------------------------------------------------------------------------------------|
 | **.vscode**              | Contains VS Code specific settings                                                           |
-| **data**                 | Integration tests input data                                                                 |  
 | **lib**                  | Contains the distributable (or output) from your TypeScript build. This is the code you ship |
 | **src**                  | Contains source code that will be compiled to the build dir                                  |
 | .env                     | Settings for authentication and project IDs required for running the RealityData sample      |
 | .eslintrc.json           | Configuration file for ESLint                                                                |
 | .npmrc                   | npm configuration settings file                                                              |
-| certa.json               | Certa configuration file for integration tests                                               |  
 | package.json             | File that contains npm dependencies as well as build scripts                                 |
 | tsconfig.json            | Config settings for compiling server code written in TypeScript                              |
 | template.env             | template environment file. Mist be copied, renamed and filled to run the apps                |
-| webpack.config.js        | webpack configuration to run integration tests                                               |

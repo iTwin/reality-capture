@@ -21,7 +21,6 @@
 		"@azure/abort-controller": "^1.1.0",
 		"@azure/storage-blob": "^12.8.0",
 		"@itwin/browser-authorization": "^0.5.1",
-		"@itwin/certa": "^3.4.3",
 		"@itwin/core-backend": "^3.2.7",
 		"@itwin/core-bentley": "^3.2.7",
 		"@itwin/core-geometry": "^3.2.7",

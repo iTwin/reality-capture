@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
 import path = require("path");
 import { ContextCaptureService } from "../cccs/ContextCaptureService";
 import { RealityDataTransfer } from "../utils/RealityDataTransfer";
@@ -106,9 +111,6 @@ async function main() {
             await sleep(6000);
         }
         console.log("Job done");
-
-        const test = await contextCaptureService.getJobProperties(jobId);
-        console.log("test : ", test);
 
         console.log("Retrieving outputs ids");
         const finalSettings = await contextCaptureService.getJobSettings(jobId);

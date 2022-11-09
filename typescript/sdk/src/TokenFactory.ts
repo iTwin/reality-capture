@@ -1,4 +1,9 @@
 
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
 import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 import { IModelHost } from "@itwin/core-backend";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";

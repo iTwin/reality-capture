@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
 import path = require("path");
 import { RealityDataType, JobState, ClientInfo } from "../CommonData";
 import { RealityDataAnalysisService } from "../rdas/RealityDataAnalysisService";

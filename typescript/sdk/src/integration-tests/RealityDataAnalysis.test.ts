@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
 import { RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
 import chai, { expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
