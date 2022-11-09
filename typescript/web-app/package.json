@@ -38,7 +38,6 @@
 		"@itwin/imodels-access-frontend": "^1.0.1",
 		"@itwin/imodels-client-management": "^1.0.1",
 		"@itwin/itwinui-react": "^1.39.0",
-		"@itwin/oidc-signin-tool": "^3.4.1",
 		"@itwin/presentation-common": "^3.2.2",
 		"@itwin/presentation-components": "^3.2.2",
 		"@itwin/presentation-frontend": "^3.2.2",
