@@ -21,10 +21,10 @@ def main():
     ccimage_collections = (
         r"C:\RDAS_Demo_Set\Photo_Object-Face_and_License_Plates\images"
     )
-    photo_context_scene = (
-        r"C:\RDAS_Demo_Set\Photo_Object-Face_and_License_Plates"
+    photo_context_scene = r"C:\RDAS_Demo_Set\Photo_Object-Face_and_License_Plates"
+    photo_object_detector = (
+        r"C:\RDAS_Demo_Set\Photo_Object-Face_and_License_Plates\detector"
     )
-    photo_object_detector = r"C:\RDAS_Demo_Set\Photo_Object-Face_and_License_Plates\detector"
     output_path = r"C:\tests\O2D"
 
     job_name = "O2D job new SDK sample"

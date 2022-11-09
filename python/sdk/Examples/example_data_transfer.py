@@ -12,9 +12,7 @@ from config import project_id, client_id
 
 def main():
 
-    ccimage_collections = (
-        r"C:\DataTransfer_Demo\images"
-    )
+    ccimage_collections = r"C:\DataTransfer_Demo\images"
     output_path = r"C:\tests\DataTransfer"
     ccimage_collections_name = "Test Data Transfer"
 

@@ -19,12 +19,8 @@ from token_factory.token_factory import ClientInfo, SpaDesktopMobileTokenFactory
 def main():
 
     ccimage_collections = r"C:\RDAS_Demo_Set\Lines3D\Images"
-    oriented_photos_context_scene = (
-        r"C:\RDAS_Demo_Set\Lines3D\OrientedPhotos"
-    )
-    photo_segmentation_detector = (
-        r"C:\RDAS_Demo_Set\Lines3D\CracksA_v1"
-    )
+    oriented_photos_context_scene = r"C:\RDAS_Demo_Set\Lines3D\OrientedPhotos"
+    photo_segmentation_detector = r"C:\RDAS_Demo_Set\Lines3D\CracksA_v1"
     mesh = r"C:\RDAS_Demo_Set\Lines3D\3MX"
     mesh_context_scene = r"C:\RDAS_Demo_Set\Lines3D\Mesh3MX"
     output_path = r"C:\tests\L3D"
