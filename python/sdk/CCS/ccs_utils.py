@@ -6,6 +6,11 @@ from sdk.utils import ReturnValue, JobState, JobDateTime
 
 
 class CCWorkspaceProperties(NamedTuple):
+    """
+    Properties of a workspace.
+    Convenience class to stock all properties of a job in a simple way.
+    """
+
     work_id: str = ""
     created_date_time: str = ""
     work_name: str = ""
@@ -14,6 +19,10 @@ class CCWorkspaceProperties(NamedTuple):
 
 
 class CCJobType(Enum):
+    """
+    Possible types of a ContextCapture job.
+    """
+
     NONE = "not recognized"
     FULL = "Full"
     CALIBRATION = "Calibration"
@@ -21,6 +30,10 @@ class CCJobType(Enum):
 
 
 class CCJobQuality(Enum):
+    """
+    Possible qualities of a ContextCapture job.
+    """
+
     UNKNOWN = "Unknown"
     DRAFT = "Draft"
     MEDIUM = "Medium"
@@ -28,12 +41,28 @@ class CCJobQuality(Enum):
 
 
 class CacheSettings:
+    """
+    Cache settings for a ContextCapture Job.
+    """
+
     def __init__(self) -> None:
         self.create_cache = False
         self.use_cache = ""
 
 
 class CCJobSettings:
+    """
+    Settings for ContextCapture jobs.
+
+    Attributes:
+        inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing the settings to create_job.
+        mesh_quality: Quality of the mesh used.
+        engines: Quantity of engines to be used by the job.
+        cache_settings: Cache settings for the job.
+    """
+
     def __init__(self) -> None:
         self.inputs = []
         self.outputs = self.Outputs()
@@ -42,6 +71,13 @@ class CCJobSettings:
         self.cache_settings = CacheSettings()
 
     def to_json(self) -> tuple[dict, dict]:
+        """
+        Transform settings into a tuple of dictionaries compatible with json.
+
+        Returns:
+            Tuple of dictionaries with settings values. The first dictionary has the settings and the second dictionary
+            has the inputs, both as expected by the API.
+        """
         cache = {}
         if self.cache_settings.create_cache:
             cache["createCache"] = str(self.cache_settings.create_cache)
@@ -96,6 +132,15 @@ class CCJobSettings:
     def from_json(
         cls, settings_json: dict, inputs_json: dict
     ) -> ReturnValue[CCJobSettings]:
+        """
+        Transform json received from cloud service into settings.
+
+        Args:
+            settings_json: Dictionary with settings received from cloud service.
+            inputs_json: Dictionary with inputs received from cloud service.
+        Returns:
+            New settings object.
+        """
         new_job_settings = cls()
         try:
             new_job_settings.inputs = [i["id"] for i in inputs_json]
@@ -150,6 +195,28 @@ class CCJobSettings:
         return ReturnValue(value=new_job_settings, error="")
 
     class Outputs:
+        """
+        Possible outputs for a ContextCapture job.
+
+        Attributes:
+            context_scene: Created context scene id.
+            ccorientation: Created ccorientation id.
+            threeMX: Created 3MX id.
+            threeSM: Created 3SM id.
+            web_ready_scalable_mesh: Created web ready scalable mesh id.
+            cesium_3D_tiles: Created cesium 3D tiles id.
+            pod: Created pod id.
+            orthophoto_DSM: Created orthophoto dsm id.
+            las: Created las id.
+            fbx: Created fbx id.
+            obj: Created obj id.
+            esri_i3s: Created esri i3s id.
+            dgn: Created dgn id.
+            lod_tree_export: Created lod tree export id.
+            ply: Created ply id.
+            opc: Created opc id.
+        """
+
         def __init__(self) -> None:
             self.context_scene = ""
             self.ccorientation = ""
@@ -170,6 +237,15 @@ class CCJobSettings:
 
 
 class CCJobCostParameters:
+    """
+    Parameters for estimating job cost before its processing.
+
+    Args:
+        giga_pixels: Gigapixels to be processed.
+        mega_points: Megapoints to be processed.
+        mesh_quality: Quality of the mesh.
+    """
+
     def __init__(
         self,
         giga_pixels: float = 0.0,
@@ -182,6 +258,10 @@ class CCJobCostParameters:
 
 
 class CCJobProperties(NamedTuple):
+    """
+    Properties of a ContextCapture job.
+    Convenience class to stock all properties of a job in a simple way.
+    """
 
     job_id: str = ""
     job_name: str = ""
