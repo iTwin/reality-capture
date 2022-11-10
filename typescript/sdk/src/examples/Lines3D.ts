@@ -7,7 +7,7 @@ import path = require("path");
 import { RealityDataType, JobState, ClientInfo } from "../CommonData";
 import { RealityDataAnalysisService } from "../rdas/RealityDataAnalysisService";
 import { L3DJobSettings } from "../rdas/Settings";
-import { RealityDataTransfer } from "../utils/RealityDataTransfer";
+import { defaultProgressHook, RealityDataTransfer } from "../utils/RealityDataTransfer";
 import { ReferenceTable } from "../utils/ReferenceTable";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
@@ -50,6 +50,8 @@ async function runContextCaptureExample() {
         console.log("Can't get the access token");
     
     const realityDataService = new RealityDataTransfer(tokenFactoryRd);
+    realityDataService.setUploadHook(defaultProgressHook);
+    realityDataService.setDownloadHook(defaultProgressHook);
     const realityDataAnalysisService = new RealityDataAnalysisService(tokenFactoryRda);
     console.log("Service initialized");
 

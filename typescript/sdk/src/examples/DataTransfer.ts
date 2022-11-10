@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { RealityDataTransfer } from "../utils/RealityDataTransfer";
+import { defaultProgressHook, RealityDataTransfer } from "../utils/RealityDataTransfer";
 import { ClientInfo, RealityDataType } from "../CommonData";
 import * as dotenv from "dotenv";
 import { ServiceTokenFactory } from "../TokenFactory";
@@ -29,6 +29,8 @@ async function runRealityDataExample() {
         console.log("Can't get the access token");
     
     const realityDataService = new RealityDataTransfer(tokenFactory);
+    realityDataService.setUploadHook(defaultProgressHook);
+    realityDataService.setDownloadHook(defaultProgressHook);
     console.log("Service initialized");
 
     // Upload CCImageCollection

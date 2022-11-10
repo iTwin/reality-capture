@@ -5,7 +5,7 @@
 
 import path = require("path");
 import { ContextCaptureService } from "../cccs/ContextCaptureService";
-import { RealityDataTransfer } from "../utils/RealityDataTransfer";
+import { defaultProgressHook, RealityDataTransfer } from "../utils/RealityDataTransfer";
 import { ReferenceTable } from "../utils/ReferenceTable";
 import * as fs from "fs";
 import { ClientInfo, JobState, RealityDataType } from "../CommonData";
@@ -45,6 +45,8 @@ async function main() {
         console.log("Can't get the access token");
 
     const realityDataService = new RealityDataTransfer(tokenFactoryRd);
+    realityDataService.setUploadHook(defaultProgressHook);
+    realityDataService.setDownloadHook(defaultProgressHook);
     const contextCaptureService = new ContextCaptureService(tokenFactoryCc);
     console.log("Service initialized");
 
