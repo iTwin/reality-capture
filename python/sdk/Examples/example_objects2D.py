@@ -48,10 +48,12 @@ def main():
 
     # initializing data transfer
     data_transfer = DataTransfer.RealityDataTransfer(token_factory)
+    # adding hook to follow upload and download status
+    data_transfer.set_progress_hook(DataTransfer.example_hook)
+    print("Data transfer initialized")
 
     # initializing rda service
     service_rda = RDAS.RealityDataAnalysisService(token_factory)
-
     print("Service initialized")
 
     # creating reference table and uploading ccimageCollection, contextScene and detector if necessary (not yet on the cloud)
