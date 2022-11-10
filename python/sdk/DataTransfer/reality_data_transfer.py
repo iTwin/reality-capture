@@ -16,7 +16,8 @@ from sdk.utils import RealityDataType, ReturnValue
 
 class RealityDataTransfer:
     """
-    Handles communication with RealityData Analysis Service.
+    Utility class that handles communication with the Reality Data API. It implements upload and download of
+    different types of RealityData.
 
     Args:
         token_factory: An object that implements the abstract functions in AbstractTokenFactory. Used to retrieve the
@@ -31,7 +32,7 @@ class RealityDataTransfer:
         )
         self._header = {
             "Authorization": None,
-            "User-Agent": f"ContextCapture Python SDK/0.0.1",
+            "User-Agent": f"RealityDataTransfer Python SDK/0.0.1",
             "Content-type": "application/json",
             "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }
@@ -184,7 +185,7 @@ class RealityDataTransfer:
                     nonlocal proceed
                     proceed = proceed and self._progress_hook(percentage)
                 if not proceed:
-                    raise Exception("Upload interrupted by callback function")
+                    raise InterruptedError("Upload interrupted by callback function")
 
             client = ContainerClient.from_container_url(sas_uri)
             with open(os.path.join(data_path, file_tuple[0]), "rb") as data:
@@ -203,6 +204,8 @@ class RealityDataTransfer:
         try:
             with ThreadPool(processes=int(4)) as pool:
                 pool.map(_upload_file, files_tuple)
+        except InterruptedError as e:
+            return ReturnValue("", "Stopped upload of reality data: " + str(e))
         except Exception as e:
             return ReturnValue("", "Failed to upload reality data: " + str(e))
         finally:
@@ -341,7 +344,7 @@ class RealityDataTransfer:
                     nonlocal proceed
                     proceed = proceed and self._progress_hook(percentage)
                 if not proceed:
-                    raise Exception("Download interrupted by callback function")
+                    raise InterruptedError("Download interrupted by callback function")
 
             data = client.download_blob(
                 blob_tuple[0],
@@ -363,10 +366,10 @@ class RealityDataTransfer:
         try:
             with ThreadPool(processes=int(4)) as pool:
                 pool.map(_download_blob, blobs_tuple)
+        except InterruptedError as e:
+            return ReturnValue("", "Stopped download of reality data: " + str(e))
         except Exception as e:
-            return ReturnValue(
-                value=False, error="Failed to download reality data:" + str(e)
-            )
+            return ReturnValue("", "Failed to upload reality data: " + str(e))
 
         return ReturnValue(value=True, error="")
 
@@ -423,8 +426,8 @@ class RealityDataTransfer:
         if reference_table is not None:
             # change references
             return replace_ccorientation_references(
-                os.path.join(output_path, "Orientation.xml"),
-                os.path.join(output_path, "Orientation.xml"),
+                os.path.join(output_path, "Orientations.xml"),
+                os.path.join(output_path, "Orientations.xml"),
                 reference_table,
                 False,
             )
