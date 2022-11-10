@@ -1,5 +1,5 @@
 {
-	"name": "reality-apis-sdk-ts",
+	"name": "reality-services",
 	"version": "1.0.0",
 	"description": "Typescript RDAS and CCCS SDK",
 	"scripts": {
