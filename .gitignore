@@ -146,3 +146,8 @@ node_modules/
 package-lock.json
 lib/
 out/
+
+python/cc_api_wrapper
+python/rd_api_wrapper
+python/rda_api_wrapper
+python/examples
