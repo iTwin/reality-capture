@@ -39,3 +39,10 @@ jobs:
       - name: EsLint
         working-directory: ./typescript/web-app
         run: npm run lint
+      - name: SDK integration tests
+        working-directory: ./typescript/sdk
+        env:
+          IMJS_PROJECT_ID: ${{ secrets.IMJS_PROJECT_ID }}
+          IMJS_CLIENT_ID: ${{ secrets.IMJS_CLIENT_ID }}
+          IMJS_SECRET: ${{ secrets.IMJS_SECRET }}
+        run: npm run integration:test
