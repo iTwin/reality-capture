@@ -137,14 +137,14 @@ export class ReferenceTable {
      * @param inputPath input path to translate.
      * @returns input as cloud id.
      */
-    private translateInputPath(inputPath: string): string {
+    public translateInputPath(inputPath: string): string {
         if (!inputPath.length)
             return "";
 
         return this.getCloudIdFromLocalPath(inputPath);
     }
 
-    private translateOutputPath(path: string): string {
+    public translateOutputPath(path: string): string {
         /* if(path)
             return "<requested>"; */
         return path;

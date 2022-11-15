@@ -14,17 +14,16 @@ export interface ClientInfo {
 
 /** Status of a job. */
 export enum JobState {
+    ACTIVE = "active",
+    CANCELLED = "cancelled",
+    COMPLETED = "success",
+    FAILED = "failed",
+    OVER = "over",
+    PENDING = "pending",
+    RUNNING = "active",
+    SUCCESS = "success",
     UNKNOWN = "unknown",
     UNSUBMITTED = "unsubmitted",
-    ACTIVE = "active",
-    SUCCESS = "success",
-    FAILED = "failed",
-    CANCELLED = "cancelled",
-
-    Over = "over",
-    Completed = "success",
-    Pending = "pending",
-    Running = "active",
 };
 
 /**

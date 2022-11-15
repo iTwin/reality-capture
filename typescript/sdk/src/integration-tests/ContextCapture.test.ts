@@ -135,7 +135,7 @@ describe("Context capture integration tests", () => {
 
         while(true) {
             const progress = await contextCaptureService.getJobProgress(jobId);
-            if(progress.state === JobState.SUCCESS || progress.state === JobState.Over || 
+            if(progress.state === JobState.SUCCESS || progress.state === JobState.OVER || 
                 progress.state === JobState.CANCELLED || progress.state === JobState.FAILED) {
                 break;
             }
@@ -144,7 +144,7 @@ describe("Context capture integration tests", () => {
 
         jobProgress = await contextCaptureService.getJobProgress(jobId);
         expect(jobProgress.progress).to.equal(100);
-        expect(jobProgress.state).to.deep.equal(JobState.Over);
+        expect(jobProgress.state).to.deep.equal(JobState.OVER);
         expect(jobProgress.step).to.deep.equal("");
 
         const jobProperties = await contextCaptureService.getJobProperties(jobId);

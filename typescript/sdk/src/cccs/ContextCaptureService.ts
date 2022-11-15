@@ -3,10 +3,10 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { JobDates, JobProgress, JobState } from "../CommonData";
+import { JobProgress, JobState } from "../CommonData";
 import { CCCostParameters, CCJobProperties, CCJobSettings, CCJobType, CCWorkspaceProperties } from "./Utils";
 import { TokenFactory } from "../TokenFactory";
-import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
+import { BentleyError } from "@itwin/core-bentley";
 import fetch from 'node-fetch';
 
 /**
@@ -46,14 +46,16 @@ export class ContextCaptureService {
             };
             const request = ["POST", "PATCH"].includes(method) ? { ...reqBase, body: JSON.stringify(payload) } : reqBase;
             const response = await fetch(this.tokenFactory.getServiceUrl() + "contextcapture/" + apiOperationUrl, request);
-            if (!okRet.includes(response.status))
+            const responseJson = await response.json();
+            if (!okRet.includes(response.status)) {
                 return Promise.reject(new BentleyError(response.status,
-                    "Error in request: " + response.url + ", return code : " + response.status + " " + response.statusText));
+                    "Error in request: " + response.url + "\nMessage : " + JSON.stringify(responseJson.error)));
+            }
 
-            if(okRet.includes(204))
+            if (okRet.includes(204))
                 return {};
-            
-            return await response.json();
+
+            return responseJson;
         }
         catch (error: any) {
             return Promise.reject(error);
@@ -85,7 +87,7 @@ export class ContextCaptureService {
             const response = await this.submitRequest("workspaces", "POST", [201], body);
             return response["workspace"]["id"];
         }
-        catch(error: any) {
+        catch (error: any) {
             return Promise.reject(error);
         }
     }
@@ -95,12 +97,7 @@ export class ContextCaptureService {
      * @param {string} workspaceId The ID of the relevant workspace.
      */
     public async deleteWorkspace(workspaceId: string): Promise<void> {
-        try {
-            return await this.submitRequest("workspaces/" + workspaceId, "DELETE", [204]);
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        return await this.submitRequest("workspaces/" + workspaceId, "DELETE", [204]);
     }
 
     /**
@@ -109,19 +106,14 @@ export class ContextCaptureService {
      * @returns {CCWorkspaceProperties} Workspace properties.
      */
     public async getWorkspace(workspaceId: string): Promise<CCWorkspaceProperties> {
-        try {
-            const response = await this.submitRequest("workspaces/" + workspaceId, "GET", [200]);
-            return {
-                id: response["workspace"]["id"],
-                createdDateTime: response["workspace"]["createdDatTime"],
-                name: response["workspace"]["name"],
-                iTwinId: response["workspace"]["iTwinId"],
-                contextCaptureVersion: response["workspace"]["contextCaptureVersion"],
-            };
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        const response = await this.submitRequest("workspaces/" + workspaceId, "GET", [200]);
+        return {
+            id: response["workspace"]["id"],
+            createdDateTime: response["workspace"]["createdDateTime"],
+            name: response["workspace"]["name"],
+            iTwinId: response["workspace"]["iTwinId"],
+            contextCaptureVersion: response["workspace"]["contextCaptureVersion"],
+        };
     }
 
     /**
@@ -133,22 +125,17 @@ export class ContextCaptureService {
      * @returns {string} Created job id.
      */
     public async createJob(type: CCJobType, settings: CCJobSettings, name: string, workspaceId: string): Promise<string> {
-        try {
-            const settingsJson = settings.toJson();
-            const body = {
-                "type": type,
-                "name": name,
-                "inputs": settingsJson.inputs,
-                "settings": settingsJson.settings,
-                "workspaceId": workspaceId,
-            };
-            
-            const response = await this.submitRequest("jobs/", "POST", [201], body);
-            return response["job"]["id"];
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        const settingsJson = settings.toJson();
+        const body = {
+            "type": type,
+            "name": name,
+            "inputs": settingsJson.inputs,
+            "settings": settingsJson.settings,
+            "workspaceId": workspaceId,
+        };
+
+        const response = await this.submitRequest("jobs/", "POST", [201], body);
+        return response["job"]["id"];
     }
 
     /**
@@ -156,29 +143,19 @@ export class ContextCaptureService {
      * @param {string} jobId The ID of the relevant job.
      */
     public async submitJob(jobId: string): Promise<void> {
-        const body = {"state": "active"};
-        try {
-            return await this.submitRequest("jobs/" + jobId, "PATCH", [200], body);
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        const body = { "state": "active" };
+        return await this.submitRequest("jobs/" + jobId, "PATCH", [200], body);
     }
 
     /**
      * Cancel a job.
      * @param {string} id The ID of the relevant job.
      */
-    public async cancelJob(id: string): Promise<void> {       
+    public async cancelJob(id: string): Promise<void> {
         const body = {
             "state": "cancelled",
         };
-        try {
-            return await this.submitRequest("jobs/" + id, "PATCH", [200], body);
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        return await this.submitRequest("jobs/" + id, "PATCH", [200], body);
     }
 
     /**
@@ -186,12 +163,7 @@ export class ContextCaptureService {
      * @param {string} id The ID of the relevant job.
      */
     public async deleteJob(id: string): Promise<void> {
-        try {
-            return await this.submitRequest("jobs/" + id, "DELETE", [204]);
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        return await this.submitRequest("jobs/" + id, "DELETE", [204]);
     }
 
     /**
@@ -200,15 +172,10 @@ export class ContextCaptureService {
      * @returns {JobProgress} The progress for the job.
      */
     public async getJobProgress(id: string): Promise<JobProgress> {
-        try {
-            const response = await this.submitRequest(`jobs/${id}/progress`, "GET", [200]);
-            const progress = response["jobProgress"];
-            const state = (progress["state"] as string).toLowerCase();
-            return {state: state as JobState, progress: JSON.parse(progress["percentage"]), step: progress["step"]};
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        const response = await this.submitRequest(`jobs/${id}/progress`, "GET", [200]);
+        const progress = response["jobProgress"];
+        const state = (progress["state"] as string).toLowerCase();
+        return { state: state as JobState, progress: JSON.parse(progress["percentage"]), step: progress["step"] };
     }
 
     /**
@@ -217,61 +184,56 @@ export class ContextCaptureService {
      * @returns {RDAJobProperties} The job properties.
      */
     public async getJobProperties(id: string): Promise<CCJobProperties> {
-        try {
-            const response = await this.submitRequest("jobs/" + id, "GET", [200]);
-            const job = response["job"];
-            const jobProperties: CCJobProperties = {
-                name: job["name"],
-                type: job["type"],
-                iTwinId: job["iTwinId"],
-                settings: new CCJobSettings(),
-                workspaceId: job["workspaceId"],
-                id: job["id"],
-                email: job["email"],
-                state: job["state"],
-                location: job["dataCenter"],
-                estimatedCost: job["estimatedCost"],
+        const response = await this.submitRequest("jobs/" + id, "GET", [200]);
+        const job = response["job"];
+        const jobProperties: CCJobProperties = {
+            name: job["name"],
+            type: job["type"],
+            iTwinId: job["iTwinId"],
+            settings: new CCJobSettings(),
+            workspaceId: job["workspaceId"],
+            id: job["id"],
+            email: job["email"],
+            state: job["state"],
+            location: job["dataCenter"],
+            estimatedCost: job["estimatedCost"],
+        };
+
+        let settings = await CCJobSettings.fromJson(job["inputs"], job["jobSettings"]);
+        jobProperties.settings = settings;
+
+        if (job["executionInformation"]) {
+            jobProperties.dates = {
+                createdDateTime: job["createdDateTime"],
+                submissionDateTime: job["executionInformation"]["submittedDateTime"],
+                startedDateTime: job["executionInformation"]["startedDateTime"],
+                endedDateTime: job["executionInformation"]["endedDateTime"],
             };
-
-            let settings = await CCJobSettings.fromJson(job["inputs"], job["jobSettings"]);       
-            jobProperties.settings = settings;
-
-            if(job["executionInformation"]) {
-                jobProperties.dates = {
-                    createdDateTime: job["createdDateTime"],
-                    submissionDateTime: job["executionInformation"]["submittedDateTime"],
-                    startedDateTime: job["executionInformation"]["startedDateTime"],
-                    endedDateTime: job["executionInformation"]["endedDateTime"],             
-                };
-                jobProperties.executionCost = job["executionInformation"]["estimatedUnits"];
-            }
-            else {
-                jobProperties.dates = {
-                    createdDateTime: job["executionInformation"]
-                };  
-            }
-
-            if(job["costEstimationParameters"]) {
-                jobProperties.costEstimationParameters = {
-                    gigaPixels: job["costEstimationParameters"]["gigaPixels"],
-                    megaPoints: job["costEstimationParameters"]["megaPoints"],
-                    meshQuality: job["costEstimationParameters"]["quality"],
-                };
-            }
-
-            return jobProperties;
+            jobProperties.executionCost = job["executionInformation"]["estimatedUnits"];
         }
-        catch(error: any) {
-            return Promise.reject(error);
+        else {
+            jobProperties.dates = {
+                createdDateTime: job["createdDateTime"]
+            };
         }
+
+        if (job["costEstimationParameters"]) {
+            jobProperties.costEstimationParameters = {
+                gigaPixels: job["costEstimationParameters"]["gigaPixels"],
+                megaPoints: job["costEstimationParameters"]["megaPoints"],
+                meshQuality: job["costEstimationParameters"]["quality"],
+            };
+        }
+
+        return jobProperties;
     }
 
     /**
      * Get the estimated cost of a given job.
      * @param {string} id The ID of the relevant job.
-     * @returns {number | undefined} The job cost estimation.
+     * @returns {number} The job cost estimation.
      */
-    public async getJobEstimatedCost(id: string, costParameters: CCCostParameters): Promise<number | undefined> {
+    public async getJobEstimatedCost(id: string, costParameters: CCCostParameters): Promise<number> {
         const body = {
             costEstimationParameters: {
                 gigaPixels: costParameters.gigaPixels,
@@ -279,12 +241,7 @@ export class ContextCaptureService {
                 meshQuality: costParameters.meshQuality,
             }
         }
-        try {
-            const response = await this.submitRequest("jobs/" + id, "PATCH", [200], body);   
-            return response.costEstimation?.estimateCost;
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        const response = await this.submitRequest("jobs/" + id, "PATCH", [200], body);
+        return response.estimatedCost;
     }
 }

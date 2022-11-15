@@ -95,7 +95,7 @@ async function main() {
 
         while(true) {
             const progress = await contextCaptureService.getJobProgress(jobId);
-            if(progress.state === JobState.SUCCESS || progress.state === JobState.Over) {
+            if(progress.state === JobState.SUCCESS || progress.state === JobState.OVER) {
                 break;
             }
             else if(progress.state === JobState.ACTIVE) {

@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { RealityDataAnalysisService } from "../rdas/RealityDataAnalysisService";
-import { defaultProgressHook, RealityDataTransfer } from "../utils/RealityDataTransfer";
+import { RealityDataTransfer } from "../utils/RealityDataTransfer";
 import { ReferenceTable } from "../utils/ReferenceTable";
 import path = require("path");
 import * as fs from "fs";
@@ -46,8 +46,6 @@ async function runObjects2DExample() {
         console.log("Can't get the access token");
     
     const realityDataService = new RealityDataTransfer(tokenFactoryRd);
-    realityDataService.setUploadHook(defaultProgressHook);
-    realityDataService.setDownloadHook(defaultProgressHook);
     const realityDataAnalysisService = new RealityDataAnalysisService(tokenFactoryRda);
     console.log("Service initialized");
 

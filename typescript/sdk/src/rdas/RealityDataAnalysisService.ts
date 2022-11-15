@@ -5,7 +5,7 @@
 
 import { ChangeDetectionJobSettings, JobSettings, L3DJobSettings, O2DJobSettings, O3DJobSettings, RDAJobType, S2DJobSettings, S3DJobSettings } from "./Settings";
 import { RDACostParameters, RDAJobProperties } from "./Utils";
-import { JobDates, JobProgress, JobState } from "../CommonData";
+import { JobProgress, JobState } from "../CommonData";
 import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
 import { TokenFactory } from "../TokenFactory";
 import fetch from 'node-fetch';
@@ -47,12 +47,13 @@ export class RealityDataAnalysisService {
             };
             const request = ["POST", "PATCH"].includes(method) ? { ...reqBase, body: JSON.stringify(payload) } : reqBase;
             const response = await fetch(this.tokenFactory.getServiceUrl() + "realitydataanalysis/" + apiOperationUrl, request);
+            const responseJson = await response.json();
+            if (!okRet.includes(response.status)) {
+                return Promise.reject(new BentleyError(response.status,
+                    "Error in request: " + response.url + "\nMessage : " + JSON.stringify(responseJson.error)));
+            }
 
-            if (!okRet.includes(response.status))
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR,
-                    "Error in request: " + response.url + ", return code : " + response.status + " " + response.statusText));
-
-            return await response.json();
+            return responseJson;
         }
         catch (error: any) {
             return Promise.reject(error);
@@ -81,13 +82,8 @@ export class RealityDataAnalysisService {
             "iTwinId": iTwinId,
             "settings": settings.toJson()
         };
-        try {
-            const response = await this.submitRequest("jobs", "POST", [201], body);
-            return response["job"]["id"];
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        const response = await this.submitRequest("jobs", "POST", [201], body);
+        return response["job"]["id"];
     }
 
     /**
@@ -95,29 +91,19 @@ export class RealityDataAnalysisService {
      * @param {string} id The ID of the relevant job.
      */
     public async submitJob(id: string): Promise<void> {
-        const body = {"state": "active"};
-        try {
-            return await this.submitRequest("jobs/" + id, "PATCH", [200], body);
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        const body = { "state": "active" };
+        return await this.submitRequest("jobs/" + id, "PATCH", [200], body);
     }
-    
+
     /**
      * Cancel a job.
      * @param {string} id The ID of the relevant job.
      */
-    public async cancelJob(id: string): Promise<void> {       
+    public async cancelJob(id: string): Promise<void> {
         const body = {
             "state": "cancelled",
         };
-        try {
-            return await this.submitRequest("jobs/" + id, "PATCH", [200], body);
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        return await this.submitRequest("jobs/" + id, "PATCH", [200], body);
     }
 
     /**
@@ -125,12 +111,7 @@ export class RealityDataAnalysisService {
      * @param {string} id The ID of the relevant job.
      */
     public async deleteJob(id: string): Promise<void> {
-        try {
-            return await this.submitRequest("jobs/" + id, "DELETE", [204]);
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        return await this.submitRequest("jobs/" + id, "DELETE", [204]);
     }
 
     /**
@@ -139,15 +120,10 @@ export class RealityDataAnalysisService {
      * @returns {JobProgress} The progress for the job.
      */
     public async getJobProgress(id: string): Promise<JobProgress> {
-        try {
-            const response = await this.submitRequest(`jobs/${id}/progress`, "GET", [200]);
-            const progress = response["progress"];
-            const state = (progress["state"] as string).toLowerCase();
-            return {state: state as JobState, progress: JSON.parse(progress["percentage"]), step: progress["step"]};
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        const response = await this.submitRequest(`jobs/${id}/progress`, "GET", [200]);
+        const progress = response["progress"];
+        const state = (progress["state"] as string).toLowerCase();
+        return { state: state as JobState, progress: JSON.parse(progress["percentage"]), step: progress["step"] };
     }
 
     /**
@@ -156,87 +132,82 @@ export class RealityDataAnalysisService {
      * @returns {RDAJobProperties} The job properties.
      */
     public async getJobProperties(id: string): Promise<RDAJobProperties> {
-        try {
-            const response = await this.submitRequest("jobs/" + id, "GET", [200]); 
-            const job = response["job"];
-            const jobProperties: RDAJobProperties = {
-                name: job["name"],
-                type: job["type"],
-                iTwinId: job["iTwinId"],
-                settings: new O2DJobSettings(), // dummy settings
-                id: job["id"],
-                email: job["email"],
-                state: job["state"],
-                dataCenter: job["dataCenter"],
+        const response = await this.submitRequest("jobs/" + id, "GET", [200]);
+        const job = response["job"];
+        const jobProperties: RDAJobProperties = {
+            name: job["name"],
+            type: job["type"],
+            iTwinId: job["iTwinId"],
+            settings: new O2DJobSettings(), // dummy settings
+            id: job["id"],
+            email: job["email"],
+            state: job["state"],
+            dataCenter: job["dataCenter"],
+        };
+
+        let settings: JobSettings;
+        if (job["type"] === RDAJobType.O2D) {
+            settings = await O2DJobSettings.fromJson(job["settings"]);
+        }
+        else if (job["type"] === RDAJobType.S2D) {
+            settings = await S2DJobSettings.fromJson(job["settings"]);
+        }
+        else if (job["type"] === RDAJobType.O3D) {
+            settings = await O3DJobSettings.fromJson(job["settings"]);
+        }
+        else if (job["type"] === RDAJobType.S3D) {
+            settings = await S3DJobSettings.fromJson(job["settings"]);
+        }
+        else if (job["type"] === RDAJobType.L3D) {
+            settings = await L3DJobSettings.fromJson(job["settings"]);
+        }
+        else if (job["type"] === RDAJobType.ChangeDetection) {
+            settings = await ChangeDetectionJobSettings.fromJson(job["settings"]);
+        }
+        else
+            return Promise.reject(new BentleyError(BentleyStatus.ERROR,
+                "Can't get job properties of unknown type : " + job["type"]));
+
+        jobProperties.settings = settings;
+
+        if (job["executionInformation"]) {
+            jobProperties.dates = {
+                createdDateTime: job["createdDateTime"],
+                submissionDateTime: job["executionInformation"]["submissionDateTime"],
+                startedDateTime: job["executionInformation"]["startedDateTime"],
+                endedDateTime: job["executionInformation"]["endedDateTime"],
             };
-
-            let settings: JobSettings;
-            if(job["type"] === RDAJobType.O2D) {
-                settings = await O2DJobSettings.fromJson(job["settings"]);
-            }
-            else if(job["type"] === RDAJobType.S2D) {
-                settings = await S2DJobSettings.fromJson(job["settings"]);
-            }
-            else if(job["type"] === RDAJobType.O3D) {
-                settings = await O3DJobSettings.fromJson(job["settings"]);
-            }
-            else if(job["type"] === RDAJobType.S3D) {
-                settings = await S3DJobSettings.fromJson(job["settings"]);
-            }
-            else if(job["type"] === RDAJobType.L3D) {
-                settings = await L3DJobSettings.fromJson(job["settings"]);
-            }
-            else if(job["type"] === RDAJobType.ChangeDetection) {
-                settings = await ChangeDetectionJobSettings.fromJson(job["settings"]);
-            }
-            else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                    "Can't get job properties of unknown type : " + job["type"]));
-            
-            jobProperties.settings = settings;
-
-            if(job["executionInformation"]) {
-                jobProperties.dates = {
-                    createdDateTime: job["createdDateTime"],
-                    submissionDateTime: job["executionInformation"]["submissionDateTime"],
-                    startedDateTime: job["executionInformation"]["startedDateTime"],
-                    endedDateTime: job["executionInformation"]["endedDateTime"],             
-                };
-                jobProperties.executionCost = job["executionInformation"]["estimatedUnits"];
-                jobProperties.exitCode = job["executionInformation"]["exitCode"];
-            }
-            else {
-                jobProperties.dates = {
-                    createdDateTime: job["executionInformation"]
-                };  
-            }
-
-            if(job["costEstimation"]) {
-                jobProperties.costEstimation = {
-                    gigaPixels: job["costEstimation"]["gigaPixels"],
-                    numberOfPhotos: job["costEstimation"]["numberOfPhotos"],
-                    sceneWidth: job["costEstimation"]["sceneWidth"],
-                    sceneHeight: job["costEstimation"]["sceneHeight"],
-                    sceneLength: job["costEstimation"]["sceneLength"],
-                    detectorScale: job["costEstimation"]["detectorScale"],
-                    detectorCost: job["costEstimation"]["detectorCost"],
-                    estimatedCost: job["costEstimation"]["estimatedCost"],
-                };
-            }
-
-            return jobProperties;
+            jobProperties.executionCost = job["executionInformation"]["estimatedUnits"];
+            jobProperties.exitCode = job["executionInformation"]["exitCode"];
         }
-        catch(error: any) {
-            return Promise.reject(error);
+        else {
+            jobProperties.dates = {
+                createdDateTime: job["createdDateTime"]
+            };
         }
+
+        if (job["costEstimation"]) {
+            jobProperties.costEstimation = {
+                gigaPixels: job["costEstimation"]["gigaPixels"],
+                numberOfPhotos: job["costEstimation"]["numberOfPhotos"],
+                sceneWidth: job["costEstimation"]["sceneWidth"],
+                sceneHeight: job["costEstimation"]["sceneHeight"],
+                sceneLength: job["costEstimation"]["sceneLength"],
+                detectorScale: job["costEstimation"]["detectorScale"],
+                detectorCost: job["costEstimation"]["detectorCost"],
+                estimatedCost: job["costEstimation"]["estimatedCost"],
+            };
+        }
+
+        return jobProperties;
     }
 
     /**
      * Get the estimated cost of a given job.
      * @param {string} id The ID of the relevant job.
-     * @returns {number | undefined} The job cost estimation.
+     * @returns {number} The job cost estimation.
      */
-    public async getJobEstimatedCost(id: string, costParameters: RDACostParameters): Promise<number | undefined> {
+    public async getJobEstimatedCost(id: string, costParameters: RDACostParameters): Promise<number> {
         const body = {
             costEstimationParameters: {
                 gigaPixels: costParameters.gigaPixels,
@@ -248,12 +219,7 @@ export class RealityDataAnalysisService {
                 detectorCost: costParameters.detectorCost,
             }
         }
-        try {
-            const response = await this.submitRequest("jobs/" + id, "PATCH", [200], body);     
-            return response.costEstimation?.estimateCost;
-        }
-        catch(error: any) {
-            return Promise.reject(error);
-        }
+        const response = await this.submitRequest("jobs/" + id, "PATCH", [200], body);
+        return response.costEstimation.estimatedCost;
     }
 }
