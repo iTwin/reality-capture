@@ -95,7 +95,7 @@ describe("Context capture integration tests", () => {
     });
 
     // Create & submit job
-    /* it("Create CC job", async function () {
+    it("Create CC job", async function () {
         this.timeout(10000);
         let settings = new CCJobSettings();
         settings.inputs = [imagesId, ccOrientationsId];
@@ -198,5 +198,5 @@ describe("Context capture integration tests", () => {
             expect(error).instanceOf(BentleyError);
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
-    }); */
+    });
 });

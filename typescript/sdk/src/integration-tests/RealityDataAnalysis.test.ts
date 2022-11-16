@@ -91,7 +91,7 @@ describe("Reality data analysis integration tests", () => {
     });
 
     // Create & submit job
-    /* it("Create RDAS job", async function () {
+    it("Create RDAS job", async function () {
         this.timeout(10000);
 
         const settings = new O2DJobSettings();
@@ -192,6 +192,6 @@ describe("Reality data analysis integration tests", () => {
             expect(error).instanceOf(BentleyError);
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
-    }); */
+    });
 
 });
