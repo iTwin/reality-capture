@@ -79,6 +79,9 @@ describe("Context capture integration tests", () => {
     // Create and upload inputs
     it("Upload images", async function () {
         this.timeout(20000);
+
+        console.log("__dirname : ", __dirname);
+
         imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../data/CC/Images/"), 
             "SDK integration tests CC images", RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
         expect(imagesId).is.not.undefined;
@@ -95,7 +98,7 @@ describe("Context capture integration tests", () => {
     });
 
     // Create & submit job
-    it("Create CC job", async function () {
+    /* it("Create CC job", async function () {
         this.timeout(10000);
         let settings = new CCJobSettings();
         settings.inputs = [imagesId, ccOrientationsId];
@@ -198,5 +201,5 @@ describe("Context capture integration tests", () => {
             expect(error).instanceOf(BentleyError);
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
-    });
+    }); */
 });
