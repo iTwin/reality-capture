@@ -383,6 +383,8 @@ export class RealityDataTransfer {
             };
             await getUploadFilesInfo(uploadInfo, dataToUpload);
             let currentPercentage = -1;
+            console.log("dataToUpload : ", dataToUpload);
+            console.log("upload info : ", uploadInfo);
             for (let i = 0; i < uploadInfo.files.length; i++) {
                 const blockBlobClient = containerClient.getBlockBlobClient(uploadInfo.files[i]);
                 const options: BlockBlobParallelUploadOptions = {
