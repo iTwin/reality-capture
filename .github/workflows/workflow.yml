@@ -45,4 +45,4 @@ jobs:
           IMJS_PROJECT_ID: ${{ secrets.IMJS_PROJECT_ID }}
           IMJS_CLIENT_ID: ${{ secrets.IMJS_CLIENT_ID }}
           IMJS_SECRET: ${{ secrets.IMJS_SECRET }}
-        run: npm run integration:test
+        run: npm run test:integration
