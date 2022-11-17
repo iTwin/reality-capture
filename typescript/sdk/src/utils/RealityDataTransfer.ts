@@ -66,7 +66,7 @@ async function getUploadFilesInfo(uploadInfo: DataTransferInfo, root: string, cu
 
 async function getUniqueTmpDir(): Promise<string> {
     const tmpDir = path.join(os.tmpdir(), "Bentley/ContextCapture Internal/", uuidv4());
-    await fs.promises.mkdir(tmpDir);
+    await fs.promises.mkdir(tmpDir, { recursive: true });
     return tmpDir;
 }
 
@@ -79,7 +79,7 @@ async function createTempScene(scenePath: string): Promise<string> {
             await fs.promises.access(path.dirname(path.join(localTmpPath, files[i])), fs.constants.W_OK);
         }
         catch (error: any) {
-            await fs.promises.mkdir(path.dirname(path.join(localTmpPath, files[i])));
+            await fs.promises.mkdir(path.dirname(path.join(localTmpPath, files[i])), { recursive: true });
         }
         await fs.promises.copyFile(path.join(path.dirname(scenePath), files[i]), path.join(localTmpPath, files[i]));
     };

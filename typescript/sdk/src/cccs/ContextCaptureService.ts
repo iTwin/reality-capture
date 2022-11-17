@@ -46,14 +46,16 @@ export class ContextCaptureService {
             };
             const request = ["POST", "PATCH"].includes(method) ? { ...reqBase, body: JSON.stringify(payload) } : reqBase;
             const response = await fetch(this.tokenFactory.getServiceUrl() + "contextcapture/" + apiOperationUrl, request);
-            const responseJson = await response.json();
+            // For some reason, after a workspace has been deleted, "response.json()" throws an "invalid json response body" error.
+            // Since we don't need the response in this case, just return an empty json.
+            if (okRet.includes(204))
+                return {};
+            
+            const responseJson = await response.json(); 
             if (!okRet.includes(response.status)) {
                 return Promise.reject(new BentleyError(response.status,
                     "Error in request: " + response.url + "\nMessage : " + JSON.stringify(responseJson.error)));
             }
-
-            if (okRet.includes(204))
-                return {};
 
             return responseJson;
         }
