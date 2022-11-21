@@ -1,3 +1,6 @@
+# Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+# See LICENSE.md in the project root for license terms and full copyright notice.
+
 import os
 from collections import defaultdict
 from sdk.utils import ReturnValue
