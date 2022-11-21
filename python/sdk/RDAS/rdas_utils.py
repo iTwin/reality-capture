@@ -1,3 +1,6 @@
+# Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+# See LICENSE.md in the project root for license terms and full copyright notice.
+
 from __future__ import annotations
 from typing import NamedTuple
 from sdk.RDAS.job_settings import JobSettings, O2DJobSettings

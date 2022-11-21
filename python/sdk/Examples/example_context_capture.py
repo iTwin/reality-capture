@@ -41,12 +41,14 @@ def main():
     client_info = ClientInfo(client_id, scope_set)
     token_factory = SpaDesktopMobileTokenFactory(client_info)
 
-    # initializing cc service
-    service_cc = CCS.ContextCaptureService(token_factory)
-
     # initializing data transfer
     data_transfer = DataTransfer.RealityDataTransfer(token_factory)
+    # adding hook to follow upload and download status
+    data_transfer.set_progress_hook(DataTransfer.example_hook)
+    print("Data transfer initialized")
 
+    # initializing cc service
+    service_cc = CCS.ContextCaptureService(token_factory)
     print("Service initialized")
 
     # creating reference table and uploading ccimageCollection, ccOrientations if necessary (not yet on the cloud)
