@@ -1,3 +1,6 @@
+# Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+# See LICENSE.md in the project root for license terms and full copyright notice.
+
 from enum import Enum
 from typing import TypeVar, Generic, NamedTuple
 
