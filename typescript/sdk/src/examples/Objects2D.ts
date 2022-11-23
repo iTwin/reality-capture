@@ -120,7 +120,7 @@ async function runObjects2DExample() {
     const properties = await realityDataAnalysisService.getJobProperties(jobId);
     console.log("Downloading outputs");
     const objects2DId = (properties.settings as O2DJobSettings).outputs.objects2D;
-    realityDataService.downloadContextScene(objects2DId, outputPath, references);
+    realityDataService.downloadContextScene(objects2DId, outputPath, projectId, references);
     console.log("Successfully downloaded output");
 }
 

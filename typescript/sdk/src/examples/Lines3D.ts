@@ -145,7 +145,7 @@ async function runContextCaptureExample() {
     const properties = await realityDataAnalysisService.getJobProperties(jobId);
     console.log("Downloading outputs");
     const lines3dId = (properties.settings as L3DJobSettings).outputs.lines3D;
-    realityDataService.downloadContextScene(lines3dId, outputPath, references);
+    realityDataService.downloadContextScene(lines3dId, outputPath, projectId, references);
     console.log("Successfully downloaded output");
 }
 

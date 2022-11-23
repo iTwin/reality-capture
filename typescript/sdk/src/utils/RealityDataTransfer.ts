@@ -494,7 +494,7 @@ export class RealityDataTransfer {
      * @param {string} realityDataId The ID of the data to download.
      * @param {string} downloadPath The path where downloaded data should be saved.
      */
-    public async downloadRealityData(realityDataId: string, downloadPath: string): Promise<void> {
+    public async downloadRealityData(realityDataId: string, downloadPath: string, iTwinId: string): Promise<void> {
         // TODO: parallelize
         try {
             const realityDataClientOptions: RealityDataClientOptions = {
@@ -502,7 +502,7 @@ export class RealityDataTransfer {
             };
             const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
             const iTwinRealityData: ITwinRealityData = await rdaClient.getRealityData(await this.tokenFactory.getToken(), 
-                undefined, realityDataId);
+                iTwinId, realityDataId);
             const azureBlobUrl = await iTwinRealityData.getBlobUrl(await this.tokenFactory.getToken(), "", false);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
             const iter = await containerClient.listBlobsFlat();
@@ -569,10 +569,10 @@ export class RealityDataTransfer {
      * @param {string} downloadPath The path where downloaded ContextScene should be saved.
      * @param {ReferenceTable} references (optional): A table mapping local path of dependencies to their ID.
      */
-    public async downloadContextScene(realityDataId: string, downloadPath: string,
+    public async downloadContextScene(realityDataId: string, downloadPath: string, iTwinId: string,
         references?: ReferenceTable): Promise<void> {
         try {
-            await this.downloadRealityData(realityDataId, downloadPath);
+            await this.downloadRealityData(realityDataId, downloadPath, iTwinId);
             if (references) {
                 const scenePath = path.join(downloadPath, "ContextScene.xml");
                 if (!fs.existsSync(path.dirname(scenePath)))
@@ -596,10 +596,10 @@ export class RealityDataTransfer {
      * @param {string} downloadPath The path where downloaded file should be saved.
      * @param {ReferenceTable} references (optional): A table mapping local path of dependencies to their ID.
      */
-    public async downloadCCorientations(realityDataId: string, downloadPath: string,
+    public async downloadCCorientations(realityDataId: string, downloadPath: string, iTwinId: string,
         references?: ReferenceTable): Promise<void> {
         try {
-            await this.downloadRealityData(realityDataId, downloadPath);
+            await this.downloadRealityData(realityDataId, downloadPath, iTwinId);
             if (references) {
                 const scenePath = path.join(downloadPath, "Orientations.xml");
                 await replaceCCOrientationsReferences(scenePath, scenePath, references, false);

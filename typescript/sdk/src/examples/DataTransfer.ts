@@ -41,7 +41,7 @@ async function runRealityDataExample() {
 
     // Download CCImageCollection
     console.log("Downloading CCImagesCollection");
-    await realityDataService.downloadRealityData(id, outputPath);
+    await realityDataService.downloadRealityData(id, outputPath, projectId);
     console.log("CCImagesCollection downloaded successfully");
 }
 
