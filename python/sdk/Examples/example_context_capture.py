@@ -163,13 +163,13 @@ def main():
     print("Retrieving outputs ids")
     ret = service_cc.get_job_properties(job_id)
     if ret.is_error():
-        print("Error while getting settings:", ret.error)
+        print("Error while getting properties:", ret.error)
         exit(1)
     final_settings = ret.value.job_settings
     print("Downloading outputs")
 
     threeMX_id = final_settings.outputs.threeMX
-    ret = data_transfer.download_reality_data(threeMX_id, output_path)
+    ret = data_transfer.download_reality_data(threeMX_id, output_path, project_id)
     if ret.is_error():
         print("Error while downloading output:", ret.error)
         exit(1)

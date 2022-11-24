@@ -1,10 +1,9 @@
 # Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 # See LICENSE.md in the project root for license terms and full copyright notice.
 
-import http.client
+import requests
 import json
 
-from apim_utils.code import Code
 from sdk.CCS.ccs_utils import (
     CCWorkspaceProperties,
     CCJobType,
@@ -27,9 +26,9 @@ class ContextCaptureService:
 
     def __init__(self, token_factory) -> None:
         self._token_factory = token_factory
-        self._connection = http.client.HTTPSConnection(
-            self._token_factory.get_service_url()
-        )
+        self._session = requests.Session()
+        self._service_url = self._token_factory.get_service_url()
+
         self._header = {
             "Authorization": None,
             "User-Agent": f"ContextCapture Python SDK/0.0.1",
@@ -40,19 +39,6 @@ class ContextCaptureService:
     def _get_header(self) -> dict:
         self._header["Authorization"] = self._token_factory.get_token()
         return self._header
-
-    def _connect(self) -> ReturnValue[bool]:
-        """
-        Connects to the service.
-
-        Returns:
-            True if connected to the service, and a potential error message.
-        """
-        try:
-            self._connection.connect()
-        except Exception as e:
-            return ReturnValue(value=False, error=str(e))
-        return ReturnValue(value=True, error="")
 
     def create_workspace(
         self, work_name: str, iTwin_id: str, cc_version: str = ""
@@ -68,24 +54,21 @@ class ContextCaptureService:
         Returns:
             The ID of the workspace, and a potential error message.
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value="", error=ret.error)
         wc_dict = {"name": work_name, "iTwinId": iTwin_id}
         if cc_version != "":
             wc_dict["contextCaptureVersion"] = cc_version
         json_data = json.dumps(wc_dict)
-        self._connection.request(
-            "POST", "/contextcapture/workspaces", json_data, self._get_header()
-        )
-        response = self._connection.getresponse()
+        response = self._session.post("https://" + self._service_url + "/contextcapture/workspaces", json_data, headers=self._get_header())
 
         # if the query was successful we return the id of the workspace, else we return an empty string
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value="", error=code.error_message())
-        data = code.response()
-        return ReturnValue(value=data["workspace"]["id"], error="")
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value="", error=error_string)
+        return ReturnValue(value=data_json["workspace"]["id"], error="")
 
     def delete_workspace(self, work_id: str) -> ReturnValue[bool]:
         """
@@ -97,16 +80,14 @@ class ContextCaptureService:
         Returns:
             True if the workspace was deleted successfully, and a potential error message.
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value="", error=ret.error)
-        self._connection.request(
-            "DELETE", f"/contextcapture/workspaces/{work_id}", None, self._get_header()
-        )
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value=False, error=code.error_message())
+        response = self._session.delete("https://" + self._service_url + f"/contextcapture/workspaces/{work_id}", headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=False, error=error_string)
         return ReturnValue(value=True, error="")
 
     def get_workspace_properties(
@@ -123,26 +104,21 @@ class ContextCaptureService:
             An object with all the workspace properties, and a potential error message.
 
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value=CCWorkspaceProperties(), error=ret.error)
-        self._connection.request(
-            "GET", f"/contextcapture/workspaces/{work_id}", None, self._get_header()
-        )
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(
-                value=CCWorkspaceProperties(), error=code.error_message()
-            )
-        data = code.response()
+        response = self._session.get("https://" + self._service_url + f"/contextcapture/workspaces/{work_id}", headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=CCWorkspaceProperties(), error=error_string)
         return ReturnValue(
             value=CCWorkspaceProperties(
-                work_id=data["workspace"]["id"],
-                created_date_time=data["workspace"]["id"],
-                work_name=data["name"]["id"],
-                iTwin_id=data["iTwinId"]["id"],
-                context_capture_version=data["contextCaptureVersion"]["id"],
+                id=data_json["workspace"]["id"],
+                created_date_time=data_json["workspace"]["id"],
+                name=data_json["name"]["id"],
+                iTwin_id=data_json["iTwinId"]["id"],
+                context_capture_version=data_json["contextCaptureVersion"]["id"],
             ),
             error="",
         )
@@ -162,9 +138,6 @@ class ContextCaptureService:
         Returns:
             The ID of the job, and a potential error message.
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value="", error=ret.error)
         settings_dict, inputs_dict = settings.to_json()
         jc_dict = {
             "type": job_type.value,
@@ -174,16 +147,15 @@ class ContextCaptureService:
             "settings": settings_dict["settings"],
         }
         job_json = json.dumps(jc_dict)
-        self._connection.request(
-            "POST", "/contextcapture/jobs", job_json, self._get_header()
-        )
-        response = self._connection.getresponse()
-
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value="", error=code.error_message())
-        data = code.response()
-        return ReturnValue(value=data["job"]["id"], error="")
+        response = self._session.post("https://" + self._service_url + "/contextcapture/jobs", job_json, headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value="", error=error_string)
+        return ReturnValue(value=data_json["job"]["id"], error="")
 
     def submit_job(self, job_id: str) -> ReturnValue[bool]:
         """
@@ -194,22 +166,18 @@ class ContextCaptureService:
         Returns:
             True if the job was successfully submitted, and a potential error message.
         """
-
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value=False, error=ret.error)
         jc_dict = {
             "state": "active",
         }
         job_json = json.dumps(jc_dict)
-        self._connection.request(
-            "PATCH", f"/contextcapture/jobs/{job_id}", job_json, self._get_header()
-        )
-        response = self._connection.getresponse()
-
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value=False, error=code.error_message())
+        response = self._session.patch("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", job_json, headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=False, error=error_string)
         return ReturnValue(value=True, error="")
 
     def cancel_job(self, job_id: str) -> ReturnValue[bool]:
@@ -221,22 +189,18 @@ class ContextCaptureService:
         Returns:
             True if the job was successfully cancelled, and a potential error message.
         """
-
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value=False, error=ret.error)
         jc_dict = {
             "state": "cancelled",
         }
         job_json = json.dumps(jc_dict)
-
-        self._connection.request(
-            "PATCH", f"/contextcapture/jobs/{job_id}", job_json, self._get_header()
-        )
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value=False, error=code.error_message())
+        response = self._session.patch("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", job_json, headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=False, error=error_string)
         return ReturnValue(value=True, error="")
 
     def delete_job(self, job_id: str) -> ReturnValue[bool]:
@@ -248,17 +212,14 @@ class ContextCaptureService:
         Returns:
             True if the job was successfully deleted, and a potential error message.
         """
-
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value=False, error=ret.error)
-        self._connection.request(
-            "DELETE", f"/contextcapture/jobs/{job_id}", None, self._get_header()
-        )
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value=False, error=code.error_message())
+        response = self._session.delete("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=False, error=error_string)
         return ReturnValue(value=True, error="")
 
     def get_job_properties(self, job_id: str) -> ReturnValue[CCJobProperties]:
@@ -272,26 +233,22 @@ class ContextCaptureService:
         Returns:
             The properties for the job, and a potential error message.
         """
+        response = self._session.get("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=CCJobProperties(), error=error_string)
 
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value=CCJobProperties(), error=ret.error)
-        self._connection.request(
-            "GET", f"/contextcapture/jobs/{job_id}", None, self._get_header()
-        )
-        response = self._connection.getresponse()
-
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value=CCJobProperties(), error=code.error_message())
-        data = code.response()
         try:
-            job_name = data["job"].get("name", "")
-            job_type = CCJobType(data["job"].get("type", CCJobType.NONE.value))
-            job_state = JobState(data["job"].get("state", JobState.UNKNOWN.value))
+            job_name = data_json["job"].get("name", "")
+            job_type = CCJobType(data_json["job"].get("type", CCJobType.NONE.value))
+            job_state = JobState(data_json["job"].get("state", JobState.UNKNOWN.value))
 
             cost_estimation_parameters = CCJobCostParameters()
-            estimate = data["job"].get("costEstimationParameters", None)
+            estimate = data_json["job"].get("costEstimationParameters", None)
             if estimate is not None:
                 cost_estimation_parameters.giga_pixels = float(
                     estimate.get("gigaPixels", 0.0)
@@ -302,9 +259,9 @@ class ContextCaptureService:
                 cost_estimation_parameters.mesh_quality = CCJobQuality(
                     estimate.get("meshQuality", CCJobQuality.UNKNOWN.value)
                 )
-            estimated_cost = float(data["job"].get("estimatedCost", 0.0))
-            created_date_time = data["job"].get("createdDateTime", "")
-            execution = data["job"].get("executionInformation", None)
+            estimated_cost = float(data_json["job"].get("estimatedCost", 0.0))
+            created_date_time = data_json["job"].get("createdDateTime", "")
+            execution = data_json["job"].get("executionInformation", None)
             if execution is not None:
                 job_date_time = JobDateTime(
                     created_date_time=created_date_time,
@@ -317,13 +274,13 @@ class ContextCaptureService:
                 job_date_time = JobDateTime(created_date_time=created_date_time)
                 estimated_units = 0.0
 
-            iTwin_id = data["job"].get("iTwinId", "")
-            location = data["job"].get("location", "")
-            email = data["job"].get("email", "")
-            work_id = data["job"].get("workspaceId", "")
+            iTwin_id = data_json["job"].get("iTwinId", "")
+            location = data_json["job"].get("location", "")
+            email = data_json["job"].get("email", "")
+            work_id = data_json["job"].get("workspaceId", "")
 
             job_settings = CCJobSettings.from_json(
-                data["job"].get("jobSettings", []), data["job"].get("inputs", [])
+                data_json["job"].get("jobSettings", []), data_json["job"].get("inputs", [])
             )
             if job_settings.is_error():
                 return ReturnValue(value=CCJobProperties(), error=job_settings.error)
@@ -357,25 +314,16 @@ class ContextCaptureService:
         Returns:
             The progress for the job, and a potential error message.
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(
-                value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
-                error=ret.error,
-            )
-        self._connection.request(
-            "GET", f"/contextcapture/jobs/{job_id}/progress", None, self._get_header()
-        )
-        response = self._connection.getresponse()
+        response = self._session.get("https://" + self._service_url + f"/contextcapture/jobs/{job_id}/progress", headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=error_string)
 
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(
-                value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
-                error=code.error_message(),
-            )
-        data = code.response()
-        dp = data["jobProgress"]
+        dp = data_json["jobProgress"]
         try:
             state = JobState(dp["state"].lower())
         except Exception as e:
@@ -403,24 +351,21 @@ class ContextCaptureService:
             The estimated cost of the job, and a potential error
             message.
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value=-1.0, error=ret.error)
         pi_dict = {
             "gigaPixels": str(cost_parameters.giga_pixels),
             "megaPoints": str(cost_parameters.mega_points),
             "meshQuality": cost_parameters.mesh_quality.value,
         }
         json_data = json.dumps(pi_dict)
-        self._connection.request(
-            "PATCH", f"/contextcapture/jobs/{job_id}", json_data, self._get_header()
-        )
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value=-1.0, error=code.error_message())
-        data = code.response()
-        ret = float(data["job"].get("estimatedCost", -1.0))
+        response = self._session.patch("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", json_data, headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=-1.0, error=error_string)
+        ret = float(data_json["job"].get("estimatedCost", -1.0))
         if ret != -1.0:
             return ReturnValue(value=ret, error="")
         return ReturnValue(value=ret, error="No estimatedCost field in received json")

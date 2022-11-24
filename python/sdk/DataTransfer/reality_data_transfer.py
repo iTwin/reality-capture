@@ -1,14 +1,12 @@
 # Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 # See LICENSE.md in the project root for license terms and full copyright notice.
-
+import requests
 import json
 import os
 import tempfile
-import http.client
 from azure.storage.blob import ContainerClient
 from multiprocessing.pool import ThreadPool
 
-from apim_utils.code import Code
 from sdk.DataTransfer.conversion import (
     replace_context_scene_references,
     replace_ccorientation_references,
@@ -30,9 +28,9 @@ class RealityDataTransfer:
     def __init__(self, token_factory):
 
         self._token_factory = token_factory
-        self._connection = http.client.HTTPSConnection(
-            self._token_factory.get_service_url()
-        )
+        self._session = requests.Session()
+        self._service_url = self._token_factory.get_service_url()
+
         self._header = {
             "Authorization": None,
             "User-Agent": f"RealityDataTransfer Python SDK/0.0.1",
@@ -45,19 +43,12 @@ class RealityDataTransfer:
         self._header["Authorization"] = self._token_factory.get_token()
         return self._header
 
-    def _connect(self) -> ReturnValue[bool]:
-        try:
-            self._connection.connect()
-        except Exception as e:
-            return ReturnValue(value=False, error=str(e))
-        return ReturnValue(value=True, error="")
-
     def _create_reality_data(
-        self,
-        name: str,
-        data_type: RealityDataType,
-        iTwin_id: str = "",
-        rootfile: str = "",
+            self,
+            name: str,
+            data_type: RealityDataType,
+            iTwin_id: str = "",
+            rootfile: str = "",
     ) -> ReturnValue[str]:
         rd_dict = {
             "realityData": {
@@ -71,36 +62,37 @@ class RealityDataTransfer:
         if rootfile != "":
             rd_dict["realityData"]["rootDocument"] = rootfile
         json_data = json.dumps(rd_dict)
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value="", error=ret.error)
-        self._connection.request("POST", "/realitydata/", json_data, self._get_header())
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value="", error=code.error_message())
-        data = code.response()
-        return ReturnValue(value=data["realityData"]["id"], error="")
+
+        response = self._session.post("https://" + self._service_url + "/realitydata/", json_data,
+                                      headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value="", error=error_string)
+
+        return ReturnValue(value=data_json["realityData"]["id"], error="")
 
     def _update_reality_data(
-        self, rd_id: str, update_dict: dict, iTwin_id: str = ""
+            self, rd_id: str, update_dict: dict, iTwin_id: str = ""
     ) -> ReturnValue[str]:
         rd_dict = {"realityData": update_dict}
         if iTwin_id != "":
             rd_dict["projectId"] = iTwin_id
         json_data = json.dumps(rd_dict)
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value="", error=ret.error)
-        self._connection.request(
-            "PATCH", f"/realitydata/{rd_id}", json_data, self._get_header()
-        )
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value="", error=code.error_message())
-        data = code.response()
-        return ReturnValue(value=data["realityData"]["id"], error="")
+
+        response = self._session.patch("https://" + self._service_url + f"/realitydata/{rd_id}", json_data,
+                                       headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value="", error=error_string)
+        return ReturnValue(value=data_json["realityData"]["id"], error="")
 
     def set_progress_hook(self, hook) -> None:
         """
@@ -113,12 +105,12 @@ class RealityDataTransfer:
         self._progress_hook = hook
 
     def upload_reality_data(
-        self,
-        data_path: str,
-        name: str,
-        data_type: RealityDataType,
-        iTwin_id: str,
-        root_file: str = "",
+            self,
+            data_path: str,
+            name: str,
+            data_type: RealityDataType,
+            iTwin_id: str,
+            root_file: str = "",
     ) -> ReturnValue[str]:
         """
         Upload reality data to ProjectWise ContextShare.
@@ -145,20 +137,19 @@ class RealityDataTransfer:
             ReturnValue(value=ret.value, error=ret.error)
         print("Uploading files")
 
-        ret_con = self._connect()
-        if ret_con.is_error():
-            return ReturnValue(value="", error=ret_con.error)
-        self._connection.request(
-            "GET",
-            f"/realitydata/{ret.value}/container?projectId={iTwin_id}&access=Write",
-            None,
-            self._get_header(),
-        )
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            ReturnValue(value="", error=code.error_message())
-        sas_uri = code.response()["container"]["_links"]["containerUrl"]["href"]
+        response = self._session.get(
+            "https://" + self._service_url + f"/realitydata/{ret.value}/container?projectId={iTwin_id}&access=Write",
+            headers=self._get_header())
+
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value="", error=error_string)
+
+        sas_uri = data_json["container"]["_links"]["containerUrl"]["href"]
 
         files_tuple = [
             (
@@ -220,11 +211,11 @@ class RealityDataTransfer:
         return ret
 
     def upload_context_scene(
-        self,
-        scene_path: str,
-        name: str,
-        iTwin_id: str,
-        reference_table: ReferenceTable = None,
+            self,
+            scene_path: str,
+            name: str,
+            iTwin_id: str,
+            reference_table: ReferenceTable = None,
     ) -> ReturnValue[str]:
         """
         Upload a ContextScene to ProjectWise ContextShare.
@@ -262,11 +253,11 @@ class RealityDataTransfer:
         )
 
     def upload_ccorientation(
-        self,
-        ccorientation_path: str,
-        name: str,
-        iTwin_id: str,
-        reference_table: ReferenceTable = None,
+            self,
+            ccorientation_path: str,
+            name: str,
+            iTwin_id: str,
+            reference_table: ReferenceTable = None,
     ) -> ReturnValue[str]:
         """
         Upload a CCOrientation to ProjectWise ContextShare.
@@ -302,8 +293,7 @@ class RealityDataTransfer:
         )
 
     def download_reality_data(
-        self, data_id: str, output_path: str
-    ) -> ReturnValue[bool]:
+            self, data_id: str, output_path: str, iTwin_id: str) -> ReturnValue[bool]:
         """
         Download reality data from ProjectWise ContextShare.
         This function should not be used for ContextScenes that contain dependencies to data you have locally as the
@@ -313,23 +303,24 @@ class RealityDataTransfer:
         Args:
             data_id: The ID of the data to download.
             output_path: The path where downloaded data should be saved.
+            iTwin_id: ID of the iTwin project the reality data will be linked to. It is also used to choose the
+                data center where the reality data is stored.
         Returns:
             True if download was successful, and a potential error message.
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value=False, error=ret.error)
-        self._connection.request(
-            "GET",
-            f"/realitydata/{data_id}/container?&access=Read",
-            None,
-            self._get_header(),
-        )
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value=False, error=code.error_message())
-        sas_uri = code.response()["container"]["_links"]["containerUrl"]["href"]
+        response = self._session.get(
+            "https://" + self._service_url + f"/realitydata/{data_id}/container?projectId={iTwin_id}&access=Read",
+            headers=self._get_header())
+
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value="", error=error_string)
+        sas_uri = data_json["container"]["_links"]["containerUrl"]["href"]
+
         client = ContainerClient.from_container_url(sas_uri)
         blobs = client.list_blobs()
 
@@ -377,7 +368,7 @@ class RealityDataTransfer:
         return ReturnValue(value=True, error="")
 
     def download_context_scene(
-        self, data_id: str, output_path: str, reference_table: ReferenceTable = None
+            self, data_id: str, output_path: str, iTwin_id: str, reference_table: ReferenceTable = None
     ) -> ReturnValue[bool]:
         """
         Download a ContextScene from ProjectWise ContextShare.
@@ -388,12 +379,14 @@ class RealityDataTransfer:
         Args:
             data_id: The ID of the ContextScene to download.
             output_path: The path where downloaded ContextScene should be saved.
+            iTwin_id: ID of the iTwin project the reality data will be linked to. It is also used to choose the
+                data center where the reality data is stored.
             reference_table (optional): A table mapping local path of dependencies to their ID.
         Returns:
             True if download was successful, and a potential error message.
         """
         # download
-        ret = self.download_reality_data(data_id, output_path)
+        ret = self.download_reality_data(data_id, output_path, iTwin_id)
         if ret.is_error():
             return ret
         if reference_table is not None:
@@ -407,7 +400,7 @@ class RealityDataTransfer:
         return ret
 
     def download_ccorientation(
-        self, data_id: str, output_path: str, reference_table: ReferenceTable = None
+            self, data_id: str, output_path: str, iTwin_id: str, reference_table: ReferenceTable = None
     ) -> ReturnValue[bool]:
         """
         Download a CCOrientation from ProjectWise ContextShare.
@@ -418,12 +411,14 @@ class RealityDataTransfer:
         Args:
             data_id: The ID of the CCOrientation to download.
             output_path: The path where downloaded file should be saved.
+            iTwin_id: ID of the iTwin project the reality data will be linked to. It is also used to choose the
+                data center where the reality data is stored.
             reference_table (optional): A table mapping local path of dependencies to their ID.
         Returns:
             True if download was successful, and a potential error message.
         """
         # download
-        ret = self.download_reality_data(data_id, output_path)
+        ret = self.download_reality_data(data_id, output_path, iTwin_id)
         if ret.is_error():
             return ret
         if reference_table is not None:

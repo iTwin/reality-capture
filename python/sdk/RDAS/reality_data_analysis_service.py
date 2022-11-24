@@ -1,10 +1,9 @@
 # Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 # See LICENSE.md in the project root for license terms and full copyright notice.
 
-import http.client
+import requests
 import json
 
-from apim_utils.code import Code
 from sdk.RDAS.rdas_utils import (
     RDAJobCostParameters,
     RDAJobProperties,
@@ -33,9 +32,9 @@ class RealityDataAnalysisService:
 
     def __init__(self, token_factory) -> None:
         self._token_factory = token_factory
-        self._connection = http.client.HTTPSConnection(
-            self._token_factory.get_service_url()
-        )
+        self._session = requests.Session()
+        self._service_url = self._token_factory.get_service_url()
+
         self._header = {
             "Authorization": None,
             "User-Agent": f"RDAS Python SDK/0.0.1",
@@ -47,21 +46,8 @@ class RealityDataAnalysisService:
         self._header["Authorization"] = self._token_factory.get_token()
         return self._header
 
-    def _connect(self) -> ReturnValue[bool]:
-        """
-        Connects to the service.
-
-        Returns:
-            True if connected to the service, and a potential error message.
-        """
-        try:
-            self._connection.connect()
-        except Exception as e:
-            return ReturnValue(value=False, error=str(e))
-        return ReturnValue(value=True, error="")
-
     def create_job(
-        self, settings: JobSettings, job_name: str, iTwin_id: str
+            self, settings: JobSettings, job_name: str, iTwin_id: str
     ) -> ReturnValue[str]:
         """
         Creates a job corresponding to the given settings.
@@ -74,9 +60,6 @@ class RealityDataAnalysisService:
         Returns:
             The ID of the job, and a potential error message.
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value="", error=ret.error)
         # take job_settings and create the json settings we need to send
         jc_dict = {
             "name": job_name,
@@ -86,16 +69,18 @@ class RealityDataAnalysisService:
         }
         job_json = json.dumps(jc_dict)
         # send the json settings
-        self._connection.request(
-            "POST", "/realitydataanalysis/jobs", job_json, self._get_header()
-        )
-        response = self._connection.getresponse()
+        response = self._session.post("https://" + self._service_url + "/realitydataanalysis/jobs", job_json,
+                                      headers=self._get_header())
+
         # if the query was successful we return the id of the job, else we return an empty string and the error message
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value="", error=code.error_message())
-        data = code.response()
-        return ReturnValue(value=data["job"]["id"], error="")
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value="", error=error_string)
+        return ReturnValue(value=data_json["job"]["id"], error="")
 
     def submit_job(self, job_id: str) -> ReturnValue[bool]:
         """
@@ -106,22 +91,18 @@ class RealityDataAnalysisService:
         Returns:
             True if the job was successfully submitted, and a potential error message.
         """
-
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value=False, error=ret.error)
         jc_dict = {"state": "active"}
         job_json = json.dumps(jc_dict)
-        self._connection.request(
-            "PATCH",
-            f"/realitydataanalysis/jobs/{job_id}",
-            job_json,
-            self._get_header(),
-        )
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value=False, error=code.error_message())
+        response = self._session.patch("https://" + self._service_url + f"/realitydataanalysis/jobs/{job_id}",
+                                       job_json,
+                                       headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=False, error=error_string)
         return ReturnValue(value=True, error="")
 
     def get_job_properties(self, job_id: str) -> ReturnValue[RDAJobProperties]:
@@ -135,35 +116,34 @@ class RealityDataAnalysisService:
         Returns:
             The properties of the job, and a potential error message.
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value=RDAJobProperties(), error=ret.error)
-        self._connection.request(
-            "GET", f"/realitydataanalysis/jobs/{job_id}", None, self._get_header()
-        )
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value=RDAJobProperties(), error=code.error_message())
-        data = code.response()
+
+        response = self._session.get("https://" + self._service_url + f"/realitydataanalysis/jobs/{job_id}", headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=RDAJobProperties(), error=error_string)
+
         try:
-            job_type_str = data["job"].get("type", None)
+            job_type_str = data_json["job"].get("type", None)
             if job_type_str is None:
                 return ReturnValue(value=RDAJobProperties(), error="no Job type")
 
             if job_type_str == RDAJobType.O2D.value:
-                settings = O2DJobSettings.from_json(data["job"].get("settings", {}))
+                settings = O2DJobSettings.from_json(data_json["job"].get("settings", {}))
             elif job_type_str == RDAJobType.S2D.value:
-                settings = S2DJobSettings.from_json(data["job"].get("settings", {}))
+                settings = S2DJobSettings.from_json(data_json["job"].get("settings", {}))
             elif job_type_str == RDAJobType.O3D.value:
-                settings = O3DJobSettings.from_json(data["job"].get("settings", {}))
+                settings = O3DJobSettings.from_json(data_json["job"].get("settings", {}))
             elif job_type_str == RDAJobType.S3D.value:
-                settings = S3DJobSettings.from_json(data["job"].get("settings", {}))
+                settings = S3DJobSettings.from_json(data_json["job"].get("settings", {}))
             elif job_type_str == RDAJobType.L3D.value:
-                settings = L3DJobSettings.from_json(data["job"].get("settings", {}))
+                settings = L3DJobSettings.from_json(data_json["job"].get("settings", {}))
             elif job_type_str == RDAJobType.ChangeDetection.value:
                 settings = ChangeDetectionJobSettings.from_json(
-                    data["job"].get("settings", {})
+                    data_json["job"].get("settings", {})
                 )
             else:
                 return ReturnValue(
@@ -173,7 +153,7 @@ class RealityDataAnalysisService:
                 return ReturnValue(value=RDAJobProperties(), error=settings.error)
 
             cost_estimation = RDAJobCostParameters()
-            estimate = data["job"].get("costEstimation", None)
+            estimate = data_json["job"].get("costEstimation", None)
             if estimate is not None:
                 cost_estimation.giga_pixels = float(estimate.get("gigaPixels", 0.0))
                 cost_estimation.number_photos = int(estimate.get("numberOfPhotos", 0))
@@ -188,8 +168,8 @@ class RealityDataAnalysisService:
                     estimate.get("estimatedCost", 0.0)
                 )
 
-            created_date_time = data["job"].get("createdDateTime", "")
-            execution = data["job"].get("executionInformation", None)
+            created_date_time = data_json["job"].get("createdDateTime", "")
+            execution = data_json["job"].get("executionInformation", None)
             if execution is not None:
                 job_date_time = JobDateTime(
                     created_date_time=created_date_time,
@@ -204,11 +184,11 @@ class RealityDataAnalysisService:
                 exit_code = 0
                 estimated_units = 0.0
 
-            job_state = data["job"].get("state", JobState.UNKNOWN)
-            job_name = data["job"].get("name", "")
-            itwin_id = data["job"].get("projectId", "")
-            data_center = data["job"].get("dataCenter", "")
-            email = data["job"].get("dataCenter", "")
+            job_state = data_json["job"].get("state", JobState.UNKNOWN)
+            job_name = data_json["job"].get("name", "")
+            itwin_id = data_json["job"].get("projectId", "")
+            data_center = data_json["job"].get("dataCenter", "")
+            email = data_json["job"].get("dataCenter", "")
         except Exception as e:
             return ReturnValue(value=RDAJobProperties(), error=str(e))
 
@@ -239,28 +219,16 @@ class RealityDataAnalysisService:
         Returns:
             The progress for the job, and a potential error message.
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(
-                value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
-                error=ret.error,
-            )
-        self._connection.request(
-            "GET",
-            f"/realitydataanalysis/jobs/{job_id}/progress",
-            None,
-            self._get_header(),
-        )
-        response = self._connection.getresponse()
+        response = self._session.get("https://" + self._service_url + f"/realitydataanalysis/jobs/{job_id}/progress", headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=error_string)
 
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(
-                value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
-                error=code.error_message(),
-            )
-        data = code.response()
-        dp = data["progress"]
+        dp = data_json["progress"]
         try:
             state = JobState(dp["state"].lower())
         except Exception as e:
@@ -278,7 +246,7 @@ class RealityDataAnalysisService:
         )
 
     def get_job_estimated_cost(
-        self, job_id: str, cost_parameters: RDAJobCostParameters
+            self, job_id: str, cost_parameters: RDAJobCostParameters
     ) -> ReturnValue[float]:
         """
         Get estimated cost for a given job.
@@ -290,23 +258,18 @@ class RealityDataAnalysisService:
             The estimated cost of the job, and a potential error
             message.
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value=-1.0, error=ret.error)
         jc_dict = {"costEstimation": cost_parameters.to_json()}
         job_json = json.dumps(jc_dict)
-        self._connection.request(
-            "PATCH",
-            f"/realitydataanalysis/jobs/{job_id}",
-            job_json,
-            self._get_header(),
-        )
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value=-1.0, error=code.error_message())
-        data = code.response()
-        ret = RDAJobCostParameters.from_json(data["job"]["costEstimation"])
+        response = self._session.patch("https://" + self._service_url + f"/realitydataanalysis/jobs/{job_id}", job_json, headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=-1.0, error=error_string)
+
+        ret = RDAJobCostParameters.from_json(data_json["job"]["costEstimation"])
         return ReturnValue(value=ret.value.estimated_cost, error=ret.error)
 
     def cancel_job(self, job_id: str) -> ReturnValue[bool]:
@@ -318,23 +281,18 @@ class RealityDataAnalysisService:
         Returns:
             True if the job was successfully cancelled, and a potential error message.
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value=False, error=ret.error)
         jc_dict = {
             "state": "cancelled",
         }
         job_json = json.dumps(jc_dict)
-        self._connection.request(
-            "PATCH",
-            f"/realitydataanalysis/jobs/{job_id}",
-            job_json,
-            self._get_header(),
-        )
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value=False, error=code.error_message())
+        response = self._session.patch("https://" + self._service_url + f"/realitydataanalysis/jobs/{job_id}", job_json, headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=False, error=error_string)
         return ReturnValue(value=True, error="")
 
     def delete_job(self, job_id: str) -> ReturnValue[bool]:
@@ -346,17 +304,12 @@ class RealityDataAnalysisService:
         Returns:
             True if the job was successfully deleted, and a potential error message.
         """
-        ret = self._connect()
-        if ret.is_error():
-            return ReturnValue(value=False, error=ret.error)
-        self._connection.request(
-            "DELETE",
-            f"/realitydataanalysis/jobs/{job_id}",
-            None,
-            self._get_header(),
-        )
-        response = self._connection.getresponse()
-        code = Code(response)
-        if not code.success():
-            return ReturnValue(value=False, error=code.error_message())
+        response = self._session.delete("https://" + self._service_url + f"/realitydataanalysis/jobs/{job_id}", headers=self._get_header())
+        data_json = response.json()
+        if response.status_code < 200 or response.status_code >= 400:
+            error = data_json.get("error", {})
+            code = error.get("code", "")
+            message = error.get("message", "")
+            error_string = f"code {response.status_code}: {code}, {message}"
+            return ReturnValue(value=False, error=error_string)
         return ReturnValue(value=True, error="")

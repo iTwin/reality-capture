@@ -185,7 +185,7 @@ def main():
     print("Downloading outputs")
 
     objects2D_id = final_settings.outputs.objects2D
-    ret = data_transfer.download_context_scene(objects2D_id, output_path, references)
+    ret = data_transfer.download_context_scene(objects2D_id, output_path, project_id, references)
     if ret.is_error():
         print("Error while downloading output:", ret.error)
         exit(1)

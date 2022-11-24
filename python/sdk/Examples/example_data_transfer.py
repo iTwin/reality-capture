@@ -47,7 +47,7 @@ def main():
     print("Upload finished")
 
     # download ccimageCollection
-    ret_down = data_transfer.download_reality_data(ret_up.value, output_path)
+    ret_down = data_transfer.download_reality_data(ret_up.value, output_path, project_id)
     if ret_down.is_error():
         print(
             "Error while downloading output with id {}: {}".format(
