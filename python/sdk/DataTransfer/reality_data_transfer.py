@@ -43,6 +43,13 @@ class RealityDataTransfer:
         self._header["Authorization"] = self._token_factory.get_token()
         return self._header
 
+    @staticmethod
+    def _error_msg(status_code, data_json) -> str:
+        error = data_json.get("error", {})
+        code = error.get("code", "")
+        message = error.get("message", "")
+        return f"code {status_code}: {code}, {message}"
+
     def _create_reality_data(
             self,
             name: str,
@@ -67,11 +74,7 @@ class RealityDataTransfer:
                                       headers=self._get_header())
         data_json = response.json()
         if response.status_code < 200 or response.status_code >= 400:
-            error = data_json.get("error", {})
-            code = error.get("code", "")
-            message = error.get("message", "")
-            error_string = f"code {response.status_code}: {code}, {message}"
-            return ReturnValue(value="", error=error_string)
+            return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
 
         return ReturnValue(value=data_json["realityData"]["id"], error="")
 
@@ -87,11 +90,7 @@ class RealityDataTransfer:
                                        headers=self._get_header())
         data_json = response.json()
         if response.status_code < 200 or response.status_code >= 400:
-            error = data_json.get("error", {})
-            code = error.get("code", "")
-            message = error.get("message", "")
-            error_string = f"code {response.status_code}: {code}, {message}"
-            return ReturnValue(value="", error=error_string)
+            return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
         return ReturnValue(value=data_json["realityData"]["id"], error="")
 
     def set_progress_hook(self, hook) -> None:
@@ -143,11 +142,7 @@ class RealityDataTransfer:
 
         data_json = response.json()
         if response.status_code < 200 or response.status_code >= 400:
-            error = data_json.get("error", {})
-            code = error.get("code", "")
-            message = error.get("message", "")
-            error_string = f"code {response.status_code}: {code}, {message}"
-            return ReturnValue(value="", error=error_string)
+            return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
 
         sas_uri = data_json["container"]["_links"]["containerUrl"]["href"]
 
@@ -314,11 +309,7 @@ class RealityDataTransfer:
 
         data_json = response.json()
         if response.status_code < 200 or response.status_code >= 400:
-            error = data_json.get("error", {})
-            code = error.get("code", "")
-            message = error.get("message", "")
-            error_string = f"code {response.status_code}: {code}, {message}"
-            return ReturnValue(value="", error=error_string)
+            return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
         sas_uri = data_json["container"]["_links"]["containerUrl"]["href"]
 
         client = ContainerClient.from_container_url(sas_uri)

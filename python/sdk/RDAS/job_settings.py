@@ -160,8 +160,8 @@ class S2DJobSettings:
         json_dict["outputs"] = list()
         if self.outputs.segmentation2D:
             json_dict["outputs"].append("segmentation2D")
-        # if self.outputs.segmented_photos:
-        #     json_dict["outputs"].append("segmentedPhotos")
+        if self.outputs.segmented_photos:
+            json_dict["outputs"].append("segmentedPhotos")
         if self.outputs.polygons2D:
             json_dict["outputs"].append("polygons2D")
         if self.outputs.exported_polygons2D_SHP:
@@ -206,8 +206,8 @@ class S2DJobSettings:
                     new_job_settings.outputs.segmentation2D = output_dict[
                         "realityDataId"
                     ]
-                # elif output_dict["name"] == "segmentedPhotos":
-                #     new_job_settings.outputs.segmented_photos = output_dict["realityDataId"]
+                elif output_dict["name"] == "segmentedPhotos":
+                    new_job_settings.outputs.segmented_photos = output_dict["realityDataId"]
                 elif output_dict["name"] == "polygons2D":
                     new_job_settings.outputs.polygons2D = output_dict["realityDataId"]
                 elif output_dict["name"] == "exportedPolygons2DSHP":
@@ -257,7 +257,7 @@ class S2DJobSettings:
             self.polygons2D: str = ""
             self.exported_polygons2D_SHP: str = ""
             self.lines2D: str = ""
-            # self.segmented_photos: str = ""
+            self.segmented_photos: str = ""
 
 
 class O3DJobSettings:

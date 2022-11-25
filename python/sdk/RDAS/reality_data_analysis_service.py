@@ -46,6 +46,13 @@ class RealityDataAnalysisService:
         self._header["Authorization"] = self._token_factory.get_token()
         return self._header
 
+    @staticmethod
+    def _error_msg(status_code, data_json) -> str:
+        error = data_json.get("error", {})
+        code = error.get("code", "")
+        message = error.get("message", "")
+        return f"code {status_code}: {code}, {message}"
+
     def create_job(
             self, settings: JobSettings, job_name: str, iTwin_id: str
     ) -> ReturnValue[str]:
@@ -75,11 +82,7 @@ class RealityDataAnalysisService:
         # if the query was successful we return the id of the job, else we return an empty string and the error message
         data_json = response.json()
         if response.status_code < 200 or response.status_code >= 400:
-            error = data_json.get("error", {})
-            code = error.get("code", "")
-            message = error.get("message", "")
-            error_string = f"code {response.status_code}: {code}, {message}"
-            return ReturnValue(value="", error=error_string)
+            return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
         return ReturnValue(value=data_json["job"]["id"], error="")
 
     def submit_job(self, job_id: str) -> ReturnValue[bool]:
@@ -98,11 +101,7 @@ class RealityDataAnalysisService:
                                        headers=self._get_header())
         data_json = response.json()
         if response.status_code < 200 or response.status_code >= 400:
-            error = data_json.get("error", {})
-            code = error.get("code", "")
-            message = error.get("message", "")
-            error_string = f"code {response.status_code}: {code}, {message}"
-            return ReturnValue(value=False, error=error_string)
+            return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
         return ReturnValue(value=True, error="")
 
     def get_job_properties(self, job_id: str) -> ReturnValue[RDAJobProperties]:
@@ -120,11 +119,7 @@ class RealityDataAnalysisService:
         response = self._session.get("https://" + self._service_url + f"/realitydataanalysis/jobs/{job_id}", headers=self._get_header())
         data_json = response.json()
         if response.status_code < 200 or response.status_code >= 400:
-            error = data_json.get("error", {})
-            code = error.get("code", "")
-            message = error.get("message", "")
-            error_string = f"code {response.status_code}: {code}, {message}"
-            return ReturnValue(value=RDAJobProperties(), error=error_string)
+            return ReturnValue(value=RDAJobProperties(), error=self._error_msg(response.status_code, data_json))
 
         try:
             job_type_str = data_json["job"].get("type", None)
@@ -222,11 +217,7 @@ class RealityDataAnalysisService:
         response = self._session.get("https://" + self._service_url + f"/realitydataanalysis/jobs/{job_id}/progress", headers=self._get_header())
         data_json = response.json()
         if response.status_code < 200 or response.status_code >= 400:
-            error = data_json.get("error", {})
-            code = error.get("code", "")
-            message = error.get("message", "")
-            error_string = f"code {response.status_code}: {code}, {message}"
-            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=error_string)
+            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=self._error_msg(response.status_code, data_json))
 
         dp = data_json["progress"]
         try:
@@ -263,11 +254,7 @@ class RealityDataAnalysisService:
         response = self._session.patch("https://" + self._service_url + f"/realitydataanalysis/jobs/{job_id}", job_json, headers=self._get_header())
         data_json = response.json()
         if response.status_code < 200 or response.status_code >= 400:
-            error = data_json.get("error", {})
-            code = error.get("code", "")
-            message = error.get("message", "")
-            error_string = f"code {response.status_code}: {code}, {message}"
-            return ReturnValue(value=-1.0, error=error_string)
+            return ReturnValue(value=-1.0, error=self._error_msg(response.status_code, data_json))
 
         ret = RDAJobCostParameters.from_json(data_json["job"]["costEstimation"])
         return ReturnValue(value=ret.value.estimated_cost, error=ret.error)
@@ -288,11 +275,7 @@ class RealityDataAnalysisService:
         response = self._session.patch("https://" + self._service_url + f"/realitydataanalysis/jobs/{job_id}", job_json, headers=self._get_header())
         data_json = response.json()
         if response.status_code < 200 or response.status_code >= 400:
-            error = data_json.get("error", {})
-            code = error.get("code", "")
-            message = error.get("message", "")
-            error_string = f"code {response.status_code}: {code}, {message}"
-            return ReturnValue(value=False, error=error_string)
+            return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
         return ReturnValue(value=True, error="")
 
     def delete_job(self, job_id: str) -> ReturnValue[bool]:
@@ -307,9 +290,5 @@ class RealityDataAnalysisService:
         response = self._session.delete("https://" + self._service_url + f"/realitydataanalysis/jobs/{job_id}", headers=self._get_header())
         data_json = response.json()
         if response.status_code < 200 or response.status_code >= 400:
-            error = data_json.get("error", {})
-            code = error.get("code", "")
-            message = error.get("message", "")
-            error_string = f"code {response.status_code}: {code}, {message}"
-            return ReturnValue(value=False, error=error_string)
+            return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
         return ReturnValue(value=True, error="")
