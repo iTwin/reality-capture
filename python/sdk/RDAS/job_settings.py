@@ -168,10 +168,6 @@ class S2DJobSettings:
             json_dict["outputs"].append("exportedPolygons2DSHP")
         if self.outputs.lines2D:
             json_dict["outputs"].append("lines2D")
-        if self.outputs.exported_lines2D_DGN:
-            json_dict["outputs"].append("exportedLines2DDGN")
-        if self.outputs.exported_lines2D_SHP:
-            json_dict["outputs"].append("exportedLines2DSHP")
         return json_dict
 
     @classmethod
@@ -220,10 +216,6 @@ class S2DJobSettings:
                     ]
                 elif output_dict["name"] == "lines2D":
                     new_job_settings.outputs.lines2D = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedLines2DDGN":
-                    new_job_settings.outputs.exported_lines2D_DGN = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedLines2DSHP":
-                    new_job_settings.outputs.exported_lines2D_SHP = output_dict["realityDataId"]
                 else:
                     raise TypeError(
                         "found non expected output name:" + output_dict["name"]
@@ -266,8 +258,6 @@ class S2DJobSettings:
             self.exported_polygons2D_SHP: str = ""
             self.lines2D: str = ""
             self.segmented_photos: str = ""
-            self.exported_lines2D_SHP = ""
-            self.exported_lines2D_DGN = ""
 
 
 class O3DJobSettings:
