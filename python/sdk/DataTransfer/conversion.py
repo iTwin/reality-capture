@@ -120,6 +120,8 @@ def _replace_context_scene_references_json(
     with open(new_scene, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
 
+    return ReturnValue(value=True, error="")
+
 
 def replace_context_scene_references(
     scene_path: str,
