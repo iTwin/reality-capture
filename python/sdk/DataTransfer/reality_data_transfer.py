@@ -133,7 +133,7 @@ class RealityDataTransfer:
         print("Creating new reality data for project:", iTwin_id)
         ret = self._create_reality_data(name, data_type, iTwin_id, root_file)
         if ret.is_error():
-            ReturnValue(value=ret.value, error=ret.error)
+            return ReturnValue(value=ret.value, error=ret.error)
         print("Uploading files")
 
         response = self._session.get(
@@ -163,7 +163,7 @@ class RealityDataTransfer:
             ret.value, update_dict={"authoring": True}, iTwin_id=iTwin_id
         )
         if ret_bool.is_error():
-            ReturnValue(value="", error=ret.error)
+            return ReturnValue(value="", error=ret.error)
 
         def _upload_file(file_tuple):
             def _upload_callback(current, total):
@@ -202,7 +202,7 @@ class RealityDataTransfer:
                 ret.value, update_dict={"authoring": False}, iTwin_id=iTwin_id
             )
             if ret_bool.is_error():
-                ReturnValue(value="", error=ret.error)
+                return ReturnValue(value="", error=ret.error)
         return ret
 
     def upload_context_scene(
