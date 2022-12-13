@@ -288,7 +288,7 @@ class RealityDataAnalysisService:
             True if the job was successfully deleted, and a potential error message.
         """
         response = self._session.delete("https://" + self._service_url + f"/realitydataanalysis/jobs/{job_id}", headers=self._get_header())
-        data_json = response.json()
         if response.status_code < 200 or response.status_code >= 400:
+            data_json = response.json()
             return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
         return ReturnValue(value=True, error="")
