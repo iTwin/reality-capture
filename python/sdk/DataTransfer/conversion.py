@@ -38,31 +38,24 @@ def _replace_context_scene_references_xml(
                 value=False, error=f"{scene_path} is not a valid ContextScene"
             )
         refs = root.find("References")
-        if refs is None:
-            return ReturnValue(value=True, error="")
-        cpt = 0
-        for reference in refs.findall("Reference"):
-            cpt += 1
-            ref_path = reference.find("Path")
-            if ref_path is None:
-                return ReturnValue(
-                    value=False,
-                    error=f"Invalid Reference format in scene {scene_path}",
-                )
-            if local_to_cloud:
-                ret = reference_table.get_cloud_id_from_local_path(ref_path.text)
-                new_path = "rds:" + ret.value
-            else:
-                ret = reference_table.get_local_path_from_cloud_id(ref_path.text[4:])
-                new_path = ret.value
-            if ret.is_error():
-                return ReturnValue(value=False, error=ret.error)
-            ref_path.text = new_path
-        if cpt < 1:
-            return ReturnValue(
-                value=False,
-                error=f"No references in scene {scene_path}",
-            )
+        if refs is not None:
+            for reference in refs.findall("Reference"):
+                ref_path = reference.find("Path")
+                if ref_path is None:
+                    return ReturnValue(
+                        value=False,
+                        error=f"Invalid Reference format in scene {scene_path}",
+                    )
+                if local_to_cloud:
+                    ret = reference_table.get_cloud_id_from_local_path(ref_path.text)
+                    new_path = "rds:" + ret.value
+                else:
+                    ret = reference_table.get_local_path_from_cloud_id(ref_path.text[4:])
+                    new_path = ret.value
+                if ret.is_error():
+                    return ReturnValue(value=False, error=ret.error)
+                ref_path.text = new_path
+
     tree.write(new_scene_path, encoding="utf-8")
     return ReturnValue(value=True, error="")
 
@@ -97,29 +90,27 @@ def _replace_context_scene_references_json(
     data = json.load(file)
     file.close()
     refs = data.get("References", None)
-    if refs is None:
-        return ReturnValue(value=False, error=f"No references in scene {scene_path}")
-    for ref_nb in refs.values():
-        old_path = ref_nb.get("Path", None)
-        if old_path is None:
-            return ReturnValue(
-                value=False, error=f"Invalid Reference format in scene {scene_path}"
-            )
-        if local_to_cloud:
-            ret = reference_table.get_cloud_id_from_local_path(
-                os.path.normpath(old_path)
-            )
-            new_path = "rds:" + ret.value
-        else:
-            ret = reference_table.get_local_path_from_cloud_id(old_path[4:])
-            new_path = ret.value
-        if ret.is_error():
-            return ReturnValue(value=False, error=ret.error)
-        ref_nb["Path"] = new_path
+    if refs is not None:
+        for ref_nb in refs.values():
+            old_path = ref_nb.get("Path", None)
+            if old_path is None:
+                return ReturnValue(
+                    value=False, error=f"Invalid Reference format in scene {scene_path}"
+                )
+            if local_to_cloud:
+                ret = reference_table.get_cloud_id_from_local_path(
+                    os.path.normpath(old_path)
+                )
+                new_path = "rds:" + ret.value
+            else:
+                ret = reference_table.get_local_path_from_cloud_id(old_path[4:])
+                new_path = ret.value
+            if ret.is_error():
+                return ReturnValue(value=False, error=ret.error)
+            ref_nb["Path"] = new_path
 
     with open(new_scene, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
-
     return ReturnValue(value=True, error="")
 
 
