@@ -130,7 +130,7 @@ class BaseTokenFactory(AbstractTokenFactory):
         self._env = client_info.env
         self._redirect_url = client_info.redirect_url
         self._secret = client_info.secret
-        if not self._env:
+        if not self._env or self._env == "prod":
             ims_server = "ims.bentley.com"
         else:
             ims_server = "qa-ims.bentley.com"
