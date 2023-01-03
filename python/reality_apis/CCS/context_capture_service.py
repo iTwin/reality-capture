@@ -40,6 +40,13 @@ class ContextCaptureService:
         self._header["Authorization"] = self._token_factory.get_token()
         return self._header
 
+    @staticmethod
+    def _error_msg(status_code, data_json) -> str:
+        error = data_json.get("error", {})
+        code = error.get("code", "")
+        message = error.get("message", "")
+        return f"code {status_code}: {code}, {message}"
+
     def create_workspace(
         self, work_name: str, iTwin_id: str, cc_version: str = ""
     ) -> ReturnValue[str]:
