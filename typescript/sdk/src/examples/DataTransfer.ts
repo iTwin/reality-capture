@@ -6,7 +6,7 @@
 import { defaultProgressHook, RealityDataTransfer } from "../utils/RealityDataTransfer";
 import { ClientInfo, RealityDataType } from "../CommonData";
 import * as dotenv from "dotenv";
-import { ServiceTokenFactory } from "../TokenFactory";
+import { ServiceTokenFactory } from "../token/TokenFactoryNode";
 
 
 async function runRealityDataExample() {

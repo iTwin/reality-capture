@@ -3,17 +3,18 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import * as fs from "fs";
-import path = require("path");
-
 /**
  * Associate data local paths to RDS ids.
  */
-export class ReferenceTable {
+export class ReferenceTableBrowser {
     /** Local path to cloud id. */
     private localToCloud: Map<string, string>;
     /** Cloud id to local path. */
     private cloudToLocal: Map<string, string>;
+
+    public get entries() {
+        return this.localToCloud;
+    }
 
     constructor() {
         this.localToCloud = new Map();
@@ -22,50 +23,50 @@ export class ReferenceTable {
 
     /**
      * Save references in {@link fileName}. This file will be loaded next time to prevent reuploading the same data, see {@link load}.
-     * @param fileName target file.
      * @returns true if the references have been saved successfully.
      */
-    public async save(fileName: string): Promise<void> {
-        await fs.promises.mkdir(path.dirname(fileName), { recursive: true });
-
-        const fileExist = async (): Promise<boolean> => {
-            try {
-                await fs.promises.access(fileName, fs.constants.F_OK);
-            }
-            catch (error: any) {
-                return false;
-            }
-            return true;
-        };
-
-        const exist = await fileExist();
-        if(exist)
-            await fs.promises.truncate(fileName, 0); // Reset file
-
+    public async save(): Promise<void> {
+        const newHandle = await window.showSaveFilePicker();
+        const writableStream = await newHandle.createWritable();
+        let content = "";
         for (const [key, value] of this.localToCloud) {
-            await fs.promises.appendFile(fileName, key + "," + value + "\n");
+            content += key + "," + value + "\n";
         }
+        await writableStream.write(content);
+        await writableStream.close();
     }
 
     /**
-     * Load references from {@link fileName}.
-     * @param fileName target file.
+     * Load references from selected file.
      * @returns true if the references have been successfully loaded.
      */
-    public async load(fileName: string): Promise<void> {
-        this.localToCloud = new Map();
-        this.cloudToLocal = new Map();
+    public async load(): Promise<void> {
+        const pickerOpts = {
+            types: [
+                {
+                    description: "Text",
+                    accept: {
+                        "text/*": [".txt"]
+                    }
+                },
+            ],
+            excludeAcceptAllOption: true,
+            multiple: false
+        };
 
-        const content = await fs.promises.readFile(fileName);
+        const handles = await window.showOpenFilePicker(pickerOpts);
+        if(!handles.length)
+            return;
+            
+        const file = await handles[0].getFile();
+        const content = await file.text();
         const lines = content.toString().replace(/\r\n/g, "\n").split("\n");
-
-        let res = true;
         for (const line of lines) {
             const [localPath, cloudId] = line.split(",");
             if (!localPath || !cloudId)
                 continue;
 
-            res &&= this.addReference(localPath, cloudId);
+            this.addReference(localPath, cloudId);
         }
     }
 
@@ -86,6 +87,16 @@ export class ReferenceTable {
         this.localToCloud.set(localPath, cloudId);
         this.cloudToLocal.set(cloudId, localPath);
         return true;
+    }
+
+    /**
+     * Remove reference from the reference table.
+     * @param localPath local path entry to remove.
+     * @param cloudId cloud id entry to remove.
+     * @returns true if the entry has been removed successfully in both maps.
+     */
+    public removeReference(localPath: string, cloudId: string): boolean {
+        return this.localToCloud.delete(localPath) && this.cloudToLocal.delete(cloudId);
     }
 
     /**

@@ -4,24 +4,12 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 import { IModelHost } from "@itwin/core-backend";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import { ElectronMainAuthorization } from "@itwin/electron-authorization/lib/cjs/ElectronMain";
-import { ClientInfo } from "./CommonData";
-
-/**
- * Token factory interface. Implement this interface to create your own token factory.
- */
-export interface TokenFactory {
-    /** Returns a valid access token to make authenticated requests to an API. */
-    getToken: () => Promise<string>;
-    /** Returns true if the access token is valid. */
-    isOk: () => boolean;
-    /** Returns service url. */
-    getServiceUrl: () => string;
-}
+import { TokenFactory } from "./TokenFactory";
+import { ClientInfo } from "../CommonData";
 
 /**
  * iTwin Token factory for Service Application.
@@ -65,54 +53,7 @@ export class ServiceTokenFactory implements TokenFactory {
     }
 
     public getServiceUrl(): string {
-        return "https://" + this.clientInfo.env + "api.bentley.com/"
-    }
-}
-
-/**
- * iTwin Token factory for Single Page Application.
- */
-export class SPATokenFactory implements TokenFactory {
-    /** Info to initialize the authorization client. */
-    private clientInfo: ClientInfo;
-
-    /** Utility to generate tokens. */
-    private authorizationClient?: BrowserAuthorizationClient;
-
-    constructor(clientInfo: ClientInfo) {
-        this.clientInfo = clientInfo;
-    }
-
-    public async getToken(): Promise<string> {
-        if(this.authorizationClient)
-            return await this.authorizationClient.getAccessToken();
-        
-        if (!this.clientInfo.redirectUrl)
-            return Promise.reject(Error("Redirect url is undefined"));
-
-        let env = "";
-        if(this.clientInfo.env)
-            env = "qa-";
-            
-        const authority = "https://" + env + "ims.bentley.com";
-        this.authorizationClient = new BrowserAuthorizationClient({
-            clientId: this.clientInfo.clientId,
-            scope: Array.from(this.clientInfo.scopes).join(" "),
-            authority: authority,
-            responseType: "code",
-            redirectUri: this.clientInfo.redirectUrl,
-        });
-        await this.authorizationClient.signInRedirect();
-        return await this.authorizationClient.getAccessToken();
-    }
-
-    public isOk(): boolean {
-        return this.authorizationClient !== undefined && this.authorizationClient.hasSignedIn 
-            && this.authorizationClient.isAuthorized && !this.authorizationClient.hasExpired; 
-    }
-
-    public getServiceUrl(): string {
-        return "https://" + this.clientInfo.env + "api.bentley.com/"
+        return "https://" + this.clientInfo.env + "api.bentley.com/";
     }
 }
 
@@ -157,7 +98,7 @@ export class DesktopTokenFactory implements TokenFactory {
     }
 
     public getServiceUrl(): string {
-        return "https://" + this.clientInfo.env + "api.bentley.com/"
+        return "https://" + this.clientInfo.env + "api.bentley.com/";
     }
 }
 
@@ -202,6 +143,6 @@ export class ElectronTokenFactory implements TokenFactory {
     }
 
     public getServiceUrl(): string {
-        return "https://" + this.clientInfo.env + "api.bentley.com/"
+        return "https://" + this.clientInfo.env + "api.bentley.com/";
     }
 }

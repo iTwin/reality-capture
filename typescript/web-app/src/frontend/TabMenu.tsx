@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Viewer2D } from "./Viewer2D";
 import { Viewer3D } from "./Viewer3D";
 import "./App.css";
@@ -12,86 +12,69 @@ import { Rds } from "./DataTransferTab";
 import { Rdas } from "./RDASTab";
 import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 import { RealityDataAccessClient } from "@itwin/reality-data-client";
-import { ContextCapture } from "./CCCSTab";
+import { ContextCapture } from "./CCSTab";
+import { ReferenceTableBrowser } from "./sdk/utils/ReferenceTableBrowser";
+import { Svg2D, Svg3D, SvgProcess, SvgRealityMesh, SvgUpload } from "@itwin/itwinui-icons-react";
+import { ClientInfo } from "./sdk/CommonData";
+import { RealityDataAnalysisService } from "./sdk/rdas/RealityDataAnalysisService";
+import { ContextCaptureService } from "./sdk/cccs/ContextCaptureService";
+import { RealityDataTransferBrowser } from "./sdk/utils/RealityDataTransferBrowser";
 
 interface TabMenu {
-    accessToken: string;
     realityDataAccessClient: RealityDataAccessClient;
     authClient: BrowserAuthorizationClient;
 }
 
 export function TabMenu(props: TabMenu) {
     const [tabIndex, setTabIndex] = React.useState(0);
+    const [referenceTable, setReferenceTable] = React.useState(new ReferenceTableBrowser());
+    const [useReferenceTable, setUseReferenceTable] = React.useState(true);
 
-    // RDS
-    const [uploadedDataType, setUploadedDataType] = React.useState<string>("");
-    const [uploadedDataId, setUploadedDataId] = React.useState<string>("");
-
-    const [downloadedDataId, setDownloadedDataId] = React.useState<string>("");
-
-    // 2D
-    const [imageIndex, setImageIndex] = React.useState<number>(-1);
-    const [zoomLevel, setZoomLevel] = React.useState<number>(1);
-    const [idViewer2D, setIdViewer2D] = React.useState<string>("");
-
-    // 3D
-    
-
-    /** Previous photo */
-    const onImageIndexChange = (newImageIndex: number): void => {
-        setImageIndex(newImageIndex);
+    const onReferenceTableChanged = async (newReferenceTable: ReferenceTableBrowser): Promise<void> => {
+        setReferenceTable(newReferenceTable);
     };
 
-    const onZoomChange = (newZoomLevel: number): void => {
-        setZoomLevel(newZoomLevel);
+    const onUseReferenceTableChanged = async (isUsed: boolean): Promise<void> => {
+        setUseReferenceTable(isUsed);
     };
 
-    const onDisplay2DIdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setIdViewer2D(event.target.value);
-    };
-
-    const onUploadedDataTypeChange = (select: string): void => {
-        setUploadedDataType(select);
-    };
-
-    const onUploadedDataIdChange = (id: string): void => {
-        setUploadedDataId(id);
-    };
-
-    const onDownloadedIdChange = async (id: React.ChangeEvent<HTMLInputElement>): Promise<void> => {
-        setDownloadedDataId(id.target.value);
-    };
+    const clientInfo = useMemo(
+        (): ClientInfo => {
+            const clientInfo: ClientInfo = {clientId: process.env.IMJS_AUTHORIZATION_CLIENT_ID!, 
+                scopes: new Set([...RealityDataAnalysisService.getScopes(), ...ContextCaptureService.getScopes(), ...RealityDataTransferBrowser.getScopes()]), 
+                env: "qa-", redirectUrl: process.env.IMJS_AUTHORIZATION_REDIRECT_URI!};
+            return clientInfo;
+        },[],
+    );
 
     const getTabs = () => {
         switch (tabIndex) {
         case 0:
-            return <Rds uploadedDataType={uploadedDataType} uploadedDataId={uploadedDataId}
-                downloadedDataId={downloadedDataId}           
-                onUploadedDataTypeChange={onUploadedDataTypeChange} accessToken={props.accessToken}
-                onUploadedDataIdChange={onUploadedDataIdChange} onDownloadedIdChange={onDownloadedIdChange}/>;
+            return <Rdas realityDataAccessClient={props.realityDataAccessClient} clientInfo={clientInfo}/>;
         case 1:
-            return <Rdas accessToken={props.accessToken!}/>;
+            return <ContextCapture realityDataAccessClient={props.realityDataAccessClient} clientInfo={clientInfo}/>;
         case 2:
-            return <ContextCapture accessToken={props.accessToken!}/>;
+            return <Viewer2D realityDataAccessClient={props.realityDataAccessClient}/>;
         case 3:
-            return <Viewer2D imageIndex={imageIndex} zoomLevel={zoomLevel} idToDisplay={idViewer2D} accessToken={props.accessToken}
-                onIdChange={onDisplay2DIdChange} onZoomChange={onZoomChange} onImageIndexChange={onImageIndexChange}/>;
+            return <Viewer3D realityDataAccessClient={props.realityDataAccessClient} 
+                authClient={props.authClient}/>;
         case 4:
-            return <Viewer3D accessToken={props.accessToken!} realityDataAccessClient={props.realityDataAccessClient} authClient={props.authClient}/>;
+            return <Rds referenceTable={referenceTable} clientInfo={clientInfo} onReferenceTableChanged={onReferenceTableChanged} 
+                realityDataAccessClient={props.realityDataAccessClient} useReferenceTable={useReferenceTable} 
+                onUseReferenceTableChanged={onUseReferenceTableChanged} />;
         default:
-            return <Viewer2D imageIndex={imageIndex} zoomLevel={zoomLevel} idToDisplay={idViewer2D} accessToken={props.accessToken}
-                onIdChange={onDisplay2DIdChange} onZoomChange={onZoomChange} onImageIndexChange={onImageIndexChange}/>;
+            return <Rdas realityDataAccessClient={props.realityDataAccessClient} clientInfo={clientInfo}/>;
         }
     };
 
     return(
         <HorizontalTabs
-            labels={[
-                <Tab key={0} label="RDS" />,
-                <Tab key={1} label="Reality Data Analysis" />,
-                <Tab key={2} label="ContextCapture" />,
-                <Tab key={3} label="Display 2D" />,
-                <Tab key={4} label="Display 3D" />,
+            labels={[                
+                <Tab key={0} label="RDAS" startIcon={<SvgProcess />} />,
+                <Tab key={1} label="CCS" startIcon={<SvgRealityMesh />} />,
+                <Tab key={2} label="2D viewer" startIcon={<Svg2D />} />,
+                <Tab key={3} label="3D viewer" startIcon={<Svg3D />} />,
+                <Tab key={4} label="Data Transfer" startIcon={<SvgUpload />} />,
             ]}
             onTabSelected={setTabIndex}
             type="borderless">

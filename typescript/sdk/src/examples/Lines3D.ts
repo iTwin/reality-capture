@@ -11,7 +11,7 @@ import { defaultProgressHook, RealityDataTransfer } from "../utils/RealityDataTr
 import { ReferenceTable } from "../utils/ReferenceTable";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
-import { ServiceTokenFactory } from "../TokenFactory";
+import { ServiceTokenFactory } from "../token/TokenFactoryNode";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }

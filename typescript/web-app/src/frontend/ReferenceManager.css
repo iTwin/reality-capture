@@ -3,18 +3,12 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-.ccs-controls-group {
-    display: flex;
-    align-items: center;
-    margin-left: 10px;
+.reference-group {
+    text-align: left;
+    align-items: left;
     margin-top: 10px;
 }
 
-.ccs-control {
+.reference-control {
     margin-left: 10px;
-}
-
-.ccs-progress {
-    margin-left: 10px;
-    width: 600px;
 }

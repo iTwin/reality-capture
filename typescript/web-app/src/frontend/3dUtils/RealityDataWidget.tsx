@@ -12,8 +12,13 @@ import { Alert, Button, IconButton, LabeledInput, Slider, ToggleSwitch } from "@
 import RealityData from "./RealityData";
 import "./RealityData.scss";
 import { RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
+import { SelectRealityData } from "../SelectRealityData";
 
-const RealityDataWidget = () => {
+interface RealityDataWidgetProps {
+    realityDataAccessClient: RealityDataAccessClient;
+}
+
+const RealityDataWidget = (props: RealityDataWidgetProps) => {
     const iModelConnection = useActiveIModelConnection();
     const viewport = useActiveViewport();
 
@@ -23,6 +28,8 @@ const RealityDataWidget = () => {
     const [updateAttachedState, setUpdateAttachedState] = React.useState<string>("");
     const [updateTransparencyState, setUpdateTransparencyState] = React.useState<string>("");
     const [realityDataId, setRealityDataId] = React.useState<string>("");
+
+    const [id, setId] = React.useState<string>("");
 
     // Initialize the widget
     useEffect(() => {
@@ -77,37 +84,38 @@ const RealityDataWidget = () => {
 
     const onDisplay = async (): Promise<void> => {
         const list = [...availableRealityModels];
-        const control = document.getElementById("reality-data-id") as HTMLInputElement;
         const accessToken = await IModelApp.authorizationClient!.getAccessToken();
         const realityDataClientOptions: RealityDataClientOptions = {
             baseUrl: `https://${process.env.IMJS_URL_PREFIX}api.bentley.com/realitydata`,
         };
-        const available = await new RealityDataAccessClient(realityDataClientOptions).getRealityData(accessToken, process.env.IMJS_PROJECT_ID, control.value);
+        const available = await new RealityDataAccessClient(realityDataClientOptions).getRealityData(accessToken, process.env.IMJS_PROJECT_ID, id);
         const model: ContextRealityModelProps = {
             tilesetUrl: "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata/" + 
-                control.value + "?projectId=" + process.env.IMJS_PROJECT_ID,
+                id + "?projectId=" + process.env.IMJS_PROJECT_ID,
             name: available.displayName,
             rdSourceKey: {
                 provider: RealityDataProvider.ContextShare,
                 format: available.type === "OPC" ? RealityDataFormat.OPC : RealityDataFormat.ThreeDTile,
-                id: control.value
+                id: id
             }
         };
         list.push(model);
         
         // Set the blank iModel connection when the first reality data is loaded.
         if(list.length === 1)
-            RealityData.onRealityDataAdd.emit({ realityDataId: control.value });
+            RealityData.onRealityDataAdd.emit({ realityDataId: id });
         
         setAvailableRealityModels(list);
-        setRealityDataId(control.value);
+        setRealityDataId(id);
     };
 
     return (
         <div className="sample-options">
             <div className="viewer3d-controls-group">               
-                <LabeledInput className="viewer3d-control" id="reality-data-id" displayStyle="inline" label="Mesh" placeholder="Enter id here..."/>
-                <Button className="viewer3d-control" onClick={onDisplay}>Display</Button>
+                <SelectRealityData key={0} realityDataAccessClient={props.realityDataAccessClient} placeholder={"Select photos (context scene)"} 
+                    onSelectedDataChange={(select: string) => setId(select)}
+                    realityDataType={["Cesium3DTiles", "OPC"]} selectedRealityData={id} />
+                <Button className="viewer3d-control" onClick={onDisplay} disabled={id === ""}>Display</Button>
             </div>
             <div className="sample-options-col">
                 {availableRealityModels && availableRealityModels.map((element, index) => {
@@ -147,6 +155,11 @@ const RealityDataWidget = () => {
 
 export class RealityDataWidgetProvider implements UiItemsProvider {
     public readonly id: string = "RealityDataWidgetProvider";
+    public realityDataAccessClient: RealityDataAccessClient;
+
+    constructor(realityDataAccessClient: RealityDataAccessClient) {
+        this.realityDataAccessClient = realityDataAccessClient;
+    }
 
     public provideWidgets(_stageId: string, _stageUsage: string, location: StagePanelLocation, _section?: StagePanelSection): ReadonlyArray<AbstractWidgetProps> {
         const widgets: AbstractWidgetProps[] = [];
@@ -156,7 +169,7 @@ export class RealityDataWidgetProvider implements UiItemsProvider {
                     id: "RealityDataWidget",
                     label: "Reality Data Controls",
                     defaultState: WidgetState.Open,
-                    getWidgetContent: () => <RealityDataWidget />,
+                    getWidgetContent: () => <RealityDataWidget realityDataAccessClient={this.realityDataAccessClient}/>,
                 },
             );
         }

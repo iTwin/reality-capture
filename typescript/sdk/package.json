@@ -45,6 +45,7 @@
 		"@types/node": "^16.11.34",
 		"@types/node-fetch": "^2.6.2",
 		"@types/uuid": "^8.3.4",
+		"@types/wicg-file-system-access": "^2020.9.5",
 		"@typescript-eslint/eslint-plugin": "^5.30.6",
 		"@typescript-eslint/parser": "^5.30.6",
 		"chai": "^4.3.6",
