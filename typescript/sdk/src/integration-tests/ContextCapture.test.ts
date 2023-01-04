@@ -6,8 +6,6 @@
 import chai, { expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
-import { ContextCaptureService } from "../cccs/ContextCaptureService";
-import { ServiceTokenFactory } from "../TokenFactory";
 import { BentleyError } from "@itwin/core-bentley";
 import { ClientInfo, JobState, RealityDataType } from "../CommonData";
 import * as dotenv from "dotenv";
@@ -15,7 +13,9 @@ import { RealityDataTransfer } from "../utils/RealityDataTransfer";
 import path = require("path");
 import { ReferenceTable } from "../utils/ReferenceTable";
 import { RealityDataClientOptions, RealityDataAccessClient } from "@itwin/reality-data-client";
-import { CCJobSettings, CCJobType, CCMeshQuality } from "../cccs/Utils";
+import { ContextCaptureService } from "../cccs/ContextCaptureService";
+import { CCJobSettings, CCMeshQuality, CCJobType } from "../cccs/Utils";
+import { ServiceTokenFactory } from "../token/TokenFactoryNode";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 

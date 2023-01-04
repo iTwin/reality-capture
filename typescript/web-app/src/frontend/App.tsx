@@ -13,15 +13,6 @@ import { TabMenu } from "./TabMenu";
 export function App() {
     const [accessToken, setAccessToken] = React.useState<string>();
 
-    const realityDataAccessClient = useMemo(
-        (): RealityDataAccessClient => {
-            const realityDataClientOptions: RealityDataClientOptions = {
-                baseUrl: "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata",
-            };
-            return new RealityDataAccessClient(realityDataClientOptions);
-        },[],
-    );
-
     const authClient = useMemo(
         () =>
             new BrowserAuthorizationClient({
@@ -32,6 +23,16 @@ export function App() {
                 authority: process.env.IMJS_AUTHORIZATION_ISSUER_URL,
             }),
         []
+    );
+
+    const realityDataAccessClient = useMemo(
+        (): RealityDataAccessClient => {
+            const realityDataClientOptions: RealityDataClientOptions = {
+                baseUrl: "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata",
+                authorizationClient: authClient
+            };
+            return new RealityDataAccessClient(realityDataClientOptions);
+        },[authClient],
     );
     
     const login = useCallback(async () => {
@@ -54,7 +55,9 @@ export function App() {
                     <ProgressLinear indeterminate={true} labels={["Signing in..."]} />
                 </div>
             )}
-            <TabMenu accessToken={accessToken!} realityDataAccessClient={realityDataAccessClient} authClient={authClient}/>
+            {accessToken && (
+                <TabMenu realityDataAccessClient={realityDataAccessClient} authClient={authClient}/>
+            )}
         </div>
     );
 }

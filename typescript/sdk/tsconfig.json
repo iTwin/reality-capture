@@ -6,6 +6,9 @@
     "outDir": "./lib",
     "esModuleInterop": true
   },
+  "types": [
+    "@types/wicg-file-system-access"
+  ],
   "include": [
     "./src/**/*.ts*"
   ]

@@ -3,24 +3,28 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-.photo-viewer-canvas {
-    position: relative;
-    margin-top: 25px;
-}
-
-.photo-viewer-controls-group {
+.ccs-controls-group {
     display: flex;
     align-items: center;
-    text-align: left;
 }
 
-.photo-viewer-control {
+.ccs-control {
     margin-left: 10px;
     margin-top: 10px;
 }
 
-.photo-viewer-canvas canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
+.ccs-progress {
+    margin-left: 10px;
+    margin-top: 10px;
+    width: 600px;
+}
+
+.ccs-sep {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.ccs-input {
+    width: 300px;
+    margin-bottom: 5px;
 }

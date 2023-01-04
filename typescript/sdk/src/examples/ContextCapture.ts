@@ -4,14 +4,14 @@
 *--------------------------------------------------------------------------------------------*/
 
 import path = require("path");
-import { ContextCaptureService } from "../cccs/ContextCaptureService";
 import { defaultProgressHook, RealityDataTransfer } from "../utils/RealityDataTransfer";
 import { ReferenceTable } from "../utils/ReferenceTable";
 import * as fs from "fs";
 import { ClientInfo, JobState, RealityDataType } from "../CommonData";
-import { CCJobSettings, CCJobType, CCMeshQuality } from "../cccs/Utils";
 import * as dotenv from "dotenv";
-import { ServiceTokenFactory } from "../TokenFactory";
+import { ServiceTokenFactory } from "../token/TokenFactoryNode";
+import { CCJobSettings, CCJobType, CCMeshQuality } from "../cccs/Utils";
+import { ContextCaptureService } from "../cccs/ContextCaptureService";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }

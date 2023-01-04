@@ -13,7 +13,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "types": [
-      "@bentley/react-scripts"
+      "@bentley/react-scripts", "@types/wicg-file-system-access"
     ],
     "lib": [
       "dom",

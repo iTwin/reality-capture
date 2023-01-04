@@ -176,15 +176,13 @@ class S2DInputs {
 class S2DOutputs {
     /** Segmented photos. */
     segmentation2D: string;
+    // this.segmentedPhotos: string;
     /** Detected 2D polygons. */
     polygons2D: string;
     /** 2D polygons exported to ESRI shapefile. */
     exportedPolygons2DSHP: string;
     /** Detected 2D lines. */
     lines2D: string;
-    segmentedPhotos: string;
-    exportedLines2DSHP: string;
-    exportedLines2DDGN: string;
 
     constructor() {
         /**
@@ -192,6 +190,7 @@ class S2DOutputs {
          * @type {string}
          */
         this.segmentation2D = "";
+        // this.segmentedPhotos = "";
         /**
          * Detected 2D polygons.
          * @type {string}
@@ -207,9 +206,6 @@ class S2DOutputs {
          * @type {string}
          */
         this.lines2D = "";
-        this.segmentedPhotos = "";
-        this.exportedLines2DSHP = "";
-        this.exportedLines2DDGN = "";
     }
 }
 
@@ -268,8 +264,8 @@ export class S2DJobSettings {
         if (this.outputs.segmentation2D)
             json["outputs"].push("segmentation2D");
 
-        if(this.outputs.segmentedPhotos)
-            json["outputs"].push("segmentedPhotos")
+        // if(this.outputs.segmentedPhotos
+        //     json["outputs"].push("segmentedPhotos")
         if (this.outputs.polygons2D)
             json["outputs"].push("polygons2D");
         if (this.outputs.exportedPolygons2DSHP)
@@ -304,8 +300,8 @@ export class S2DJobSettings {
         for (const output of outputsJson) {
             if (output["name"] === "segmentation2D")
                 newJobSettings.outputs.segmentation2D = output["realityDataId"];
-            else if(output["name"] === "segmentedPhotos")
-                newJobSettings.outputs.segmentedPhotos = output["realityDataId"];
+            // else if(output["name"] === "segmentedPhotos":
+            //     newJobSettings.outputs.segmentedPhotos = output["realityDataId"];
             else if (output["name"] === "polygons2D")
                 newJobSettings.outputs.polygons2D = output["realityDataId"];
             else if (output["name"] === "exportedPolygons2DSHP")
@@ -371,7 +367,6 @@ class O3DOutputs {
     exportedObjects3DCesium: string;
     /** ESRI SHP file export with locations of the 3D objects. */
     exportedLocations3DSHP: string;
-    meshes: string;
 
     constructor() {
         /**
@@ -399,7 +394,6 @@ class O3DOutputs {
          * @type {string}
          */
         this.exportedLocations3DSHP = "";
-        this.meshes = "";
     }
 }
 
@@ -929,7 +923,6 @@ class L3DOutputs {
     exportedLines3DDGN: string;
     /** Cesium 3D Tiles file export with 3D lines. */
     exportedLines3DCesium: string;
-    segmentedPhotos: string;
 
     constructor() {
         /**
@@ -947,7 +940,7 @@ class L3DOutputs {
          * @type {string}
          */
         this.segmentation2D = "";
-        this.segmentedPhotos = "";
+        // this.segmentedPhotos = ""
         /**
          * Detected 3D lines.
          * @type {string}
@@ -1048,8 +1041,8 @@ export class L3DJobSettings {
             json["outputs"].push("segmentedPointCloud");
         if (this.outputs.segmentation2D)
             json["outputs"].push("segmentation2D");
-        if(this.outputs.segmentedPhotos)
-            json["outputs"].push("segmentedPhotos")
+        // if(this.outputs.segmentedPhotos:
+        //     json["outputs"].push("segmentedPhotos"})
         if (this.outputs.lines3D)
             json["outputs"].push("lines3D");
         if (this.outputs.exportedLines3DDGN)
@@ -1099,8 +1092,8 @@ export class L3DJobSettings {
                 newJobSettings.outputs.segmentedPointCloud = output["realityDataId"];
             else if (output["name"] === "segmentation2D")
                 newJobSettings.outputs.segmentation2D = output["realityDataId"];
-            else if(output["name"] === "segmentedPhotos")
-                newJobSettings.outputs.segmentedPhotos = output["realityDataId"]
+            // else if(output["name"] === "segmentedPhotos")
+            //     newJobSettings.outputs.segmentedPhotos = output["realityDataId"]
             else if (output["name"] === "lines3D")
                 newJobSettings.outputs.lines3D = output["realityDataId"];
             else if (output["name"] === "exportedLines3DDGN")

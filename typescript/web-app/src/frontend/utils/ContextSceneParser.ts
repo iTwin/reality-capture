@@ -6,8 +6,8 @@
 "use strict";
 
 import { ContainerClient } from "@azure/storage-blob";
+import { RealityDataClientOptions, RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
 import { DOMParser } from "@xmldom/xmldom";
-import { getRealityData } from "./ApiUtils";
 
 interface Object2D {
     labelId : number;
@@ -88,7 +88,7 @@ export async function writeTempSceneFromImageCollection(id: string, collectionUr
  * @param contextScene parsed context scene.
  * @param accessToken access token to allow the app to access the API.
  */
-async function parseReferences(xmlDoc: XMLDocument, contextScene: ContextScene, accessToken: string) {
+async function parseReferences(xmlDoc: XMLDocument, contextScene: ContextScene, realityDataAccessClient: RealityDataAccessClient) {
     // Not safe because tags "Reference" may exist elsewhere
     const references = xmlDoc.getElementsByTagName("Reference");
     for (let i = 0; i < references.length; i++) {
@@ -105,10 +105,9 @@ async function parseReferences(xmlDoc: XMLDocument, contextScene: ContextScene, 
             continue; // No text content in reference path
         
         pathValue = pathValue.replace("rds:", "");
-
-        // const azureBlobUrl = await serverRdsSample.getRealityDataUrl(pathValue);
-        const realityData = await getRealityData(pathValue, accessToken);
-        const azureBlobUrl = await realityData.getBlobUrl(accessToken, "");
+        const realityData: ITwinRealityData = await realityDataAccessClient.getRealityData("", 
+            process.env.IMJS_PROJECT_ID, pathValue);
+        const azureBlobUrl = await realityData.getBlobUrl("", "");
         contextScene.references.set(parseInt(id), {collectionId: pathValue, collectionStorageUrl: azureBlobUrl.toString()});
     }
 }
@@ -302,7 +301,7 @@ function parseSegmentation2D(xmlDoc: XMLDocument, contextScene: ContextScene, do
     }
 }
 
-export async function parseContextScene(accessToken: string, sceneId: string, isFile = true): Promise<ContextScene> {
+export async function parseContextScene(realityDataAccessClient: RealityDataAccessClient, sceneId: string, isFile = true): Promise<ContextScene> {
     const contextScene: ContextScene = {
         photos: new Map(),
         lines3D: "",
@@ -311,8 +310,9 @@ export async function parseContextScene(accessToken: string, sceneId: string, is
     };
 
     let xmlDoc: Document | undefined = undefined;
-    const realityData = await getRealityData(sceneId, accessToken);
-    const azureBlobUrl = await realityData.getBlobUrl(accessToken, "");
+    const realityData: ITwinRealityData = await realityDataAccessClient.getRealityData("", 
+        process.env.IMJS_PROJECT_ID, sceneId);
+    const azureBlobUrl = await realityData.getBlobUrl("", "");
     if(!isFile) {
         await writeTempSceneFromImageCollection(sceneId, azureBlobUrl.toString());
         const content = localStorage.getItem("tmpContextSceneFromImages");
@@ -338,7 +338,7 @@ export async function parseContextScene(accessToken: string, sceneId: string, is
             throw new Error("Can't find " + sceneId);
     }
 
-    await parseReferences(xmlDoc, contextScene, accessToken);
+    await parseReferences(xmlDoc, contextScene, realityDataAccessClient);
     parsePhotoCollection(xmlDoc, contextScene);
     parseLabels(xmlDoc, contextScene);
     parseObjects2D(xmlDoc, contextScene);

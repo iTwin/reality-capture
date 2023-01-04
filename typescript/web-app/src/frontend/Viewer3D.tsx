@@ -18,7 +18,6 @@ import { createBlankViewState, getBlankConnection } from "./3dUtils/RealityDataC
 
 
 interface Viewer3DProps {
-    accessToken: string;
     realityDataAccessClient: RealityDataAccessClient;
     authClient: BrowserAuthorizationClient;
 }
@@ -40,9 +39,10 @@ export function Viewer3D(props: Viewer3DProps) {
             return;
         
         const getBlankConnectionProps = async () => {
-            const blankConnection = await getBlankConnection(firstDisplayedRealityData, props.accessToken);
+            const blankConnection = await getBlankConnection(firstDisplayedRealityData, await props.authClient.getAccessToken());
             const iModelConnection = BlankConnection.create(blankConnection);
-            const viewState = await createBlankViewState(props.accessToken, iModelConnection, firstDisplayedRealityData);
+            const viewState = await createBlankViewState(await props.authClient.getAccessToken(), iModelConnection, 
+                firstDisplayedRealityData);
             UiFramework.setIModelConnection(iModelConnection);
             if(viewState) {
                 for (const viewPort of IModelApp.viewManager) {
@@ -55,13 +55,13 @@ export function Viewer3D(props: Viewer3DProps) {
 
     const uiProviders = useMemo(
         () =>
-            new RealityDataWidgetProvider(),
+            new RealityDataWidgetProvider(props.realityDataAccessClient),
         []
     );
 
     return(
         <div className="viewer3d">
-            {props.accessToken && (
+            {props.authClient && (
                 <div id="test" className="viewer-container">
                     <Viewer
                         authClient={props.authClient}
@@ -69,6 +69,7 @@ export function Viewer3D(props: Viewer3DProps) {
                             name: "Test",
                             location: Cartographic.fromDegrees({longitude: -75.686694, latitude: 40.065757, height: 0}),
                             extents: new Range3d(-1000, -1000, -100, 1000, 1000, 100),
+                            iTwinId: process.env.IMJS_PROJECT_ID
                         }}
                         enablePerformanceMonitors={false}
                         uiProviders={[uiProviders,

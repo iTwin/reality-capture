@@ -11,7 +11,7 @@ import * as fs from "fs";
 import { ClientInfo, JobState, RealityDataType } from "../CommonData";
 import { O2DJobSettings } from "../rdas/Settings";
 import * as dotenv from "dotenv";
-import { ServiceTokenFactory } from "../TokenFactory";
+import { ServiceTokenFactory } from "../token/TokenFactoryNode";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
