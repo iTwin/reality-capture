@@ -12,8 +12,8 @@ from config import project_id, client_id
 
 def main():
 
-    ccimage_collections = r"C:\DataTransfer_Demo\images"
-    output_path = r"C:\tests\DataTransfer"
+    ccimage_collections = r"path to the folder yu want to upload"
+    output_path = r"path to the folder where you want to save downloads"
     ccimage_collections_name = "Test Data Transfer"
 
     print("Data Transfer example: upload and download of files")

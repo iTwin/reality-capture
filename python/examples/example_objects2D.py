@@ -1,39 +1,44 @@
 # Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 # See LICENSE.md in the project root for license terms and full copyright notice.
 
-# Sample creating and submitting a ContextCapture job
+# Sample creating and submitting a Reality Data Analysis job detecting 2D objects
 import os
 import time
 
-import reality_apis.CCS.context_capture_service as CCS
+import reality_apis.RDAS.reality_data_analysis_service as RDAS
 import reality_apis.DataTransfer.reality_data_transfer as DataTransfer
 
 from reality_apis.DataTransfer.references import ReferenceTable
-from reality_apis.CCS.ccs_utils import CCJobSettings, CCJobQuality, CCJobType
+from reality_apis.RDAS.job_settings import O2DJobSettings
 from reality_apis.utils import RealityDataType, JobState
 
-from config import project_id, client_id
 from token_factory.token_factory import ClientInfo, SpaDesktopMobileTokenFactory
+from config import project_id, client_id
 
 
 def main():
 
-    ccimage_collections = r"C:\CCS_Demo_Set\S2D-3CS-Bridge\BridgeImages"
-    cc_orientations = r"C:\CCS_Demo_Set\S2D-3CS-Bridge\BridgeCCorientation"
-    output_path = r"C:\tests\CCS"
+    ccimage_collections = (
+        r"path to your image folder"
+    )
+    photo_context_scene = r"path to the folder where your context scene file is"
+    photo_object_detector = (
+        r"path to the folder where your detector is"
+    )
+    output_path = r"path to the folder where you want to save outputs"
 
-    job_name = "CCCS job SDK sample"
-    workspace_name = "CCCS SDK test workspace"
-    ccimage_collections_name = "Test CCCS Photos"
-    cc_orientations_name = "Test CCCS cc orientations"
+    job_name = "O2D job new SDK sample"
+    ccimage_collections_name = "Test Moto Photos"
+    context_scene_name = "Test Moto Scene"
+    detector_name = "O2D photos in RAS-QA"
 
-    print("Context Capture sample job - Full (Calibration + Reconstruction)")
+    print("Reality Data Analysis sample job detecting 2D objects")
 
     scope_set = {
         "realitydata:modify",
         "realitydata:read",
-        "contextcapture:modify",
-        "contextcapture:read",
+        "realitydataanalysis:read",
+        "realitydataanalysis:modify",
     }
     # only for desktop/mobile applications
     scope_set.add("offline_access")
@@ -47,11 +52,11 @@ def main():
     data_transfer.set_progress_hook(DataTransfer.example_hook)
     print("Data transfer initialized")
 
-    # initializing cc service
-    service_cc = CCS.ContextCaptureService(token_factory)
+    # initializing rda service
+    service_rda = RDAS.RealityDataAnalysisService(token_factory)
     print("Service initialized")
 
-    # creating reference table and uploading ccimageCollection, ccOrientations if necessary (not yet on the cloud)
+    # creating reference table and uploading ccimageCollection, contextScene and detector if necessary (not yet on the cloud)
     references = ReferenceTable()
     references_path = os.path.join(output_path, "test_references_python.txt")
     if os.path.isfile(references_path):
@@ -61,7 +66,7 @@ def main():
             print("Error while loading preexisting references:", ret.error)
             exit(1)
 
-    # upload ccimageCollection
+    # ccimageCollection
     if not references.has_local_path(ccimage_collections):
         print(
             "No reference to CCimage Collections found, uploading local files to cloud"
@@ -80,18 +85,35 @@ def main():
             print("Error adding reference:", ret.error)
             exit(1)
 
-    # upload ccorientations
-    if not references.has_local_path(cc_orientations):
-        print("No reference to cc orientations found, uploading local files to cloud")
-        ret = data_transfer.upload_ccorientation(
-            cc_orientations, cc_orientations_name, project_id, references
+    # contextScene
+    if not references.has_local_path(photo_context_scene):
+        print("No reference to ContextScene found, uploading local files to cloud")
+        ret = data_transfer.upload_context_scene(
+            photo_context_scene, context_scene_name, project_id, references
         )
         if ret.is_error():
             print("Error in upload:", ret.error)
             exit(1)
-        ret = references.add_reference(cc_orientations, ret.value)
+        ret = references.add_reference(photo_context_scene, ret.value)
         if ret.is_error():
-            print("Error adding reference:", cc_orientations)
+            print("Error adding reference:", photo_context_scene)
+            exit(1)
+
+    # detector
+    if not references.has_local_path(photo_object_detector):
+        print("No reference to detector found, uploading local files to cloud")
+        ret = data_transfer.upload_reality_data(
+            photo_object_detector,
+            detector_name,
+            RealityDataType.ContextDetector,
+            project_id,
+        )
+        if ret.is_error():
+            print("Error in upload:", ret.error)
+            exit(1)
+        ret = references.add_reference(photo_object_detector, ret.value)
+        if ret.is_error():
+            print("Error adding reference:", ret.error)
             exit(1)
 
     # saving references (so we don't need to re-upload afterwards)
@@ -101,31 +123,25 @@ def main():
         exit(1)
     print("Checked data upload")
 
-    # create workspace
-    ret = service_cc.create_workspace(workspace_name, project_id)
-    if ret.is_error():
-        print("Error creating workspace:", ret.error)
-        exit(1)
-    workspace_id = ret.value
-
-    # create job settings
-    settings = CCJobSettings()
-    settings.inputs = [
-        references.get_cloud_id_from_local_path(ccimage_collections).value,
-        references.get_cloud_id_from_local_path(cc_orientations).value,
-    ]
-    settings.outputs.threeMX = "threeMX"
-    settings.mesh_quality = CCJobQuality.MEDIUM
+    # creating job settings
+    settings = O2DJobSettings()
+    settings.inputs.photos = references.get_cloud_id_from_local_path(
+        photo_context_scene
+    ).value
+    settings.inputs.photo_object_detector = references.get_cloud_id_from_local_path(
+        photo_object_detector
+    ).value
+    settings.outputs.objects2D = "true"
     print("Settings created")
 
     # creating and submitting job
-    ret = service_cc.create_job(CCJobType.FULL, settings, job_name, workspace_id)
+    ret = service_rda.create_job(settings, job_name, project_id)
     if ret.is_error():
         print("Error in submit:", ret.error)
         exit(1)
     print("Created Job")
     job_id = ret.value
-    ret = service_cc.submit_job(job_id)
+    ret = service_rda.submit_job(job_id)
     if ret.is_error():
         print("Error in submit:", ret.error)
         exit(1)
@@ -133,7 +149,7 @@ def main():
 
     # tracking job progress
     while True:
-        progress_ret = service_cc.get_job_progress(job_id)
+        progress_ret = service_rda.get_job_progress(job_id)
         if progress_ret.is_error():
             print("Error while getting progress:", progress_ret.error)
             exit(1)
@@ -161,15 +177,15 @@ def main():
 
     # retrieving results
     print("Retrieving outputs ids")
-    ret = service_cc.get_job_properties(job_id)
+    ret = service_rda.get_job_properties(job_id)
     if ret.is_error():
-        print("Error while getting properties:", ret.error)
+        print("Error while getting settings:", ret.error)
         exit(1)
     final_settings = ret.value.job_settings
     print("Downloading outputs")
 
-    threeMX_id = final_settings.outputs.threeMX
-    ret = data_transfer.download_reality_data(threeMX_id, output_path, project_id)
+    objects2D_id = final_settings.outputs.objects2D
+    ret = data_transfer.download_context_scene(objects2D_id, output_path, project_id, references)
     if ret.is_error():
         print("Error while downloading output:", ret.error)
         exit(1)
