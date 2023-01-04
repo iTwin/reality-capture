@@ -149,7 +149,7 @@ class CCJobSettings:
             new_job_settings.inputs = [i["id"] for i in inputs_json]
             outputs_list = settings_json["outputs"]
             for output in outputs_list:
-                if output["format"] == "contextScene":
+                if output["format"] == "ContextScene":
                     new_job_settings.outputs.context_scene = output["id"]
                 elif output["format"] == "CCOrientations":
                     new_job_settings.outputs.ccorientation = output["id"]
