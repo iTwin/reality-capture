@@ -49,7 +49,7 @@ export function ContextCapture(props: CcProps) {
         settings.outputs.cesium3DTiles = "cesium3DTiles";
 
         const workspaceId = await contextCaptureService.current.createWorkspace(jobName + " workspace", 
-            process.env.IMJS_PROJECT_ID!);
+            process.env.REACT_APP_PROJECT_ID!);
         const id = await contextCaptureService.current.createJob(CCJobType.FULL, settings, jobName, workspaceId);
         await contextCaptureService.current.submitJob(id);
         setJobId(id);

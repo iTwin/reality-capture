@@ -220,7 +220,7 @@ export function Viewer2D(props: Viewer2DProps) {
         contextScene.references.clear();
 
         const realityData: ITwinRealityData = await props.realityDataAccessClient.getRealityData("", 
-            process.env.IMJS_PROJECT_ID, idToDisplay);
+            process.env.REACT_APP_PROJECT_ID, idToDisplay);
         if(realityData.type === "ContextScene")
             contextScene = await parseContextScene(props.realityDataAccessClient, idToDisplay);
         else if(realityData.type === "CCImageCollection")

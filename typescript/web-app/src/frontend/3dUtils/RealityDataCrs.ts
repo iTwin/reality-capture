@@ -35,7 +35,7 @@ export async function getBlankConnection(realityDataId : string, accessToken: st
         location: blankContextRealityModel[0].location,
         // The volume of interest, in meters, centered around `location`
         extents: modelExtents.toJSON(),
-        iTwinId: process.env.IMJS_PROJECT_ID,
+        iTwinId: process.env.REACT_APP_PROJECT_ID,
     };
     return blankConnectionProps;
 }
@@ -114,11 +114,11 @@ function realityModelFromJson(json: any, realityDataName: string, realityDataId?
     const provider = RealityDataProvider.ContextShare;
     const format = realityDataType === "OPC" ? RealityDataFormat.OPC : RealityDataFormat.ThreeDTile;
     const rdSourceKey: RealityDataSourceKey = realityDataId ? { provider, format, id: realityDataId } : RealityDataSource.createKeyFromUrl(
-        "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata/" + realityDataId + "?projectId=" + process.env.IMJS_PROJECT_ID);
+        "https://" + process.env.REACT_APP_URL_PREFIX + "api.bentley.com/realitydata/" + realityDataId + "?projectId=" + process.env.REACT_APP_PROJECT_ID);
 
     const realityModel: ContextRealityModelProps = { 
         rdSourceKey, 
-        tilesetUrl: "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata/" + realityDataId + "?projectId=" + process.env.IMJS_PROJECT_ID, 
+        tilesetUrl: "https://" + process.env.REACT_APP_URL_PREFIX + "api.bentley.com/realitydata/" + realityDataId + "?projectId=" + process.env.REACT_APP_PROJECT_ID, 
         name: realityDataName, 
         realityDataId: realityDataId
     };
@@ -219,13 +219,13 @@ async function getBlankContextRealityModel(accessToken: string, realityDataId: s
     const blankContextRealityModels: BlankContextRealityModelProps[] = [];
   
     const realityDataClientOptions: RealityDataClientOptions = {
-        baseUrl: "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata",
+        baseUrl: "https://" + process.env.REACT_APP_URL_PREFIX + "api.bentley.com/realitydata",
     };
     const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
-    const rdUrl = await rdaClient.getRealityDataUrl(process.env.IMJS_PROJECT_ID, realityDataId);
+    const rdUrl = await rdaClient.getRealityDataUrl(process.env.REACT_APP_PROJECT_ID, realityDataId);
     
     // The dataset came from RDS
-    const realityData = await rdaClient.getRealityData(accessToken, process.env.IMJS_PROJECT_ID, realityDataId);
+    const realityData = await rdaClient.getRealityData(accessToken, process.env.REACT_APP_PROJECT_ID, realityDataId);
     if(!realityData)
         return blankContextRealityModels;
     

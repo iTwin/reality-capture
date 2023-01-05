@@ -40,9 +40,9 @@ export function TabMenu(props: TabMenu) {
 
     const clientInfo = useMemo(
         (): ClientInfo => {
-            const clientInfo: ClientInfo = {clientId: process.env.IMJS_AUTHORIZATION_CLIENT_ID!, 
+            const clientInfo: ClientInfo = {clientId: process.env.REACT_APP_AUTHORIZATION_CLIENT_ID!, 
                 scopes: new Set([...RealityDataAnalysisService.getScopes(), ...ContextCaptureService.getScopes(), ...RealityDataTransferBrowser.getScopes()]), 
-                env: "qa-", redirectUrl: process.env.IMJS_AUTHORIZATION_REDIRECT_URI!};
+                env: "qa-", redirectUrl: process.env.REACT_APP_AUTHORIZATION_REDIRECT_URI!};
             return clientInfo;
         },[],
     );

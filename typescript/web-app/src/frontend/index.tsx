@@ -9,7 +9,7 @@ import ReactDOM from "react-dom";
 import { App } from "./App";
 
 (async () => {
-    const redirectUrl = new URL(process.env.IMJS_AUTHORIZATION_REDIRECT_URI!);
+    const redirectUrl = new URL(process.env.REACT_APP_AUTHORIZATION_REDIRECT_URI!);
     if (redirectUrl.pathname === window.location.pathname) {
         BrowserAuthorizationCallbackHandler.handleSigninCallback(redirectUrl.toString());
     } 

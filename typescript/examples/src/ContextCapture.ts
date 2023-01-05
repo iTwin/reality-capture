@@ -28,9 +28,9 @@ async function main() {
     const ccImageCollectionName = "Test CCCS Photos";
     const ccOrientationsName = "Test CCCS cc orientations";
 
-    const projectId = process.env.IMJS_PROJECT_ID ?? "";
-    const clientId = process.env.IMJS_CLIENT_ID ?? "";
-    const secret = process.env.IMJS_SECRET ?? "";
+    const projectId = process.env.PROJECT_ID ?? "";
+    const clientId = process.env.CLIENT_ID ?? "";
+    const secret = process.env.SECRET ?? "";
 
     console.log("Context capture sample job - Full (Calibration + Reconstruction)");
     const clientInfoRd: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 

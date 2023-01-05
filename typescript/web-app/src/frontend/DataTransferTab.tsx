@@ -168,7 +168,7 @@ export function Rds(props: RdsProps) {
         }
 
         const realityDataId = await realityDataTransfer.current.uploadRealityDataBrowser(filesToUpload, uploadedDataType, uploadedDataName,
-            process.env.IMJS_PROJECT_ID!, rootDocumentName.length > 0 ? rootDocumentName : undefined, 
+            process.env.REACT_APP_PROJECT_ID!, rootDocumentName.length > 0 ? rootDocumentName : undefined, 
             props.useReferenceTable === true ? props.referenceTable : undefined);
         
         if(realityDataId)
