@@ -29,9 +29,9 @@ async function runObjects2DExample() {
     const contextSceneName = "Test Moto Scene";
     const detectorName = "O2D photos in RDAS-QA";
 
-    const projectId = process.env.PROJECT_ID ?? "";
-    const clientId = process.env.CLIENT_ID ?? "";
-    const secret = process.env.SECRET ?? "";
+    const projectId = process.env.IMJS_PROJECT_ID ?? "";
+    const clientId = process.env.IMJS_CLIENT_ID ?? "";
+    const secret = process.env.IMJS_SECRET ?? "";
 
     console.log("Reality Data Analysis sample job detecting 2D objects");
     const clientInfoRd: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 

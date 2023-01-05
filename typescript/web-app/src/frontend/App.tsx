@@ -16,11 +16,11 @@ export function App() {
     const authClient = useMemo(
         () =>
             new BrowserAuthorizationClient({
-                scope: process.env.REACT_APP_AUTHORIZATION_SCOPES ?? "",
-                clientId: process.env.REACT_APP_AUTHORIZATION_CLIENT_ID ?? "",
-                redirectUri: process.env.REACT_APP_AUTHORIZATION_REDIRECT_URI ?? "",
+                scope: process.env.IMJS_AUTHORIZATION_SCOPES ?? "",
+                clientId: process.env.IMJS_AUTHORIZATION_CLIENT_ID ?? "",
+                redirectUri: process.env.IMJS_AUTHORIZATION_REDIRECT_URI ?? "",
                 responseType: "code",
-                authority: process.env.REACT_APP_AUTHORIZATION_ISSUER_URL,
+                authority: process.env.IMJS_AUTHORIZATION_ISSUER_URL,
             }),
         []
     );
@@ -28,7 +28,7 @@ export function App() {
     const realityDataAccessClient = useMemo(
         (): RealityDataAccessClient => {
             const realityDataClientOptions: RealityDataClientOptions = {
-                baseUrl: "https://" + process.env.REACT_APP_URL_PREFIX + "api.bentley.com/realitydata",
+                baseUrl: "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata",
                 authorizationClient: authClient
             };
             return new RealityDataAccessClient(realityDataClientOptions);

@@ -37,9 +37,9 @@ describe("Reality data analysis integration tests", () => {
         this.timeout(30000);
         dotenv.config();
 
-        iTwinId = process.env.PROJECT_ID ?? "";
-        const clientId = process.env.CLIENT_ID ?? "";
-        const secret = process.env.SECRET ?? "";
+        iTwinId = process.env.IMJS_PROJECT_ID ?? "";
+        const clientId = process.env.IMJS_CLIENT_ID ?? "";
+        const secret = process.env.IMJS_SECRET ?? "";
 
         const clientInfoRd: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
             secret: secret, env: "qa-"};

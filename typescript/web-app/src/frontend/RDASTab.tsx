@@ -79,7 +79,7 @@ export function Rdas(props: RdasProps) {
     const onJobRun = async (): Promise<void> => {
         setPercentage(0);
         setStep("Prepare step");
-        const id = await realityDataAnalysisService.current.createJob(jobSettings, rdasJobName, process.env.REACT_APP_PROJECT_ID!);
+        const id = await realityDataAnalysisService.current.createJob(jobSettings, rdasJobName, process.env.IMJS_PROJECT_ID!);
         await realityDataAnalysisService.current.submitJob(id);
         setJobId(id);
         let currentStep = JobState.ACTIVE;

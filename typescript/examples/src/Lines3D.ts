@@ -33,9 +33,9 @@ async function runContextCaptureExample() {
     const contextSceneName = "Test L3D Scene";
     const detectorName = "Test L3D detector";
 
-    const projectId = process.env.PROJECT_ID ?? "";
-    const clientId = process.env.CLIENT_ID ?? "";
-    const secret = process.env.SECRET ?? "";
+    const projectId = process.env.IMJS_PROJECT_ID ?? "";
+    const clientId = process.env.IMJS_CLIENT_ID ?? "";
+    const secret = process.env.IMJS_SECRET ?? "";
 
     console.log("Reality Data Analysis sample job detecting 3D lines");
     const clientInfoRd: ClientInfo = {clientId: clientId, scopes: new Set([ ...RealityDataTransfer.getScopes()]), 

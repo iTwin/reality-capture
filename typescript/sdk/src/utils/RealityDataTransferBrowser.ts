@@ -240,7 +240,7 @@ export class RealityDataTransferBrowser {
             };
             const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
             const iTwinRealityData: ITwinRealityData = await rdaClient.getRealityData(await this.tokenFactory.getToken(),
-                process.env.PROJECT_ID, realityDataId);
+                process.env.IMJS_PROJECT_ID, realityDataId);
             const azureBlobUrl = await iTwinRealityData.getBlobUrl(await this.tokenFactory.getToken(), "", false);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
             let iter = await containerClient.listBlobsFlat();

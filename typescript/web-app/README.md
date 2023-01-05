@@ -51,8 +51,8 @@ If you don't have one already, follow these steps to create an application.
 9.  Leave post logout redirect URIs empty.
 10. Click the Save button.
 
-You will receive a client id for the app. Put it in the .env file (REACT_APP_AUTHORIZATION_CLIENT_ID).
-with issuerUrl, redirectUrl and the proper scopes: `contextcapture:modify contextcapture:read itwinjs realitydataanalysis:read realitydataanalysis:modify realitydata:read realitydata:modify`
+You will receive a client id for the app. Put it in the .env file (IMJS_AUTHORIZATION_CLIENT_ID).
+with issuerUrl, redirectUrl and the proper scopes: `contextcapture:modify contextcapture:read realitydataanalysis:read realitydataanalysis:modify realitydata:read realitydata:modify`
 
 ## Getting started
 

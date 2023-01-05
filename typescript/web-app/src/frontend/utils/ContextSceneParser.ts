@@ -106,7 +106,7 @@ async function parseReferences(xmlDoc: XMLDocument, contextScene: ContextScene, 
         
         pathValue = pathValue.replace("rds:", "");
         const realityData: ITwinRealityData = await realityDataAccessClient.getRealityData("", 
-            process.env.REACT_APP_PROJECT_ID, pathValue);
+            process.env.IMJS_PROJECT_ID, pathValue);
         const azureBlobUrl = await realityData.getBlobUrl("", "");
         contextScene.references.set(parseInt(id), {collectionId: pathValue, collectionStorageUrl: azureBlobUrl.toString()});
     }
@@ -311,7 +311,7 @@ export async function parseContextScene(realityDataAccessClient: RealityDataAcce
 
     let xmlDoc: Document | undefined = undefined;
     const realityData: ITwinRealityData = await realityDataAccessClient.getRealityData("", 
-        process.env.REACT_APP_PROJECT_ID, sceneId);
+        process.env.IMJS_PROJECT_ID, sceneId);
     const azureBlobUrl = await realityData.getBlobUrl("", "");
     if(!isFile) {
         await writeTempSceneFromImageCollection(sceneId, azureBlobUrl.toString());
