@@ -6,7 +6,7 @@
 "use strict";
 
 import { ContainerClient } from "@azure/storage-blob";
-import { RealityDataClientOptions, RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
+import { RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
 import { DOMParser } from "@xmldom/xmldom";
 
 interface Object2D {

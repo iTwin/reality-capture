@@ -10,8 +10,8 @@ import { ServiceTokenFactory } from "../token/TokenFactoryNode";
 
 
 async function runRealityDataExample() {
-    const ccImageCollection = "D:\\O2D-Motos\\images";
-    const outputPath = "D:\\output";
+    const ccImageCollection = "path to the folder yu want to upload";
+    const outputPath = "path to the folder where you want to save downloads";
     const ccImageCollectionName = "Test Moto Photos";
 
     dotenv.config();

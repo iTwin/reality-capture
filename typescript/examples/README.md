@@ -1,23 +1,17 @@
 # Introduction
 
-reality-services is a typescript SDK for Reality Data Analysis and Context Capture. These SDK are based on the APIs
-- [Reality Data Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
-- [Context Capture](https://developer.bentley.com/apis/contextcapture/) 
-and should work he same way.
+capture-sdks-examples contains some examples for capture-sdks.
 
-Moreover, it contains Reality Data utils to upload and download reality data. 
-See [Reality Data]https://developer.bentley.com/apis/reality-data/ for more information.
-
-It has been tested with Node 14.18.1 and should work with Node 14.18.1 and newer.
+It has been tested with Node 16.17.0 and should work with Node 16.17.0 and newer.
 
 ## Pre-reqs
 
 To build and run the source code locally you will need a few things:
 
-- Install [Node.js](https://nodejs.org/en/) v14 (must be greater than 14.17.x).
+- Install [Node.js](https://nodejs.org/en/) v16 (must be greater than 16.17.x).
 - Install [VS Code](https://code.visualstudio.com/).
 
-## Run the examples
+## Build and run the examples
 
 - Clone the repository
 
@@ -28,19 +22,19 @@ To build and run the source code locally you will need a few things:
 - Install dependencies
 
   ```sh
-  cd reality-apis-samples/typescript/sdk
+  cd reality-apis-samples/typescript/examples
   npm install
   ```
-- If npm install doesn't work with node > 14
+- If npm install doesn't work with node v16 and newer
 
   ```sh
   npm install --legacy-peer-deps
   ```
 
-- Add a `.env`file based on `template.env`. Fill in the required fields in the `.env` configuration file.
+- Create a new `.env` file, based on `template.env`. Fill in the required fields in the `.env` configuration file.
 
 - Then, replace the input data paths with yours. You can download data samples here : [data]https://communities.bentley.com/products/3d_imaging_and_point_cloud_software/w/wiki/54656/context-insights-detectors-download-page
-- Replace qa and dev environment with the one you want to use.
+- Replace qa/dev environment with the one you want to use.
 
 - Build and run the project
 

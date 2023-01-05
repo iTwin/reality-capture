@@ -1,0 +1,35 @@
+{
+	"name": "capture-sdks-examples",
+	"version": "0.1.0",
+	"description": "Capture SDKs examples",
+	"scripts": {
+		"build": "npm run clean && tsc",
+		"clean": "rimraf lib build .rush",
+		"lint": "eslint ./src --ext .ts,.tsx ",
+		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
+		"start-cc-example": "node ./lib/examples/ContextCapture.js",
+		"start-l3d-example": "node ./lib/examples/Lines3D.js",
+		"start-o2d-example": "node ./lib/examples/Objects2D.js",
+		"start-data-example": "node ./lib/examples/DataTransfer.js"
+	},
+	"keywords": [],
+	"author": {
+		"name": "Bentley Systems, Inc.",
+		"url": "http://www.bentley.com"
+	},
+	"license": "MIT",
+	"dependencies": {
+		"dotenv": "^16.0.3"
+	},
+	"devDependencies": {
+		"@itwin/build-tools": "^3.5.0",
+		"@types/node": "^16.11.34",
+		"@types/node-fetch": "^2.6.2",
+		"@types/wicg-file-system-access": "^2020.9.5",
+		"@typescript-eslint/eslint-plugin": "^5.30.6",
+		"@typescript-eslint/parser": "^5.30.6",
+		"eslint": "^8.19.0",
+		"rimraf": "^3.0.2",
+		"typescript": "^4.5.1"
+	}
+}

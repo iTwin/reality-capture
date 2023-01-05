@@ -8,7 +8,6 @@ import React, { useMemo, useState } from "react";
 import "./DataTransferTab.css";
 import { ReferenceTableBrowser } from "./sdk/utils/ReferenceTableBrowser";
 import "./ReferenceManager.css";
-import { redirectPolicy } from "@azure/core-http";
 
 export enum DataTypes {
     CCImageCollection = "CCImageCollection",

@@ -17,9 +17,9 @@ import { ContextCaptureService } from "../cccs/ContextCaptureService";
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function main() {
-    const ccImageCollection = "D:\\S2D-3CS-Bridge\\BridgeImages";
-    const ccOrientations = "D:\\S2D-3CS-Bridge\\BridgeCCorientation";
-    const outputPath = "D:\\output";
+    const ccImageCollection = "path to your image folder";
+    const ccOrientations = "path to the folder where your ccorientation file is";
+    const outputPath = "path to the folder where you want to save outputs";
 
     dotenv.config();
 

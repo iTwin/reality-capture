@@ -17,12 +17,12 @@ import { ServiceTokenFactory } from "../token/TokenFactoryNode";
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function runContextCaptureExample() {
-    const ccImageCollection = "D:\\Lines3D\\Images";
-    const orientedPhotosContextScene = "D:\\Lines3D\\OrientedPhotos";
-    const photoSegmentationDetector = "D:\\Lines3D\\CracksA_v1";
-    const mesh = "D:\\Lines3D\\3MX";
-    const meshContextScene = "D:\\Lines3D\\Mesh3MX";
-    const outputPath = "D:\\output";
+    const ccImageCollection = "path to your image folder";
+    const orientedPhotosContextScene = "path to the folder where your context scene file is";
+    const photoSegmentationDetector = "path to the folder where your detector is";
+    const mesh = "path to the folder where your mesh is";
+    const meshContextScene = "path to the folder where your context scene file that references the mesh is";
+    const outputPath = "path to the folder where you want to save outputs";
 
     dotenv.config();
 

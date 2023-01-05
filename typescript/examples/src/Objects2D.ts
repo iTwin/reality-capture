@@ -17,17 +17,17 @@ import { ServiceTokenFactory } from "../token/TokenFactoryNode";
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function runObjects2DExample() {
-    const ccImageCollection = "D:\\Photo_Object-Face_and_License_Plates\\images";
-    const photoContextScene = "D:\\Photo_Object-Face_and_License_Plates\\ContextScene";
-    const photoObjectDetector = "D:\\Photo_Object-Face_and_License_Plates\\Face_&_License_plates_1";
-    const outputPath = "D:\\output";
+    const imageCollection = "path to your image folder";
+    const photoContextScene = "path to the folder where your context scene file is";
+    const photoObjectDetector = "path to the folder where your detector is";
+    const outputPath = "path to the folder where you want to save outputs";
 
     dotenv.config();
 
     const jobName = "O2D job new SDK sample";
-    const ccImageCollectionName = "Test Moto Photos";
+    const imageCollectionName = "Test Moto Photos";
     const contextSceneName = "Test Moto Scene";
-    const detectorName = "O2D photos in RAS-QA";
+    const detectorName = "O2D photos in RDAS-QA";
 
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
@@ -58,11 +58,11 @@ async function runObjects2DExample() {
     }
 
     // Upload CCImageCollection
-    if(!references.hasLocalPath(ccImageCollection)) {
+    if(!references.hasLocalPath(imageCollection)) {
         console.log("No reference to CCimage Collections found, uploading local files to cloud");
-        const id = await realityDataService.uploadRealityData(ccImageCollection, ccImageCollectionName, 
+        const id = await realityDataService.uploadRealityData(imageCollection, imageCollectionName, 
             RealityDataType.CC_IMAGE_COLLECTION, projectId);
-        references.addReference(ccImageCollection, id);
+        references.addReference(imageCollection, id);
     }
 
     // Upload ContextScene

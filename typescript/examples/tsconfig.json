@@ -1,0 +1,15 @@
+{
+  "extends": "./node_modules/@itwin/build-tools/tsconfig-base.json",
+  "compilerOptions": {
+    "declaration": false,
+    "declarationMap": false,
+    "outDir": "./lib",
+    "esModuleInterop": true
+  },
+  "types": [
+    "@types/wicg-file-system-access"
+  ],
+  "include": [
+    "./src/**/*.ts*"
+  ]
+}
