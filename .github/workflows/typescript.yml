@@ -47,7 +47,7 @@ jobs:
       - name: SDK integration tests
         working-directory: ./typescript/sdk
         env:
-          IMJS_PROJECT_ID: ${{ secrets.IMJS_PROJECT_ID }}
-          IMJS_CLIENT_ID: ${{ secrets.IMJS_CLIENT_ID }}
-          IMJS_SECRET: ${{ secrets.IMJS_SECRET }}
+          IMJS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          IMJS_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          IMJS_SECRET: ${{ secrets.SECRET }}
         run: npm run test:integration
