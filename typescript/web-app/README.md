@@ -59,13 +59,13 @@ with issuerUrl, redirectUrl and the proper scopes: `contextcapture:modify contex
 - Clone the repository
 
   ```sh
-  git clone https://github.com/iTwin/reality-apis-samples
+  git clone https://github.com/iTwin/reality-capture
   ```
 
 - Install dependencies
 
   ```sh
-  cd reality-apis-samples/typescript/web-app
+  cd reality-capture/typescript/web-app
   npm install
   ```
 - If npm install doesn't work with node v16 and newer

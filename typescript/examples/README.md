@@ -16,13 +16,13 @@ To build and run the source code locally you will need a few things:
 - Clone the repository
 
   ```sh
-  git clone https://github.com/iTwin/reality-apis-samples
+  git clone https://github.com/iTwin/reality-capture
   ```
 
 - Install dependencies
 
   ```sh
-  cd reality-apis-samples/typescript/examples
+  cd reality-capture/typescript/examples
   npm install
   ```
 - If npm install doesn't work with node v16 and newer
