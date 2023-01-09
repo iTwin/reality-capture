@@ -11,7 +11,6 @@ import * as os from "os";
 import path = require("path");
 import { ReferenceTable } from "./ReferenceTable";
 import { v4 as uuidv4 } from "uuid";
-import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
 import { RealityDataType } from "../CommonData";
 import { TokenFactory } from "../token/TokenFactory";
 

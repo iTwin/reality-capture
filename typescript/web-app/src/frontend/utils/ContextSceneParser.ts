@@ -5,7 +5,6 @@
 
 import { ContainerClient } from "@azure/storage-blob";
 import { RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
-import { DOMParser } from "@xmldom/xmldom";
 
 interface Object2D {
     labelId : number;
