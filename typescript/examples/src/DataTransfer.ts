@@ -3,10 +3,8 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { defaultProgressHook, RealityDataTransfer } from "../utils/RealityDataTransfer";
-import { ClientInfo, RealityDataType } from "../CommonData";
+import { CommonData, defaultProgressHook, RealityDataTransfer, ServiceTokenFactory } from "reality-capture";
 import * as dotenv from "dotenv";
-import { ServiceTokenFactory } from "../token/TokenFactoryNode";
 
 
 async function runRealityDataExample() {
@@ -21,7 +19,7 @@ async function runRealityDataExample() {
     const secret = process.env.IMJS_SECRET ?? "";
 
     console.log("Reality Data Analysis sample job detecting 2D objects");
-    const clientInfo: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
+    const clientInfo: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
         secret: secret, env: "qa-"};
     const tokenFactory = new ServiceTokenFactory(clientInfo);
     await tokenFactory.getToken();
@@ -36,7 +34,7 @@ async function runRealityDataExample() {
     // Upload CCImageCollection
     console.log("Uploading CCImagesCollection to cloud");
     const id = await realityDataService.uploadRealityData(ccImageCollection, ccImageCollectionName, 
-        RealityDataType.CC_IMAGE_COLLECTION, projectId);
+        CommonData.RealityDataType.CC_IMAGE_COLLECTION, projectId);
     console.log("CCImagesCollection uploaded successfully");
 
     // Download CCImageCollection

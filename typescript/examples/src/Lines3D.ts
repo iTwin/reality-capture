@@ -4,14 +4,10 @@
 *--------------------------------------------------------------------------------------------*/
 
 import path = require("path");
-import { RealityDataType, JobState, ClientInfo } from "../CommonData";
-import { RealityDataAnalysisService } from "../rdas/RealityDataAnalysisService";
-import { L3DJobSettings } from "../rdas/Settings";
-import { defaultProgressHook, RealityDataTransfer } from "../utils/RealityDataTransfer";
-import { ReferenceTable } from "../utils/ReferenceTable";
+import { CommonData, defaultProgressHook, RDASettings, RealityDataAnalysisService, RealityDataTransfer, 
+    ReferenceTable, ServiceTokenFactory } from "reality-capture";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
-import { ServiceTokenFactory } from "../token/TokenFactoryNode";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -38,9 +34,9 @@ async function runContextCaptureExample() {
     const secret = process.env.IMJS_SECRET ?? "";
 
     console.log("Reality Data Analysis sample job detecting 3D lines");
-    const clientInfoRd: ClientInfo = {clientId: clientId, scopes: new Set([ ...RealityDataTransfer.getScopes()]), 
+    const clientInfoRd: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([ ...RealityDataTransfer.getScopes()]), 
         secret: secret, env: "qa-"};
-    const clientInfoRda: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataAnalysisService.getScopes()]), 
+    const clientInfoRda: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataAnalysisService.getScopes()]), 
         secret: secret, env: "dev-"};
     const tokenFactoryRd = new ServiceTokenFactory(clientInfoRd);
     const tokenFactoryRda = new ServiceTokenFactory(clientInfoRda);
@@ -68,7 +64,7 @@ async function runContextCaptureExample() {
     if(!references.hasLocalPath(ccImageCollection)) {
         console.log("No reference to CCimage Collections found, uploading local files to cloud");
         const id = await realityDataService.uploadRealityData(ccImageCollection, ccImageCollectionName, 
-            RealityDataType.CC_IMAGE_COLLECTION, projectId);
+            CommonData.RealityDataType.CC_IMAGE_COLLECTION, projectId);
         references.addReference(ccImageCollection, id);
     }
 
@@ -82,7 +78,7 @@ async function runContextCaptureExample() {
     // Upload Detector
     if(!references.hasLocalPath(photoSegmentationDetector)) {
         console.log("No reference to detector found, uploading local files to cloud");
-        const id = await realityDataService.uploadRealityData(photoSegmentationDetector, detectorName, RealityDataType.CONTEXT_DETECTOR, 
+        const id = await realityDataService.uploadRealityData(photoSegmentationDetector, detectorName, CommonData.RealityDataType.CONTEXT_DETECTOR, 
             projectId);
         references.addReference(photoSegmentationDetector, id);
     }
@@ -90,7 +86,7 @@ async function runContextCaptureExample() {
     // Upload Mesh
     if(!references.hasLocalPath(mesh)) {
         console.log("No reference to mesh found, uploading local files to cloud");
-        const id = await realityDataService.uploadRealityData(mesh, meshName, RealityDataType.THREEMX, 
+        const id = await realityDataService.uploadRealityData(mesh, meshName, CommonData.RealityDataType.THREEMX, 
             projectId);
         references.addReference(mesh, id);
     }
@@ -105,7 +101,7 @@ async function runContextCaptureExample() {
     await references.save(referencesPath);
     console.log("Checked data upload");
 
-    const settings = new L3DJobSettings();
+    const settings = new RDASettings.L3DJobSettings();
     settings.inputs.orientedPhotos = references.getCloudIdFromLocalPath(orientedPhotosContextScene);
     settings.inputs.photoSegmentationDetector = references.getCloudIdFromLocalPath(photoSegmentationDetector);
     settings.inputs.meshes = references.getCloudIdFromLocalPath(meshContextScene);
@@ -122,17 +118,17 @@ async function runContextCaptureExample() {
 
     while(true) {
         const progress = await realityDataAnalysisService.getJobProgress(jobId);
-        if(progress.state === JobState.SUCCESS) {
+        if(progress.state === CommonData.JobState.SUCCESS) {
             break;
         }
-        else if(progress.state === JobState.ACTIVE) {
+        else if(progress.state === CommonData.JobState.ACTIVE) {
             console.log("Progress: " + progress.progress + ", step: " + progress.step);
         }
-        else if(progress.state === JobState.CANCELLED) {
+        else if(progress.state === CommonData.JobState.CANCELLED) {
             console.log("Job cancelled");
             return;
         }
-        else if(progress.state === JobState.FAILED) {
+        else if(progress.state === CommonData.JobState.FAILED) {
             console.log("Job failed");
             console.log("Progress: " + progress.progress + ", step: " + progress.step);
             return;
@@ -144,7 +140,7 @@ async function runContextCaptureExample() {
     console.log("Retrieving outputs ids");
     const properties = await realityDataAnalysisService.getJobProperties(jobId);
     console.log("Downloading outputs");
-    const lines3dId = (properties.settings as L3DJobSettings).outputs.lines3D;
+    const lines3dId = (properties.settings as RDASettings.L3DJobSettings).outputs.lines3D;
     realityDataService.downloadContextScene(lines3dId, outputPath, projectId, references);
     console.log("Successfully downloaded output");
 }

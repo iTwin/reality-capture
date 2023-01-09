@@ -4,14 +4,10 @@
 *--------------------------------------------------------------------------------------------*/
 
 import path = require("path");
-import { defaultProgressHook, RealityDataTransfer } from "../utils/RealityDataTransfer";
-import { ReferenceTable } from "../utils/ReferenceTable";
+import { CCUtils, CommonData, ContextCaptureService, defaultProgressHook, RealityDataTransfer, ReferenceTable, 
+    ServiceTokenFactory } from "reality-capture";
 import * as fs from "fs";
-import { ClientInfo, JobState, RealityDataType } from "../CommonData";
 import * as dotenv from "dotenv";
-import { ServiceTokenFactory } from "../token/TokenFactoryNode";
-import { CCJobSettings, CCJobType, CCMeshQuality } from "../cccs/Utils";
-import { ContextCaptureService } from "../cccs/ContextCaptureService";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -33,9 +29,9 @@ async function main() {
     const secret = process.env.IMJS_SECRET ?? "";
 
     console.log("Context capture sample job - Full (Calibration + Reconstruction)");
-    const clientInfoRd: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
+    const clientInfoRd: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
         secret: secret, env: "qa-"};
-    const clientInfoCc: ClientInfo = {clientId: clientId, scopes: new Set([...ContextCaptureService.getScopes()]), 
+    const clientInfoCc: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...ContextCaptureService.getScopes()]), 
         secret: secret, env: "dev-"};
     const tokenFactoryRd = new ServiceTokenFactory(clientInfoRd);
     const tokenFactoryCc = new ServiceTokenFactory(clientInfoCc);
@@ -63,7 +59,7 @@ async function main() {
         if(!references.hasLocalPath(ccImageCollection)) {
             console.log("No reference to CCimage Collections found, uploading local files to cloud");
             const id = await realityDataService.uploadRealityData(ccImageCollection, ccImageCollectionName, 
-                RealityDataType.CC_IMAGE_COLLECTION, projectId);
+                CommonData.RealityDataType.CC_IMAGE_COLLECTION, projectId);
             references.addReference(ccImageCollection, id);
         }
 
@@ -80,14 +76,14 @@ async function main() {
         // Create workspace
         const workspaceId = await contextCaptureService.createWorkspace(workspaceName, projectId);
 
-        let settings = new CCJobSettings();
+        let settings = new CCUtils.CCJobSettings();
         settings.inputs = [references.getCloudIdFromLocalPath(ccImageCollection), references.getCloudIdFromLocalPath(ccOrientations)];
         settings.outputs.threeMX = "threeMX";
-        settings.meshQuality = CCMeshQuality.MEDIUM;
+        settings.meshQuality = CCUtils.CCMeshQuality.MEDIUM;
 
         console.log("Settings created");
 
-        const jobId = await contextCaptureService.createJob(CCJobType.FULL, settings, jobName, workspaceId);
+        const jobId = await contextCaptureService.createJob(CCUtils.CCJobType.FULL, settings, jobName, workspaceId);
         console.log("Job created");
 
         await contextCaptureService.submitJob(jobId);
@@ -95,17 +91,17 @@ async function main() {
 
         while(true) {
             const progress = await contextCaptureService.getJobProgress(jobId);
-            if(progress.state === JobState.SUCCESS || progress.state === JobState.OVER) {
+            if(progress.state === CommonData.JobState.SUCCESS || progress.state === CommonData.JobState.OVER) {
                 break;
             }
-            else if(progress.state === JobState.ACTIVE) {
+            else if(progress.state === CommonData.JobState.ACTIVE) {
                 console.log("Progress: " + progress.progress + ", step: " + progress.step);
             }
-            else if(progress.state === JobState.CANCELLED) {
+            else if(progress.state === CommonData.JobState.CANCELLED) {
                 console.log("Job cancelled");
                 return;
             }
-            else if(progress.state === JobState.FAILED) {
+            else if(progress.state === CommonData.JobState.FAILED) {
                 console.log("Job failed");
                 console.log("Progress: " + progress.progress + ", step: " + progress.step);
                 return;
@@ -117,7 +113,7 @@ async function main() {
         console.log("Retrieving outputs ids");
         const properties = await contextCaptureService.getJobProperties(jobId);
         console.log("Downloading outputs");
-        const threeMXId = (properties.settings as CCJobSettings).outputs.threeMX;
+        const threeMXId = (properties.settings as CCUtils.CCJobSettings).outputs.threeMX;
         realityDataService.downloadRealityData(threeMXId, outputPath, projectId);
         console.log("Successfully downloaded output");
     }

@@ -3,15 +3,11 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { RealityDataAnalysisService } from "../rdas/RealityDataAnalysisService";
-import { RealityDataTransfer } from "../utils/RealityDataTransfer";
-import { ReferenceTable } from "../utils/ReferenceTable";
+import { CommonData, RDASettings, RealityDataAnalysisService, RealityDataTransfer, ReferenceTable, 
+    ServiceTokenFactory } from "reality-capture";
 import path = require("path");
 import * as fs from "fs";
-import { ClientInfo, JobState, RealityDataType } from "../CommonData";
-import { O2DJobSettings } from "../rdas/Settings";
 import * as dotenv from "dotenv";
-import { ServiceTokenFactory } from "../token/TokenFactoryNode";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -34,9 +30,9 @@ async function runObjects2DExample() {
     const secret = process.env.IMJS_SECRET ?? "";
 
     console.log("Reality Data Analysis sample job detecting 2D objects");
-    const clientInfoRd: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
+    const clientInfoRd: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
         secret: secret, env: "qa-"};
-    const clientInfoRda: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataAnalysisService.getScopes()]), 
+    const clientInfoRda: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataAnalysisService.getScopes()]), 
         secret: secret, env: "dev-"};
     const tokenFactoryRd = new ServiceTokenFactory(clientInfoRd);
     const tokenFactoryRda = new ServiceTokenFactory(clientInfoRda);
@@ -61,7 +57,7 @@ async function runObjects2DExample() {
     if(!references.hasLocalPath(imageCollection)) {
         console.log("No reference to CCimage Collections found, uploading local files to cloud");
         const id = await realityDataService.uploadRealityData(imageCollection, imageCollectionName, 
-            RealityDataType.CC_IMAGE_COLLECTION, projectId);
+            CommonData.RealityDataType.CC_IMAGE_COLLECTION, projectId);
         references.addReference(imageCollection, id);
     }
 
@@ -75,7 +71,7 @@ async function runObjects2DExample() {
     // Upload Detector
     if(!references.hasLocalPath(photoObjectDetector)) {
         console.log("No reference to detector found, uploading local files to cloud");
-        const id = await realityDataService.uploadRealityData(photoObjectDetector, detectorName, RealityDataType.CONTEXT_DETECTOR, 
+        const id = await realityDataService.uploadRealityData(photoObjectDetector, detectorName, CommonData.RealityDataType.CONTEXT_DETECTOR, 
             projectId);
         references.addReference(photoObjectDetector, id);
     }
@@ -83,7 +79,7 @@ async function runObjects2DExample() {
     await references.save(referencesPath);
     console.log("Checked data upload");
 
-    const settings = new O2DJobSettings();
+    const settings = new RDASettings.O2DJobSettings();
     settings.inputs.photos = references.getCloudIdFromLocalPath(photoContextScene);
     settings.inputs.photoObjectDetector = references.getCloudIdFromLocalPath(photoObjectDetector);
     settings.outputs.objects2D = "objects2D";
@@ -97,17 +93,17 @@ async function runObjects2DExample() {
 
     while(true) {
         const progress = await realityDataAnalysisService.getJobProgress(jobId);
-        if(progress.state === JobState.SUCCESS) {
+        if(progress.state === CommonData.JobState.SUCCESS) {
             break;
         }
-        else if(progress.state === JobState.ACTIVE) {
+        else if(progress.state === CommonData.JobState.ACTIVE) {
             console.log("Progress: " + progress.progress + ", step: " + progress.step);
         }
-        else if(progress.state === JobState.CANCELLED) {
+        else if(progress.state === CommonData.JobState.CANCELLED) {
             console.log("Job cancelled");
             return;
         }
-        else if(progress.state === JobState.FAILED) {
+        else if(progress.state === CommonData.JobState.FAILED) {
             console.log("Job failed");
             console.log("Progress: " + progress.progress + ", step: " + progress.step);
             return;
@@ -119,7 +115,7 @@ async function runObjects2DExample() {
     console.log("Retrieving outputs ids");
     const properties = await realityDataAnalysisService.getJobProperties(jobId);
     console.log("Downloading outputs");
-    const objects2DId = (properties.settings as O2DJobSettings).outputs.objects2D;
+    const objects2DId = (properties.settings as RDASettings.O2DJobSettings).outputs.objects2D;
     realityDataService.downloadContextScene(objects2DId, outputPath, projectId, references);
     console.log("Successfully downloaded output");
 }

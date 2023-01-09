@@ -3,13 +3,27 @@
   "compilerOptions": {
     "declaration": false,
     "declarationMap": false,
+    "skipLibCheck": true,
     "outDir": "./lib",
-    "esModuleInterop": true
+    "allowJs": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "lib": [
+      "esnext"
+    ],
+    "types": [
+      "@types/wicg-file-system-access"
+    ],
+    "strict": true
   },
-  "types": [
-    "@types/wicg-file-system-access"
-  ],
   "include": [
-    "./src/**/*.ts*"
+    "./src/**/*.ts",
+  ],
+  "exclude": [
+    "lib",
+    "node_modules"
   ]
 }
