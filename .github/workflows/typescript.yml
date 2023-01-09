@@ -51,7 +51,7 @@ jobs:
         working-directory: ./typescript/web-app
         run: npm run lint
       - name: SDK integration tests
-        working-directory: ./typescript/sdk
+        working-directory: ./typescript/integration-tests
         env:
           IMJS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
           IMJS_CLIENT_ID: ${{ secrets.CLIENT_ID }}
