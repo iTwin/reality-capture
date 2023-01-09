@@ -21,7 +21,7 @@ jobs:
         run: git lfs checkout
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '16'
       - name: Setup Azure Artifacts Authentication
         run: |
           npm config set @bentley:registry https://pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/
@@ -35,10 +35,16 @@ jobs:
       - name: Install SDK
         working-directory: ./typescript/sdk
         run: npm install --no-save
+      - name: Install Examples
+        working-directory: ./typescript/examples
+        run: npm install --no-save
       - name: Typescript compiler (WebApp)
         working-directory: ./typescript/web-app
         run: npx tsc
       - name: Typescript compiler (SDK)
+        working-directory: ./typescript/sdk
+        run: npx tsc
+      - name: Typescript compiler (Examples)
         working-directory: ./typescript/sdk
         run: npx tsc
       - name: EsLint
