@@ -50,7 +50,13 @@ jobs:
       - name: EsLint
         working-directory: ./typescript/web-app
         run: npm run lint
-      - name: SDK integration tests
+      - name: Install Integration Tests
+        working-directory: ./typescript/integration-tests
+        run: npm install --no-save
+      - name: Typescript compiler (Integration Tests)
+        working-directory: ./typescript/integration-tests
+        run: npx tsc
+      - name: Run SDK Integration Tests
         working-directory: ./typescript/integration-tests
         env:
           IMJS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
