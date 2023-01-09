@@ -1,7 +1,7 @@
 {
 	"name": "capture-web-app-sample",
 	"version": "0.1.0",
-	"description": "Client-side sample application to display the productions from realitydata sample app.",
+	"description": "Client-side sample application to run capture reality jobs and display the productions",
 	"main": "lib/index.js",
 	"scripts": {
 		"build": "npm run clean && tsc",
@@ -52,7 +52,8 @@
 		"node-fetch": "^2.1.0",
 		"react": "^17.0.0",
 		"react-dom": "^17.0.0",
-		"react-redux": "^7.2.0"
+		"react-redux": "^7.2.0",
+		"reality-capture": "file:../sdk"
 	},
 	"devDependencies": {
 		"@bentley/react-scripts": "^5.0.0",

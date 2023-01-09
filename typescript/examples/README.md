@@ -1,6 +1,6 @@
 # Introduction
 
-capture-sdks-examples contains some examples for capture-sdks.
+reality-capture-examples contains some examples for capture-sdks.
 
 It has been tested with Node 16.17.0 and should work with Node 16.17.0 and newer.
 

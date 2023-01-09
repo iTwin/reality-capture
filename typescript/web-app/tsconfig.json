@@ -13,15 +13,15 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "types": [
-      "@bentley/react-scripts", "@types/wicg-file-system-access"
+      "@bentley/react-scripts",
+      "@types/wicg-file-system-access"
     ],
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
-    "strict": true,
-    "forceConsistentCasingInFileNames": true
+    "strict": true
   },
   "include": [
     "./src/**/*.ts",

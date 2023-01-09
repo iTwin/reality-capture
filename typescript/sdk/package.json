@@ -1,7 +1,11 @@
 {
-	"name": "capture-sdks",
+	"name": "reality-capture",
 	"version": "0.1.0",
 	"description": "Typescript RDAS and CCS SDKs",
+	"main": "lib/reality-capture.js",
+	"module": "lib/reality-capture.js",
+	"source": "src/reality-capture.ts",
+	"target": "ES6",
 	"scripts": {
 		"build": "npm run clean && tsc",
 		"clean": "rimraf lib build .rush",

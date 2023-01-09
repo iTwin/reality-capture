@@ -65,7 +65,7 @@ with issuerUrl, redirectUrl and the proper scopes: `contextcapture:modify contex
 - Install dependencies
 
   ```sh
-  cd reality-capture/typescript/web-app
+  cd reality-capture/src/typescript/web-app
   npm install
   ```
 - If npm install doesn't work with node v16 and newer

@@ -9,10 +9,7 @@ import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import React, { ChangeEvent, MutableRefObject, useCallback, useEffect } from "react";
 import "./DataTransferTab.css";
 import { ReferenceManager } from "./ReferenceManager";
-import { ClientInfo, RealityDataType } from "./sdk/CommonData";
-import { SPATokenFactory } from "./sdk/token/TokenFactoryBrowser";
-import { RealityDataTransferBrowser } from "./sdk/utils/RealityDataTransferBrowser";
-import { ReferenceTableBrowser } from "./sdk/utils/ReferenceTableBrowser";
+import { SPATokenFactory, RealityDataTransferBrowser, ReferenceTableBrowser, CommonData } from "reality-capture";
 import { SelectRealityData } from "./SelectRealityData";
 
 
@@ -28,7 +25,7 @@ export enum DataTypes {
 
 interface RdsProps {
     realityDataAccessClient: RealityDataAccessClient;
-    clientInfo: ClientInfo;
+    clientInfo: CommonData.ClientInfo;
     referenceTable: ReferenceTableBrowser;
     onReferenceTableChanged: (type: ReferenceTableBrowser) => void;
     useReferenceTable: boolean;
@@ -102,9 +99,9 @@ export function Rds(props: RdsProps) {
         { value: DataTypes.OPC, label: "Web Ready Point Cloud" },
     ];
 
-    const listPathsToResolve = async (file: File, type: RealityDataType.CONTEXT_SCENE | RealityDataType.CC_ORIENTATIONS): Promise<boolean> => {
+    const listPathsToResolve = async (file: File, type: CommonData.RealityDataType.CONTEXT_SCENE | CommonData.RealityDataType.CC_ORIENTATIONS): Promise<boolean> => {
         const paths: string[] = [];
-        if (type === RealityDataType.CONTEXT_SCENE) {
+        if (type === CommonData.RealityDataType.CONTEXT_SCENE) {
             const xmlDoc = new DOMParser().parseFromString(await file.text(), "text/xml");
             const references = xmlDoc.getElementsByTagName("Reference");
             for (let i = 0; i < references.length; i++) {
@@ -162,7 +159,7 @@ export function Rds(props: RdsProps) {
 
     const onUploadFiles = async (): Promise<void> => {
         setUploadedDataId("");
-        if (props.useReferenceTable && (uploadedDataType === RealityDataType.CONTEXT_SCENE || uploadedDataType === RealityDataType.CC_ORIENTATIONS)) {
+        if (props.useReferenceTable && (uploadedDataType === CommonData.RealityDataType.CONTEXT_SCENE || uploadedDataType === CommonData.RealityDataType.CC_ORIENTATIONS)) {
             if (await listPathsToResolve(filesToUpload[0], uploadedDataType))
                 return; // The user must resolve the paths errors before uploading the scene/orientations
         }
@@ -174,7 +171,7 @@ export function Rds(props: RdsProps) {
         if(realityDataId)
             setUploadProgress(100);
         
-        if (props.useReferenceTable && uploadedDataType !== RealityDataType.CONTEXT_SCENE && uploadedDataType !== RealityDataType.CC_ORIENTATIONS)
+        if (props.useReferenceTable && uploadedDataType !== CommonData.RealityDataType.CONTEXT_SCENE && uploadedDataType !== CommonData.RealityDataType.CC_ORIENTATIONS)
             props.referenceTable.addReference(filesToUpload[0].webkitRelativePath.split("/")[0]!, realityDataId);
 
         setUploadedDataId(realityDataId);
