@@ -1,6 +1,6 @@
 # Introduction
 
-capture-web-app-sample is a web application (in typescript) to show how reality Capture services are working and display Reality Data Analysis outputs, such as Cesium 3D Tiles and Context Scenes.
+reality-capture-web-app is a web application (in typescript) to show how reality Capture services are working and display Reality Data Analysis outputs, such as Cesium 3D Tiles and Context Scenes.
 
 - [Reality Data](https://developer.bentley.com/apis/reality-data/) provides the ability to retrieve information about the reality data that is associated with an infrastructure project.
 - [Reality Data Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
@@ -61,6 +61,8 @@ with issuerUrl, redirectUrl and the proper scopes: `contextcapture:modify contex
   ```sh
   git clone https://github.com/iTwin/reality-capture
   ```
+
+- Since this repo has a (temporary) local dependency on typescript/sdk, this project has to be build. See [sdk](./../sdk/README.md).
 
 - Install dependencies
 

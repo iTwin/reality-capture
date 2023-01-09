@@ -145,6 +145,7 @@ v_env
 node_modules/
 typescript/sdk/package-lock.json
 typescript/examples/package-lock.json
+typescript/integration-tests/package-lock.json
 lib/
 out/
 

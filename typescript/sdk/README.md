@@ -7,12 +7,12 @@ and should work he same way.
 
 ## Pre-reqs
 
-To build and run integration tests locally you will need a few things:
+To build reality-capture, you will need a few things:
 
 - Install [Node.js](https://nodejs.org/en/) v16 (must be greater than 16.17.x).
 - Install [VS Code](https://code.visualstudio.com/).
 
-## Build and run integration tests locally
+## Build project
 
 - Clone the repository
 
@@ -32,17 +32,20 @@ To build and run integration tests locally you will need a few things:
   npm install --legacy-peer-deps
   ```
 
-- Create a new `.env` file, based on `template.env`. Fill in the required fields in the `.env` configuration file.
-
-- Build and run the project
+- Build the project
 
   ```sh
   npm run build
   ```
 
-- Run integration tests
-  
-  ```sh
-  npm run test:integration
-  ```
+# Integration tests
 
+To run reality-capture integration-tests, see [integration-tests](./../integration-tests/README.md)
+
+# Examples
+
+To run reality-capture examples, see [examples](./../examples/README.md)
+
+# Web app
+
+It is possible to import reality-capture in a browser application, see [web-app](./../web-app/README.md)

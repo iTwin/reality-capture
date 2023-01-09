@@ -1,6 +1,6 @@
 # Introduction
 
-reality-capture-examples contains some examples for capture-sdks.
+reality-capture-examples contains some examples for reality-capture.
 
 It has been tested with Node 16.17.0 and should work with Node 16.17.0 and newer.
 
@@ -19,6 +19,8 @@ To build and run the source code locally you will need a few things:
   git clone https://github.com/iTwin/reality-capture
   ```
 
+- Since this repo has a (temporary) local dependency on typescript/sdk, this project has to be build. See [sdk](./../sdk/README.md).
+
 - Install dependencies
 
   ```sh
@@ -33,7 +35,7 @@ To build and run the source code locally you will need a few things:
 
 - Create a new `.env` file, based on `template.env`. Fill in the required fields in the `.env` configuration file.
 
-- Then, replace the input data paths with yours. You can download data samples here : [data]https://communities.bentley.com/products/3d_imaging_and_point_cloud_software/w/wiki/54656/context-insights-detectors-download-page
+- Then, replace the input data paths with yours. You can download data samples here : [data](https://communities.bentley.com/products/3d_imaging_and_point_cloud_software/w/wiki/54656/context-insights-detectors-download-page)
 - Replace qa/dev environment with the one you want to use.
 
 - Build and run the project

@@ -14,9 +14,6 @@
     "lib": [
       "esnext"
     ],
-    "types": [
-      "@types/wicg-file-system-access"
-    ],
     "strict": true
   },
   "include": [

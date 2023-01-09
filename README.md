@@ -17,4 +17,5 @@ See README [python](./python/README.md) and [typescript sdk](./typescript/sdk/RE
 Other useful README files :
 - [sdk examples](./typescript/examples/README.md)
 - [sdk web app sample](./typescript/web-app/README.md)
+- [sdk integration tests](./typescript/integration-tests/README.md)
 
