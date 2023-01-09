@@ -9,21 +9,18 @@ import { Button, Input, LabeledInput, ProgressLinear } from "@itwin/itwinui-reac
 import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import React, { ChangeEvent, MutableRefObject, useCallback, useEffect } from "react";
 import "./CCSTab.css";
-import { ContextCaptureService } from "./sdk/cccs/ContextCaptureService";
-import { CCJobSettings, CCJobType } from "./sdk/cccs/Utils";
-import { ClientInfo, JobState } from "./sdk/CommonData";
-import { SPATokenFactory } from "./sdk/token/TokenFactoryBrowser";
+import { ContextCaptureService, SPATokenFactory, CCUtils, CommonData } from "reality-capture";
 import { SelectRealityData } from "./SelectRealityData";
 
 interface CcProps {
     realityDataAccessClient: RealityDataAccessClient;
-    clientInfo: ClientInfo;
+    clientInfo: CommonData.ClientInfo;
 }
 
 export function ContextCapture(props: CcProps) {
     const [step, setStep] = React.useState<string>("");
     const [percentage, setPercentage] = React.useState<number>(0);
-    const [jobSettings, setJobSettings] = React.useState<CCJobSettings>(new CCJobSettings());
+    const [jobSettings, setJobSettings] = React.useState<CCUtils.CCJobSettings>(new CCUtils.CCJobSettings());
     const [jobId, setJobId] = React.useState<string>("");
     const [photosId, setPhotosId] = React.useState<string>("");
     const [ccOrientationsId, setCcOrientationsId] = React.useState<string>("");
@@ -50,7 +47,7 @@ export function ContextCapture(props: CcProps) {
 
         const workspaceId = await contextCaptureService.current.createWorkspace(jobName + " workspace", 
             process.env.IMJS_PROJECT_ID!);
-        const id = await contextCaptureService.current.createJob(CCJobType.FULL, settings, jobName, workspaceId);
+        const id = await contextCaptureService.current.createJob(CCUtils.CCJobType.FULL, settings, jobName, workspaceId);
         await contextCaptureService.current.submitJob(id);
         setJobId(id);
 
@@ -60,17 +57,17 @@ export function ContextCapture(props: CcProps) {
             setPercentage(progress.progress);
             setStep(progress.step);
 
-            if (progress.state === JobState.SUCCESS || progress.state === JobState.OVER) {
+            if (progress.state === CommonData.JobState.SUCCESS || progress.state === CommonData.JobState.OVER) {
                 done = true;
             }
-            else if (progress.state === JobState.ACTIVE) {
+            else if (progress.state === CommonData.JobState.ACTIVE) {
                 console.log("Progress: " + progress.progress + ", step: " + progress.step);
             }
-            else if (progress.state === JobState.CANCELLED) {
+            else if (progress.state === CommonData.JobState.CANCELLED) {
                 console.log("Job cancelled");
                 return;
             }
-            else if (progress.state === JobState.FAILED) {
+            else if (progress.state === CommonData.JobState.FAILED) {
                 console.log("Job failed");
                 done = true;
             }

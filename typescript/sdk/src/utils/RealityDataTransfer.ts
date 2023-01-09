@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 import { RealityDataType } from "../CommonData";
 import { TokenFactory } from "../token/TokenFactory";
 
-export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
+async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 // taken from Microsoft's Azure sdk samples.
 // https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/storage/storage-blob/samples/typescript/src/basic.ts
@@ -172,7 +172,7 @@ async function replaceJSONScene(scenePath: string, outputPath: string, reference
  * @param {ReferenceTable} references A table mapping local path of dependencies to their ID.
  * @param {boolean} localToCloud  If true, searches for local paths and replaces them for reality data ids, if false does the opposite.
  */
-export async function replaceCCOrientationsReferences(ccOrientationPath: string, outputPath: string, references: ReferenceTable,
+async function replaceCCOrientationsReferences(ccOrientationPath: string, outputPath: string, references: ReferenceTable,
     localToCloud: boolean): Promise<void> {
     const data = await fs.promises.readFile(ccOrientationPath);
     const text = data.toString();
@@ -260,7 +260,7 @@ export async function replaceCCOrientationsReferences(ccOrientationPath: string,
  * @param {ReferenceTable} references A table mapping local path of dependencies to their ID.
  * @param {boolean} localToCloud If true, searches for local paths and replaces them for reality data ids, if false does the opposite.
  */
-export async function replaceContextSceneReferences(scenePath: string, outputPath: string, references: ReferenceTable,
+async function replaceContextSceneReferences(scenePath: string, outputPath: string, references: ReferenceTable,
     localToCloud: boolean): Promise<void> {
     if (scenePath.endsWith("json"))
         await replaceJSONScene(scenePath, outputPath, references, localToCloud);

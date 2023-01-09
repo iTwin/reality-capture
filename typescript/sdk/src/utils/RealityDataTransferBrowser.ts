@@ -88,14 +88,14 @@ async function replaceJSONScene(file: File | Blob, references: ReferenceTableBro
     localStorage.setItem("tmpPatchedFile", JSON.stringify(json));
 }
 
-export async function replaceContextSceneReferences(file: File | Blob, references: ReferenceTableBrowser, localToCloud: boolean, isJson: boolean): Promise<void> {
+async function replaceContextSceneReferences(file: File | Blob, references: ReferenceTableBrowser, localToCloud: boolean, isJson: boolean): Promise<void> {
     if (isJson)
         await replaceJSONScene(file, references, localToCloud);
     else
         await replaceXMLScene(file, references, localToCloud);
 }
 
-export async function replaceCCOrientationsReferences(file: File | Blob, references: ReferenceTableBrowser, localToCloud: boolean): Promise<void> {
+async function replaceCCOrientationsReferences(file: File | Blob, references: ReferenceTableBrowser, localToCloud: boolean): Promise<void> {
     const text = await file.text();
     const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
     const photos = xmlDoc.getElementsByTagName("Photo");
