@@ -29,20 +29,20 @@ jobs:
           npm config set //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:username=VssSessionToken
           npm config set //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:_password=${{ secrets.NPM_TOKEN }}
           npm config set //pkgs.dev.azure.com/bentleycs/_packaging/Packages/npm/registry/:email=not-used@example.com
-      - name: Install WebApp
-        working-directory: ./typescript/web-app
-        run: npm install --no-save
       - name: Install SDK
         working-directory: ./typescript/sdk
+        run: npm install --no-save
+      - name: Typescript compiler (SDK)
+        working-directory: ./typescript/sdk
+        run: npx tsc
+      - name: Install WebApp
+        working-directory: ./typescript/web-app
         run: npm install --no-save
       - name: Install Examples
         working-directory: ./typescript/examples
         run: npm install --no-save
       - name: Typescript compiler (WebApp)
         working-directory: ./typescript/web-app
-        run: npx tsc
-      - name: Typescript compiler (SDK)
-        working-directory: ./typescript/sdk
         run: npx tsc
       - name: Typescript compiler (Examples)
         working-directory: ./typescript/sdk
