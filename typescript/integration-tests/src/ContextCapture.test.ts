@@ -7,27 +7,23 @@ import chai, { expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 import { BentleyError } from "@itwin/core-bentley";
-import { ClientInfo, JobState, RealityDataType } from "../CommonData";
 import * as dotenv from "dotenv";
-import { RealityDataTransfer } from "../utils/RealityDataTransfer";
 import path = require("path");
-import { ReferenceTable } from "../utils/ReferenceTable";
 import { RealityDataClientOptions, RealityDataAccessClient } from "@itwin/reality-data-client";
-import { ContextCaptureService } from "../cccs/ContextCaptureService";
-import { CCJobSettings, CCMeshQuality, CCJobType } from "../cccs/Utils";
-import { ServiceTokenFactory } from "../token/TokenFactoryNode";
+import { CCUtils, CommonData, ContextCaptureService } from "reality-capture";
+import { RealityDataTransferNode, ReferenceTableNode, ServiceTokenFactory } from "reality-capture-node";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 describe("Context capture integration tests", () => {
     let tokenFactory: ServiceTokenFactory;
     let contextCaptureService: ContextCaptureService;
-    let realityDataTransfer: RealityDataTransfer;
+    let realityDataTransfer: RealityDataTransferNode;
     let iTwinId = "";
     let workspaceId = "";
     let imagesId = "";
     let ccOrientationsId = "";
-    let references: ReferenceTable;
+    let references: ReferenceTableNode;
     let rdaClient: RealityDataAccessClient;
     let jobId = "";
     let threeMXId = "";
@@ -40,8 +36,8 @@ describe("Context capture integration tests", () => {
         const clientId = process.env.IMJS_CLIENT_ID ?? "";
         const secret = process.env.IMJS_SECRET ?? "";
 
-        const clientInfo: ClientInfo = {clientId: clientId, scopes: new Set([...ContextCaptureService.getScopes(), 
-            ...RealityDataTransfer.getScopes()]), secret: secret, env: "qa-"};
+        const clientInfo: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...ContextCaptureService.getScopes(), 
+            ...RealityDataTransferNode.getScopes()]), secret: secret, env: "qa-"};
         tokenFactory = new ServiceTokenFactory(clientInfo);
         await tokenFactory.getToken();
         if(!tokenFactory.isOk) {
@@ -50,8 +46,8 @@ describe("Context capture integration tests", () => {
         }
 
         contextCaptureService = new ContextCaptureService(tokenFactory);
-        realityDataTransfer = new RealityDataTransfer(tokenFactory);
-        references = new ReferenceTable();
+        realityDataTransfer = new RealityDataTransferNode(tokenFactory);
+        references = new ReferenceTableNode();
 
         const realityDataClientOptions: RealityDataClientOptions = {
             baseUrl: tokenFactory.getServiceUrl() + "realitydata",
@@ -80,7 +76,7 @@ describe("Context capture integration tests", () => {
     it("Upload images", async function () {
         this.timeout(20000);
         imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../data/CC/Images/"), 
-            "SDK integration tests CC images", RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
+            "SDK integration tests CC images", CommonData.RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
         expect(imagesId).is.not.undefined;
         expect(imagesId).to.have.length(36);
         references.addReference(/* path.resolve(__dirname, "../../data/CC/Images/") */ "0", imagesId);
@@ -97,11 +93,11 @@ describe("Context capture integration tests", () => {
     // Create & submit job
     it("Create CC job", async function () {
         this.timeout(10000);
-        let settings = new CCJobSettings();
+        let settings = new CCUtils.CCJobSettings();
         settings.inputs = [imagesId, ccOrientationsId];
         settings.outputs.threeMX = "threeMX";
-        settings.meshQuality = CCMeshQuality.MEDIUM;
-        jobId = await contextCaptureService.createJob(CCJobType.FULL, settings, "SDK integration tests CC job", 
+        settings.meshQuality = CCUtils.CCMeshQuality.MEDIUM;
+        jobId = await contextCaptureService.createJob(CCUtils.CCJobType.FULL, settings, "SDK integration tests CC job", 
             workspaceId);
         expect(jobId).is.not.undefined;
         expect(jobId).to.have.length(36);
@@ -112,17 +108,17 @@ describe("Context capture integration tests", () => {
     it("Get CC job properties", async function () {
         const jobProperties = await contextCaptureService.getJobProperties(jobId);
         expect(jobProperties.name).to.deep.equal("SDK integration tests CC job");
-        expect(jobProperties.type).to.deep.equal(CCJobType.FULL);
+        expect(jobProperties.type).to.deep.equal(CCUtils.CCJobType.FULL);
         expect(jobProperties.iTwinId).to.deep.equal(iTwinId);
         expect(jobProperties.settings.inputs).to.have.length(2);
         expect(jobProperties.settings.inputs[0]).to.deep.equal(imagesId);
         expect(jobProperties.settings.inputs[1]).to.deep.equal(ccOrientationsId);
         threeMXId = jobProperties.settings.outputs.threeMX;
         expect(threeMXId).to.have.length(36);
-        expect(jobProperties.settings.meshQuality).to.deep.equal(CCMeshQuality.MEDIUM);
+        expect(jobProperties.settings.meshQuality).to.deep.equal(CCUtils.CCMeshQuality.MEDIUM);
         expect(jobProperties.workspaceId).to.deep.equal(workspaceId);
         expect(jobProperties.id).to.deep.equal(jobId);
-        expect(jobProperties.state).to.deep.equal(JobState.ACTIVE);
+        expect(jobProperties.state).to.deep.equal(CommonData.JobState.ACTIVE);
     });
 
     it("Get cc job progress", async function () {
@@ -130,13 +126,13 @@ describe("Context capture integration tests", () => {
 
         let jobProgress = await contextCaptureService.getJobProgress(jobId);
         expect(jobProgress.progress).to.equal(0);
-        expect(jobProgress.state).to.deep.equal(JobState.ACTIVE);
+        expect(jobProgress.state).to.deep.equal(CommonData.JobState.ACTIVE);
         expect(jobProgress.step).to.deep.equal("PrepareStep");
 
         while(true) {
             const progress = await contextCaptureService.getJobProgress(jobId);
-            if(progress.state === JobState.SUCCESS || progress.state === JobState.OVER || 
-                progress.state === JobState.CANCELLED || progress.state === JobState.FAILED) {
+            if(progress.state === CommonData.JobState.SUCCESS || progress.state === CommonData.JobState.OVER || 
+                progress.state === CommonData.JobState.CANCELLED || progress.state === CommonData.JobState.FAILED) {
                 break;
             }
             await sleep(10000);
@@ -144,11 +140,11 @@ describe("Context capture integration tests", () => {
 
         jobProgress = await contextCaptureService.getJobProgress(jobId);
         expect(jobProgress.progress).to.equal(100);
-        expect(jobProgress.state).to.deep.equal(JobState.OVER);
+        expect(jobProgress.state).to.deep.equal(CommonData.JobState.OVER);
         expect(jobProgress.step).to.deep.equal("");
 
         const jobProperties = await contextCaptureService.getJobProperties(jobId);
-        expect(jobProperties.state).to.deep.equal(JobState.SUCCESS);
+        expect(jobProperties.state).to.deep.equal(CommonData.JobState.SUCCESS);
     });
 
     // Delete inputs

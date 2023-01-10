@@ -3,8 +3,8 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { CommonData, RDASettings, RealityDataAnalysisService, RealityDataTransfer, ReferenceTable, 
-    ServiceTokenFactory } from "reality-capture";
+import { CommonData, RDASettings, RealityDataAnalysisService } from "reality-capture";
+import { RealityDataTransferNode, ReferenceTableNode, ServiceTokenFactory } from "reality-capture-node";
 import path = require("path");
 import * as fs from "fs";
 import * as dotenv from "dotenv";
@@ -30,7 +30,7 @@ async function runObjects2DExample() {
     const secret = process.env.IMJS_SECRET ?? "";
 
     console.log("Reality Data Analysis sample job detecting 2D objects");
-    const clientInfoRd: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
+    const clientInfoRd: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransferNode.getScopes()]), 
         secret: secret, env: "qa-"};
     const clientInfoRda: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataAnalysisService.getScopes()]), 
         secret: secret, env: "dev-"};
@@ -41,12 +41,12 @@ async function runObjects2DExample() {
     if(!tokenFactoryRd.isOk() || !tokenFactoryRda.isOk())
         console.log("Can't get the access token");
     
-    const realityDataService = new RealityDataTransfer(tokenFactoryRd);
+    const realityDataService = new RealityDataTransferNode(tokenFactoryRd);
     const realityDataAnalysisService = new RealityDataAnalysisService(tokenFactoryRda);
     console.log("Service initialized");
 
     // Creating reference table and uploading ccimageCollection, contextScene and detector if necessary (not yet on the cloud)
-    const references = new ReferenceTable();
+    const references = new ReferenceTableNode();
     const referencesPath = path.join(outputPath, "test_references_typescript.txt");
     if(fs.existsSync(referencesPath) && fs.lstatSync(referencesPath).isFile()) {
         console.log("Loading preexistent references");

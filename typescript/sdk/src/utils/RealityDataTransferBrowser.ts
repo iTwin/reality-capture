@@ -172,6 +172,16 @@ async function replaceCCOrientationsReferences(file: File | Blob, references: Re
 }
 
 /**
+ * Default hook to display progress.
+ * @param progress current progress (percentage).
+ * @returns false if the upload/download has been cancelled.
+ */
+export function defaultProgressHook(progress: number): boolean {
+    console.log("Current progress : " + progress + "%.");
+    return true;
+}
+
+/**
  * Utility class to upload and download reality data in ContextShare.
  */
 export class RealityDataTransferBrowser {

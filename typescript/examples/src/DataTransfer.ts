@@ -3,7 +3,8 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { CommonData, defaultProgressHook, RealityDataTransfer, ServiceTokenFactory } from "reality-capture";
+import { CommonData, defaultProgressHook } from "reality-capture";
+import { RealityDataTransferNode, ServiceTokenFactory } from "reality-capture-node";
 import * as dotenv from "dotenv";
 
 
@@ -19,14 +20,14 @@ async function runRealityDataExample() {
     const secret = process.env.IMJS_SECRET ?? "";
 
     console.log("Reality Data Analysis sample job detecting 2D objects");
-    const clientInfo: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
+    const clientInfo: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransferNode.getScopes()]), 
         secret: secret, env: "qa-"};
     const tokenFactory = new ServiceTokenFactory(clientInfo);
     await tokenFactory.getToken();
     if(!tokenFactory.isOk())
         console.log("Can't get the access token");
     
-    const realityDataService = new RealityDataTransfer(tokenFactory);
+    const realityDataService = new RealityDataTransferNode(tokenFactory);
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
     console.log("Service initialized");

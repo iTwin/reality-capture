@@ -17,7 +17,8 @@ To build and run integration tests locally you will need a few things:
   git clone https://github.com/iTwin/reality-capture
   ```
 
-- Since this repo has a (temporary) local dependency on typescript/sdk, this project has to be build. See [sdk](./../sdk/README.md).
+- Since this repo has a (temporary) local dependency on typescript/sdk and typescript/sdk-node, 
+  this project has to be build. See [sdk](./../sdk/README.md) and [sdk-node](./../sdk-node/README.md) for more information.
 
 - Install dependencies
 

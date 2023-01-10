@@ -9,7 +9,7 @@ import path = require("path");
 /**
  * Associate data local paths to RDS ids.
  */
-export class ReferenceTable {
+export class ReferenceTableNode {
     /** Local path to cloud id. */
     private localToCloud: Map<string, string>;
     /** Cloud id to local path. */

@@ -9,13 +9,9 @@ import chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 import path = require("path");
 import * as dotenv from "dotenv";
-import { ClientInfo, JobState, RealityDataType } from "../CommonData";
-import { RealityDataAnalysisService } from "../rdas/RealityDataAnalysisService";
-import { RealityDataTransfer } from "../utils/RealityDataTransfer";
-import { ReferenceTable } from "../utils/ReferenceTable";
-import { O2DJobSettings } from "../rdas/Settings";
 import { BentleyError } from "@itwin/core-bentley";
-import { ServiceTokenFactory } from "../token/TokenFactoryNode";
+import { CommonData, RDASettings, RealityDataAnalysisService } from "reality-capture";
+import { RealityDataTransferNode, ReferenceTableNode, ServiceTokenFactory } from "reality-capture-node";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -24,8 +20,8 @@ describe("Reality data analysis integration tests", () => {
     let tokenFactoryRd: ServiceTokenFactory;
     let tokenFactoryRda: ServiceTokenFactory;
     let realityDataAnalysisService: RealityDataAnalysisService;
-    let realityDataTransfer: RealityDataTransfer;
-    let references: ReferenceTable;
+    let realityDataTransfer: RealityDataTransferNode;
+    let references: ReferenceTableNode;
     let rdaClient: RealityDataAccessClient;
     let detectorId = "";
     let imagesId = "";
@@ -41,9 +37,9 @@ describe("Reality data analysis integration tests", () => {
         const clientId = process.env.IMJS_CLIENT_ID ?? "";
         const secret = process.env.IMJS_SECRET ?? "";
 
-        const clientInfoRd: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
+        const clientInfoRd: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransferNode.getScopes()]), 
             secret: secret, env: "qa-"};
-        const clientInfoRda: ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataAnalysisService.getScopes()]), 
+        const clientInfoRda: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataAnalysisService.getScopes()]), 
             secret: secret, env: "dev-"};
         tokenFactoryRd = new ServiceTokenFactory(clientInfoRd);
         tokenFactoryRda = new ServiceTokenFactory(clientInfoRda);
@@ -55,8 +51,8 @@ describe("Reality data analysis integration tests", () => {
         }
 
         realityDataAnalysisService = new RealityDataAnalysisService(tokenFactoryRda);
-        realityDataTransfer = new RealityDataTransfer(tokenFactoryRd);
-        references = new ReferenceTable();
+        realityDataTransfer = new RealityDataTransferNode(tokenFactoryRd);
+        references = new ReferenceTableNode();
 
         const realityDataClientOptions: RealityDataClientOptions = {
             baseUrl: tokenFactoryRd.getServiceUrl() + "realitydata",
@@ -68,7 +64,7 @@ describe("Reality data analysis integration tests", () => {
     it("Upload RDAS detector", async function () {
         this.timeout(120000);
         detectorId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../data/O2D/Coco2017_v1.19/"), 
-            "SDK integration tests RDAS detector", RealityDataType.CONTEXT_DETECTOR, iTwinId);
+            "SDK integration tests RDAS detector", CommonData.RealityDataType.CONTEXT_DETECTOR, iTwinId);
         expect(detectorId).is.not.undefined;
         expect(detectorId).to.have.length(36);
     });
@@ -76,7 +72,7 @@ describe("Reality data analysis integration tests", () => {
     it("Upload RDAS images", async function () {
         this.timeout(20000);
         imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../data/O2D/Images"), 
-            "SDK integration tests RDAS images", RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
+            "SDK integration tests RDAS images", CommonData.RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
         expect(imagesId).is.not.undefined;
         expect(imagesId).to.have.length(36);
         references.addReference(/* path.resolve(__dirname, "../../data/CC/Images/") */ "0", imagesId);
@@ -94,7 +90,7 @@ describe("Reality data analysis integration tests", () => {
     it("Create RDAS job", async function () {
         this.timeout(10000);
 
-        const settings = new O2DJobSettings();
+        const settings = new RDASettings.O2DJobSettings();
         settings.inputs.photos = sceneId;
         settings.inputs.photoObjectDetector = detectorId;
         settings.outputs.objects2D = "objects2D";
@@ -111,13 +107,13 @@ describe("Reality data analysis integration tests", () => {
         expect(jobProperties.name).to.deep.equal("SDK integration tests RDAS job");
         expect(jobProperties.type).to.deep.equal("objects2D");
         expect(jobProperties.iTwinId).to.deep.equal(iTwinId);
-        const o2dSettings = jobProperties.settings as O2DJobSettings;
+        const o2dSettings = jobProperties.settings as RDASettings.O2DJobSettings;
         expect(o2dSettings.inputs.photos).to.deep.equal(sceneId);
         expect(o2dSettings.inputs.photoObjectDetector).to.deep.equal(detectorId);
         objects2D = o2dSettings.outputs.objects2D;
         expect(o2dSettings.outputs.objects2D).to.have.length(36);
         expect(jobProperties.id).to.deep.equal(jobId);
-        expect(jobProperties.state).to.deep.equal(JobState.ACTIVE);
+        expect(jobProperties.state).to.deep.equal(CommonData.JobState.ACTIVE);
     });
 
     it("Get cc job progress", async function () {
@@ -125,12 +121,13 @@ describe("Reality data analysis integration tests", () => {
 
         let jobProgress = await realityDataAnalysisService.getJobProgress(jobId);
         expect(jobProgress.progress).to.equal(0);
-        expect(jobProgress.state).to.deep.equal(JobState.ACTIVE);
+        expect(jobProgress.state).to.deep.equal(CommonData.JobState.ACTIVE);
         expect(jobProgress.step).to.deep.equal("PrepareStep");
 
         while(true) {
             const progress = await realityDataAnalysisService.getJobProgress(jobId);
-            if(progress.state === JobState.SUCCESS || progress.state === JobState.CANCELLED || progress.state === JobState.FAILED) {
+            if(progress.state === CommonData.JobState.SUCCESS || progress.state === CommonData.JobState.CANCELLED 
+                || progress.state === CommonData.JobState.FAILED) {
                 break;
             }
             await sleep(10000);
@@ -138,11 +135,11 @@ describe("Reality data analysis integration tests", () => {
 
         jobProgress = await realityDataAnalysisService.getJobProgress(jobId);
         expect(jobProgress.progress).to.equal(100);
-        expect(jobProgress.state).to.deep.equal(JobState.SUCCESS);
+        expect(jobProgress.state).to.deep.equal(CommonData.JobState.SUCCESS);
         expect(jobProgress.step).to.deep.equal("");
 
         const jobProperties = await realityDataAnalysisService.getJobProperties(jobId);
-        expect(jobProperties.state).to.deep.equal(JobState.SUCCESS);
+        expect(jobProperties.state).to.deep.equal(CommonData.JobState.SUCCESS);
     });
 
     // Delete inputs

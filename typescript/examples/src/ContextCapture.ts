@@ -4,8 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 
 import path = require("path");
-import { CCUtils, CommonData, ContextCaptureService, defaultProgressHook, RealityDataTransfer, ReferenceTable, 
-    ServiceTokenFactory } from "reality-capture";
+import { CCUtils, CommonData, ContextCaptureService, defaultProgressHook } from "reality-capture";
+import { RealityDataTransferNode, ReferenceTableNode, ServiceTokenFactory } from "reality-capture-node";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
 
@@ -29,7 +29,7 @@ async function main() {
     const secret = process.env.IMJS_SECRET ?? "";
 
     console.log("Context capture sample job - Full (Calibration + Reconstruction)");
-    const clientInfoRd: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransfer.getScopes()]), 
+    const clientInfoRd: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransferNode.getScopes()]), 
         secret: secret, env: "qa-"};
     const clientInfoCc: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...ContextCaptureService.getScopes()]), 
         secret: secret, env: "dev-"};
@@ -40,7 +40,7 @@ async function main() {
     if(!tokenFactoryRd.isOk() || !tokenFactoryCc.isOk())
         console.log("Can't get the access token");
 
-    const realityDataService = new RealityDataTransfer(tokenFactoryRd);
+    const realityDataService = new RealityDataTransferNode(tokenFactoryRd);
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
     const contextCaptureService = new ContextCaptureService(tokenFactoryCc);
@@ -48,7 +48,7 @@ async function main() {
 
     try {
         // Creating reference table and uploading ccimageCollection, ccOrientations if necessary (not yet on the cloud)
-        const references = new ReferenceTable();
+        const references = new ReferenceTableNode();
         const referencesPath = path.join(outputPath, "test_references_typescript.txt");
         if(fs.existsSync(referencesPath) && fs.lstatSync(referencesPath).isFile()) {
             console.log("Loading preexistent references");

@@ -9,10 +9,9 @@ import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions } f
 import * as fs from "fs";
 import * as os from "os";
 import path = require("path");
-import { ReferenceTable } from "./ReferenceTable";
 import { v4 as uuidv4 } from "uuid";
-import { RealityDataType } from "../CommonData";
-import { TokenFactory } from "../token/TokenFactory";
+import { ReferenceTableNode } from "../utils/ReferenceTableNode"
+import { CommonData, TokenFactory } from "reality-capture";
 
 async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -86,7 +85,7 @@ async function createTempScene(scenePath: string): Promise<string> {
     return newScenePath;
 }
 
-async function replaceXMLScene(scenePath: string, outputPath: string, references: ReferenceTable, localToCloud: boolean): Promise<void> {
+async function replaceXMLScene(scenePath: string, outputPath: string, references: ReferenceTableNode, localToCloud: boolean): Promise<void> {
     const data = await fs.promises.readFile(scenePath);
     const text = data.toString();
     const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
@@ -130,7 +129,7 @@ async function replaceXMLScene(scenePath: string, outputPath: string, references
 }
 
 async function replaceJSONScene(scenePath: string, outputPath: string, references:
-    ReferenceTable, localToCloud: boolean): Promise<void> {
+    ReferenceTableNode, localToCloud: boolean): Promise<void> {
     const data = await fs.promises.readFile(scenePath);
     const text = data.toString();
     const json = JSON.parse(text);
@@ -169,10 +168,10 @@ async function replaceJSONScene(scenePath: string, outputPath: string, reference
  * localToCloud.
  * @param {string} ccOrientationPath Path to the CCOrientation.
  * @param {string} outputPath Path to the new CCOrientation. You can pass the same path twice if you want to replace the file.
- * @param {ReferenceTable} references A table mapping local path of dependencies to their ID.
+ * @param {ReferenceTableNode} references A table mapping local path of dependencies to their ID.
  * @param {boolean} localToCloud  If true, searches for local paths and replaces them for reality data ids, if false does the opposite.
  */
-async function replaceCCOrientationsReferences(ccOrientationPath: string, outputPath: string, references: ReferenceTable,
+async function replaceCCOrientationsReferences(ccOrientationPath: string, outputPath: string, references: ReferenceTableNode,
     localToCloud: boolean): Promise<void> {
     const data = await fs.promises.readFile(ccOrientationPath);
     const text = data.toString();
@@ -257,10 +256,10 @@ async function replaceCCOrientationsReferences(ccOrientationPath: string, output
  * This function can either replace local paths for reality data IDs or the contrary, according to the value of localToCloud.
  * @param {string} scenePath Path to the ContextScene.
  * @param {string} outputPath Path to the new ContextScene. You can pass the same path twice if you want to replace the file.
- * @param {ReferenceTable} references A table mapping local path of dependencies to their ID.
+ * @param {ReferenceTableNode} references A table mapping local path of dependencies to their ID.
  * @param {boolean} localToCloud If true, searches for local paths and replaces them for reality data ids, if false does the opposite.
  */
-async function replaceContextSceneReferences(scenePath: string, outputPath: string, references: ReferenceTable,
+async function replaceContextSceneReferences(scenePath: string, outputPath: string, references: ReferenceTableNode,
     localToCloud: boolean): Promise<void> {
     if (scenePath.endsWith("json"))
         await replaceJSONScene(scenePath, outputPath, references, localToCloud);
@@ -275,19 +274,9 @@ interface DataTransferInfo {
 }
 
 /**
- * Default hook to display progress.
- * @param progress current progress (percentage).
- * @returns false if the upload/download has been cancelled.
- */
-export function defaultProgressHook(progress: number): boolean {
-    console.log("Current progress : " + progress + "%.");
-    return true;
-}
-
-/**
  * Utility class to upload and download reality data in ContextShare.
  */
-export class RealityDataTransfer {
+export class RealityDataTransferNode {
     /** Token factory to make authenticated request to the API. */
     private tokenFactory: TokenFactory;
 
@@ -354,7 +343,7 @@ export class RealityDataTransfer {
      * a relative path to the root folder of the data.
      * @returns {string} The ID of the uploaded data.
      */
-    public async uploadRealityData(dataToUpload: string, name: string, type: RealityDataType,
+    public async uploadRealityData(dataToUpload: string, name: string, type: CommonData.RealityDataType,
         iTwinId: string, rootFile?: string): Promise<string> {
         // TODO: parallelize
         try {
@@ -431,11 +420,11 @@ export class RealityDataTransfer {
      * @param {string} name Name of the created entry on ProjectWise ContextShare.
      * @param {string} iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the
      * data center where the reality data is stored.
-     * @param {ReferenceTable} references (optional) A table mapping local path of dependencies to their ID.
+     * @param {ReferenceTableNode} references (optional) A table mapping local path of dependencies to their ID.
      * @returns {string} The ID of the uploaded ContextScene.
      */
     public async uploadContextScene(sceneFolderPath: string, name: string, iTwinId: string,
-        references?: ReferenceTable): Promise<string> {
+        references?: ReferenceTableNode): Promise<string> {
         try {
             const orientationFiles = await listFiles(sceneFolderPath);
             if (!orientationFiles[0].includes("ContextScene"))
@@ -447,7 +436,7 @@ export class RealityDataTransfer {
             if (references)
                 await replaceContextSceneReferences(scenePath, newScenePath, references, true);
 
-            return await this.uploadRealityData(path.dirname(newScenePath), name, RealityDataType.CONTEXT_SCENE, iTwinId);
+            return await this.uploadRealityData(path.dirname(newScenePath), name, CommonData.RealityDataType.CONTEXT_SCENE, iTwinId);
         }
         catch (error: any) {
             return Promise.reject(error);
@@ -462,11 +451,11 @@ export class RealityDataTransfer {
      * @param {string} name Name of the created entry on ProjectWise ContextShare.
      * @param {string} iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the 
      * data center where the reality data is stored.
-     * @param {ReferenceTable} references (optional): A table mapping local path of dependencies to their ID.
+     * @param {ReferenceTableNode} references (optional): A table mapping local path of dependencies to their ID.
      * @returns {string} The ID of the uploaded CCOrientation.
      */
     public async uploadCCOrientations(orientationFolderPath: string, name: string, iTwinId: string,
-        references?: ReferenceTable): Promise<string> {
+        references?: ReferenceTableNode): Promise<string> {
         try {
             const orientationFiles = await listFiles(orientationFolderPath);
             if (!orientationFiles[0].includes("Orientations"))
@@ -478,7 +467,7 @@ export class RealityDataTransfer {
             if (references)
                 await replaceCCOrientationsReferences(orientationPath, newOrientationPath, references, true);
 
-            return await this.uploadRealityData(path.dirname(newOrientationPath), name, RealityDataType.CC_ORIENTATIONS, iTwinId);
+            return await this.uploadRealityData(path.dirname(newOrientationPath), name, CommonData.RealityDataType.CC_ORIENTATIONS, iTwinId);
         }
         catch (error: any) {
             return Promise.reject(error);
@@ -566,10 +555,10 @@ export class RealityDataTransfer {
      * paths should be provided in the reference table.
      * @param {string} realityDataId The ID of the ContextScene to download.
      * @param {string} downloadPath The path where downloaded ContextScene should be saved.
-     * @param {ReferenceTable} references (optional): A table mapping local path of dependencies to their ID.
+     * @param {ReferenceTableNode} references (optional): A table mapping local path of dependencies to their ID.
      */
     public async downloadContextScene(realityDataId: string, downloadPath: string, iTwinId: string,
-        references?: ReferenceTable): Promise<void> {
+        references?: ReferenceTableNode): Promise<void> {
         try {
             await this.downloadRealityData(realityDataId, downloadPath, iTwinId);
             if (references) {
@@ -593,10 +582,10 @@ export class RealityDataTransfer {
      * paths should be provided in the reference table.
      * @param {string} realityDataId The ID of the CCOrientation to download.
      * @param {string} downloadPath The path where downloaded file should be saved.
-     * @param {ReferenceTable} references (optional): A table mapping local path of dependencies to their ID.
+     * @param {ReferenceTableNode} references (optional): A table mapping local path of dependencies to their ID.
      */
     public async downloadCCorientations(realityDataId: string, downloadPath: string, iTwinId: string,
-        references?: ReferenceTable): Promise<void> {
+        references?: ReferenceTableNode): Promise<void> {
         try {
             await this.downloadRealityData(realityDataId, downloadPath, iTwinId);
             if (references) {

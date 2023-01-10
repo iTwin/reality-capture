@@ -8,20 +8,19 @@ import { IModelHost } from "@itwin/core-backend";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import { ElectronMainAuthorization } from "@itwin/electron-authorization/lib/cjs/ElectronMain";
-import { TokenFactory } from "./TokenFactory";
-import { ClientInfo } from "../CommonData";
+import { CommonData, TokenFactory } from "reality-capture";
 
 /**
  * iTwin Token factory for Service Application.
  */
 export class ServiceTokenFactory implements TokenFactory {
     /** Info to initialize the authorization client. */
-    private clientInfo: ClientInfo;
+    private clientInfo: CommonData.ClientInfo;
 
     /** Utility to generate tokens. */
     private authorizationClient?: ServiceAuthorizationClient;
 
-    constructor(clientInfo: ClientInfo) {
+    constructor(clientInfo: CommonData.ClientInfo) {
         this.clientInfo = clientInfo;
     }
 
@@ -62,12 +61,12 @@ export class ServiceTokenFactory implements TokenFactory {
  */
 export class DesktopTokenFactory implements TokenFactory {
     /** Info to initialize the authorization client. */
-    private clientInfo: ClientInfo;
+    private clientInfo: CommonData.ClientInfo;
 
     /** Utility to generate tokens. */
     private authorizationClient?: NodeCliAuthorizationClient;
 
-    constructor(clientInfo: ClientInfo) {
+    constructor(clientInfo: CommonData.ClientInfo) {
         this.clientInfo = clientInfo;
     }
 
@@ -107,12 +106,12 @@ export class DesktopTokenFactory implements TokenFactory {
  */
 export class ElectronTokenFactory implements TokenFactory {
     /** Info to initialize the authorization client. */
-    private clientInfo: ClientInfo;
+    private clientInfo: CommonData.ClientInfo;
 
     /** Utility to generate tokens. */
     private authorizationClient?: ElectronMainAuthorization;
 
-    constructor(clientInfo: ClientInfo) {
+    constructor(clientInfo: CommonData.ClientInfo) {
         this.clientInfo = clientInfo;
     }
 
