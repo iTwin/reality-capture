@@ -35,6 +35,12 @@ jobs:
       - name: Typescript compiler (SDK)
         working-directory: ./typescript/sdk
         run: npx tsc
+      - name: Install SDK Node support
+        working-directory: ./typescript/sdk-node
+        run: npm install --no-save
+      - name: Typescript compiler (SDK Node support)
+        working-directory: ./typescript/sdk-node
+        run: npx tsc
       - name: Install WebApp
         working-directory: ./typescript/web-app
         run: npm install --no-save
@@ -45,7 +51,7 @@ jobs:
         working-directory: ./typescript/web-app
         run: npx tsc
       - name: Typescript compiler (Examples)
-        working-directory: ./typescript/sdk
+        working-directory: ./typescript/examples
         run: npx tsc
       - name: EsLint
         working-directory: ./typescript/web-app
