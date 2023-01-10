@@ -74,7 +74,7 @@ def main():
         ret = data_transfer.upload_reality_data(
             ccimage_collections,
             ccimage_collections_name,
-            RealityDataType.ImageCollection,
+            RealityDataType.CCImageCollection,
             project_id,
         )
         if ret.is_error():
@@ -123,7 +123,7 @@ def main():
     if not references.has_local_path(mesh):
         print("No reference to mesh found, uploading local files to cloud")
         ret = data_transfer.upload_reality_data(
-            mesh, mesh_name, RealityDataType.ImageCollection, project_id
+            mesh, mesh_name, RealityDataType.CCImageCollection, project_id
         )
         if ret.is_error():
             print("Error in upload:", ret.error)

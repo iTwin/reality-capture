@@ -38,7 +38,7 @@ def main():
     ret_up = data_transfer.upload_reality_data(
         ccimage_collections,
         ccimage_collections_name,
-        RealityDataType.ImageCollection,
+        RealityDataType.CCImageCollection,
         project_id,
     )
     if ret_up.is_error():

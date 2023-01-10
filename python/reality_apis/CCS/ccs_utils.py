@@ -89,7 +89,7 @@ class CCJobSettings:
         input_dict = {"inputs": [{"id": i} for i in self.inputs]}
         settings_dict = {
             "settings": {
-                "meshQuality": self.mesh_quality.value,
+                "quality": self.mesh_quality.value,
                 "processingEngines": self.engines,
                 "outputs": list(),
             }
@@ -97,7 +97,7 @@ class CCJobSettings:
         if cache:
             settings_dict["settings"]["cacheSettings"] = cache
         if self.outputs.context_scene:
-            settings_dict["settings"]["outputs"].append("contextScene")
+            settings_dict["settings"]["outputs"].append("ContextScene")
         if self.outputs.ccorientation:
             settings_dict["settings"]["outputs"].append("CCOrientations")
         if self.outputs.threeMX:

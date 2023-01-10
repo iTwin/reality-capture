@@ -10,7 +10,7 @@ class RealityDataType(Enum):
     Data types used in ProjectWise ContextShare.
     """
 
-    ImageCollection = "CCImageCollection"
+    CCImageCollection = "CCImageCollection"
     ContextScene = "ContextScene"
     ContextDetector = "ContextDetector"
     CCOrientations = "CCOrientations"
