@@ -7,7 +7,7 @@
 		"clean": "rimraf lib build .rush",
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
-		"test:integration": "mocha ./lib/integration-tests/*.test.js"
+		"test:integration": "mocha ./lib/*.test.js"
 	},
 	"keywords": [],
 	"author": {
