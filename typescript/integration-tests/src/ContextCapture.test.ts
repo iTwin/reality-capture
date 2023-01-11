@@ -75,16 +75,16 @@ describe("Context capture integration tests", () => {
     // Create and upload inputs
     it("Upload images", async function () {
         this.timeout(20000);
-        imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../data/CC/Images/"), 
+        imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../data/CC/Images/"), 
             "SDK integration tests CC images", CommonData.RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
         expect(imagesId).is.not.undefined;
         expect(imagesId).to.have.length(36);
-        references.addReference(/* path.resolve(__dirname, "../../data/CC/Images/") */ "0", imagesId);
+        references.addReference("0", imagesId);
     });
 
     it("Upload CC orientations", async function () {
         this.timeout(10000);
-        ccOrientationsId = await realityDataTransfer.uploadCCOrientations(path.resolve(__dirname, "../../data/CC/Orientation"), 
+        ccOrientationsId = await realityDataTransfer.uploadCCOrientations(path.resolve(__dirname, "../data/CC/Orientation"), 
             "SDK integration tests CC orientations", iTwinId, references);
         expect(ccOrientationsId).is.not.undefined;
         expect(ccOrientationsId).to.have.length(36);

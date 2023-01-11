@@ -63,7 +63,7 @@ describe("Reality data analysis integration tests", () => {
     // Create and upload inputs
     it("Upload RDAS detector", async function () {
         this.timeout(120000);
-        detectorId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../data/O2D/Coco2017_v1.19/"), 
+        detectorId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../data/O2D/Coco2017_v1.19/"), 
             "SDK integration tests RDAS detector", CommonData.RealityDataType.CONTEXT_DETECTOR, iTwinId);
         expect(detectorId).is.not.undefined;
         expect(detectorId).to.have.length(36);
@@ -71,16 +71,16 @@ describe("Reality data analysis integration tests", () => {
 
     it("Upload RDAS images", async function () {
         this.timeout(20000);
-        imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../data/O2D/Images"), 
+        imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../data/O2D/Images"), 
             "SDK integration tests RDAS images", CommonData.RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
         expect(imagesId).is.not.undefined;
         expect(imagesId).to.have.length(36);
-        references.addReference(/* path.resolve(__dirname, "../../data/CC/Images/") */ "0", imagesId);
+        references.addReference("0", imagesId);
     });
 
     it("Upload RDAS scene", async function () {
         this.timeout(10000);
-        sceneId = await realityDataTransfer.uploadContextScene(path.resolve(__dirname, "../../data/O2D/Scene"), 
+        sceneId = await realityDataTransfer.uploadContextScene(path.resolve(__dirname, "../data/O2D/Scene"), 
             "SDK integration tests RDAS scene", iTwinId, references);
         expect(sceneId).is.not.undefined;
         expect(sceneId).to.have.length(36);
