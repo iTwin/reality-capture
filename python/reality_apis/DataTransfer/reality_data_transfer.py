@@ -1,5 +1,7 @@
 # Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 # See LICENSE.md in the project root for license terms and full copyright notice.
+import shutil
+
 import requests
 import json
 import os
@@ -261,7 +263,7 @@ class RealityDataTransfer:
 
         Args:
             ccorientation_path: Local directory containing the relevant CCOrientation. The file must be called
-            "Orientations".
+            "Orientations.xml".
             name: Name of the created entry on ProjectWise ContextShare.
             iTwin_id: ID of the iTwin project the reality data will be linked to. It is also used to choose the
                 data center where the reality data is stored.
@@ -278,6 +280,9 @@ class RealityDataTransfer:
                 reference_table,
                 True,
             )
+            if os.path.exists(os.path.join(ccorientation_path, "Orientations - TiePoints.xml")):
+                shutil.copy(os.path.join(ccorientation_path, "Orientations - TiePoints.xml"), temp_dir.name)
+
             if ret.is_error():
                 return ReturnValue(value="", error=ret.error)
             return self.upload_reality_data(
