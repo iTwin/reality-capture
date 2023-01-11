@@ -280,32 +280,34 @@ export class RealityDataTransferNode {
     /** Token factory to make authenticated request to the API. */
     private tokenFactory: TokenFactory;
 
-    /** Abort controller to stop the upload when the upload has been cancelled. */
+    /** Abort controller to stop the upload when it has been cancelled. */
     private abortController: AbortController;
 
     /** 
      * On upload progress hook. Displays the upload progress and returns false when the upload is cancelled.
      * Create your own function or use {@link defaultProgressHook}.
+     * @param {number} progress upload progress, usually a percentage.
      */
     private onUploadProgress?: (progress: number) => boolean;
 
     /** 
      * On download progress hook. Displays the download progress and returns false when the download is cancelled.
      * Create your own function or use {@link defaultProgressHook}.
+     * @param {number} progress download progress, usually a percentage.
      */
     private onDownloadProgress?: (progress: number) => boolean;
 
     /**
-     * Set the upload progress hook.
-     * @param onProgress function to display the progress, should returns a boolean (cancelled).
+     * Set upload progress hook.
+     * @param onProgress function to display the progress, should returns a boolean (is cancelled/running).
      */
     public setUploadHook(onProgress: (progress: number) => boolean): void {
         this.onUploadProgress = onProgress;
     }
 
     /**
-     * Set the download progress hook.
-     * @param onProgress function to display the progress, should returns a boolean (cancelled).
+     * Set download progress hook.
+     * @param progress function to display the progress, should returns a boolean (is cancelled/running).
      */
     public setDownloadHook(onProgress: (progress: number) => boolean): void {
         this.onDownloadProgress = onProgress;
@@ -481,6 +483,7 @@ export class RealityDataTransferNode {
      * Use downloadContextScene instead.
      * @param {string} realityDataId The ID of the data to download.
      * @param {string} downloadPath The path where downloaded data should be saved.
+     * @param {string} iTwinId ID of the iTwin project the reality data is linked to.
      */
     public async downloadRealityData(realityDataId: string, downloadPath: string, iTwinId: string): Promise<void> {
         // TODO: parallelize
@@ -555,6 +558,7 @@ export class RealityDataTransferNode {
      * paths should be provided in the reference table.
      * @param {string} realityDataId The ID of the ContextScene to download.
      * @param {string} downloadPath The path where downloaded ContextScene should be saved.
+     * @param {string} iTwinId ID of the iTwin project the reality data is linked to.
      * @param {ReferenceTableNode} references (optional): A table mapping local path of dependencies to their ID.
      */
     public async downloadContextScene(realityDataId: string, downloadPath: string, iTwinId: string,
@@ -582,6 +586,7 @@ export class RealityDataTransferNode {
      * paths should be provided in the reference table.
      * @param {string} realityDataId The ID of the CCOrientation to download.
      * @param {string} downloadPath The path where downloaded file should be saved.
+     * @param {string} iTwinId ID of the iTwin project the reality data is linked to.
      * @param {ReferenceTableNode} references (optional): A table mapping local path of dependencies to their ID.
      */
     public async downloadCCorientations(realityDataId: string, downloadPath: string, iTwinId: string,

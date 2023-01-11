@@ -23,7 +23,6 @@ export class ReferenceTableNode {
     /**
      * Save references in {@link fileName}. This file will be loaded next time to prevent reuploading the same data, see {@link load}.
      * @param fileName target file.
-     * @returns true if the references have been saved successfully.
      */
     public async save(fileName: string): Promise<void> {
         await fs.promises.mkdir(path.dirname(fileName), { recursive: true });
@@ -49,8 +48,7 @@ export class ReferenceTableNode {
 
     /**
      * Load references from {@link fileName}.
-     * @param fileName target file.
-     * @returns true if the references have been successfully loaded.
+     * @param fileName references file to load.
      */
     public async load(fileName: string): Promise<void> {
         this.localToCloud = new Map();

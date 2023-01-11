@@ -194,12 +194,14 @@ export class RealityDataTransferBrowser {
     /** 
      * On upload progress hook. Displays the upload progress and returns false when the upload is cancelled.
      * Create your own function or use {@link defaultProgressHook}.
+     * @param {number} progress upload progress, usually a percentage.
      */
     private onUploadProgress?: (progress: number) => boolean;
 
     /** 
      * On download progress hook. Displays the download progress and returns false when the download is cancelled.
      * Create your own function or use {@link defaultProgressHook}.
+     * @param {number} progress download progress, usually a percentage.
      */
     private onDownloadProgress?: (progress: number) => boolean;
 
@@ -242,6 +244,7 @@ export class RealityDataTransferBrowser {
      * paths will point to ids in the ProjectWise ContextShare.
      * Use downloadContextScene instead.
      * @param {string} realityDataId The ID of the data to download.
+     * @param {ReferenceTableBrowser} referenceTable (optional) A table mapping local path of dependencies to their ID.
      */
     public async downloadRealityDataBrowser(realityDataId: string, referenceTable?: ReferenceTableBrowser): Promise<void> {
         try {
@@ -343,9 +346,9 @@ export class RealityDataTransferBrowser {
      * This function should not be used for ContextScenes or CCOrientations that contain dependencies to other data
      * unless those dependencies are already uploaded and the file you want to upload points to their id. 
      * Use uploadContextScene or uploadCCOrientation instead.
-     * @param {string} dataToUpload Local directory containing the relevant data.
-     * @param {string} name Name of the created entry on ProjectWise ContextShare.
+     * @param {File[]} files Files to upload.
      * @param {RealityDataType} type RealityDataType of the data.
+     * @param {string} name Name of the created entry on ProjectWise ContextShare.
      * @param {string} iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the 
      * data center where the reality data is stored.
      * @param {string} rootFile (optional) Used to indicate the root document of the reality data. The root document can be in a 

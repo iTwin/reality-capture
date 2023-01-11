@@ -22,8 +22,7 @@ export class ReferenceTableBrowser {
     }
 
     /**
-     * Save references in {@link fileName}. This file will be loaded next time to prevent reuploading the same data, see {@link load}.
-     * @returns true if the references have been saved successfully.
+     * Open a file picker and save references. This file will be loaded next time to prevent reuploading the same data, see {@link load}.
      */
     public async save(): Promise<void> {
         const newHandle = await window.showSaveFilePicker();
@@ -37,8 +36,7 @@ export class ReferenceTableBrowser {
     }
 
     /**
-     * Load references from selected file.
-     * @returns true if the references have been successfully loaded.
+     * Load references from selected file. Open a file picker to select the reference file.
      */
     public async load(): Promise<void> {
         const pickerOpts = {

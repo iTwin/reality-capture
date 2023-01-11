@@ -86,11 +86,11 @@ const RealityDataWidget = (props: RealityDataWidgetProps) => {
         const list = [...availableRealityModels];
         const accessToken = await IModelApp.authorizationClient!.getAccessToken();
         const realityDataClientOptions: RealityDataClientOptions = {
-            baseUrl: `https://${process.env.IMJS_URL_PREFIX ?? ""}api.bentley.com/realitydata`,
+            baseUrl: `https://${process.env.IMJS_URL_PREFIX === undefined ? "" : process.env.IMJS_URL_PREFIX}api.bentley.com/realitydata`,
         };
         const available = await new RealityDataAccessClient(realityDataClientOptions).getRealityData(accessToken, process.env.IMJS_PROJECT_ID, id);
         const model: ContextRealityModelProps = {
-            tilesetUrl: "https://" + process.env.IMJS_URL_PREFIX ?? "" + "api.bentley.com/realitydata/" + 
+            tilesetUrl: "https://" + process.env.IMJS_URL_PREFIX === undefined ? "" : process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata/" + 
                 id + "?projectId=" + process.env.IMJS_PROJECT_ID,
             name: available.displayName,
             rdSourceKey: {
