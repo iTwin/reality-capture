@@ -27,8 +27,9 @@ export function App() {
 
     const realityDataAccessClient = useMemo(
         (): RealityDataAccessClient => {
+            const prefix = process.env.IMJS_URL_PREFIX ?? "";
             const realityDataClientOptions: RealityDataClientOptions = {
-                baseUrl: "https://" + process.env.IMJS_URL_PREFIX === undefined ? "" : process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata",
+                baseUrl: "https://" + prefix + "api.bentley.com/realitydata",
                 authorizationClient: authClient
             };
             return new RealityDataAccessClient(realityDataClientOptions);

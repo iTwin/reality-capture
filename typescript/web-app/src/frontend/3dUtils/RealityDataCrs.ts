@@ -113,12 +113,13 @@ function realityModelFromJson(json: any, realityDataName: string, realityDataId?
     }
     const provider = RealityDataProvider.ContextShare;
     const format = realityDataType === "OPC" ? RealityDataFormat.OPC : RealityDataFormat.ThreeDTile;
+    const prefix = process.env.IMJS_URL_PREFIX ?? "";
     const rdSourceKey: RealityDataSourceKey = realityDataId ? { provider, format, id: realityDataId } : RealityDataSource.createKeyFromUrl(
-        "https://" + process.env.IMJS_URL_PREFIX === undefined ? "" : process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata/" + realityDataId + "?projectId=" + process.env.IMJS_PROJECT_ID);
+        "https://" + prefix + "api.bentley.com/realitydata/" + realityDataId + "?projectId=" + process.env.IMJS_PROJECT_ID);
 
     const realityModel: ContextRealityModelProps = { 
         rdSourceKey, 
-        tilesetUrl: "https://" + process.env.IMJS_URL_PREFIX === undefined ? "" : process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata/" + realityDataId + "?projectId=" + process.env.IMJS_PROJECT_ID, 
+        tilesetUrl: "https://" + prefix + "api.bentley.com/realitydata/" + realityDataId + "?projectId=" + process.env.IMJS_PROJECT_ID, 
         name: realityDataName, 
         realityDataId: realityDataId
     };
@@ -217,9 +218,9 @@ async function realityModelFromOPC(blobFileURL: string, rdUrl: string, rdName: s
  */
 async function getBlankContextRealityModel(accessToken: string, realityDataId: string): Promise<BlankContextRealityModelProps[]> {
     const blankContextRealityModels: BlankContextRealityModelProps[] = [];
-  
+    const prefix = process.env.IMJS_URL_PREFIX ?? "";
     const realityDataClientOptions: RealityDataClientOptions = {
-        baseUrl: "https://" + process.env.IMJS_URL_PREFIX === undefined ? "" : process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata",
+        baseUrl: "https://" + prefix + "api.bentley.com/realitydata",
     };
     const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
     const rdUrl = await rdaClient.getRealityDataUrl(process.env.IMJS_PROJECT_ID, realityDataId);

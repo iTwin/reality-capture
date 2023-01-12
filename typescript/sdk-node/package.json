@@ -28,6 +28,7 @@
 		"@itwin/oidc-signin-tool": "^3.5.0",
 		"@itwin/reality-data-client": "^0.9.0",
 		"@itwin/service-authorization": "^0.7.0",
+		"@xmldom/xmldom": "^0.8.6",
 		"electron": "^17.0.0",
 		"reality-capture": "file:../sdk",
 		"uuid": "^9.0.0"

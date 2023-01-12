@@ -12,8 +12,7 @@ import path = require("path");
 import { v4 as uuidv4 } from "uuid";
 import { ReferenceTableNode } from "../utils/ReferenceTableNode"
 import { CommonData, TokenFactory } from "reality-capture";
-
-async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
+import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
 
 // taken from Microsoft's Azure sdk samples.
 // https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/storage/storage-blob/samples/typescript/src/basic.ts
