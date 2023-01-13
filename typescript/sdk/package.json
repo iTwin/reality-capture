@@ -20,13 +20,18 @@
 	"license": "MIT",
 	"dependencies": {
 		"@azure/storage-blob": "^12.8.0",
-		"@itwin/browser-authorization": "^0.5.1",
-		"@itwin/core-bentley": "^3.5.0",
-		"@itwin/reality-data-client": "^0.9.0",
 		"node-fetch": "^2.6.0"
 	},
+	"peerDependencies": {
+		"@itwin/browser-authorization": "^0.5.1",
+		"@itwin/core-bentley": "^3.5.0",
+		"@itwin/reality-data-client": "^0.9.0"
+	},
 	"devDependencies": {
+		"@itwin/browser-authorization": "^0.5.1",
 		"@itwin/build-tools": "^3.5.0",
+		"@itwin/core-bentley": "^3.5.0",
+		"@itwin/reality-data-client": "^0.9.0",
 		"@types/node": "^16.11.34",
 		"@types/node-fetch": "^2.6.2",
 		"@types/wicg-file-system-access": "^2020.9.5",

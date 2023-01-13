@@ -20,6 +20,11 @@
 	"license": "MIT",
 	"dependencies": {
 		"@azure/storage-blob": "^12.8.0",
+		"@xmldom/xmldom": "^0.8.6",
+		"reality-capture": "file:../sdk",
+		"uuid": "^9.0.0"
+	},
+	"peerDependencies": {
 		"@itwin/core-backend": "^3.5.0",
 		"@itwin/core-bentley": "^3.5.0",
 		"@itwin/core-geometry": "^3.5.0",
@@ -28,17 +33,23 @@
 		"@itwin/oidc-signin-tool": "^3.5.0",
 		"@itwin/reality-data-client": "^0.9.0",
 		"@itwin/service-authorization": "^0.7.0",
-		"@xmldom/xmldom": "^0.8.6",
-		"electron": "^17.0.0",
-		"reality-capture": "file:../sdk",
-		"uuid": "^9.0.0"
+		"electron": "^17.0.0"
 	},
 	"devDependencies": {
 		"@itwin/build-tools": "^3.5.0",
+		"@itwin/core-backend": "^3.5.0",
+		"@itwin/core-bentley": "^3.5.0",
+		"@itwin/core-geometry": "^3.5.0",
+		"@itwin/electron-authorization": "^0.10.0",
+		"@itwin/node-cli-authorization": "^0.10.0",
+		"@itwin/oidc-signin-tool": "^3.5.0",
+		"@itwin/reality-data-client": "^0.9.0",
+		"@itwin/service-authorization": "^0.7.0",
 		"@types/node": "^16.11.34",
 		"@types/uuid": "^9.0.0",
 		"@typescript-eslint/eslint-plugin": "^5.30.6",
 		"@typescript-eslint/parser": "^5.30.6",
+		"electron": "^17.0.0",
 		"eslint": "^8.19.0",
 		"rimraf": "^3.0.2",
 		"typescript": "^4.5.1"
