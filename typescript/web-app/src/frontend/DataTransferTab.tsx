@@ -9,8 +9,9 @@ import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import React, { ChangeEvent, MutableRefObject, useCallback, useEffect } from "react";
 import "./DataTransferTab.css";
 import { ReferenceManager } from "./ReferenceManager";
-import { SPATokenFactory, RealityDataTransferBrowser, ReferenceTableBrowser, CommonData } from "reality-capture";
+import { RealityDataTransferBrowser, ReferenceTableBrowser, CommonData } from "reality-capture";
 import { SelectRealityData } from "./SelectRealityData";
+import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 
 
 export enum DataTypes {
@@ -25,7 +26,7 @@ export enum DataTypes {
 
 interface RdsProps {
     realityDataAccessClient: RealityDataAccessClient;
-    clientInfo: CommonData.ClientInfo;
+    authorizationClient: BrowserAuthorizationClient;
     referenceTable: ReferenceTableBrowser;
     onReferenceTableChanged: (type: ReferenceTableBrowser) => void;
     useReferenceTable: boolean;
@@ -50,8 +51,11 @@ export function Rds(props: RdsProps) {
     const realityDataTransfer = React.useRef() as MutableRefObject<RealityDataTransferBrowser>;
 
     const initRds = useCallback(async () => {
-        const tokenFactory = new SPATokenFactory(props.clientInfo);
-        realityDataTransfer.current = new RealityDataTransferBrowser(tokenFactory);
+        let prefix = process.env.IMJS_URL_PREFIX ?? "";
+        if(prefix === "dev-")
+            prefix = "qa-";
+        
+        realityDataTransfer.current = new RealityDataTransferBrowser(props.authorizationClient, prefix);
         realityDataTransfer.current.setUploadHook(uploadProgressHook);
         realityDataTransfer.current.setDownloadHook(downloadProgressHook);
     }, []);

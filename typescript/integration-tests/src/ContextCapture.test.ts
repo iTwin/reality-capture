@@ -11,12 +11,12 @@ import * as dotenv from "dotenv";
 import path = require("path");
 import { RealityDataClientOptions, RealityDataAccessClient } from "@itwin/reality-data-client";
 import { CCUtils, CommonData, ContextCaptureService } from "reality-capture";
-import { RealityDataTransferNode, ReferenceTableNode, ServiceTokenFactory } from "reality-capture-node";
+import { RealityDataTransferNode, ReferenceTableNode } from "reality-capture-node";
+import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 describe("Context capture integration tests", () => {
-    let tokenFactory: ServiceTokenFactory;
     let contextCaptureService: ContextCaptureService;
     let realityDataTransfer: RealityDataTransferNode;
     let iTwinId = "";
@@ -36,21 +36,20 @@ describe("Context capture integration tests", () => {
         const clientId = process.env.IMJS_CLIENT_ID ?? "";
         const secret = process.env.IMJS_SECRET ?? "";
 
-        const clientInfo: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...ContextCaptureService.getScopes(), 
-            ...RealityDataTransferNode.getScopes()]), secret: secret, env: "qa-"};
-        tokenFactory = new ServiceTokenFactory(clientInfo);
-        await tokenFactory.getToken();
-        if(!tokenFactory.isOk) {
-            console.log("Can't get the access token");
-            return;
-        }
+        const authorizationClient = new ServiceAuthorizationClient({
+            clientId: clientId,
+            clientSecret: secret,
+            scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(ContextCaptureService.getScopes()).join(" "),
+            authority: "https://qa-ims.bentley.com",
+        });
 
-        contextCaptureService = new ContextCaptureService(tokenFactory);
-        realityDataTransfer = new RealityDataTransferNode(tokenFactory);
+        contextCaptureService = new ContextCaptureService(authorizationClient, "dev-");
+        realityDataTransfer = new RealityDataTransferNode(authorizationClient, "qa-");
         references = new ReferenceTableNode();
 
         const realityDataClientOptions: RealityDataClientOptions = {
-            baseUrl: tokenFactory.getServiceUrl() + "realitydata",
+            baseUrl: "https://qa-api.bentley.com/realitydata/",
+            authorizationClient: authorizationClient,
         };
         rdaClient = new RealityDataAccessClient(realityDataClientOptions);
     });
@@ -74,7 +73,7 @@ describe("Context capture integration tests", () => {
 
     // Create and upload inputs
     it("Upload images", async function () {
-        this.timeout(20000);
+        this.timeout(60000);
         imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../data/CC/Images/"), 
             "SDK integration tests CC images", CommonData.RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
         expect(imagesId).is.not.undefined;
@@ -150,9 +149,9 @@ describe("Context capture integration tests", () => {
     // Delete inputs
     it("Delete images", async function () {
         this.timeout(10000);
-        await rdaClient.deleteRealityData(await tokenFactory.getToken(), imagesId);
+        await rdaClient.deleteRealityData("", imagesId);
         try {
-            await rdaClient.getRealityData(await tokenFactory.getToken(), iTwinId, imagesId);
+            await rdaClient.getRealityData("", iTwinId, imagesId);
         }
         catch(error: any) {
             expect(error).instanceOf(BentleyError);
@@ -162,9 +161,9 @@ describe("Context capture integration tests", () => {
 
     it("Delete cc orientations", async function () {
         this.timeout(10000);
-        await rdaClient.deleteRealityData(await tokenFactory.getToken(), ccOrientationsId);
+        await rdaClient.deleteRealityData("", ccOrientationsId);
         try {
-            await rdaClient.getRealityData(await tokenFactory.getToken(), iTwinId, ccOrientationsId);
+            await rdaClient.getRealityData("", iTwinId, ccOrientationsId);
         }
         catch(error: any) {
             expect(error).instanceOf(BentleyError);
@@ -186,9 +185,9 @@ describe("Context capture integration tests", () => {
 
     it("Delete 3MX output", async function () {
         this.timeout(10000);
-        await rdaClient.deleteRealityData(await tokenFactory.getToken(), threeMXId);
+        await rdaClient.deleteRealityData("", threeMXId);
         try {
-            await rdaClient.getRealityData(await tokenFactory.getToken(), iTwinId, threeMXId);
+            await rdaClient.getRealityData("", iTwinId, threeMXId);
         }
         catch(error: any) {
             expect(error).instanceOf(BentleyError);

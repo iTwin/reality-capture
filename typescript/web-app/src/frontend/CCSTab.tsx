@@ -9,12 +9,13 @@ import { Button, Input, LabeledInput, ProgressLinear } from "@itwin/itwinui-reac
 import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import React, { ChangeEvent, MutableRefObject, useCallback, useEffect } from "react";
 import "./CCSTab.css";
-import { ContextCaptureService, SPATokenFactory, CCUtils, CommonData } from "reality-capture";
+import { ContextCaptureService, CCUtils, CommonData } from "reality-capture";
 import { SelectRealityData } from "./SelectRealityData";
+import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 
 interface CcProps {
     realityDataAccessClient: RealityDataAccessClient;
-    clientInfo: CommonData.ClientInfo;
+    authorizationClient: BrowserAuthorizationClient;
 }
 
 export function ContextCapture(props: CcProps) {
@@ -29,8 +30,8 @@ export function ContextCapture(props: CcProps) {
     const contextCaptureService = React.useRef() as MutableRefObject<ContextCaptureService>;
 
     const initCc = useCallback(async () => {
-        const tokenFactory = new SPATokenFactory(props.clientInfo);
-        contextCaptureService.current = new ContextCaptureService(tokenFactory);
+        const prefix = process.env.IMJS_URL_PREFIX ?? "";
+        contextCaptureService.current = new ContextCaptureService(props.authorizationClient, prefix);
     }, []);
 
     useEffect(() => {

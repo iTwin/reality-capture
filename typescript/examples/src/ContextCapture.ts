@@ -5,10 +5,10 @@
 
 import path = require("path");
 import { CCUtils, CommonData, ContextCaptureService, defaultProgressHook } from "reality-capture";
-import { RealityDataTransferNode, ReferenceTableNode, ServiceTokenFactory } from "reality-capture-node";
+import { RealityDataTransferNode, ReferenceTableNode } from "reality-capture-node";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
-
+import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -28,22 +28,17 @@ async function main() {
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_SECRET ?? "";
 
+    const authorizationClient = new ServiceAuthorizationClient({
+        clientId: clientId,
+        clientSecret: secret,
+        scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(ContextCaptureService.getScopes()).join(" "),
+        authority: "https://qa-ims.bentley.com",
+    });
     console.log("Context capture sample job - Full (Calibration + Reconstruction)");
-    const clientInfoRd: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransferNode.getScopes()]), 
-        secret: secret, env: "qa-"};
-    const clientInfoCc: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...ContextCaptureService.getScopes()]), 
-        secret: secret, env: "dev-"};
-    const tokenFactoryRd = new ServiceTokenFactory(clientInfoRd);
-    const tokenFactoryCc = new ServiceTokenFactory(clientInfoCc);
-    await tokenFactoryRd.getToken();
-    await tokenFactoryCc.getToken();
-    if(!tokenFactoryRd.isOk() || !tokenFactoryCc.isOk())
-        console.log("Can't get the access token");
-
-    const realityDataService = new RealityDataTransferNode(tokenFactoryRd);
+    const realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
-    const contextCaptureService = new ContextCaptureService(tokenFactoryCc);
+    const contextCaptureService = new ContextCaptureService(authorizationClient, "dev-");
     console.log("Service initialized");
 
     try {

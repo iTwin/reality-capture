@@ -18,7 +18,7 @@ import { RealityDataAnalysisService, ContextCaptureService, RealityDataTransferB
 
 interface TabMenu {
     realityDataAccessClient: RealityDataAccessClient;
-    authClient: BrowserAuthorizationClient;
+    authorizationClient: BrowserAuthorizationClient;
 }
 
 export function TabMenu(props: TabMenu) {
@@ -34,32 +34,23 @@ export function TabMenu(props: TabMenu) {
         setUseReferenceTable(isUsed);
     };
 
-    const clientInfo = useMemo(
-        (): CommonData.ClientInfo => {
-            const clientInfo: CommonData.ClientInfo = {clientId: process.env.IMJS_AUTHORIZATION_CLIENT_ID!, 
-                scopes: new Set([...RealityDataAnalysisService.getScopes(), ...ContextCaptureService.getScopes(), ...RealityDataTransferBrowser.getScopes()]), 
-                env: "qa-", redirectUrl: process.env.IMJS_AUTHORIZATION_REDIRECT_URI!};
-            return clientInfo;
-        },[],
-    );
-
     const getTabs = () => {
         switch (tabIndex) {
         case 0:
-            return <Rdas realityDataAccessClient={props.realityDataAccessClient} clientInfo={clientInfo}/>;
+            return <Rdas realityDataAccessClient={props.realityDataAccessClient} authorizationClient={props.authorizationClient}/>;
         case 1:
-            return <ContextCapture realityDataAccessClient={props.realityDataAccessClient} clientInfo={clientInfo}/>;
+            return <ContextCapture realityDataAccessClient={props.realityDataAccessClient} authorizationClient={props.authorizationClient}/>;
         case 2:
             return <Viewer2D realityDataAccessClient={props.realityDataAccessClient}/>;
         case 3:
             return <Viewer3D realityDataAccessClient={props.realityDataAccessClient} 
-                authClient={props.authClient}/>;
+                authClient={props.authorizationClient}/>;
         case 4:
-            return <Rds referenceTable={referenceTable} clientInfo={clientInfo} onReferenceTableChanged={onReferenceTableChanged} 
+            return <Rds referenceTable={referenceTable} authorizationClient={props.authorizationClient} onReferenceTableChanged={onReferenceTableChanged} 
                 realityDataAccessClient={props.realityDataAccessClient} useReferenceTable={useReferenceTable} 
                 onUseReferenceTableChanged={onUseReferenceTableChanged} />;
         default:
-            return <Rdas realityDataAccessClient={props.realityDataAccessClient} clientInfo={clientInfo}/>;
+            return <Rdas realityDataAccessClient={props.realityDataAccessClient} authorizationClient={props.authorizationClient}/>;
         }
     };
 

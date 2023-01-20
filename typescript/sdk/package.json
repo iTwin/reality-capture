@@ -23,14 +23,14 @@
 		"node-fetch": "^2.6.0"
 	},
 	"peerDependencies": {
-		"@itwin/browser-authorization": "^0.5.1",
 		"@itwin/core-bentley": "^3.5.0",
+		"@itwin/core-common": "^3.5.0",
 		"@itwin/reality-data-client": "^0.9.0"
 	},
 	"devDependencies": {
-		"@itwin/browser-authorization": "^0.5.1",
 		"@itwin/build-tools": "^3.5.0",
 		"@itwin/core-bentley": "^3.5.0",
+		"@itwin/core-common": "^3.5.0",
 		"@itwin/reality-data-client": "^0.9.0",
 		"@types/node": "^16.11.34",
 		"@types/node-fetch": "^2.6.2",

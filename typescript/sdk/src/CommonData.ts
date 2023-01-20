@@ -3,15 +3,6 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-/** Client information to get access to services. */
-export interface ClientInfo {
-    clientId: string,
-    scopes: Set<string>,
-    env?: string,
-    secret?: string,
-    redirectUrl?: string,
-}
-
 /** Status of a job. */
 export enum JobState {
     ACTIVE = "active",

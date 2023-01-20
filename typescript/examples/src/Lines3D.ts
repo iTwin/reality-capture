@@ -5,15 +5,16 @@
 
 import path = require("path");
 import { CommonData, defaultProgressHook, RDASettings, RealityDataAnalysisService } from "reality-capture";
-import { RealityDataTransferNode, ReferenceTableNode, ServiceTokenFactory } from "reality-capture-node";
+import { RealityDataTransferNode, ReferenceTableNode } from "reality-capture-node";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
+import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function runContextCaptureExample() {
-    const ccImageCollection = "path to your image folder";
+    const imageCollection = "path to your image folder";
     const orientedPhotosContextScene = "path to the folder where your context scene file is";
     const photoSegmentationDetector = "path to the folder where your detector is";
     const mesh = "path to the folder where your mesh is";
@@ -23,7 +24,7 @@ async function runContextCaptureExample() {
     dotenv.config();
 
     const jobName = "L3D job SDK sample";
-    const ccImageCollectionName = "Test L3D Photos";
+    const imageCollectionName = "Test L3D Photos";
     const orientedPhotosName = "Test L3D oriented photos";
     const meshName = "Test L3D mesh";
     const contextSceneName = "Test L3D Scene";
@@ -34,21 +35,16 @@ async function runContextCaptureExample() {
     const secret = process.env.IMJS_SECRET ?? "";
 
     console.log("Reality Data Analysis sample job detecting 3D lines");
-    const clientInfoRd: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([ ...RealityDataTransferNode.getScopes()]), 
-        secret: secret, env: "qa-"};
-    const clientInfoRda: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataAnalysisService.getScopes()]), 
-        secret: secret, env: "dev-"};
-    const tokenFactoryRd = new ServiceTokenFactory(clientInfoRd);
-    const tokenFactoryRda = new ServiceTokenFactory(clientInfoRda);
-    await tokenFactoryRd.getToken();
-    await tokenFactoryRda.getToken();
-    if(!tokenFactoryRd.isOk() || !tokenFactoryRda.isOk())
-        console.log("Can't get the access token");
-    
-    const realityDataService = new RealityDataTransferNode(tokenFactoryRd);
+    const authorizationClient = new ServiceAuthorizationClient({
+        clientId: clientId,
+        clientSecret: secret,
+        scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(RealityDataAnalysisService.getScopes()).join(" "),
+        authority: "https://qa-ims.bentley.com",
+    });
+    const realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
-    const realityDataAnalysisService = new RealityDataAnalysisService(tokenFactoryRda);
+    const realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "dev-");
     console.log("Service initialized");
 
 
@@ -61,11 +57,11 @@ async function runContextCaptureExample() {
     }
 
     // Upload CCImageCollection
-    if(!references.hasLocalPath(ccImageCollection)) {
+    if(!references.hasLocalPath(imageCollection)) {
         console.log("No reference to CCimage Collections found, uploading local files to cloud");
-        const id = await realityDataService.uploadRealityData(ccImageCollection, ccImageCollectionName, 
+        const id = await realityDataService.uploadRealityData(imageCollection, imageCollectionName, 
             CommonData.RealityDataType.CC_IMAGE_COLLECTION, projectId);
-        references.addReference(ccImageCollection, id);
+        references.addReference(imageCollection, id);
     }
 
     // Upload Oriented photos (contextScene)

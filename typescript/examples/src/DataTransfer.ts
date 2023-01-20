@@ -4,14 +4,15 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { CommonData, defaultProgressHook } from "reality-capture";
-import { RealityDataTransferNode, ServiceTokenFactory } from "reality-capture-node";
+import { RealityDataTransferNode } from "reality-capture-node";
 import * as dotenv from "dotenv";
+import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 
 
 async function runRealityDataExample() {
-    const ccImageCollection = "path to the folder yu want to upload";
+    const imageCollection = "path to the folder yu want to upload";
     const outputPath = "path to the folder where you want to save downloads";
-    const ccImageCollectionName = "Test Moto Photos";
+    const imageCollectionName = "Test Moto Photos";
 
     dotenv.config();
 
@@ -19,22 +20,22 @@ async function runRealityDataExample() {
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_SECRET ?? "";
 
-    console.log("Reality Data Analysis sample job detecting 2D objects");
-    const clientInfo: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransferNode.getScopes()]), 
-        secret: secret, env: "qa-"};
-    const tokenFactory = new ServiceTokenFactory(clientInfo);
-    await tokenFactory.getToken();
-    if(!tokenFactory.isOk())
-        console.log("Can't get the access token");
+    console.log("Reality Data Transfer example");
+    const authorizationClient = new ServiceAuthorizationClient({
+        clientId: clientId,
+        clientSecret: secret,
+        scope: Array.from(RealityDataTransferNode.getScopes()).join(" "),
+        authority: "https://qa-ims.bentley.com",
+    });
     
-    const realityDataService = new RealityDataTransferNode(tokenFactory);
+    const realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
     console.log("Service initialized");
 
     // Upload CCImageCollection
     console.log("Uploading CCImagesCollection to cloud");
-    const id = await realityDataService.uploadRealityData(ccImageCollection, ccImageCollectionName, 
+    const id = await realityDataService.uploadRealityData(imageCollection, imageCollectionName, 
         CommonData.RealityDataType.CC_IMAGE_COLLECTION, projectId);
     console.log("CCImagesCollection uploaded successfully");
 

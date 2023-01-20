@@ -11,14 +11,13 @@ import path = require("path");
 import * as dotenv from "dotenv";
 import { BentleyError } from "@itwin/core-bentley";
 import { CommonData, RDASettings, RealityDataAnalysisService } from "reality-capture";
-import { RealityDataTransferNode, ReferenceTableNode, ServiceTokenFactory } from "reality-capture-node";
+import { RealityDataTransferNode, ReferenceTableNode } from "reality-capture-node";
+import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 describe("Reality data analysis integration tests", () => {
     let iTwinId = "";
-    let tokenFactoryRd: ServiceTokenFactory;
-    let tokenFactoryRda: ServiceTokenFactory;
     let realityDataAnalysisService: RealityDataAnalysisService;
     let realityDataTransfer: RealityDataTransferNode;
     let references: ReferenceTableNode;
@@ -37,25 +36,20 @@ describe("Reality data analysis integration tests", () => {
         const clientId = process.env.IMJS_CLIENT_ID ?? "";
         const secret = process.env.IMJS_SECRET ?? "";
 
-        const clientInfoRd: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransferNode.getScopes()]), 
-            secret: secret, env: "qa-"};
-        const clientInfoRda: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataAnalysisService.getScopes()]), 
-            secret: secret, env: "dev-"};
-        tokenFactoryRd = new ServiceTokenFactory(clientInfoRd);
-        tokenFactoryRda = new ServiceTokenFactory(clientInfoRda);
-        await tokenFactoryRd.getToken();
-        await tokenFactoryRda.getToken();
-        if(!tokenFactoryRd.isOk() || !tokenFactoryRda.isOk()) {
-            console.log("Can't get the access token");
-            return;
-        }
+        const authorizationClient = new ServiceAuthorizationClient({
+            clientId: clientId,
+            clientSecret: secret,
+            scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(RealityDataAnalysisService.getScopes()).join(" "),
+            authority: "https://qa-ims.bentley.com",
+        });
 
-        realityDataAnalysisService = new RealityDataAnalysisService(tokenFactoryRda);
-        realityDataTransfer = new RealityDataTransferNode(tokenFactoryRd);
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "dev-");
+        realityDataTransfer = new RealityDataTransferNode(authorizationClient, "qa-");
         references = new ReferenceTableNode();
 
         const realityDataClientOptions: RealityDataClientOptions = {
-            baseUrl: tokenFactoryRd.getServiceUrl() + "realitydata",
+            baseUrl: "https://qa-api.bentley.com/realitydata/",
+            authorizationClient: authorizationClient,
         };
         rdaClient = new RealityDataAccessClient(realityDataClientOptions);
     });
@@ -70,7 +64,7 @@ describe("Reality data analysis integration tests", () => {
     });
 
     it("Upload RDAS images", async function () {
-        this.timeout(20000);
+        this.timeout(60000);
         imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../data/O2D/Images"), 
             "SDK integration tests RDAS images", CommonData.RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
         expect(imagesId).is.not.undefined;
@@ -145,9 +139,9 @@ describe("Reality data analysis integration tests", () => {
     // Delete inputs
     it("Delete images", async function () {
         this.timeout(10000);
-        await rdaClient.deleteRealityData(await tokenFactoryRd.getToken(), imagesId);
+        await rdaClient.deleteRealityData("", imagesId);
         try {
-            await rdaClient.getRealityData(await tokenFactoryRd.getToken(), iTwinId, imagesId);
+            await rdaClient.getRealityData("", iTwinId, imagesId);
         }
         catch(error: any) {
             expect(error).instanceOf(BentleyError);
@@ -157,9 +151,9 @@ describe("Reality data analysis integration tests", () => {
 
     it("Delete scene", async function () {
         this.timeout(10000);
-        await rdaClient.deleteRealityData(await tokenFactoryRd.getToken(), sceneId);
+        await rdaClient.deleteRealityData("", sceneId);
         try {
-            await rdaClient.getRealityData(await tokenFactoryRd.getToken(), iTwinId, sceneId);
+            await rdaClient.getRealityData("", iTwinId, sceneId);
         }
         catch(error: any) {
             expect(error).instanceOf(BentleyError);
@@ -169,9 +163,9 @@ describe("Reality data analysis integration tests", () => {
 
     it("Delete detector", async function () {
         this.timeout(10000);
-        await rdaClient.deleteRealityData(await tokenFactoryRd.getToken(), detectorId);
+        await rdaClient.deleteRealityData("", detectorId);
         try {
-            await rdaClient.getRealityData(await tokenFactoryRd.getToken(), iTwinId, detectorId);
+            await rdaClient.getRealityData("", iTwinId, detectorId);
         }
         catch(error: any) {
             expect(error).instanceOf(BentleyError);
@@ -181,9 +175,9 @@ describe("Reality data analysis integration tests", () => {
 
     it("Delete objects 2D output", async function () {
         this.timeout(10000);
-        await rdaClient.deleteRealityData(await tokenFactoryRd.getToken(), objects2D);
+        await rdaClient.deleteRealityData("", objects2D);
         try {
-            await rdaClient.getRealityData(await tokenFactoryRd.getToken(), iTwinId, objects2D);
+            await rdaClient.getRealityData("", iTwinId, objects2D);
         }
         catch(error: any) {
             expect(error).instanceOf(BentleyError);

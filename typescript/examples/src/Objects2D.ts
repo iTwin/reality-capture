@@ -4,19 +4,20 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { CommonData, RDASettings, RealityDataAnalysisService } from "reality-capture";
-import { RealityDataTransferNode, ReferenceTableNode, ServiceTokenFactory } from "reality-capture-node";
+import { RealityDataTransferNode, ReferenceTableNode } from "reality-capture-node";
 import path = require("path");
 import * as fs from "fs";
 import * as dotenv from "dotenv";
+import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function runObjects2DExample() {
-    const imageCollection = "path to your image folder";
-    const photoContextScene = "path to the folder where your context scene file is";
-    const photoObjectDetector = "path to the folder where your detector is";
-    const outputPath = "path to the folder where you want to save outputs";
+    const imageCollection = "D:\\Photo_Object-Face_and_License_Plates\\images";
+    const photoContextScene = "D:\\Photo_Object-Face_and_License_Plates\\ContextScene";
+    const photoObjectDetector = "D:\\Photo_Object-Face_and_License_Plates\\Face_&_License_plates_1";
+    const outputPath = "D:\\output";
 
     dotenv.config();
 
@@ -30,19 +31,14 @@ async function runObjects2DExample() {
     const secret = process.env.IMJS_SECRET ?? "";
 
     console.log("Reality Data Analysis sample job detecting 2D objects");
-    const clientInfoRd: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataTransferNode.getScopes()]), 
-        secret: secret, env: "qa-"};
-    const clientInfoRda: CommonData.ClientInfo = {clientId: clientId, scopes: new Set([...RealityDataAnalysisService.getScopes()]), 
-        secret: secret, env: "dev-"};
-    const tokenFactoryRd = new ServiceTokenFactory(clientInfoRd);
-    const tokenFactoryRda = new ServiceTokenFactory(clientInfoRda);
-    await tokenFactoryRd.getToken();
-    await tokenFactoryRda.getToken();
-    if(!tokenFactoryRd.isOk() || !tokenFactoryRda.isOk())
-        console.log("Can't get the access token");
-    
-    const realityDataService = new RealityDataTransferNode(tokenFactoryRd);
-    const realityDataAnalysisService = new RealityDataAnalysisService(tokenFactoryRda);
+    const authorizationClient = new ServiceAuthorizationClient({
+        clientId: clientId,
+        clientSecret: secret,
+        scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(RealityDataAnalysisService.getScopes()).join(" "),
+        authority: "https://qa-ims.bentley.com",
+    });
+    const realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
+    const realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "dev-");
     console.log("Service initialized");
 
     // Creating reference table and uploading ccimageCollection, contextScene and detector if necessary (not yet on the cloud)

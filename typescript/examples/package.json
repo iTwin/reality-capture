@@ -7,10 +7,10 @@
 		"clean": "rimraf lib build .rush",
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
-		"start-cc-example": "node ./lib/examples/ContextCapture.js",
-		"start-l3d-example": "node ./lib/examples/Lines3D.js",
-		"start-o2d-example": "node ./lib/examples/Objects2D.js",
-		"start-data-example": "node ./lib/examples/DataTransfer.js"
+		"start-cc-example": "node ./lib/ContextCapture.js",
+		"start-l3d-example": "node ./lib/Lines3D.js",
+		"start-o2d-example": "node ./lib/Objects2D.js",
+		"start-data-example": "node ./lib/DataTransfer.js"
 	},
 	"keywords": [],
 	"author": {
@@ -19,6 +19,7 @@
 	},
 	"license": "MIT",
 	"dependencies": {
+		"@itwin/service-authorization": "^0.7.0",
 		"dotenv": "^16.0.3",
 		"reality-capture": "file:../sdk",
 		"reality-capture-node": "file:../sdk-node"

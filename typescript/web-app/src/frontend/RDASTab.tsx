@@ -7,10 +7,11 @@ import { sleep } from "@itwin/imodels-client-management";
 import { Button, Input, LabeledInput, ProgressLinear, Select, SelectOption, ToggleSwitch } from "@itwin/itwinui-react";
 import React, { ChangeEvent, MutableRefObject, useCallback, useEffect } from "react";
 import "./RDASTab.css";
-import { RealityDataAnalysisService, SPATokenFactory, RDASettings, CommonData } from "reality-capture";
+import { RealityDataAnalysisService, RDASettings, CommonData } from "reality-capture";
 import { SelectRealityData } from "./SelectRealityData";
 import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import { SvgPlay, SvgStop } from "@itwin/itwinui-icons-react";
+import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 
 enum RdasJobTypes {
     O2D = "objects2D",
@@ -20,7 +21,7 @@ enum RdasJobTypes {
 
 interface RdasProps {
     realityDataAccessClient: RealityDataAccessClient;
-    clientInfo: CommonData.ClientInfo;
+    authorizationClient: BrowserAuthorizationClient;
 }
 
 export function Rdas(props: RdasProps) {
@@ -41,8 +42,8 @@ export function Rdas(props: RdasProps) {
     ];
 
     const initRdas = useCallback(async () => {
-        const tokenFactory = new SPATokenFactory(props.clientInfo);
-        realityDataAnalysisService.current = new RealityDataAnalysisService(tokenFactory);
+        const prefix = process.env.IMJS_URL_PREFIX ?? "";
+        realityDataAnalysisService.current = new RealityDataAnalysisService(props.authorizationClient, prefix);
     }, []);
     
     useEffect(() => {

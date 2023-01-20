@@ -7,22 +7,28 @@ import { ChangeDetectionJobSettings, JobSettings, L3DJobSettings, O2DJobSettings
 import { RDACostParameters, RDAJobProperties } from "./Utils";
 import { JobProgress, JobState } from "../CommonData";
 import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
-import { TokenFactory } from "../token/TokenFactory";
 import fetch from "node-fetch";
+import { AuthorizationClient } from "@itwin/core-common";
 
 /**
  * Service handling communication with RealityData Analysis Service
  */
 export class RealityDataAnalysisService {
-    /** Token factory to make authenticated request to the API. */
-    private tokenFactory: TokenFactory;
+    /** Authorization client to generate access token. */
+    private authorizationClient: AuthorizationClient;
+
+    /** Target service url. */
+    private serviceUrl = "https://api.bentley.com/realitydataanalysis";
 
     /**
-     * Create a new RealityDataTransferService.
-     * @param {TokenFactory} tokenFactory Token factory to make authenticated request to the API. 
+     * Create a new RealityDataAnalysisService.
+     * @param {AuthorizationClient} authorizationClient Authorization client to generate access token.
+     * @param {string} env (optional) Target environment.
      */
-    constructor(tokenFactory: TokenFactory) {
-        this.tokenFactory = tokenFactory;
+    constructor(authorizationClient: AuthorizationClient, env?: string) {
+        this.authorizationClient = authorizationClient;
+        if(env)
+            this.serviceUrl = "https://" + env + "api.bentley.com/realitydataanalysis";
     }
 
     /**
@@ -39,14 +45,14 @@ export class RealityDataAnalysisService {
             {
                 "Content-Type": "application/json",
                 "Accept": "application/vnd.bentley.v1+json",
-                "Authorization": await this.tokenFactory.getToken(),
+                "Authorization": await this.authorizationClient.getAccessToken(),
             };
             const reqBase = {
                 headers,
                 method
             };
             const request = ["POST", "PATCH"].includes(method) ? { ...reqBase, body: JSON.stringify(payload) } : reqBase;
-            const response = await fetch(this.tokenFactory.getServiceUrl() + "realitydataanalysis/" + apiOperationUrl, request);
+            const response = await fetch(this.serviceUrl + "/" + apiOperationUrl, request);
             const responseJson = await response.json();
             if (!okRet.includes(response.status)) {
                 return Promise.reject(new BentleyError(response.status,

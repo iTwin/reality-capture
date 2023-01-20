@@ -11,8 +11,9 @@ import * as os from "os";
 import path = require("path");
 import { v4 as uuidv4 } from "uuid";
 import { ReferenceTableNode } from "../utils/ReferenceTableNode"
-import { CommonData, TokenFactory } from "reality-capture";
+import { CommonData } from "reality-capture";
 import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
+import { AuthorizationClient } from "@itwin/core-common";
 
 // taken from Microsoft's Azure sdk samples.
 // https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/storage/storage-blob/samples/typescript/src/basic.ts
@@ -276,8 +277,11 @@ interface DataTransferInfo {
  * Utility class to upload and download reality data in ContextShare.
  */
 export class RealityDataTransferNode {
-    /** Token factory to make authenticated request to the API. */
-    private tokenFactory: TokenFactory;
+    /** Authorization client to generate access token. */
+    private authorizationClient: AuthorizationClient;
+
+    /** Target service url. */
+    private serviceUrl = "https://api.bentley.com/realitydata";
 
     /** Abort controller to stop the upload when it has been cancelled. */
     private abortController: AbortController;
@@ -314,10 +318,14 @@ export class RealityDataTransferNode {
 
     /**
      * Create a new RealityDataTransferService.
-     * @param {TokenFactory} tokenFactory Token factory to make authenticated request to the API. 
+     * @param {AuthorizationClient} authorizationClient Authorization client to generate access token.
+     * @param {string} env (optional) Target environment.
      */
-    constructor(tokenFactory: TokenFactory) {
-        this.tokenFactory = tokenFactory;
+    constructor(authorizationClient: AuthorizationClient, env?: string) {
+        this.authorizationClient = authorizationClient;
+        if(env)
+            this.serviceUrl = "https://" + env + "api.bentley.com/realitydata";
+        
         this.abortController = new AbortController();
     }
 
@@ -349,7 +357,7 @@ export class RealityDataTransferNode {
         // TODO: parallelize
         try {
             const realityDataClientOptions: RealityDataClientOptions = {
-                baseUrl: this.tokenFactory.getServiceUrl() + "realitydata",
+                baseUrl: this.serviceUrl,
             };
             const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
             const realityData = new ITwinRealityData(rdaClient, undefined, iTwinId);
@@ -360,9 +368,9 @@ export class RealityDataTransferNode {
             realityData.rootDocument = rootFile;
 
             const iTwinRealityData: ITwinRealityData = await rdaClient.createRealityData(
-                await this.tokenFactory.getToken(), iTwinId, realityData);
+                await this.authorizationClient.getAccessToken(), iTwinId, realityData);
             // Then, get the files to upload
-            const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.tokenFactory.getToken(), "", true);
+            const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.authorizationClient.getAccessToken(), "", true);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
 
             const uploadInfo: DataTransferInfo = {
@@ -488,12 +496,12 @@ export class RealityDataTransferNode {
         // TODO: parallelize
         try {
             const realityDataClientOptions: RealityDataClientOptions = {
-                baseUrl: this.tokenFactory.getServiceUrl() + "realitydata",
+                baseUrl: this.serviceUrl,
             };
             const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
-            const iTwinRealityData: ITwinRealityData = await rdaClient.getRealityData(await this.tokenFactory.getToken(), 
+            const iTwinRealityData: ITwinRealityData = await rdaClient.getRealityData(await this.authorizationClient.getAccessToken(), 
                 iTwinId, realityDataId);
-            const azureBlobUrl = await iTwinRealityData.getBlobUrl(await this.tokenFactory.getToken(), "", false);
+            const azureBlobUrl = await iTwinRealityData.getBlobUrl(await this.authorizationClient.getAccessToken(), "", false);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
             const iter = await containerClient.listBlobsFlat();
 

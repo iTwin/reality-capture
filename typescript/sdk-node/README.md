@@ -1,6 +1,6 @@
 # Introduction
 
-reality-capture-node extends reality-capture package to add data transfer and token factory Node support.
+reality-capture-node extends reality-capture package to add data transfer Node support.
 See [reality-capture](./../sdk/README.md) for more information about the main package.
 
 ## Pre-reqs

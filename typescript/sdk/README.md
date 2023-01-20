@@ -7,7 +7,7 @@ and should work the same way.
 
 # Node support
 
-This package does not support Node environment for data transfer and token factory. However, reality-capture-node extends this package so it is possible to upload, download, and get access token in Node environment. See [reality-capture-node](./../sdk-node/README.md) for more
+This package does not support Node environment for data transfer. However, reality-capture-node extends this package so it is possible to upload and download in Node environment. See [reality-capture-node](./../sdk-node/README.md) for more
 information about this package.
 
 ## Pre-reqs

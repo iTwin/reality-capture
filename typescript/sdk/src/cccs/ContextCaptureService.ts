@@ -5,23 +5,29 @@
 
 import { JobProgress, JobState } from "../CommonData";
 import { CCCostParameters, CCJobProperties, CCJobSettings, CCJobType, CCWorkspaceProperties } from "./Utils";
-import { TokenFactory } from "../token/TokenFactory";
 import { BentleyError } from "@itwin/core-bentley";
 import fetch from "node-fetch";
+import { AuthorizationClient } from "@itwin/core-common";
 
 /**
  * Service handling communication with Context Capture Service
  */
 export class ContextCaptureService {
-    /** Token factory to make authenticated request to the API. */
-    private tokenFactory: TokenFactory;
+    /** Authorization client to generate access token. */
+    private authorizationClient: AuthorizationClient;
+
+    /** Target service url. */
+    private serviceUrl = "https://api.bentley.com/contextcapture";
 
     /**
-     * Create a new RealityDataTransferService.
-     * @param {TokenFactory} tokenFactory Token factory to make authenticated request to the API.
+     * Create a new ContextCaptureService.
+     * @param {AuthorizationClient} authorizationClient Authorization client to generate access token.
+     * @param {string} env (optional) Target environment.
      */
-    constructor(tokenFactory: TokenFactory) {
-        this.tokenFactory = tokenFactory;
+    constructor(authorizationClient: AuthorizationClient, env?: string) {
+        this.authorizationClient = authorizationClient;
+        if(env)
+            this.serviceUrl = "https://" + env + "api.bentley.com/contextcapture";
     }
 
     /**
@@ -38,14 +44,14 @@ export class ContextCaptureService {
             {
                 "Content-Type": "application/json",
                 "Accept": "application/vnd.bentley.v1+json",
-                "Authorization": await this.tokenFactory.getToken(),
+                "Authorization": await this.authorizationClient.getAccessToken(),
             };
             const reqBase = {
                 headers,
                 method
             };
             const request = ["POST", "PATCH"].includes(method) ? { ...reqBase, body: JSON.stringify(payload) } : reqBase;
-            const response = await fetch(this.tokenFactory.getServiceUrl() + "contextcapture/" + apiOperationUrl, request);
+            const response = await fetch(this.serviceUrl + "/" + apiOperationUrl, request);
             // For some reason, after a workspace has been deleted, "response.json()" throws an "invalid json response body" error.
             // Since we don't need the response in this case, just return an empty json.
             if (okRet.includes(204))
