@@ -258,6 +258,9 @@ class S2DJobSettings:
             polygons2D: Detected 2D polygons.
             exported_polygons2D_SHP: 2D polygons exported to ESRI shapefile.
             lines2D: Detected 2D lines.
+            segmented_photos: ContextScene pointing to segmented photos.
+            exported_lines2D_SHP: 2D lines exported to ESRI shapefile.
+            exported_lines2D_DGN: 2D lines exported to DGN file.
         """
 
         def __init__(self) -> None:
@@ -266,8 +269,8 @@ class S2DJobSettings:
             self.exported_polygons2D_SHP: str = ""
             self.lines2D: str = ""
             self.segmented_photos: str = ""
-            self.exported_lines2D_SHP = ""
-            self.exported_lines2D_DGN = ""
+            self.exported_lines2D_SHP: str = ""
+            self.exported_lines2D_DGN: str = ""
 
 
 class O3DJobSettings:
@@ -322,6 +325,10 @@ class O3DJobSettings:
             json_dict["inputs"].append(
                 {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
             )
+        if self.inputs.meshes:
+            json_dict["meshes"].append(
+                {"name": "meshes", "realityDataId": self.inputs.meshes}
+            )
         json_dict["outputs"] = list()
         if self.outputs.objects2D:
             json_dict["outputs"].append("objects2D")
@@ -369,6 +376,8 @@ class O3DJobSettings:
                     new_job_settings.inputs.point_clouds = input_dict["realityDataId"]
                 elif input_dict["name"] == "objects2D":
                     new_job_settings.inputs.objects2D = input_dict["realityDataId"]
+                elif input_dict["name"] == "meshes":
+                    new_job_settings.inputs.meshes = input_dict["realityDataId"]
                 else:
                     raise TypeError(
                         "found non expected input name:" + input_dict["name"]
@@ -416,6 +425,7 @@ class O3DJobSettings:
             point_clouds: Collection of point clouds.
             photo_object_detector: Path to photo object detector to apply.
             objects2D: Given 2D objects.
+            meshes: Collection of meshes.
         """
 
         def __init__(self) -> None:
@@ -423,6 +433,7 @@ class O3DJobSettings:
             self.point_clouds: str = ""
             self.photo_object_detector: str = ""
             self.objects2D: str = ""
+            self.meshes: str = ""
 
     class Outputs:
         """
@@ -755,8 +766,8 @@ class L3DJobSettings:
             json_dict["outputs"].append("segmentedPointCloud")
         if self.outputs.segmentation2D:
             json_dict["outputs"].append("segmentation2D")
-        # if self.outputs.segmented_photos:
-        #     json_dict["outputs"].append("segmentedPhotos"})
+        if self.outputs.segmented_photos:
+            json_dict["outputs"].append("segmentedPhotos")
         if self.outputs.lines3D:
             json_dict["outputs"].append("lines3D")
         if self.outputs.exported_lines3D_DGN:
@@ -823,8 +834,8 @@ class L3DJobSettings:
                     new_job_settings.outputs.segmentation2D = output_dict[
                         "realityDataId"
                     ]
-                # elif output_dict["name"] == "segmentedPhotos":
-                #     new_job_settings.outputs.segmented_photos = output_dict["realityDataId"]
+                elif output_dict["name"] == "segmentedPhotos":
+                    new_job_settings.outputs.segmented_photos = output_dict["realityDataId"]
                 elif output_dict["name"] == "lines3D":
                     new_job_settings.outputs.lines3D = output_dict["realityDataId"]
                 elif output_dict["name"] == "exportedLines3DDGN":
@@ -893,7 +904,7 @@ class L3DJobSettings:
             self.segmentation3D: str = ""
             self.segmented_point_cloud: str = ""
             self.segmentation2D: str = ""
-            # self.segmented_photos: str = ""
+            self.segmented_photos: str = ""
             self.lines3D: str = ""
             self.exported_lines3D_DGN: str = ""
             self.exported_lines3D_cesium: str = ""
