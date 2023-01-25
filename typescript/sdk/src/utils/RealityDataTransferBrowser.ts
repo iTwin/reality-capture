@@ -253,14 +253,14 @@ export class RealityDataTransferBrowser {
      * @param {string} realityDataId The ID of the data to download.
      * @param {ReferenceTableBrowser} referenceTable (optional) A table mapping local path of dependencies to their ID.
      */
-    public async downloadRealityDataBrowser(realityDataId: string, referenceTable?: ReferenceTableBrowser): Promise<void> {
+    public async downloadRealityDataBrowser(realityDataId: string, iTwinId: string, referenceTable?: ReferenceTableBrowser): Promise<void> {
         try {
             const realityDataClientOptions: RealityDataClientOptions = {
                 baseUrl: this.serviceUrl,
             };
             const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
             const iTwinRealityData: ITwinRealityData = await rdaClient.getRealityData(await this.authorizationClient.getAccessToken(),
-                process.env.IMJS_PROJECT_ID, realityDataId);
+                iTwinId, realityDataId);
             const azureBlobUrl = await iTwinRealityData.getBlobUrl(await this.authorizationClient.getAccessToken(), "", false);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
             let iter = await containerClient.listBlobsFlat();

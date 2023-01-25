@@ -143,10 +143,6 @@ v_env
 
 # Typescript
 node_modules/
-typescript/sdk/package-lock.json
-typescript/sdk-node/package-lock.json
-typescript/examples/package-lock.json
-typescript/integration-tests/package-lock.json
 lib/
 out/
 

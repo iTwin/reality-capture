@@ -5,7 +5,6 @@
 	"main": "lib/reality-capture.js",
 	"module": "lib/reality-capture.js",
 	"source": "src/reality-capture.ts",
-	"target": "ES6",
 	"scripts": {
 		"build": "npm run clean && tsc",
 		"clean": "rimraf lib build .rush",

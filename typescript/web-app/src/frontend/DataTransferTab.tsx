@@ -189,7 +189,7 @@ export function Rds(props: RdsProps) {
     };
 
     const onDownloadFiles = async (): Promise<void> => {
-        await realityDataTransfer.current.downloadRealityDataBrowser(downloadId, props.useReferenceTable === 
+        await realityDataTransfer.current.downloadRealityDataBrowser(downloadId, process.env.IMJS_PROJECT_ID ?? "", props.useReferenceTable === 
             true ? props.referenceTable : undefined);
         setDownloadProgress(100);
     };
