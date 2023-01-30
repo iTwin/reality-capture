@@ -174,10 +174,10 @@ export class CCJobSettings {
             json["settings"]["settings"]["outputs"].push("DGN");
 
         if (this.outputs.esri)
-            json["outputs"].push("ESRI i3s");
+            json["settings"]["outputs"].push("ESRI i3s");
 
         if (this.outputs.webReadyScalableMesh)
-            json["outputs"].push("WebReady ScalableMesh");
+            json["settings"]["outputs"].push("WebReady ScalableMesh");
 
         if (this.outputs.fbx)
             json["settings"]["outputs"].push("FBX");
