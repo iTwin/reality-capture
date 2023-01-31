@@ -183,7 +183,7 @@ class RealityDataAnalysisService:
             job_name = data_json["job"].get("name", "")
             itwin_id = data_json["job"].get("projectId", "")
             data_center = data_json["job"].get("dataCenter", "")
-            email = data_json["job"].get("dataCenter", "")
+            email = data_json["job"].get("email", "")
         except Exception as e:
             return ReturnValue(value=RDAJobProperties(), error=str(e))
 
