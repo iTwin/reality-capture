@@ -132,22 +132,24 @@ class CCJobSettings:
         return settings_dict, input_dict
 
     @classmethod
-    def from_json(
-        cls, settings_json: dict, inputs_json: dict
-    ) -> ReturnValue[CCJobSettings]:
+    def from_json(cls, settings_inputs_json: dict) -> ReturnValue[CCJobSettings]:
         """
         Transform json received from cloud service into settings.
 
         Args:
-            settings_json: Dictionary with settings received from cloud service.
-            inputs_json: Dictionary with inputs received from cloud service.
+            settings_inputs_json: Dictionary with settings and inputs received from cloud service.
         Returns:
             New settings object.
         """
         new_job_settings = cls()
+
         try:
+            settings_json = settings_inputs_json.get("jobSettings", {})
+            inputs_json = settings_inputs_json.get("inputs", [])
+
             new_job_settings.inputs = [i["id"] for i in inputs_json]
-            outputs_list = settings_json["outputs"]
+
+            outputs_list = settings_json.get("outputs", [])
             for output in outputs_list:
                 if output["format"] == "ContextScene":
                     new_job_settings.outputs.context_scene = output["id"]
@@ -185,8 +187,8 @@ class CCJobSettings:
                     raise TypeError(
                         "found non expected output name:" + output["format"]
                     )
-            new_job_settings.mesh_quality = CCJobQuality(settings_json["quality"])
-            new_job_settings.engines = float(settings_json["processingEngines"])
+            new_job_settings.mesh_quality = CCJobQuality(settings_json.get("quality", "Unknown"))
+            new_job_settings.engines = float(settings_json.get("processingEngines", 0))
             new_job_settings.cache_settings.use_cache = bool(
                 settings_json.get("useCache", False)
             )

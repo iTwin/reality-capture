@@ -254,9 +254,8 @@ class ContextCaptureService:
             email = data_json["job"].get("email", "")
             work_id = data_json["job"].get("workspaceId", "")
 
-            job_settings = CCJobSettings.from_json(
-                data_json["job"].get("jobSettings", []), data_json["job"].get("inputs", [])
-            )
+            job_settings = CCJobSettings.from_json(data_json["job"])
+
             if job_settings.is_error():
                 return ReturnValue(value=CCJobProperties(), error=job_settings.error)
         except Exception as e:
