@@ -182,8 +182,11 @@ class S2DOutputs {
     exportedPolygons2DSHP: string;
     /** Detected 2D lines. */
     lines2D: string;
+    /** ContextScene pointing to segmented photos. */
     segmentedPhotos: string;
+    /** 2D lines exported to ESRI shapefile. */
     exportedLines2DSHP: string;
+    /** 2D lines exported to DGN file. */
     exportedLines2DDGN: string;
 
     constructor() {
@@ -207,8 +210,20 @@ class S2DOutputs {
          * @type {string}
          */
         this.lines2D = "";
+        /**
+         * ContextScene pointing to segmented photos.
+         * @type {string}
+         */
         this.segmentedPhotos = "";
+        /**
+         * 2D lines exported to ESRI shapefile.
+         * @type {string}
+         */
         this.exportedLines2DSHP = "";
+        /**
+         * 2D lines exported to DGN file.
+         * @type {string}
+         */
         this.exportedLines2DDGN = "";
     }
 }
@@ -270,12 +285,21 @@ export class S2DJobSettings {
 
         if(this.outputs.segmentedPhotos)
             json["outputs"].push("segmentedPhotos")
+
         if (this.outputs.polygons2D)
             json["outputs"].push("polygons2D");
+
         if (this.outputs.exportedPolygons2DSHP)
             json["outputs"].push("exportedPolygons2DSHP");
+
         if (this.outputs.lines2D)
             json["outputs"].push("lines2D");
+
+        if (this.outputs.exportedLines2DDGN)
+            json["outputs"].push("exportedLines2DDGN");
+
+        if (this.outputs.exportedLines2DSHP)
+            json["outputs"].push("exportedLines2DSHP");
 
         return json;
     }
@@ -312,6 +336,10 @@ export class S2DJobSettings {
                 newJobSettings.outputs.exportedPolygons2DSHP = output["realityDataId"];
             else if (output["name"] === "lines2D")
                 newJobSettings.outputs.lines2D = output["realityDataId"];
+            else if (output["name"] === "exportedLines2DDGN")
+                newJobSettings.outputs.exportedLines2DDGN = output["realityDataId"];
+            else if (output["name"] === "exportedLines2DSHP")
+                newJobSettings.outputs.exportedLines2DSHP = output["realityDataId"];
             else
                 return Promise.reject(new Error("Found non expected output name" + output["name"]));
         }
@@ -371,6 +399,7 @@ class O3DOutputs {
     exportedObjects3DCesium: string;
     /** ESRI SHP file export with locations of the 3D objects. */
     exportedLocations3DSHP: string;
+    /** Collection of meshes. */
     meshes: string;
 
     constructor() {
@@ -399,6 +428,10 @@ class O3DOutputs {
          * @type {string}
          */
         this.exportedLocations3DSHP = "";
+        /**
+         * Collection of meshes.
+         * @type {string}
+         */
         this.meshes = "";
     }
 }
@@ -479,6 +512,7 @@ export class O3DJobSettings {
             json["inputs"].push({ "name": "objects2D", "realityDataId": this.inputs.objects2D });
         if (this.inputs.pointClouds)
             json["inputs"].push({ "name": "pointClouds", "realityDataId": this.inputs.pointClouds });
+        
         json["outputs"] = [];
         if (this.outputs.objects2D)
             json["outputs"].push("objects2D");
@@ -490,6 +524,9 @@ export class O3DJobSettings {
             json["outputs"].push("exportedObjects3DCesium");
         if (this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
+        if (this.outputs.meshes)
+            json["outputs"].push("meshes");
+        
         if (this.useTiePoints)
             json["UseTiePoints"] = "true";
         if (this.minPhotos)
@@ -534,6 +571,8 @@ export class O3DJobSettings {
                 newJobSettings.outputs.exportedObjects3DCesium = output["realityDataId"];
             else if (output["name"] === "exportedLocations3DSHP")
                 newJobSettings.outputs.exportedLocations3DSHP = output["realityDataId"];
+            else if (output["name"] === "meshes")
+                newJobSettings.outputs.meshes = output["realityDataId"];
             else
                 return Promise.reject(new Error("Found non expected output name" + output["name"]));
         }
@@ -929,6 +968,7 @@ class L3DOutputs {
     exportedLines3DDGN: string;
     /** Cesium 3D Tiles file export with 3D lines. */
     exportedLines3DCesium: string;
+    /** ContextScene pointing to segmented photos. */
     segmentedPhotos: string;
 
     constructor() {
@@ -947,6 +987,10 @@ class L3DOutputs {
          * @type {string}
          */
         this.segmentation2D = "";
+        /**
+         * ContextScene pointing to segmented photos.
+         * @type {string}
+         */
         this.segmentedPhotos = "";
         /**
          * Detected 3D lines.
