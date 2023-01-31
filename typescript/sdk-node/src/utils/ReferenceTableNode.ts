@@ -7,7 +7,7 @@ import * as fs from "fs";
 import path = require("path");
 
 /**
- * Associate data local paths to RDS ids.
+ * A bi-directional map of local data paths and their corresponding cloud ID.
  */
 export class ReferenceTableNode {
     /** Local path to cloud id. */
@@ -22,7 +22,7 @@ export class ReferenceTableNode {
 
     /**
      * Save references in {@link fileName}. This file will be loaded next time to prevent reuploading the same data, see {@link load}.
-     * @param fileName target file.
+     * @param {string} fileName target file.
      */
     public async save(fileName: string): Promise<void> {
         await fs.promises.mkdir(path.dirname(fileName), { recursive: true });
@@ -56,22 +56,20 @@ export class ReferenceTableNode {
 
         const content = await fs.promises.readFile(fileName);
         const lines = content.toString().replace(/\r\n/g, "\n").split("\n");
-
-        let res = true;
         for (const line of lines) {
             const [localPath, cloudId] = line.split(",");
             if (!localPath || !cloudId)
                 continue;
 
-            res &&= this.addReference(localPath, cloudId);
+            this.addReference(localPath, cloudId);
         }
     }
 
     /**
      * Add a new entry in the table.
-     * @param localPath new entry local path.
-     * @param cloudId new entry cloud id.
-     * @returns true if the entry has been added successfully.
+     * @param {string} localPath new entry local path.
+     * @param {string} cloudId new entry cloud id.
+     * @returns {boolean} true if the entry has been added successfully.
      */
     public addReference(localPath: string, cloudId: string): boolean {
         if (this.localToCloud.has(localPath) && this.cloudToLocal.has(cloudId)) {
@@ -88,8 +86,8 @@ export class ReferenceTableNode {
 
     /**
      * Check if {@link localPath} exists in {@link localToCloud}.
-     * @param localPath local path to search in the reference table.
-     * @returns true if {@link localPath} exists in {@link localToCloud}.
+     * @param {string} localPath local path to search in the reference table.
+     * @returns {boolean} true if {@link localPath} exists in {@link localToCloud}.
      */
     public hasLocalPath(localPath: string): boolean {
         return this.localToCloud.has(localPath);
@@ -97,8 +95,8 @@ export class ReferenceTableNode {
 
     /**
      * Check if {@link cloudId} exists in {@link cloudToLocal}.
-     * @param cloudId local path to search in the reference table.
-     * @returns true if {@link cloudId} exists in {@link cloudToLocal}.
+     * @param {string} cloudId local path to search in the reference table.
+     * @returns {boolean} true if {@link cloudId} exists in {@link cloudToLocal}.
      */
     public hasCloudId(cloudId: string): boolean {
         return this.cloudToLocal.has(cloudId);
@@ -106,8 +104,8 @@ export class ReferenceTableNode {
 
     /**
      * Get cloud id from local path.
-     * @param localPath local path.
-     * @returns cloud id associated to {@link localPath}.
+     * @param {string} localPath local path.
+     * @returns {string} cloud id associated to {@link localPath}.
      */
     public getCloudIdFromLocalPath(localPath: string): string {
         if (!this.hasLocalPath(localPath)) {
@@ -119,8 +117,8 @@ export class ReferenceTableNode {
 
     /**
      * Get local path from cloud id.
-     * @param cloudId cloud id.
-     * @returns local path associated to {@link cloudId}.
+     * @param {string} cloudId cloud id.
+     * @returns {string} local path associated to {@link cloudId}.
      */
     public getLocalPathFromCloudId(cloudId: string): string {
         if (!this.hasCloudId(cloudId)) {
@@ -132,8 +130,8 @@ export class ReferenceTableNode {
 
     /**
      * Translate input path to cloud id.
-     * @param inputPath input path to translate.
-     * @returns input as cloud id.
+     * @param {string} inputPath input path to translate.
+     * @returns {string} input as cloud id.
      */
     public translateInputPath(inputPath: string): string {
         if (!inputPath.length)
@@ -142,9 +140,14 @@ export class ReferenceTableNode {
         return this.getCloudIdFromLocalPath(inputPath);
     }
 
-    public translateOutputPath(path: string): string {
+    /**
+     * Translate output path to cloud id.
+     * @param {string} outputPath input path to translate.
+     * @returns {string} input as cloud id.
+     */
+    public translateOutputPath(outputPath: string): string {
         /* if(path)
             return "<requested>"; */
-        return path;
+        return outputPath;
     }
 }

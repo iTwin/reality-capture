@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 /**
- * Associate data local paths to RDS ids.
+ * A bi-directional map of local data paths and their corresponding cloud ID.
  */
 export class ReferenceTableBrowser {
     /** Local path to cloud id. */
@@ -22,7 +22,8 @@ export class ReferenceTableBrowser {
     }
 
     /**
-     * Open a file picker and save references. This file will be loaded next time to prevent reuploading the same data, see {@link load}.
+     * Open a file picker and save references as txt file. 
+     * This file will be loaded next time to prevent reuploading the same data, see {@link load}.
      */
     public async save(): Promise<void> {
         const newHandle = await window.showSaveFilePicker();
@@ -70,9 +71,9 @@ export class ReferenceTableBrowser {
 
     /**
      * Add a new entry in the table.
-     * @param localPath new entry local path.
-     * @param cloudId new entry cloud id.
-     * @returns true if the entry has been added successfully.
+     * @param {string} localPath new entry local path.
+     * @param {string} cloudId new entry cloud id.
+     * @returns {boolean} true if the entry has been added successfully.
      */
     public addReference(localPath: string, cloudId: string): boolean {
         if (this.localToCloud.has(localPath) && this.cloudToLocal.has(cloudId)) {
@@ -89,9 +90,9 @@ export class ReferenceTableBrowser {
 
     /**
      * Remove reference from the reference table.
-     * @param localPath local path entry to remove.
-     * @param cloudId cloud id entry to remove.
-     * @returns true if the entry has been removed successfully in both maps.
+     * @param {string} localPath local path entry to remove.
+     * @param {string} cloudId cloud id entry to remove.
+     * @returns {boolean} true if the entry has been removed successfully in both maps.
      */
     public removeReference(localPath: string, cloudId: string): boolean {
         return this.localToCloud.delete(localPath) && this.cloudToLocal.delete(cloudId);
@@ -99,8 +100,8 @@ export class ReferenceTableBrowser {
 
     /**
      * Check if {@link localPath} exists in {@link localToCloud}.
-     * @param localPath local path to search in the reference table.
-     * @returns true if {@link localPath} exists in {@link localToCloud}.
+     * @param {string} localPath local path to search in the reference table.
+     * @returns {boolean} true if {@link localPath} exists in {@link localToCloud}.
      */
     public hasLocalPath(localPath: string): boolean {
         return this.localToCloud.has(localPath);
@@ -108,8 +109,8 @@ export class ReferenceTableBrowser {
 
     /**
      * Check if {@link cloudId} exists in {@link cloudToLocal}.
-     * @param cloudId local path to search in the reference table.
-     * @returns true if {@link cloudId} exists in {@link cloudToLocal}.
+     * @param {string} cloudId local path to search in the reference table.
+     * @returns {boolean} true if {@link cloudId} exists in {@link cloudToLocal}.
      */
     public hasCloudId(cloudId: string): boolean {
         return this.cloudToLocal.has(cloudId);
@@ -117,8 +118,8 @@ export class ReferenceTableBrowser {
 
     /**
      * Get cloud id from local path.
-     * @param localPath local path.
-     * @returns cloud id associated to {@link localPath}.
+     * @param {string} localPath local path.
+     * @returns {string} cloud id associated to {@link localPath}.
      */
     public getCloudIdFromLocalPath(localPath: string): string {
         if (!this.hasLocalPath(localPath)) {
@@ -130,8 +131,8 @@ export class ReferenceTableBrowser {
 
     /**
      * Get local path from cloud id.
-     * @param cloudId cloud id.
-     * @returns local path associated to {@link cloudId}.
+     * @param {string} cloudId cloud id.
+     * @returns {string} local path associated to {@link cloudId}.
      */
     public getLocalPathFromCloudId(cloudId: string): string {
         if (!this.hasCloudId(cloudId)) {
@@ -143,8 +144,8 @@ export class ReferenceTableBrowser {
 
     /**
      * Translate input path to cloud id.
-     * @param inputPath input path to translate.
-     * @returns input as cloud id.
+     * @param {string} inputPath input path to translate.
+     * @returns {string} input as cloud id.
      */
     public translateInputPath(inputPath: string): string {
         if (!inputPath.length)
@@ -153,9 +154,14 @@ export class ReferenceTableBrowser {
         return this.getCloudIdFromLocalPath(inputPath);
     }
 
-    public translateOutputPath(path: string): string {
-        /* if(path)
+    /**
+     * Translate output path to cloud id.
+     * @param {string} outputPath output path to translate.
+     * @returns {string} output as cloud id.
+     */
+    public translateOutputPath(outputPath: string): string {
+        /* if(outputPath)
             return "<requested>"; */
-        return path;
+        return outputPath;
     }
 }

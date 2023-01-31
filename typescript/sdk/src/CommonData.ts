@@ -45,12 +45,16 @@ export enum RealityDataType {
     CC_ORIENTATIONS = "CCOrientations",
     CONTEXT_DETECTOR = "ContextDetector",
     CONTEXT_SCENE = "ContextScene",
+    DGN = "DGN",
     LAS = "LAS",
     LAZ = "LAZ",
     OPC = "OPC",
     PLY = "PLY",
+    POD = "POD",
     POINTCLOUD = "PointCloud",
     SCAN_COLLECTION = "ScanCollection",
+    SHP = "SHP",
     THREEMX = "3MX",
     THREESM = "3SM",
+    UNSTRUCTURED = "Unstructured"
 }

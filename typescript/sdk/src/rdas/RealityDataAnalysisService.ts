@@ -11,7 +11,7 @@ import fetch from "node-fetch";
 import { AuthorizationClient } from "@itwin/core-common";
 
 /**
- * Service handling communication with RealityData Analysis Service
+ * Service handling communication with RealityData Analysis Service.
  */
 export class RealityDataAnalysisService {
     /** Authorization client to generate access token. */

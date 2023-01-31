@@ -162,15 +162,6 @@ async function replaceJSONScene(scenePath: string, outputPath: string, reference
     await fs.promises.writeFile(outputPath, JSON.stringify(json, undefined, 4));
 }
 
-/**
- * Replaces references on the given CCOrientation by the ones on the reference table.
- * This function can either replace local paths for reality data IDs or the contrary, according to the value of
- * localToCloud.
- * @param {string} ccOrientationPath Path to the CCOrientation.
- * @param {string} outputPath Path to the new CCOrientation. You can pass the same path twice if you want to replace the file.
- * @param {ReferenceTableNode} references A table mapping local path of dependencies to their ID.
- * @param {boolean} localToCloud  If true, searches for local paths and replaces them for reality data ids, if false does the opposite.
- */
 async function replaceCCOrientationsReferences(ccOrientationPath: string, outputPath: string, references: ReferenceTableNode,
     localToCloud: boolean): Promise<void> {
     const data = await fs.promises.readFile(ccOrientationPath);
@@ -251,14 +242,6 @@ async function replaceCCOrientationsReferences(ccOrientationPath: string, output
     await fs.promises.writeFile(outputPath, newXmlStr);
 }
 
-/**
- * Replaces references on the given ContextScene by the ones on the reference table.
- * This function can either replace local paths for reality data IDs or the contrary, according to the value of localToCloud.
- * @param {string} scenePath Path to the ContextScene.
- * @param {string} outputPath Path to the new ContextScene. You can pass the same path twice if you want to replace the file.
- * @param {ReferenceTableNode} references A table mapping local path of dependencies to their ID.
- * @param {boolean} localToCloud If true, searches for local paths and replaces them for reality data ids, if false does the opposite.
- */
 async function replaceContextSceneReferences(scenePath: string, outputPath: string, references: ReferenceTableNode,
     localToCloud: boolean): Promise<void> {
     if (scenePath.endsWith("json"))

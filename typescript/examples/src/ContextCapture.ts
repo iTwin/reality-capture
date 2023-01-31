@@ -74,7 +74,7 @@ async function main() {
         let settings = new CCUtils.CCJobSettings();
         settings.inputs = [references.getCloudIdFromLocalPath(ccImageCollection), references.getCloudIdFromLocalPath(ccOrientations)];
         settings.outputs.threeMX = "threeMX";
-        settings.meshQuality = CCUtils.CCMeshQuality.MEDIUM;
+        settings.meshQuality = CCUtils.CCJobQuality.MEDIUM;
 
         console.log("Settings created");
 

@@ -207,7 +207,7 @@ export class ContextCaptureService {
             estimatedCost: job["estimatedCost"],
         };
 
-        const settings = await CCJobSettings.fromJson(job["inputs"], job["jobSettings"]);
+        const settings = await CCJobSettings.fromJson(job);
         jobProperties.settings = settings;
 
         if (job["executionInformation"]) {
@@ -229,7 +229,7 @@ export class ContextCaptureService {
             jobProperties.costEstimationParameters = {
                 gigaPixels: job["costEstimationParameters"]["gigaPixels"],
                 megaPoints: job["costEstimationParameters"]["megaPoints"],
-                meshQuality: job["costEstimationParameters"]["quality"],
+                meshQuality: job["costEstimationParameters"]["meshQuality"],
             };
         }
 

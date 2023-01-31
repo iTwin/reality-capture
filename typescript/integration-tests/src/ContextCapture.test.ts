@@ -95,7 +95,7 @@ describe("Context capture integration tests", () => {
         let settings = new CCUtils.CCJobSettings();
         settings.inputs = [imagesId, ccOrientationsId];
         settings.outputs.threeMX = "threeMX";
-        settings.meshQuality = CCUtils.CCMeshQuality.MEDIUM;
+        settings.meshQuality = CCUtils.CCJobQuality.MEDIUM;
         jobId = await contextCaptureService.createJob(CCUtils.CCJobType.FULL, settings, "SDK integration tests CC job", 
             workspaceId);
         expect(jobId).is.not.undefined;
@@ -114,7 +114,7 @@ describe("Context capture integration tests", () => {
         expect(jobProperties.settings.inputs[1]).to.deep.equal(ccOrientationsId);
         threeMXId = jobProperties.settings.outputs.threeMX;
         expect(threeMXId).to.have.length(36);
-        expect(jobProperties.settings.meshQuality).to.deep.equal(CCUtils.CCMeshQuality.MEDIUM);
+        expect(jobProperties.settings.meshQuality).to.deep.equal(CCUtils.CCJobQuality.MEDIUM);
         expect(jobProperties.workspaceId).to.deep.equal(workspaceId);
         expect(jobProperties.id).to.deep.equal(jobId);
         expect(jobProperties.state).to.deep.equal(CommonData.JobState.ACTIVE);

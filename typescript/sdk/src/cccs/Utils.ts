@@ -15,6 +15,7 @@ export enum CCJobType {
 
 /** 
  * Properties of a workspace.
+ * Convenience interface to stock all properties of a job in a simple way.
  */
 export interface CCWorkspaceProperties {
     id: string;
@@ -24,14 +25,17 @@ export interface CCWorkspaceProperties {
     contextCaptureVersion?: string;
 }
 
+/**
+ * Parameters for estimating job cost before its processing.
+ */
 export interface CCCostParameters {
     gigaPixels?: number;
     megaPoints?: number;
-    meshQuality?: CCMeshQuality;
+    meshQuality?: CCJobQuality;
 }
 
 /**
- * Properties of a job.
+ * Properties of ContextCapture job.
  * Convenience interface to stock all properties of a job in a simple way.
  */
 export interface CCJobProperties {
@@ -51,8 +55,8 @@ export interface CCJobProperties {
     estimatedCost?: string;
 }
 
-/** Possible mesh qualities. */
-export enum CCMeshQuality {
+/** Possible qualities of a ContextCapture job. */
+export enum CCJobQuality {
     UNKNOWN = "Unknown",
     DRAFT = "Draft",
     MEDIUM = "Medium",
@@ -60,7 +64,7 @@ export enum CCMeshQuality {
 }
 
 /** 
- * Cache settings properties.
+ * Cache settings for a ContextCapture Job.
  */
 export interface CCCacheSettings {
     createCache: boolean;
@@ -71,46 +75,126 @@ export interface CCCacheSettings {
  * Possible outputs for a ContextCapture job.
  */
 class CCOutputs {
-    orientations: string;
-    threeMX: string;
-    threeSM: string;
-    webReadyScalableMesh: string;
-    cesium3DTiles: string;
-    pod: string;
-    orthophoto: string;
-    las: string;
-    fbx: string;
-    obj: string;
-    esri: string;
-    dgn: string;
-    lodTreeExport: string;
-    ply: string;
-    opc: string;
+    /** Created context scene id. */
     contextScene: string;
+    /** Created ccorientation id. */
+    orientations: string;
+    /** Created 3MX id. */
+    threeMX: string;
+    /** Created 3SM id. */
+    threeSM: string;
+    /** Created web ready scalable mesh id. */
+    webReadyScalableMesh: string;
+    /** Created cesium 3D tiles id. */
+    cesium3DTiles: string;
+    /** Created pod id. */
+    pod: string;
+    /** Created orthophoto id. */
+    orthophoto: string;
+    /** Created las id. */
+    las: string;
+    /** Created fbx id. */
+    fbx: string;
+    /** Created obj id. */
+    obj: string;
+    /** Created esri i3s id. */
+    esri: string;
+    /** Created dgn id. */
+    dgn: string;
+    /** Created load tree export id. */
+    lodTreeExport: string;
+    /** Created ply id. */
+    ply: string;
+    /** Created opc id. */
+    opc: string;
 
     constructor() {
-        this.orientations = "";
-        this.threeMX = "";
-        this.threeSM = "";
-        this.webReadyScalableMesh = "";
-        this.cesium3DTiles = "";
-        this.pod = "";
-        this.orthophoto = "";
-        this.las = "";
-        this.fbx = "";
-        this.obj = "";
-        this.esri = "";
-        this.dgn = "";
-        this.lodTreeExport = "";
-        this.ply = "";
-        this.opc = "";
+        /**
+         * Created context scene id.
+         * @type {string}
+         */
         this.contextScene = "";
+        /**
+         * Created ccorientation id.
+         * @type {string}
+         */
+        this.orientations = "";
+        /**
+         * Created 3MX id.
+         * @type {string}
+         */
+        this.threeMX = "";
+        /**
+         * Created 3SM id.
+         * @type {string}
+         */
+        this.threeSM = "";
+        /**
+         * Created web ready scalable mesh id.
+         * @type {string}
+         */
+        this.webReadyScalableMesh = "";
+        /**
+         * Created cesium 3D Tiles id.
+         * @type {string}
+         */
+        this.cesium3DTiles = "";
+        /**
+         * Created pod id.
+         * @type {string}
+         */
+        this.pod = "";
+        /**
+         * Created orthophoto id.
+         * @type {string}
+         */
+        this.orthophoto = "";
+        /**
+         * Created las id.
+         * @type {string}
+         */
+        this.las = "";
+        /**
+         * Created fbx id.
+         * @type {string}
+         */
+        this.fbx = "";
+        /**
+         * Created obj id.
+         * @type {string}
+         */
+        this.obj = "";
+        /**
+         * Created esri i3s id.
+         * @type {string}
+         */
+        this.esri = "";
+        /**
+         * Created dgn id.
+         * @type {string}
+         */
+        this.dgn = "";
+        /**
+         * Created load tree export id.
+         * @type {string}
+         */
+        this.lodTreeExport = "";
+        /**
+         * Created ply id.
+         * @type {string}
+         */
+        this.ply = "";
+        /**
+         * Created opc id.
+         * @type {string}
+         */
+        this.opc = "";
     }
 }
 
 /** Settings for ContextCapture jobs. */
 export class CCJobSettings {
-    /** Possible inputs for this job. */
+    /** Possible inputs for this job. Should be the ids of the inputs in the cloud. */
     inputs: string[];
     /** 
      * Possible outputs for this job. 
@@ -119,10 +203,10 @@ export class CCJobSettings {
     outputs: CCOutputs;
 
     /** Mesh quality for this job. */
-    meshQuality?: CCMeshQuality;
+    meshQuality?: CCJobQuality;
 
-    /** Number of engines to be used at most, between 0 and your engine limit. If set at 0, CCCS will use your engine limit. */
-    processingEngines?: number;
+    /** Quantity of engines to be used by the job. If set at 0, CCS will use your engine limit. */
+    engines?: number;
 
     /** Cache settings for this job. */
     cacheSettings?: CCCacheSettings;
@@ -142,15 +226,15 @@ export class CCJobSettings {
 
         /**
          * Mesh quality for this job.
-         * @type {CCMeshQuality}
+         * @type {CCJobQuality}
          */
-        this.meshQuality = CCMeshQuality.UNKNOWN;
+        this.meshQuality = CCJobQuality.UNKNOWN;
 
         /** 
          * Number of engines to be used at most, between 0 and your engine limit. If set at 0, CCCS will use your engine limit. 
          * @type {number}
          */
-        this.processingEngines = 0;
+        this.engines = 0;
     }
 
     /**
@@ -226,8 +310,8 @@ export class CCJobSettings {
             json["meshQuality"] = this.meshQuality;
         }
 
-        if (this.processingEngines) {
-            json["processingEngines"] = this.processingEngines;
+        if (this.engines) {
+            json["processingEngines"] = this.engines;
         }
 
         return json;
@@ -235,16 +319,16 @@ export class CCJobSettings {
 
     /**
      * Transform json received from cloud service into settings.
-     * @param {any} settingsJson Dictionary with settings received from cloud service.
+     * @param {any} jobJson Dictionary with settings received from cloud service.
      * @returns {CCJobSettings} New settings.
      */
-    public static async fromJson(inputsJson: any, settingsJson: any): Promise<CCJobSettings> {
+    public static async fromJson(settingsJson: any): Promise<CCJobSettings> {
         const newJobSettings = new CCJobSettings();
 
-        for (const input of inputsJson) {
+        for (const input of settingsJson["inputs"]) {
             newJobSettings.inputs.push(input["id"]);
         }
-        const outputsJson = settingsJson["outputs"];
+        const outputsJson = settingsJson["jobSettings"]["outputs"];
         for (const output of outputsJson) {
             if (output["format"] === "Cesium 3D Tiles")
                 newJobSettings.outputs.cesium3DTiles = output["id"];
@@ -281,14 +365,14 @@ export class CCJobSettings {
             else
                 return Promise.reject(new Error("Found non expected output name" + output["name"]));
         }
-        if ("cacheSettings" in settingsJson)
-            newJobSettings.cacheSettings = JSON.parse(settingsJson["cacheSettings"]);
+        if ("cacheSettings" in settingsJson["jobSettings"])
+            newJobSettings.cacheSettings = JSON.parse(settingsJson["jobSettings"]["cacheSettings"]);
 
-        if ("quality" in settingsJson)
-            newJobSettings.meshQuality = settingsJson["quality"];
+        if ("quality" in settingsJson["jobSettings"])
+            newJobSettings.meshQuality = settingsJson["jobSettings"]["quality"];
 
-        if ("processingEngines" in settingsJson)
-            newJobSettings.processingEngines = settingsJson["processingEngines"];
+        if ("processingEngines" in settingsJson["jobSettings"])
+            newJobSettings.engines = settingsJson["jobSettings"]["processingEngines"];
 
         return newJobSettings;
     }

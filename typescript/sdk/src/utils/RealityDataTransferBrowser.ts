@@ -173,8 +173,8 @@ async function replaceCCOrientationsReferences(file: File | Blob, references: Re
 
 /**
  * Default hook to display progress.
- * @param progress current progress (percentage).
- * @returns false if the upload/download has been cancelled.
+ * @param {number} progress current progress (percentage).
+ * @returns {boolean} false if the upload/download has been cancelled.
  */
 export function defaultProgressHook(progress: number): boolean {
     console.log("Current progress : " + progress + "%.");
@@ -210,7 +210,7 @@ export class RealityDataTransferBrowser {
 
     /**
      * Set the upload progress hook.
-     * @param onProgress function to display the progress, should returns a boolean (cancelled).
+     * @param {number} onProgress function to display the progress, should returns a boolean (cancelled).
      */
     public setUploadHook(onProgress: (progress: number) => boolean): void {
         this.onUploadProgress = onProgress;
@@ -218,7 +218,7 @@ export class RealityDataTransferBrowser {
 
     /**
      * Set the download progress hook.
-     * @param onProgress function to display the progress, should returns a boolean (cancelled).
+     * @param {number} onProgress function to display the progress, should returns a boolean (cancelled).
      */
     public setDownloadHook(onProgress: (progress: number) => boolean): void {
         this.onDownloadProgress = onProgress;
@@ -250,7 +250,8 @@ export class RealityDataTransferBrowser {
      * This function should not be used for ContextScenes that contain dependencies to data you have locally as the
      * paths will point to ids in the ProjectWise ContextShare.
      * Use downloadContextScene instead.
-     * @param {string} realityDataId The ID of the data to download.
+     * @param {string} realityDataId The ID of the reality data to download.
+     * @param {string} iTwinId iTwin project associated to the reality data.
      * @param {ReferenceTableBrowser} referenceTable (optional) A table mapping local path of dependencies to their ID.
      */
     public async downloadRealityDataBrowser(realityDataId: string, iTwinId: string, referenceTable?: ReferenceTableBrowser): Promise<void> {
