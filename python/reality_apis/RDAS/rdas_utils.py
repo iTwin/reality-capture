@@ -19,9 +19,10 @@ class RDAJobCostParameters:
         giga_pixels: Number of giga pixels in inputs.
         number_photos: Number of photos in inputs.
         scene_width: Width of the scene.
-        scene_length: Height of the scene.
-        detector_scale: Length of the scene.
-        detector_cost: Scale of the detector.
+        scene_height: Height of the scene.
+        scene_length: Length of the scene.
+        detector_scale: Scale of the detector.
+        detector_cost: Cost of the detector.
         estimated_cost: Estimated cost of the detector.
     """
 
