@@ -27,18 +27,19 @@ async function main() {
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_SECRET ?? "";
+    const authority = process.env.IMJS_ISSUER_URL ?? "";
 
     const authorizationClient = new ServiceAuthorizationClient({
         clientId: clientId,
         clientSecret: secret,
         scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(ContextCaptureService.getScopes()).join(" "),
-        authority: "https://qa-ims.bentley.com",
+        authority: authority,
     });
     console.log("Context capture sample job - Full (Calibration + Reconstruction)");
-    const realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
+    const realityDataService = new RealityDataTransferNode(authorizationClient);
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
-    const contextCaptureService = new ContextCaptureService(authorizationClient, "dev-");
+    const contextCaptureService = new ContextCaptureService(authorizationClient);
     console.log("Service initialized");
 
     try {

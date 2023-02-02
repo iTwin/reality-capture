@@ -28,7 +28,6 @@
 		"@itwin/core-bentley": "^3.5.0",
 		"@itwin/core-common": "^3.5.0",
 		"@itwin/core-geometry": "^3.5.0",
-		"@itwin/oidc-signin-tool": "^3.5.0",
 		"@itwin/reality-data-client": "^0.9.0"
 	},
 	"devDependencies": {
@@ -37,7 +36,6 @@
 		"@itwin/core-bentley": "^3.5.0",
 		"@itwin/core-common": "^3.5.0",
 		"@itwin/core-geometry": "^3.5.0",
-		"@itwin/oidc-signin-tool": "^3.5.0",
 		"@itwin/reality-data-client": "^0.9.0",
 		"@types/node": "^16.11.34",
 		"@types/uuid": "^9.0.0",

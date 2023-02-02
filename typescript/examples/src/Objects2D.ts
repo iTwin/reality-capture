@@ -29,16 +29,17 @@ async function runObjects2DExample() {
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_SECRET ?? "";
+    const authority = process.env.IMJS_ISSUER_URL ?? "";
 
     console.log("Reality Data Analysis sample job detecting 2D objects");
     const authorizationClient = new ServiceAuthorizationClient({
         clientId: clientId,
         clientSecret: secret,
         scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(RealityDataAnalysisService.getScopes()).join(" "),
-        authority: "https://qa-ims.bentley.com",
+        authority: authority,
     });
-    const realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
-    const realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "dev-");
+    const realityDataService = new RealityDataTransferNode(authorizationClient);
+    const realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient);
     console.log("Service initialized");
 
     // Creating reference table and uploading ccimageCollection, contextScene and detector if necessary (not yet on the cloud)

@@ -139,15 +139,4 @@ export class ReferenceTableNode {
 
         return this.getCloudIdFromLocalPath(inputPath);
     }
-
-    /**
-     * Translate output path to cloud id.
-     * @param {string} outputPath input path to translate.
-     * @returns {string} input as cloud id.
-     */
-    public translateOutputPath(outputPath: string): string {
-        /* if(path)
-            return "<requested>"; */
-        return outputPath;
-    }
 }

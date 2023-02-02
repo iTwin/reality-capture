@@ -153,15 +153,4 @@ export class ReferenceTableBrowser {
 
         return this.getCloudIdFromLocalPath(inputPath);
     }
-
-    /**
-     * Translate output path to cloud id.
-     * @param {string} outputPath output path to translate.
-     * @returns {string} output as cloud id.
-     */
-    public translateOutputPath(outputPath: string): string {
-        /* if(outputPath)
-            return "<requested>"; */
-        return outputPath;
-    }
 }

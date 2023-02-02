@@ -33,18 +33,19 @@ async function runContextCaptureExample() {
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_SECRET ?? "";
+    const authority = process.env.IMJS_ISSUER_URL ?? "";
 
     console.log("Reality Data Analysis sample job detecting 3D lines");
     const authorizationClient = new ServiceAuthorizationClient({
         clientId: clientId,
         clientSecret: secret,
         scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(RealityDataAnalysisService.getScopes()).join(" "),
-        authority: "https://qa-ims.bentley.com",
+        authority: authority,
     });
-    const realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
+    const realityDataService = new RealityDataTransferNode(authorizationClient);
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
-    const realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "dev-");
+    const realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient);
     console.log("Service initialized");
 
 
