@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import React, { useMemo } from "react";
+import React from "react";
 import { Viewer2D } from "./Viewer2D";
 import { Viewer3D } from "./Viewer3D";
 import "./App.css";
@@ -14,7 +14,7 @@ import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import { ContextCapture } from "./CCSTab";
 import { Svg2D, Svg3D, SvgProcess, SvgRealityMesh, SvgUpload } from "@itwin/itwinui-icons-react";
-import { RealityDataAnalysisService, ContextCaptureService, RealityDataTransferBrowser, ReferenceTableBrowser, CommonData } from "reality-capture";
+import { ReferenceTableBrowser } from "reality-capture";
 
 interface TabMenu {
     realityDataAccessClient: RealityDataAccessClient;

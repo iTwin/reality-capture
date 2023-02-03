@@ -9,6 +9,6 @@ import { ReferenceTableNode } from "./utils/ReferenceTableNode";
 export {
     RealityDataTransferNode,
     ReferenceTableNode,
-}
+};
 
 

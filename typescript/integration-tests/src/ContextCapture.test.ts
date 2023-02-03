@@ -92,7 +92,7 @@ describe("Context capture integration tests", () => {
     // Create & submit job
     it("Create CC job", async function () {
         this.timeout(10000);
-        let settings = new CCUtils.CCJobSettings();
+        const settings = new CCUtils.CCJobSettings();
         settings.inputs = [imagesId, ccOrientationsId];
         settings.outputs.threeMX = "threeMX";
         settings.meshQuality = CCUtils.CCJobQuality.MEDIUM;

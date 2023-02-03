@@ -284,7 +284,7 @@ export class S2DJobSettings {
             json["outputs"].push("segmentation2D");
 
         if(this.outputs.segmentedPhotos)
-            json["outputs"].push("segmentedPhotos")
+            json["outputs"].push("segmentedPhotos");
 
         if (this.outputs.polygons2D)
             json["outputs"].push("polygons2D");
@@ -1181,7 +1181,7 @@ export class L3DJobSettings {
             else if (output["name"] === "segmentation2D")
                 newJobSettings.outputs.segmentation2D = output["realityDataId"];
             else if(output["name"] === "segmentedPhotos")
-                newJobSettings.outputs.segmentedPhotos = output["realityDataId"]
+                newJobSettings.outputs.segmentedPhotos = output["realityDataId"];
             else if (output["name"] === "lines3D")
                 newJobSettings.outputs.lines3D = output["realityDataId"];
             else if (output["name"] === "exportedLines3DDGN")
