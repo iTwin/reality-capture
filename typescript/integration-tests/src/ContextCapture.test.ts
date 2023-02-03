@@ -154,7 +154,7 @@ describe("Context capture integration tests", () => {
             await rdaClient.getRealityData("", iTwinId, imagesId);
         }
         catch(error: any) {
-            expect(error).instanceOf(BentleyError);
+            expect(error).to.be.instanceOf(BentleyError);
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
     });
@@ -166,7 +166,7 @@ describe("Context capture integration tests", () => {
             await rdaClient.getRealityData("", iTwinId, ccOrientationsId);
         }
         catch(error: any) {
-            expect(error).instanceOf(BentleyError);
+            expect(error).to.be.instanceOf(BentleyError);
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
     });
@@ -178,7 +178,7 @@ describe("Context capture integration tests", () => {
             await contextCaptureService.getWorkspace(workspaceId);
         }
         catch(error: any) {
-            expect(error).instanceOf(BentleyError);
+            expect(error).to.be.instanceOf(BentleyError);
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
     });
@@ -190,7 +190,7 @@ describe("Context capture integration tests", () => {
             await rdaClient.getRealityData("", iTwinId, threeMXId);
         }
         catch(error: any) {
-            expect(error).instanceOf(BentleyError);
+            expect(error).to.be.instanceOf(BentleyError);
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
     });
