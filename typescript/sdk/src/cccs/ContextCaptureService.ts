@@ -37,7 +37,7 @@ export class ContextCaptureService {
      * @param {unknown} payload (optional) Request body.
      * @returns {any} Request response.
      */
-    private async submitRequest(apiOperationUrl: string, method: string, payload?: unknown): Promise<any> {
+    private async submitRequest(apiOperationUrl: string, method: string, okRet: number[], payload?: unknown): Promise<any> {
         try {
             let response;
             const url = this.serviceUrl + "/" + apiOperationUrl;
@@ -58,6 +58,10 @@ export class ContextCaptureService {
                 response = await axios.patch(url, payload, {headers, url, method});
             else 
                 return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Wrong request method"));
+
+            if (!okRet.includes(response.status)) {
+                return new BentleyError(response.status, response.statusText);
+            }
 
             return response.data;
 
@@ -98,13 +102,15 @@ export class ContextCaptureService {
      * @returns {string} created workspace id.
      */
     public async createWorkspace(name: string, iTwinId: string, contextCaptureVersion?: string): Promise<string> {
-        const body = {
+        let body: any = {
             "name": name,
-            "iTwinId": iTwinId,
-            "contextCaptureVersion": contextCaptureVersion
+            "iTwinId": iTwinId           
         };
+        if(contextCaptureVersion)
+            body["contextCaptureVersion"] = contextCaptureVersion;
+        
         try {
-            const response = await this.submitRequest("workspaces", "POST", body);
+            const response = await this.submitRequest("workspaces", "POST", [201], body);
             return response["workspace"]["id"];
         }
         catch (error: any) {
@@ -117,7 +123,7 @@ export class ContextCaptureService {
      * @param {string} workspaceId The ID of the relevant workspace.
      */
     public async deleteWorkspace(workspaceId: string): Promise<void> {
-        return await this.submitRequest("workspaces/" + workspaceId, "DELETE");
+        return await this.submitRequest("workspaces/" + workspaceId, "DELETE", [204]);
     }
 
     /**
@@ -126,7 +132,7 @@ export class ContextCaptureService {
      * @returns {CCWorkspaceProperties} Workspace properties.
      */
     public async getWorkspace(workspaceId: string): Promise<CCWorkspaceProperties> {
-        const response = await this.submitRequest("workspaces/" + workspaceId, "GET");
+        const response = await this.submitRequest("workspaces/" + workspaceId, "GET", [200]);
         return {
             id: response["workspace"]["id"],
             createdDateTime: response["workspace"]["createdDateTime"],
@@ -154,7 +160,7 @@ export class ContextCaptureService {
             "workspaceId": workspaceId,
         };
 
-        const response = await this.submitRequest("jobs/", "POST", body);
+        const response = await this.submitRequest("jobs/", "POST", [201], body);
         return response["job"]["id"];
     }
 
@@ -164,7 +170,7 @@ export class ContextCaptureService {
      */
     public async submitJob(jobId: string): Promise<void> {
         const body = { "state": "active" };
-        return await this.submitRequest("jobs/" + jobId, "PATCH", body);
+        return await this.submitRequest("jobs/" + jobId, "PATCH", [200], body);
     }
 
     /**
@@ -175,7 +181,7 @@ export class ContextCaptureService {
         const body = {
             "state": "cancelled",
         };
-        return await this.submitRequest("jobs/" + id, "PATCH", body);
+        return await this.submitRequest("jobs/" + id, "PATCH", [200], body);
     }
 
     /**
@@ -183,7 +189,7 @@ export class ContextCaptureService {
      * @param {string} id The ID of the relevant job.
      */
     public async deleteJob(id: string): Promise<void> {
-        return await this.submitRequest("jobs/" + id, "DELETE");
+        return await this.submitRequest("jobs/" + id, "DELETE", [204]);
     }
 
     /**
@@ -192,7 +198,7 @@ export class ContextCaptureService {
      * @returns {JobProgress} The progress for the job.
      */
     public async getJobProgress(id: string): Promise<JobProgress> {
-        const response = await this.submitRequest(`jobs/${id}/progress`, "GET");
+        const response = await this.submitRequest("jobs/" + id + "/progress", "GET", [200]);
         const progress = response["jobProgress"];
         const state = (progress["state"] as string).toLowerCase();
         return { state: state as JobState, progress: JSON.parse(progress["percentage"]), step: progress["step"] };
@@ -204,7 +210,7 @@ export class ContextCaptureService {
      * @returns {RDAJobProperties} The job properties.
      */
     public async getJobProperties(id: string): Promise<CCJobProperties> {
-        const response = await this.submitRequest("jobs/" + id, "GET");
+        const response = await this.submitRequest("jobs/" + id, "GET", [200]);
         const job = response["job"];
         const jobProperties: CCJobProperties = {
             name: job["name"],
@@ -261,7 +267,7 @@ export class ContextCaptureService {
                 meshQuality: costParameters.meshQuality,
             }
         };
-        const response = await this.submitRequest("jobs/" + id, "PATCH", body);
+        const response = await this.submitRequest("jobs/" + id, "PATCH", [200], body);
         return response.estimatedCost;
     }
 }

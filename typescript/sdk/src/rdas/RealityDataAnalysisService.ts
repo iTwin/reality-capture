@@ -38,7 +38,7 @@ export class RealityDataAnalysisService {
      * @param {unknown} payload (optional) Request body.
      * @returns {any} Request response.
      */
-    private async submitRequest(apiOperationUrl: string, method: string, payload?: unknown): Promise<any> {
+    private async submitRequest(apiOperationUrl: string, method: string, okRet: number[], payload?: unknown): Promise<any> {
         try {
             let response;
             const url = this.serviceUrl + "/" + apiOperationUrl;
@@ -59,6 +59,10 @@ export class RealityDataAnalysisService {
                 response = await axios.patch(url, payload, {headers, url, method});
             else 
                 return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Wrong request method"));
+
+            if (!okRet.includes(response.status)) {
+                return new BentleyError(response.status, response.statusText);
+            }
 
             return response.data;
 
@@ -105,7 +109,7 @@ export class RealityDataAnalysisService {
             "iTwinId": iTwinId,
             "settings": settings.toJson()
         };
-        const response = await this.submitRequest("jobs", "POST", body);
+        const response = await this.submitRequest("jobs", "POST", [201], body);
         return response["job"]["id"];
     }
 
@@ -115,7 +119,7 @@ export class RealityDataAnalysisService {
      */
     public async submitJob(id: string): Promise<void> {
         const body = { "state": "active" };
-        return await this.submitRequest("jobs/" + id, "PATCH", body);
+        return await this.submitRequest("jobs/" + id, "PATCH", [200], body);
     }
 
     /**
@@ -126,7 +130,7 @@ export class RealityDataAnalysisService {
         const body = {
             "state": "cancelled",
         };
-        return await this.submitRequest("jobs/" + id, "PATCH", body);
+        return await this.submitRequest("jobs/" + id, "PATCH", [200], body);
     }
 
     /**
@@ -134,7 +138,7 @@ export class RealityDataAnalysisService {
      * @param {string} id The ID of the relevant job.
      */
     public async deleteJob(id: string): Promise<void> {
-        return await this.submitRequest("jobs/" + id, "DELETE");
+        return await this.submitRequest("jobs/" + id, "DELETE", [204]);
     }
 
     /**
@@ -143,7 +147,7 @@ export class RealityDataAnalysisService {
      * @returns {JobProgress} The progress for the job.
      */
     public async getJobProgress(id: string): Promise<JobProgress> {
-        const response = await this.submitRequest(`jobs/${id}/progress`, "GET");
+        const response = await this.submitRequest(`jobs/${id}/progress`, "GET", [200]);
         const progress = response["progress"];
         const state = (progress["state"] as string).toLowerCase();
         return { state: state as JobState, progress: JSON.parse(progress["percentage"]), step: progress["step"] };
@@ -155,7 +159,7 @@ export class RealityDataAnalysisService {
      * @returns {RDAJobProperties} The job properties.
      */
     public async getJobProperties(id: string): Promise<RDAJobProperties> {
-        const response = await this.submitRequest("jobs/" + id, "GET");
+        const response = await this.submitRequest("jobs/" + id, "GET", [200]);
         const job = response["job"];
         const jobProperties: RDAJobProperties = {
             name: job["name"],
@@ -242,7 +246,7 @@ export class RealityDataAnalysisService {
                 detectorCost: costParameters.detectorCost,
             }
         };
-        const response = await this.submitRequest("jobs/" + id, "PATCH", body);
+        const response = await this.submitRequest("jobs/" + id, "PATCH", [200], body);
         return response.costEstimation.estimatedCost;
     }
 }

@@ -40,15 +40,15 @@ describe("Reality data analysis integration tests", () => {
             clientId: clientId,
             clientSecret: secret,
             scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(RealityDataAnalysisService.getScopes()).join(" "),
-            authority: "https://qa-ims.bentley.com",
+            authority: "https://ims.bentley.com",
         });
 
-        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "dev-");
-        realityDataTransfer = new RealityDataTransferNode(authorizationClient, "qa-");
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient);
+        realityDataTransfer = new RealityDataTransferNode(authorizationClient);
         references = new ReferenceTableNode();
 
         const realityDataClientOptions: RealityDataClientOptions = {
-            baseUrl: "https://qa-api.bentley.com/realitydata/",
+            baseUrl: "https://api.bentley.com/realitydata/",
             authorizationClient: authorizationClient,
         };
         rdaClient = new RealityDataAccessClient(realityDataClientOptions);
