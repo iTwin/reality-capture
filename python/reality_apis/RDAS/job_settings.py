@@ -1081,6 +1081,165 @@ class ChangeDetectionJobSettings:
             self.exported_locations3D_SHP: str = ""
 
 
+class ExtractGroundJobSettings:
+    """
+    Settings for Extract Ground jobs. Will be available in an upcoming update.
+
+    Attributes:
+        type: Type of job settings.
+        inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing the settings to create_job.
+        export_srs: SRS used by exports.
+    """
+
+    def __init__(self) -> None:
+        self.type = RDAJobType.ExtractGround
+        self.inputs = self.Inputs()
+        self.outputs = self.Outputs()
+        self.export_srs: str = ""
+
+    def to_json(self) -> dict:
+        """
+        Transform settings into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with settings values.
+        """
+        json_dict = dict()
+        json_dict["inputs"] = list()
+        if self.inputs.point_clouds:
+            json_dict["inputs"].append(
+                {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
+            )
+        if self.inputs.meshes:
+            json_dict["inputs"].append(
+                {"name": "meshes", "realityDataId": self.inputs.meshes}
+            )
+        if self.inputs.point_cloud_segmentation_detector:
+            json_dict["inputs"].append(
+                {
+                    "name": "pointCloudSegmentationDetector",
+                    "realityDataId": self.inputs.point_cloud_segmentation_detector,
+                }
+            )
+        if self.inputs.clip_polygon:
+            json_dict["inputs"].append(
+                {"name": "clipPolygon", "realityDataId": self.inputs.clip_polygon}
+            )
+
+        json_dict["outputs"] = list()
+        if self.outputs.segmentation3D:
+            json_dict["outputs"].append("segmentation3D")
+        if self.outputs.segmented_point_cloud:
+            json_dict["outputs"].append("segmentedPointCloud")
+        if self.outputs.exported_segmentation3D_POD:
+            json_dict["outputs"].append("exportedSegmentation3DPOD")
+        if self.outputs.exported_segmentation3D_LAS:
+            json_dict["outputs"].append("exportedSegmentation3DLAS")
+        if self.outputs.exported_segmentation3D_LAZ:
+            json_dict["outputs"].append("exportedSegmentation3DLAZ")
+        if self.export_srs:
+            json_dict["exportSrs"] = self.export_srs
+        return json_dict
+
+    @classmethod
+    def from_json(cls, settings_json: dict) -> ReturnValue[ExtractGroundJobSettings]:
+        """
+        Transform json received from cloud service into settings.
+
+        Args:
+            settings_json: Dictionary with settings received from cloud service.
+        Returns:
+            New settings.
+        """
+        new_job_settings = cls()
+        try:
+            inputs_json = settings_json["inputs"]
+            for input_dict in inputs_json:
+                if input_dict["name"] == "pointClouds":
+                    new_job_settings.inputs.point_clouds = input_dict["realityDataId"]
+                elif input_dict["name"] == "meshes":
+                    new_job_settings.inputs.meshes = input_dict["realityDataId"]
+                elif input_dict["name"] == "pointCloudSegmentationDetector":
+                    new_job_settings.inputs.point_cloud_segmentation_detector = (
+                        input_dict["realityDataId"]
+                    )
+                elif input_dict["name"] == "clipPolygon":
+                    new_job_settings.inputs.clip_polygon = input_dict["realityDataId"]
+                else:
+                    raise TypeError(
+                        "found non expected input name:" + input_dict["name"]
+                    )
+            outputs_json = settings_json["outputs"]
+            for output_dict in outputs_json:
+                if output_dict["name"] == "segmentation3D":
+                    new_job_settings.outputs.segmentation3D = output_dict[
+                        "realityDataId"
+                    ]
+                elif output_dict["name"] == "segmentedPointCloud":
+                    new_job_settings.outputs.segmented_point_cloud = output_dict[
+                        "realityDataId"
+                    ]
+                elif output_dict["name"] == "exportedSegmentation3DPOD":
+                    new_job_settings.outputs.exported_segmentation3D_POD = output_dict[
+                        "realityDataId"
+                    ]
+                elif output_dict["name"] == "exportedSegmentation3DLAS":
+                    new_job_settings.outputs.exported_segmentation3D_LAS = output_dict[
+                        "realityDataId"
+                    ]
+                elif output_dict["name"] == "exportedSegmentation3DLAZ":
+                    new_job_settings.outputs.exported_segmentation3D_LAZ = output_dict[
+                        "realityDataId"
+                    ]
+                else:
+                    raise TypeError(
+                        "found non expected output name:" + output_dict["name"]
+                    )
+            if "exportSrs" in settings_json:
+                new_job_settings.export_srs = settings_json["exportSrs"]
+        except (KeyError, TypeError) as e:
+            return ReturnValue(value=cls(), error=str(e))
+        return ReturnValue(value=new_job_settings, error="")
+
+    class Inputs:
+        """
+        Possible inputs for an Extract Ground job.
+
+        Attributes:
+            point_clouds: Collection of point clouds.
+            meshes: Collection of meshes.
+            point_cloud_segmentation_detector: Point cloud segmentation detector.
+            clip_polygon: Path of clipping polygon to apply.
+        """
+
+        def __init__(self) -> None:
+            self.point_clouds: str = ""
+            self.meshes: str = ""
+            self.point_cloud_segmentation_detector: str = ""
+            self.clip_polygon: str = ""
+
+    class Outputs:
+        """
+        Possible outputs for an Extract Ground job.
+
+        Attributes:
+            segmentation3D: Ground segmentation computed by current job.
+            segmented_point_cloud: 3D ground segmentation as an OPC file.
+            exported_segmentation3D_POD: 3D ground segmentation exported as a POD file.
+            exported_segmentation3D_LAS: 3D ground segmentation exported as a LAS file.
+            exported_segmentation3D_LAZ: 3D ground segmentation exported as a LAZ file.
+        """
+
+        def __init__(self) -> None:
+            self.segmentation3D: str = ""
+            self.segmented_point_cloud: str = ""
+            self.exported_segmentation3D_POD: str = ""
+            self.exported_segmentation3D_LAS: str = ""
+            self.exported_segmentation3D_LAZ: str = ""
+
+
 JobSettings = TypeVar(
     "JobSettings",
     O2DJobSettings,
@@ -1089,4 +1248,5 @@ JobSettings = TypeVar(
     S3DJobSettings,
     L3DJobSettings,
     ChangeDetectionJobSettings,
+    ExtractGroundJobSettings
 )
