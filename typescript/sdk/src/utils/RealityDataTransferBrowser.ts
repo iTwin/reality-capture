@@ -1,7 +1,7 @@
 import { ContainerClient, BlobDownloadOptions, BlockBlobParallelUploadOptions, BlobUploadCommonResponse } from "@azure/storage-blob";
+import { AuthorizationClient } from "@itwin/core-common";
 import { RealityDataClientOptions, RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
 import { RealityDataType } from "../CommonData";
-import { TokenFactory } from "../token/TokenFactory";
 import { ReferenceTableBrowser } from "./ReferenceTableBrowser";
 
 interface FileInfo {
@@ -88,14 +88,14 @@ async function replaceJSONScene(file: File | Blob, references: ReferenceTableBro
     localStorage.setItem("tmpPatchedFile", JSON.stringify(json));
 }
 
-export async function replaceContextSceneReferences(file: File | Blob, references: ReferenceTableBrowser, localToCloud: boolean, isJson: boolean): Promise<void> {
+async function replaceContextSceneReferences(file: File | Blob, references: ReferenceTableBrowser, localToCloud: boolean, isJson: boolean): Promise<void> {
     if (isJson)
         await replaceJSONScene(file, references, localToCloud);
     else
         await replaceXMLScene(file, references, localToCloud);
 }
 
-export async function replaceCCOrientationsReferences(file: File | Blob, references: ReferenceTableBrowser, localToCloud: boolean): Promise<void> {
+async function replaceCCOrientationsReferences(file: File | Blob, references: ReferenceTableBrowser, localToCloud: boolean): Promise<void> {
     const text = await file.text();
     const xmlDoc = new DOMParser().parseFromString(text, "text/xml");
     const photos = xmlDoc.getElementsByTagName("Photo");
@@ -172,30 +172,45 @@ export async function replaceCCOrientationsReferences(file: File | Blob, referen
 }
 
 /**
+ * Default hook to display progress.
+ * @param {number} progress current progress (percentage).
+ * @returns {boolean} false if the upload/download has been cancelled.
+ */
+export function defaultProgressHook(progress: number): boolean {
+    console.log("Current progress : " + progress + "%.");
+    return true;
+}
+
+/**
  * Utility class to upload and download reality data in ContextShare.
  */
 export class RealityDataTransferBrowser {
-    /** Token factory to make authenticated request to the API. */
-    private tokenFactory: TokenFactory;
+    /** Authorization client to generate access token. */
+    private authorizationClient: AuthorizationClient;
 
+    /** Target service url. */
+    private serviceUrl = "https://api.bentley.com/realitydata";
+    
     /** Abort controller to stop the upload when the upload has been cancelled. */
     private abortController: AbortController;
 
     /** 
      * On upload progress hook. Displays the upload progress and returns false when the upload is cancelled.
      * Create your own function or use {@link defaultProgressHook}.
+     * @param {number} progress upload progress, usually a percentage.
      */
     private onUploadProgress?: (progress: number) => boolean;
 
     /** 
      * On download progress hook. Displays the download progress and returns false when the download is cancelled.
      * Create your own function or use {@link defaultProgressHook}.
+     * @param {number} progress download progress, usually a percentage.
      */
     private onDownloadProgress?: (progress: number) => boolean;
 
     /**
      * Set the upload progress hook.
-     * @param onProgress function to display the progress, should returns a boolean (cancelled).
+     * @param {number} onProgress function to display the progress, should returns a boolean (cancelled).
      */
     public setUploadHook(onProgress: (progress: number) => boolean): void {
         this.onUploadProgress = onProgress;
@@ -203,7 +218,7 @@ export class RealityDataTransferBrowser {
 
     /**
      * Set the download progress hook.
-     * @param onProgress function to display the progress, should returns a boolean (cancelled).
+     * @param {number} onProgress function to display the progress, should returns a boolean (cancelled).
      */
     public setDownloadHook(onProgress: (progress: number) => boolean): void {
         this.onDownloadProgress = onProgress;
@@ -211,10 +226,14 @@ export class RealityDataTransferBrowser {
 
     /**
      * Create a new RealityDataTransferService.
-     * @param {TokenFactory} tokenFactory Token factory to make authenticated request to the API. 
+     * @param {AuthorizationClient} authorizationClient Authorization client to generate access token.
+     * @param {string} env (optional) Target environment.
      */
-    constructor(tokenFactory: TokenFactory) {
-        this.tokenFactory = tokenFactory;
+    constructor(authorizationClient: AuthorizationClient, env?: string) {
+        this.authorizationClient = authorizationClient;
+        if(env)
+            this.serviceUrl = "https://" + env + "api.bentley.com/realitydata";
+        
         this.abortController = new AbortController();
     }
 
@@ -231,17 +250,19 @@ export class RealityDataTransferBrowser {
      * This function should not be used for ContextScenes that contain dependencies to data you have locally as the
      * paths will point to ids in the ProjectWise ContextShare.
      * Use downloadContextScene instead.
-     * @param {string} realityDataId The ID of the data to download.
+     * @param {string} realityDataId The ID of the reality data to download.
+     * @param {string} iTwinId iTwin project associated to the reality data.
+     * @param {ReferenceTableBrowser} referenceTable (optional) A table mapping local path of dependencies to their ID.
      */
-    public async downloadRealityDataBrowser(realityDataId: string, referenceTable?: ReferenceTableBrowser): Promise<void> {
+    public async downloadRealityDataBrowser(realityDataId: string, iTwinId: string, referenceTable?: ReferenceTableBrowser): Promise<void> {
         try {
             const realityDataClientOptions: RealityDataClientOptions = {
-                baseUrl: this.tokenFactory.getServiceUrl() + "realitydata",
+                baseUrl: this.serviceUrl,
             };
             const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
-            const iTwinRealityData: ITwinRealityData = await rdaClient.getRealityData(await this.tokenFactory.getToken(),
-                process.env.IMJS_PROJECT_ID, realityDataId);
-            const azureBlobUrl = await iTwinRealityData.getBlobUrl(await this.tokenFactory.getToken(), "", false);
+            const iTwinRealityData: ITwinRealityData = await rdaClient.getRealityData(await this.authorizationClient.getAccessToken(),
+                iTwinId, realityDataId);
+            const azureBlobUrl = await iTwinRealityData.getBlobUrl(await this.authorizationClient.getAccessToken(), "", false);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
             let iter = await containerClient.listBlobsFlat();
 
@@ -314,7 +335,7 @@ export class RealityDataTransferBrowser {
 
     private async createRealityData(type: string, name: string, iTwinId: string, rootFile?: string): Promise<ITwinRealityData> {
         const realityDataClientOptions: RealityDataClientOptions = {
-            baseUrl: this.tokenFactory.getServiceUrl() + "realitydata",
+            baseUrl: this.serviceUrl,
         };
         const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
         const realityData = new ITwinRealityData(rdaClient, undefined, iTwinId);
@@ -324,7 +345,7 @@ export class RealityDataTransferBrowser {
         realityData.classification = "Undefined";
         realityData.rootDocument = rootFile;
         const iTwinRealityData: ITwinRealityData = await rdaClient.createRealityData(
-            await this.tokenFactory.getToken(), iTwinId, realityData);
+            await this.authorizationClient.getAccessToken(), iTwinId, realityData);
         return iTwinRealityData;
     }
 
@@ -333,9 +354,9 @@ export class RealityDataTransferBrowser {
      * This function should not be used for ContextScenes or CCOrientations that contain dependencies to other data
      * unless those dependencies are already uploaded and the file you want to upload points to their id. 
      * Use uploadContextScene or uploadCCOrientation instead.
-     * @param {string} dataToUpload Local directory containing the relevant data.
-     * @param {string} name Name of the created entry on ProjectWise ContextShare.
+     * @param {File[]} files Files to upload.
      * @param {RealityDataType} type RealityDataType of the data.
+     * @param {string} name Name of the created entry on ProjectWise ContextShare.
      * @param {string} iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the 
      * data center where the reality data is stored.
      * @param {string} rootFile (optional) Used to indicate the root document of the reality data. The root document can be in a 
@@ -355,7 +376,7 @@ export class RealityDataTransferBrowser {
             }
 
             const iTwinRealityData = await this.createRealityData(type, name, iTwinId, rootFile);
-            const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.tokenFactory.getToken(), "", true);
+            const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.authorizationClient.getAccessToken(), "", true);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
             const uploadInfo: DataTransferInfo = {
                 files: [],

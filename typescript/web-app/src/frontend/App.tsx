@@ -27,8 +27,12 @@ export function App() {
 
     const realityDataAccessClient = useMemo(
         (): RealityDataAccessClient => {
+            let prefix = process.env.IMJS_URL_PREFIX ?? "";
+            if(prefix === "dev-")
+                prefix = "qa-";
+
             const realityDataClientOptions: RealityDataClientOptions = {
-                baseUrl: "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata",
+                baseUrl: "https://" + prefix + "api.bentley.com/realitydata",
                 authorizationClient: authClient
             };
             return new RealityDataAccessClient(realityDataClientOptions);
@@ -56,7 +60,7 @@ export function App() {
                 </div>
             )}
             {accessToken && (
-                <TabMenu realityDataAccessClient={realityDataAccessClient} authClient={authClient}/>
+                <TabMenu realityDataAccessClient={realityDataAccessClient} authorizationClient={authClient}/>
             )}
         </div>
     );

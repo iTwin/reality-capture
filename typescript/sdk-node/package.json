@@ -1,0 +1,48 @@
+{
+	"name": "reality-capture-node",
+	"version": "0.1.0",
+	"description": "Node support for reality-capture package",
+	"main": "lib/reality-capture-node.js",
+	"module": "lib/reality-capture-node.js",
+	"source": "src/reality-capture-node.ts",
+	"scripts": {
+		"build": "npm run clean && tsc",
+		"clean": "rimraf lib build .rush",
+		"lint": "eslint ./src --ext .ts,.tsx ",
+		"lint-fix": "eslint ./src --fix --ext .ts,.tsx"
+	},
+	"keywords": [],
+	"author": {
+		"name": "Bentley Systems, Inc.",
+		"url": "http://www.bentley.com"
+	},
+	"license": "MIT",
+	"dependencies": {
+		"@azure/storage-blob": "^12.8.0",
+		"@xmldom/xmldom": "^0.8.6",
+		"reality-capture": "file:../sdk",
+		"uuid": "^9.0.0"
+	},
+	"peerDependencies": {
+		"@itwin/core-backend": "^3.5.0",
+		"@itwin/core-bentley": "^3.5.0",
+		"@itwin/core-common": "^3.5.0",
+		"@itwin/core-geometry": "^3.5.0",
+		"@itwin/reality-data-client": "^0.9.0"
+	},
+	"devDependencies": {
+		"@itwin/build-tools": "^3.5.0",
+		"@itwin/core-backend": "^3.5.0",
+		"@itwin/core-bentley": "^3.5.0",
+		"@itwin/core-common": "^3.5.0",
+		"@itwin/core-geometry": "^3.5.0",
+		"@itwin/reality-data-client": "^0.9.0",
+		"@types/node": "^16.11.34",
+		"@types/uuid": "^9.0.0",
+		"@typescript-eslint/eslint-plugin": "^5.30.6",
+		"@typescript-eslint/parser": "^5.30.6",
+		"eslint": "^8.19.0",
+		"rimraf": "^3.0.2",
+		"typescript": "^4.5.1"
+	}
+}

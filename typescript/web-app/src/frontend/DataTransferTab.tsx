@@ -9,11 +9,9 @@ import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import React, { ChangeEvent, MutableRefObject, useCallback, useEffect } from "react";
 import "./DataTransferTab.css";
 import { ReferenceManager } from "./ReferenceManager";
-import { ClientInfo, RealityDataType } from "./sdk/CommonData";
-import { SPATokenFactory } from "./sdk/token/TokenFactoryBrowser";
-import { RealityDataTransferBrowser } from "./sdk/utils/RealityDataTransferBrowser";
-import { ReferenceTableBrowser } from "./sdk/utils/ReferenceTableBrowser";
+import { RealityDataTransferBrowser, ReferenceTableBrowser, CommonData } from "reality-capture";
 import { SelectRealityData } from "./SelectRealityData";
+import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 
 
 export enum DataTypes {
@@ -28,7 +26,7 @@ export enum DataTypes {
 
 interface RdsProps {
     realityDataAccessClient: RealityDataAccessClient;
-    clientInfo: ClientInfo;
+    authorizationClient: BrowserAuthorizationClient;
     referenceTable: ReferenceTableBrowser;
     onReferenceTableChanged: (type: ReferenceTableBrowser) => void;
     useReferenceTable: boolean;
@@ -53,8 +51,11 @@ export function Rds(props: RdsProps) {
     const realityDataTransfer = React.useRef() as MutableRefObject<RealityDataTransferBrowser>;
 
     const initRds = useCallback(async () => {
-        const tokenFactory = new SPATokenFactory(props.clientInfo);
-        realityDataTransfer.current = new RealityDataTransferBrowser(tokenFactory);
+        let prefix = process.env.IMJS_URL_PREFIX ?? "";
+        if(prefix === "dev-")
+            prefix = "qa-";
+        
+        realityDataTransfer.current = new RealityDataTransferBrowser(props.authorizationClient, prefix);
         realityDataTransfer.current.setUploadHook(uploadProgressHook);
         realityDataTransfer.current.setDownloadHook(downloadProgressHook);
     }, []);
@@ -102,9 +103,9 @@ export function Rds(props: RdsProps) {
         { value: DataTypes.OPC, label: "Web Ready Point Cloud" },
     ];
 
-    const listPathsToResolve = async (file: File, type: RealityDataType.CONTEXT_SCENE | RealityDataType.CC_ORIENTATIONS): Promise<boolean> => {
+    const listPathsToResolve = async (file: File, type: CommonData.RealityDataType.CONTEXT_SCENE | CommonData.RealityDataType.CC_ORIENTATIONS): Promise<boolean> => {
         const paths: string[] = [];
-        if (type === RealityDataType.CONTEXT_SCENE) {
+        if (type === CommonData.RealityDataType.CONTEXT_SCENE) {
             const xmlDoc = new DOMParser().parseFromString(await file.text(), "text/xml");
             const references = xmlDoc.getElementsByTagName("Reference");
             for (let i = 0; i < references.length; i++) {
@@ -162,7 +163,7 @@ export function Rds(props: RdsProps) {
 
     const onUploadFiles = async (): Promise<void> => {
         setUploadedDataId("");
-        if (props.useReferenceTable && (uploadedDataType === RealityDataType.CONTEXT_SCENE || uploadedDataType === RealityDataType.CC_ORIENTATIONS)) {
+        if (props.useReferenceTable && (uploadedDataType === CommonData.RealityDataType.CONTEXT_SCENE || uploadedDataType === CommonData.RealityDataType.CC_ORIENTATIONS)) {
             if (await listPathsToResolve(filesToUpload[0], uploadedDataType))
                 return; // The user must resolve the paths errors before uploading the scene/orientations
         }
@@ -174,7 +175,7 @@ export function Rds(props: RdsProps) {
         if(realityDataId)
             setUploadProgress(100);
         
-        if (props.useReferenceTable && uploadedDataType !== RealityDataType.CONTEXT_SCENE && uploadedDataType !== RealityDataType.CC_ORIENTATIONS)
+        if (props.useReferenceTable && uploadedDataType !== CommonData.RealityDataType.CONTEXT_SCENE && uploadedDataType !== CommonData.RealityDataType.CC_ORIENTATIONS)
             props.referenceTable.addReference(filesToUpload[0].webkitRelativePath.split("/")[0]!, realityDataId);
 
         setUploadedDataId(realityDataId);
@@ -188,7 +189,7 @@ export function Rds(props: RdsProps) {
     };
 
     const onDownloadFiles = async (): Promise<void> => {
-        await realityDataTransfer.current.downloadRealityDataBrowser(downloadId, props.useReferenceTable === 
+        await realityDataTransfer.current.downloadRealityDataBrowser(downloadId, process.env.IMJS_PROJECT_ID ?? "", props.useReferenceTable === 
             true ? props.referenceTable : undefined);
         setDownloadProgress(100);
     };

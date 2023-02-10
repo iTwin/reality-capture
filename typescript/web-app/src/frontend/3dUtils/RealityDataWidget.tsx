@@ -3,12 +3,12 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 import React, { useEffect } from "react";
-import { AbstractWidgetProps, StagePanelLocation, StagePanelSection, UiItemsProvider, WidgetState } from "@itwin/appui-abstract";
+import { AbstractWidgetProps, StagePanelLocation, UiItemsProvider, WidgetState } from "@itwin/appui-abstract";
 import { useActiveIModelConnection, useActiveViewport } from "@itwin/appui-react";
 import { ContextRealityModelProps, RealityDataFormat, RealityDataProvider } from "@itwin/core-common";
 import { IModelApp } from "@itwin/core-frontend";
 import { SvgHelpCircularHollow } from "@itwin/itwinui-icons-react";
-import { Alert, Button, IconButton, LabeledInput, Slider, ToggleSwitch } from "@itwin/itwinui-react";
+import { Alert, Button, IconButton, Slider, ToggleSwitch } from "@itwin/itwinui-react";
 import RealityData from "./RealityData";
 import "./RealityData.scss";
 import { RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
@@ -85,12 +85,13 @@ const RealityDataWidget = (props: RealityDataWidgetProps) => {
     const onDisplay = async (): Promise<void> => {
         const list = [...availableRealityModels];
         const accessToken = await IModelApp.authorizationClient!.getAccessToken();
+        const prefix = process.env.IMJS_URL_PREFIX ?? "";
         const realityDataClientOptions: RealityDataClientOptions = {
-            baseUrl: `https://${process.env.IMJS_URL_PREFIX}api.bentley.com/realitydata`,
+            baseUrl: "https://" + prefix + "api.bentley.com/realitydata",
         };
         const available = await new RealityDataAccessClient(realityDataClientOptions).getRealityData(accessToken, process.env.IMJS_PROJECT_ID, id);
         const model: ContextRealityModelProps = {
-            tilesetUrl: "https://" + process.env.IMJS_URL_PREFIX + "api.bentley.com/realitydata/" + 
+            tilesetUrl: "https://" + prefix + "api.bentley.com/realitydata/" + 
                 id + "?projectId=" + process.env.IMJS_PROJECT_ID,
             name: available.displayName,
             rdSourceKey: {
@@ -161,7 +162,7 @@ export class RealityDataWidgetProvider implements UiItemsProvider {
         this.realityDataAccessClient = realityDataAccessClient;
     }
 
-    public provideWidgets(_stageId: string, _stageUsage: string, location: StagePanelLocation, _section?: StagePanelSection): ReadonlyArray<AbstractWidgetProps> {
+    public provideWidgets(_stageId: string, _stageUsage: string, location: StagePanelLocation): ReadonlyArray<AbstractWidgetProps> {
         const widgets: AbstractWidgetProps[] = [];
         if (location === StagePanelLocation.Bottom) {
             widgets.push(

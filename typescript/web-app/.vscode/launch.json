@@ -10,28 +10,6 @@
         "type": "pwa-chrome",
         "url": "http://localhost:3000",
         "webRoot": "${workspaceFolder}/src"
-      },
-      {
-        "name": "Attach by Process ID",
-        "processId": "${command:PickProcess}",
-        "request": "attach",
-        "skipFiles": [
-          "<node_internals>/**"
-        ],
-        "type": "pwa-node"
-      },
-      {
-        "type": "pwa-node",
-        "request": "launch",
-        "name": "Launch sample",
-        "skipFiles": [
-            "<node_internals>/**"
-        ],
-        "program": "${workspaceFolder}\\lib\\backend\\reality-data-sample\\index.js",
-        "preLaunchTask": "tsc: build - tsconfig.json",
-        "outFiles": [
-            "${workspaceFolder}/build/**/*.js"
-        ]
       }
     ]
 }
