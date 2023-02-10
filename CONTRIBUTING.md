@@ -47,9 +47,7 @@ Every change must be tested with proper unit tests.
 
 ### Build Instructions
 
-1. Clone repository (first time) with `git clone` or pull updates to the repository (subsequent times) with `git pull`
-2. Install dependencies: `npm install`
-3. Build source: `npm run build`
+See sub Readme files in typescript/sdk, typescript/web-app or python/ for more  information about build instructions.
 
 > Note: It is a good idea to `npm install` after each `git pull` as dependencies may have changed.
 ### Making and testing changes

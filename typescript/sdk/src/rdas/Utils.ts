@@ -8,25 +8,23 @@ import { JobSettings, RDAJobType } from "./Settings";
 
 /**
  * Parameters for estimating job cost before its processing.
- * Estimated_cost is filled when this object is returned by a function but should only be taken in consideration if you
- * have updated parameters for estimation before by using the get_job_estimated_cost function.
- * Args:
- * - giga_pixels: Number of giga pixels in inputs.
- * - number_photos: Number of photos in inputs.
- * - scene_width: Width of the scene.
- * - scene_length: Height of the scene.
- * - detector_scale: Length of the scene.
- * - detector_cost: Scale of the detector.
- * - estimated_cost: Estimated cost of the detector.
  */
 export interface RDACostParameters {
+    /** Number of giga pixels in inputs. */
     gigaPixels?: number;
+    /** Number of photos in inputs. */
     numberOfPhotos?: number;
+    /** Width of the scene. */
     sceneWidth?: number;
+    /** Height of the scene. */
     sceneHeight?: number;
+    /** Length of the scene. */
     sceneLength?: number;
+    /** Scale of the detector. */
     detectorScale?: number;
+    /** Cost of the detector. */
     detectorCost?: number;
+    /** Estimated cost of the detector. */
     estimatedCost?: number;
 }
 

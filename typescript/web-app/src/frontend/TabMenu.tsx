@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import React, { useMemo } from "react";
+import React from "react";
 import { Viewer2D } from "./Viewer2D";
 import { Viewer3D } from "./Viewer3D";
 import "./App.css";
@@ -13,16 +13,12 @@ import { Rdas } from "./RDASTab";
 import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import { ContextCapture } from "./CCSTab";
-import { ReferenceTableBrowser } from "./sdk/utils/ReferenceTableBrowser";
 import { Svg2D, Svg3D, SvgProcess, SvgRealityMesh, SvgUpload } from "@itwin/itwinui-icons-react";
-import { ClientInfo } from "./sdk/CommonData";
-import { RealityDataAnalysisService } from "./sdk/rdas/RealityDataAnalysisService";
-import { ContextCaptureService } from "./sdk/cccs/ContextCaptureService";
-import { RealityDataTransferBrowser } from "./sdk/utils/RealityDataTransferBrowser";
+import { ReferenceTableBrowser } from "reality-capture";
 
 interface TabMenu {
     realityDataAccessClient: RealityDataAccessClient;
-    authClient: BrowserAuthorizationClient;
+    authorizationClient: BrowserAuthorizationClient;
 }
 
 export function TabMenu(props: TabMenu) {
@@ -38,32 +34,23 @@ export function TabMenu(props: TabMenu) {
         setUseReferenceTable(isUsed);
     };
 
-    const clientInfo = useMemo(
-        (): ClientInfo => {
-            const clientInfo: ClientInfo = {clientId: process.env.IMJS_AUTHORIZATION_CLIENT_ID!, 
-                scopes: new Set([...RealityDataAnalysisService.getScopes(), ...ContextCaptureService.getScopes(), ...RealityDataTransferBrowser.getScopes()]), 
-                env: "qa-", redirectUrl: process.env.IMJS_AUTHORIZATION_REDIRECT_URI!};
-            return clientInfo;
-        },[],
-    );
-
     const getTabs = () => {
         switch (tabIndex) {
         case 0:
-            return <Rdas realityDataAccessClient={props.realityDataAccessClient} clientInfo={clientInfo}/>;
+            return <Rdas realityDataAccessClient={props.realityDataAccessClient} authorizationClient={props.authorizationClient}/>;
         case 1:
-            return <ContextCapture realityDataAccessClient={props.realityDataAccessClient} clientInfo={clientInfo}/>;
+            return <ContextCapture realityDataAccessClient={props.realityDataAccessClient} authorizationClient={props.authorizationClient}/>;
         case 2:
             return <Viewer2D realityDataAccessClient={props.realityDataAccessClient}/>;
         case 3:
             return <Viewer3D realityDataAccessClient={props.realityDataAccessClient} 
-                authClient={props.authClient}/>;
+                authClient={props.authorizationClient}/>;
         case 4:
-            return <Rds referenceTable={referenceTable} clientInfo={clientInfo} onReferenceTableChanged={onReferenceTableChanged} 
+            return <Rds referenceTable={referenceTable} authorizationClient={props.authorizationClient} onReferenceTableChanged={onReferenceTableChanged} 
                 realityDataAccessClient={props.realityDataAccessClient} useReferenceTable={useReferenceTable} 
                 onUseReferenceTableChanged={onUseReferenceTableChanged} />;
         default:
-            return <Rdas realityDataAccessClient={props.realityDataAccessClient} clientInfo={clientInfo}/>;
+            return <Rdas realityDataAccessClient={props.realityDataAccessClient} authorizationClient={props.authorizationClient}/>;
         }
     };
 

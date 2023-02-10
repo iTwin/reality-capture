@@ -182,8 +182,11 @@ class S2DOutputs {
     exportedPolygons2DSHP: string;
     /** Detected 2D lines. */
     lines2D: string;
+    /** ContextScene pointing to segmented photos. */
     segmentedPhotos: string;
+    /** 2D lines exported to ESRI shapefile. */
     exportedLines2DSHP: string;
+    /** 2D lines exported to DGN file. */
     exportedLines2DDGN: string;
 
     constructor() {
@@ -207,8 +210,20 @@ class S2DOutputs {
          * @type {string}
          */
         this.lines2D = "";
+        /**
+         * ContextScene pointing to segmented photos.
+         * @type {string}
+         */
         this.segmentedPhotos = "";
+        /**
+         * 2D lines exported to ESRI shapefile.
+         * @type {string}
+         */
         this.exportedLines2DSHP = "";
+        /**
+         * 2D lines exported to DGN file.
+         * @type {string}
+         */
         this.exportedLines2DDGN = "";
     }
 }
@@ -269,13 +284,22 @@ export class S2DJobSettings {
             json["outputs"].push("segmentation2D");
 
         if(this.outputs.segmentedPhotos)
-            json["outputs"].push("segmentedPhotos")
+            json["outputs"].push("segmentedPhotos");
+
         if (this.outputs.polygons2D)
             json["outputs"].push("polygons2D");
+
         if (this.outputs.exportedPolygons2DSHP)
             json["outputs"].push("exportedPolygons2DSHP");
+
         if (this.outputs.lines2D)
             json["outputs"].push("lines2D");
+
+        if (this.outputs.exportedLines2DDGN)
+            json["outputs"].push("exportedLines2DDGN");
+
+        if (this.outputs.exportedLines2DSHP)
+            json["outputs"].push("exportedLines2DSHP");
 
         return json;
     }
@@ -312,6 +336,10 @@ export class S2DJobSettings {
                 newJobSettings.outputs.exportedPolygons2DSHP = output["realityDataId"];
             else if (output["name"] === "lines2D")
                 newJobSettings.outputs.lines2D = output["realityDataId"];
+            else if (output["name"] === "exportedLines2DDGN")
+                newJobSettings.outputs.exportedLines2DDGN = output["realityDataId"];
+            else if (output["name"] === "exportedLines2DSHP")
+                newJobSettings.outputs.exportedLines2DSHP = output["realityDataId"];
             else
                 return Promise.reject(new Error("Found non expected output name" + output["name"]));
         }
@@ -332,6 +360,8 @@ class O3DInputs {
     photoObjectDetector: string;
     /** Given 2D objects. */
     objects2D: string;
+    /** Collection of meshes. */
+    meshes: string;
 
     constructor() {
         /**
@@ -354,6 +384,11 @@ class O3DInputs {
          * @type {string}
          */
         this.objects2D = "";
+        /**
+         * Collection of meshes.
+         * @type {string}
+         */
+        this.meshes = "";
     }
 }
 
@@ -371,7 +406,6 @@ class O3DOutputs {
     exportedObjects3DCesium: string;
     /** ESRI SHP file export with locations of the 3D objects. */
     exportedLocations3DSHP: string;
-    meshes: string;
 
     constructor() {
         /**
@@ -399,7 +433,6 @@ class O3DOutputs {
          * @type {string}
          */
         this.exportedLocations3DSHP = "";
-        this.meshes = "";
     }
 }
 
@@ -479,6 +512,9 @@ export class O3DJobSettings {
             json["inputs"].push({ "name": "objects2D", "realityDataId": this.inputs.objects2D });
         if (this.inputs.pointClouds)
             json["inputs"].push({ "name": "pointClouds", "realityDataId": this.inputs.pointClouds });
+        if (this.inputs.meshes)
+            json["inputs"].push({ "name": "meshes", "realityDataId": this.inputs.meshes });
+        
         json["outputs"] = [];
         if (this.outputs.objects2D)
             json["outputs"].push("objects2D");
@@ -490,6 +526,7 @@ export class O3DJobSettings {
             json["outputs"].push("exportedObjects3DCesium");
         if (this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
+        
         if (this.useTiePoints)
             json["UseTiePoints"] = "true";
         if (this.minPhotos)
@@ -519,6 +556,8 @@ export class O3DJobSettings {
                 newJobSettings.inputs.pointClouds = input["realityDataId"];
             else if (input["name"] === "objects2D")
                 newJobSettings.inputs.objects2D = input["realityDataId"];
+            else if (input["name"] === "meshes")
+                newJobSettings.inputs.meshes = input["realityDataId"];
             else
                 return Promise.reject(new Error("Found non expected input name" + input["name"]));
         }
@@ -750,43 +789,62 @@ export class S3DJobSettings {
         json["inputs"] = [];
         if (this.inputs.pointClouds)
             json["inputs"].push({ "name": "pointClouds", "realityDataId": this.inputs.pointClouds });
+
         if (this.inputs.meshes)
             json["inputs"].push({ "name": "meshes", "realityDataId": this.inputs.meshes });
+        
         if (this.inputs.pointCloudSegmentationDetector)
             json["inputs"].push({ "name": "pointCloudSegmentationDetector", "realityDataId": this.inputs.pointCloudSegmentationDetector });
+        
         if (this.inputs.segmentation3D)
             json["inputs"].push({ "name": "segmentation3D", "realityDataId": this.inputs.segmentation3D });
+        
         if (this.inputs.orientedPhotos)
             json["inputs"].push({ "name": "orientedPhotos", "realityDataId": this.inputs.orientedPhotos });
+
         if (this.inputs.photoObjectDetector)
             json["inputs"].push({ "name": "photoObjectDetector", "realityDataId": this.inputs.photoObjectDetector });
+
         if (this.inputs.objects2D)
             json["inputs"].push({ "name": "objects2D", "realityDataId": this.inputs.objects2D });
+        
         json["outputs"] = [];
         if (this.outputs.segmentation3D)
             json["outputs"].push("segmentation3D");
+
         if (this.outputs.segmentedPointCloud)
             json["outputs"].push("segmentedPointCloud");
+
         if (this.outputs.objects2D)
             json["outputs"].push("objects2D");
+
         if (this.outputs.exportedSegmentation3DPOD)
             json["outputs"].push("exportedSegmentation3DPOD");
+
         if (this.outputs.exportedSegmentation3DLAS)
             json["outputs"].push("exportedSegmentation3DLAS");
+
         if (this.outputs.exportedSegmentation3DLAZ)
             json["outputs"].push("exportedSegmentation3DLAZ");
+
         if (this.outputs.exportedSegmentation3DPLY)
             json["outputs"].push("exportedSegmentation3DPLY");
+
         if (this.outputs.objects3D)
             json["outputs"].push("objects3D");
+
         if (this.outputs.exportedObjects3DDGN)
             json["outputs"].push("exportedObjects3DDGN");
+
         if (this.outputs.exportedObjects3DCesium)
             json["outputs"].push("exportedObjects3DCesium");
+
         if (this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
+        
         if (this.exportSrs)
             json["exportSrs"] = this.exportSrs;
+
         if (this.saveConfidence)
             json["saveConfidence"] = "true";
 
@@ -848,6 +906,7 @@ export class S3DJobSettings {
         }
         if ("saveConfidence" in settingsJson)
             newJobSettings.saveConfidence = JSON.parse(settingsJson["saveConfidence"]);
+        
         if ("exportSrs" in settingsJson)
             newJobSettings.exportSrs = settingsJson["exportSrs"];
 
@@ -929,6 +988,7 @@ class L3DOutputs {
     exportedLines3DDGN: string;
     /** Cesium 3D Tiles file export with 3D lines. */
     exportedLines3DCesium: string;
+    /** ContextScene pointing to segmented photos. */
     segmentedPhotos: string;
 
     constructor() {
@@ -947,6 +1007,10 @@ class L3DOutputs {
          * @type {string}
          */
         this.segmentation2D = "";
+        /**
+         * ContextScene pointing to segmented photos.
+         * @type {string}
+         */
         this.segmentedPhotos = "";
         /**
          * Detected 3D lines.
@@ -1029,39 +1093,56 @@ export class L3DJobSettings {
         json["inputs"] = [];
         if (this.inputs.pointClouds)
             json["inputs"].push({ "name": "pointClouds", "realityDataId": this.inputs.pointClouds });
+
         if (this.inputs.meshes)
             json["inputs"].push({ "name": "meshes", "realityDataId": this.inputs.meshes });
+
         if (this.inputs.pointCloudSegmentationDetector)
             json["inputs"].push({ "name": "pointCloudSegmentationDetector", "realityDataId": this.inputs.pointCloudSegmentationDetector });
+
         if (this.inputs.segmentation3D)
             json["inputs"].push({ "name": "segmentation3D", "realityDataId": this.inputs.segmentation3D });
+
         if (this.inputs.orientedPhotos)
             json["inputs"].push({ "name": "orientedPhotos", "realityDataId": this.inputs.orientedPhotos });
+
         if (this.inputs.photoSegmentationDetector)
             json["inputs"].push({ "name": "photoSegmentationDetector", "realityDataId": this.inputs.photoSegmentationDetector });
+
         if (this.inputs.segmentation2D)
             json["inputs"].push({ "name": "segmentation2D", "realityDataId": this.inputs.segmentation2D });
+
         json["outputs"] = [];
         if (this.outputs.segmentation3D)
             json["outputs"].push("segmentation3D");
+
         if (this.outputs.segmentedPointCloud)
             json["outputs"].push("segmentedPointCloud");
+
         if (this.outputs.segmentation2D)
             json["outputs"].push("segmentation2D");
+
         if(this.outputs.segmentedPhotos)
-            json["outputs"].push("segmentedPhotos")
+            json["outputs"].push("segmentedPhotos");
+
         if (this.outputs.lines3D)
             json["outputs"].push("lines3D");
+
         if (this.outputs.exportedLines3DDGN)
             json["outputs"].push("exportedLines3DDGN");
+
         if (this.outputs.exportedLines3DCesium)
             json["outputs"].push("exportedLines3DCesium");
+
         if (this.computeLineWidth)
             json["computeLineWidth"] = "true";
+
         if (this.removeSmallComponents)
             json["removeSmallComponents"] = this.removeSmallComponents.toString();
+        
         if (this.exportSrs)
             json["exportSrs"] = this.exportSrs;
+        
         return json;
     }
 
@@ -1100,7 +1181,7 @@ export class L3DJobSettings {
             else if (output["name"] === "segmentation2D")
                 newJobSettings.outputs.segmentation2D = output["realityDataId"];
             else if(output["name"] === "segmentedPhotos")
-                newJobSettings.outputs.segmentedPhotos = output["realityDataId"]
+                newJobSettings.outputs.segmentedPhotos = output["realityDataId"];
             else if (output["name"] === "lines3D")
                 newJobSettings.outputs.lines3D = output["realityDataId"];
             else if (output["name"] === "exportedLines3DDGN")
@@ -1112,8 +1193,10 @@ export class L3DJobSettings {
         }
         if ("computeLineWidth" in settingsJson)
             newJobSettings.computeLineWidth = JSON.parse(settingsJson["computeLineWidth"]);
+
         if ("removeSmallComponents" in settingsJson)
             newJobSettings.removeSmallComponents = JSON.parse(settingsJson["removeSmallComponents"]);
+
         if ("exportSrs" in settingsJson)
             newJobSettings.exportSrs = settingsJson["exportSrs"];
 
@@ -1272,31 +1355,44 @@ export class ChangeDetectionJobSettings {
         json["inputs"] = [];
         if (this.inputs.pointClouds1)
             json["inputs"].push({ "name": "pointClouds1", "realityDataId": this.inputs.pointClouds1 });
+
         if (this.inputs.pointClouds2)
             json["inputs"].push({ "name": "pointClouds2", "realityDataId": this.inputs.pointClouds2 });
+
         if (this.inputs.meshes1)
             json["inputs"].push({ "name": "meshes1", "realityDataId": this.inputs.meshes1 });
+
         if (this.inputs.meshes2)
             json["inputs"].push({ "name": "meshes2", "realityDataId": this.inputs.meshes2 });
+
         json["outputs"] = [];
         if (this.outputs.objects3D)
             json["outputs"].push("objects3D");
+
         if (this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
+
         if (this.colorThresholdLow)
             json["colorThresholdLow"] = this.colorThresholdLow.toString();
+
         if (this.colorThresholdHigh)
             json["colorThresholdHigh"] = this.colorThresholdHigh.toString();
+
         if (this.distThresholdLow)
             json["distThresholdLow"] = this.distThresholdLow.toString();
+
         if (this.distThresholdHigh)
             json["distThresholdHigh"] = this.distThresholdHigh.toString();
+
         if (this.resolution)
             json["resolution"] = this.resolution.toString();
+
         if (this.minPoints)
             json["minPoints"] = this.minPoints.toString();
+
         if (this.exportSrs)
             json["exportSrs"] = this.exportSrs;
+        
         return json;
     }
 

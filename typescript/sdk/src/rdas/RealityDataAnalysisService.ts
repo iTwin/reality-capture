@@ -7,56 +7,83 @@ import { ChangeDetectionJobSettings, JobSettings, L3DJobSettings, O2DJobSettings
 import { RDACostParameters, RDAJobProperties } from "./Utils";
 import { JobProgress, JobState } from "../CommonData";
 import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
-import { TokenFactory } from "../token/TokenFactory";
-import fetch from "node-fetch";
+import { AuthorizationClient } from "@itwin/core-common";
+import axios from "axios";
 
 /**
- * Service handling communication with RealityData Analysis Service
+ * Service handling communication with RealityData Analysis Service.
  */
 export class RealityDataAnalysisService {
-    /** Token factory to make authenticated request to the API. */
-    private tokenFactory: TokenFactory;
+    /** Authorization client to generate access token. */
+    private authorizationClient: AuthorizationClient;
+
+    /** Target service url. */
+    private serviceUrl = "https://api.bentley.com/realitydataanalysis";
 
     /**
-     * Create a new RealityDataTransferService.
-     * @param {TokenFactory} tokenFactory Token factory to make authenticated request to the API. 
+     * Create a new RealityDataAnalysisService.
+     * @param {AuthorizationClient} authorizationClient Authorization client to generate access token.
+     * @param {string} env (optional) Target environment.
      */
-    constructor(tokenFactory: TokenFactory) {
-        this.tokenFactory = tokenFactory;
+    constructor(authorizationClient: AuthorizationClient, env?: string) {
+        this.authorizationClient = authorizationClient;
+        if(env)
+            this.serviceUrl = "https://" + env + "api.bentley.com/realitydataanalysis";
     }
 
     /**
      * @private
      * @param {string} apiOperationUrl API operation url.
      * @param {string} method HTTP method.
-     * @param {number[]} okRet HTTP expected code.
      * @param {unknown} payload (optional) Request body.
      * @returns {any} Request response.
      */
     private async submitRequest(apiOperationUrl: string, method: string, okRet: number[], payload?: unknown): Promise<any> {
         try {
+            let response;
+            const url = this.serviceUrl + "/" + apiOperationUrl;
             const headers =
             {
-                "Content-Type": "application/json",
-                "Accept": "application/vnd.bentley.v1+json",
-                "Authorization": await this.tokenFactory.getToken(),
+                "content-type": "application/json",
+                "accept": "application/vnd.bentley.v1+json",
+                "authorization": await this.authorizationClient.getAccessToken(),
             };
-            const reqBase = {
-                headers,
-                method
-            };
-            const request = ["POST", "PATCH"].includes(method) ? { ...reqBase, body: JSON.stringify(payload) } : reqBase;
-            const response = await fetch(this.tokenFactory.getServiceUrl() + "realitydataanalysis/" + apiOperationUrl, request);
-            const responseJson = await response.json();
+
+            if(method === "GET")
+                response = await axios.get(url, {headers, url, method});
+            else if(method === "DELETE")
+                response = await axios.delete(url, {headers, url, method});
+            else if(method === "POST")
+                response = await axios.post(url, payload, {headers, url, method});
+            else if(method === "PATCH")
+                response = await axios.patch(url, payload, {headers, url, method});
+            else 
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Wrong request method"));
+
             if (!okRet.includes(response.status)) {
-                return Promise.reject(new BentleyError(response.status,
-                    "Error in request: " + response.url + "\nMessage : " + JSON.stringify(responseJson.error)));
+                return new BentleyError(response.status, response.statusText);
             }
 
-            return responseJson;
+            return response.data;
+
         }
         catch (error: any) {
-            return Promise.reject(error);
+            let status = 422;
+            let message = "Unknown error. Please ensure that the request is valid.";
+
+            if (axios.isAxiosError(error)) {
+                const axiosResponse = error.response!;
+                status = axiosResponse.status;
+                message = axiosResponse.data?.error?.message;
+            } 
+            else {
+                const bentleyError = error as BentleyError;
+                if (bentleyError !== undefined) {
+                    status = bentleyError.errorNumber;
+                    message = bentleyError.message;
+                }
+            }
+            return Promise.reject(new BentleyError(status, message));
         }
     }
 

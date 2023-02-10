@@ -1,0 +1,64 @@
+name: Typescript workflow
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [windows-latest]
+    steps:
+      - name: Checkout github repo (+ download lfs dependencies)
+        uses: actions/checkout@v3
+        with:
+          lfs: true
+      - name: Checkout LFS objects
+        run: git lfs checkout
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Install SDK
+        working-directory: ./typescript/sdk
+        run: npm install --no-save
+      - name: Typescript compiler (SDK)
+        working-directory: ./typescript/sdk
+        run: npx tsc
+      - name: Install SDK Node support
+        working-directory: ./typescript/sdk-node
+        run: npm install --no-save
+      - name: Typescript compiler (SDK Node support)
+        working-directory: ./typescript/sdk-node
+        run: npx tsc
+      - name: Install WebApp
+        working-directory: ./typescript/web-app
+        run: npm install --no-save
+      - name: Install Examples
+        working-directory: ./typescript/examples
+        run: npm install --no-save
+      - name: Typescript compiler (WebApp)
+        working-directory: ./typescript/web-app
+        run: npx tsc
+      - name: Typescript compiler (Examples)
+        working-directory: ./typescript/examples
+        run: npx tsc
+      - name: EsLint
+        working-directory: ./typescript/web-app
+        run: npm run lint
+      - name: Install Integration Tests
+        working-directory: ./typescript/integration-tests
+        run: npm install --no-save
+      - name: Typescript compiler (Integration Tests)
+        working-directory: ./typescript/integration-tests
+        run: npx tsc
+      - name: Run SDK Integration Tests
+        working-directory: ./typescript/integration-tests
+        env:
+          IMJS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          IMJS_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          IMJS_SECRET: ${{ secrets.SECRET }}
+        run: npm run test:integration

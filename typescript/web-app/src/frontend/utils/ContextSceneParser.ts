@@ -3,11 +3,8 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-"use strict";
-
 import { ContainerClient } from "@azure/storage-blob";
-import { RealityDataClientOptions, RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
-import { DOMParser } from "@xmldom/xmldom";
+import { RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
 
 interface Object2D {
     labelId : number;
