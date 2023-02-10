@@ -518,6 +518,11 @@ class S3DJobSettings:
             json_dict["inputs"].append(
                 {"name": "objects2D", "realityDataId": self.inputs.objects2D}
             )
+        if self.inputs.clip_polygon:
+            json_dict["inputs"].append(
+                {"name": "clipPolygon", "realityDataId": self.inputs.clip_polygon}
+            )
+
         json_dict["outputs"] = list()
         if self.outputs.segmentation3D:
             json_dict["outputs"].append("segmentation3D")
@@ -581,6 +586,8 @@ class S3DJobSettings:
                     ]
                 elif input_dict["name"] == "objects2D":
                     new_job_settings.inputs.objects2D = input_dict["realityDataId"]
+                elif input_dict["name"] == "clipPolygon":
+                    new_job_settings.inputs.clip_polygon = input_dict["realityDataId"]
                 else:
                     raise TypeError(
                         "found non expected input name:" + input_dict["name"]
@@ -651,6 +658,7 @@ class S3DJobSettings:
             oriented_photos: Photos and their orientation.
             photo_object_detector: Object detector to analyze oriented photos.
             objects2D: Given 2D objects.
+            clip_polygon: Path of clipping polygon to apply.
         """
 
         def __init__(self) -> None:
@@ -661,6 +669,7 @@ class S3DJobSettings:
             self.oriented_photos: str = ""
             self.photo_object_detector: str = ""
             self.objects2D: str = ""
+            self.clip_polygon: str = ""
 
     class Outputs:
         """
