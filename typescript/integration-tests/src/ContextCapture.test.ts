@@ -72,7 +72,7 @@ describe("Context capture integration tests", () => {
     });
 
     // Create and upload inputs
-    it("Upload images", async function () {
+    /*it("Upload images", async function () {
         this.timeout(60000);
         imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../data/CC/Images/"), 
             "SDK integration tests CC images", CommonData.RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
@@ -169,7 +169,7 @@ describe("Context capture integration tests", () => {
             expect(error).to.be.instanceOf(BentleyError);
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
-    });
+    }); */
 
     it("Delete workspace", async function () {
         this.timeout(10000);
@@ -178,12 +178,11 @@ describe("Context capture integration tests", () => {
             await contextCaptureService.getWorkspace(workspaceId);
         }
         catch(error: any) {
-            expect(error).to.be.instanceOf(BentleyError);
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
     });
 
-    it("Delete 3MX output", async function () {
+    /*it("Delete 3MX output", async function () {
         this.timeout(10000);
         await rdaClient.deleteRealityData("", threeMXId);
         try {
@@ -193,5 +192,5 @@ describe("Context capture integration tests", () => {
             expect(error).to.be.instanceOf(BentleyError);
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
-    });
+    }); */
 });

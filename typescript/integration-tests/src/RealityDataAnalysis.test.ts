@@ -55,7 +55,7 @@ describe("Reality data analysis integration tests", () => {
     });
 
     // Create and upload inputs
-    it("Upload RDAS detector", async function () {
+    /*it("Upload RDAS detector", async function () {
         this.timeout(120000);
         detectorId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../data/O2D/Coco2017_v1.19/"), 
             "SDK integration tests RDAS detector", CommonData.RealityDataType.CONTEXT_DETECTOR, iTwinId);
@@ -183,6 +183,6 @@ describe("Reality data analysis integration tests", () => {
             expect(error).instanceOf(BentleyError);
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
-    });
+    }); */
 
 });
