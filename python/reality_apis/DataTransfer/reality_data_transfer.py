@@ -55,8 +55,8 @@ class RealityDataTransfer:
 
     @staticmethod
     def _create_files_tuple(data_path, data_types, recursion) -> List[Tuple[str, int]]:
-        # get relative paths to files and their sizes, we can choose the types and also if we want to recursively go
-        # through subdirectories or not
+        # get relative paths to files and their sizes, we can choose types if data_type is a directory and also if we
+        # want to recursively go through subdirectories or not.
         if os.path.isdir(data_path) and recursion:
             if data_types is not None:
                 files_tuple = [
@@ -169,7 +169,8 @@ class RealityDataTransfer:
                     raise InterruptedError("Upload interrupted by callback function")
 
             client = ContainerClient.from_container_url(sas_uri)
-            with open(os.path.join(data_path, file_tuple[0]), "rb") as data:
+            file_path = os.path.join(data_path, file_tuple[0]) if os.path.isdir(data_path) else data_path
+            with open(file_path, "rb") as data:
                 client.upload_blob(
                     rd_folder + file_tuple[0],
                     data,
