@@ -128,6 +128,8 @@ class CCJobSettings:
             settings_dict["settings"]["outputs"].append("PLY")
         if self.outputs.opc:
             settings_dict["settings"]["outputs"].append("OPC")
+        if self.outputs.omr:
+            settings_dict["settings"]["outputs"].append("OMR")
 
         return settings_dict, input_dict
 
@@ -183,6 +185,8 @@ class CCJobSettings:
                     new_job_settings.outputs.ply = output["id"]
                 elif output["format"] == "OPC":
                     new_job_settings.outputs.opc = output["id"]
+                elif output["format"] == "OMR":
+                    new_job_settings.outputs.omr = output["id"]
                 else:
                     raise TypeError(
                         "found non expected output name:" + output["format"]
@@ -220,6 +224,7 @@ class CCJobSettings:
             lod_tree_export: Created lod tree export id.
             ply: Created ply id.
             opc: Created opc id.
+            omr: Created omr id.
         """
 
         def __init__(self) -> None:
@@ -239,6 +244,7 @@ class CCJobSettings:
             self.lod_tree_export = ""
             self.ply = ""
             self.opc = ""
+            self.omr = ""
 
 
 class CCJobCostParameters:
