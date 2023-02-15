@@ -783,6 +783,12 @@ class L3DJobSettings:
             json_dict["outputs"].append("exportedLines3DDGN")
         if self.outputs.exported_lines3D_cesium:
             json_dict["outputs"].append("exportedLines3DCesium")
+        if self.outputs.patches3D:
+            json_dict["outputs"].append("patches3D")
+        if self.outputs.exported_patches3D_DGN:
+            json_dict["outputs"].append("exportedPatches3DDGN")
+        if self.outputs.exported_patches3D_cesium:
+            json_dict["outputs"].append("exportedPatches3DCesium")
         if self.compute_line_width:
             json_dict["computeLineWidth"] = "true"
         if self.remove_small_components:
@@ -855,6 +861,16 @@ class L3DJobSettings:
                     new_job_settings.outputs.exported_lines3D_cesium = output_dict[
                         "realityDataId"
                     ]
+                elif output_dict["name"] == "patches3D":
+                    new_job_settings.outputs.patches3D = output_dict["realityDataId"]
+                elif output_dict["name"] == "exportedPatches3DDGN":
+                    new_job_settings.outputs.exported_patches3D_DGN = output_dict[
+                        "realityDataId"
+                    ]
+                elif output_dict["name"] == "exportedPatches3DCesium":
+                    new_job_settings.outputs.exported_patches3D_cesium = output_dict[
+                        "realityDataId"
+                    ]
                 else:
                     raise TypeError(
                         "found non expected output name:" + output_dict["name"]
@@ -907,6 +923,9 @@ class L3DJobSettings:
             lines3D: Detected 3D lines.
             exported_lines3D_DGN: DGN file export with 3D lines.
             exported_lines3D_cesium: Cesium 3D Tiles file export with 3D lines.
+            patches3D: Detected patches.
+            exported_patches3D_DGN: DGN file export with patches.
+            exported_patches3D_cesium: Cesium 3D Tiles file export with 3D patches.
         """
 
         def __init__(self) -> None:
@@ -917,6 +936,9 @@ class L3DJobSettings:
             self.lines3D: str = ""
             self.exported_lines3D_DGN: str = ""
             self.exported_lines3D_cesium: str = ""
+            self.patches3D: str = ""
+            self.exported_patches3D_DGN: str = ""
+            self.exported_patches3D_cesium: str = ""
 
 
 class ChangeDetectionJobSettings:
