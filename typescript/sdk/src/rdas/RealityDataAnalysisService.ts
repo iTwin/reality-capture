@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { ChangeDetectionJobSettings, JobSettings, L3DJobSettings, O2DJobSettings, O3DJobSettings, RDAJobType, S2DJobSettings, S3DJobSettings } from "./Settings";
+import { ChangeDetectionJobSettings, ExtractGroundJobSettings, JobSettings, L3DJobSettings, O2DJobSettings, O3DJobSettings, RDAJobType, S2DJobSettings, S3DJobSettings } from "./Settings";
 import { RDACostParameters, RDAJobProperties } from "./Utils";
 import { JobProgress, JobState } from "../CommonData";
 import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
@@ -190,6 +190,9 @@ export class RealityDataAnalysisService {
         }
         else if (job["type"] === RDAJobType.ChangeDetection) {
             settings = await ChangeDetectionJobSettings.fromJson(job["settings"]);
+        }
+        else if (job["type"] === RDAJobType.ExtractGround) {
+            settings = await ExtractGroundJobSettings.fromJson(job["settings"]);
         }
         else
             return Promise.reject(new BentleyError(BentleyStatus.ERROR,

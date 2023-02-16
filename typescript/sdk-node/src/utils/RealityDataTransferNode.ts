@@ -361,7 +361,17 @@ export class RealityDataTransferNode {
                 totalFilesSize: 0,
                 processedFilesSize: 0
             };
-            await getUploadFilesInfo(uploadInfo, dataToUpload);
+            let isSingleFile = false;
+            if ((await fs.promises.lstat(dataToUpload)).isDirectory()) {
+                await getUploadFilesInfo(uploadInfo, dataToUpload);
+            }
+            else {
+                isSingleFile = true;
+                const stats = fs.statSync(dataToUpload);
+                uploadInfo.files.push(path.join(path.basename(path.dirname(dataToUpload)), path.basename(dataToUpload)));
+                uploadInfo.totalFilesSize += stats.size;
+            }
+            
             let currentPercentage = -1;
             for (let i = 0; i < uploadInfo.files.length; i++) {
                 const blockBlobClient = containerClient.getBlockBlobClient(uploadInfo.files[i]);
@@ -387,8 +397,12 @@ export class RealityDataTransferNode {
                         }
                     }
                 };
-                const uploadBlobResponse = await blockBlobClient.uploadFile(path.join(dataToUpload, uploadInfo.files[i]), options);
-                const stats = fs.statSync(path.join(dataToUpload, uploadInfo.files[i]));
+                let fileToUpload = path.join(dataToUpload, uploadInfo.files[i]);
+                if(isSingleFile)
+                    fileToUpload = dataToUpload;
+                
+                const uploadBlobResponse = await blockBlobClient.uploadFile(fileToUpload, options);
+                const stats = fs.statSync(fileToUpload);
                 uploadInfo.processedFilesSize += stats.size;
                 if (uploadBlobResponse.errorCode)
                     return Promise.reject(Error(

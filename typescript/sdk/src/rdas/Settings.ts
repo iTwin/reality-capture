@@ -13,6 +13,7 @@ export enum RDAJobType {
     S3D = "segmentation3D",
     ChangeDetection = "changeDetection",
     L3D = "lines3D",
+    ExtractGround = "extractGround"
 }
 
 /**
@@ -1205,6 +1206,211 @@ export class L3DJobSettings {
 }
 
 /**
+ * Possible inputs for an Extract Ground job.
+ */
+class ExtractGroundInputs {
+    /** Collection of point clouds. */
+    pointClouds: string;
+    /** Collection of meshes. */
+    meshes: string;
+    /** Point cloud segmentation detector. */
+    pointCloudSegmentationDetector: string;
+    /** Path of clipping polygon to apply. */
+    clipPolygon: string;
+
+    constructor() {
+        /**
+         * Collection of point clouds.
+         * @type {string}
+         */
+        this.pointClouds = "";
+        /**
+         * Collection of meshes.
+         * @type {string}
+         */
+        this.meshes = "";
+        /**
+         * Point cloud segmentation detector.
+         * @type {string}
+         */
+        this.pointCloudSegmentationDetector = "";
+        /**
+         * Path of clipping polygon to apply.
+         * @type {string}
+         */
+        this.clipPolygon = "";
+    }
+}
+
+/**
+ * Possible outputs for an Extract Ground Detection job.
+ */
+class ExtractGroundOutputs {
+    /** Ground segmentation computed by current job. */
+    segmentation3D: string;
+    /** 3D ground segmentation as an OPC file. */
+    segmentedPointCloud: string;
+    /** 3D ground segmentation exported as a POD file. */
+    exportedSegmentation3DPOD: string;
+    /** 3D ground segmentation exported as a LAS file. */
+    exportedSegmentation3DLAS: string;
+    /** 3D ground segmentation exported as a LAZ file. */
+    exportedSegmentation3DLAZ: string;
+
+    constructor() {
+        /**
+         * Ground segmentation computed by current job.
+         * @type {string}
+         */
+        this.segmentation3D = "";
+        /**
+         * 3D ground segmentation as an OPC file.
+         * @type {string}
+         */
+        this.segmentedPointCloud = "";
+        /**
+         * 3D ground segmentation exported as a POD file.
+         * @type {string}
+         */
+        this.exportedSegmentation3DPOD = "";
+        /**
+         * 3D ground segmentation exported as a LAS file.
+         * @type {string}
+         */
+        this.exportedSegmentation3DLAS = "";
+        /**
+         * 3D ground segmentation exported as a LAZ file.
+         * @type {string}
+         */
+        this.exportedSegmentation3DLAZ = "";
+    }
+}
+
+/**
+ * Settings for Extract ground jobs.
+ */
+export class ExtractGroundJobSettings {
+    /** Type of job settings. */
+    type: RDAJobType;
+    /** Possible inputs for this job settings. */
+    inputs: ExtractGroundInputs;
+    /** 
+     * Possible outputs for this job. 
+     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+     */
+    outputs: ExtractGroundOutputs;
+    /** SRS used by exports. */
+    exportSrs: string;
+
+    constructor() {
+        /**
+         * Type of job settings.
+         * @type {RDAJobType}
+         */
+        this.type = RDAJobType.ExtractGround;
+        /**
+         * Possible inputs for this job settings.
+         * @type {ExtractGroundInputs}
+         */
+        this.inputs = new ExtractGroundInputs();
+        /**
+         * Possible outputs for this job. 
+         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+         * @type {ExtractGroundOutputs}
+         */
+        this.outputs = new ExtractGroundOutputs();
+        /**
+         * SRS used by exports.
+         * @type {string}
+         */
+        this.exportSrs = "";
+    }
+
+    /**
+     * Transform settings into json.
+     * @returns {any} json with settings values.
+     */
+    public toJson(): any {
+        const json: any = {};
+        json["inputs"] = [];
+        if (this.inputs.pointClouds)
+            json["inputs"].push({ "name": "pointClouds", "realityDataId": this.inputs.pointClouds });
+
+        if (this.inputs.meshes)
+            json["inputs"].push({ "name": "meshes", "realityDataId": this.inputs.meshes });
+
+        if (this.inputs.pointCloudSegmentationDetector)
+            json["inputs"].push({ "name": "pointCloudSegmentationDetector", "realityDataId": this.inputs.pointCloudSegmentationDetector });
+
+        if (this.inputs.clipPolygon)
+            json["inputs"].push({ "name": "clipPolygon", "realityDataId": this.inputs.clipPolygon });
+
+        json["outputs"] = [];
+        if (this.outputs.segmentation3D)
+            json["outputs"].push("segmentation3D");
+
+        if (this.outputs.segmentedPointCloud)
+            json["outputs"].push("segmentedPointCloud");
+
+        if (this.outputs.exportedSegmentation3DPOD)
+            json["outputs"].push("exportedSegmentation3DPOD");
+
+        if (this.outputs.exportedSegmentation3DLAS)
+            json["outputs"].push("exportedSegmentation3DLAS");
+
+        if (this.outputs.exportedSegmentation3DLAZ)
+            json["outputs"].push("exportedSegmentation3DLAZ");
+
+        if (this.exportSrs)
+            json["exportSrs"] = this.exportSrs;
+        
+        return json;
+    }
+
+    /**
+     * Transform json received from cloud service into settings.
+     * @param {any} settingsJson Dictionary with settings received from cloud service.
+     * @returns {ExtractGroundJobSettings} New settings.
+     */
+    public static async fromJson(settingsJson: any): Promise<ExtractGroundJobSettings> {
+        const newJobSettings = new ExtractGroundJobSettings();
+        const inputsJson = settingsJson["inputs"];
+        for (const input of inputsJson) {
+            if (input["name"] === "pointClouds")
+                newJobSettings.inputs.pointClouds = input["realityDataId"];
+            else if (input["name"] === "meshes")
+                newJobSettings.inputs.meshes = input["realityDataId"];
+            else if (input["name"] === "pointCloudSegmentationDetector")
+                newJobSettings.inputs.pointCloudSegmentationDetector = input["realityDataId"];
+            else if (input["name"] === "clipPolygon")
+                newJobSettings.inputs.clipPolygon = input["realityDataId"];
+            else
+                return Promise.reject(new Error("Found non expected input name" + input["name"]));
+        }
+        const outputsJson = settingsJson["outputs"];
+        for (const output of outputsJson) {
+            if (output["name"] === "segmentation3D")
+                newJobSettings.outputs.segmentation3D = output["realityDataId"];
+            else if (output["name"] === "segmentedPointCloud")
+                newJobSettings.outputs.segmentedPointCloud = output["realityDataId"];
+            else if (output["name"] === "exportedSegmentation3DPOD")
+                newJobSettings.outputs.exportedSegmentation3DPOD = output["realityDataId"];
+            else if (output["name"] === "exportedSegmentation3DLAZ")
+                newJobSettings.outputs.exportedSegmentation3DLAZ = output["realityDataId"];
+            else if (output["name"] === "exportedSegmentation3DLAS")
+                newJobSettings.outputs.exportedSegmentation3DLAS = output["realityDataId"];
+            else
+                return Promise.reject(new Error("Found non expected output name" + output["name"]));
+        }
+        
+        if ("exportSrs" in settingsJson)
+            newJobSettings.exportSrs = settingsJson["exportSrs"];
+        
+        return newJobSettings;
+    }
+}
+
+/**
  * Possible inputs for a  Change Detection job.
  */
 class ChangeDetectionInputs {
@@ -1444,4 +1650,5 @@ export class ChangeDetectionJobSettings {
     }
 }
 
-export type JobSettings = O2DJobSettings | S2DJobSettings | O3DJobSettings | S3DJobSettings | L3DJobSettings | ChangeDetectionJobSettings;
+export type JobSettings = O2DJobSettings | S2DJobSettings | O3DJobSettings | S3DJobSettings | L3DJobSettings | 
+    ChangeDetectionJobSettings | ExtractGroundJobSettings;
