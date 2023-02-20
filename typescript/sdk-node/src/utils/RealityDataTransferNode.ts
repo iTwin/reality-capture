@@ -320,39 +320,24 @@ export class RealityDataTransferNode {
         return new Set(["realitydata:modify", "realitydata:read"]);
     }
 
-    /**
-     * Upload reality data to ProjectWise ContextShare.
-     * This function should not be used for ContextScenes or CCOrientations that contain dependencies to other data
-     * unless those dependencies are already uploaded and the file you want to upload points to their id. 
-     * Use uploadContextScene or uploadCCOrientation instead.
-     * @param {string} dataToUpload Local directory containing the relevant data.
-     * @param {string} name Name of the created entry on ProjectWise ContextShare.
-     * @param {RealityDataType} type RealityDataType of the data.
-     * @param {string} iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the 
-     * data center where the reality data is stored.
-     * @param {string} rootFile (optional) Used to indicate the root document of the reality data. The root document can be in a 
-     * subfolder and is then specified as “Tile_Root.json” or “Folder1/SubFolder1/File.json” for example, with 
-     * a relative path to the root folder of the data.
-     * @returns {string} The ID of the uploaded data.
-     */
-    public async uploadRealityData(dataToUpload: string, name: string, type: CommonData.RealityDataType,
-        iTwinId: string, rootFile?: string): Promise<string> {
-        // TODO: parallelize
-        try {
-            const realityDataClientOptions: RealityDataClientOptions = {
-                baseUrl: this.serviceUrl,
-            };
-            const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
-            const realityData = new ITwinRealityData(rdaClient, undefined, iTwinId);
-            realityData.displayName = name;
-            realityData.type = type;
-            realityData.description = "";
-            realityData.classification = "Undefined";
-            realityData.rootDocument = rootFile;
+    private async createRealityData(type: string, name: string, iTwinId: string, rootFile?: string): Promise<ITwinRealityData> {
+        const realityDataClientOptions: RealityDataClientOptions = {
+            baseUrl: this.serviceUrl,
+        };
+        const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
+        const realityData = new ITwinRealityData(rdaClient, undefined, iTwinId);
+        realityData.displayName = name;
+        realityData.type = type;
+        realityData.description = "";
+        realityData.classification = "Undefined";
+        realityData.rootDocument = rootFile;
+        const iTwinRealityData: ITwinRealityData = await rdaClient.createRealityData(
+            await this.authorizationClient.getAccessToken(), iTwinId, realityData);
+        return iTwinRealityData;
+    }
 
-            const iTwinRealityData: ITwinRealityData = await rdaClient.createRealityData(
-                await this.authorizationClient.getAccessToken(), iTwinId, realityData);
-            // Then, get the files to upload
+    private async uploadToAzureBlob(dataToUpload: string, iTwinRealityData: ITwinRealityData): Promise<void> {
+        try {
             const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.authorizationClient.getAccessToken(), "", true);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
 
@@ -371,7 +356,7 @@ export class RealityDataTransferNode {
                 uploadInfo.files.push(path.join(path.basename(path.dirname(dataToUpload)), path.basename(dataToUpload)));
                 uploadInfo.totalFilesSize += stats.size;
             }
-            
+
             let currentPercentage = -1;
             for (let i = 0; i < uploadInfo.files.length; i++) {
                 const blockBlobClient = containerClient.getBlockBlobClient(uploadInfo.files[i]);
@@ -383,39 +368,79 @@ export class RealityDataTransferNode {
                         if (this.abortController.signal.aborted)
                             return;
 
-                        const newPercentage = Math.round(((env.loadedBytes + uploadInfo.processedFilesSize) 
+                        const newPercentage = Math.round(((env.loadedBytes + uploadInfo.processedFilesSize)
                             / uploadInfo.totalFilesSize * 100));
-                        if(newPercentage !== currentPercentage) {
+                        if (newPercentage !== currentPercentage) {
                             currentPercentage = newPercentage;
-                            if(this.onUploadProgress) {
+                            if (this.onUploadProgress) {
                                 const isCancelled = !this.onUploadProgress(currentPercentage);
-                                if(isCancelled)
+                                if (isCancelled)
                                     this.abortController.abort();
-                                
+
                                 // TODO : what to do if no provided hook?
                             }
                         }
                     }
                 };
                 let fileToUpload = path.join(dataToUpload, uploadInfo.files[i]);
-                if(isSingleFile)
+                if (isSingleFile)
                     fileToUpload = dataToUpload;
-                
+
                 const uploadBlobResponse = await blockBlobClient.uploadFile(fileToUpload, options);
                 const stats = fs.statSync(fileToUpload);
                 uploadInfo.processedFilesSize += stats.size;
                 if (uploadBlobResponse.errorCode)
                     return Promise.reject(Error(
-                        "Can't upload reality data : " + realityData + ", error : " + uploadBlobResponse.errorCode));
+                        "Can't upload reality data : " + iTwinRealityData + ", error : " + uploadBlobResponse.errorCode));
             }
-            return iTwinRealityData.id;
         }
         catch (error: any) {
             if(error.name === "AbortError")
-                return ""; // TODO : what to do if aborted?
+                return; // TODO : what to do if aborted?
             
             return Promise.reject(error);
         }
+    }
+
+    /**
+     * Upload reality data to ProjectWise ContextShare. Creates a new reality data.
+     * This function should not be used for ContextScenes or CCOrientations that contain dependencies to other data
+     * unless those dependencies are already uploaded and the file you want to upload points to their id. 
+     * Use uploadContextScene or uploadCCOrientation instead.
+     * @param {string} dataToUpload Local directory containing the relevant data.
+     * @param {string} name Name of the created entry on ProjectWise ContextShare.
+     * @param {RealityDataType} type RealityDataType of the data.
+     * @param {string} iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the 
+     * data center where the reality data is stored.
+     * @param {string} rootFile (optional) Used to indicate the root document of the reality data. The root document can be in a 
+     * subfolder and is then specified as “Tile_Root.json” or “Folder1/SubFolder1/File.json” for example, with 
+     * a relative path to the root folder of the data.
+     * @returns {string} The ID of the uploaded data.
+     */
+    public async uploadRealityData(dataToUpload: string, name: string, type: CommonData.RealityDataType,
+        iTwinId: string, rootFile?: string): Promise<string> {
+        const iTwinRealityData = await this.createRealityData(type, name, iTwinId, rootFile);
+        this.uploadToAzureBlob(dataToUpload, iTwinRealityData);
+        return iTwinRealityData.id;
+    }
+
+    /**
+     * Upload data to ProjectWise ContextShare. Upload the data in existing reality data.
+     * This function should not be used for ContextScenes or CCOrientations that contain dependencies to other data
+     * unless those dependencies are already uploaded and the file you want to upload points to their id. 
+     * Use uploadContextScene or uploadCCOrientation instead.
+     * @param {string} dataToUpload Local directory containing the relevant data.
+     * @param {string} realityDataId Target reality data.
+     * @param {string} iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the 
+     * data center where the reality data is stored.
+     */
+    public async uploadToExistingRealityData(dataToUpload: string, realityDataId: string, iTwinId: string): Promise<void> {
+        const realityDataClientOptions: RealityDataClientOptions = {
+            baseUrl: this.serviceUrl,
+        };
+        const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
+        const iTwinRealityData = await rdaClient.getRealityData(await this.authorizationClient.getAccessToken(), iTwinId, realityDataId);
+        this.uploadToAzureBlob(dataToUpload, iTwinRealityData);
     }
 
     /**
