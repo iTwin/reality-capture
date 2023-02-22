@@ -933,6 +933,8 @@ class L3DInputs {
     photoSegmentationDetector: string;
     /** Given 2D segmentation. */
     segmentation2D: string;
+    /** Path of clipping polygon to apply. */
+    clipPolygon: string;
 
     constructor() {
         /**
@@ -970,6 +972,11 @@ class L3DInputs {
          * @type {string}
          */
         this.segmentation2D = "";
+        /** 
+         * Path of clipping polygon to apply.
+         * @type {string}
+         */
+        this.clipPolygon = "";
     }
 }
 
@@ -1113,6 +1120,9 @@ export class L3DJobSettings {
         if (this.inputs.segmentation2D)
             json["inputs"].push({ "name": "segmentation2D", "realityDataId": this.inputs.segmentation2D });
 
+        if (this.inputs.clipPolygon)
+            json["inputs"].push({ "name": "clipPolygon", "realityDataId": this.inputs.clipPolygon });
+
         json["outputs"] = [];
         if (this.outputs.segmentation3D)
             json["outputs"].push("segmentation3D");
@@ -1170,6 +1180,8 @@ export class L3DJobSettings {
                 newJobSettings.inputs.photoSegmentationDetector = input["realityDataId"];
             else if (input["name"] === "segmentation2D")
                 newJobSettings.inputs.segmentation2D = input["realityDataId"];
+            else if (input["name"] === "clipPolygon")
+                newJobSettings.inputs.clipPolygon = input["realityDataId"];
             else
                 return Promise.reject(new Error("Found non expected input name" + input["name"]));
         }
