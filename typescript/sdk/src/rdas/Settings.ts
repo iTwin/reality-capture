@@ -933,6 +933,8 @@ class L3DInputs {
     photoSegmentationDetector: string;
     /** Given 2D segmentation. */
     segmentation2D: string;
+    /** Path of clipping polygon to apply. */
+    clipPolygon: string;
 
     constructor() {
         /**
@@ -970,6 +972,11 @@ class L3DInputs {
          * @type {string}
          */
         this.segmentation2D = "";
+        /** 
+         * Path of clipping polygon to apply.
+         * @type {string}
+         */
+        this.clipPolygon = "";
     }
 }
 
@@ -991,6 +998,12 @@ class L3DOutputs {
     exportedLines3DCesium: string;
     /** ContextScene pointing to segmented photos. */
     segmentedPhotos: string;
+    /** Detected patches. */
+    patches3D: string;
+    /** DGN file export with patches. */
+    exportedPatches3DDGN: string;
+    /** Cesium 3D Tiles file export with 3D patches. */
+    exportedPatches3DCesium: string;
 
     constructor() {
         /**
@@ -1028,6 +1041,21 @@ class L3DOutputs {
          * @type {string}
          */
         this.exportedLines3DCesium = "";
+        /** 
+         * Detected patches.
+         * @type {string}
+         */
+        this.patches3D = "";
+        /** 
+         * DGN file export with patches.
+         * @type {string}
+         */
+        this.exportedPatches3DDGN = "";
+        /** 
+         * Cesium 3D Tiles file export with 3D patches.
+         * @type {string}
+         */
+        this.exportedPatches3DCesium = "";
     }
 }
 
@@ -1113,6 +1141,9 @@ export class L3DJobSettings {
         if (this.inputs.segmentation2D)
             json["inputs"].push({ "name": "segmentation2D", "realityDataId": this.inputs.segmentation2D });
 
+        if (this.inputs.clipPolygon)
+            json["inputs"].push({ "name": "clipPolygon", "realityDataId": this.inputs.clipPolygon });
+
         json["outputs"] = [];
         if (this.outputs.segmentation3D)
             json["outputs"].push("segmentation3D");
@@ -1134,6 +1165,15 @@ export class L3DJobSettings {
 
         if (this.outputs.exportedLines3DCesium)
             json["outputs"].push("exportedLines3DCesium");
+
+        if (this.outputs.patches3D)
+            json["outputs"].push("patches3D");
+
+        if (this.outputs.exportedPatches3DDGN)
+            json["outputs"].push("exportedPatches3DDGN");
+
+        if (this.outputs.exportedPatches3DCesium)
+            json["outputs"].push("exportedPatches3DCesium");
 
         if (this.computeLineWidth)
             json["computeLineWidth"] = "true";
@@ -1170,6 +1210,8 @@ export class L3DJobSettings {
                 newJobSettings.inputs.photoSegmentationDetector = input["realityDataId"];
             else if (input["name"] === "segmentation2D")
                 newJobSettings.inputs.segmentation2D = input["realityDataId"];
+            else if (input["name"] === "clipPolygon")
+                newJobSettings.inputs.clipPolygon = input["realityDataId"];
             else
                 return Promise.reject(new Error("Found non expected input name" + input["name"]));
         }
@@ -1189,6 +1231,12 @@ export class L3DJobSettings {
                 newJobSettings.outputs.exportedLines3DDGN = output["realityDataId"];
             else if (output["name"] === "exportedLines3DCesium")
                 newJobSettings.outputs.exportedLines3DCesium = output["realityDataId"];
+            else if (output["name"] === "patches3D")
+                newJobSettings.outputs.patches3D = output["realityDataId"];
+            else if (output["name"] === "exportedPatches3DCesium")
+                newJobSettings.outputs.exportedPatches3DCesium = output["realityDataId"];
+            else if (output["name"] === "exportedPatches3DDGN")
+                newJobSettings.outputs.exportedPatches3DDGN = output["realityDataId"];
             else
                 return Promise.reject(new Error("Found non expected output name" + output["name"]));
         }

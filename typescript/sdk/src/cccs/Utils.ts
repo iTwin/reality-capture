@@ -107,6 +107,8 @@ class CCOutputs {
     ply: string;
     /** Created opc id. */
     opc: string;
+    /** Created omr id. */
+    omr: string;
 
     constructor() {
         /**
@@ -189,6 +191,11 @@ class CCOutputs {
          * @type {string}
          */
         this.opc = "";
+        /**
+         * Created omr id.
+         * @type {string}
+         */
+        this.omr = "";
     }
 }
 
@@ -278,6 +285,9 @@ export class CCJobSettings {
         if (this.outputs.opc)
             json["settings"]["outputs"].push("OPC");
 
+        if (this.outputs.omr)
+            json["settings"]["outputs"].push("OMR");
+
         if (this.outputs.orientations)
             json["settings"]["outputs"].push("CCOrientations");
 
@@ -346,6 +356,8 @@ export class CCJobSettings {
                 newJobSettings.outputs.obj = output["id"];
             else if (output["format"] === "OPC")
                 newJobSettings.outputs.opc = output["id"];
+            else if (output["format"] === "OMR")
+                newJobSettings.outputs.omr = output["id"];
             else if (output["format"] === "CCOrientations")
                 newJobSettings.outputs.orientations = output["id"];
             else if (output["format"] === "Orthophoto/DSM")
