@@ -96,7 +96,7 @@ def main():
             exit(1)
         ret = references.add_reference(photo_context_scene, ret.value)
         if ret.is_error():
-            print("Error adding reference:", photo_context_scene)
+            print("Error adding reference:", ret.error)
             exit(1)
 
     # detector

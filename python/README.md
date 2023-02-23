@@ -33,6 +33,7 @@ Necessary Python modules can also be found at the requirements.txt file.
 ```
 bottle >= 0.12
 oauthlib >= 3.2
+requests-oauthlib >= 1.3.1
 azure-storage-blob >= 12.9
 ```
 
