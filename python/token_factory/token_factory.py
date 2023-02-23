@@ -36,7 +36,7 @@ class ClientInfo:
     def __init__(
         self,
         client_id: str,
-        scope_set: set(),
+        scope_set: set,
         env: str = "",
         redirect_url: str = "http://localhost:8080/sign-oidc",
         secret: str = "",
