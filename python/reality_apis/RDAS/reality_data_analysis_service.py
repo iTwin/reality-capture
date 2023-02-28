@@ -37,7 +37,7 @@ class RealityDataAnalysisService:
 
         self._header = {
             "Authorization": None,
-            "User-Agent": f"RDAS Python SDK/0.0.1",
+            "User-Agent": f"RDAS Python SDK/1.0.0",
             "Content-type": "application/json",
             "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }
