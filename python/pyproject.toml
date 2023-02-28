@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reality_apis"
+version = "1.0.0"
+authors = [
+  { name="Bentley Systems", email="ariana.carnielli@bentley.com" },
+]
+description = "This package contains a SDK for Context Capture and Reality Data Analysis iTwin APIs as well as Reality Data API utils. It provides classes, functions and examples to upload local data to ContextShare, run Context Capture/Reality Data Analysis jobs and download the results."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3.8",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+]
+dependencies = [
+    "bottle >= 0.12",
+    "oauthlib >= 3.2",
+    "requests-oauthlib >= 1.3.1",
+    "azure-storage-blob >= 12.9",
+]
+
+[tool.hatch.build]
+exclude = [
+    "/dist",
+    "/examples",
+]
+include = ["*.py"]
+
+[project.urls]
+"Homepage" = "https://https://github.com/iTwin/reality-apis-samples/tree/main/python"
+"RDAS Api reference" = "https://developer.bentley.com/apis/realitydataanalysis/"
+"CCS Api reference" = "https://developer.bentley.com/apis/contextcapture/"
+"RDS Api reference" = "https://developer.bentley.com/apis/reality-data/"
