@@ -27,7 +27,7 @@ setup(
     packages =
     find_packages(
         exclude=["/examples"],
-        include=['reality_apis', 'reality_apis.CCS', 'reality_apis.RDAS', 'reality_apis.DataTransfer']
+        include=["reality_apis", "reality_apis.CCS", "reality_apis.RDAS", "reality_apis.DataTransfer", "token_factory"]
     ),
     install_requires= [
         "bottle >= 0.12",
