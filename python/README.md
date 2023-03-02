@@ -24,7 +24,13 @@ By default, the token factories provided expect as redirect URI `http://localhos
 
 You may choose any Application type but be conscious the authorization process is different between them. An explanation of each authorization code flow process can be found [here](https://developer.bentley.com/apis/overview/authorization/). This SDK includes an example of a token factory for each type of Application. You may code your own factory for authorization tokens but you will have to implement the functions present at `AbstractTokenFactory` so that your code integrates properly with this SDK.
 
-After creating an application and a ProjectWise project if you didn't have one, clone this repository and you are good to go. 
+After creating an application and a ProjectWise project if you didn't have one, you can either:
+
+- Clone this repository and add its path to your PYTHONPATH environment variable;
+- Download the last released version wheel and install it using `py -m pip install **path_to_the_wheel**`;
+- Install it directly from the last github version by using `py -m pip install git+https://github.com/iTwin/reality-capture.git#subdirectory=python`
+
+and you are good to go. 
 
 ## Software dependencies
 
