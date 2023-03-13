@@ -15,7 +15,7 @@ from reality_apis.DataTransfer.conversion import (
     replace_ccorientation_references,
 )
 from reality_apis.DataTransfer.references import ReferenceTable
-from reality_apis.utils import RealityDataType, ReturnValue
+from reality_apis.utils import RealityDataType, ReturnValue, __version__
 
 
 class RealityDataTransfer:
@@ -36,7 +36,7 @@ class RealityDataTransfer:
 
         self._header = {
             "Authorization": None,
-            "User-Agent": f"RealityDataTransfer Python SDK/0.0.1",
+            "User-Agent": f"RealityDataTransfer Python SDK/{__version__}",
             "Content-type": "application/json",
             "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }

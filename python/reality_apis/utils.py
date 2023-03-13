@@ -4,6 +4,10 @@
 from enum import Enum
 from typing import TypeVar, Generic, NamedTuple
 
+from importlib import metadata
+
+__version__ = metadata.version(__package__)
+
 
 class RealityDataType(Enum):
     """

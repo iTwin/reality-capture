@@ -12,7 +12,7 @@ from reality_apis.CCS.ccs_utils import (
     CCJobCostParameters,
     CCJobProperties,
 )
-from reality_apis.utils import ReturnValue, JobState, JobDateTime, JobProgress
+from reality_apis.utils import ReturnValue, JobState, JobDateTime, JobProgress, __version__
 
 
 class ContextCaptureService:
@@ -31,7 +31,7 @@ class ContextCaptureService:
 
         self._header = {
             "Authorization": None,
-            "User-Agent": f"ContextCapture Python SDK/0.0.1",
+            "User-Agent": f"ContextCapture Python SDK/{__version__}",
             "Content-type": "application/json",
             "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }
