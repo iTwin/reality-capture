@@ -25,10 +25,10 @@ stages:
         matrix:
           windows:
             imageName: 'windows-latest'
-          # linux:
-          #   imageName: 'ubuntu-latest'
-          # mac:
-          #   imageName: 'macos-latest'
+          linux:
+            imageName: 'ubuntu-latest'
+          mac:
+            imageName: 'macos-latest'
       pool:
         vmImage: $(imageName)
       variables:
@@ -46,115 +46,172 @@ stages:
       # Build SDK
       - script: npm ci
         displayName: Install SDK
-        workingDirectory: ./typescript/sdk
+        workingDirectory: $(Pipeline.Workspace)/typescript/sdk
 
       - script: npm run build
         displayName: Typescript compiler (SDK)
-        workingDirectory: ./typescript/sdk
+        workingDirectory: $(Pipeline.Workspace)/typescript/sdk
 
       # Build SDK Node support
       - script: npm ci
         displayName: Install SDK Node support
-        workingDirectory: ./typescript/sdk-node
+        workingDirectory: $(Pipeline.Workspace)/typescript/sdk-node
 
       - script: npm ci
         displayName: Typescript compiler (SDK Node support)
-        workingDirectory: ./typescript/sdk-node
+        workingDirectory: $(Pipeline.Workspace)/typescript/sdk-node
 
       # Build WebApp
       - script: npm ci
         displayName: Install WebApp
-        workingDirectory: ./typescript/web-app
+        workingDirectory: $(Pipeline.Workspace)/typescript/web-app
 
       - script: npm run build
         displayName: Typescript compiler (WebApp)
-        workingDirectory: ./typescript/web-app
+        workingDirectory: $(Pipeline.Workspace)/typescript/web-app
 
       - script: npm run lint
         displayName: EsLint
-        workingDirectory: ./typescript/web-app
+        workingDirectory: $(Pipeline.Workspace)/typescript/web-app
 
       # Build examples
       - script: npm ci
         displayName: Install Examples
-        workingDirectory: ./typescript/examples
+        workingDirectory: $(Pipeline.Workspace)/typescript/examples
 
       - script: npm run build
         displayName: Typescript compiler (Examples)
-        workingDirectory: ./typescript/examples
+        workingDirectory: $(Pipeline.Workspace)/typescript/examples
 
       # Build integration tests
       - script: npm ci
         displayName: Install Integration Tests
-        workingDirectory: ./typescript/integration-tests
+        workingDirectory: $(Pipeline.Workspace)/typescript/integration-tests
 
       - script: npm run build
         displayName: Typescript compiler (Integration Tests)
-        workingDirectory: ./typescript/integration-tests
+        workingDirectory: $(Pipeline.Workspace)/typescript/integration-tests
 
       - script: npm run test:integration
         displayName: Run SDK Integration Tests
-        workingDirectory: ./typescript/integration-tests
+        workingDirectory: $(Pipeline.Workspace)/typescript/integration-tests
         env:
           IMJS_PROJECT_ID: $(PROJECT_ID)
           IMJS_CLIENT_ID: $(CLIENT_ID)
           IMJS_SECRET: $(CLIENT_SECRET)
 
       # Publish Reality Capture SDK artifact
+      - bash: |
+          sdkVersion=$(node -p "require('./package.json').version")
+          sdkName=$(node -p "require('./package.json').name")
+          checkVer() {
+            localVer=$1
+            name=$2
+            remoteVer=$(npm view $name version)
+            if [ -z "$remoteVer" ]; then
+              remoteVer=0.0.0
+            fi
+            olderVer=$(printf '%s\n' "$localVer" "$remoteVer" | sort -V | head -n1)
+            if [ "$localVer" != "$remoteVer" ] && [ "$remoteVer" = "$olderVer" ]; then
+              echo true
+            else
+              echo false
+            fi
+          }
+          updateClient=$(checkVer $sdkVersion $sdkName)
+          if [ "$updateClient" = "true" ]; then
+            echo "package publishing conditions are met."
+            shouldPublish=true
+          else
+            echo "package publishing conditions not met."
+            shouldPublish=false
+          fi
+          echo "##vso[task.setvariable variable=shouldPublish;isOutput=true]$shouldPublishSDK"
+          echo "##vso[task.setvariable variable=sdkVersion;isOutput=true]$sdkVersion"
+          echo "##vso[task.setvariable variable=sdkName;isOutput=true]$sdkName"
+        displayName: Store Build Info
+        workingDirectory: $(Pipeline.Workspace)/typescript/sdk
+        name: info
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
+
+      - script: npm pack
+        workingDirectory: $(Pipeline.Workspace)/typescript/sdk
+        displayName: Package Reality Capture SDK
+        condition: and(succeeded(), eq(variables['info.shouldPublishSDK'], 'true'))
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: $(Pipeline.Workspace)/typescript/sdk/$(info.sdkName)-$(info.sdkVersion).tgz
+          artifactName: RealityCaptureSDK
+        displayName: Publish Reality Capture SDK
+        condition: and(succeeded(), eq(variables['info.shouldPublishSDK'], 'true'))
+
       # Publish SDK node support
-#       - bash: |
-#           insightsClientVersion=$(node -p "require('./package.json').version")
-#           insightsClientName=$(node -p "require('./package.json').name")
-#           checkVer() {
-#             localVer=$1
-#             name=$2
-#             remoteVer=$(npm view $name version)
-#             if [ -z "$remoteVer" ]; then
-#               remoteVer=0.0.0
-#             fi
-#             olderVer=$(printf '%s\n' "$localVer" "$remoteVer" | sort -V | head -n1)
-#             if [ "$localVer" != "$remoteVer" ] && [ "$remoteVer" = "$olderVer" ]; then
-#               echo true
-#             else
-#               echo false
-#             fi
-#           }
-#           updateClient=$(checkVer $insightsClientVersion $insightsClientName)
-#           if [ "$updateClient" = "true" ]; then
-#             echo "package publishing conditions are met."
-#             shouldPublish=true
-#           else
-#             echo "package publishing conditions not met."
-#             shouldPublish=false
-#           fi
-#           echo "##vso[task.setvariable variable=shouldPublish;isOutput=true]$shouldPublish"
-#           echo "##vso[task.setvariable variable=insightsClientVersion;isOutput=true]$insightsClientVersion"
-#           echo "##vso[task.setvariable variable=insightsClientName;isOutput=true]$insightsClientName"
-#         displayName: 'Store Build Info'
-#         name: info
-#         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
+      - bash: |
+          sdkNodeVersion=$(node -p "require('./package.json').version")
+          sdkNodeName=$(node -p "require('./package.json').name")
+          checkVer() {
+            localVer=$1
+            name=$2
+            remoteVer=$(npm view $name version)
+            if [ -z "$remoteVer" ]; then
+              remoteVer=0.0.0
+            fi
+            olderVer=$(printf '%s\n' "$localVer" "$remoteVer" | sort -V | head -n1)
+            if [ "$localVer" != "$remoteVer" ] && [ "$remoteVer" = "$olderVer" ]; then
+              echo true
+            else
+              echo false
+            fi
+          }
+          updateClient=$(checkVer $sdkNodeVersion $sdkNodeName)
+          if [ "$updateClient" = "true" ]; then
+            echo "package publishing conditions are met."
+            shouldPublish=true
+          else
+            echo "package publishing conditions not met."
+            shouldPublish=false
+          fi
+          echo "##vso[task.setvariable variable=shouldPublish;isOutput=true]$shouldPublishSDKNode"
+          echo "##vso[task.setvariable variable=sdkNodeVersion;isOutput=true]$sdkNodeVersion"
+          echo "##vso[task.setvariable variable=sdkNodeName;isOutput=true]$sdkNodeName"
+        displayName: Store Build Info
+        workingDirectory: $(Pipeline.Workspace)/typescript/sdkNode
+        name: info
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
 
-#       - task: PublishBuildArtifacts@1
-#         inputs:
-#           PathtoPublish: '$(Build.SourcesDirectory)/itwin-insights-client-$(info.insightsClientVersion).tgz'
-#           artifactName: InsightsClient
-#         displayName: 'Publish Insights client'
-#         condition: and(succeeded(), eq(variables['info.shouldPublish'], 'true'))
+      - script: npm pack
+        workingDirectory: $(Pipeline.Workspace)/typescript/sdkNode
+        displayName: Package Reality Capture SDK Node
+        condition: and(succeeded(), eq(variables['info.shouldPublishSDKNode'], 'true'))
 
-#       - task: PublishTestResults@2
-#         inputs:
-#           testResultsFormat: 'JUnit'
-#           testResultsFiles: '**/junit_results.xml'
-#         displayName: "Publish test results"
-  
-# - stage: Publish
-#   displayName: Publish
-#   condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info.shouldPublish'], 'true'))
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: $(Pipeline.Workspace)/typescript/sdk-node/$(info.sdkNodeName)-$(info.sdkNodeVersion).tgz
+          artifactName: RealityCaptureSDKNode
+        displayName: Publish Reality Capture SDK Node
+        condition: and(succeeded(), eq(variables['info.shouldPublishSDKNode'], 'true'))
+
+# - stage: PublishSDK
+#   displayName: Publish Reality Data SDK
+#   condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info.shouldPublishSDK'], 'true'))
 #   dependsOn: Build
-
 #   jobs:
 #     - template: templates/npmjs-publish-deployment.yaml@build-pipeline-scripts
 #       parameters:
 #         path: '*.tgz'
-#         artifactName: InsightsClient
-#         name: InsightsClient
+#         artifactName: RealityCaptureSDK
+#         name: RealityCaptureSDK
+#         dryrun: true
+
+# - stage: PublishSDKNode
+#   displayName: Publish Reality Data SDK Node
+#   condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info.shouldPublishSDKNode'], 'true'))
+#   dependsOn: Build
+#   jobs:
+#     - template: templates/npmjs-publish-deployment.yaml@build-pipeline-scripts
+#       parameters:
+#         path: '*.tgz'
+#         artifactName: RealityCaptureSDKNode
+#         name: RealityCaptureSDKNode
+#         dryrun: true
