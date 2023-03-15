@@ -1,11 +1,13 @@
-trigger:
-- main
+# trigger:
+# - main
 
-pr:
-  drafts: false
-  branches:
-    include:
-      - main
+# pr:
+#   drafts: false
+#   branches:
+#     include:
+#       - main
+trigger: none
+pr: none
 
 resources:
   repositories:
