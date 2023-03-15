@@ -150,18 +150,9 @@ class RealityDataAnalysisService:
             cost_estimation = RDAJobCostParameters()
             estimate = data_json["job"].get("costEstimation", None)
             if estimate is not None:
-                cost_estimation.giga_pixels = float(estimate.get("gigaPixels", 0.0))
-                cost_estimation.number_photos = int(estimate.get("numberOfPhotos", 0))
-                cost_estimation.scene_width = float(estimate.get("sceneWidth", 0.0))
-                cost_estimation.scene_height = float(estimate.get("sceneHeight", 0.0))
-                cost_estimation.scene_length = float(estimate.get("sceneLength", 0.0))
-                cost_estimation.detector_scale = float(
-                    estimate.get("detectorScale", 0.0)
-                )
-                cost_estimation.detector_cost = float(estimate.get("detectorCost", 0.0))
-                cost_estimation.estimated_cost = float(
-                    estimate.get("estimatedCost", 0.0)
-                )
+                cost_estimation_ret = RDAJobCostParameters.from_json(estimate)
+                if not cost_estimation_ret.is_error():
+                    cost_estimation = cost_estimation_ret.value
 
             created_date_time = data_json["job"].get("createdDateTime", "")
             execution = data_json["job"].get("executionInformation", None)
@@ -179,9 +170,9 @@ class RealityDataAnalysisService:
                 exit_code = 0
                 estimated_units = 0.0
 
-            job_state = data_json["job"].get("state", JobState.UNKNOWN)
+            job_state = JobState(data_json["job"].get("state", JobState.UNKNOWN.value))
             job_name = data_json["job"].get("name", "")
-            itwin_id = data_json["job"].get("projectId", "")
+            itwin_id = data_json["job"].get("iTwinId", "")
             data_center = data_json["job"].get("dataCenter", "")
             email = data_json["job"].get("email", "")
         except Exception as e:
@@ -249,7 +240,7 @@ class RealityDataAnalysisService:
             The estimated cost of the job, and a potential error
             message.
         """
-        jc_dict = {"costEstimation": cost_parameters.to_json()}
+        jc_dict = {"costEstimationParameters": cost_parameters.to_json()}
         job_json = json.dumps(jc_dict)
         response = self._session.patch("https://" + self._service_url + f"/realitydataanalysis/jobs/{job_id}", job_json, headers=self._get_header())
         data_json = response.json()
