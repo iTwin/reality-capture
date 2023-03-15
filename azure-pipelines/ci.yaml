@@ -44,56 +44,56 @@ stages:
         displayName: Use node 16
 
       # Build SDK
-      - name: Install SDK
-        script: npm ci
+      - script: npm ci
+        displayName: Install SDK
         workingDirectory: ./typescript/sdk
 
-      - name: Typescript compiler (SDK)
-        script: npm run build
+      - script: npm run build
+        displayName: Typescript compiler (SDK)
         workingDirectory: ./typescript/sdk
 
       # Build SDK Node support
-      - name: Install SDK Node support
-        script: npm ci
+      - script: npm ci
+        displayName: Install SDK Node support
         workingDirectory: ./typescript/sdk-node
 
-      - name: Typescript compiler (SDK Node support)
-        script: npm ci
+      - script: npm ci
+        displayName: Typescript compiler (SDK Node support)
         workingDirectory: ./typescript/sdk-node
 
       # Build WebApp
-      - name: Install WebApp
-        script: npm ci
+      - script: npm ci
+        displayName: Install WebApp
         workingDirectory: ./typescript/web-app
 
-      - name: Typescript compiler (WebApp)
-        script: npm run build
+      - script: npm run build
+        displayName: Typescript compiler (WebApp)
         workingDirectory: ./typescript/web-app
 
-      - name: EsLint
-        script: npm run lint
+      - script: npm run lint
+        displayName: EsLint
         workingDirectory: ./typescript/web-app
 
       # Build examples
-      - name: Install Examples
-        script: npm ci
+      - script: npm ci
+        displayName: Install Examples
         workingDirectory: ./typescript/examples
 
-      - name: Typescript compiler (Examples)
-        script: npm run build
+      - script: npm run build
+        displayName: Typescript compiler (Examples)
         workingDirectory: ./typescript/examples
 
       # Build integration tests
-      - name: Install Integration Tests
-        script: npm ci
+      - script: npm ci
+        displayName: Install Integration Tests
         workingDirectory: ./typescript/integration-tests
 
-      - name: Typescript compiler (Integration Tests)
-        script: npm run build
+      - script: npm run build
+        displayName: Typescript compiler (Integration Tests)
         workingDirectory: ./typescript/integration-tests
 
-      - name: Run SDK Integration Tests
-        script: npm run test:integration
+      - script: npm run test:integration
+        displayName: Run SDK Integration Tests
         workingDirectory: ./typescript/integration-tests
         env:
           IMJS_PROJECT_ID: $(PROJECT_ID)
