@@ -1,0 +1,158 @@
+trigger:
+- main
+
+pr:
+  drafts: false
+  branches:
+    include:
+      - main
+
+resources:
+  repositories:
+    - repository: build-pipeline-scripts
+      type: git
+      ref: master
+      name: iModelTechnologies/imodeljs-build-pipeline-scripts
+
+stages:
+- stage: Build
+  displayName: Build
+  jobs:
+    - job: BuildPackage
+      strategy:
+        matrix:
+          windows:
+            imageName: 'windows-latest'
+          # linux:
+          #   imageName: 'ubuntu-latest'
+          # mac:
+          #   imageName: 'macos-latest'
+      pool:
+        vmImage: $(imageName)
+      variables:
+      - group: Reality Capture Integration Test Variables
+
+      steps:
+      - checkout: self
+        lfs: true
+      
+      - task: NodeTool@0
+        inputs:
+          versionSpec: 16.x
+        displayName: Use node 16
+
+      # Build SDK
+      - name: Install SDK
+        script: npm ci
+        workingDirectory: ./typescript/sdk
+
+      - name: Typescript compiler (SDK)
+        script: npm run build
+        workingDirectory: ./typescript/sdk
+
+      # Build SDK Node support
+      - name: Install SDK Node support
+        script: npm ci
+        workingDirectory: ./typescript/sdk-node
+
+      - name: Typescript compiler (SDK Node support)
+        script: npm ci
+        workingDirectory: ./typescript/sdk-node
+
+      # Build WebApp
+      - name: Install WebApp
+        script: npm ci
+        workingDirectory: ./typescript/web-app
+
+      - name: Typescript compiler (WebApp)
+        script: npm run build
+        workingDirectory: ./typescript/web-app
+
+      - name: EsLint
+        script: npm run lint
+        workingDirectory: ./typescript/web-app
+
+      # Build examples
+      - name: Install Examples
+        script: npm ci
+        workingDirectory: ./typescript/examples
+
+      - name: Typescript compiler (Examples)
+        script: npm run build
+        workingDirectory: ./typescript/examples
+
+      # Build integration tests
+      - name: Install Integration Tests
+        script: npm ci
+        workingDirectory: ./typescript/integration-tests
+
+      - name: Typescript compiler (Integration Tests)
+        script: npm run build
+        workingDirectory: ./typescript/integration-tests
+
+      - name: Run SDK Integration Tests
+        script: npm run test:integration
+        workingDirectory: ./typescript/integration-tests
+        env:
+          IMJS_PROJECT_ID: $(PROJECT_ID)
+          IMJS_CLIENT_ID: $(CLIENT_ID)
+          IMJS_SECRET: $(CLIENT_SECRET)
+
+      # Publish Reality Capture SDK artifact
+      # Publish SDK node support
+#       - bash: |
+#           insightsClientVersion=$(node -p "require('./package.json').version")
+#           insightsClientName=$(node -p "require('./package.json').name")
+#           checkVer() {
+#             localVer=$1
+#             name=$2
+#             remoteVer=$(npm view $name version)
+#             if [ -z "$remoteVer" ]; then
+#               remoteVer=0.0.0
+#             fi
+#             olderVer=$(printf '%s\n' "$localVer" "$remoteVer" | sort -V | head -n1)
+#             if [ "$localVer" != "$remoteVer" ] && [ "$remoteVer" = "$olderVer" ]; then
+#               echo true
+#             else
+#               echo false
+#             fi
+#           }
+#           updateClient=$(checkVer $insightsClientVersion $insightsClientName)
+#           if [ "$updateClient" = "true" ]; then
+#             echo "package publishing conditions are met."
+#             shouldPublish=true
+#           else
+#             echo "package publishing conditions not met."
+#             shouldPublish=false
+#           fi
+#           echo "##vso[task.setvariable variable=shouldPublish;isOutput=true]$shouldPublish"
+#           echo "##vso[task.setvariable variable=insightsClientVersion;isOutput=true]$insightsClientVersion"
+#           echo "##vso[task.setvariable variable=insightsClientName;isOutput=true]$insightsClientName"
+#         displayName: 'Store Build Info'
+#         name: info
+#         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
+
+#       - task: PublishBuildArtifacts@1
+#         inputs:
+#           PathtoPublish: '$(Build.SourcesDirectory)/itwin-insights-client-$(info.insightsClientVersion).tgz'
+#           artifactName: InsightsClient
+#         displayName: 'Publish Insights client'
+#         condition: and(succeeded(), eq(variables['info.shouldPublish'], 'true'))
+
+#       - task: PublishTestResults@2
+#         inputs:
+#           testResultsFormat: 'JUnit'
+#           testResultsFiles: '**/junit_results.xml'
+#         displayName: "Publish test results"
+  
+# - stage: Publish
+#   displayName: Publish
+#   condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info.shouldPublish'], 'true'))
+#   dependsOn: Build
+
+#   jobs:
+#     - template: templates/npmjs-publish-deployment.yaml@build-pipeline-scripts
+#       parameters:
+#         path: '*.tgz'
+#         artifactName: InsightsClient
+#         name: InsightsClient
