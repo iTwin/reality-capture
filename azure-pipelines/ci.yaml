@@ -118,8 +118,8 @@ stages:
               echo false
             fi
           }
-          updateClient=$(checkVer $sdkVersion $sdkName)
-          if [ "$updateClient" = "true" ]; then
+          isUpdated=$(checkVer $sdkVersion $sdkName)
+          if [ "$isUpdated" = "true" ]; then
             echo "package publishing conditions are met."
             shouldPublish=true
           else
@@ -129,10 +129,10 @@ stages:
           echo "##vso[task.setvariable variable=shouldPublish;isOutput=true]$shouldPublishSDK"
           echo "##vso[task.setvariable variable=sdkVersion;isOutput=true]$sdkVersion"
           echo "##vso[task.setvariable variable=sdkName;isOutput=true]$sdkName"
-        displayName: Store Build Info
+        displayName: Check SDK version
         workingDirectory: $(Pipeline.Workspace)/typescript/sdk
         name: info
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
+        condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'Manual'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
 
       - script: npm pack
         workingDirectory: $(Pipeline.Workspace)/typescript/sdk
@@ -164,8 +164,8 @@ stages:
               echo false
             fi
           }
-          updateClient=$(checkVer $sdkNodeVersion $sdkNodeName)
-          if [ "$updateClient" = "true" ]; then
+          isUpdated=$(checkVer $sdkNodeVersion $sdkNodeName)
+          if [ "$isUpdated" = "true" ]; then
             echo "package publishing conditions are met."
             shouldPublish=true
           else
@@ -175,10 +175,10 @@ stages:
           echo "##vso[task.setvariable variable=shouldPublish;isOutput=true]$shouldPublishSDKNode"
           echo "##vso[task.setvariable variable=sdkNodeVersion;isOutput=true]$sdkNodeVersion"
           echo "##vso[task.setvariable variable=sdkNodeName;isOutput=true]$sdkNodeName"
-        displayName: Store Build Info
+        displayName: Check SDK Node version
         workingDirectory: $(Pipeline.Workspace)/typescript/sdkNode
         name: info
-        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
+        condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'Manual'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
 
       - script: npm pack
         workingDirectory: $(Pipeline.Workspace)/typescript/sdkNode
