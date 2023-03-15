@@ -249,7 +249,7 @@ class ContextCaptureService:
                 job_date_time = JobDateTime(created_date_time=created_date_time)
                 estimated_units = 0.0
 
-            iTwin_id = data_json["job"].get("iTwinId", "")
+            itwin_id = data_json["job"].get("iTwinId", "")
             location = data_json["job"].get("location", "")
             email = data_json["job"].get("email", "")
             work_id = data_json["job"].get("workspaceId", "")
@@ -267,7 +267,7 @@ class ContextCaptureService:
                 job_type=job_type,
                 job_state=job_state,
                 job_date_time=job_date_time,
-                iTwin_id=iTwin_id,
+                iTwin_id=itwin_id,
                 location=location,
                 email=email,
                 work_id=work_id,
@@ -321,11 +321,10 @@ class ContextCaptureService:
             The estimated cost of the job, and a potential error
             message.
         """
-        pi_dict = {
+        pi_dict = {"costEstimationParameters": {
             "gigaPixels": str(cost_parameters.giga_pixels),
             "megaPoints": str(cost_parameters.mega_points),
-            "meshQuality": cost_parameters.mesh_quality.value,
-        }
+            "meshQuality": cost_parameters.mesh_quality.value}}
         json_data = json.dumps(pi_dict)
         response = self._session.patch("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", json_data, headers=self._get_header())
         data_json = response.json()

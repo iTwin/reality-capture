@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 from enum import Enum
-from typing import NamedTuple
+from typing import NamedTuple, List
 
 from reality_apis.utils import ReturnValue, JobState, JobDateTime
 
@@ -46,11 +46,15 @@ class CCJobQuality(Enum):
 class CacheSettings:
     """
     Cache settings for a ContextCapture Job.
+
+    Attributes:
+        create_cache: True if the job should produce a cache, False otherwise.
+        use_cache: Id of the previous job cache to be reused.
     """
 
     def __init__(self) -> None:
-        self.create_cache = False
-        self.use_cache = ""
+        self.create_cache: bool = False
+        self.use_cache: str = ""
 
 
 class CCJobSettings:
@@ -67,11 +71,11 @@ class CCJobSettings:
     """
 
     def __init__(self) -> None:
-        self.inputs = []
-        self.outputs = self.Outputs()
-        self.mesh_quality = CCJobQuality.UNKNOWN
-        self.engines = 0
-        self.cache_settings = CacheSettings()
+        self.inputs: List[str] = []
+        self.outputs: CCJobSettings.Outputs = self.Outputs()
+        self.mesh_quality: CCJobQuality = CCJobQuality.UNKNOWN
+        self.engines: int = 0
+        self.cache_settings: CacheSettings = CacheSettings()
 
     def to_json(self) -> tuple[dict, dict]:
         """
@@ -228,23 +232,23 @@ class CCJobSettings:
         """
 
         def __init__(self) -> None:
-            self.context_scene = ""
-            self.ccorientation = ""
-            self.threeMX = ""
-            self.threeSM = ""
-            self.web_ready_scalable_mesh = ""
-            self.cesium_3D_tiles = ""
-            self.pod = ""
-            self.orthophoto_DSM = ""
-            self.las = ""
-            self.fbx = ""
-            self.obj = ""
-            self.esri_i3s = ""
-            self.dgn = ""
-            self.lod_tree_export = ""
-            self.ply = ""
-            self.opc = ""
-            self.omr = ""
+            self.context_scene: str = ""
+            self.ccorientation: str = ""
+            self.threeMX: str = ""
+            self.threeSM: str = ""
+            self.web_ready_scalable_mesh: str = ""
+            self.cesium_3D_tiles: str = ""
+            self.pod: str = ""
+            self.orthophoto_DSM: str = ""
+            self.las: str = ""
+            self.fbx: str = ""
+            self.obj: str = ""
+            self.esri_i3s: str = ""
+            self.dgn: str = ""
+            self.lod_tree_export: str = ""
+            self.ply: str = ""
+            self.opc: str = ""
+            self.omr: str = ""
 
 
 class CCJobCostParameters:
@@ -263,9 +267,9 @@ class CCJobCostParameters:
         mega_points: float = 0.0,
         mesh_quality: CCJobQuality = CCJobQuality.UNKNOWN,
     ):
-        self.giga_pixels = giga_pixels
-        self.mega_points = mega_points
-        self.mesh_quality = mesh_quality
+        self.giga_pixels: float = giga_pixels
+        self.mega_points: float = mega_points
+        self.mesh_quality: CCJobQuality = mesh_quality
 
 
 class CCJobProperties(NamedTuple):
