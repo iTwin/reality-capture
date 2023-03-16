@@ -131,7 +131,7 @@ stages:
           echo "##vso[task.setvariable variable=sdkName;isOutput=true]$sdkName"
         displayName: Check SDK version
         workingDirectory: $(Pipeline.Workspace)/typescript/sdk
-        name: info-sdk
+        name: info_sdk
         condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'Manual'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
 
       - script: npm pack
@@ -177,7 +177,7 @@ stages:
           echo "##vso[task.setvariable variable=sdkNodeName;isOutput=true]$sdkNodeName"
         displayName: Check SDK Node version
         workingDirectory: $(Pipeline.Workspace)/typescript/sdk-node
-        name: info-sdk-node
+        name: info_sdk_node
         condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'Manual'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
 
       - script: npm pack
