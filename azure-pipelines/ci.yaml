@@ -46,55 +46,55 @@ stages:
       # Build SDK
       - script: npm ci
         displayName: Install SDK
-        workingDirectory: $(Pipeline.Workspace)/typescript/sdk
+        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk
 
       - script: npm run build
         displayName: Typescript compiler (SDK)
-        workingDirectory: $(Pipeline.Workspace)/typescript/sdk
+        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk
 
       # Build SDK Node support
       - script: npm ci
         displayName: Install SDK Node support
-        workingDirectory: $(Pipeline.Workspace)/typescript/sdk-node
+        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk-node
 
       - script: npm run build
         displayName: Typescript compiler (SDK Node support)
-        workingDirectory: $(Pipeline.Workspace)/typescript/sdk-node
+        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk-node
 
       # Build WebApp
       - script: npm ci
         displayName: Install WebApp
-        workingDirectory: $(Pipeline.Workspace)/typescript/web-app
+        workingDirectory: $(Build.SourcesDirectory)/typescript/web-app
 
       - script: npm run build
         displayName: Typescript compiler (WebApp)
-        workingDirectory: $(Pipeline.Workspace)/typescript/web-app
+        workingDirectory: $(Build.SourcesDirectory)/typescript/web-app
 
       - script: npm run lint
         displayName: EsLint
-        workingDirectory: $(Pipeline.Workspace)/typescript/web-app
+        workingDirectory: $(Build.SourcesDirectory)/typescript/web-app
 
       # Build examples
       - script: npm ci
         displayName: Install Examples
-        workingDirectory: $(Pipeline.Workspace)/typescript/examples
+        workingDirectory: $(Build.SourcesDirectory)/typescript/examples
 
       - script: npm run build
         displayName: Typescript compiler (Examples)
-        workingDirectory: $(Pipeline.Workspace)/typescript/examples
+        workingDirectory: $(Build.SourcesDirectory)/typescript/examples
 
       # Build integration tests
       - script: npm ci
         displayName: Install Integration Tests
-        workingDirectory: $(Pipeline.Workspace)/typescript/integration-tests
+        workingDirectory: $(Build.SourcesDirectory)/typescript/integration-tests
 
       - script: npm run build
         displayName: Typescript compiler (Integration Tests)
-        workingDirectory: $(Pipeline.Workspace)/typescript/integration-tests
+        workingDirectory: $(Build.SourcesDirectory)/typescript/integration-tests
 
       - script: npm run test:integration
         displayName: Run SDK Integration Tests
-        workingDirectory: $(Pipeline.Workspace)/typescript/integration-tests
+        workingDirectory: $(Build.SourcesDirectory)/typescript/integration-tests
         env:
           IMJS_PROJECT_ID: $(PROJECT_ID)
           IMJS_CLIENT_ID: $(CLIENT_ID)
@@ -130,21 +130,21 @@ stages:
           echo "##vso[task.setvariable variable=sdkVersion;isOutput=true]$sdkVersion"
           echo "##vso[task.setvariable variable=sdkName;isOutput=true]$sdkName"
         displayName: Check SDK version
-        workingDirectory: $(Pipeline.Workspace)/typescript/sdk
+        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk
         name: info_sdk
         condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'Manual'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
 
       - script: npm pack
-        workingDirectory: $(Pipeline.Workspace)/typescript/sdk
+        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk
         displayName: Package Reality Capture SDK
-        condition: and(succeeded(), eq(variables['info.shouldPublishSDK'], 'true'))
+        condition: and(succeeded(), eq(variables['info_sdk.shouldPublishSDK'], 'true'))
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: $(Pipeline.Workspace)/typescript/sdk/$(info.sdkName)-$(info.sdkVersion).tgz
+          PathtoPublish: $(Build.SourcesDirectory)/typescript/sdk/$(info_sdk.sdkName)-$(info_sdk.sdkVersion).tgz
           artifactName: RealityCaptureSDK
         displayName: Publish Reality Capture SDK
-        condition: and(succeeded(), eq(variables['info.shouldPublishSDK'], 'true'))
+        condition: and(succeeded(), eq(variables['info_sdk.shouldPublishSDK'], 'true'))
 
       # Publish SDK node support
       - bash: |
@@ -176,25 +176,25 @@ stages:
           echo "##vso[task.setvariable variable=sdkNodeVersion;isOutput=true]$sdkNodeVersion"
           echo "##vso[task.setvariable variable=sdkNodeName;isOutput=true]$sdkNodeName"
         displayName: Check SDK Node version
-        workingDirectory: $(Pipeline.Workspace)/typescript/sdk-node
+        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk-node
         name: info_sdk_node
         condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'Manual'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
 
       - script: npm pack
-        workingDirectory: $(Pipeline.Workspace)/typescript/sdkNode
+        workingDirectory: $(Build.SourcesDirectory)/typescript/sdkNode
         displayName: Package Reality Capture SDK Node
-        condition: and(succeeded(), eq(variables['info.shouldPublishSDKNode'], 'true'))
+        condition: and(succeeded(), eq(variables['info_sdk_node.shouldPublishSDKNode'], 'true'))
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: $(Pipeline.Workspace)/typescript/sdk-node/$(info.sdkNodeName)-$(info.sdkNodeVersion).tgz
+          PathtoPublish: $(Build.SourcesDirectory)/typescript/sdk-node/$(info_sdk_node.sdkNodeName)-$(info_sdk_node.sdkNodeVersion).tgz
           artifactName: RealityCaptureSDKNode
         displayName: Publish Reality Capture SDK Node
-        condition: and(succeeded(), eq(variables['info.shouldPublishSDKNode'], 'true'))
+        condition: and(succeeded(), eq(variables['info_sdk_node.shouldPublishSDKNode'], 'true'))
 
 # - stage: PublishSDK
 #   displayName: Publish Reality Data SDK
-#   condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info.shouldPublishSDK'], 'true'))
+#   condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info_sdk.shouldPublishSDK'], 'true'))
 #   dependsOn: Build
 #   jobs:
 #     - template: templates/npmjs-publish-deployment.yaml@build-pipeline-scripts
@@ -206,7 +206,7 @@ stages:
 
 # - stage: PublishSDKNode
 #   displayName: Publish Reality Data SDK Node
-#   condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info.shouldPublishSDKNode'], 'true'))
+#   condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info_sdk_node.shouldPublishSDKNode'], 'true'))
 #   dependsOn: Build
 #   jobs:
 #     - template: templates/npmjs-publish-deployment.yaml@build-pipeline-scripts
