@@ -32,11 +32,19 @@ stages:
       pool:
         vmImage: $(imageName)
       variables:
-      - group: Reality Capture Integration Test Variables
+      - group: "Reality Capture Integration Test Variables"
 
       steps:
       - checkout: self
         lfs: true
+
+      - script: |
+          echo "$(IMJS_CLIENT_ID)"
+        env:
+          IMJS_PROJECT_ID: $(PROJECT_ID)
+          IMJS_CLIENT_ID: $(CLIENT_ID)
+          IMJS_SECRET: $(CLIENT_SECRET)
+        displayName: print variables
       
       - task: NodeTool@0
         inputs:
