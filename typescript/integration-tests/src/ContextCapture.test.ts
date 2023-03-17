@@ -68,7 +68,7 @@ describe("Context capture integration tests", () => {
         expect(workspace.id).to.deep.equal(workspaceId);
         expect(workspace.name).to.deep.equal("SDK integration tests CC workspace");
         expect(workspace.iTwinId).to.deep.equal(iTwinId);
-        expect(workspace.contextCaptureVersion).to.deep.equal("19.1");
+        expect(workspace.contextCaptureVersion).to.deep.equal("20.1");
     });
 
     // Create and upload inputs
