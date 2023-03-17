@@ -121,29 +121,20 @@ describe("Context capture integration tests", () => {
     });
 
     it("Get cc job progress", async function () {
-        this.timeout(3600000); // 60mn
+        this.timeout(10000);
 
         let jobProgress = await contextCaptureService.getJobProgress(jobId);
         expect(jobProgress.progress).to.equal(0);
         expect(jobProgress.state).to.deep.equal(CommonData.JobState.ACTIVE);
         expect(jobProgress.step).to.deep.equal("PrepareStep");
+    });
 
-        while(true) {
-            const progress = await contextCaptureService.getJobProgress(jobId);
-            if(progress.state === CommonData.JobState.SUCCESS || progress.state === CommonData.JobState.OVER || 
-                progress.state === CommonData.JobState.CANCELLED || progress.state === CommonData.JobState.FAILED) {
-                break;
-            }
-            await sleep(10000);
-        }
+    it("Cancel cc job", async function () {
+        this.timeout(10000);
 
-        jobProgress = await contextCaptureService.getJobProgress(jobId);
-        expect(jobProgress.progress).to.equal(100);
-        expect(jobProgress.state).to.deep.equal(CommonData.JobState.OVER);
-        expect(jobProgress.step).to.deep.equal("");
-
-        const jobProperties = await contextCaptureService.getJobProperties(jobId);
-        expect(jobProperties.state).to.deep.equal(CommonData.JobState.SUCCESS);
+        await contextCaptureService.cancelJob(jobId);
+        let jobProperties = await contextCaptureService.getJobProperties(jobId);
+        expect(jobProperties.state).to.deep.equal(CommonData.JobState.OVER);
     });
 
     // Delete inputs

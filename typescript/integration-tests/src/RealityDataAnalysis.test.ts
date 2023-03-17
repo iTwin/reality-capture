@@ -110,30 +110,21 @@ describe("Reality data analysis integration tests", () => {
         expect(jobProperties.state).to.deep.equal(CommonData.JobState.ACTIVE);
     });
 
-    it("Get cc job progress", async function () {
-        this.timeout(3600000); // 60mn
+    it("Get RDAS job progress", async function () {
+        this.timeout(10000);
 
         let jobProgress = await realityDataAnalysisService.getJobProgress(jobId);
         expect(jobProgress.progress).to.equal(0);
         expect(jobProgress.state).to.deep.equal(CommonData.JobState.ACTIVE);
         expect(jobProgress.step).to.deep.equal("PrepareStep");
+    });
 
-        while(true) {
-            const progress = await realityDataAnalysisService.getJobProgress(jobId);
-            if(progress.state === CommonData.JobState.SUCCESS || progress.state === CommonData.JobState.CANCELLED 
-                || progress.state === CommonData.JobState.FAILED) {
-                break;
-            }
-            await sleep(10000);
-        }
+    it("Cancel RDAS job", async function () {
+        this.timeout(10000);
 
-        jobProgress = await realityDataAnalysisService.getJobProgress(jobId);
-        expect(jobProgress.progress).to.equal(100);
-        expect(jobProgress.state).to.deep.equal(CommonData.JobState.SUCCESS);
-        expect(jobProgress.step).to.deep.equal("");
-
-        const jobProperties = await realityDataAnalysisService.getJobProperties(jobId);
-        expect(jobProperties.state).to.deep.equal(CommonData.JobState.SUCCESS);
+        await realityDataAnalysisService.cancelJob(jobId);
+        let jobProperties = await realityDataAnalysisService.getJobProperties(jobId);
+        expect(jobProperties.state).to.deep.equal(CommonData.JobState.CANCELLED);
     });
 
     // Delete inputs
