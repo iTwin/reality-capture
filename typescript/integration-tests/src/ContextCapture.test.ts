@@ -133,8 +133,8 @@ describe("Context capture integration tests", () => {
         this.timeout(10000);
 
         await contextCaptureService.cancelJob(jobId);
-        let jobProperties = await contextCaptureService.getJobProperties(jobId);
-        expect(jobProperties.state).to.deep.equal(CommonData.JobState.OVER);
+        const progress = await contextCaptureService.getJobProgress(jobId);
+        expect(progress.state).to.deep.equal(CommonData.JobState.OVER);
     });
 
     // Delete inputs
