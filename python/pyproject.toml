@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reality_apis"
-version = "1.0.1"
+version = "1.0.2"
 authors = [
-  { name="Bentley Systems", email="ariana.carnielli@bentley.com" },
+  { name="Bentley Systems" },
 ]
 description = "This package contains a SDK for Context Capture and Reality Data Analysis iTwin APIs as well as Reality Data API utils. It provides classes, functions and examples to upload local data to ContextShare, run Context Capture/Reality Data Analysis jobs and download the results."
 readme = "README.md"
@@ -24,8 +24,9 @@ dependencies = [
     "azure-storage-blob >= 12.9",
 ]
 
-[tool.setuptools]
-packages = ["reality_apis", "token_factory"]
+[tool.setuptools.packages.find]
+exclude = ["reality_apis*docs*"]
+include = ["reality_apis*", "token_factory"]
 
 [project.urls]
 "Homepage" = "https://https://github.com/iTwin/reality-apis-samples/tree/main/python"
