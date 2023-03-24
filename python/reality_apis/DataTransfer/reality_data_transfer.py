@@ -429,7 +429,7 @@ class RealityDataTransfer:
         except InterruptedError as e:
             return ReturnValue("", "Stopped download of reality data: " + str(e))
         except Exception as e:
-            return ReturnValue("", "Failed to upload reality data: " + str(e))
+            return ReturnValue("", "Failed to download reality data: " + str(e))
 
         return ReturnValue(value=True, error="")
 
