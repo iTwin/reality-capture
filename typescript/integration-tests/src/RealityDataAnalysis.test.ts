@@ -97,6 +97,8 @@ describe("Reality data analysis integration tests", () => {
 
     // Get and monitor job
     it("Get RDAS job properties", async function () {
+        this.timeout(10000);
+        
         const jobProperties = await realityDataAnalysisService.getJobProperties(jobId);
         expect(jobProperties.name).to.deep.equal("SDK integration tests RDAS job");
         expect(jobProperties.type).to.deep.equal("objects2D");
