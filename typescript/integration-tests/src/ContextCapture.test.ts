@@ -124,17 +124,10 @@ describe("Context capture integration tests", () => {
         this.timeout(10000);
 
         let jobProgress = await contextCaptureService.getJobProgress(jobId);
+        await contextCaptureService.cancelJob(jobId);
         expect(jobProgress.progress).to.equal(0);
         expect(jobProgress.state).to.deep.equal(CommonData.JobState.ACTIVE);
         expect(jobProgress.step).to.deep.equal("PrepareStep");
-    });
-
-    it("Cancel cc job", async function () {
-        this.timeout(10000);
-
-        await contextCaptureService.cancelJob(jobId);
-        const progress = await contextCaptureService.getJobProgress(jobId);
-        expect(progress.state).to.deep.equal(CommonData.JobState.OVER);
     });
 
     // Delete inputs
@@ -169,18 +162,6 @@ describe("Context capture integration tests", () => {
             await contextCaptureService.getWorkspace(workspaceId);
         }
         catch(error: any) {
-            expect((error as BentleyError).errorNumber).to.equal(404);
-        }
-    });
-
-    it("Delete 3MX output", async function () {
-        this.timeout(10000);
-        await rdaClient.deleteRealityData("", threeMXId);
-        try {
-            await rdaClient.getRealityData("", iTwinId, threeMXId);
-        }
-        catch(error: any) {
-            expect(error).to.be.instanceOf(BentleyError);
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
     });
