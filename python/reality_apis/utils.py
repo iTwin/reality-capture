@@ -28,7 +28,7 @@ class RealityDataType(Enum):
     PLY = "PLY"
     ThreeMX = "3MX"
     ThreeSM = "3SM"
-    Cesium = "Cesium"
+    Cesium = "Cesium3DTiles"
     Unstructured = "Unstructured"
 
 
