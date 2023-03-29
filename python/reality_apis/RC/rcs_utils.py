@@ -90,7 +90,6 @@ class RCJobSettings:
 
             outputs_json = settings_json.get("outputs", [])
             new_job_settings.outputs.OPC = []
-            new_job_settings.outputs.cesium_point_cloud = []
             for output_dict in outputs_json:
                 if output_dict["format"] == "OPC":
                     new_job_settings.outputs.OPC.append(output_dict["id"])
