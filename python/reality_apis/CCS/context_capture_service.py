@@ -48,7 +48,7 @@ class ContextCaptureService:
         return f"code {status_code}: {code}, {message}"
 
     def create_workspace(
-        self, work_name: str, iTwin_id: str, cc_version: str = ""
+            self, work_name: str, iTwin_id: str, cc_version: str = ""
     ) -> ReturnValue[str]:
         """
         Creates a workspace.
@@ -65,13 +65,18 @@ class ContextCaptureService:
         if cc_version != "":
             wc_dict["contextCaptureVersion"] = cc_version
         json_data = json.dumps(wc_dict)
-        response = self._session.post("https://" + self._service_url + "/contextcapture/workspaces", json_data, headers=self._get_header())
+        response = self._session.post("https://" + self._service_url + "/contextcapture/workspaces", json_data,
+                                      headers=self._get_header())
 
-        # if the query was successful we return the id of the workspace, else we return an empty string
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
-        return ReturnValue(value=data_json["workspace"]["id"], error="")
+        try:
+            # if the query was successful we return the id of the workspace, else we return an empty string
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(value=data_json["workspace"]["id"], error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value="",
+                               error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
 
     def delete_workspace(self, work_id: str) -> ReturnValue[bool]:
         """
@@ -83,14 +88,19 @@ class ContextCaptureService:
         Returns:
             True if the workspace was deleted successfully, and a potential error message.
         """
-        response = self._session.delete("https://" + self._service_url + f"/contextcapture/workspaces/{work_id}", headers=self._get_header())
-        if response.status_code < 200 or response.status_code >= 400:
-            data_json = response.json()
-            return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
-        return ReturnValue(value=True, error="")
+        response = self._session.delete("https://" + self._service_url + f"/contextcapture/workspaces/{work_id}",
+                                        headers=self._get_header())
+        try:
+            if response.status_code < 200 or response.status_code >= 400:
+                data_json = response.json()
+                return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(value=True, error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=False,
+                               error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
 
     def get_workspace_properties(
-        self, work_id: str
+            self, work_id: str
     ) -> ReturnValue[CCWorkspaceProperties]:
         """
         Get all properties of a given workspace.
@@ -103,23 +113,32 @@ class ContextCaptureService:
             An object with all the workspace properties, and a potential error message.
 
         """
-        response = self._session.get("https://" + self._service_url + f"/contextcapture/workspaces/{work_id}", headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value=CCWorkspaceProperties(), error=self._error_msg(response.status_code, data_json))
-        return ReturnValue(
-            value=CCWorkspaceProperties(
-                id=data_json["workspace"]["id"],
-                created_date_time=data_json["workspace"]["id"],
-                name=data_json["name"]["id"],
-                iTwin_id=data_json["iTwinId"]["id"],
-                context_capture_version=data_json["contextCaptureVersion"]["id"],
-            ),
-            error="",
-        )
+        response = self._session.get("https://" + self._service_url + f"/contextcapture/workspaces/{work_id}",
+                                     headers=self._get_header())
+        try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value=CCWorkspaceProperties(),
+                                   error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(
+                value=CCWorkspaceProperties(
+                    id=data_json["workspace"]["id"],
+                    created_date_time=data_json["workspace"]["id"],
+                    name=data_json["name"]["id"],
+                    iTwin_id=data_json["iTwinId"]["id"],
+                    context_capture_version=data_json["contextCaptureVersion"]["id"],
+                ),
+                error="",
+            )
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=CCWorkspaceProperties(),
+                               error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
+        except KeyError as e:
+            return ReturnValue(value=CCWorkspaceProperties(),
+                               error=str(e))
 
     def create_job(
-        self, job_type: CCJobType, settings: CCJobSettings, job_name: str, work_id: str
+            self, job_type: CCJobType, settings: CCJobSettings, job_name: str, work_id: str
     ) -> ReturnValue[str]:
         """
         Creates a job corresponding to the given settings.
@@ -142,11 +161,18 @@ class ContextCaptureService:
             "settings": settings_dict["settings"],
         }
         job_json = json.dumps(jc_dict)
-        response = self._session.post("https://" + self._service_url + "/contextcapture/jobs", job_json, headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
-        return ReturnValue(value=data_json["job"]["id"], error="")
+        response = self._session.post("https://" + self._service_url + "/contextcapture/jobs", job_json,
+                                      headers=self._get_header())
+        try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(value=data_json["job"]["id"], error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value="",
+                               error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
+        except KeyError as e:
+            return ReturnValue(value="", error=str(e))
 
     def submit_job(self, job_id: str) -> ReturnValue[bool]:
         """
@@ -161,11 +187,16 @@ class ContextCaptureService:
             "state": "active",
         }
         job_json = json.dumps(jc_dict)
-        response = self._session.patch("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", job_json, headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
-        return ReturnValue(value=True, error="")
+        response = self._session.patch("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", job_json,
+                                       headers=self._get_header())
+        try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(value=True, error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=False,
+                               error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
 
     def cancel_job(self, job_id: str) -> ReturnValue[bool]:
         """
@@ -180,11 +211,16 @@ class ContextCaptureService:
             "state": "cancelled",
         }
         job_json = json.dumps(jc_dict)
-        response = self._session.patch("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", job_json, headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
-        return ReturnValue(value=True, error="")
+        response = self._session.patch("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", job_json,
+                                       headers=self._get_header())
+        try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(value=True, error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=False,
+                               error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
 
     def delete_job(self, job_id: str) -> ReturnValue[bool]:
         """
@@ -195,11 +231,16 @@ class ContextCaptureService:
         Returns:
             True if the job was successfully deleted, and a potential error message.
         """
-        response = self._session.delete("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", headers=self._get_header())
-        if response.status_code < 200 or response.status_code >= 400:
-            data_json = response.json()
-            return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
-        return ReturnValue(value=True, error="")
+        response = self._session.delete("https://" + self._service_url + f"/contextcapture/jobs/{job_id}",
+                                        headers=self._get_header())
+        try:
+            if response.status_code < 200 or response.status_code >= 400:
+                data_json = response.json()
+                return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(value=True, error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=False,
+                               error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
 
     def get_job_properties(self, job_id: str) -> ReturnValue[CCJobProperties]:
         """
@@ -212,12 +253,13 @@ class ContextCaptureService:
         Returns:
             The properties for the job, and a potential error message.
         """
-        response = self._session.get("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value=CCJobProperties(), error=self._error_msg(response.status_code, data_json))
+        response = self._session.get("https://" + self._service_url + f"/contextcapture/jobs/{job_id}",
+                                     headers=self._get_header())
 
         try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value=CCJobProperties(), error=self._error_msg(response.status_code, data_json))
             job_name = data_json["job"].get("name", "")
             job_type = CCJobType(data_json["job"].get("type", CCJobType.NONE.value))
             job_state = JobState(data_json["job"].get("state", JobState.UNKNOWN.value))
@@ -258,26 +300,31 @@ class ContextCaptureService:
 
             if job_settings.is_error():
                 return ReturnValue(value=CCJobProperties(), error=job_settings.error)
-        except Exception as e:
+
+            return ReturnValue(
+                value=CCJobProperties(
+                    job_id=job_id,
+                    job_name=job_name,
+                    job_type=job_type,
+                    job_state=job_state,
+                    job_date_time=job_date_time,
+                    iTwin_id=itwin_id,
+                    location=location,
+                    email=email,
+                    work_id=work_id,
+                    estimated_units=estimated_units,
+                    job_settings=job_settings.value,
+                    cost_estimation_parameters=cost_estimation_parameters,
+                    estimated_cost=estimated_cost,
+                ),
+                error="",
+            )
+
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=CCJobProperties(),
+                               error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
+        except (KeyError, ValueError) as e:
             return ReturnValue(value=CCJobProperties(), error=str(e))
-        return ReturnValue(
-            value=CCJobProperties(
-                job_id=job_id,
-                job_name=job_name,
-                job_type=job_type,
-                job_state=job_state,
-                job_date_time=job_date_time,
-                iTwin_id=itwin_id,
-                location=location,
-                email=email,
-                work_id=work_id,
-                estimated_units=estimated_units,
-                job_settings=job_settings.value,
-                cost_estimation_parameters=cost_estimation_parameters,
-                estimated_cost=estimated_cost,
-            ),
-            error="",
-        )
 
     def get_job_progress(self, job_id: str) -> ReturnValue[JobProgress]:
         """
@@ -288,28 +335,28 @@ class ContextCaptureService:
         Returns:
             The progress for the job, and a potential error message.
         """
-        response = self._session.get("https://" + self._service_url + f"/contextcapture/jobs/{job_id}/progress", headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=self._error_msg(response.status_code, data_json))
-
-        dp = data_json["jobProgress"]
+        response = self._session.get("https://" + self._service_url + f"/contextcapture/jobs/{job_id}/progress",
+                                     headers=self._get_header())
         try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
+                                   error=self._error_msg(response.status_code, data_json))
+
+            dp = data_json["jobProgress"]
             state = JobState(dp["state"].lower())
-        except Exception as e:
+            return ReturnValue(value=JobProgress(state=state, progress=int(dp["percentage"]), step=dp["step"]),
+                               error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
+                               error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
+        except (KeyError, ValueError) as e:
             return ReturnValue(
                 value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
-                error=str(e),
-            )
-        return ReturnValue(
-            value=JobProgress(
-                state=state, progress=int(dp["percentage"]), step=dp["step"]
-            ),
-            error="",
-        )
+                error=str(e))
 
     def get_job_estimated_cost(
-        self, job_id: str, cost_parameters: CCJobCostParameters
+            self, job_id: str, cost_parameters: CCJobCostParameters
     ) -> ReturnValue[float]:
         """
         Get estimated cost for a given job.
@@ -326,11 +373,17 @@ class ContextCaptureService:
             "megaPoints": str(cost_parameters.mega_points),
             "meshQuality": cost_parameters.mesh_quality.value}}
         json_data = json.dumps(pi_dict)
-        response = self._session.patch("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", json_data, headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value=-1.0, error=self._error_msg(response.status_code, data_json))
-        ret = float(data_json["job"].get("estimatedCost", -1.0))
-        if ret != -1.0:
-            return ReturnValue(value=ret, error="")
-        return ReturnValue(value=ret, error="No estimatedCost field in received json")
+        response = self._session.patch("https://" + self._service_url + f"/contextcapture/jobs/{job_id}", json_data,
+                                       headers=self._get_header())
+        try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value=-1.0, error=self._error_msg(response.status_code, data_json))
+            ret = float(data_json["job"].get("estimatedCost", -1.0))
+            if ret != -1.0:
+                return ReturnValue(value=ret, error="")
+            return ReturnValue(value=ret, error="No estimatedCost field in received json")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=-1.0, error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
+        except (KeyError, ValueError) as e:
+            return ReturnValue(value=-1.0, error=str(e))

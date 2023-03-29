@@ -32,35 +32,34 @@ class RCJobSettings:
         self.outputs: RCJobSettings.Outputs = self.Outputs()
         self.engines: int = 0
 
-    def to_json(self) -> dict:
+    def to_json(self) -> tuple[dict, dict, dict]:
         """
-        Transform settings into a dictionary compatible with json.
+        Transform settings into a tuple of dictionaries compatible with json.
 
         Returns:
-            Dictionary with settings values.
+            Tuple of dictionaries with settings values. First dictionary has inputs, second has outputs and third holds
+            options.
         """
 
-        settings_dict = {
-                "inputs": list(),
-                "processingEngines": self.engines,
-                "outputs": list()
-        }
+        inputs_dict = {"inputs": list()}
 
         for rd_id in self.inputs.LAS:
-            settings_dict["inputs"].append({"name": "LAS", "realityDataId": rd_id})
+            inputs_dict["inputs"].append({"type": "LAS", "id": rd_id})
         for rd_id in self.inputs.LAZ:
-            settings_dict["inputs"].append({"name": "LAZ", "realityDataId": rd_id})
+            inputs_dict["inputs"].append({"type": "LAZ", "id": rd_id})
         for rd_id in self.inputs.PLY:
-            settings_dict["inputs"].append({"name": "PLY", "realityDataId": rd_id})
+            inputs_dict["inputs"].append({"type": "PLY", "id": rd_id})
         for rd_id in self.inputs.E57:
-            settings_dict["inputs"].append({"name": "E57", "realityDataId": rd_id})
+            inputs_dict["inputs"].append({"type": "E57", "id": rd_id})
+
+        outputs_dict = {"outputs": list()}
 
         if self.outputs.OPC:
-            settings_dict["outputs"].append("OPC")
-        if self.outputs.cesium_point_cloud:
-            settings_dict["outputs"].append("CesiumPointCloud")
+            outputs_dict["outputs"].append("OPC")
 
-        return settings_dict
+        options_dict = {"options": {"processingEngines": self.engines}}
+
+        return inputs_dict, outputs_dict, options_dict
 
     @classmethod
     def from_json(cls, settings_json: dict) -> ReturnValue[RCJobSettings]:
@@ -74,32 +73,34 @@ class RCJobSettings:
         """
         new_job_settings = cls()
         try:
-            inputs_json = settings_json["inputs"]
+            inputs_json = settings_json.get("inputs", [])
             for input_dict in inputs_json:
-                if input_dict["name"] == "LAS":
-                    new_job_settings.inputs.LAS.append(input_dict["realityDataId"])
-                elif input_dict["name"] == "LAZ":
-                    new_job_settings.inputs.LAZ.append(input_dict["realityDataId"])
-                elif input_dict["name"] == "PLY":
-                    new_job_settings.inputs.PLY.append(input_dict["realityDataId"])
-                elif input_dict["name"] == "E57":
-                    new_job_settings.inputs.E57.append(input_dict["realityDataId"])
+                if input_dict["type"] == "LAS":
+                    new_job_settings.inputs.LAS.append(input_dict["id"])
+                elif input_dict["type"] == "LAZ":
+                    new_job_settings.inputs.LAZ.append(input_dict["id"])
+                elif input_dict["type"] == "PLY":
+                    new_job_settings.inputs.PLY.append(input_dict["id"])
+                elif input_dict["type"] == "E57":
+                    new_job_settings.inputs.E57.append(input_dict["id"])
                 else:
                     raise TypeError(
-                        "found non expected input name:" + input_dict["name"]
+                        "found non expected input type:" + input_dict["type"]
                     )
-            outputs_json = settings_json["outputs"]
+
+            outputs_json = settings_json.get("outputs", [])
             new_job_settings.outputs.OPC = []
-            new_job_settings.outputs.cesium_point_cloud = []
             for output_dict in outputs_json:
-                if output_dict["name"] == "OPC":
-                    new_job_settings.outputs.OPC.append(output_dict["realityDataId"])
-                elif output_dict["name"] == "CesiumPointCloud":
-                    new_job_settings.outputs.cesium_point_cloud.append(output_dict["realityDataId"])
+                if output_dict["format"] == "OPC":
+                    new_job_settings.outputs.OPC.append(output_dict["id"])
                 else:
                     raise TypeError(
-                        "found non expected output name" + output_dict["name"]
+                        "found non expected output format" + output_dict["format"]
                     )
+
+            options_json = settings_json.get("options", {})
+            new_job_settings.engines = int(options_json.get("processingEngines", 0))
+
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_settings, error="")
@@ -127,13 +128,10 @@ class RCJobSettings:
 
         Attributes:
             OPC: Either a boolean to indicate conversion type or a list of created OPC files ids.
-            cesium_point_cloud: Either a boolean to indicate conversion type or a list of created cesiumPointCloud files
-                ids.
         """
 
         def __init__(self) -> None:
             self.OPC: Union[bool, List[str]] = False
-            self.cesium_point_cloud: Union[bool, List[str]] = False
 
 
 class RCJobCostParameters:

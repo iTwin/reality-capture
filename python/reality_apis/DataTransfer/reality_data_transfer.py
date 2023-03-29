@@ -55,7 +55,7 @@ class RealityDataTransfer:
 
     @staticmethod
     def _create_files_tuple(data_path, data_types, recursion) -> List[Tuple[str, int]]:
-        # get relative paths to files and their sizes, we can choose types if data_type is a directory and also if we
+        # get relative paths to files and their sizes, we can choose types if data_path is a directory and also if we
         # want to recursively go through subdirectories or not.
         if os.path.isdir(data_path) and recursion:
             if data_types is not None:
@@ -112,11 +112,15 @@ class RealityDataTransfer:
 
         response = self._session.post("https://" + self._service_url + "/realitydata/", json_data,
                                       headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
-
-        return ReturnValue(value=data_json["realityData"]["id"], error="")
+        try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(value=data_json["realityData"]["id"], error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value="", error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
+        except KeyError as e:
+            return ReturnValue(value="", error=str(e))
 
     def _update_reality_data(
             self, rd_id: str, update_dict: dict, iTwin_id: str = ""
@@ -128,16 +132,26 @@ class RealityDataTransfer:
 
         response = self._session.patch("https://" + self._service_url + f"/realitydata/{rd_id}", json_data,
                                        headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
-        return ReturnValue(value=data_json["realityData"]["id"], error="")
+        try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(value=data_json["realityData"]["id"], error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value="", error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
+        except KeyError as e:
+            return ReturnValue(value="", error=str(e))
 
-    def _upload_data_to_container(self, data_path, rd_id, iTwin_id, rd_folder ="", data_types = None, recursion = True):
+    def _upload_data_to_container(self, data_path, rd_id, iTwin_id, rd_folder ="", data_types = None, recursion = True) -> ReturnValue[bool]:
         # get files relative paths and sizes
         files_tuple = self._create_files_tuple(data_path, data_types, recursion)
 
-        total_size = sum(n for _, n in files_tuple)
+        size_threshold = 5 * 1024 * 1024  # 5mb
+        nb_small_files = sum(size <= size_threshold for _, size in files_tuple)
+
+        nb_threads = min(32, 4 + nb_small_files // 100)  # control number of threads considering quantity of files
+
+        total_size = sum(size for _, size in files_tuple)
         proceed = True
         uploaded_values = {}
 
@@ -145,10 +159,15 @@ class RealityDataTransfer:
         response = self._session.get(
             "https://" + self._service_url + f"/realitydata/{rd_id}/container?projectId={iTwin_id}&access=Write",
             headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
-        sas_uri = data_json["container"]["_links"]["containerUrl"]["href"]
+        try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
+            sas_uri = data_json["container"]["_links"]["containerUrl"]["href"]
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=False, error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
+        except KeyError as e:
+            return ReturnValue(value=False, error=str(e))
 
         # Notify we are modifying content
         ret_bool = self._update_reality_data(
@@ -162,8 +181,8 @@ class RealityDataTransfer:
                 nonlocal uploaded_values
                 uploaded_values[file_tuple[0]] = current
                 percentage = (sum(uploaded_values.values()) / total_size) * 100
+                nonlocal proceed
                 if self._progress_hook is not None:
-                    nonlocal proceed
                     proceed = proceed and self._progress_hook(percentage)
                 if not proceed:
                     raise InterruptedError("Upload interrupted by callback function")
@@ -185,7 +204,7 @@ class RealityDataTransfer:
             uploaded_values[file_tuple[0]] = file_tuple[1]
 
         try:
-            with ThreadPool(processes=int(4)) as pool:
+            with ThreadPool(processes=nb_threads) as pool:
                 pool.map(_upload_file, files_tuple)
         except InterruptedError as e:
             return ReturnValue(False, "Stopped upload of reality data: " + str(e))
@@ -382,15 +401,26 @@ class RealityDataTransfer:
             "https://" + self._service_url + f"/realitydata/{data_id}/container?projectId={iTwin_id}&access=Read",
             headers=self._get_header())
 
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
-        sas_uri = data_json["container"]["_links"]["containerUrl"]["href"]
+        try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
+            sas_uri = data_json["container"]["_links"]["containerUrl"]["href"]
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=False, error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
+        except KeyError as e:
+            return ReturnValue(value=False, error=str(e))
 
         client = ContainerClient.from_container_url(sas_uri)
         blobs = client.list_blobs()
 
         blobs_tuple = [(blob.name, blob.size) for blob in blobs]
+
+        size_threshold = 5 * 1024 * 1024  # 5mb
+        nb_small_files = sum(size <= size_threshold for _, size in blobs_tuple)
+
+        nb_threads = min(32, 4 + nb_small_files // 100)  # control number of threads considering quantity of files
+
         total_size = sum(n for _, n in blobs_tuple)
         proceed = True
         downloaded_values = {}
@@ -400,8 +430,8 @@ class RealityDataTransfer:
                 nonlocal downloaded_values
                 downloaded_values[blob_tuple[0]] = current
                 percentage = (sum(downloaded_values.values()) / total_size) * 100
+                nonlocal proceed
                 if self._progress_hook is not None:
-                    nonlocal proceed
                     proceed = proceed and self._progress_hook(percentage)
                 if not proceed:
                     raise InterruptedError("Download interrupted by callback function")
@@ -424,7 +454,7 @@ class RealityDataTransfer:
             downloaded_values[blob_tuple[0]] = blob_tuple[1]
 
         try:
-            with ThreadPool(processes=int(4)) as pool:
+            with ThreadPool(processes=nb_threads) as pool:
                 pool.map(_download_blob, blobs_tuple)
         except InterruptedError as e:
             return ReturnValue("", "Stopped download of reality data: " + str(e))
@@ -513,10 +543,13 @@ class RealityDataTransfer:
             "https://" + self._service_url + f"/realitydata/{rd_id}",
             headers=self._get_header())
 
-        if response.status_code < 200 or response.status_code >= 400:
-            data_json = response.json()
-            return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
-        return ReturnValue(value=True, error="")
+        try:
+            if response.status_code < 200 or response.status_code >= 400:
+                data_json = response.json()
+                return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(value=True, error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=False, error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
 
 
 def example_hook(percentage):
