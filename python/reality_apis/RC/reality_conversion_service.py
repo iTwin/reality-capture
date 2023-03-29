@@ -53,22 +53,31 @@ class RealityConversionService:
 
         """
         # take job_settings and create the json settings we need to send
+        inputs_dict, outputs_dict, options_dict = settings.to_json()
+
         jc_dict = {
             "type": job_type.value,
             "name": job_name,
             "iTwinId": iTwin_id,
-            "settings": settings.to_json(),
+            "inputs": inputs_dict["inputs"],
+            "outputs": outputs_dict["outputs"],
+            "options": options_dict["options"]
         }
         job_json = json.dumps(jc_dict)
         # send the json settings
         response = self._session.post("https://" + self._service_url + "/realityconversion/jobs", job_json,
                                       headers=self._get_header())
 
-        # if the query was successful we return the id of the job, else we return an empty string and the error message
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
-        return ReturnValue(value=data_json["job"]["id"], error="")
+        # if the query was successful we return the id of the job, else we return an empty string and the error message*
+        try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(value=data_json["job"]["id"], error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value="", error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
+        except KeyError as e:
+            return ReturnValue(value="", error=str(e))
 
     def submit_job(self, job_id: str) -> ReturnValue[bool]:
         """
@@ -84,10 +93,13 @@ class RealityConversionService:
         response = self._session.patch("https://" + self._service_url + f"/realityconversion/jobs/{job_id}",
                                        job_json,
                                        headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
-        return ReturnValue(value=True, error="")
+        try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(value=True, error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=False, error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
 
     def get_job_properties(self, job_id: str) -> ReturnValue[RCJobProperties]:
         """
@@ -100,11 +112,11 @@ class RealityConversionService:
         """
         response = self._session.get("https://" + self._service_url + f"/realityconversion/jobs/{job_id}",
                                      headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value=RCJobProperties(), error=self._error_msg(response.status_code, data_json))
-
         try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value=RCJobProperties(), error=self._error_msg(response.status_code, data_json))
+
             job_name = data_json["job"].get("name", "")
             job_type = RCJobType(data_json["job"].get("type", RCJobType.NONE.value))
             job_state = JobState(data_json["job"].get("state", JobState.UNKNOWN.value))
@@ -127,7 +139,7 @@ class RealityConversionService:
             data_center = data_json["job"].get("dataCenter", "")
             email = data_json["job"].get("email", "")
 
-            job_settings = RCJobSettings.from_json(data_json["job"].get("settings", {}))
+            job_settings = RCJobSettings.from_json(data_json["job"])
             if job_settings.is_error():
                 return ReturnValue(value=RCJobProperties(), error=job_settings.error)
 
@@ -138,22 +150,25 @@ class RealityConversionService:
                 cost_estimation.mega_points = float(estimate.get("megaPoints", 0.0))
                 cost_estimation.estimated_cost = float(estimate.get("estimatedCost", 0.0))
 
-        except Exception as e:
-            return ReturnValue(value=RCJobProperties(), error=str(e))
+            return ReturnValue(
+                value=RCJobProperties(job_id=job_id,
+                                      job_name=job_name,
+                                      job_type=job_type,
+                                      job_state=job_state,
+                                      job_date_time=job_date_time,
+                                      estimated_units=estimated_units,
+                                      data_center=data_center,
+                                      iTwin_id=itwin_id,
+                                      email=email,
+                                      job_settings=job_settings.value,
+                                      cost_estimation_parameters=cost_estimation),
+                error="")
 
-        return ReturnValue(
-            value=RCJobProperties(job_id=job_id,
-                                  job_name=job_name,
-                                  job_type=job_type,
-                                  job_state=job_state,
-                                  job_date_time=job_date_time,
-                                  estimated_units=estimated_units,
-                                  data_center=data_center,
-                                  iTwin_id=itwin_id,
-                                  email=email,
-                                  job_settings=job_settings.value,
-                                  cost_estimation_parameters=cost_estimation),
-            error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=RCJobProperties(), error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
+
+        except (KeyError, ValueError) as e:
+            return ReturnValue(value=RCJobProperties(), error=str(e))
 
     def get_job_progress(self, job_id: str) -> ReturnValue[JobProgress]:
         """
@@ -166,25 +181,18 @@ class RealityConversionService:
         """
         response = self._session.get("https://" + self._service_url + f"/realityconversion/jobs/{job_id}/progress",
                                      headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
-                               error=self._error_msg(response.status_code, data_json))
-
-        dp = data_json["progress"]
         try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=self._error_msg(response.status_code, data_json))
+            dp = data_json["progress"]
             state = JobState(dp["state"].lower())
-        except Exception as e:
-            return ReturnValue(
-                value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""),
-                error=str(e),
-            )
-        return ReturnValue(
-            value=JobProgress(
-                state=state, progress=int(dp["percentage"]), step=dp["step"]
-            ),
-            error="",
-        )
+            return ReturnValue(value=JobProgress(state=state, progress=int(dp["percentage"]), step=dp["step"]), error="")
+
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
+        except (KeyError, ValueError) as e:
+            return ReturnValue(value=JobProgress(state=JobState.UNKNOWN, progress=-1, step=""), error=str(e))
 
     def get_job_estimated_cost(self, job_id: str, cost_parameters: RCJobCostParameters) -> ReturnValue[float]:
         """
@@ -200,11 +208,16 @@ class RealityConversionService:
         json_data = json.dumps(pi_dict)
         response = self._session.patch("https://" + self._service_url + f"/realityconversion/jobs/{job_id}", json_data,
                                        headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value=-1.0, error=self._error_msg(response.status_code, data_json))
-        ret = RCJobCostParameters.from_json(data_json["job"]["costEstimation"])
-        return ReturnValue(value=ret.value.estimated_cost, error=ret.error)
+        try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value=-1.0, error=self._error_msg(response.status_code, data_json))
+            ret = RCJobCostParameters.from_json(data_json["job"]["costEstimation"])
+            return ReturnValue(value=ret.value.estimated_cost, error=ret.error)
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=-1.0, error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
+        except KeyError as e:
+            return ReturnValue(value=-1.0, error=str(e))
 
     def cancel_job(self, job_id: str) -> ReturnValue[bool]:
         """
@@ -221,10 +234,13 @@ class RealityConversionService:
         job_json = json.dumps(jc_dict)
         response = self._session.patch("https://" + self._service_url + f"/realityconversion/jobs/{job_id}", job_json,
                                        headers=self._get_header())
-        data_json = response.json()
-        if response.status_code < 200 or response.status_code >= 400:
-            return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
-        return ReturnValue(value=True, error="")
+        try:
+            data_json = response.json()
+            if response.status_code < 200 or response.status_code >= 400:
+                return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(value=True, error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=False, error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
 
     def delete_job(self, job_id: str) -> ReturnValue[bool]:
         """
@@ -237,7 +253,10 @@ class RealityConversionService:
         """
         response = self._session.delete("https://" + self._service_url + f"/realityconversion/jobs/{job_id}",
                                         headers=self._get_header())
-        if response.status_code < 200 or response.status_code >= 400:
-            data_json = response.json()
-            return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
-        return ReturnValue(value=True, error="")
+        try:
+            if response.status_code < 200 or response.status_code >= 400:
+                data_json = response.json()
+                return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
+            return ReturnValue(value=True, error="")
+        except json.decoder.JSONDecodeError:
+            return ReturnValue(value=False, error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
