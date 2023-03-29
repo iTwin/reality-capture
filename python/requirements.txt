@@ -1,3 +1,4 @@
+requests
 bottle >= 0.12
 oauthlib >= 3.2
 azure-storage-blob >= 12.9
