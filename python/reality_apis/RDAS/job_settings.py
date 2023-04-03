@@ -341,7 +341,7 @@ class O3DJobSettings:
         if self.outputs.exported_locations3D_SHP:
             json_dict["outputs"].append("exportedLocations3DSHP")
         if self.use_tie_points:
-            json_dict["UseTiePoints"] = "true"
+            json_dict["useTiePoints"] = "true"
         if self.min_photos:
             json_dict["MinPhotos"] = str(self.min_photos)
         if self.max_dist:
