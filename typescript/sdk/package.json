@@ -10,7 +10,7 @@
 		"clean": "rimraf lib build .rush",
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
-		"unit-tests:rdas": "mocha ./lib/rdas/RealityDataAnalysisService.test.js"
+		"unit-tests:rdas": "mocha ./lib/*.test.js --slow 0"
 	},
 	"keywords": [],
 	"author": {
