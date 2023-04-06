@@ -7,12 +7,12 @@ import chai, { expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 import { BentleyError } from "@itwin/core-bentley";
-import { ChangeDetectionJobSettings, ExtractGroundJobSettings, L3DJobSettings, O2DJobSettings, O3DJobSettings, RDAJobType, S2DJobSettings, S3DJobSettings } from "./Settings";
+import { ChangeDetectionJobSettings, ExtractGroundJobSettings, L3DJobSettings, O2DJobSettings, O3DJobSettings, S2DJobSettings, S3DJobSettings } from "./Settings";
 
 
 export function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-describe("Reality data analysis unit tests", () => {
+describe("Reality data analysis settings unit tests", () => {
     describe("Settings to json", () => {
         it("O2D", function () {
             const o2dSettings = new O2DJobSettings();
@@ -112,6 +112,7 @@ describe("Reality data analysis unit tests", () => {
             s3dSettings.inputs.pointCloudSegmentationDetector = "pointCloudSegmentationDetectorId";
             s3dSettings.inputs.pointClouds = "pointCloudsId";
             s3dSettings.inputs.segmentation3D = "segmentation3DId";
+            s3dSettings.inputs.clipPolygon = "clipPolygonId";
             s3dSettings.outputs.exportedLocations3DSHP = "exportedLocations3DSHP";
             s3dSettings.outputs.exportedObjects3DCesium = "exportedObjects3DCesium";
             s3dSettings.outputs.exportedObjects3DDGN = "exportedObjects3DDGN";
@@ -136,6 +137,7 @@ describe("Reality data analysis unit tests", () => {
                 expect(json.inputs).to.deep.include({"name": "pointCloudSegmentationDetector", "realityDataId": "pointCloudSegmentationDetectorId"}),
                 expect(json.inputs).to.deep.include({"name": "pointClouds", "realityDataId": "pointCloudsId"}),
                 expect(json.inputs).to.deep.include({"name": "segmentation3D", "realityDataId": "segmentation3DId"}),
+                expect(json.inputs).to.deep.include({"name": "clipPolygon", "realityDataId": "clipPolygonId"}),
 
                 expect(json).to.have.property("outputs"),
                 expect(json.outputs).to.have.length.above(0),
@@ -587,6 +589,10 @@ describe("Reality data analysis unit tests", () => {
                 {
                     "name": "objects2D",
                     "realityDataId": "objects2DId"
+                },
+                {
+                    "name": "clipPolygon",
+                    "realityDataId": "clipPolygonId"
                 }
                 ],
                 "outputs": [{
@@ -647,6 +653,7 @@ describe("Reality data analysis unit tests", () => {
                 expect(s3DSettings.inputs).to.have.property("orientedPhotos", "orientedPhotosId"),
                 expect(s3DSettings.inputs).to.have.property("photoObjectDetector", "photoObjectDetectorId"),
                 expect(s3DSettings.inputs).to.have.property("objects2D", "objects2DId"),
+                expect(s3DSettings.inputs).to.have.property("clipPolygon", "clipPolygonId"),
 
                 expect(s3DSettings.outputs).to.have.property("segmentation3D", "segmentation3DId"),
                 expect(s3DSettings.outputs).to.have.property("segmentedPointCloud", "segmentedPointCloudId"),

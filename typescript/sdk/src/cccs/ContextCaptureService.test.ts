@@ -9,19 +9,17 @@ chai.use(chaiAsPromised);
 import * as dotenv from "dotenv";
 import { BentleyError } from "@itwin/core-bentley";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
-import { RealityDataAnalysisService } from "./RealityDataAnalysisService";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { JobState } from "../CommonData";
-import { O2DJobSettings, RDAJobType } from "./Settings";
-
+import { ContextCaptureService } from "../reality-capture";
+import { CCJobQuality, CCJobSettings, CCJobType } from "./Utils";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-describe("Reality data analysis unit tests", () => {
+describe("Context capture unit tests", () => {
     let iTwinId = "";
-    let serviceUrl = "https://api.bentley.com/realitydataanalysis"
-    let realityDataAnalysisService: RealityDataAnalysisService;
+    let serviceUrl = "https://api.bentley.com/contextcapture"
+    let contextCaptureService: ContextCaptureService;
     let axiosMock = new MockAdapter(axios);
     let authorizationClient: ServiceAuthorizationClient;
 
@@ -37,11 +35,11 @@ describe("Reality data analysis unit tests", () => {
         authorizationClient = new ServiceAuthorizationClient({
             clientId: clientId,
             clientSecret: secret,
-            scope: Array.from(RealityDataAnalysisService.getScopes()).join(" "),
+            scope: Array.from(ContextCaptureService.getScopes()).join(" "),
             authority: authority,
         });
 
-        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient);
+        contextCaptureService = new ContextCaptureService(authorizationClient);
     });
 
     beforeEach(async function () {
@@ -57,82 +55,90 @@ describe("Reality data analysis unit tests", () => {
             this.timeout(2500);
 
             axiosMock.onPost(serviceUrl + "/jobs", {
-                "type": "objects2D",
-                "name": "SDK unit test",
-                "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                "type": "Full",
+                "name": "Context capture unit test job",
+                "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
+                "workspaceId": "workspaceId",
                 "settings": {
-                    "inputs": [{
-                            "name": "photos",
-                            "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
-                        },
-                        {
-                            "name": "photoObjectDetector",
-                            "realityDataId": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
-                        }
-                    ],
-                    "outputs": ["objects2D"]
+                    "quality": "Extra",
+                    "processingEngines": 5,
+                    "outputs": [
+                        "OPC", "CCOrientations"
+                    ]
                 }
             }).reply(201, 
             {
-                "job": {                  
-                    "id": "6f51448f-6377-4330-9ab0-f13fe994b3f1",
-                    "type": "objects2D",
-                    "name": "SDK unit test",
+                "job": {
+                    "id": "cc3d35cc-416a-4262-9714-b359da70b419",
+                    "name": "Context capture unit test job",
+                    "type": "Full",
+                    "state": "unsubmitted",
+                    "createdDateTime": "2023-04-05T14:29:55Z",
+                    "lastModifiedDateTime": "2023-04-05T14:29:55Z",
                     "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                    "settings": {
+                    "location": "East US",
+                    "email": "example@example.com",
+                    "workspaceId": "workspaceId",
+                    "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
+                    "jobSettings": {
+                        "quality": "Extra",
                         "outputs": [{
-                            "name": "objects2D",
-                        }],
-                        "inputs": [{
-                                "name": "photos",
-                                "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
+                                "format": "OPC",
+                                "id": "opcId"
                             },
                             {
-                                "name": "photoObjectDetector",
-                                "realityDataId": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
+                                "format": "CCOrientations",
+                                "id": "orientationsId"
                             }
-                        ]
-                    },
+                        ],
+                        "processingEngines": 5,
+                        "cacheSettings": {
+                            "createCache": true,
+                            "useCache": "799b11bd-71cf-481a-b284-bf48f672cd9a"
+                        }
+                    }
                 }
             });
 
-            const settings = new O2DJobSettings();
-            settings.inputs.photos = "8e9f7e7a-f37e-4d74-a1e7-df7325944757";
-            settings.inputs.photoObjectDetector = "9fbbe885-9086-4b98-b6a5-8024657bcff4";
-            settings.outputs.objects2D = "objects2D";
-            const jobName = "SDK unit test";
+            const ccSettings = new CCJobSettings();
+            ccSettings.inputs = ["imagesId", "ccOrientationsId"];
+            ccSettings.outputs.opc = "opc";
+            ccSettings.outputs.orientations = "orientations";
+            ccSettings.engines = 5;
+            ccSettings.meshQuality = CCJobQuality.EXTRA;
+            ccSettings.cacheSettings = {
+                useCache: "useCache",
+                createCache: true
+            };
+            const jobName = "Context capture unit test job";
                         
-            const id = realityDataAnalysisService.createJob(settings, jobName, iTwinId);
+            const id = contextCaptureService.createJob(CCJobType.FULL, ccSettings, jobName, "workspaceId");
             await sleep(2000);
 
             if(axiosMock.history.post.length === 0)
                 return expect(axiosMock.history.post.length).equal(1, "Mock adapter has not been called as expected.");
 
-            return Promise.all([
-                expect(axiosMock.history.post[0].data).deep.equal(JSON.stringify({
-                    "type": "objects2D",
-                    "name": "SDK unit test",
-                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                    "settings": {
-                        "inputs": [{
-                                "name": "photos",
-                                "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
-                            },
-                            {
-                                "name": "photoObjectDetector",
-                                "realityDataId": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
-                            }
-                        ],
-                        "outputs": ["objects2D"]
-                    }
-                })),
-                expect(id).to.eventually.deep.equal("6f51448f-6377-4330-9ab0-f13fe994b3f1"),
+            const body = JSON.parse(axiosMock.history.post[0].data);
+            return Promise.all([         
+                expect(body).to.have.property("type", "Full"),
+                expect(body).to.have.property("name", "Context capture unit test job"),
+                expect(body).to.have.property("workspaceId", "workspaceId"),
+                expect(body).to.have.property("inputs"),
+                expect(body.inputs).to.have.length.above(0),
+                expect(body.inputs).to.deep.include({"id": "imagesId"}),
+                expect(body.inputs).to.deep.include({"id": "ccOrientationsId"}),
+                expect(body.settings).to.have.property("quality", "Extra"),
+                expect(body.settings).to.have.property("processingEngines", 5),
+                expect(body.settings.outputs).to.have.length.above(0),
+                expect(body.inputs).to.deep.include("OPC"),
+                expect(body.inputs).to.deep.include("CCOrientations"),
+                expect(id).to.eventually.deep.equal("cc3d35cc-416a-4262-9714-b359da70b419"),
             ]);
         });
     
     });
 
-    describe("Private submit request", () => {
+    /*describe("Private submit request", () => {
         it("Get", async function () {
             axiosMock.onGet(serviceUrl + "/jobs/id1").reply(200, { });
             const res = (realityDataAnalysisService as any).submitRequest("jobs/id1", "GET", [200]);
@@ -423,6 +429,6 @@ describe("Reality data analysis unit tests", () => {
             return expect(realityDataAnalysisService.getJobEstimatedCost("validId", body)).to.eventually.equal(2.1);
         });
     
-    });
+    });*/
 
 });

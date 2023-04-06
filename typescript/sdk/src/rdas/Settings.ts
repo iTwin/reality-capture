@@ -609,6 +609,8 @@ class S3DInputs {
     photoObjectDetector: string;
     /** Given 2D objects. */
     objects2D: string;
+    /** Path of clipping polygon to apply. */
+    clipPolygon: string;
 
     constructor() {
         /**
@@ -646,6 +648,11 @@ class S3DInputs {
          * @type {string}
          */
         this.objects2D = "";
+        /**
+         * Path of clipping polygon to apply.
+         * @type {string}
+         */
+        this.clipPolygon = "";
     }
 }
 
@@ -809,6 +816,9 @@ export class S3DJobSettings {
 
         if (this.inputs.objects2D)
             json["inputs"].push({ "name": "objects2D", "realityDataId": this.inputs.objects2D });
+
+        if (this.inputs.clipPolygon)
+            json["inputs"].push({ "name": "clipPolygon", "realityDataId": this.inputs.clipPolygon });
         
         json["outputs"] = [];
         if (this.outputs.segmentation3D)
@@ -876,6 +886,8 @@ export class S3DJobSettings {
                 newJobSettings.inputs.photoObjectDetector = input["realityDataId"];
             else if (input["name"] === "objects2D")
                 newJobSettings.inputs.objects2D = input["realityDataId"];
+            else if (input["name"] === "clipPolygon")
+                newJobSettings.inputs.clipPolygon = input["realityDataId"];
             else
                 return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected input name : " + input["name"]));
         }

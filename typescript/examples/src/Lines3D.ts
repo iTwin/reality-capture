@@ -14,12 +14,12 @@ import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function runContextCaptureExample() {
-    const imageCollection = "path to your image folder";
-    const orientedPhotosContextScene = "path to the folder where your context scene file is";
-    const photoSegmentationDetector = "path to the folder where your detector is";
-    const mesh = "path to the folder where your mesh is";
-    const meshContextScene = "path to the folder where your context scene file that references the mesh is";
-    const outputPath = "path to the folder where you want to save outputs";
+    const imageCollection = "D:\\data-web\\Lines3D\\Images";
+    const orientedPhotosContextScene = "D:\\data-web\\Lines3D\\OrientedPhotos";
+    const photoSegmentationDetector = "D:\\data-web\\Lines3D\\CracksA_v1";
+    const mesh = "D:\\data-web\\Lines3D\\3MX";
+    const meshContextScene = "D:\\data-web\\Lines3D\\Mesh3MX";
+    const outputPath = "D:\\output\\examples";
 
     dotenv.config();
 
@@ -30,7 +30,7 @@ async function runContextCaptureExample() {
     const contextSceneName = "Test L3D Scene";
     const detectorName = "Test L3D detector";
 
-    const projectId = process.env.IMJS_PROJECT_ID ?? "";
+    const projectId = "049d8282-11dc-46e3-8d51-c6ee2bc70c94";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_SECRET ?? "";
     const authority = process.env.IMJS_ISSUER_URL ?? "";
