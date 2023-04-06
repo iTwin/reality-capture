@@ -3,6 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
+import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
 import { JobDates } from "../CommonData";
 
 /** Possible types of a CCS job. */
@@ -262,7 +263,7 @@ export class CCJobSettings {
             json["settings"]["outputs"].push("Cesium 3D Tiles");
 
         if (this.outputs.dgn)
-            json["settings"]["settings"]["outputs"].push("DGN");
+            json["settings"]["outputs"].push("DGN");
 
         if (this.outputs.esri)
             json["settings"]["outputs"].push("ESRI i3s");
@@ -317,11 +318,11 @@ export class CCJobSettings {
         }
 
         if (this.meshQuality) {
-            json["meshQuality"] = this.meshQuality;
+            json["settings"]["quality"] = this.meshQuality;
         }
 
         if (this.engines) {
-            json["processingEngines"] = this.engines;
+            json["settings"]["processingEngines"] = this.engines;
         }
 
         return json;
@@ -375,10 +376,13 @@ export class CCJobSettings {
             else if (output["format"] === "WebReady ScalableMesh")
                 newJobSettings.outputs.webReadyScalableMesh = output["id"];
             else
-                return Promise.reject(new Error("Found non expected output name" + output["name"]));
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output name : " + output["format"]));
         }
         if ("cacheSettings" in settingsJson["jobSettings"])
-            newJobSettings.cacheSettings = JSON.parse(settingsJson["jobSettings"]["cacheSettings"]);
+            newJobSettings.cacheSettings = {
+                useCache: settingsJson["jobSettings"]["cacheSettings"]["useCache"],
+                createCache: settingsJson["jobSettings"]["cacheSettings"]["createCache"],
+            }
 
         if ("quality" in settingsJson["jobSettings"])
             newJobSettings.meshQuality = settingsJson["jobSettings"]["quality"];
