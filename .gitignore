@@ -145,5 +145,5 @@ v_env
 node_modules/
 lib/
 out/
-*nyc_output/
+*.nyc_output/
 
