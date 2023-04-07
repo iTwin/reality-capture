@@ -13,6 +13,7 @@ import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { ContextCaptureService } from "../reality-capture";
 import { CCJobQuality, CCJobSettings, CCJobType } from "./Utils";
+import { JobState } from "../CommonData";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -56,16 +57,15 @@ describe("Context capture unit tests", () => {
 
             axiosMock.onPost(serviceUrl + "/jobs", {
                 "type": "Full",
-                "name": "Context capture unit test job",
                 "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
-                "workspaceId": "workspaceId",
-                "settings": {
+                "name": "Context capture unit test job",
+                "settings": {   
+                    "outputs": ["OPC", "CCOrientations"],               
+                    "cacheSettings": { "createCache": true, "useCache": "useCache" },
                     "quality": "Extra",
-                    "processingEngines": 5,
-                    "outputs": [
-                        "OPC", "CCOrientations"
-                    ]
-                }
+                    "processingEngines": 5
+                },
+                "workspaceId": "workspaceId"
             }).reply(201, 
             {
                 "job": {
@@ -77,7 +77,7 @@ describe("Context capture unit tests", () => {
                     "lastModifiedDateTime": "2023-04-05T14:29:55Z",
                     "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
                     "location": "East US",
-                    "email": "example@example.com",
+                    "email": "example@bentley.com",
                     "workspaceId": "workspaceId",
                     "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
                     "jobSettings": {
@@ -130,18 +130,18 @@ describe("Context capture unit tests", () => {
                 expect(body.settings).to.have.property("quality", "Extra"),
                 expect(body.settings).to.have.property("processingEngines", 5),
                 expect(body.settings.outputs).to.have.length.above(0),
-                expect(body.inputs).to.deep.include("OPC"),
-                expect(body.inputs).to.deep.include("CCOrientations"),
+                expect(body.settings.outputs).to.deep.include("OPC"),
+                expect(body.settings.outputs).to.deep.include("CCOrientations"),
                 expect(id).to.eventually.deep.equal("cc3d35cc-416a-4262-9714-b359da70b419"),
             ]);
         });
     
     });
 
-    /*describe("Private submit request", () => {
+    describe("Private submit request", () => {
         it("Get", async function () {
             axiosMock.onGet(serviceUrl + "/jobs/id1").reply(200, { });
-            const res = (realityDataAnalysisService as any).submitRequest("jobs/id1", "GET", [200]);
+            const res = (contextCaptureService as any).submitRequest("jobs/id1", "GET", [200]);
             await sleep(500);
             
             if(axiosMock.history.get.length === 0)
@@ -152,14 +152,14 @@ describe("Context capture unit tests", () => {
 
         it("Invalid method", async function () {
             axiosMock.onGet(serviceUrl + "/jobs/id2").reply(200, { });
-            const res = (realityDataAnalysisService as any).submitRequest("jobs/id2", "INVALID", [200]);
+            const res = (contextCaptureService as any).submitRequest("jobs/id2", "INVALID", [200]);
 
             return expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Wrong request method");
         });
 
         it("Wrong response code", async function () {
             axiosMock.onGet(serviceUrl + "/jobs/id3").reply(404, { });
-            const res = (realityDataAnalysisService as any).submitRequest("jobs/id3", "GET", [200]);
+            const res = (contextCaptureService as any).submitRequest("jobs/id3", "GET", [200]);
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
@@ -170,13 +170,81 @@ describe("Context capture unit tests", () => {
 
     });
 
-    describe("Submit job", () => {
-        it("Submit valid job", async function () {
-            axiosMock.onPatch(serviceUrl + "/jobs/validId", {"state": "active"}).reply(200, { });
-            const res = realityDataAnalysisService.submitJob("validId");
+    describe("Create workspace", () => {
+        it("Create workspace", async function () {
+            const body: any = {
+                "name": "Unit tests workspace name",
+                "iTwinId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "contextCaptureVersion": "20.1"
+            };
+            axiosMock.onPost(serviceUrl + "/workspaces", body).reply(201, {
+                "workspace": {
+                    "id": "e47cf092-729a-4ce2-b20e-9b01ad820cdb",
+                    "createdDateTime": "2023-04-07T09:39:23.436Z",
+                    "name": "Unit tests workspace name",
+                    "iTwinId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "contextCaptureVersion": "20.1"
+                }
+            });
+            const res = contextCaptureService.createWorkspace("Unit tests workspace name", "3fa85f64-5717-4562-b3fc-2c963f66afa6", "20.1");
+            await sleep(500);
+
+            if(axiosMock.history.post.length === 0)
+                return expect(axiosMock.history.post.length).equal(1, "Mock adapter has not been called as expected.");
+
+            return expect(res).to.eventually.deep.equal("e47cf092-729a-4ce2-b20e-9b01ad820cdb");
+        });
+    });
+
+    describe("Delete workspace", () => {
+        it("Delete workspace", async function () {
+            axiosMock.onDelete(serviceUrl + "/workspaces/workspace").reply(204, { });
+            const res = contextCaptureService.deleteWorkspace("workspace");
+            await sleep(500);
+
+            if(axiosMock.history.delete.length === 0)
+                return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
+
+            return expect(res).to.eventually.deep.equal({});
+        });
+
+    });
+
+    describe("Get workspace", () => {
+        it("Get workspace", async function () {
+            axiosMock.onGet(serviceUrl + "/workspaces/workspace").reply(200, {
+                "workspace": {
+                    "id": "e47cf092-729a-4ce2-b20e-9b01ad820cdb",
+                    "createdDateTime": "2023-04-07T09:39:23.436Z",
+                    "name": "Unit tests workspace name",
+                    "iTwinId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "contextCaptureVersion": "20.1"
+                }
+            });
+            const workspace = contextCaptureService.getWorkspace("workspace");
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
+
+                return Promise.all([
+                    expect(workspace).to.eventually.have.property("id", "e47cf092-729a-4ce2-b20e-9b01ad820cdb"),
+                    expect(workspace).to.eventually.have.property("createdDateTime", "2023-04-07T09:39:23.436Z"),
+                    expect(workspace).to.eventually.have.property("name", "Unit tests workspace name"),
+                    expect(workspace).to.eventually.have.property("iTwinId", "3fa85f64-5717-4562-b3fc-2c963f66afa6"),
+                    expect(workspace).to.eventually.have.property("contextCaptureVersion", "20.1"),
+                ]);
+        });
+
+    });
+
+    describe("Submit job", () => {
+        it("Submit valid job", async function () {
+            axiosMock.onPatch(serviceUrl + "/jobs/validId", {"state": "active"}).reply(200, { });
+            const res = contextCaptureService.submitJob("validId");
+            await sleep(500);
+
+            if(axiosMock.history.patch.length === 0)
                 return expect(axiosMock.history.patch.length).equal(1, "Mock adapter has not been called as expected.");
 
             return expect(res).to.eventually.deep.equal({});
@@ -186,10 +254,10 @@ describe("Context capture unit tests", () => {
     describe("Cancel", () => {
         it("Cancel existing job", async function () {
             axiosMock.onPatch(serviceUrl + "/jobs/validId", {"state": "cancelled"}).reply(200, { });
-            const res = realityDataAnalysisService.cancelJob("validId");
+            const res = contextCaptureService.cancelJob("validId");
             await sleep(500);
 
-            if(axiosMock.history.get.length === 0)
+            if(axiosMock.history.patch.length === 0)
                 return expect(axiosMock.history.patch.length).equal(1, "Mock adapter has not been called as expected.");
 
             return expect(res).to.eventually.deep.equal({});
@@ -199,10 +267,10 @@ describe("Context capture unit tests", () => {
     describe("Delete", () => {
         it("Delete existing job", async function () {
             axiosMock.onDelete(serviceUrl + "/jobs/validId").reply(204, { });
-            const res = realityDataAnalysisService.deleteJob("validId");
+            const res = contextCaptureService.deleteJob("validId");
             await sleep(500);
 
-            if(axiosMock.history.get.length === 0)
+            if(axiosMock.history.delete.length === 0)
                 return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
 
             return expect(res).to.eventually.deep.equal({});
@@ -213,181 +281,127 @@ describe("Context capture unit tests", () => {
     describe("Get job progress", () => {
         it("Get active job progress", async function () {
             axiosMock.onGet(serviceUrl + "/jobs/validId/progress").reply(200, {"progress": {"percentage": 56, "state": "active", "step": "Run_Production"}});
-            const res = realityDataAnalysisService.getJobProgress("validId");
+            const res = contextCaptureService.getJobProgress("validId");
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
-                return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
 
             return expect(res).to.eventually.deep.equal({ state: JobState.ACTIVE, progress: 56, step: "Run_Production" });
         });
 
         it("Get failed job progress", async function () {
             axiosMock.onGet(serviceUrl + "/jobs/failedId/progress").reply(200, {"progress": {"percentage": 3, "state": "failed", "step": "Prepare_Step"}});
-            const res = realityDataAnalysisService.getJobProgress("failedId");
+            const res = contextCaptureService.getJobProgress("failedId");
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
-                return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
 
             return expect(res).to.eventually.deep.equal({ state: JobState.FAILED, progress: 3, step: "Prepare_Step" });
         });
 
         it("Get success job progress", async function () {            
             axiosMock.onGet(serviceUrl + "/jobs/successId/progress").reply(200, {"progress": {"percentage": 100, "state": "success", "step": "Final_Step"}});
-            const res = realityDataAnalysisService.getJobProgress("successId");
+            const res = contextCaptureService.getJobProgress("successId");
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
-                return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
             
             return expect(res).to.eventually.deep.equal({ state: JobState.SUCCESS, progress: 100, step: "Final_Step" });
         });
 
         it("Get cancelled job progress", async function () {            
             axiosMock.onGet(serviceUrl + "/jobs/cancelId/progress").reply(200, {"progress": {"percentage": 3, "state": "cancelled", "step": "Prepare_Step"}});
-            const res = realityDataAnalysisService.getJobProgress("cancelId");
+            const res = contextCaptureService.getJobProgress("cancelId");
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
-                return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
             
             return expect(res).to.eventually.deep.equal({ state: JobState.CANCELLED, progress: 3, step: "Prepare_Step" });
+        });
+
+        it("Get over job progress", async function () {            
+            axiosMock.onGet(serviceUrl + "/jobs/overId/progress").reply(200, {"progress": {"percentage": 100, "state": "over", "step": "Final_Step"}});
+            const res = contextCaptureService.getJobProgress("overId");
+            await sleep(500);
+
+            if(axiosMock.history.get.length === 0)
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
+            
+            return expect(res).to.eventually.deep.equal({ state: JobState.OVER, progress: 100, step: "Final_Step" });
         });
 
     });
 
     describe("Get job properties", () => {
-        it("O2D job with cost estimation and execution information", async function () {
-            axiosMock.onGet(serviceUrl + "/jobs/o2d").reply(200, 
+        it("Get job properties", async function () {
+            axiosMock.onGet(serviceUrl + "/jobs/ccJob").reply(200, 
             {
                 "job": {
-                    "state": "success",
-                    "settings": {
+                    "id": "cc3d35cc-416a-4262-9714-b359da70b419",
+                    "name": "Context capture unit test job",
+                    "type": "Full",
+                    "state": "unsubmitted",
+                    "createdDateTime": "2023-04-05T14:29:55Z",
+                    "lastModifiedDateTime": "2023-04-05T14:29:55Z",
+                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                    "location": "East US",
+                    "email": "example@bentley.com",
+                    "workspaceId": "workspaceId",
+                    "costEstimationParameters": {
+                        "gigaPixels": 2.1,
+                        "megaPoints": 1.5,
+                        "meshQuality": "Extra"
+                    },
+                    "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
+                    "jobSettings": {
+                        "quality": "Extra",
                         "outputs": [{
-                            "name": "objects2D",
-                            "realityDataId": "60d8a846-7ad2-40e4-aed1-5adfe2dc79a4"
-                        }],
-                        "inputs": [{
-                                "name": "photos",
-                                "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
+                                "format": "OPC",
+                                "id": "opcId"
                             },
                             {
-                                "name": "photoObjectDetector",
-                                "realityDataId": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
+                                "format": "CCOrientations",
+                                "id": "orientationsId"
                             }
-                        ]
-                    },
-                    "createdDateTime": "2023-03-30T15:14:55Z",
-                    "lastModifiedDateTime": "2023-03-30T15:14:55Z",
-                    "id": "6f51448f-6377-4330-9ab0-f13fe994b3f1",
-                    "email": "example@bentley.com",
-                    "dataCenter": "EastUs",
-                    "type": "objects2D",
-                    "name": "SDK unit test",
-                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                    "costEstimation": {
-                        "gigaPixels": 2,
-                        "sceneWidth": 4.5,
-                        "sceneHeight": 3.0,
-                        "sceneLength": 1.7,
-                        "detectorScale": 1.2,
-                        "detectorCost": 1.4,
-                        "numberOfPhotos": 150,
-                        "estimatedCost": 2.1
-                    },
-                    "executionInformation": {
-                        "exitCode": 0,
-                        "submissionDateTime": "2023-03-30T15:14:57Z",
-                        "startedDateTime": "2023-03-30T15:22:11Z",
-                        "endedDateTime": "2023-03-30T15:39:47Z",
-                        "estimatedUnits": 0
-                    },
+                        ],
+                        "processingEngines": 5,
+                        "cacheSettings": {
+                            "createCache": true,
+                            "useCache": "799b11bd-71cf-481a-b284-bf48f672cd9a"
+                        }
+                    }
                 }
             });
-            const properties = realityDataAnalysisService.getJobProperties("o2d");
+            const properties = contextCaptureService.getJobProperties("ccJob");
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
-                return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
             
             return Promise.all([
-                expect(properties).to.eventually.have.property("name", "SDK unit test"),
-                expect(properties).to.eventually.have.property("type", RDAJobType.O2D), // Other types are tested in Settings unit tests
+                expect(properties).to.eventually.have.property("name", "Context capture unit test job"),
+                expect(properties).to.eventually.have.property("type", CCJobType.FULL),
                 expect(properties).to.eventually.have.property("iTwinId", "c3739cf2-9da3-487b-b03d-f58c8eb97e5b"),
-                expect(properties).to.eventually.have.property("id", "6f51448f-6377-4330-9ab0-f13fe994b3f1"),
+                expect(properties).to.eventually.have.property("id", "cc3d35cc-416a-4262-9714-b359da70b419"),
                 expect(properties).to.eventually.have.property("email", "example@bentley.com"),
-                expect(properties).to.eventually.have.property("state", JobState.SUCCESS),
-                expect(properties).to.eventually.have.property("dataCenter", "EastUs"),
-                expect(properties).to.eventually.have.property("exitCode", 0),
-                expect(properties).to.eventually.have.property("executionCost", 0),
-                expect(properties).to.eventually.have.deep.property("settings").instanceOf(O2DJobSettings),
-                expect(properties).to.eventually.have.deep.property("settings", {
-                    type: "objects2D",
-                    inputs: {
-                        photos: "8e9f7e7a-f37e-4d74-a1e7-df7325944757",
-                        photoObjectDetector: "9fbbe885-9086-4b98-b6a5-8024657bcff4",
-                    },
-                    outputs: {
-                        objects2D: "60d8a846-7ad2-40e4-aed1-5adfe2dc79a4",
-                    },
-                }),
-                expect(properties).to.eventually.have.deep.property("dates", {
-                    createdDateTime: "2023-03-30T15:14:55Z",
-                    submissionDateTime: "2023-03-30T15:14:57Z",
-                    startedDateTime: "2023-03-30T15:22:11Z",
-                    endedDateTime: "2023-03-30T15:39:47Z"
-                }),
-                expect(properties).to.eventually.have.deep.property("costEstimation", {
-                    gigaPixels: 2,
-                    numberOfPhotos: 150,
-                    sceneWidth: 4.5,
-                    sceneHeight: 3.0,
-                    sceneLength: 1.7,
-                    detectorScale: 1.2,
-                    detectorCost: 1.4,
-                    estimatedCost: 2.1
+                expect(properties).to.eventually.have.property("state", JobState.UNSUBMITTED),
+                
+                expect(properties).to.eventually.have.property("settings").that.has.property("meshQuality").to.deep.equal("Extra"),
+                expect(properties).to.eventually.have.property("settings").that.has.property("engines").to.deep.equal(5),
+                expect(properties).to.eventually.have.property("settings").that.has.property("cacheSettings").that.has.property("createCache").to.deep.equal(true),
+                expect(properties).to.eventually.have.property("settings").that.has.property("cacheSettings").that.has.property("useCache").to.deep.equal("799b11bd-71cf-481a-b284-bf48f672cd9a"),
+                expect(properties).to.eventually.have.property("settings").that.has.property("outputs").that.has.property("orientations").to.deep.equal("orientationsId"),
+                expect(properties).to.eventually.have.property("settings").that.has.property("outputs").that.has.property("opc").to.deep.equal("opcId"),
+                expect(properties).to.eventually.have.deep.property("costEstimationParameters", {
+                    gigaPixels: 2.1,
+                    megaPoints: 1.5,
+                    meshQuality: "Extra",
                 }),
             ]);
-        });
-
-        it("Properties with invalid settings type", async function () {
-            axiosMock.onGet(serviceUrl + "/jobs/invalid").reply(200, 
-            {
-                "job": {
-                    "state": "success",
-                    "settings": {
-                        "outputs": [{
-                            "name": "objects2D",
-                            "realityDataId": "60d8a846-7ad2-40e4-aed1-5adfe2dc79a4"
-                        }],
-                        "inputs": [{
-                                "name": "photos",
-                                "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
-                            },
-                            {
-                                "name": "photoObjectDetector",
-                                "realityDataId": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
-                            }
-                        ]
-                    },
-                    "createdDateTime": "2023-03-30T15:14:55Z",
-                    "lastModifiedDateTime": "2023-03-30T15:14:55Z",
-                    "id": "6f51448f-6377-4330-9ab0-f13fe994b3f1",
-                    "email": "example@bentley.com",
-                    "dataCenter": "EastUs",
-                    "type": "invalidJobType",
-                    "name": "SDK unit test",
-                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                }
-            });
-            const properties = realityDataAnalysisService.getJobProperties("invalid");
-            await sleep(500);
-
-            if(axiosMock.history.get.length === 0)
-                return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
-
-            return expect(properties).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Can't get job properties of unknown type : invalidJobType");
         });
     });
 
@@ -395,40 +409,21 @@ describe("Context capture unit tests", () => {
         it("Get estimated cost", async function () {
             const body = {
                 gigaPixels: 2,
-                numberOfPhotos: 150,
-                sceneWidth: 4.5,
-                sceneHeight: 3,
-                sceneLength: 1.7,
-                detectorScale: 1.2,
-                detectorCost: 1.4,
+                megaPoints: 150,
+                meshQuality: CCJobQuality.EXTRA,
             };
             axiosMock.onPatch(serviceUrl + "/jobs/validId", {
                 costEstimationParameters: {
                     gigaPixels: 2,
-                    numberOfPhotos: 150,
-                    sceneWidth: 4.5,
-                    sceneHeight: 3,
-                    sceneLength: 1.7,
-                    detectorScale: 1.2,
-                    detectorCost: 1.4,
+                    megaPoints: 150,
+                    meshQuality: "Extra",
                 }
             }).reply(200, {
-                "job": {
-                    "costEstimation": {
-                        "gigaPixels": 2,
-                        "sceneWidth": 4.5,
-                        "sceneHeight": 3.0,
-                        "sceneLength": 1.7,
-                        "detectorScale": 1.2,
-                        "detectorCost": 1.4,
-                        "numberOfPhotos": 150,
-                        "estimatedCost": 2.1
-                    },
-                }
+                "estimatedCost": 2.1
             });
-            return expect(realityDataAnalysisService.getJobEstimatedCost("validId", body)).to.eventually.equal(2.1);
+            return expect(contextCaptureService.getJobEstimatedCost("validId", body)).to.eventually.equal(2.1);
         });
     
-    });*/
+    });
 
 });

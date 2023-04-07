@@ -109,13 +109,8 @@ export class ContextCaptureService {
         if(contextCaptureVersion)
             body["contextCaptureVersion"] = contextCaptureVersion;
         
-        try {
-            const response = await this.submitRequest("workspaces", "POST", [201], body);
-            return response["workspace"]["id"];
-        }
-        catch (error: any) {
-            return Promise.reject(error);
-        }
+        const response = await this.submitRequest("workspaces", "POST", [201], body);
+        return response["workspace"]["id"];
     }
 
     /**
@@ -160,7 +155,7 @@ export class ContextCaptureService {
             "workspaceId": workspaceId,
         };
 
-        const response = await this.submitRequest("jobs/", "POST", [201], body);
+        const response = await this.submitRequest("jobs", "POST", [201], body);
         return response["job"]["id"];
     }
 
@@ -199,7 +194,7 @@ export class ContextCaptureService {
      */
     public async getJobProgress(id: string): Promise<JobProgress> {
         const response = await this.submitRequest("jobs/" + id + "/progress", "GET", [200]);
-        const progress = response["jobProgress"];
+        const progress = response["progress"];
         const state = (progress["state"] as string).toLowerCase();
         return { state: state as JobState, progress: JSON.parse(progress["percentage"]), step: progress["step"] };
     }
