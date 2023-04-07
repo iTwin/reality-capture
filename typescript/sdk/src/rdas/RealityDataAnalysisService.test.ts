@@ -170,7 +170,7 @@ describe("Reality data analysis unit tests", () => {
             const res = realityDataAnalysisService.submitJob("validId");
             await sleep(500);
 
-            if(axiosMock.history.get.length === 0)
+            if(axiosMock.history.patch.length === 0)
                 return expect(axiosMock.history.patch.length).equal(1, "Mock adapter has not been called as expected.");
 
             return expect(res).to.eventually.deep.equal({});
@@ -183,7 +183,7 @@ describe("Reality data analysis unit tests", () => {
             const res = realityDataAnalysisService.cancelJob("validId");
             await sleep(500);
 
-            if(axiosMock.history.get.length === 0)
+            if(axiosMock.history.patch.length === 0)
                 return expect(axiosMock.history.patch.length).equal(1, "Mock adapter has not been called as expected.");
 
             return expect(res).to.eventually.deep.equal({});
@@ -196,7 +196,7 @@ describe("Reality data analysis unit tests", () => {
             const res = realityDataAnalysisService.deleteJob("validId");
             await sleep(500);
 
-            if(axiosMock.history.get.length === 0)
+            if(axiosMock.history.delete.length === 0)
                 return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
 
             return expect(res).to.eventually.deep.equal({});
@@ -211,7 +211,7 @@ describe("Reality data analysis unit tests", () => {
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
-                return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
 
             return expect(res).to.eventually.deep.equal({ state: JobState.ACTIVE, progress: 56, step: "Run_Production" });
         });
@@ -222,7 +222,7 @@ describe("Reality data analysis unit tests", () => {
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
-                return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
 
             return expect(res).to.eventually.deep.equal({ state: JobState.FAILED, progress: 3, step: "Prepare_Step" });
         });
@@ -233,7 +233,7 @@ describe("Reality data analysis unit tests", () => {
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
-                return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
             
             return expect(res).to.eventually.deep.equal({ state: JobState.SUCCESS, progress: 100, step: "Final_Step" });
         });
@@ -244,7 +244,7 @@ describe("Reality data analysis unit tests", () => {
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
-                return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
             
             return expect(res).to.eventually.deep.equal({ state: JobState.CANCELLED, progress: 3, step: "Prepare_Step" });
         });
@@ -303,7 +303,7 @@ describe("Reality data analysis unit tests", () => {
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
-                return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
             
             return Promise.all([
                 expect(properties).to.eventually.have.property("name", "SDK unit test"),
@@ -379,7 +379,7 @@ describe("Reality data analysis unit tests", () => {
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
-                return expect(axiosMock.history.delete.length).equal(1, "Mock adapter has not been called as expected.");
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
 
             return expect(properties).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Can't get job properties of unknown type : invalidJobType");
         });
