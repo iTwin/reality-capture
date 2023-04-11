@@ -37,6 +37,7 @@ and you are good to go.
 Necessary Python modules can also be found at the requirements.txt file.
 
 ```
+requests
 bottle >= 0.12
 oauthlib >= 3.2
 requests-oauthlib >= 1.3.1

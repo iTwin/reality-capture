@@ -10,7 +10,8 @@
 		"start-cc-example": "node ./lib/ContextCapture.js",
 		"start-l3d-example": "node ./lib/Lines3D.js",
 		"start-o2d-example": "node ./lib/Objects2D.js",
-		"start-data-example": "node ./lib/DataTransfer.js"
+		"start-data-example": "node ./lib/DataTransfer.js",
+		"start-rcs-example": "node ./lib/RealityConversion.js"
 	},
 	"keywords": [],
 	"author": {
