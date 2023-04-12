@@ -47,3 +47,4 @@ data/L3D/CracksA_v1/frozen_inference_graph.pb filter=lfs diff=lfs merge=lfs -tex
 data/L3D/CracksA_v1/labels.xml filter=lfs diff=lfs merge=lfs -text
 data/L3D/Images/image003.jpg filter=lfs diff=lfs merge=lfs -text
 data/L3D/Images/image005.jpg filter=lfs diff=lfs merge=lfs -text
+data/RCS/LAS/spain.las filter=lfs diff=lfs merge=lfs -text
