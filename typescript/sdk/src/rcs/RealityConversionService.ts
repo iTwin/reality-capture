@@ -17,7 +17,7 @@ export class RealityConversionService {
     private authorizationClient: AuthorizationClient;
 
     /** Target service url. */
-    private serviceUrl = "https://api-wcus-apim-01.azure-api.net/realityconversion";
+    private serviceUrl = "https://api.bentley.com/realityconversion";
 
     /**
      * Create a new RealityConversionService.
@@ -27,7 +27,7 @@ export class RealityConversionService {
     constructor(authorizationClient: AuthorizationClient, env?: string) {
         this.authorizationClient = authorizationClient;
         if(env)
-            this.serviceUrl = "https://" + env + "api-wcus-apim-01.azure-api.net/realityconversion";
+            this.serviceUrl = "https://" + env + "api.bentley.com/realityconversion";
     }
 
     /**
@@ -71,9 +71,7 @@ export class RealityConversionService {
             let message = "Unknown error. Please ensure that the request is valid.";
 
             if (axios.isAxiosError(error)) {
-                // console.log("axios error : ", error);
                 const errorStr = JSON.stringify(error);
-                console.log("axios error : ", errorStr);
                 const axiosResponse = error.response!;
                 status = axiosResponse.status;
                 message = axiosResponse.data?.error?.message;
