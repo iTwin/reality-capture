@@ -1,3 +1,4 @@
+import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
 import { JobDates, JobState } from "../CommonData";
 
 /** Possible types of Reality Conversion job. */
@@ -110,6 +111,9 @@ export class RCJobSettings {
         const json: any = {
             "inputs": [],
             "outputs": [],
+            "options": {
+                "processingEngines": this.options.engines,
+            }
         };
 
         this.inputs.las.forEach((id) => {
@@ -133,7 +137,7 @@ export class RCJobSettings {
 
         if(this.options) {
             if(this.options.engines)
-                json["options"]["engines"] = this.options.engines;
+                json["options"]["processingEngines"] = this.options.engines;
             
         }
 
@@ -158,7 +162,7 @@ export class RCJobSettings {
             else if (input["type"] === "E57")
                 newJobSettings.inputs.e57.push(input["id"]);
             else
-                return Promise.reject(new Error("Found non expected input name" + input["type"]));
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected input type : " + input["type"]));
         }
         const outputsJson = settingsJson["outputs"];
         newJobSettings.outputs.opc = [];
@@ -166,12 +170,12 @@ export class RCJobSettings {
             if (output["format"] === "OPC")
                 newJobSettings.outputs.opc.push(output["id"]);
             else
-                return Promise.reject(new Error("Found non expected output name" + console.log(JSON.stringify(output))));
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output format : " + output["format"]));
         }
 
         if(settingsJson["options"]) {
-            if(settingsJson["options"]["engines"])
-                newJobSettings.options.engines = settingsJson["options"]["engines"];
+            if(settingsJson["options"]["processingEngines"])
+                newJobSettings.options.engines = settingsJson["options"]["processingEngines"];
             
         }
 
@@ -182,67 +186,13 @@ export class RCJobSettings {
 /** Parameters for estimating job cost before its processing.
     EstimatedCost is filled when this object is returned by a function but should only be taken in consideration if you
     have updated parameters for estimation before by using the getJobEstimatedCost function. */
-export class RCJobCostParameters {
+export interface RCJobCostParameters {
     /** Gigapixels to be processed. */
-    gigaPixels: number;
+    gigaPixels?: number;
     /** Megapoints to be processed. */
-    megaPoints: number;
+    megaPoints?: number;
     /** Estimated cost of the job. */
-    estimatedCost: number;
-
-    constructor() {
-        /**
-         * Gigapixels to be processed.
-         * @type {number}
-         */
-        this.gigaPixels = 0;
-        /**
-         * Megapoints to be processed.
-         * @type {number}
-         */
-        this.megaPoints = 0;
-        /**
-         * Estimated cost of the job.
-         * @type {number}
-         */
-        this.estimatedCost = 0;
-    }
-
-    /**
-     * Transform settings into json.
-     * Doesn't save estimatedCost because it is not a parameter used to estimate cost.
-     * @returns {any} json with cost parameters.
-     */
-    public toJson(): any {
-        const json: any = {};
-
-        if(this.gigaPixels)
-            json["gigaPixels"] = this.gigaPixels;
-
-        if(this.megaPoints)
-            json["megaPoints"] = this.megaPoints;
-
-        return json;
-    }
-
-    /**
-     * Transform json received from cloud service into job cost parameters.
-     * @param {any} settingsJson json with estimation parameters received from cloud service.
-     * @returns {RCJobCostParameters} New RCJobCostEstimation object with actualized estimated cost..
-     */
-    public static async fromJson(settingsJson: any): Promise<RCJobCostParameters> {
-        const newJobSettings = new RCJobCostParameters();
-        if(settingsJson["gigaPixels"])
-            newJobSettings.gigaPixels = settingsJson["gigaPixels"];
-
-        if(settingsJson["megaPoints"])
-            newJobSettings.megaPoints = settingsJson["megaPoints"];
-
-        if(settingsJson["estimatedCost"])
-            newJobSettings.estimatedCost = settingsJson["estimatedCost"];
-
-        return newJobSettings;
-    }
+    estimatedCost?: number;
 }
 
 /**
