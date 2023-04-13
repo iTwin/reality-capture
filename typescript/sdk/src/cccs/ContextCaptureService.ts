@@ -60,7 +60,7 @@ export class ContextCaptureService {
                 return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Wrong request method"));
 
             if (!okRet.includes(response.status)) {
-                return new BentleyError(response.status, response.statusText);
+                return Promise.reject(new BentleyError(response.status, response.statusText ?? "Wrong request response code, expected : ", okRet));
             }
 
             return response.data;

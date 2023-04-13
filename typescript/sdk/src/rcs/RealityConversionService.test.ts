@@ -9,7 +9,7 @@ chai.use(chaiAsPromised);
 import * as dotenv from "dotenv";
 import { BentleyError } from "@itwin/core-bentley";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { JobState } from "../CommonData";
 import { RealityConversionService } from "./RealityConversionService";
@@ -139,14 +139,43 @@ describe("Reality conversion unit tests", () => {
         });
 
         it("Wrong response code", async function () {
-            axiosMock.onGet(serviceUrl + "/jobs/id3").reply(404, { });
+            axiosMock.onGet(serviceUrl + "/jobs/id3").reply(201, { });
             const res = (realityConversionService as any).submitRequest("jobs/id3", "GET", [200]);
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
                 return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
 
-            return expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("errorNumber", 404);
+            return expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("errorNumber", 201);
+        });
+
+        it("Axios error", async function () {
+            const axiosResponse = {data: {error: {message: "Axios error"}}, status: 404, statusText: "404"} as AxiosResponse<any>;
+            axiosMock.onGet(serviceUrl + "/jobs/id4").reply(() => Promise.reject(new AxiosError("Axios error", "404", undefined, undefined, axiosResponse)));
+            const res = (realityConversionService as any).submitRequest("jobs/id4", "GET", [200]);
+            await sleep(500);
+
+            if(axiosMock.history.get.length === 0)
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
+
+            return Promise.all([
+                expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("errorNumber", 404),
+                expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Axios error"),
+            ]);
+        });
+
+        it("Bentley error", async function () {
+            axiosMock.onGet(serviceUrl + "/jobs/id5").reply(() => Promise.reject(new BentleyError(404, "Bentley Error")));
+            const res = (realityConversionService as any).submitRequest("jobs/id5", "GET", [200]);
+            await sleep(500);
+
+            if(axiosMock.history.get.length === 0)
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
+
+            return Promise.all([
+                expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("errorNumber", 404),
+                expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Bentley Error"),
+            ]);
         });
     });
 
@@ -269,7 +298,6 @@ describe("Reality conversion unit tests", () => {
             if(axiosMock.history.get.length === 0)
                 return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
             
-            console.log(properties);
             return Promise.all([
                 expect(properties).to.eventually.have.property("id", "cc3d35cc-416a-4262-9714-b359da70b419"),
                 expect(properties).to.eventually.have.property("name", "Reality Conversion unit test"),
