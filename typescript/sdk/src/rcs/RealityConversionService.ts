@@ -111,6 +111,7 @@ export class RealityConversionService {
             "iTwinId": iTwinId,
             "inputs": settingsJson.inputs,
             "outputs": settingsJson.outputs,
+            "options": settingsJson.options,
         };
         const response = await this.submitRequest("jobs", "POST", [201], body);
         return response["job"]["id"];
@@ -177,8 +178,13 @@ export class RealityConversionService {
 
         jobProperties.settings = await RCJobSettings.fromJson(job);
 
-        if(job["costEstimation"])
-            jobProperties.costEstimationParameters = await RCJobCostParameters.fromJson(job["costEstimation"]);
+        if(job["costEstimation"]) {
+            jobProperties.costEstimationParameters = {
+                gigaPixels: job["costEstimation"]["gigaPixels"],
+                megaPoints: job["costEstimation"]["megaPoints"],
+                estimatedCost: job["costEstimation"]["estimatedCost"],
+            };
+        }
 
         return jobProperties;
     }
@@ -191,10 +197,12 @@ export class RealityConversionService {
      */
     public async getJobEstimatedCost(id: string, costParameters: RCJobCostParameters): Promise<number> {
         const body = {
-            "costEstimationParameters": costParameters.toJson()
+            costEstimationParameters: {
+                gigaPixels: costParameters.gigaPixels,
+                megaPoints: costParameters.megaPoints,
+            }
         };
         const response = await this.submitRequest("jobs/" + id, "PATCH", [200], body);
-        const newCostParameters = await RCJobCostParameters.fromJson(response["job"]["costEstimation"]);
-        return newCostParameters.estimatedCost;
+        return response.estimatedCost;
     }
 }
