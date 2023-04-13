@@ -9,7 +9,7 @@ chai.use(chaiAsPromised);
 import * as dotenv from "dotenv";
 import { BentleyError } from "@itwin/core-bentley";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { ContextCaptureService } from "../reality-capture";
 import { CCJobQuality, CCJobSettings, CCJobType } from "./Utils";
@@ -158,14 +158,43 @@ describe("Context capture unit tests", () => {
         });
 
         it("Wrong response code", async function () {
-            axiosMock.onGet(serviceUrl + "/jobs/id3").reply(404, { });
+            axiosMock.onGet(serviceUrl + "/jobs/id3").reply(201, { });
             const res = (contextCaptureService as any).submitRequest("jobs/id3", "GET", [200]);
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
                 return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
 
-            return expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("errorNumber", 404);
+            return expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("errorNumber", 201);
+        });
+
+        it("Axios error", async function () {
+            const axiosResponse = {data: {error: {message: "Axios error"}}, status: 404, statusText: "404"} as AxiosResponse<any>;
+            axiosMock.onGet(serviceUrl + "/jobs/id4").reply(() => Promise.reject(new AxiosError("Axios error", "404", undefined, undefined, axiosResponse)));
+            const res = (contextCaptureService as any).submitRequest("jobs/id4", "GET", [200]);
+            await sleep(500);
+
+            if(axiosMock.history.get.length === 0)
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
+
+            return Promise.all([
+                expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("errorNumber", 404),
+                expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Axios error"),
+            ]);
+        });
+
+        it("Bentley error", async function () {
+            axiosMock.onGet(serviceUrl + "/jobs/id5").reply(() => Promise.reject(new BentleyError(404, "Bentley Error")));
+            const res = (contextCaptureService as any).submitRequest("jobs/id5", "GET", [200]);
+            await sleep(500);
+
+            if(axiosMock.history.get.length === 0)
+                return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
+
+            return Promise.all([
+                expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("errorNumber", 404),
+                expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Bentley Error"),
+            ]);
         });
 
     });
@@ -227,13 +256,13 @@ describe("Context capture unit tests", () => {
             if(axiosMock.history.get.length === 0)
                 return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
 
-                return Promise.all([
-                    expect(workspace).to.eventually.have.property("id", "e47cf092-729a-4ce2-b20e-9b01ad820cdb"),
-                    expect(workspace).to.eventually.have.property("createdDateTime", "2023-04-07T09:39:23.436Z"),
-                    expect(workspace).to.eventually.have.property("name", "Unit tests workspace name"),
-                    expect(workspace).to.eventually.have.property("iTwinId", "3fa85f64-5717-4562-b3fc-2c963f66afa6"),
-                    expect(workspace).to.eventually.have.property("contextCaptureVersion", "20.1"),
-                ]);
+            return Promise.all([
+                expect(workspace).to.eventually.have.property("id", "e47cf092-729a-4ce2-b20e-9b01ad820cdb"),
+                expect(workspace).to.eventually.have.property("createdDateTime", "2023-04-07T09:39:23.436Z"),
+                expect(workspace).to.eventually.have.property("name", "Unit tests workspace name"),
+                expect(workspace).to.eventually.have.property("iTwinId", "3fa85f64-5717-4562-b3fc-2c963f66afa6"),
+                expect(workspace).to.eventually.have.property("contextCaptureVersion", "20.1"),
+            ]);
         });
 
     });
@@ -356,6 +385,12 @@ describe("Context capture unit tests", () => {
                         "megaPoints": 1.5,
                         "meshQuality": "Extra"
                     },
+                    "executionInformation": {
+                        "submittedDateTime": "2023-03-30T15:14:57Z",
+                        "startedDateTime": "2023-03-30T15:22:11Z",
+                        "endedDateTime": "2023-03-30T15:39:47Z",
+                        "estimatedUnits": 2
+                    },
                     "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
                     "jobSettings": {
                         "quality": "Extra",
@@ -389,6 +424,14 @@ describe("Context capture unit tests", () => {
                 expect(properties).to.eventually.have.property("id", "cc3d35cc-416a-4262-9714-b359da70b419"),
                 expect(properties).to.eventually.have.property("email", "example@bentley.com"),
                 expect(properties).to.eventually.have.property("state", JobState.UNSUBMITTED),
+
+                expect(properties).to.eventually.have.deep.property("dates", {
+                    createdDateTime: "2023-04-05T14:29:55Z",
+                    submissionDateTime: "2023-03-30T15:14:57Z",
+                    startedDateTime: "2023-03-30T15:22:11Z",
+                    endedDateTime: "2023-03-30T15:39:47Z"
+                }),
+                expect(properties).to.eventually.have.property("executionCost", 2),
                 
                 expect(properties).to.eventually.have.property("settings").that.has.property("meshQuality").to.deep.equal("Extra"),
                 expect(properties).to.eventually.have.property("settings").that.has.property("engines").to.deep.equal(5),

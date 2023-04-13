@@ -60,7 +60,7 @@ export class RealityConversionService {
                 return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Wrong request method"));
 
             if (!okRet.includes(response.status)) {
-                return new BentleyError(response.status, response.statusText);
+                return Promise.reject(new BentleyError(response.status, response.statusText ?? "Wrong request response code, expected : ", okRet));
             }
 
             return response.data;
@@ -71,7 +71,6 @@ export class RealityConversionService {
             let message = "Unknown error. Please ensure that the request is valid.";
 
             if (axios.isAxiosError(error)) {
-                const errorStr = JSON.stringify(error);
                 const axiosResponse = error.response!;
                 status = axiosResponse.status;
                 message = axiosResponse.data?.error?.message;
