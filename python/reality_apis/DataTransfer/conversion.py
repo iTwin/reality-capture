@@ -85,29 +85,27 @@ def _replace_context_scene_references_json(
         new_scene = scene_path
     else:
         new_scene = new_scene_path
-
-    file = open(scene_path, "r", encoding="utf-8")
-    data = json.load(file)
-    file.close()
-    refs = data.get("References", None)
-    if refs is not None:
-        for ref_nb in refs.values():
-            old_path = ref_nb.get("Path", None)
-            if old_path is None:
-                return ReturnValue(
-                    value=False, error=f"Invalid Reference format in scene {scene_path}"
-                )
-            if local_to_cloud:
-                ret = reference_table.get_cloud_id_from_local_path(
-                    os.path.normpath(old_path)
-                )
-                new_path = "rds:" + ret.value
-            else:
-                ret = reference_table.get_local_path_from_cloud_id(old_path[4:])
-                new_path = ret.value
-            if ret.is_error():
-                return ReturnValue(value=False, error=ret.error)
-            ref_nb["Path"] = new_path
+    with open(scene_path, "r", encoding="utf-8") as file:
+        data = json.load(file)
+        refs = data.get("References", None)
+        if refs is not None:
+            for ref_nb in refs.values():
+                old_path = ref_nb.get("Path", None)
+                if old_path is None:
+                    return ReturnValue(
+                        value=False, error=f"Invalid Reference format in scene {scene_path}"
+                    )
+                if local_to_cloud:
+                    ret = reference_table.get_cloud_id_from_local_path(
+                        os.path.normpath(old_path)
+                    )
+                    new_path = "rds:" + ret.value
+                else:
+                    ret = reference_table.get_local_path_from_cloud_id(old_path[4:])
+                    new_path = ret.value
+                if ret.is_error():
+                    return ReturnValue(value=False, error=ret.error)
+                ref_nb["Path"] = new_path
 
     with open(new_scene, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
