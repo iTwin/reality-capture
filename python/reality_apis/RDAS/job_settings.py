@@ -715,6 +715,7 @@ class L3DJobSettings:
         compute_line_width: Estimation 3D line width at each vertex.
         remove_small_components: Remove 3D lines with total length smaller than this value.
         export_srs: SRS used by exports.
+        min_photos: minimum number of photos (if any) for a line.
     """
 
     def __init__(self) -> None:
@@ -724,6 +725,7 @@ class L3DJobSettings:
         self.compute_line_width: bool = False
         self.remove_small_components: float = 0.0
         self.export_srs: str = ""
+        self.min_photos: int = 0
 
     def to_json(self) -> dict:
         """
@@ -795,6 +797,9 @@ class L3DJobSettings:
             json_dict["removeSmallComponents"] = str(self.remove_small_components)
         if self.export_srs:
             json_dict["exportSrs"] = self.export_srs
+        if self.min_photos:
+            json_dict["minPhotos"] = self.min_photos
+
         return json_dict
 
     @classmethod
@@ -885,6 +890,9 @@ class L3DJobSettings:
                 )
             if "exportSrs" in settings_json:
                 new_job_settings.export_srs = settings_json["exportSrs"]
+
+            if "minPhotos" in settings_json:
+                new_job_settings.min_photos = int(settings_json["minPhotos"])
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_settings, error="")
