@@ -6,7 +6,10 @@ from typing import TypeVar, Generic, NamedTuple
 
 from importlib import metadata
 
-__version__ = metadata.version(__package__)
+try:
+    __version__ = metadata.version(__package__)
+except metadata.PackageNotFoundError as e:
+    __version__ = "github clone"
 
 
 class RealityDataType(Enum):
