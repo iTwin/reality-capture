@@ -52,7 +52,7 @@ async function replaceXMLScene(file: File | Blob, references: ReferenceTableBrow
     }
 
     const newXmlStr = new XMLSerializer().serializeToString(xmlDoc);
-    console.log(newXmlStr);
+    localStorage.setItem("tmpPatchedFile", newXmlStr);
 }
 
 async function replaceJSONScene(file: File | Blob, references: ReferenceTableBrowser, localToCloud: boolean): Promise<void> {
