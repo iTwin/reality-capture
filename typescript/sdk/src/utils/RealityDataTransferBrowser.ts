@@ -1,5 +1,5 @@
 import { ContainerClient, BlobDownloadOptions, BlockBlobParallelUploadOptions, BlobUploadCommonResponse } from "@azure/storage-blob";
-import { AuthorizationClient } from "@itwin/core-common";
+import { AuthorizationClient, BentleyError, BentleyStatus } from "@itwin/core-common";
 import { RealityDataClientOptions, RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
 import { RealityDataType } from "../CommonData";
 import { ReferenceTableBrowser } from "./ReferenceTableBrowser";
@@ -22,30 +22,29 @@ async function replaceXMLScene(file: File | Blob, references: ReferenceTableBrow
     for (let i = 0; i < sceneReferences.length; i++) {
         const referencePath = sceneReferences[i].getElementsByTagName("Path");
         if (!referencePath.length)
-            return Promise.reject(Error(
-                "Invalid context scene, the reference " + sceneReferences[i] + " has no path."));
+            return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Invalid context scene, the reference " + sceneReferences[i] + " has no path."));
 
-        const pathValue = referencePath[0].textContent;
+        let pathValue = referencePath[0].textContent;
         if (!pathValue)
-            return Promise.reject(Error(
-                "Invalid context scene, the reference " + sceneReferences[i] + " has no path content."));
+            return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Invalid context scene, the reference " + sceneReferences[i] + " has no path content."));
 
+        pathValue = pathValue.replace(/\\/g, "/");
         if (localToCloud) {
             const cloudId = references.getCloudIdFromLocalPath(pathValue);
             if (!cloudId)
-                return Promise.reject(Error("Can't replace local path with cloud id "));
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Can't replace local path with cloud id "));
 
             referencePath[0].textContent = "rds:" + cloudId;
         }
         else {
             if (pathValue.substring(0, 4) !== "rds:")
-                return Promise.reject(Error(
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
                     "Invalid context scene, the reference " + pathValue + "doesn't start with 'rds:'."));
 
             const cloudId = pathValue.substring(4);
             const localPath = references.getLocalPathFromCloudId(cloudId);
             if (!localPath)
-                return Promise.reject(Error(
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
                     "Can't replace cloud id " + cloudId + "path with local path, does not exist in references"));
 
             referencePath[0].textContent = localPath;
@@ -53,7 +52,7 @@ async function replaceXMLScene(file: File | Blob, references: ReferenceTableBrow
     }
 
     const newXmlStr = new XMLSerializer().serializeToString(xmlDoc);
-    localStorage.setItem("tmpPatchedFile", newXmlStr);
+    console.log(newXmlStr);
 }
 
 async function replaceJSONScene(file: File | Blob, references: ReferenceTableBrowser, localToCloud: boolean): Promise<void> {
@@ -61,25 +60,24 @@ async function replaceJSONScene(file: File | Blob, references: ReferenceTableBro
     const json = JSON.parse(text);
     for (const referenceId in json.References) {
         let referencePath = json.References[referenceId].Path;
-        referencePath = referencePath.replace(/\//g, "\\");
+        referencePath = referencePath.replace(/\\/g, "/");
 
         if (localToCloud) {
             const cloudId = references.getCloudIdFromLocalPath(referencePath);
             if (!cloudId)
-                return Promise.reject(Error("Can't replace local path " + referencePath + " with cloud id "));
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Can't replace local path " + referencePath + " with cloud id "));
 
             json.References[referenceId].Path = "rds:" + cloudId;
         }
         else {
             if (referencePath.substring(0, 4) !== "rds:")
-                return Promise.reject(Error(
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
                     "Invalid context scene, the reference " + referencePath + "doesn't start with 'rds:'."));
 
             const id = referencePath.substring(4);
             const localPath = references.getLocalPathFromCloudId(id);
-            referencePath = referencePath.replace(/\//g, "\\");
             if (!localPath)
-                return Promise.reject(Error("Can't replace cloud id path with local path"));
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Can't replace cloud id path with local path"));
 
             json.References[referenceId].Path = localPath;
         }
@@ -119,10 +117,11 @@ async function replaceCCOrientationsReferences(file: File | Blob, references: Re
 
             imagePath[0].textContent = cloudId + "/" + fileName;
             if (maskPath.length) {
-                const maskPathValue = maskPath[0].textContent;
+                let maskPathValue = maskPath[0].textContent;
                 if (!maskPathValue)
                     continue;
 
+                maskPathValue = maskPathValue.replace(/\\/g, "/");
                 const maskDirName = maskPathValue.substring(0, maskPathValue.lastIndexOf("/"));
                 const maskFileName = maskPathValue.split("/").pop();
                 const maskCloudId = references.getCloudIdFromLocalPath(maskDirName);
@@ -133,33 +132,30 @@ async function replaceCCOrientationsReferences(file: File | Blob, references: Re
             }
         }
         else {
-            const splittedImagePath = pathValue.split(/\//);
+            const splittedImagePath = pathValue.split("/");
             if (!splittedImagePath.length)
-                return Promise.reject(Error(
-                    "Invalid image path, the reference " + pathValue + " is not a path."));
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Invalid image path, the reference " + pathValue + " is not a path."));
 
             const cloudId = splittedImagePath[0];
             const localPath = references.getLocalPathFromCloudId(cloudId);
             if (!localPath)
-                return Promise.reject(Error(
-                    "Can't replace cloud id " + cloudId + "path with local path, does not exist in references"));
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Can't replace cloud id " + cloudId + "path with local path, does not exist in references"));
 
-            imagePath[0].textContent = localPath;
+            imagePath[0].textContent = localPath + "/" + splittedImagePath[splittedImagePath.length - 1];
             if (maskPath.length) {
-                const maskPathValue = maskPath[0].textContent;
+                let maskPathValue = maskPath[0].textContent;
                 if (!maskPathValue)
-                    return Promise.reject(Error(
-                        "Invalid cc orientations, the mask " + photos[i] + " has no path content."));
+                    return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Invalid cc orientations, the mask " + photos[i] + " has no path content."));
 
-                const splittedMaskPath = maskPathValue.split(/\//);
+                maskPathValue = maskPathValue.replace(/\\/g, "/");
+                const splittedMaskPath = maskPathValue.split("/");
                 if (!splittedMaskPath.length)
-                    return Promise.reject(Error(
-                        "Invalid image path, the reference " + maskPathValue + " is not a path."));
+                    return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Invalid image path, the reference " + maskPathValue + " is not a path."));
 
                 const maskCloudId = splittedMaskPath[0];
                 const maskLocalPath = references.getLocalPathFromCloudId(maskCloudId);
                 if (!maskLocalPath)
-                    return Promise.reject(Error(
+                    return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
                         "Can't replace cloud id " + maskCloudId + "path with local path, does not exist in references"));
 
                 maskPath[0].textContent = maskLocalPath;
@@ -422,7 +418,7 @@ export class RealityDataTransferBrowser {
 
                 uploadInfo.processedFilesSize += uploadInfo.files[i].size;
                 if (uploadBlobResponse.errorCode)
-                    return Promise.reject(Error(
+                    return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
                         "Can't upload reality data : " + iTwinRealityData + ", error : " + uploadBlobResponse.errorCode));
             }
             return iTwinRealityData.id;

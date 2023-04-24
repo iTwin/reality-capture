@@ -309,7 +309,7 @@ describe("Context capture unit tests", () => {
 
     describe("Get job progress", () => {
         it("Get active job progress", async function () {
-            axiosMock.onGet(serviceUrl + "/jobs/validId/progress").reply(200, {"progress": {"percentage": 56, "state": "active", "step": "Run_Production"}});
+            axiosMock.onGet(serviceUrl + "/jobs/validId/progress").reply(200, {"jobProgress": {"percentage": 56, "state": "active", "step": "Run_Production"}});
             const res = contextCaptureService.getJobProgress("validId");
             await sleep(500);
 
@@ -320,7 +320,7 @@ describe("Context capture unit tests", () => {
         });
 
         it("Get failed job progress", async function () {
-            axiosMock.onGet(serviceUrl + "/jobs/failedId/progress").reply(200, {"progress": {"percentage": 3, "state": "failed", "step": "Prepare_Step"}});
+            axiosMock.onGet(serviceUrl + "/jobs/failedId/progress").reply(200, {"jobProgress": {"percentage": 3, "state": "failed", "step": "Prepare_Step"}});
             const res = contextCaptureService.getJobProgress("failedId");
             await sleep(500);
 
@@ -331,7 +331,7 @@ describe("Context capture unit tests", () => {
         });
 
         it("Get success job progress", async function () {            
-            axiosMock.onGet(serviceUrl + "/jobs/successId/progress").reply(200, {"progress": {"percentage": 100, "state": "success", "step": "Final_Step"}});
+            axiosMock.onGet(serviceUrl + "/jobs/successId/progress").reply(200, {"jobProgress": {"percentage": 100, "state": "success", "step": "Final_Step"}});
             const res = contextCaptureService.getJobProgress("successId");
             await sleep(500);
 
@@ -342,7 +342,7 @@ describe("Context capture unit tests", () => {
         });
 
         it("Get cancelled job progress", async function () {            
-            axiosMock.onGet(serviceUrl + "/jobs/cancelId/progress").reply(200, {"progress": {"percentage": 3, "state": "cancelled", "step": "Prepare_Step"}});
+            axiosMock.onGet(serviceUrl + "/jobs/cancelId/progress").reply(200, {"jobProgress": {"percentage": 3, "state": "cancelled", "step": "Prepare_Step"}});
             const res = contextCaptureService.getJobProgress("cancelId");
             await sleep(500);
 
@@ -353,7 +353,7 @@ describe("Context capture unit tests", () => {
         });
 
         it("Get over job progress", async function () {            
-            axiosMock.onGet(serviceUrl + "/jobs/overId/progress").reply(200, {"progress": {"percentage": 100, "state": "over", "step": "Final_Step"}});
+            axiosMock.onGet(serviceUrl + "/jobs/overId/progress").reply(200, {"jobProgress": {"percentage": 100, "state": "over", "step": "Final_Step"}});
             const res = contextCaptureService.getJobProgress("overId");
             await sleep(500);
 

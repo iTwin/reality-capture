@@ -194,7 +194,7 @@ export class ContextCaptureService {
      */
     public async getJobProgress(id: string): Promise<JobProgress> {
         const response = await this.submitRequest("jobs/" + id + "/progress", "GET", [200]);
-        const progress = response["progress"];
+        const progress = response["jobProgress"];
         const state = (progress["state"] as string).toLowerCase();
         return { state: state as JobState, progress: JSON.parse(progress["percentage"]), step: progress["step"] };
     }
