@@ -117,6 +117,7 @@ class RealityDataAnalysisService:
         Get all properties of a given job.
         By default this function returns a placeholder empty RDAJobProperties if it hasn't succeeded in retrieving job
         settings. Use is_error() to be sure the return value is valid.
+
         Args:
             job_id: The ID of the relevant job.
 

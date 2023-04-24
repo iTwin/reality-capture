@@ -42,15 +42,16 @@ class RealityConversionService:
 
     def create_job(self, settings, job_name, iTwin_id, job_type = RCJobType.CONVERSION) -> ReturnValue[str]:
         """
-        # TODO
+        Creates a job corresponding to the given settings.
+
         Args:
-            settings:
-            job_name:
-            iTwin_id:
-            job_type:
+            settings: Settings for the job.
+            job_name: Name of the job.
+            iTwin_id: ID of the project.
+            job_type: Type of the job (by default, Conversion)
 
         Returns:
-
+            The ID of the job, and a potential error message.
         """
         # take job_settings and create the json settings we need to send
         inputs_dict, outputs_dict, options_dict = settings.to_json()
@@ -81,12 +82,13 @@ class RealityConversionService:
 
     def submit_job(self, job_id: str) -> ReturnValue[bool]:
         """
-        # TODO
+        Submit a job.
+
         Args:
-            job_id:
+            job_id: The ID of the job to be submitted.
 
         Returns:
-
+            True if the job was successfully submitted, and a potential error message.
         """
         jc_dict = {"state": "active"}
         job_json = json.dumps(jc_dict)
@@ -103,12 +105,15 @@ class RealityConversionService:
 
     def get_job_properties(self, job_id: str) -> ReturnValue[RCJobProperties]:
         """
-        # TODO
+        Get all properties of a given job.
+        By default this function returns a placeholder empty RCJobProperties if it hasn't succeeded in retrieving job
+        settings. Use is_error() to be sure the return value is valid.
+
         Args:
-            job_id:
+            job_id: The ID of the relevant job.
 
         Returns:
-
+            The properties of the job, and a potential error message.
         """
         response = self._session.get("https://" + self._service_url + f"/realityconversion/jobs/{job_id}",
                                      headers=self._get_header())
@@ -172,12 +177,13 @@ class RealityConversionService:
 
     def get_job_progress(self, job_id: str) -> ReturnValue[JobProgress]:
         """
-        # TODO
+        Get progress for a given job.
+
         Args:
-            job_id:
+            job_id: The ID of the relevant job.
 
         Returns:
-
+            The progress for the job, and a potential error message.
         """
         response = self._session.get("https://" + self._service_url + f"/realityconversion/jobs/{job_id}/progress",
                                      headers=self._get_header())
@@ -196,13 +202,15 @@ class RealityConversionService:
 
     def get_job_estimated_cost(self, job_id: str, cost_parameters: RCJobCostParameters) -> ReturnValue[float]:
         """
-        # TODO
+        Get estimated cost for a given job.
+
         Args:
-            job_id:
-            cost_parameters:
+            job_id: The ID of the relevant job.
+            cost_parameters: New cost estimation parameters for the job.
 
         Returns:
-
+            The estimated cost of the job, and a potential error
+            message.
         """
         pi_dict = {"costEstimationParameters": cost_parameters.to_json()}
         json_data = json.dumps(pi_dict)
@@ -221,12 +229,13 @@ class RealityConversionService:
 
     def cancel_job(self, job_id: str) -> ReturnValue[bool]:
         """
-        # TODO
+        Cancel a job.
+
         Args:
-            job_id:
+            job_id: The ID of the job to be cancelled.
 
         Returns:
-
+            True if the job was successfully cancelled, and a potential error message.
         """
         jc_dict = {
             "state": "cancelled",
@@ -244,12 +253,13 @@ class RealityConversionService:
 
     def delete_job(self, job_id: str) -> ReturnValue[bool]:
         """
-        # TODO
+        Delete existing job (job cannot already be submitted to be deleted).
+
         Args:
-            job_id:
+            job_id: The ID of the job to be deleted.
 
         Returns:
-
+            True if the job was successfully deleted, and a potential error message.
         """
         response = self._session.delete("https://" + self._service_url + f"/realityconversion/jobs/{job_id}",
                                         headers=self._get_header())
