@@ -45,7 +45,7 @@ export class RealityDataAnalysisService {
             const headers =
             {
                 "content-type": "application/json",
-                "accept": "application/vnd.bentley.v1+json",
+                "accept": "application/vnd.bentley.itwin-platform.v1+json",
                 "authorization": await this.authorizationClient.getAccessToken(),
             };
 
@@ -57,11 +57,11 @@ export class RealityDataAnalysisService {
                 response = await axios.post(url, payload, {headers, url, method});
             else if(method === "PATCH")
                 response = await axios.patch(url, payload, {headers, url, method});
-            else 
+            else
                 return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Wrong request method"));
 
             if (!okRet.includes(response.status)) {
-                return new BentleyError(response.status, response.statusText);
+                return Promise.reject(new BentleyError(response.status, response.statusText ?? "Wrong request response code, expected : ", okRet));
             }
 
             return response.data;
@@ -250,6 +250,6 @@ export class RealityDataAnalysisService {
             }
         };
         const response = await this.submitRequest("jobs/" + id, "PATCH", [200], body);
-        return response.costEstimation.estimatedCost;
+        return response.job.costEstimation.estimatedCost;
     }
 }

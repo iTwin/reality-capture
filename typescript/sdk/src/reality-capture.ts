@@ -11,10 +11,13 @@ import * as RDAUtils from "./rdas/Utils";
 import { defaultProgressHook, RealityDataTransferBrowser } from "./utils/RealityDataTransferBrowser";
 import { ReferenceTableBrowser } from "./utils/ReferenceTableBrowser";
 import * as CommonData from "./CommonData";
+import { RealityConversionService } from "./rcs/RealityConversionService";
+import * as RCUtils from "./rcs/Utils";
 
 export {
     ContextCaptureService, CCUtils,
     RealityDataAnalysisService, RDASettings, RDAUtils,
+    RealityConversionService, RCUtils, 
     defaultProgressHook, RealityDataTransferBrowser,
     ReferenceTableBrowser,
     CommonData,
