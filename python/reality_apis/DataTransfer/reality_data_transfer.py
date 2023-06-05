@@ -487,12 +487,20 @@ class RealityDataTransfer:
             return ret
         if reference_table is not None:
             # change references
-            return replace_context_scene_references(
-                os.path.join(output_path, "ContextScene.xml"),
-                os.path.join(output_path, "ContextScene.xml"),
-                reference_table,
-                False,
-            )
+            if os.path.exists(os.path.join(output_path, "ContextScene.xml")):
+                return replace_context_scene_references(
+                    os.path.join(output_path, "ContextScene.xml"),
+                    os.path.join(output_path, "ContextScene.xml"),
+                    reference_table,
+                    False,
+                )
+            else:
+                return replace_context_scene_references(
+                    os.path.join(output_path, "ContextScene.json"),
+                    os.path.join(output_path, "ContextScene.json"),
+                    reference_table,
+                    False,
+                )
         return ret
 
     def download_ccorientation(
