@@ -36,7 +36,7 @@ class RealityDataTransfer:
 
         self._header = {
             "Authorization": None,
-            "User-Agent": f"RealityDataTransfer Python SDK/{__version__}",
+            "User-Agent": f"Reality Data Transfer Python SDK/{__version__}",
             "Content-type": "application/json",
             "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }
