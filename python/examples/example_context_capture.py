@@ -1,7 +1,7 @@
 # Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 # See LICENSE.md in the project root for license terms and full copyright notice.
 
-# Sample creating and submitting a ContextCapture job
+# Sample creating and submitting a Reality Modeling job
 import os
 import time
 
@@ -22,12 +22,12 @@ def main():
     cc_orientations = r"path to the folder where your ccorientation file is"
     output_path = r"path to the folder where you want to save outputs"
 
-    job_name = "CCCS job SDK sample"
-    workspace_name = "CCCS SDK test workspace"
-    ccimage_collections_name = "Test CCCS Photos"
-    cc_orientations_name = "Test CCCS cc orientations"
+    job_name = "Reality Modeling job SDK sample"
+    workspace_name = "Reality Modeling SDK test workspace"
+    ccimage_collections_name = "Test Photos"
+    cc_orientations_name = "Test cc orientations"
 
-    print("Context Capture sample job - Full (Calibration + Reconstruction)")
+    print("Reality Modeling sample job - Full (Calibration + Reconstruction)")
 
     scope_set = {
         "realitydata:modify",

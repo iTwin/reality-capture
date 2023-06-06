@@ -1,7 +1,7 @@
 # Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 # See LICENSE.md in the project root for license terms and full copyright notice.
 
-# Sample conversion of a file
+# Sample of using Reality Conversion service to make the conversion of a file
 import time
 
 import reality_apis.RC.reality_conversion_service as RC
