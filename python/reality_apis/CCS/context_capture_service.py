@@ -17,7 +17,7 @@ from reality_apis.utils import ReturnValue, JobState, JobDateTime, JobProgress, 
 
 class ContextCaptureService:
     """
-    Service handling communication with Context Capture Service.
+    Service handling communication with Reality Modeling Service.
 
     Args:
         token_factory: An object that implements the abstract functions in AbstractTokenFactory. Used to retrieve the
@@ -31,7 +31,7 @@ class ContextCaptureService:
 
         self._header = {
             "Authorization": None,
-            "User-Agent": f"ContextCapture Python SDK/{__version__}",
+            "User-Agent": f"Reality Modeling Python SDK/{__version__}",
             "Content-type": "application/json",
             "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }
