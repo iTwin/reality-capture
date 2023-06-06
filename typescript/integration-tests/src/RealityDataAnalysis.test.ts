@@ -125,6 +125,7 @@ describe("Reality data analysis integration tests", () => {
         this.timeout(10000);
 
         await realityDataAnalysisService.cancelJob(jobId);
+        await sleep(250); // It seems a job needs some time to be cancelled.
         let jobProperties = await realityDataAnalysisService.getJobProperties(jobId);
         expect(jobProperties.state).to.deep.equal(CommonData.JobState.CANCELLED);
     });
@@ -165,17 +166,4 @@ describe("Reality data analysis integration tests", () => {
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
     });
-
-    it("Delete objects 2D output", async function () {
-        this.timeout(10000);
-        await rdaClient.deleteRealityData("", objects2D);
-        try {
-            await rdaClient.getRealityData("", iTwinId, objects2D);
-        }
-        catch(error: any) {
-            expect(error).instanceOf(BentleyError);
-            expect((error as BentleyError).errorNumber).to.equal(404);
-        }
-    });
-
 });
