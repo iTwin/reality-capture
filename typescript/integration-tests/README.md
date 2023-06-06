@@ -1,6 +1,6 @@
 # Introduction
 
-reality-capture-tests is a node project to run Context Capture and Reality Data Analysis integration tests. These integration tests have been added in the github [typescript workflow](../../.github/workflows/typescript.yml)
+reality-capture-tests is a node project to run Reality Analysis, Reality Modeling and Reality Conversion integration tests. These integration tests have been added in the github [typescript workflow](../../.github/workflows/typescript.yml)
 
 ## Pre-reqs
 

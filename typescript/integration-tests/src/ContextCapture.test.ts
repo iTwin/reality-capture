@@ -16,7 +16,7 @@ import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-describe("Context capture integration tests", () => {
+describe("Reality Modeling integration tests", () => {
     let contextCaptureService: ContextCaptureService;
     let realityDataTransfer: RealityDataTransferNode;
     let iTwinId = "";
@@ -57,7 +57,7 @@ describe("Context capture integration tests", () => {
     // Create and get workspace
     it("Create workspace", async function () {
         this.timeout(10000);
-        workspaceId = await contextCaptureService.createWorkspace("SDK integration tests CC workspace", iTwinId);
+        workspaceId = await contextCaptureService.createWorkspace("SDK integration tests reality modeling workspace", iTwinId);
         expect(workspaceId).is.not.undefined;
         expect(workspaceId).to.have.length(36);
     });
@@ -66,7 +66,7 @@ describe("Context capture integration tests", () => {
         this.timeout(10000);
         const workspace = await contextCaptureService.getWorkspace(workspaceId);
         expect(workspace.id).to.deep.equal(workspaceId);
-        expect(workspace.name).to.deep.equal("SDK integration tests CC workspace");
+        expect(workspace.name).to.deep.equal("SDK integration tests reality modeling workspace");
         expect(workspace.iTwinId).to.deep.equal(iTwinId);
         expect(workspace.contextCaptureVersion).to.deep.equal("19.1");
     });
@@ -75,7 +75,7 @@ describe("Context capture integration tests", () => {
     it("Upload images", async function () {
         this.timeout(60000);
         imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../data/CC/Images/"), 
-            "SDK integration tests CC images", CommonData.RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
+            "SDK integration tests images", CommonData.RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
         expect(imagesId).is.not.undefined;
         expect(imagesId).to.have.length(36);
         references.addReference("0", imagesId);
@@ -90,13 +90,13 @@ describe("Context capture integration tests", () => {
     });
 
     // Create & submit job
-    it("Create CC job", async function () {
+    it("Create reality modeling job", async function () {
         this.timeout(10000);
         const settings = new CCUtils.CCJobSettings();
         settings.inputs = [imagesId, ccOrientationsId];
         settings.outputs.threeMX = "threeMX";
         settings.meshQuality = CCUtils.CCJobQuality.MEDIUM;
-        jobId = await contextCaptureService.createJob(CCUtils.CCJobType.FULL, settings, "SDK integration tests CC job", 
+        jobId = await contextCaptureService.createJob(CCUtils.CCJobType.FULL, settings, "SDK integration tests reality modeling job", 
             workspaceId);
         expect(jobId).is.not.undefined;
         expect(jobId).to.have.length(36);
@@ -104,9 +104,9 @@ describe("Context capture integration tests", () => {
     });
 
     // Get and monitor job
-    it("Get CC job properties", async function () {
+    it("Get reality modeling job properties", async function () {
         const jobProperties = await contextCaptureService.getJobProperties(jobId);
-        expect(jobProperties.name).to.deep.equal("SDK integration tests CC job");
+        expect(jobProperties.name).to.deep.equal("SDK integration tests reality modeling job");
         expect(jobProperties.type).to.deep.equal(CCUtils.CCJobType.FULL);
         expect(jobProperties.iTwinId).to.deep.equal(iTwinId);
         expect(jobProperties.settings.inputs).to.have.length(2);
@@ -120,7 +120,7 @@ describe("Context capture integration tests", () => {
         expect(jobProperties.state).to.deep.equal(CommonData.JobState.ACTIVE);
     });
 
-    it("Get cc job progress", async function () {
+    it("Get reality modeling job progress", async function () {
         this.timeout(3600000); // 60mn
 
         let jobProgress = await contextCaptureService.getJobProgress(jobId);
