@@ -24,14 +24,14 @@ async function runObjects2DExample() {
     const jobName = "O2D job new SDK sample";
     const imageCollectionName = "Test Moto Photos";
     const contextSceneName = "Test Moto Scene";
-    const detectorName = "O2D photos in RDAS-QA";
+    const detectorName = "Test O2D Photo Detector";
 
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_SECRET ?? "";
     const authority = process.env.IMJS_ISSUER_URL ?? "";
 
-    console.log("Reality Data Analysis sample job detecting 2D objects");
+    console.log("Reality Analysis sample job detecting 2D objects");
     const authorizationClient = new ServiceAuthorizationClient({
         clientId: clientId,
         clientSecret: secret,

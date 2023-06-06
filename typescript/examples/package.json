@@ -1,7 +1,7 @@
 {
 	"name": "reality-capture-examples",
 	"version": "0.1.0",
-	"description": "Capture SDKs examples",
+	"description": "SDKs examples",
 	"scripts": {
 		"build": "npm run clean && tsc",
 		"clean": "rimraf lib build .rush",
