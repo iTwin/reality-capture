@@ -72,6 +72,7 @@ export class ReferenceTableNode {
      * @returns {boolean} true if the entry has been added successfully.
      */
     public addReference(localPath: string, cloudId: string): boolean {
+        localPath = localPath.replace(/\\/g, "/");
         if (this.localToCloud.has(localPath) && this.cloudToLocal.has(cloudId)) {
             if (this.localToCloud.get(localPath) === cloudId && this.cloudToLocal.get(cloudId) === localPath)
                 console.log("Both " + localPath + " and " + cloudId + " already exist in table and are not mapped to each other");
@@ -90,6 +91,7 @@ export class ReferenceTableNode {
      * @returns {boolean} true if {@link localPath} exists in {@link localToCloud}.
      */
     public hasLocalPath(localPath: string): boolean {
+        localPath = localPath.replace(/\\/g, "/");
         return this.localToCloud.has(localPath);
     }
 
@@ -108,6 +110,7 @@ export class ReferenceTableNode {
      * @returns {string} cloud id associated to {@link localPath}.
      */
     public getCloudIdFromLocalPath(localPath: string): string {
+        localPath = localPath.replace(/\\/g, "/");
         if (!this.hasLocalPath(localPath)) {
             console.log("Could not find " + localPath + " in reference table");
             return "";
