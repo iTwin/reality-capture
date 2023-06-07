@@ -12,7 +12,7 @@ import { ChangeDetectionJobSettings, ExtractGroundJobSettings, L3DJobSettings, O
 
 export function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-describe("Reality data analysis settings unit tests", () => {
+describe("Reality Analysis settings unit tests", () => {
     describe("Settings to json", () => {
         it("O2D", function () {
             const o2dSettings = new O2DJobSettings();
