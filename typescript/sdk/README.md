@@ -1,8 +1,9 @@
 # Introduction
 
-reality-capture is a typescript SDK for Reality Data Analysis and Context Capture. This SDK is based on the APIs
-- [Reality Data Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
-- [Context Capture](https://developer.bentley.com/apis/contextcapture/) 
+reality-capture is a typescript SDK for Reality Analysis, Reality Modeling and Reality Conversion Services. This SDK is based on the APIs
+- [Reality Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
+- [Reality Modeling](https://developer.bentley.com/apis/contextcapture/) 
+- [Reality conversion](https://developer.bentley.com/apis/realityconversion/)
 and should work the same way.
 
 # Node support
