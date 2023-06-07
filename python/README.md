@@ -1,6 +1,6 @@
 # Introduction 
 
-Python SDK for Bentley Systems Reality Analysis (RDA), Reality Modeling (CC) Services and Reality Conversion (RC). It has been created and tested with Python 3.9.
+Python SDK for Bentley Systems Reality Analysis (RDA), Reality Modeling (CC) and Reality Conversion (RC) Services. It has been created and tested with Python 3.9.
 
 This SDK is based on the APIs:
 
