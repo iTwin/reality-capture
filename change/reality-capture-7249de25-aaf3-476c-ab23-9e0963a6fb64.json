@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Creating pnpm workspace",
+  "packageName": "reality-capture",
+  "email": "Jake-Screen@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
