@@ -22,43 +22,19 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-      - name: Install SDK
-        working-directory: ./typescript/sdk
-        run: npm install --no-save
-      - name: Typescript compiler (SDK)
-        working-directory: ./typescript/sdk
-        run: npx tsc
-      - name: Install SDK Node support
-        working-directory: ./typescript/sdk-node
-        run: npm install --no-save
-      - name: Typescript compiler (SDK Node support)
-        working-directory: ./typescript/sdk-node
-        run: npx tsc
-      - name: Install WebApp
-        working-directory: ./typescript/web-app
-        run: npm install --no-save
-      - name: Install Examples
-        working-directory: ./typescript/examples
-        run: npm install --no-save
-      - name: Typescript compiler (WebApp)
-        working-directory: ./typescript/web-app
-        run: npx tsc
-      - name: Typescript compiler (Examples)
-        working-directory: ./typescript/examples
-        run: npx tsc
+      - name: Install packages
+        working-directory: ./
+        run: pnpm install
+      - name: Build packages
+        working-directory: ./
+        run: pnpm build
       - name: EsLint
         working-directory: ./typescript/web-app
-        run: npm run lint
-      - name: Install Integration Tests
-        working-directory: ./typescript/integration-tests
-        run: npm install --no-save
-      - name: Typescript compiler (Integration Tests)
-        working-directory: ./typescript/integration-tests
-        run: npx tsc
+        run: pnpm lint
       - name: Run SDK Integration Tests
         working-directory: ./typescript/integration-tests
         env:
           IMJS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
           IMJS_CLIENT_ID: ${{ secrets.CLIENT_ID }}
           IMJS_SECRET: ${{ secrets.SECRET }}
-        run: npm run test:integration
+        run: pnpm test:integration
