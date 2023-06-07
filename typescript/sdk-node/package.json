@@ -18,7 +18,7 @@
 	},
 	"license": "MIT",
 	"dependencies": {
-		"@azure/abort-controller": "1.1.0",
+		"@azure/abort-controller": "^1.1.0",
 		"@azure/storage-blob": "^12.8.0",
 		"@xmldom/xmldom": "^0.8.6",
 		"reality-capture": "workspace:*",
