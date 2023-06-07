@@ -326,7 +326,7 @@ class O3DJobSettings:
                 {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
             )
         if self.inputs.meshes:
-            json_dict["meshes"].append(
+            json_dict["inputs"].append(
                 {"name": "meshes", "realityDataId": self.inputs.meshes}
             )
         json_dict["outputs"] = list()
