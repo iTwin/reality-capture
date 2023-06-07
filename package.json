@@ -4,7 +4,7 @@
   "description": "This project contains iTwin API SDK for ContextCapture and RealityDataAnalysis as well as reality data API utils in typescript.",
   "packageManager": "pnpm@7.14.0",
   "scripts": {
-    "build": "pnpm -r --filter \"reality-capture\" run build && pnpm -r --filter \"reality-capture-node\" run build && pnpm -r --filter=!reality-capture --filter=!reality-capture-node --filter=!reality-capture-web-app run build",
+    "build": "pnpm -r --filter=@itwin/reality-capture run build && pnpm -r --filter=@itwin/reality-capture-node run build && pnpm -r --filter=@itwin/reality-capture-tests run build",
     "test": "pnpm -r run test",
     "clean": "pnpm -r run clean",
     "lint": "pnpm -r run lint",
