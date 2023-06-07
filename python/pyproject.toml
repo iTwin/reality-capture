@@ -32,6 +32,5 @@ include = ["reality_apis*", "token_factory"]
 "Homepage" = "https://https://github.com/iTwin/reality-apis-samples/tree/main/python"
 "Reality Analysis Api reference" = "https://developer.bentley.com/apis/realitydataanalysis/"
 "Reality Modeling Api reference" = "https://developer.bentley.com/apis/contextcapture/"
-"Reality Analysis Api reference" = "https://developer.bentley.com/apis/realitydataanalysis/"
 "Reality Conversion Api reference" = "https://developer.bentley.com/apis/realityconversion/"
 "Reality Data Api reference" = "https://developer.bentley.com/apis/reality-data/"
