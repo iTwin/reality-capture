@@ -1,0 +1,6 @@
+packages:
+  - "typescript/sdk"
+  - "typescript/sdk-node"
+  - "typescript/web-app"
+  - "typescript/integration-tests"
+  - "typescript/examples"

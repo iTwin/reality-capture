@@ -1,0 +1,19 @@
+{
+  "name": "reality-capture",
+  "version": "1.0.0",
+  "description": "",
+  "workspaces": [
+    "packages/*"
+  ],
+  "packageManager": "pnpm@7.14.0",
+  "scripts": {
+    "build": "pnpm -r --filter \"reality-capture\" run build && pnpm -r --filter \"reality-capture-node\" run build && pnpm -r --filter=!reality-capture --filter=!reality-capture-node run build",
+    "test": "pnpm -r run test",
+    "cover": "pnpm -r run cover",
+    "clean": "pnpm -r run clean",
+    "lint": "pnpm -r run lint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
