@@ -14,7 +14,7 @@ import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import { ContextCapture } from "./CCSTab";
 import { Svg2D, Svg3D, SvgProcess, SvgRealityMesh, SvgUpload } from "@itwin/itwinui-icons-react";
-import { ReferenceTableBrowser } from "reality-capture";
+import { ReferenceTableBrowser } from "@itwin/reality-capture";
 
 interface TabMenu {
     realityDataAccessClient: RealityDataAccessClient;

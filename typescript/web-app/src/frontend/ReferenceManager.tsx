@@ -6,7 +6,7 @@
 import { Button, Table, ToggleSwitch } from "@itwin/itwinui-react";
 import React, { useMemo, useState } from "react";
 import "./DataTransferTab.css";
-import { ReferenceTableBrowser } from "reality-capture";
+import { ReferenceTableBrowser } from "@itwin/reality-capture";
 import "./ReferenceManager.css";
 
 export enum DataTypes {

@@ -25,8 +25,8 @@
 		"dotenv": "^16.0.3",
 		"mocha": "^10.1.0",
 		"node-fetch": "^2.6.0",
-		"reality-capture": "workspace:*",
-		"reality-capture-node": "workspace:*"
+		"@itwin/reality-capture": "workspace:^*",
+		"@itwin/reality-capture-node": "workspace:^*"
 	},
 	"devDependencies": {
 		"@itwin/build-tools": "^3.5.0",

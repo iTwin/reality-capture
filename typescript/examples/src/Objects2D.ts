@@ -3,8 +3,8 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { CommonData, RDASettings, RealityDataAnalysisService } from "reality-capture";
-import { RealityDataTransferNode, ReferenceTableNode } from "reality-capture-node";
+import { CommonData, RDASettings, RealityDataAnalysisService } from "@itwin/reality-capture";
+import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-capture-node";
 import path = require("path");
 import * as fs from "fs";
 import * as dotenv from "dotenv";

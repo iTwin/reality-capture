@@ -11,7 +11,7 @@ import * as os from "os";
 import path = require("path");
 import { v4 as uuidv4 } from "uuid";
 import { ReferenceTableNode } from "../utils/ReferenceTableNode";
-import { CommonData } from "reality-capture";
+import { CommonData } from "@itwin/reality-capture";
 import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
 import { AuthorizationClient, BentleyError, BentleyStatus } from "@itwin/core-common";
 

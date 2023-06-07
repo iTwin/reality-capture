@@ -4,8 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 
 import path = require("path");
-import { CCUtils, CommonData, ContextCaptureService, defaultProgressHook } from "reality-capture";
-import { RealityDataTransferNode, ReferenceTableNode } from "reality-capture-node";
+import { CCUtils, CommonData, ContextCaptureService, defaultProgressHook } from "@itwin/reality-capture";
+import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-capture-node";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
