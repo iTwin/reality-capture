@@ -1,5 +1,5 @@
 {
-	"name": "reality-capture-examples",
+	"name": "@itwin/reality-capture-examples",
 	"version": "0.1.0",
 	"description": "Capture SDKs examples",
 	"scripts": {

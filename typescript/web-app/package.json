@@ -1,5 +1,5 @@
 {
-	"name": "reality-capture-web-app",
+	"name": "@itwin/reality-capture-web-app",
 	"version": "0.1.0",
 	"description": "Client-side sample application to run capture reality jobs and display the productions",
 	"main": "lib/index.js",

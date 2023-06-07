@@ -1,5 +1,5 @@
 {
-	"name": "reality-capture",
+	"name": "@itwin/reality-capture",
 	"version": "0.1.0",
 	"description": "Typescript RDAS and CCS SDKs",
 	"main": "lib/reality-capture.js",

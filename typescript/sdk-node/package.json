@@ -1,5 +1,5 @@
 {
-	"name": "reality-capture-node",
+	"name": "@itwin/reality-capture-node",
 	"version": "0.1.0",
 	"description": "Node support for reality-capture package",
 	"main": "lib/reality-capture-node.js",

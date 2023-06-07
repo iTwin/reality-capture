@@ -1,5 +1,5 @@
 {
-	"name": "reality-capture-tests",
+	"name": "@itwin/reality-capture-tests",
 	"version": "0.1.0",
 	"description": "Reality capture integration tests",
 	"scripts": {
