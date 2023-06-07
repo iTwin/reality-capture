@@ -185,7 +185,7 @@ importers:
         version: 1.1.0
       '@azure/storage-blob':
         specifier: ^12.8.0
-        version: 12.8.0
+        version: 12.12.0
       '@xmldom/xmldom':
         specifier: ^0.8.6
         version: 0.8.6
@@ -431,15 +431,13 @@ packages:
       '@types/node-fetch': 2.6.4
       '@types/tunnel': 0.0.1
       form-data: 3.0.1
-      node-fetch: 2.6.11
+      node-fetch: 2.6.0
       process: 0.11.10
       tough-cookie: 4.1.3
       tslib: 2.5.3
       tunnel: 0.0.6
       uuid: 8.3.2
       xml2js: 0.4.23
-    transitivePeerDependencies:
-      - encoding
 
   /@azure/core-http@2.3.2:
     resolution: {integrity: sha512-Z4dfbglV9kNZO177CNx4bo5ekFuYwwsvjLiKdZI4r84bYGv3irrbQz7JC3/rUfFH2l4T/W6OFleJaa2X0IaQqw==}
@@ -462,6 +460,7 @@ packages:
       xml2js: 0.5.0
     transitivePeerDependencies:
       - encoding
+    dev: false
 
   /@azure/core-http@3.0.2:
     resolution: {integrity: sha512-o1wR9JrmoM0xEAa0Ue7Sp8j+uJvmqYaGoHOCT5qaVYmvgmnZDC0OvQimPA/JR3u77Sz6D1y3Xmk1y69cDU9q9A==}
@@ -483,7 +482,6 @@ packages:
       xml2js: 0.5.0
     transitivePeerDependencies:
       - encoding
-    dev: false
 
   /@azure/core-lro@1.0.5:
     resolution: {integrity: sha512-0EFCFZxARrIoLWMIRt4vuqconRVIO2Iin7nFBfJiYCCbKp5eEmxutNk8uqudPmG0XFl5YqlVh68/al/vbE5OOg==}
@@ -494,8 +492,6 @@ packages:
       '@azure/core-tracing': 1.0.0-preview.11
       events: 3.3.0
       tslib: 2.5.3
-    transitivePeerDependencies:
-      - encoding
 
   /@azure/core-lro@2.5.3:
     resolution: {integrity: sha512-ubkOf2YCnVtq7KqEJQqAI8dDD5rH1M6OP5kW0KO/JQyTaxLA0N0pjFWvvaysCj9eHMNBcuuoZXhhl0ypjod2DA==}
@@ -585,7 +581,6 @@ packages:
       tslib: 2.5.3
     transitivePeerDependencies:
       - encoding
-    dev: false
 
   /@azure/storage-blob@12.14.0:
     resolution: {integrity: sha512-g8GNUDpMisGXzBeD+sKphhH5yLwesB4JkHr1U6be/X3F+cAMcyGLPD1P89g2M7wbEtUJWoikry1rlr83nNRBzg==}
@@ -615,23 +610,6 @@ packages:
       '@opentelemetry/api': 0.10.2
       events: 3.3.0
       tslib: 2.5.3
-    transitivePeerDependencies:
-      - encoding
-
-  /@azure/storage-blob@12.8.0:
-    resolution: {integrity: sha512-c8+Wz19xauW0bGkTCoqZH4dYfbtBniPiGiRQOn1ca6G5jsjr4azwaTk9gwjVY8r3vY2Taf95eivLzipfIfiS4A==}
-    engines: {node: '>=12.0.0'}
-    dependencies:
-      '@azure/abort-controller': 1.1.0
-      '@azure/core-http': 2.3.2
-      '@azure/core-lro': 2.5.3
-      '@azure/core-paging': 1.5.0
-      '@azure/core-tracing': 1.0.0-preview.13
-      '@azure/logger': 1.0.4
-      events: 3.3.0
-      tslib: 2.5.3
-    transitivePeerDependencies:
-      - encoding
 
   /@babel/code-frame@7.21.4:
     resolution: {integrity: sha512-LYvhNKfwWSPpocw8GI7gpK2nq3HSDuEPC/uSYaALSJu9xjsalaaYFOq0Pwt5KmVqwEbZlDu81aLXwBOmD/Fv9g==}
@@ -2627,8 +2605,8 @@ packages:
       cross-spawn: 7.0.3
       fs-extra: 8.1.0
       glob: 7.2.3
-      mocha: 10.2.0
-      mocha-junit-reporter: 2.2.0(mocha@10.2.0)
+      mocha: 10.1.0
+      mocha-junit-reporter: 2.2.0(mocha@10.1.0)
       rimraf: 3.0.2
       tree-kill: 1.2.2
       typedoc: 0.22.18(typescript@4.5.2)
@@ -2705,7 +2683,7 @@ packages:
       '@opentelemetry/api':
         optional: true
     dependencies:
-      '@azure/storage-blob': 12.8.0
+      '@azure/storage-blob': 12.13.0
       '@bentley/imodeljs-native': 3.5.11
       '@itwin/cloud-agnostic-core': 1.4.0
       '@itwin/core-bentley': 3.5.0
@@ -3163,7 +3141,6 @@ packages:
       reflect-metadata: 0.1.13
     transitivePeerDependencies:
       - debug
-      - encoding
 
   /@itwin/object-storage-azure@1.6.0:
     resolution: {integrity: sha512-b0rxhn0NAFY1alOEGMAUaJtK8WG7xoJPDOVjuA8nC7zFcxxtP2VOsSOauuie2zzL3GDi9OU6vywR3gAcJcTZww==}
@@ -3275,7 +3252,7 @@ packages:
       '@itwin/core-bentley': ^3.0.0
     dependencies:
       '@itwin/core-bentley': 3.5.0
-      '@itwin/core-geometry': 3.7.8
+      '@itwin/core-geometry': 3.5.0
       axios: 0.25.0
     transitivePeerDependencies:
       - debug
@@ -3286,7 +3263,7 @@ packages:
       '@itwin/core-bentley': ^3.0.0
     dependencies:
       '@itwin/core-bentley': 3.7.8
-      '@itwin/core-geometry': 3.7.8
+      '@itwin/core-geometry': 3.5.0
       axios: 0.25.0
     transitivePeerDependencies:
       - debug
@@ -10327,7 +10304,7 @@ packages:
     hasBin: true
     dev: true
 
-  /mocha-junit-reporter@2.2.0(mocha@10.2.0):
+  /mocha-junit-reporter@2.2.0(mocha@10.1.0):
     resolution: {integrity: sha512-W83Ddf94nfLiTBl24aS8IVyFvO8aRDLlCvb+cKb/VEaN5dEbcqu3CXiTe8MQK2DvzS7oKE1RsFTxzN302GGbDQ==}
     peerDependencies:
       mocha: '>=2.2.5'
@@ -10335,7 +10312,7 @@ packages:
       debug: 4.3.4(supports-color@8.1.1)
       md5: 2.3.0
       mkdirp: 1.0.4
-      mocha: 10.2.0
+      mocha: 10.1.0
       strip-ansi: 6.0.1
       xml: 1.0.1
     transitivePeerDependencies:
@@ -10368,34 +10345,6 @@ packages:
       yargs: 16.2.0
       yargs-parser: 20.2.4
       yargs-unparser: 2.0.0
-
-  /mocha@10.2.0:
-    resolution: {integrity: sha512-IDY7fl/BecMwFHzoqF2sg/SHHANeBoMMXFlS9r0OXKDssYE1M5O43wUY/9BVPeIvfH2zmEbBfseqN9gBQZzXkg==}
-    engines: {node: '>= 14.0.0'}
-    hasBin: true
-    dependencies:
-      ansi-colors: 4.1.1
-      browser-stdout: 1.3.1
-      chokidar: 3.5.3
-      debug: 4.3.4(supports-color@8.1.1)
-      diff: 5.0.0
-      escape-string-regexp: 4.0.0
-      find-up: 5.0.0
-      glob: 7.2.0
-      he: 1.2.0
-      js-yaml: 4.1.0
-      log-symbols: 4.1.0
-      minimatch: 5.0.1
-      ms: 2.1.3
-      nanoid: 3.3.3
-      serialize-javascript: 6.0.0
-      strip-json-comments: 3.1.1
-      supports-color: 8.1.1
-      workerpool: 6.2.1
-      yargs: 16.2.0
-      yargs-parser: 20.2.4
-      yargs-unparser: 2.0.0
-    dev: true
 
   /ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
@@ -10488,7 +10437,6 @@ packages:
   /node-fetch@2.6.0:
     resolution: {integrity: sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==}
     engines: {node: 4.x || >=6.0.0}
-    dev: false
 
   /node-fetch@2.6.11:
     resolution: {integrity: sha512-4I6pdBY1EthSqDmJkiNk3JIT8cswwR9nfeW/cPdUagJYEQG7R95WRH74wpz7ma8Gh/9dI9FP+OU+0E4FvtA55w==}
