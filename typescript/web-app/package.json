@@ -48,7 +48,7 @@
 		"react": "^17.0.0",
 		"react-dom": "^17.0.0",
 		"react-redux": "^7.2.0",
-		"reality-capture": "file:../sdk"
+		"reality-capture": "workspace:*"
 	},
 	"devDependencies": {
 		"@bentley/react-scripts": "^5.0.0",

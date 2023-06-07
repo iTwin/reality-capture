@@ -22,8 +22,8 @@
 	"dependencies": {
 		"@itwin/service-authorization": "^0.7.0",
 		"dotenv": "^16.0.3",
-		"reality-capture": "file:../sdk",
-		"reality-capture-node": "file:../sdk-node"
+		"reality-capture": "workspace:*",
+		"reality-capture-node": "workspace:*"
 	},
 	"devDependencies": {
 		"@itwin/build-tools": "^3.5.0",
