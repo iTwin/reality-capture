@@ -5,9 +5,9 @@
   "packageManager": "pnpm@7.14.0",
   "scripts": {
     "build": "pnpm -r run build",
-    "test": "pnpm -r run test",
     "clean": "pnpm -r run clean",
     "lint": "pnpm -r run lint",
+    "lint-fix": "pnpm -r run lint-fix",
     "change": "beachball change",
     "check": "beachball check",
     "version-bump": "beachball bump",

@@ -20,7 +20,7 @@
 	},
 	"license": "MIT",
 	"dependencies": {
-		"@itwin/core-bentley": "^3.5.0",
+		"@itwin/core-bentley": "^3.7.8",
 		"@itwin/reality-capture": "workspace:^*",
 		"@itwin/reality-capture-node": "workspace:^*",
 		"@itwin/reality-data-client": "^0.9.0",
@@ -30,7 +30,7 @@
 		"node-fetch": "^2.6.0"
 	},
 	"devDependencies": {
-		"@itwin/build-tools": "^3.5.0",
+		"@itwin/build-tools": "^3.7.8",
 		"@types/chai": "^4.3.3",
 		"@types/chai-as-promised": "^7.1.5",
 		"@types/mocha": "^10.0.0",

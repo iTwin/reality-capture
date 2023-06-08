@@ -10,7 +10,6 @@ module.exports = {
     ignorePatterns: [
       ".nycrc",
       ".eslintrc.json",
-      ".mocharc.json",
       "tsconfig.*",
       ".*ignore",
       ".github/**",
