@@ -128,10 +128,12 @@ describe("Context capture integration tests", () => {
         expect(jobProgress.state).to.deep.equal(CommonData.JobState.ACTIVE);
         expect(jobProgress.step).to.deep.equal("PrepareStep");
 
-        while(true) {
+        let jobInProgress = true;
+        while(jobInProgress) {
             const progress = await contextCaptureService.getJobProgress(jobId);
             if(progress.state === CommonData.JobState.SUCCESS || progress.state === CommonData.JobState.OVER || 
                 progress.state === CommonData.JobState.CANCELLED || progress.state === CommonData.JobState.FAILED) {
+                jobInProgress = false;
                 break;
             }
             await sleep(10000);

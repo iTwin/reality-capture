@@ -113,9 +113,11 @@ async function runContextCaptureExample() {
     await realityDataAnalysisService.submitJob(jobId);
     console.log("Job submitted");
 
-    while(true) {
+    let jobInProgress = true;
+    while(jobInProgress) {
         const progress = await realityDataAnalysisService.getJobProgress(jobId);
         if(progress.state === CommonData.JobState.SUCCESS) {
+            jobInProgress = false;
             break;
         }
         else if(progress.state === CommonData.JobState.ACTIVE) {

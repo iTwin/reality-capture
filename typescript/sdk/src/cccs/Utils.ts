@@ -382,7 +382,7 @@ export class CCJobSettings {
             newJobSettings.cacheSettings = {
                 useCache: settingsJson["jobSettings"]["cacheSettings"]["useCache"],
                 createCache: settingsJson["jobSettings"]["cacheSettings"]["createCache"],
-            }
+            };
 
         if ("quality" in settingsJson["jobSettings"])
             newJobSettings.meshQuality = settingsJson["jobSettings"]["quality"];

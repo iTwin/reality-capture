@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import path = require("path");
+import path from "path";
 import { CCUtils, CommonData, ContextCaptureService, defaultProgressHook } from "@itwin/reality-capture";
 import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-capture-node";
 import * as fs from "fs";
@@ -72,7 +72,7 @@ async function main() {
         // Create workspace
         const workspaceId = await contextCaptureService.createWorkspace(workspaceName, projectId);
 
-        let settings = new CCUtils.CCJobSettings();
+        const settings = new CCUtils.CCJobSettings();
         settings.inputs = [references.getCloudIdFromLocalPath(ccImageCollection), references.getCloudIdFromLocalPath(ccOrientations)];
         settings.outputs.threeMX = "threeMX";
         settings.meshQuality = CCUtils.CCJobQuality.MEDIUM;
@@ -85,9 +85,11 @@ async function main() {
         await contextCaptureService.submitJob(jobId);
         console.log("Job submitted");
 
-        while(true) {
+        let jobInProgress = true;
+        while(jobInProgress) {
             const progress = await contextCaptureService.getJobProgress(jobId);
             if(progress.state === CommonData.JobState.SUCCESS || progress.state === CommonData.JobState.OVER) {
+                jobInProgress = false;
                 break;
             }
             else if(progress.state === CommonData.JobState.ACTIVE) {

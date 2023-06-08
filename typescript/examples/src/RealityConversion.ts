@@ -58,7 +58,7 @@ async function main() {
         await references.save(referencesPath);
         console.log("Checked data upload");
 
-        let settings = new RCUtils.RCJobSettings();
+        const settings = new RCUtils.RCJobSettings();
         settings.inputs.laz = [references.getCloudIdFromLocalPath(lazPointCloud)];
         settings.outputs.opc = true;
 
@@ -70,9 +70,11 @@ async function main() {
         await realityConversionService.submitJob(jobId);
         console.log("Job submitted");
 
-        while(true) {
+        let jobInProgress = true;
+        while(jobInProgress) {
             const progress = await realityConversionService.getJobProgress(jobId);
             if(progress.state === CommonData.JobState.SUCCESS || progress.state === CommonData.JobState.OVER) {
+                jobInProgress = false;
                 break;
             }
             else if(progress.state === CommonData.JobState.ACTIVE) {

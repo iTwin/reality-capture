@@ -92,7 +92,7 @@ describe("RealityConversion integration tests", () => {
 
     it("Get rcs job progress", async function () {
         this.timeout(10000);
-        let jobProgress = await realityConversionService.getJobProgress(jobId);
+        const jobProgress = await realityConversionService.getJobProgress(jobId);
         expect(jobProgress.progress).to.equal(0);
         expect(jobProgress.state).to.deep.equal(CommonData.JobState.ACTIVE);
         expect(jobProgress.step).to.deep.equal("PrepareStep");

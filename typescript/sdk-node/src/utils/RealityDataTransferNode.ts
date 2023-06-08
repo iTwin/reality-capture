@@ -217,7 +217,7 @@ async function replaceCCOrientationsReferences(ccOrientationPath: string, output
                 return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
                     "Can't replace cloud id " + cloudId + " path with local path, does not exist in references"));
 
-            imagePath[0].textContent = localPath + "/" + splittedImagePath[splittedImagePath.length - 1];;
+            imagePath[0].textContent = localPath + "/" + splittedImagePath[splittedImagePath.length - 1];
             if (maskPath.length) {
                 let maskPathValue = maskPath[0].textContent;
                 if (!maskPathValue)
