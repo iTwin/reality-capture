@@ -33,7 +33,7 @@ jobs:
         working-directory: ./
         run: pnpm build
       - name: EsLint
-        working-directory: ./typescript/web-app
+        working-directory: ./
         run: pnpm lint
       - name: Run SDK Integration Tests
         working-directory: ./typescript/integration-tests
