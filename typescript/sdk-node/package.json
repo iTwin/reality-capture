@@ -24,9 +24,9 @@
 	"license": "MIT",
 	"dependencies": {
 		"@azure/abort-controller": "^1.1.0",
+		"@itwin/reality-capture": "workspace:^*",
 		"@azure/storage-blob": "^12.8.0",
 		"@xmldom/xmldom": "^0.8.6",
-		"@itwin/reality-capture": "workspace:^*",
 		"uuid": "^9.0.0"
 	},
 	"peerDependencies": {
