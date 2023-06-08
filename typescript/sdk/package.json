@@ -18,6 +18,11 @@
 		"name": "Bentley Systems, Inc.",
 		"url": "http://www.bentley.com"
 	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/iTwin/reality-capture.git",
+		"directory": "typescript/sdk"
+	},
 	"license": "MIT",
 	"dependencies": {
 		"@azure/storage-blob": "^12.13.0",
