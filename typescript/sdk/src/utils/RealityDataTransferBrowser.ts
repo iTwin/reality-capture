@@ -294,8 +294,6 @@ export class RealityDataTransferBrowser {
                                 const isCancelled = !this.onDownloadProgress(currentPercentage);
                                 if (isCancelled)
                                     this.abortController.abort();
-
-                                // TODO : what to do if no provided hook?
                             }
                         }
                     }
@@ -404,8 +402,6 @@ export class RealityDataTransferBrowser {
                                 const isCancelled = !this.onUploadProgress(currentPercentage);
                                 if (isCancelled)
                                     this.abortController.abort();
-
-                                // TODO : what to do if no provided hook?
                             }
                         }
                     }
@@ -425,7 +421,7 @@ export class RealityDataTransferBrowser {
         }
         catch (error: any) {
             if (error.name === "AbortError")
-                return ""; // TODO : what to do if aborted?
+                return "";
 
             return Promise.reject(error);
         }
