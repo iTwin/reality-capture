@@ -26,7 +26,6 @@ describe("Reality analysis integration tests", () => {
     let imagesId = "";
     let sceneId = "";
     let jobId = "";
-    let objects2D = "";
 
     before(async function ()  {
         this.timeout(30000);
@@ -106,7 +105,6 @@ describe("Reality analysis integration tests", () => {
         const o2dSettings = jobProperties.settings as RDASettings.O2DJobSettings;
         expect(o2dSettings.inputs.photos).to.deep.equal(sceneId);
         expect(o2dSettings.inputs.photoObjectDetector).to.deep.equal(detectorId);
-        objects2D = o2dSettings.outputs.objects2D;
         expect(o2dSettings.outputs.objects2D).to.have.length(36);
         expect(jobProperties.id).to.deep.equal(jobId);
         expect(jobProperties.state).to.deep.equal(CommonData.JobState.ACTIVE);
@@ -115,7 +113,7 @@ describe("Reality analysis integration tests", () => {
     it("Get reality analysis job progress", async function () {
         this.timeout(10000);
 
-        let jobProgress = await realityDataAnalysisService.getJobProgress(jobId);
+        const jobProgress = await realityDataAnalysisService.getJobProgress(jobId);
         expect(jobProgress.progress).to.equal(0);
         expect(jobProgress.state).to.deep.equal(CommonData.JobState.ACTIVE);
         expect(jobProgress.step).to.deep.equal("PrepareStep");
@@ -126,7 +124,7 @@ describe("Reality analysis integration tests", () => {
 
         await realityDataAnalysisService.cancelJob(jobId);
         await sleep(250); // It seems a job needs some time to be cancelled.
-        let jobProperties = await realityDataAnalysisService.getJobProperties(jobId);
+        const jobProperties = await realityDataAnalysisService.getJobProperties(jobId);
         expect(jobProperties.state).to.deep.equal(CommonData.JobState.CANCELLED);
     });
 

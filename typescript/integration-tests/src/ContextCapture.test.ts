@@ -123,7 +123,7 @@ describe("Reality Modeling integration tests", () => {
     it("Get reality modeling job progress", async function () {
         this.timeout(10000);
 
-        let jobProgress = await contextCaptureService.getJobProgress(jobId);
+        const jobProgress = await contextCaptureService.getJobProgress(jobId);
         await contextCaptureService.cancelJob(jobId);
         expect(jobProgress.progress).to.equal(0);
         expect(jobProgress.state).to.deep.equal(CommonData.JobState.ACTIVE);
