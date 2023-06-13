@@ -17,8 +17,9 @@ import { JobState } from "../CommonData";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-describe("Context capture unit tests", () => {
-    const serviceUrl = "https://api.bentley.com/contextcapture";
+describe("Reality Modeling unit tests", () => {
+    let iTwinId = "";
+    let serviceUrl = "https://api.bentley.com/contextcapture"
     let contextCaptureService: ContextCaptureService;
     let axiosMock = new MockAdapter(axios);
     let authorizationClient: ServiceAuthorizationClient;
@@ -56,7 +57,7 @@ describe("Context capture unit tests", () => {
             axiosMock.onPost(serviceUrl + "/jobs", {
                 "type": "Full",
                 "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
-                "name": "Context capture unit test job",
+                "name": "Reality Modeling unit test job",
                 "settings": {   
                     "outputs": ["OPC", "CCOrientations"],               
                     "cacheSettings": { "createCache": true, "useCache": "useCache" },
@@ -65,22 +66,22 @@ describe("Context capture unit tests", () => {
                 },
                 "workspaceId": "workspaceId"
             }).reply(201, 
-                {
-                    "job": {
-                        "id": "cc3d35cc-416a-4262-9714-b359da70b419",
-                        "name": "Context capture unit test job",
-                        "type": "Full",
-                        "state": "unsubmitted",
-                        "createdDateTime": "2023-04-05T14:29:55Z",
-                        "lastModifiedDateTime": "2023-04-05T14:29:55Z",
-                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                        "location": "East US",
-                        "email": "example@bentley.com",
-                        "workspaceId": "workspaceId",
-                        "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
-                        "jobSettings": {
-                            "quality": "Extra",
-                            "outputs": [{
+            {
+                "job": {
+                    "id": "cc3d35cc-416a-4262-9714-b359da70b419",
+                    "name": "Reality Modeling unit test job",
+                    "type": "Full",
+                    "state": "unsubmitted",
+                    "createdDateTime": "2023-04-05T14:29:55Z",
+                    "lastModifiedDateTime": "2023-04-05T14:29:55Z",
+                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                    "location": "East US",
+                    "email": "example@bentley.com",
+                    "workspaceId": "workspaceId",
+                    "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
+                    "jobSettings": {
+                        "quality": "Extra",
+                        "outputs": [{
                                 "format": "OPC",
                                 "id": "opcId"
                             },
@@ -108,7 +109,7 @@ describe("Context capture unit tests", () => {
                 useCache: "useCache",
                 createCache: true
             };
-            const jobName = "Context capture unit test job";
+            const jobName = "Reality Modeling unit test job";
                         
             const id = contextCaptureService.createJob(CCJobType.FULL, ccSettings, jobName, "workspaceId");
             await sleep(2000);
@@ -119,7 +120,7 @@ describe("Context capture unit tests", () => {
             const body = JSON.parse(axiosMock.history.post[0].data);
             return Promise.all([         
                 expect(body).to.have.property("type", "Full"),
-                expect(body).to.have.property("name", "Context capture unit test job"),
+                expect(body).to.have.property("name", "Reality Modeling unit test job"),
                 expect(body).to.have.property("workspaceId", "workspaceId"),
                 expect(body).to.have.property("inputs"),
                 expect(body.inputs).to.have.length.above(0),
@@ -366,33 +367,33 @@ describe("Context capture unit tests", () => {
     describe("Get job properties", () => {
         it("Get job properties", async function () {
             axiosMock.onGet(serviceUrl + "/jobs/ccJob").reply(200, 
-                {
-                    "job": {
-                        "id": "cc3d35cc-416a-4262-9714-b359da70b419",
-                        "name": "Context capture unit test job",
-                        "type": "Full",
-                        "state": "unsubmitted",
-                        "createdDateTime": "2023-04-05T14:29:55Z",
-                        "lastModifiedDateTime": "2023-04-05T14:29:55Z",
-                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                        "location": "East US",
-                        "email": "example@bentley.com",
-                        "workspaceId": "workspaceId",
-                        "costEstimationParameters": {
-                            "gigaPixels": 2.1,
-                            "megaPoints": 1.5,
-                            "meshQuality": "Extra"
-                        },
-                        "executionInformation": {
-                            "submittedDateTime": "2023-03-30T15:14:57Z",
-                            "startedDateTime": "2023-03-30T15:22:11Z",
-                            "endedDateTime": "2023-03-30T15:39:47Z",
-                            "estimatedUnits": 2
-                        },
-                        "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
-                        "jobSettings": {
-                            "quality": "Extra",
-                            "outputs": [{
+            {
+                "job": {
+                    "id": "cc3d35cc-416a-4262-9714-b359da70b419",
+                    "name": "Reality Modeling unit test job",
+                    "type": "Full",
+                    "state": "unsubmitted",
+                    "createdDateTime": "2023-04-05T14:29:55Z",
+                    "lastModifiedDateTime": "2023-04-05T14:29:55Z",
+                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                    "location": "East US",
+                    "email": "example@bentley.com",
+                    "workspaceId": "workspaceId",
+                    "costEstimationParameters": {
+                        "gigaPixels": 2.1,
+                        "megaPoints": 1.5,
+                        "meshQuality": "Extra"
+                    },
+                    "executionInformation": {
+                        "submittedDateTime": "2023-03-30T15:14:57Z",
+                        "startedDateTime": "2023-03-30T15:22:11Z",
+                        "endedDateTime": "2023-03-30T15:39:47Z",
+                        "estimatedUnits": 2
+                    },
+                    "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
+                    "jobSettings": {
+                        "quality": "Extra",
+                        "outputs": [{
                                 "format": "OPC",
                                 "id": "opcId"
                             },
@@ -416,7 +417,7 @@ describe("Context capture unit tests", () => {
                 return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
             
             return Promise.all([
-                expect(properties).to.eventually.have.property("name", "Context capture unit test job"),
+                expect(properties).to.eventually.have.property("name", "Reality Modeling unit test job"),
                 expect(properties).to.eventually.have.property("type", CCJobType.FULL),
                 expect(properties).to.eventually.have.property("iTwinId", "c3739cf2-9da3-487b-b03d-f58c8eb97e5b"),
                 expect(properties).to.eventually.have.property("id", "cc3d35cc-416a-4262-9714-b359da70b419"),

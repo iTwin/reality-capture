@@ -43,6 +43,7 @@ export interface JobProgress {
 export enum RealityDataType {
     CC_IMAGE_COLLECTION = "CCImageCollection",
     CC_ORIENTATIONS = "CCOrientations",
+    CESIUM_3D_TILES = "Cesium3DTiles",
     CONTEXT_DETECTOR = "ContextDetector",
     CONTEXT_SCENE = "ContextScene",
     DGN = "DGN",

@@ -17,7 +17,7 @@ import { RCJobSettings, RCJobType } from "@itwin/reality-capture/lib/rcs/Utils";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-describe("RealityConversion integration tests", () => {
+describe("Reality Conversion integration tests", () => {
     let realityConversionService: RealityConversionService;
     let realityDataTransfer: RealityDataTransferNode;
     let iTwinId = "";
@@ -57,29 +57,29 @@ describe("RealityConversion integration tests", () => {
     it("Upload LAS", async function () {
         this.timeout(60000);
         lasId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../data/RCS/LAS/"), 
-            "SDK integration tests RCS LAS", CommonData.RealityDataType.LAS, iTwinId);
+            "SDK integration tests reality conversion LAS", CommonData.RealityDataType.LAS, iTwinId);
         expect(lasId).is.not.undefined;
         expect(lasId).to.have.length(36);
         references.addReference("0", lasId);
     });
 
     // Create & submit job
-    it("Create CC job", async function () {
+    it("Create reality conversion job", async function () {
         this.timeout(10000);
         const settings = new RCJobSettings();
         settings.inputs.las = [lasId];
         settings.outputs.opc = true;
-        jobId = await realityConversionService.createJob(settings, "SDK integration tests RCS job", iTwinId, RCJobType.Conversion);
+        jobId = await realityConversionService.createJob(settings, "SDK integration tests reality conversion job", iTwinId, RCJobType.Conversion);
         expect(jobId).is.not.undefined;
         expect(jobId).to.have.length(36);
         await realityConversionService.submitJob(jobId);
     });
 
     // Get and monitor job
-    it("Get CC job properties", async function () {
+    it("Get reality conversion job properties", async function () {
         this.timeout(10000);
         const jobProperties = await realityConversionService.getJobProperties(jobId);
-        expect(jobProperties.name).to.deep.equal("SDK integration tests RCS job");
+        expect(jobProperties.name).to.deep.equal("SDK integration tests reality conversion job");
         expect(jobProperties.type).to.deep.equal(RCJobType.Conversion);
         expect(jobProperties.iTwinId).to.deep.equal(iTwinId);
         expect(jobProperties.settings.inputs.las).to.have.length(1);
@@ -90,7 +90,7 @@ describe("RealityConversion integration tests", () => {
         expect(jobProperties.state).to.deep.equal(CommonData.JobState.ACTIVE);
     });
 
-    it("Get rcs job progress", async function () {
+    it("Get reality conversion job progress", async function () {
         this.timeout(10000);
         const jobProgress = await realityConversionService.getJobProgress(jobId);
         expect(jobProgress.progress).to.equal(0);

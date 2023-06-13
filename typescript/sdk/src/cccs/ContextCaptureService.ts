@@ -10,7 +10,7 @@ import { AuthorizationClient } from "@itwin/core-common";
 import axios from "axios";
 
 /**
- * Service handling communication with Context Capture Service
+ * Service handling communication with Reality Modeling Service
  */
 export class ContextCaptureService {
     /** Authorization client to generate access token. */
@@ -98,7 +98,7 @@ export class ContextCaptureService {
      * Create a workspace corresponding to the given parameters.
      * @param {string} name Workspace name.
      * @param {string} iTwinId iTwinId associated to the workspace.
-     * @param {string} contextCaptureVersion (optional) Version of ContextCapture to be used for this workspace.
+     * @param {string} contextCaptureVersion (optional) Version of Reality Modeling to be used for this workspace.
      * @returns {string} created workspace id.
      */
     public async createWorkspace(name: string, iTwinId: string, contextCaptureVersion?: string): Promise<string> {

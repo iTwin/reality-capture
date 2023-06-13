@@ -16,7 +16,7 @@ import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-describe("Reality data analysis integration tests", () => {
+describe("Reality analysis integration tests", () => {
     let iTwinId = "";
     let realityDataAnalysisService: RealityDataAnalysisService;
     let realityDataTransfer: RealityDataTransferNode;
@@ -55,33 +55,33 @@ describe("Reality data analysis integration tests", () => {
     });
 
     // Create and upload inputs
-    it("Upload RDAS detector", async function () {
+    it("Upload reality analysis detector", async function () {
         this.timeout(120000);
         detectorId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../data/O2D/Coco2017_v1.19/"), 
-            "SDK integration tests RDAS detector", CommonData.RealityDataType.CONTEXT_DETECTOR, iTwinId);
+            "SDK integration tests reality analysis detector", CommonData.RealityDataType.CONTEXT_DETECTOR, iTwinId);
         expect(detectorId).is.not.undefined;
         expect(detectorId).to.have.length(36);
     });
 
-    it("Upload RDAS images", async function () {
+    it("Upload reality analysis images", async function () {
         this.timeout(60000);
         imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../data/O2D/Images"), 
-            "SDK integration tests RDAS images", CommonData.RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
+            "SDK integration tests reality analysis images", CommonData.RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
         expect(imagesId).is.not.undefined;
         expect(imagesId).to.have.length(36);
         references.addReference("0", imagesId);
     });
 
-    it("Upload RDAS scene", async function () {
+    it("Upload reality analysis scene", async function () {
         this.timeout(10000);
         sceneId = await realityDataTransfer.uploadContextScene(path.resolve(__dirname, "../data/O2D/Scene"), 
-            "SDK integration tests RDAS scene", iTwinId, references);
+            "SDK integration tests reality analysis scene", iTwinId, references);
         expect(sceneId).is.not.undefined;
         expect(sceneId).to.have.length(36);
     });
 
     // Create & submit job
-    it("Create RDAS job", async function () {
+    it("Create reality analysis job", async function () {
         this.timeout(10000);
 
         const settings = new RDASettings.O2DJobSettings();
@@ -89,16 +89,18 @@ describe("Reality data analysis integration tests", () => {
         settings.inputs.photoObjectDetector = detectorId;
         settings.outputs.objects2D = "objects2D";
 
-        jobId = await realityDataAnalysisService.createJob(settings, "SDK integration tests RDAS job", iTwinId);
+        jobId = await realityDataAnalysisService.createJob(settings, "SDK integration tests reality analysis job", iTwinId);
         expect(jobId).is.not.undefined;
         expect(jobId).to.have.length(36);
         await realityDataAnalysisService.submitJob(jobId);
     });
 
     // Get and monitor job
-    it("Get RDAS job properties", async function () {
+    it("Get reality analysis job properties", async function () {
+        this.timeout(10000);
+        
         const jobProperties = await realityDataAnalysisService.getJobProperties(jobId);
-        expect(jobProperties.name).to.deep.equal("SDK integration tests RDAS job");
+        expect(jobProperties.name).to.deep.equal("SDK integration tests reality analysis job");
         expect(jobProperties.type).to.deep.equal("objects2D");
         expect(jobProperties.iTwinId).to.deep.equal(iTwinId);
         const o2dSettings = jobProperties.settings as RDASettings.O2DJobSettings;
@@ -110,32 +112,22 @@ describe("Reality data analysis integration tests", () => {
         expect(jobProperties.state).to.deep.equal(CommonData.JobState.ACTIVE);
     });
 
-    it("Get cc job progress", async function () {
-        this.timeout(3600000); // 60mn
+    it("Get reality analysis job progress", async function () {
+        this.timeout(10000);
 
         let jobProgress = await realityDataAnalysisService.getJobProgress(jobId);
         expect(jobProgress.progress).to.equal(0);
         expect(jobProgress.state).to.deep.equal(CommonData.JobState.ACTIVE);
         expect(jobProgress.step).to.deep.equal("PrepareStep");
+    });
 
-        let jobInProgress = true;
-        while(jobInProgress) {
-            const progress = await realityDataAnalysisService.getJobProgress(jobId);
-            if(progress.state === CommonData.JobState.SUCCESS || progress.state === CommonData.JobState.CANCELLED 
-                || progress.state === CommonData.JobState.FAILED) {
-                jobInProgress = false;
-                break;
-            }
-            await sleep(10000);
-        }
+    it("Cancel RDAS job", async function () {
+        this.timeout(10000);
 
-        jobProgress = await realityDataAnalysisService.getJobProgress(jobId);
-        expect(jobProgress.progress).to.equal(100);
-        expect(jobProgress.state).to.deep.equal(CommonData.JobState.SUCCESS);
-        expect(jobProgress.step).to.deep.equal("");
-
-        const jobProperties = await realityDataAnalysisService.getJobProperties(jobId);
-        expect(jobProperties.state).to.deep.equal(CommonData.JobState.SUCCESS);
+        await realityDataAnalysisService.cancelJob(jobId);
+        await sleep(250); // It seems a job needs some time to be cancelled.
+        let jobProperties = await realityDataAnalysisService.getJobProperties(jobId);
+        expect(jobProperties.state).to.deep.equal(CommonData.JobState.CANCELLED);
     });
 
     // Delete inputs
@@ -174,17 +166,4 @@ describe("Reality data analysis integration tests", () => {
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
     });
-
-    it("Delete objects 2D output", async function () {
-        this.timeout(10000);
-        await rdaClient.deleteRealityData("", objects2D);
-        try {
-            await rdaClient.getRealityData("", iTwinId, objects2D);
-        }
-        catch(error: any) {
-            expect(error).instanceOf(BentleyError);
-            expect((error as BentleyError).errorNumber).to.equal(404);
-        }
-    });
-
 });

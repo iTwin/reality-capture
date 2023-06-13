@@ -380,8 +380,6 @@ export class RealityDataTransferNode {
                                 const isCancelled = !this.onUploadProgress(currentPercentage);
                                 if (isCancelled)
                                     this.abortController.abort();
-
-                                // TODO : what to do if no provided hook?
                             }
                         }
                     }
@@ -400,7 +398,7 @@ export class RealityDataTransferNode {
         }
         catch (error: any) {
             if(error.name === "AbortError")
-                return; // TODO : what to do if aborted?
+                return;
             
             return Promise.reject(error);
         }
@@ -519,7 +517,6 @@ export class RealityDataTransferNode {
      * @param {string} iTwinId ID of the iTwin project the reality data is linked to.
      */
     public async downloadRealityData(realityDataId: string, downloadPath: string, iTwinId: string): Promise<void> {
-        // TODO: parallelize
         try {
             const realityDataClientOptions: RealityDataClientOptions = {
                 baseUrl: this.serviceUrl,
@@ -565,9 +562,7 @@ export class RealityDataTransferNode {
                             if(this.onDownloadProgress) {
                                 const isCancelled = !this.onDownloadProgress(currentPercentage);
                                 if(isCancelled)
-                                    this.abortController.abort();
-                                
-                                // TODO : what to do if no provided hook?
+                                    this.abortController.abort();                                
                             }
                         }
                     }

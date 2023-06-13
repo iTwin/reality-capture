@@ -1,11 +1,11 @@
 # Introduction
 
-reality-capture-web-app is a web application (in typescript) to show how reality Capture services are working and display Reality Data Analysis outputs, such as Cesium 3D Tiles and Context Scenes.
+reality-capture-web-app is a web application (in typescript) to show how reality capture services work and display reality data outputs, such as Cesium 3D Tiles and Context Scenes.
 
 - [Reality Data](https://developer.bentley.com/apis/reality-data/) provides the ability to retrieve information about the reality data that is associated with an infrastructure project.
-- [Reality Data Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
+- [Reality Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
  is a service that runs Artificial Intelligence/Machine Learning (AI/ML) on photos, maps, meshes or point clouds. It can detect objects or features in 2D and 3D for defect analysis, image anonymization, image indexing, asset management, mobile mapping, aerial surveying, and more.
-- [Context Capture](https://developer.bentley.com/apis/contextcapture/) is a service that turns images and point clouds into reality meshes, orthophotos and other by-products.
+- [Reality Modeling](https://developer.bentley.com/apis/contextcapture/) is a service that turns images and point clouds into reality meshes, orthophotos and other by-products.
 
 It has been tested with Node 16.17.0 and should work with Node 16.17.0 and newer.
 

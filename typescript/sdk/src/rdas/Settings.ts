@@ -28,7 +28,7 @@ class O2DInputs {
 
     constructor() {
         /**
-         * Path to ContextScene with photos to analyze..
+         * Path to ContextScene with photos to analyze.
          * @type {string}
          */
         this.photos = "";
@@ -946,8 +946,6 @@ class L3DInputs {
     photoSegmentationDetector: string;
     /** Given 2D segmentation. */
     segmentation2D: string;
-    /** Path of clipping polygon to apply. */
-    clipPolygon: string;
 
     constructor() {
         /**
@@ -985,11 +983,6 @@ class L3DInputs {
          * @type {string}
          */
         this.segmentation2D = "";
-        /** 
-         * Path of clipping polygon to apply.
-         * @type {string}
-         */
-        this.clipPolygon = "";
     }
 }
 
@@ -1009,8 +1002,6 @@ class L3DOutputs {
     exportedLines3DDGN: string;
     /** Cesium 3D Tiles file export with 3D lines. */
     exportedLines3DCesium: string;
-    /** ContextScene pointing to segmented photos. */
-    segmentedPhotos: string;
     /** Detected patches. */
     patches3D: string;
     /** DGN file export with patches. */
@@ -1034,11 +1025,6 @@ class L3DOutputs {
          * @type {string}
          */
         this.segmentation2D = "";
-        /**
-         * ContextScene pointing to segmented photos.
-         * @type {string}
-         */
-        this.segmentedPhotos = "";
         /**
          * Detected 3D lines.
          * @type {string}
@@ -1154,9 +1140,6 @@ export class L3DJobSettings {
         if (this.inputs.segmentation2D)
             json["inputs"].push({ "name": "segmentation2D", "realityDataId": this.inputs.segmentation2D });
 
-        if (this.inputs.clipPolygon)
-            json["inputs"].push({ "name": "clipPolygon", "realityDataId": this.inputs.clipPolygon });
-
         json["outputs"] = [];
         if (this.outputs.segmentation3D)
             json["outputs"].push("segmentation3D");
@@ -1166,9 +1149,6 @@ export class L3DJobSettings {
 
         if (this.outputs.segmentation2D)
             json["outputs"].push("segmentation2D");
-
-        if(this.outputs.segmentedPhotos)
-            json["outputs"].push("segmentedPhotos");
 
         if (this.outputs.lines3D)
             json["outputs"].push("lines3D");
@@ -1223,8 +1203,6 @@ export class L3DJobSettings {
                 newJobSettings.inputs.photoSegmentationDetector = input["realityDataId"];
             else if (input["name"] === "segmentation2D")
                 newJobSettings.inputs.segmentation2D = input["realityDataId"];
-            else if (input["name"] === "clipPolygon")
-                newJobSettings.inputs.clipPolygon = input["realityDataId"];
             else
                 return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected input name : " + input["name"]));
         }
@@ -1236,8 +1214,6 @@ export class L3DJobSettings {
                 newJobSettings.outputs.segmentedPointCloud = output["realityDataId"];
             else if (output["name"] === "segmentation2D")
                 newJobSettings.outputs.segmentation2D = output["realityDataId"];
-            else if(output["name"] === "segmentedPhotos")
-                newJobSettings.outputs.segmentedPhotos = output["realityDataId"];
             else if (output["name"] === "lines3D")
                 newJobSettings.outputs.lines3D = output["realityDataId"];
             else if (output["name"] === "exportedLines3DDGN")

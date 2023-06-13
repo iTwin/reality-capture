@@ -1,7 +1,7 @@
 # Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 # See LICENSE.md in the project root for license terms and full copyright notice.
 
-# Sample creating and submitting a Reality Data Analysis job detecting 3D lines
+# Sample creating and submitting a Reality Analysis job detecting 3D lines
 import os
 import time
 
@@ -32,7 +32,7 @@ def main():
     mesh_scene_name = "Test L3D Scene"
     detector_name = "Test L3D detector"
 
-    print("Reality Data Analysis sample job detecting 3D lines")
+    print("Reality Analysis sample job detecting 3D lines")
 
     scope_set = {
         "realitydata:modify",

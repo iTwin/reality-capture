@@ -6,7 +6,7 @@
 import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
 import { JobDates } from "../CommonData";
 
-/** Possible types of a CCS job. */
+/** Possible types of a Reality Modeling job. */
 export enum CCJobType {
     NONE = "not recognized",
     CALIBRATION = "Calibration",
@@ -36,7 +36,7 @@ export interface CCCostParameters {
 }
 
 /**
- * Properties of ContextCapture job.
+ * Properties of a Reality Modeling job.
  * Convenience interface to stock all properties of a job in a simple way.
  */
 export interface CCJobProperties {
@@ -56,7 +56,7 @@ export interface CCJobProperties {
     estimatedCost?: string;
 }
 
-/** Possible qualities of a ContextCapture job. */
+/** Possible qualities of a Reality Modeling job. */
 export enum CCJobQuality {
     UNKNOWN = "Unknown",
     DRAFT = "Draft",
@@ -65,7 +65,7 @@ export enum CCJobQuality {
 }
 
 /** 
- * Cache settings for a ContextCapture Job.
+ * Cache settings for a Reality Modeling Job.
  */
 export interface CCCacheSettings {
     createCache: boolean;
@@ -73,7 +73,7 @@ export interface CCCacheSettings {
 }
 
 /**
- * Possible outputs for a ContextCapture job.
+ * Possible outputs for a Reality Modeling job.
  */
 class CCOutputs {
     /** Created context scene id. */
@@ -200,7 +200,7 @@ class CCOutputs {
     }
 }
 
-/** Settings for ContextCapture jobs. */
+/** Settings for Reality Modeling jobs. */
 export class CCJobSettings {
     /** Possible inputs for this job. Should be the ids of the inputs in the cloud. */
     inputs: string[];
@@ -213,7 +213,7 @@ export class CCJobSettings {
     /** Mesh quality for this job. */
     meshQuality?: CCJobQuality;
 
-    /** Quantity of engines to be used by the job. If set at 0, CCS will use your engine limit. */
+    /** Quantity of engines to be used by the job. If set at 0, the job will use your engine limit. */
     engines?: number;
 
     /** Cache settings for this job. */
@@ -239,7 +239,7 @@ export class CCJobSettings {
         this.meshQuality = CCJobQuality.UNKNOWN;
 
         /** 
-         * Number of engines to be used at most, between 0 and your engine limit. If set at 0, CCCS will use your engine limit. 
+         * Number of engines to be used at most, between 0 and your engine limit. If set at 0, it will use your engine limit. 
          * @type {number}
          */
         this.engines = 0;

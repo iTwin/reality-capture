@@ -11,7 +11,7 @@ import { AuthorizationClient } from "@itwin/core-common";
 import axios from "axios";
 
 /**
- * Service handling communication with RealityData Analysis Service.
+ * Service handling communication with Reality Analysis Service.
  */
 export class RealityDataAnalysisService {
     /** Authorization client to generate access token. */

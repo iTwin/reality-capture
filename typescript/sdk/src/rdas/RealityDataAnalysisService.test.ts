@@ -18,7 +18,7 @@ import { O2DJobSettings, RDAJobType } from "./Settings";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-describe("Reality data analysis unit tests", () => {
+describe("Reality Analysis unit tests", () => {
     let iTwinId = "";
     const serviceUrl = "https://api.bentley.com/realitydataanalysis";
     let realityDataAnalysisService: RealityDataAnalysisService;
@@ -58,7 +58,7 @@ describe("Reality data analysis unit tests", () => {
 
             axiosMock.onPost(serviceUrl + "/jobs", {
                 "type": "objects2D",
-                "name": "SDK unit test",
+                "name": "Reality Analysis unit test",
                 "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
                 "settings": {
                     "inputs": [{
@@ -73,17 +73,17 @@ describe("Reality data analysis unit tests", () => {
                     "outputs": ["objects2D"]
                 }
             }).reply(201, 
-                {
-                    "job": {                  
-                        "id": "6f51448f-6377-4330-9ab0-f13fe994b3f1",
-                        "type": "objects2D",
-                        "name": "SDK unit test",
-                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                        "settings": {
-                            "outputs": [{
-                                "name": "objects2D",
-                            }],
-                            "inputs": [{
+            {
+                "job": {                  
+                    "id": "6f51448f-6377-4330-9ab0-f13fe994b3f1",
+                    "type": "objects2D",
+                    "name": "Reality Analysis unit test",
+                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                    "settings": {
+                        "outputs": [{
+                            "name": "objects2D",
+                        }],
+                        "inputs": [{
                                 "name": "photos",
                                 "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
                             },
@@ -100,7 +100,7 @@ describe("Reality data analysis unit tests", () => {
             settings.inputs.photos = "8e9f7e7a-f37e-4d74-a1e7-df7325944757";
             settings.inputs.photoObjectDetector = "9fbbe885-9086-4b98-b6a5-8024657bcff4";
             settings.outputs.objects2D = "objects2D";
-            const jobName = "SDK unit test";
+            const jobName = "Reality Analysis unit test";
                         
             const id = realityDataAnalysisService.createJob(settings, jobName, iTwinId);
             await sleep(2000);
@@ -111,7 +111,7 @@ describe("Reality data analysis unit tests", () => {
             return Promise.all([
                 expect(axiosMock.history.post[0].data).deep.equal(JSON.stringify({
                     "type": "objects2D",
-                    "name": "SDK unit test",
+                    "name": "Reality Analysis unit test",
                     "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
                     "settings": {
                         "inputs": [{
@@ -299,35 +299,35 @@ describe("Reality data analysis unit tests", () => {
                                 "name": "photoObjectDetector",
                                 "realityDataId": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
                             }
-                            ]
-                        },
-                        "createdDateTime": "2023-03-30T15:14:55Z",
-                        "lastModifiedDateTime": "2023-03-30T15:14:55Z",
-                        "id": "6f51448f-6377-4330-9ab0-f13fe994b3f1",
-                        "email": "example@bentley.com",
-                        "dataCenter": "EastUs",
-                        "type": "objects2D",
-                        "name": "SDK unit test",
-                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                        "costEstimation": {
-                            "gigaPixels": 2,
-                            "sceneWidth": 4.5,
-                            "sceneHeight": 3.0,
-                            "sceneLength": 1.7,
-                            "detectorScale": 1.2,
-                            "detectorCost": 1.4,
-                            "numberOfPhotos": 150,
-                            "estimatedCost": 2.1
-                        },
-                        "executionInformation": {
-                            "exitCode": 0,
-                            "submissionDateTime": "2023-03-30T15:14:57Z",
-                            "startedDateTime": "2023-03-30T15:22:11Z",
-                            "endedDateTime": "2023-03-30T15:39:47Z",
-                            "estimatedUnits": 0
-                        },
-                    }
-                });
+                        ]
+                    },
+                    "createdDateTime": "2023-03-30T15:14:55Z",
+                    "lastModifiedDateTime": "2023-03-30T15:14:55Z",
+                    "id": "6f51448f-6377-4330-9ab0-f13fe994b3f1",
+                    "email": "example@bentley.com",
+                    "dataCenter": "EastUs",
+                    "type": "objects2D",
+                    "name": "SDK unit test",
+                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                    "costEstimation": {
+                        "gigaPixels": 2,
+                        "sceneWidth": 4.5,
+                        "sceneHeight": 3.0,
+                        "sceneLength": 1.7,
+                        "detectorScale": 1.2,
+                        "detectorCost": 1.4,
+                        "numberOfPhotos": 150,
+                        "estimatedCost": 2.1
+                    },
+                    "executionInformation": {
+                        "exitCode": 0,
+                        "submissionDateTime": "2023-03-30T15:14:57Z",
+                        "startedDateTime": "2023-03-30T15:22:11Z",
+                        "endedDateTime": "2023-03-30T15:39:47Z",
+                        "estimatedUnits": 0
+                    },
+                }
+            });
             const properties = realityDataAnalysisService.getJobProperties("o2d");
             await sleep(500);
 
@@ -335,7 +335,7 @@ describe("Reality data analysis unit tests", () => {
                 return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
             
             return Promise.all([
-                expect(properties).to.eventually.have.property("name", "SDK unit test"),
+                expect(properties).to.eventually.have.property("name", "Reality Analysis unit test"),
                 expect(properties).to.eventually.have.property("type", RDAJobType.O2D), // Other types are tested in Settings unit tests
                 expect(properties).to.eventually.have.property("iTwinId", "c3739cf2-9da3-487b-b03d-f58c8eb97e5b"),
                 expect(properties).to.eventually.have.property("id", "6f51448f-6377-4330-9ab0-f13fe994b3f1"),
@@ -392,18 +392,18 @@ describe("Reality data analysis unit tests", () => {
                                 "name": "photoObjectDetector",
                                 "realityDataId": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
                             }
-                            ]
-                        },
-                        "createdDateTime": "2023-03-30T15:14:55Z",
-                        "lastModifiedDateTime": "2023-03-30T15:14:55Z",
-                        "id": "6f51448f-6377-4330-9ab0-f13fe994b3f1",
-                        "email": "example@bentley.com",
-                        "dataCenter": "EastUs",
-                        "type": "invalidJobType",
-                        "name": "SDK unit test",
-                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                    }
-                });
+                        ]
+                    },
+                    "createdDateTime": "2023-03-30T15:14:55Z",
+                    "lastModifiedDateTime": "2023-03-30T15:14:55Z",
+                    "id": "6f51448f-6377-4330-9ab0-f13fe994b3f1",
+                    "email": "example@bentley.com",
+                    "dataCenter": "EastUs",
+                    "type": "invalidJobType",
+                    "name": "SDK unit test",
+                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                }
+            });
             const properties = realityDataAnalysisService.getJobProperties("invalid");
             await sleep(500);
 

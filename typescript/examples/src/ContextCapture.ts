@@ -19,10 +19,10 @@ async function main() {
 
     dotenv.config();
 
-    const jobName = "CCCS job SDK sample";
-    const workspaceName = "CCCS SDK test workspace";
-    const ccImageCollectionName = "Test CCCS Photos";
-    const ccOrientationsName = "Test CCCS cc orientations";
+    const jobName = "Reality Modeling job SDK sample";
+    const workspaceName = "Reality Modeling test workspace";
+    const ccImageCollectionName = "Reality Modeling test photos";
+    const ccOrientationsName = "Reality Modeling test ccorientations";
 
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
@@ -35,7 +35,7 @@ async function main() {
         scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(ContextCaptureService.getScopes()).join(" "),
         authority: authority,
     });
-    console.log("Context capture sample job - Full (Calibration + Reconstruction)");
+    console.log("Reality Modeling sample job - Full (Calibration + Reconstruction)");
     const realityDataService = new RealityDataTransferNode(authorizationClient);
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);

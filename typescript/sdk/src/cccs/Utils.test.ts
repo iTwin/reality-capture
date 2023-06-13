@@ -12,7 +12,7 @@ import { CCJobQuality, CCJobSettings } from "./Utils";
 
 export function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-describe("Context capture utils unit tests", () => {
+describe("Reality Modeling utils unit tests", () => {
     it("Settings to json", function () {
         const ccSettings = new CCJobSettings();
         ccSettings.inputs = ["imagesId", "ccOrientationsId"];

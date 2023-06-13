@@ -12,7 +12,7 @@ import { ChangeDetectionJobSettings, ExtractGroundJobSettings, L3DJobSettings, O
 
 export function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-describe("Reality data analysis settings unit tests", () => {
+describe("Reality Analysis settings unit tests", () => {
     describe("Settings to json", () => {
         it("O2D", function () {
             const o2dSettings = new O2DJobSettings();
@@ -160,7 +160,6 @@ describe("Reality data analysis settings unit tests", () => {
 
         it("L3D", function () {
             const l3dSettings = new L3DJobSettings();
-            l3dSettings.inputs.clipPolygon = "clipPolygonId";
             l3dSettings.inputs.meshes = "meshesId";
             l3dSettings.inputs.orientedPhotos = "orientedPhotosId";
             l3dSettings.inputs.photoSegmentationDetector = "photoSegmentationDetectorId";
@@ -176,7 +175,6 @@ describe("Reality data analysis settings unit tests", () => {
             l3dSettings.outputs.patches3D = "patches3D";
             l3dSettings.outputs.segmentation2D = "segmentation2D";
             l3dSettings.outputs.segmentation3D = "segmentation3D";
-            l3dSettings.outputs.segmentedPhotos = "segmentedPhotos";
             l3dSettings.outputs.segmentedPointCloud = "segmentedPointCloud";
             l3dSettings.computeLineWidth = true;
             l3dSettings.removeSmallComponents = 1;
