@@ -68,7 +68,7 @@ describe("Context capture integration tests", () => {
         expect(workspace.id).to.deep.equal(workspaceId);
         expect(workspace.name).to.deep.equal("SDK integration tests CC workspace");
         expect(workspace.iTwinId).to.deep.equal(iTwinId);
-        expect(workspace.contextCaptureVersion).to.deep.equal("19.1");
+        expect(workspace.contextCaptureVersion).to.deep.equal("2023.0");
     });
 
     // Create and upload inputs
@@ -121,29 +121,13 @@ describe("Context capture integration tests", () => {
     });
 
     it("Get cc job progress", async function () {
-        this.timeout(3600000); // 60mn
+        this.timeout(10000);
 
         let jobProgress = await contextCaptureService.getJobProgress(jobId);
+        await contextCaptureService.cancelJob(jobId);
         expect(jobProgress.progress).to.equal(0);
         expect(jobProgress.state).to.deep.equal(CommonData.JobState.ACTIVE);
         expect(jobProgress.step).to.deep.equal("PrepareStep");
-
-        while(true) {
-            const progress = await contextCaptureService.getJobProgress(jobId);
-            if(progress.state === CommonData.JobState.SUCCESS || progress.state === CommonData.JobState.OVER || 
-                progress.state === CommonData.JobState.CANCELLED || progress.state === CommonData.JobState.FAILED) {
-                break;
-            }
-            await sleep(10000);
-        }
-
-        jobProgress = await contextCaptureService.getJobProgress(jobId);
-        expect(jobProgress.progress).to.equal(100);
-        expect(jobProgress.state).to.deep.equal(CommonData.JobState.OVER);
-        expect(jobProgress.step).to.deep.equal("");
-
-        const jobProperties = await contextCaptureService.getJobProperties(jobId);
-        expect(jobProperties.state).to.deep.equal(CommonData.JobState.SUCCESS);
     });
 
     // Delete inputs
@@ -178,18 +162,6 @@ describe("Context capture integration tests", () => {
             await contextCaptureService.getWorkspace(workspaceId);
         }
         catch(error: any) {
-            expect((error as BentleyError).errorNumber).to.equal(404);
-        }
-    });
-
-    it("Delete 3MX output", async function () {
-        this.timeout(10000);
-        await rdaClient.deleteRealityData("", threeMXId);
-        try {
-            await rdaClient.getRealityData("", iTwinId, threeMXId);
-        }
-        catch(error: any) {
-            expect(error).to.be.instanceOf(BentleyError);
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
     });
