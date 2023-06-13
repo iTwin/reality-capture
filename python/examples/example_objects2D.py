@@ -1,7 +1,7 @@
 # Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 # See LICENSE.md in the project root for license terms and full copyright notice.
 
-# Sample creating and submitting a Reality Data Analysis job detecting 2D objects
+# Sample creating and submitting a Reality Analysis job detecting 2D objects
 import os
 import time
 
@@ -32,7 +32,7 @@ def main():
     context_scene_name = "Test Moto Scene"
     detector_name = "O2D photos in RAS-QA"
 
-    print("Reality Data Analysis sample job detecting 2D objects")
+    print("Reality Analysis sample job detecting 2D objects")
 
     scope_set = {
         "realitydata:modify",

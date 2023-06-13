@@ -28,7 +28,7 @@ class O2DInputs {
 
     constructor() {
         /**
-         * Path to ContextScene with photos to analyze..
+         * Path to ContextScene with photos to analyze.
          * @type {string}
          */
         this.photos = "";

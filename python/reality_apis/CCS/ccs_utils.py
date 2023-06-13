@@ -23,7 +23,7 @@ class CCWorkspaceProperties(NamedTuple):
 
 class CCJobType(Enum):
     """
-    Possible types of a ContextCapture job.
+    Possible types of a Reality Modeling job.
     """
 
     NONE = "not recognized"
@@ -34,7 +34,7 @@ class CCJobType(Enum):
 
 class CCJobQuality(Enum):
     """
-    Possible qualities of a ContextCapture job.
+    Possible qualities of a Reality Modeling job.
     """
 
     UNKNOWN = "Unknown"
@@ -45,7 +45,7 @@ class CCJobQuality(Enum):
 
 class CacheSettings:
     """
-    Cache settings for a ContextCapture Job.
+    Cache settings for a Reality Modeling Job.
 
     Attributes:
         create_cache: True if the job should produce a cache, False otherwise.
@@ -59,7 +59,7 @@ class CacheSettings:
 
 class CCJobSettings:
     """
-    Settings for ContextCapture jobs.
+    Settings for Reality Modeling jobs.
 
     Attributes:
         inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
@@ -209,7 +209,7 @@ class CCJobSettings:
 
     class Outputs:
         """
-        Possible outputs for a ContextCapture job.
+        Possible outputs for a Reality Modeling job.
 
         Attributes:
             context_scene: Created context scene id.
@@ -274,7 +274,7 @@ class CCJobCostParameters:
 
 class CCJobProperties(NamedTuple):
     """
-    Properties of a ContextCapture job.
+    Properties of a Reality Modeling job.
     Convenience class to stock all properties of a job in a simple way.
     """
 

@@ -1,11 +1,12 @@
 # Introduction 
 
-Python SDK for Bentley Systems Reality Data Analysis (RDA) and ContextCapture (CC) Services. It has been created and tested with Python 3.8.
+Python SDK for Bentley Systems Reality Analysis (RDA), Reality Modeling (CC) and Reality Conversion (RC) Services. It has been created and tested with Python 3.9.
 
 This SDK is based on the APIs:
 
-- [Reality Data Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
-- [Context Capture](https://developer.bentley.com/apis/contextcapture/) 
+- [Reality Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
+- [Reality Modeling](https://developer.bentley.com/apis/contextcapture/) 
+- [Reality conversion](https://developer.bentley.com/apis/realityconversion/)
 
 It also contains Reality Data (RD) utils to upload and download reality data. 
 See [Reality Data](https://developer.bentley.com/apis/reality-data/) for more information.
@@ -18,7 +19,7 @@ See [Reality Data](https://developer.bentley.com/apis/reality-data/) for more in
 - If you don’t have a ProjectWise project you will need to create one. [This video](https://learn.bentley.com/app/VideoPlayer/LinkToIndividualCourse?LearningPathID=109270&CourseId=114330&MediaID=5006537#.Y7V6Hx86JiY.link) shows a step by step of how to do this at [CONNECT Center](https://connect.bentley.com/).
 
 
-When creating an Application you will need to include scopes so that the Application has authorization to start jobs, etc. To be able to use the Reality Data Analysis and ContextCapture services and also have the possibility to upload and download data you should choose **Reality Capture**, **Digital Twin Management** and **Reporting & Insights** as API associations. Your application should have at least `contextcapture:modify`, `contextcapture:read`,`realitydataanalysis:modify`, `realitydataanalysis:read`, `realitydata:modify` and `realitydata:read` as Allowed scopes for this SDK to function properly. Other scopes won’t interfere with the service. 
+When creating an Application you will need to include scopes so that the Application has authorization to start jobs, etc. To be able to use the Reality Data Analysis and ContextCapture services and also have the possibility to upload and download data you should choose **Reality Capture**, **Digital Twin Management** and **Reporting & Insights** as API associations. Your application should have at least `contextcapture:modify`, `contextcapture:read`,`realitydataanalysis:modify`,`realitydataanalysis:read`, `realityconversion:read`, `realityconversion:modify`, `realitydata:modify` and `realitydata:read` as Allowed scopes for this SDK to function properly. Other scopes won’t interfere with the service. 
 
 By default, the token factories provided expect as redirect URI `http://localhost:8080/sign-oidc`. 
 
@@ -63,6 +64,8 @@ You will also need to change the variables at the beginning of the example file 
 https://developer.bentley.com/apis/realitydataanalysis/overview/
 
 https://developer.bentley.com/apis/contextcapture/overview/
+
+https://developer.bentley.com/apis/realityconversion/overview/
 
 https://developer.bentley.com/apis/reality-data/overview/
 

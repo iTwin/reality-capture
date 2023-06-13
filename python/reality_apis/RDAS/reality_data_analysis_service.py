@@ -23,7 +23,7 @@ from reality_apis.utils import ReturnValue, JobProgress, JobState, JobDateTime, 
 
 class RealityDataAnalysisService:
     """
-    Service handling communication with RealityData Analysis Service.
+    Service handling communication with Reality Analysis Service.
 
     Args:
         token_factory: An object that implements the abstract functions in AbstractTokenFactory. Used to retrieve the
@@ -37,7 +37,7 @@ class RealityDataAnalysisService:
 
         self._header = {
             "Authorization": None,
-            "User-Agent": f"RDAS Python SDK/{__version__}",
+            "User-Agent": f"Reality Analysis Python SDK/{__version__}",
             "Content-type": "application/json",
             "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }

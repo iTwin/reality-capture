@@ -13,7 +13,7 @@ import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-async function runContextCaptureExample() {
+async function runLines3DExample() {
     const imageCollection = "path to your image folder";
     const orientedPhotosContextScene = "path to the folder where your context scene file is";
     const photoSegmentationDetector = "path to the folder where your detector is";
@@ -35,7 +35,7 @@ async function runContextCaptureExample() {
     const secret = process.env.IMJS_SECRET ?? "";
     const authority = process.env.IMJS_ISSUER_URL ?? "";
 
-    console.log("Reality Data Analysis sample job detecting 3D lines");
+    console.log("Reality Analysis sample job detecting 3D lines");
     const authorizationClient = new ServiceAuthorizationClient({
         clientId: clientId,
         clientSecret: secret,
@@ -142,4 +142,4 @@ async function runContextCaptureExample() {
     console.log("Successfully downloaded output");
 }
 
-runContextCaptureExample();
+runLines3DExample();
