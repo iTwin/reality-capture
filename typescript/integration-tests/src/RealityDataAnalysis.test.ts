@@ -123,7 +123,7 @@ describe("Reality analysis integration tests", () => {
         this.timeout(10000);
 
         await realityDataAnalysisService.cancelJob(jobId);
-        await sleep(250); // It seems a job needs some time to be cancelled.
+        await sleep(1000); // It seems a job needs some time to be cancelled.
         const jobProperties = await realityDataAnalysisService.getJobProperties(jobId);
         expect(jobProperties.state).to.deep.equal(CommonData.JobState.CANCELLED);
     });
