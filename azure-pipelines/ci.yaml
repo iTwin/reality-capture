@@ -33,6 +33,8 @@ stages:
         vmImage: $(imageName)
       variables:
       - group: "Reality Capture Integration Test Variables"
+      - name: pnpm_config_cache
+        value: $(Pipeline.Workspace)/.pnpm-store
 
       steps:
       - checkout: self
@@ -43,56 +45,32 @@ stages:
           versionSpec: 16.x
         displayName: Use node 16
 
+      - task: Cache@2
+        inputs:
+          key: 'pnpm | "$(Agent.OS)" | pnpm-lock.yaml'
+          path: $(pnpm_config_cache)
+        displayName: Cache pnpm
+
+      - script: |
+          corepack enable
+          corepack prepare pnpm@latest-8 --activate
+          pnpm config set store-dir $(pnpm_config_cache)
+        displayName: "Setup pnpm"
+
       # Build SDK
-      - script: npm ci
-        displayName: Install SDK
-        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk
+      - script: pnpm install
+        displayName: Install packages
+        workingDirectory: $(Build.SourcesDirectory)
 
-      - script: npm run build
-        displayName: Typescript compiler (SDK)
-        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk
+      - script: pnpm build
+        displayName: Build packages
+        workingDirectory: $(Build.SourcesDirectory)
 
-      # Build SDK Node support
-      - script: npm ci
-        displayName: Install SDK Node support
-        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk-node
-
-      - script: npm run build
-        displayName: Typescript compiler (SDK Node support)
-        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk-node
-
-      # Build WebApp
-      - script: npm ci
-        displayName: Install WebApp
-        workingDirectory: $(Build.SourcesDirectory)/typescript/web-app
-
-      - script: npm run build
-        displayName: Typescript compiler (WebApp)
-        workingDirectory: $(Build.SourcesDirectory)/typescript/web-app
-
-      - script: npm run lint
+      - script: pnpm lint
         displayName: EsLint
         workingDirectory: $(Build.SourcesDirectory)/typescript/web-app
 
-      # Build examples
-      - script: npm ci
-        displayName: Install Examples
-        workingDirectory: $(Build.SourcesDirectory)/typescript/examples
-
-      - script: npm run build
-        displayName: Typescript compiler (Examples)
-        workingDirectory: $(Build.SourcesDirectory)/typescript/examples
-
-      # Build integration tests
-      - script: npm ci
-        displayName: Install Integration Tests
-        workingDirectory: $(Build.SourcesDirectory)/typescript/integration-tests
-
-      - script: npm run build
-        displayName: Typescript compiler (Integration Tests)
-        workingDirectory: $(Build.SourcesDirectory)/typescript/integration-tests
-
-      - script: npm run test:integration
+      - script: pnpm test:integration
         displayName: Run SDK Integration Tests
         workingDirectory: $(Build.SourcesDirectory)/typescript/integration-tests
         env:
