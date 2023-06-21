@@ -45,17 +45,8 @@ stages:
           versionSpec: 16.x
         displayName: Use node 16
 
-      - task: Cache@2
-        inputs:
-          key: 'pnpm | "$(Agent.OS)"'
-          path: $(pnpm_config_cache)
-        displayName: Cache pnpm
-
-      - script: |
-          corepack enable
-          corepack prepare pnpm@latest-8 --activate
-          pnpm config set store-dir $(pnpm_config_cache)
-        displayName: "Setup pnpm"
+      - script: npm install -g pnpm@latest-8
+        displayName: Install pnpm
 
       # Build SDK
       - script: pnpm install
