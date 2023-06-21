@@ -159,7 +159,7 @@ stages:
         condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'Manual'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
 
       - script: npm pack
-        workingDirectory: $(Build.SourcesDirectory)/typescript/sdkNode
+        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk-node
         displayName: Package Reality Capture SDK Node
         condition: and(succeeded(), eq(variables['info_sdk_node.shouldPublishSDKNode'], 'true'))
 
