@@ -45,7 +45,7 @@ stages:
           versionSpec: 16.x
         displayName: Use node 16
 
-      - script: npm install -g pnpm@latest-8
+      - script: npm install -g pnpm@7.27.0
         displayName: Install pnpm
 
       # Build SDK
