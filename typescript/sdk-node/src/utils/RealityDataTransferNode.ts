@@ -595,7 +595,7 @@ export class RealityDataTransferNode {
             await this.downloadRealityData(realityDataId, downloadPath, iTwinId);
             if (references) {
                 const scenePath = path.join(downloadPath, "ContextScene.xml");
-                if (!fs.existsSync(path.dirname(scenePath)))
+                if (!fs.existsSync(scenePath))
                     await replaceContextSceneReferences(path.join(downloadPath, "ContextScene.json"),
                         path.join(downloadPath, "ContextScene.json"), references, false);
                 else
