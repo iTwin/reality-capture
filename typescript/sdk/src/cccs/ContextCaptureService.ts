@@ -102,7 +102,7 @@ export class ContextCaptureService {
      * @returns {string} created workspace id.
      */
     public async createWorkspace(name: string, iTwinId: string, contextCaptureVersion?: string): Promise<string> {
-        let body: any = {
+        const body: any = {
             "name": name,
             "iTwinId": iTwinId           
         };

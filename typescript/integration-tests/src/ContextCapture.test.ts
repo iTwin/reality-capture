@@ -10,8 +10,8 @@ import { BentleyError } from "@itwin/core-bentley";
 import * as dotenv from "dotenv";
 import path = require("path");
 import { RealityDataClientOptions, RealityDataAccessClient } from "@itwin/reality-data-client";
-import { CCUtils, CommonData, ContextCaptureService } from "reality-capture";
-import { RealityDataTransferNode, ReferenceTableNode } from "reality-capture-node";
+import { CCUtils, CommonData, ContextCaptureService } from "@itwin/reality-capture";
+import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-capture-node";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -123,7 +123,7 @@ describe("Reality Modeling integration tests", () => {
     it("Get reality modeling job progress", async function () {
         this.timeout(10000);
 
-        let jobProgress = await contextCaptureService.getJobProgress(jobId);
+        const jobProgress = await contextCaptureService.getJobProgress(jobId);
         await contextCaptureService.cancelJob(jobId);
         expect(jobProgress.progress).to.equal(0);
         expect(jobProgress.state).to.deep.equal(CommonData.JobState.ACTIVE);

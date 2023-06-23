@@ -4,8 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 
 import path = require("path");
-import { CommonData, RealityConversionService, defaultProgressHook, RCUtils } from "reality-capture";
-import { RealityDataTransferNode, ReferenceTableNode } from "reality-capture-node";
+import { CommonData, RealityConversionService, defaultProgressHook, RCUtils } from "@itwin/reality-capture";
+import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-capture-node";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
@@ -58,7 +58,7 @@ async function main() {
         await references.save(referencesPath);
         console.log("Checked data upload");
 
-        let settings = new RCUtils.RCJobSettings();
+        const settings = new RCUtils.RCJobSettings();
         settings.inputs.laz = [references.getCloudIdFromLocalPath(lazPointCloud)];
         settings.outputs.opc = true;
 
@@ -70,9 +70,11 @@ async function main() {
         await realityConversionService.submitJob(jobId);
         console.log("Job submitted");
 
-        while(true) {
+        let jobInProgress = true;
+        while(jobInProgress) {
             const progress = await realityConversionService.getJobProgress(jobId);
             if(progress.state === CommonData.JobState.SUCCESS || progress.state === CommonData.JobState.OVER) {
+                jobInProgress = false;
                 break;
             }
             else if(progress.state === CommonData.JobState.ACTIVE) {

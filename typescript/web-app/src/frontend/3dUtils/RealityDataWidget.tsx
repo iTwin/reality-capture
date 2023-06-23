@@ -3,8 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 import React, { useEffect } from "react";
-import { AbstractWidgetProps, StagePanelLocation, UiItemsProvider, WidgetState } from "@itwin/appui-abstract";
-import { useActiveIModelConnection, useActiveViewport } from "@itwin/appui-react";
+import { CommonWidgetProps, StagePanelLocation, UiItemsProvider, useActiveIModelConnection, useActiveViewport, WidgetState } from "@itwin/appui-react";
 import { ContextRealityModelProps, RealityDataFormat, RealityDataProvider } from "@itwin/core-common";
 import { IModelApp } from "@itwin/core-frontend";
 import { SvgHelpCircularHollow } from "@itwin/itwinui-icons-react";
@@ -162,8 +161,8 @@ export class RealityDataWidgetProvider implements UiItemsProvider {
         this.realityDataAccessClient = realityDataAccessClient;
     }
 
-    public provideWidgets(_stageId: string, _stageUsage: string, location: StagePanelLocation): ReadonlyArray<AbstractWidgetProps> {
-        const widgets: AbstractWidgetProps[] = [];
+    public provideWidgets(_stageId: string, _stageUsage: string, location: StagePanelLocation): ReadonlyArray<CommonWidgetProps> {
+        const widgets: CommonWidgetProps[] = [];
         if (location === StagePanelLocation.Bottom) {
             widgets.push(
                 {

@@ -4,8 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 
 import path = require("path");
-import { CommonData, defaultProgressHook, RDASettings, RealityDataAnalysisService } from "reality-capture";
-import { RealityDataTransferNode, ReferenceTableNode } from "reality-capture-node";
+import { CommonData, defaultProgressHook, RDASettings, RealityDataAnalysisService } from "@itwin/reality-capture";
+import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-capture-node";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
@@ -113,9 +113,11 @@ async function runLines3DExample() {
     await realityDataAnalysisService.submitJob(jobId);
     console.log("Job submitted");
 
-    while(true) {
+    let jobInProgress = true;
+    while(jobInProgress) {
         const progress = await realityDataAnalysisService.getJobProgress(jobId);
         if(progress.state === CommonData.JobState.SUCCESS) {
+            jobInProgress = false;
             break;
         }
         else if(progress.state === CommonData.JobState.ACTIVE) {

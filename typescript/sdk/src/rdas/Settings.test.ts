@@ -261,7 +261,7 @@ describe("Reality Analysis settings unit tests", () => {
             extractGroundSettings.outputs.exportedSegmentation3DPOD = "exportedSegmentation3DPOD";
             extractGroundSettings.outputs.segmentation3D = "segmentation3D";
             extractGroundSettings.outputs.segmentedPointCloud = "segmentedPointCloud";
-            extractGroundSettings.exportSrs = "EPSG:6712"
+            extractGroundSettings.exportSrs = "EPSG:6712";
             const json = extractGroundSettings.toJson();
             return Promise.all([
                 expect(json).to.have.property("inputs"),
@@ -324,7 +324,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "objects2DId"
                 }
                 ]
-            }
+            };
             const o2DSettings = O2DJobSettings.fromJson(json);
             return expect(o2DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
         });
@@ -341,7 +341,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "objects2DId"
                 }
                 ]
-            }
+            };
             const o2DSettings = O2DJobSettings.fromJson(json);
             return expect(o2DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
         });
@@ -396,7 +396,7 @@ describe("Reality Analysis settings unit tests", () => {
                 "minPhotos": "10",
                 "maxDist": "100",
                 "exportSrs": "EPSG:7415"
-            }
+            };
             const o3DSettings = await O3DJobSettings.fromJson(json);
             return Promise.all([
                 expect(o3DSettings.type).to.deep.equal("objects3D"),
@@ -431,7 +431,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "objects3DId"
                 }
                 ]
-            }
+            };
             const o3DSettings = O3DJobSettings.fromJson(json);
             return expect(o3DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
         });
@@ -448,7 +448,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "objects3DId"
                 }
                 ]
-            }
+            };
             const o3DSettings = O3DJobSettings.fromJson(json);
             return expect(o3DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
         });
@@ -534,7 +534,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "segmentation2DId"
                 }
                 ]
-            }
+            };
             const s2DSettings = S2DJobSettings.fromJson(json);
             return expect(s2DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
         });
@@ -551,7 +551,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "segmentation2DId"
                 }
                 ]
-            }
+            };
             const s2DSettings = S2DJobSettings.fromJson(json);
             return expect(s2DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
         });
@@ -682,7 +682,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "segmentation3DId"
                 }
                 ]
-            }
+            };
             const s3DSettings = S3DJobSettings.fromJson(json);
             return expect(s3DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
         });
@@ -699,7 +699,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "segmentation3DId"
                 }
                 ]
-            }
+            };
             const s3DSettings = S3DJobSettings.fromJson(json);
             return expect(s3DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
         });
@@ -827,7 +827,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "segmentation3DId"
                 }
                 ]
-            }
+            };
             const l3DSettings = L3DJobSettings.fromJson(json);
             return expect(l3DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
         });
@@ -844,7 +844,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "segmentation3DId"
                 }
                 ]
-            }
+            };
             const s3DSettings = S3DJobSettings.fromJson(json);
             return expect(s3DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
         });
@@ -920,7 +920,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "objects3DId"
                 }
                 ]
-            }
+            };
             const changeDetectionSettings = ChangeDetectionJobSettings.fromJson(json);
             return expect(changeDetectionSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
         });
@@ -937,7 +937,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "objects3DId"
                 }
                 ]
-            }
+            };
             const changeDetectionSettings = ChangeDetectionJobSettings.fromJson(json);
             return expect(changeDetectionSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
         });
@@ -1016,7 +1016,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "segmentation3DId"
                 }
                 ]
-            }
+            };
             const extractGroundSettings = ExtractGroundJobSettings.fromJson(json);
             return expect(extractGroundSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
         });
@@ -1033,7 +1033,7 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "segmentation3DId"
                 }
                 ]
-            }
+            };
             const extractGroundSettings = ExtractGroundJobSettings.fromJson(json);
             return expect(extractGroundSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
         });

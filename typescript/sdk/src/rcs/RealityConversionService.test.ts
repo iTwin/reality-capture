@@ -19,7 +19,7 @@ export async function sleep(ms: number) { return new Promise(resolve => setTimeo
 
 describe("Reality conversion unit tests", () => {
     let iTwinId = "";
-    let serviceUrl = "https://api.bentley.com/realityconversion"
+    const serviceUrl = "https://api.bentley.com/realityconversion";
     let realityConversionService: RealityConversionService;
     let axiosMock = new MockAdapter(axios);
     let authorizationClient: ServiceAuthorizationClient;
@@ -65,23 +65,23 @@ describe("Reality conversion unit tests", () => {
                     "processingEngines": 8,               
                 },
             }).reply(201, 
-            {
-                "job": {
-                    "id": "cc3d35cc-416a-4262-9714-b359da70b419",
-                    "name": "Reality Conversion unit test",
-                    "type": "Conversion",
-                    "state": "unsubmitted",
-                    "createdDateTime": "2023-04-13T14:13:27Z",
-                    "lastModifiedDateTime": "2023-04-13T14:29:55Z",
-                    "iTwinId": "510cd1a3-3703-4729-b08c-fecd9c87c3be",
-                    "dataCenter": "East US",
-                    "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
-                    "outputs": [{"format": "OPC", "id": "OPCId"}],
-                    "options": {
-                        "processingEngines": 8
-                    },
-                }
-            });
+                {
+                    "job": {
+                        "id": "cc3d35cc-416a-4262-9714-b359da70b419",
+                        "name": "Reality Conversion unit test",
+                        "type": "Conversion",
+                        "state": "unsubmitted",
+                        "createdDateTime": "2023-04-13T14:13:27Z",
+                        "lastModifiedDateTime": "2023-04-13T14:29:55Z",
+                        "iTwinId": "510cd1a3-3703-4729-b08c-fecd9c87c3be",
+                        "dataCenter": "East US",
+                        "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
+                        "outputs": [{"format": "OPC", "id": "OPCId"}],
+                        "options": {
+                            "processingEngines": 8
+                        },
+                    }
+                });
 
             const rcSettings = new RCJobSettings();
             rcSettings.inputs.e57 = ["e57Id"];
@@ -268,30 +268,30 @@ describe("Reality conversion unit tests", () => {
     describe("Get job properties", () => {
         it("Get job properties", async function () {
             axiosMock.onGet(serviceUrl + "/jobs/rcJob").reply(200, 
-            {
-                "job": {
-                    "id": "cc3d35cc-416a-4262-9714-b359da70b419",
-                    "name": "Reality Conversion unit test",
-                    "type": "Conversion",
-                    "state": "unsubmitted",
-                    "createdDateTime": "2023-04-13T14:13:27Z",
-                    "lastModifiedDateTime": "2023-04-13T14:29:55Z",
-                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                    "dataCenter": "East US",
-                    "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
-                    "outputs": [{
-                        "format": "OPC", "id": "opcId"
-                    }],
-                    "options": {
-                        "processingEngines": 8
-                    },
-                    "costEstimation": {
-                        "estimatedCost": 3.5,
-                        "gigaPixels": 2.1,
-                        "megaPoints": 1.5
+                {
+                    "job": {
+                        "id": "cc3d35cc-416a-4262-9714-b359da70b419",
+                        "name": "Reality Conversion unit test",
+                        "type": "Conversion",
+                        "state": "unsubmitted",
+                        "createdDateTime": "2023-04-13T14:13:27Z",
+                        "lastModifiedDateTime": "2023-04-13T14:29:55Z",
+                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                        "dataCenter": "East US",
+                        "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
+                        "outputs": [{
+                            "format": "OPC", "id": "opcId"
+                        }],
+                        "options": {
+                            "processingEngines": 8
+                        },
+                        "costEstimation": {
+                            "estimatedCost": 3.5,
+                            "gigaPixels": 2.1,
+                            "megaPoints": 1.5
+                        }
                     }
-                }
-            });
+                });
             const properties = realityConversionService.getJobProperties("rcJob");
             await sleep(500);
 

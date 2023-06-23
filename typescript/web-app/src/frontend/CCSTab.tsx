@@ -9,7 +9,7 @@ import { Button, Input, LabeledInput, ProgressLinear } from "@itwin/itwinui-reac
 import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import React, { ChangeEvent, MutableRefObject, useCallback, useEffect } from "react";
 import "./CCSTab.css";
-import { ContextCaptureService, CCUtils, CommonData } from "reality-capture";
+import { ContextCaptureService, CCUtils, CommonData } from "@itwin/reality-capture";
 import { SelectRealityData } from "./SelectRealityData";
 import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 

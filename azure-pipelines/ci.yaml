@@ -43,56 +43,23 @@ stages:
           versionSpec: 16.x
         displayName: Use node 16
 
+      - script: npm install -g pnpm@7.27.0
+        displayName: Install pnpm
+
       # Build SDK
-      - script: npm ci
-        displayName: Install SDK
-        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk
+      - script: pnpm install
+        displayName: Install packages
+        workingDirectory: $(Build.SourcesDirectory)
 
-      - script: npm run build
-        displayName: Typescript compiler (SDK)
-        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk
+      - script: pnpm build
+        displayName: Build packages
+        workingDirectory: $(Build.SourcesDirectory)
 
-      # Build SDK Node support
-      - script: npm ci
-        displayName: Install SDK Node support
-        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk-node
-
-      - script: npm run build
-        displayName: Typescript compiler (SDK Node support)
-        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk-node
-
-      # Build WebApp
-      - script: npm ci
-        displayName: Install WebApp
-        workingDirectory: $(Build.SourcesDirectory)/typescript/web-app
-
-      - script: npm run build
-        displayName: Typescript compiler (WebApp)
-        workingDirectory: $(Build.SourcesDirectory)/typescript/web-app
-
-      - script: npm run lint
+      - script: pnpm lint
         displayName: EsLint
         workingDirectory: $(Build.SourcesDirectory)/typescript/web-app
 
-      # Build examples
-      - script: npm ci
-        displayName: Install Examples
-        workingDirectory: $(Build.SourcesDirectory)/typescript/examples
-
-      - script: npm run build
-        displayName: Typescript compiler (Examples)
-        workingDirectory: $(Build.SourcesDirectory)/typescript/examples
-
-      # Build integration tests
-      - script: npm ci
-        displayName: Install Integration Tests
-        workingDirectory: $(Build.SourcesDirectory)/typescript/integration-tests
-
-      - script: npm run build
-        displayName: Typescript compiler (Integration Tests)
-        workingDirectory: $(Build.SourcesDirectory)/typescript/integration-tests
-
-      - script: npm run test:integration
+      - script: pnpm test:integration
         displayName: Run SDK Integration Tests
         workingDirectory: $(Build.SourcesDirectory)/typescript/integration-tests
         env:
@@ -181,7 +148,7 @@ stages:
         condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'Manual'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
 
       - script: npm pack
-        workingDirectory: $(Build.SourcesDirectory)/typescript/sdkNode
+        workingDirectory: $(Build.SourcesDirectory)/typescript/sdk-node
         displayName: Package Reality Capture SDK Node
         condition: and(succeeded(), eq(variables['info_sdk_node.shouldPublishSDKNode'], 'true'))
 

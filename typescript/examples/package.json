@@ -1,7 +1,8 @@
 {
 	"name": "reality-capture-examples",
 	"version": "0.1.0",
-	"description": "SDKs examples",
+	"description": "Capture SDKs examples",
+	"private": true,
 	"scripts": {
 		"build": "npm run clean && tsc",
 		"clean": "rimraf lib build .rush",
@@ -20,13 +21,13 @@
 	},
 	"license": "MIT",
 	"dependencies": {
+		"@itwin/reality-capture": "workspace:^*",
+		"@itwin/reality-capture-node": "workspace:^*",
 		"@itwin/service-authorization": "^0.7.0",
-		"dotenv": "^16.0.3",
-		"reality-capture": "file:../sdk",
-		"reality-capture-node": "file:../sdk-node"
+		"dotenv": "^16.0.3"
 	},
 	"devDependencies": {
-		"@itwin/build-tools": "^3.5.0",
+		"@itwin/build-tools": "^3.7.8",
 		"@types/node": "^16.11.34",
 		"@typescript-eslint/eslint-plugin": "^5.30.6",
 		"@typescript-eslint/parser": "^5.30.6",
