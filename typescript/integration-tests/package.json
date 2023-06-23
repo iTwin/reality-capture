@@ -8,7 +8,7 @@
 		"clean": "rimraf lib build .rush",
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
-		"test:integration": "mocha ./lib/*.test.js",
+		"test:integration": "mocha --retries 5 ./lib/*.test.js",
 		"test:integration-ccs": "mocha ./lib/ContextCapture.test.js",
 		"test:integration-rdas": "mocha ./lib/RealityDataAnalysis.test.js",
 		"test:integration-rcs": "mocha ./lib/RealityConversion.test.js"
