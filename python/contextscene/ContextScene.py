@@ -10,6 +10,10 @@ Python structure for basic context scene creation
 
 
 class ContextScene:
+    """
+    Context scene is the master structure used to store reality data.
+    It is used for the inputs and also for the output of the manipulation and computation jobs
+    """
 
     def __init__(self, version="5.0"):
         self.version = version
@@ -43,6 +47,10 @@ class ContextScene:
         self.references = references
 
     def cs_to_dict(self):
+        """
+        Convert the Context scene to a dictionary for easy json saving
+        Returns: dictionary of the Contextscene
+        """
         result = dict()
         result["version"] = self.version
         if self.spatial_reference_system:
@@ -60,6 +68,15 @@ class ContextScene:
         return result
 
     def save_json_contextscene(self, output_path):
+        """
+        Save the context scene as a json file in the specified folder
+
+        Args:
+            output_path: Location where we want to save our context scene
+
+        Returns: None
+
+        """
         context_scene = os.path.join(output_path, "ContextScene.json")
         context_dict = self.cs_to_dict()
         with open(context_scene, 'w', encoding='utf8') as json_file_handler:
@@ -67,6 +84,12 @@ class ContextScene:
 
     # Read existing context scene and create ContextScene object
     def open_context_scene(path):
+        """
+        Open an existing context scene and return the ContextScene object created
+
+        Returns: ContextScene
+
+        """
         opened_cs = ContextScene()
 
         with open(path, 'r', encoding='utf8') as data:
@@ -120,13 +143,13 @@ class ContextScene:
             if 'Objects2D' in cs["Annotations"].keys():
                 objects2D = Objects2D()
                 for i, o in cs["Annotations"]["Objects2D"].items():
-                    object_list = Objects2D_list()
+                    object_dict = Objects2D_dict()
                     for k, v in o.items():
                         if ("LabelInfo" and "Box2D") in v.keys():
                             label_inf = LabelInfo(v["LabelInfo"]["Confidence"], v["LabelInfo"]["LabelId"])
                             box = Box2D(v["Box2D"]['xmin'], v["Box2D"]['ymin'], v["Box2D"]['xmax'], v["Box2D"]['ymax'])
-                            object_list.add_object(k, label_inf.get_labelInfo() , box.get_box2D())
-                    objects2D.add_object(i, object_list)
+                            object_dict.add_object(k, label_inf.get_labelInfo(), box.get_box2D())
+                    objects2D.add_object(i, object_dict)
                 annotation.set_objects2D(objects2D.objects2D)
             else:
                 print("No detected objects in the context scene")
@@ -167,18 +190,29 @@ class ContextScene:
 
 
 class RefPath:
+    """
+    RefPath will be the reference path used to some elements.
+    Element will be localised using the reference id plus their name
+    """
     def __init__(self, _id, path):
         self.id = _id
         self.path = {"Path": path}
 
 
 class ImagePath:
+    """
+    ImagePath will be the reference path used to images.
+    images will be localised using the reference id plus their name
+    """
     def __init__(self, _id, path):
         self.id = _id
         self.path = {"ImagePath": path}
 
 
 class ReferencesCS:
+    """
+    ReferencesCS is the collection of all the necessary references to localised all the elements of the context scene
+    """
     def __init__(self):
         self.ref = dict()
 
@@ -187,6 +221,10 @@ class ReferencesCS:
 
 
 class PhotosCS:
+    """
+    PhotosCS is the smaller element for photo identification in the context scene. It groups into a dictionary the
+    photo id and its path
+    """
     def __init__(self):
         self.photo = dict()
 
@@ -195,6 +233,9 @@ class PhotosCS:
 
 
 class PhotoCollectionCS:
+    """
+    PhotoCollectionCS is the collection of all the photo in the context scene
+    """
     def __init__(self):
         self.photoCS = dict()
 
@@ -203,6 +244,10 @@ class PhotoCollectionCS:
 
 
 class Labels_param:
+    """
+    Labels_param define the element needed for label definition
+    Minimum definition is id and name but for some analysis jobs other argument might be needed
+    """
     def __init__(self):
         self.id = None
         self.name = None
@@ -225,6 +270,9 @@ class Labels_param:
 
 
 class Labels:
+    """
+    Labels is the collection of all the label in a context scene
+    """
     def __init__(self):
         self.labels = dict()
 
@@ -240,6 +288,10 @@ class Labels:
 
 
 class Segmentation2D:
+    """
+    Segmentation2D is the smaller element for segmented mask identification in the context scene.
+    It groups into a dictionary the png mask id and its path
+    """
     def __init__(self):
         self.segmentation2D = dict()
 
@@ -248,6 +300,9 @@ class Segmentation2D:
 
 
 class Annotations:
+    """
+    Annotations will regroup the labels and the annotations i.e. segmented mask or 2D objets
+    """
     def __init__(self):
         self.annotationCS = dict()
 
@@ -262,6 +317,9 @@ class Annotations:
 
 
 class LabelInfo:
+    """
+    LabelInfo is the class for the detected labels in object detection, this will be used with each 2D object detection
+    """
     def __init__(self, confidence, labelid):
         self.confidence = confidence
         self.labelID = labelid
@@ -271,6 +329,9 @@ class LabelInfo:
 
 
 class Box2D:
+    """
+    Define a 2D boxe that will be used to represent 2D object detection
+    """
     def __init__(self, xmin, ymin, xmax, ymax):
         self.xmin = xmin
         self.ymin = ymin
@@ -281,23 +342,32 @@ class Box2D:
         return {"xmin": self.xmin, "ymin": self.ymin, "xmax": self.xmax, "ymax": self.ymax}
 
 
-class Objects2D_list:
+class Objects2D_dict:
+    """
+    Objects2D_dict is the collection of all the detected object in one image
+    """
     def __init__(self):
-        self.list_objects2D = dict()
+        self.dict_objects2D = dict()
 
     def add_object(self, object_id, label_info, box2D):
-        self.list_objects2D[object_id] = {"LabelInfo": label_info, "Box2D": box2D}
+        self.dict_objects2D[object_id] = {"LabelInfo": label_info, "Box2D": box2D}
 
 
 class Objects2D:
+    """
+    Objects2D is the collection of all the collection of object detected in all the images
+    """
     def __init__(self):
         self.objects2D = dict()
 
-    def add_object(self, object_list_id, object_list):
-        self.objects2D[object_list_id] = object_list.list_objects2D
+    def add_object(self, object_dict_id, object_dict):
+        self.objects2D[object_dict_id] = object_dict.dict_objects2D
 
 
 class SpatialReferenceSystems:
+    """
+    SpatialReferenceSystems is for the spécification of the spatial reference systems of the reality data used
+    """
     def __init__(self):
         self.srs = dict()
         self.id = None
@@ -310,6 +380,9 @@ class SpatialReferenceSystems:
 
 
 class BoundingBox:
+    """
+    BoundingBox define a 3D box that is used as bounding box of 3D element
+    """
     def __init__(self, xmin, ymin, zmin, xmax, ymax, zmax):
         self.xmin = xmin
         self.ymin = ymin
@@ -324,12 +397,18 @@ class BoundingBox:
 
 
 class PointCloud:
+    """
+    PointCloud is the smaller element for defining a pointcloud
+    """
     def __init__(self, pc_id, name, bounding_box, path):
         self.id = pc_id
         self.pc = {"Name": name, "BoundingBox": bounding_box, "Path": path}
 
 
 class PointClouds:
+    """
+    PointClouds is only used for dictionary like representation of PointCloud with their id
+    """
     def __init__(self):
         self.pointclouds = dict()
 
@@ -338,6 +417,9 @@ class PointClouds:
 
 
 class PointCloudCollection:
+    """
+    PointCloudCollection is the collection of all the PointClouds in the ContextScene
+    """
     def __init__(self, pc):
         self.pc_coll = {"PointClouds": pc}
 
@@ -346,12 +428,18 @@ class PointCloudCollection:
 
 
 class Mesh:
+    """
+    Mesh is the smaller element for defining a Mesh
+    """
     def __init__(self, pc_id, name, path):
         self.id = pc_id
         self.mesh = {"Name": name, "Path": path}
 
 
 class Meshes:
+    """
+    Meshes is only used for dictionary like representation of Mesh with their id
+    """
     def __init__(self):
         self.meshes = dict()
 
@@ -360,6 +448,9 @@ class Meshes:
 
 
 class MeshCollection:
+    """
+    MeshCollection is the collection of all the Meshes in the ContextScene
+    """
     def __init__(self, pc):
         self.mesh_coll = {"Meshes": pc}
 
