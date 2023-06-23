@@ -33,8 +33,6 @@ stages:
         vmImage: $(imageName)
       variables:
       - group: "Reality Capture Integration Test Variables"
-      - name: pnpm_config_cache
-        value: $(Pipeline.Workspace)/.pnpm-store
 
       steps:
       - checkout: self

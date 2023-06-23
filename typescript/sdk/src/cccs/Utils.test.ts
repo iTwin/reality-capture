@@ -74,7 +74,6 @@ describe("Reality Modeling utils unit tests", () => {
     });
 
     it("Settings from json", async function () {
-        console.log("");
         const json = {
             "inputs": [{"id": "imagesId"}, {"id": "ccOrientationsId"}],
             "jobSettings": {
