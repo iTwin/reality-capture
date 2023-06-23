@@ -30,18 +30,18 @@
 		"uuid": "^9.0.0"
 	},
 	"peerDependencies": {
-		"@itwin/core-backend": "^3.7.8",
-		"@itwin/core-bentley": "^3.7.8",
-		"@itwin/core-common": "^3.7.8",
-		"@itwin/core-geometry": "^3.7.8",
+		"@itwin/core-backend": "^4.0.0",
+		"@itwin/core-bentley": "^4.0.0",
+		"@itwin/core-common": "^4.0.0",
+		"@itwin/core-geometry": "^4.0.0",
 		"@itwin/reality-data-client": "^0.9.0"
 	},
 	"devDependencies": {
-		"@itwin/build-tools": "^3.7.8",
-		"@itwin/core-backend": "^3.7.8",
-		"@itwin/core-bentley": "^3.7.8",
-		"@itwin/core-common": "^3.7.8",
-		"@itwin/core-geometry": "^3.7.8",
+		"@itwin/build-tools": "^4.0.0",
+		"@itwin/core-backend": "^4.0.0",
+		"@itwin/core-bentley": "^4.0.0",
+		"@itwin/core-common": "^4.0.0",
+		"@itwin/core-geometry": "^4.0.0",
 		"@itwin/reality-data-client": "^0.9.0",
 		"@types/node": "^16.11.34",
 		"@types/uuid": "^9.0.0",

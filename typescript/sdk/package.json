@@ -29,14 +29,14 @@
 		"axios": "^1.3.0"
 	},
 	"peerDependencies": {
-		"@itwin/core-bentley": "^3.7.8",
-		"@itwin/core-common": "^3.7.8",
+		"@itwin/core-bentley": "^4.0.0",
+		"@itwin/core-common": "^4.0.0",
 		"@itwin/reality-data-client": "^0.9.0"
 	},
 	"devDependencies": {
-		"@itwin/build-tools": "^3.7.8",
-		"@itwin/core-bentley": "^3.7.8",
-		"@itwin/core-common": "^3.7.8",
+		"@itwin/build-tools": "^4.0.0",
+		"@itwin/core-bentley": "^4.0.0",
+		"@itwin/core-common": "^4.0.0",
 		"@itwin/reality-data-client": "^0.9.0",
 		"@itwin/service-authorization": "^0.7.0",
 		"@types/chai": "^4.3.3",
