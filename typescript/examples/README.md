@@ -2,13 +2,13 @@
 
 reality-capture-examples contains some examples for reality-capture.
 
-It has been tested with Node 16.17.0 and should work with Node 16.17.0 and newer.
+It has been tested with Node 18.12.0 and should work with Node 18.12.0 and newer.
 
 ## Pre-reqs
 
 To build and run the source code locally you will need a few things:
 
-- Install [Node.js](https://nodejs.org/en/) v16 (must be greater than 16.17.x).
+- Install [Node.js](https://nodejs.org/en/) v18 (must be greater than 18.12.x).
 - Install [VS Code](https://code.visualstudio.com/).
 
 ## Build and run the examples

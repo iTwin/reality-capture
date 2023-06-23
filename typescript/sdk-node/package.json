@@ -34,7 +34,7 @@
 		"@itwin/core-bentley": "^4.0.0",
 		"@itwin/core-common": "^4.0.0",
 		"@itwin/core-geometry": "^4.0.0",
-		"@itwin/reality-data-client": "^0.9.0"
+		"@itwin/reality-data-client": "^1.0.0"
 	},
 	"devDependencies": {
 		"@itwin/build-tools": "^4.0.0",
@@ -42,8 +42,8 @@
 		"@itwin/core-bentley": "^4.0.0",
 		"@itwin/core-common": "^4.0.0",
 		"@itwin/core-geometry": "^4.0.0",
-		"@itwin/reality-data-client": "^0.9.0",
-		"@types/node": "^16.11.34",
+		"@itwin/reality-data-client": "^1.0.0",
+		"@types/node": "^18.12.0",
 		"@types/uuid": "^9.0.0",
 		"@typescript-eslint/eslint-plugin": "^5.30.6",
 		"@typescript-eslint/parser": "^5.30.6",
