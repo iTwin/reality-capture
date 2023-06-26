@@ -23,12 +23,12 @@
 	"dependencies": {
 		"@itwin/reality-capture": "workspace:^*",
 		"@itwin/reality-capture-node": "workspace:^*",
-		"@itwin/service-authorization": "^0.7.0",
+		"@itwin/service-authorization": "^1.0.0",
 		"dotenv": "^16.0.3"
 	},
 	"devDependencies": {
-		"@itwin/build-tools": "^3.7.8",
-		"@types/node": "^16.11.34",
+		"@itwin/build-tools": "^4.0.0",
+		"@types/node": "^18.12.0",
 		"@typescript-eslint/eslint-plugin": "^5.30.6",
 		"@typescript-eslint/parser": "^5.30.6",
 		"eslint": "^8.19.0",

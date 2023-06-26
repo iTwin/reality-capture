@@ -40,8 +40,8 @@ stages:
       
       - task: NodeTool@0
         inputs:
-          versionSpec: 16.x
-        displayName: Use node 16
+          versionSpec: 18.12.0
+        displayName: Use node 18
 
       - script: npm install -g pnpm@7.27.0
         displayName: Install pnpm
