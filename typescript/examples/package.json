@@ -1,6 +1,6 @@
 {
 	"name": "reality-capture-examples",
-	"version": "0.1.0",
+	"version": "0.1.0-dev.1",
 	"description": "Capture SDKs examples",
 	"private": true,
 	"scripts": {
@@ -21,8 +21,8 @@
 	},
 	"license": "MIT",
 	"dependencies": {
-		"@itwin/reality-capture": "workspace:^*",
-		"@itwin/reality-capture-node": "workspace:^*",
+		"@itwin/reality-capture": "workspace:*",
+		"@itwin/reality-capture-node": "workspace:*",
 		"@itwin/service-authorization": "^1.0.0",
 		"dotenv": "^16.0.3"
 	},

@@ -1,6 +1,6 @@
 {
 	"name": "@itwin/reality-capture",
-	"version": "0.1.0",
+	"version": "0.1.0-dev.1",
 	"description": "Typescript Reality Analysis, Reality Modeling and Reality Conversion SDKs",
 	"main": "lib/reality-capture.js",
 	"module": "lib/reality-capture.js",
