@@ -1,6 +1,6 @@
 {
 	"name": "reality-capture-examples",
-	"version": "0.1.0",
+	"version": "0.1.0-dev.1",
 	"description": "Capture SDKs examples",
 	"private": true,
 	"scripts": {

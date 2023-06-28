@@ -1,6 +1,6 @@
 {
 	"name": "reality-capture-web-app",
-	"version": "0.1.0",
+	"version": "0.1.0-dev.1",
 	"description": "Client-side sample application to run capture reality jobs and display the productions",
 	"private": true,
 	"main": "lib/index.js",

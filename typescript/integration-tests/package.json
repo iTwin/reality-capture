@@ -1,6 +1,6 @@
 {
 	"name": "reality-capture-tests",
-	"version": "0.1.0",
+	"version": "0.1.0-dev.1",
 	"description": "Reality capture integration tests",
 	"private": true,
 	"scripts": {
