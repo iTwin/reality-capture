@@ -28,6 +28,6 @@ jobs:
 
       - name: Publish packages
         run: |
-          pnpm publish ./typescript/sdk ./typescript/sdk-node --access public
+          pnpm publish ./typescript/sdk ./typescript/sdk-node --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
