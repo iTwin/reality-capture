@@ -340,7 +340,7 @@ export class RealityDataTransferNode {
         return iTwinRealityData;
     }
 
-    private async uploadToAzureBlob(dataToUpload: string, iTwinRealityData: ITwinRealityData, container: string = ""): Promise<void> {
+    private async uploadToAzureBlob(dataToUpload: string, iTwinRealityData: ITwinRealityData, container = ""): Promise<void> {
         try {
             const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.authorizationClient.getAccessToken(), "", true);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
