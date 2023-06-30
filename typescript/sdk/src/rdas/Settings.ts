@@ -996,6 +996,8 @@ class L3DOutputs {
     segmentedPointCloud: string;
     /** 2D segmentation performed by current job. */
     segmentation2D: string;
+    /** Segmented photos */
+    segmentedPhotos: string;
     /** Detected 3D lines. */
     lines3D: string;
     /** DGN file export with 3D lines. */
@@ -1025,6 +1027,11 @@ class L3DOutputs {
          * @type {string}
          */
         this.segmentation2D = "";
+        /**
+         * Segmented photos.
+         * @type {string}
+         */
+        this.segmentedPhotos = "";
         /**
          * Detected 3D lines.
          * @type {string}
@@ -1150,6 +1157,9 @@ export class L3DJobSettings {
         if (this.outputs.segmentation2D)
             json["outputs"].push("segmentation2D");
 
+        if (this.outputs.segmentedPhotos)
+            json["outputs"].push("segmentedPhotos");
+
         if (this.outputs.lines3D)
             json["outputs"].push("lines3D");
 
@@ -1214,6 +1224,8 @@ export class L3DJobSettings {
                 newJobSettings.outputs.segmentedPointCloud = output["realityDataId"];
             else if (output["name"] === "segmentation2D")
                 newJobSettings.outputs.segmentation2D = output["realityDataId"];
+            else if (output["name"] === "segmentedPhotos")
+                newJobSettings.outputs.segmentedPhotos = output["realityDataId"];
             else if (output["name"] === "lines3D")
                 newJobSettings.outputs.lines3D = output["realityDataId"];
             else if (output["name"] === "exportedLines3DDGN")

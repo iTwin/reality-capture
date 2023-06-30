@@ -340,7 +340,7 @@ export class RealityDataTransferNode {
         return iTwinRealityData;
     }
 
-    private async uploadToAzureBlob(dataToUpload: string, iTwinRealityData: ITwinRealityData): Promise<void> {
+    private async uploadToAzureBlob(dataToUpload: string, iTwinRealityData: ITwinRealityData, container: string = ""): Promise<void> {
         try {
             const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.authorizationClient.getAccessToken(), "", true);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
@@ -363,7 +363,8 @@ export class RealityDataTransferNode {
 
             let currentPercentage = -1;
             for (let i = 0; i < uploadInfo.files.length; i++) {
-                const blockBlobClient = containerClient.getBlockBlobClient(uploadInfo.files[i]);
+                const blockBlobClient = containerClient.getBlockBlobClient(container === "" ? uploadInfo.files[i] : 
+                    path.join(container, uploadInfo.files[i]));
                 const options: BlockBlobParallelUploadOptions = {
                     abortSignal: this.abortController.signal,
                     maxSingleShotSize: 100 * 1024 * 1024, // 100MB
@@ -427,22 +428,24 @@ export class RealityDataTransferNode {
     }
 
     /**
-     * Upload data to ProjectWise ContextShare. Upload the data in existing reality data.
-     * This function should not be used for ContextScenes or CCOrientations that contain dependencies to other data
-     * unless those dependencies are already uploaded and the file you want to upload points to their id. 
-     * Use uploadContextScene or uploadCCOrientation instead.
-     * @param {string} dataToUpload Local directory containing the relevant data.
-     * @param {string} realityDataId Target reality data.
-     * @param {string} iTwinId ID of the iTwin project the reality data will be linked to. It is also used to choose the 
-     * data center where the reality data is stored.
+     *  Upload .json files to an already existent workspace.
+     * Convenience function to upload specific settings to ContextCapture Service jobs. Files are uploaded to the
+     * workspace passed in argument in the folder job_id/data/ so that the service can find the files when the job is submitted.
+     * This function will upload *all* json files present at the path given in argument but not recursively (it won't
+     * upload json files in subdirectories).
+     * @param dataPath Local directory containing .json files
+     * @param iTwinId ID of the iTwin project the workspace is linked to.
+     * @param workspaceId ID of the workspace the job is linked to.
+     * @param jobId The ID of the job the files are to be linked to.
      */
-    public async uploadToExistingRealityData(dataToUpload: string, realityDataId: string, iTwinId: string): Promise<void> {
+    public async uploadJsonToWorkspace(dataPath: string, iTwinId: string, workspaceId: string, jobId: string): Promise<void> {
         const realityDataClientOptions: RealityDataClientOptions = {
             baseUrl: this.serviceUrl,
         };
         const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
-        const iTwinRealityData = await rdaClient.getRealityData(await this.authorizationClient.getAccessToken(), iTwinId, realityDataId);
-        await this.uploadToAzureBlob(dataToUpload, iTwinRealityData);
+        // TODO call uploadToAzureBlob and add new arguments so it's uploaded in /job_id/data?
+        const iTwinRealityData = await rdaClient.getRealityData(await this.authorizationClient.getAccessToken(), iTwinId, workspaceId);
+        await this.uploadToAzureBlob(dataPath, iTwinRealityData, path.join(jobId, "data"));
     }
 
     /**
