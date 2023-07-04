@@ -7,7 +7,7 @@ import { sleep } from "@itwin/imodels-client-management";
 import { Button, Input, LabeledInput, ProgressLinear, Select, SelectOption, ToggleSwitch } from "@itwin/itwinui-react";
 import React, { ChangeEvent, MutableRefObject, useCallback, useEffect } from "react";
 import "./RDASTab.css";
-import { RealityDataAnalysisService, RDASettings, CommonData } from "reality-capture";
+import { RealityDataAnalysisService, RDASettings, CommonData } from "@itwin/reality-capture";
 import { SelectRealityData } from "./SelectRealityData";
 import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import { SvgPlay, SvgStop } from "@itwin/itwinui-icons-react";

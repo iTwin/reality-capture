@@ -18,8 +18,7 @@ import { JobState } from "../CommonData";
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 describe("Reality Modeling unit tests", () => {
-    let iTwinId = "";
-    let serviceUrl = "https://api.bentley.com/contextcapture"
+    const serviceUrl = "https://api.bentley.com/contextcapture";
     let contextCaptureService: ContextCaptureService;
     let axiosMock = new MockAdapter(axios);
     let authorizationClient: ServiceAuthorizationClient;
@@ -28,7 +27,6 @@ describe("Reality Modeling unit tests", () => {
         this.timeout(30000);
         dotenv.config();
 
-        iTwinId = process.env.IMJS_PROJECT_ID ?? "";
         const clientId = process.env.IMJS_CLIENT_ID ?? "";
         const secret = process.env.IMJS_SECRET ?? "";
         const authority = process.env.IMJS_ISSUER_URL ?? "";
@@ -67,22 +65,22 @@ describe("Reality Modeling unit tests", () => {
                 },
                 "workspaceId": "workspaceId"
             }).reply(201, 
-            {
-                "job": {
-                    "id": "cc3d35cc-416a-4262-9714-b359da70b419",
-                    "name": "Reality Modeling unit test job",
-                    "type": "Full",
-                    "state": "unsubmitted",
-                    "createdDateTime": "2023-04-05T14:29:55Z",
-                    "lastModifiedDateTime": "2023-04-05T14:29:55Z",
-                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                    "location": "East US",
-                    "email": "example@bentley.com",
-                    "workspaceId": "workspaceId",
-                    "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
-                    "jobSettings": {
-                        "quality": "Extra",
-                        "outputs": [{
+                {
+                    "job": {
+                        "id": "cc3d35cc-416a-4262-9714-b359da70b419",
+                        "name": "Reality Modeling unit test job",
+                        "type": "Full",
+                        "state": "unsubmitted",
+                        "createdDateTime": "2023-04-05T14:29:55Z",
+                        "lastModifiedDateTime": "2023-04-05T14:29:55Z",
+                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                        "location": "East US",
+                        "email": "example@bentley.com",
+                        "workspaceId": "workspaceId",
+                        "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
+                        "jobSettings": {
+                            "quality": "Extra",
+                            "outputs": [{
                                 "format": "OPC",
                                 "id": "opcId"
                             },
@@ -90,15 +88,15 @@ describe("Reality Modeling unit tests", () => {
                                 "format": "CCOrientations",
                                 "id": "orientationsId"
                             }
-                        ],
-                        "processingEngines": 5,
-                        "cacheSettings": {
-                            "createCache": true,
-                            "useCache": "799b11bd-71cf-481a-b284-bf48f672cd9a"
+                            ],
+                            "processingEngines": 5,
+                            "cacheSettings": {
+                                "createCache": true,
+                                "useCache": "799b11bd-71cf-481a-b284-bf48f672cd9a"
+                            }
                         }
                     }
-                }
-            });
+                });
 
             const ccSettings = new CCJobSettings();
             ccSettings.inputs = ["imagesId", "ccOrientationsId"];
@@ -368,33 +366,33 @@ describe("Reality Modeling unit tests", () => {
     describe("Get job properties", () => {
         it("Get job properties", async function () {
             axiosMock.onGet(serviceUrl + "/jobs/ccJob").reply(200, 
-            {
-                "job": {
-                    "id": "cc3d35cc-416a-4262-9714-b359da70b419",
-                    "name": "Reality Modeling unit test job",
-                    "type": "Full",
-                    "state": "unsubmitted",
-                    "createdDateTime": "2023-04-05T14:29:55Z",
-                    "lastModifiedDateTime": "2023-04-05T14:29:55Z",
-                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                    "location": "East US",
-                    "email": "example@bentley.com",
-                    "workspaceId": "workspaceId",
-                    "costEstimationParameters": {
-                        "gigaPixels": 2.1,
-                        "megaPoints": 1.5,
-                        "meshQuality": "Extra"
-                    },
-                    "executionInformation": {
-                        "submittedDateTime": "2023-03-30T15:14:57Z",
-                        "startedDateTime": "2023-03-30T15:22:11Z",
-                        "endedDateTime": "2023-03-30T15:39:47Z",
-                        "estimatedUnits": 2
-                    },
-                    "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
-                    "jobSettings": {
-                        "quality": "Extra",
-                        "outputs": [{
+                {
+                    "job": {
+                        "id": "cc3d35cc-416a-4262-9714-b359da70b419",
+                        "name": "Reality Modeling unit test job",
+                        "type": "Full",
+                        "state": "unsubmitted",
+                        "createdDateTime": "2023-04-05T14:29:55Z",
+                        "lastModifiedDateTime": "2023-04-05T14:29:55Z",
+                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                        "location": "East US",
+                        "email": "example@bentley.com",
+                        "workspaceId": "workspaceId",
+                        "costEstimationParameters": {
+                            "gigaPixels": 2.1,
+                            "megaPoints": 1.5,
+                            "meshQuality": "Extra"
+                        },
+                        "executionInformation": {
+                            "submittedDateTime": "2023-03-30T15:14:57Z",
+                            "startedDateTime": "2023-03-30T15:22:11Z",
+                            "endedDateTime": "2023-03-30T15:39:47Z",
+                            "estimatedUnits": 2
+                        },
+                        "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
+                        "jobSettings": {
+                            "quality": "Extra",
+                            "outputs": [{
                                 "format": "OPC",
                                 "id": "opcId"
                             },
@@ -402,15 +400,15 @@ describe("Reality Modeling unit tests", () => {
                                 "format": "CCOrientations",
                                 "id": "orientationsId"
                             }
-                        ],
-                        "processingEngines": 5,
-                        "cacheSettings": {
-                            "createCache": true,
-                            "useCache": "799b11bd-71cf-481a-b284-bf48f672cd9a"
+                            ],
+                            "processingEngines": 5,
+                            "cacheSettings": {
+                                "createCache": true,
+                                "useCache": "799b11bd-71cf-481a-b284-bf48f672cd9a"
+                            }
                         }
                     }
-                }
-            });
+                });
             const properties = contextCaptureService.getJobProperties("ccJob");
             await sleep(500);
 

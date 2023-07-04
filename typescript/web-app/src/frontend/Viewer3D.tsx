@@ -64,13 +64,10 @@ export function Viewer3D(props: Viewer3DProps) {
             {props.authClient && (
                 <div id="test" className="viewer-container">
                     <Viewer
+                        iTwinId={process.env.IMJS_PROJECT_ID}
                         authClient={props.authClient}
-                        blankConnection={{
-                            name: "Test",
-                            location: Cartographic.fromDegrees({longitude: -75.686694, latitude: 40.065757, height: 0}),
-                            extents: new Range3d(-1000, -1000, -100, 1000, 1000, 100),
-                            iTwinId: process.env.IMJS_PROJECT_ID
-                        }}
+                        location={Cartographic.fromDegrees({longitude: -75.686694, latitude: 40.065757, height: 0})}
+                        extents={new Range3d(-1000, -1000, -100, 1000, 1000, 100)}
                         enablePerformanceMonitors={false}
                         uiProviders={[uiProviders,
                             new ViewerContentToolsProvider({

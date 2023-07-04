@@ -1,0 +1,25 @@
+{
+  "name": "@itwin/reality-capture-main",
+  "version": "1.0.0",
+  "description": "This project contains iTwin API SDK for ContextCapture and RealityDataAnalysis as well as reality data API utils in typescript.",
+  "packageManager": "pnpm@7.14.0",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "clean": "pnpm -r run clean",
+    "lint": "pnpm -r run lint",
+    "lint-fix": "pnpm -r run lint-fix",
+    "change": "beachball change",
+    "check": "beachball check",
+    "version-bump": "beachball bump",
+    "publish-packages": "beachball publish"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Bentley Systems, Inc.",
+    "url": "http://www.bentley.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "beachball": "^2.33.3"
+  }
+}

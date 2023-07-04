@@ -9,7 +9,7 @@ import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import React, { ChangeEvent, MutableRefObject, useCallback, useEffect } from "react";
 import "./DataTransferTab.css";
 import { ReferenceManager } from "./ReferenceManager";
-import { RealityDataTransferBrowser, ReferenceTableBrowser, CommonData } from "reality-capture";
+import { RealityDataTransferBrowser, ReferenceTableBrowser, CommonData } from "@itwin/reality-capture";
 import { SelectRealityData } from "./SelectRealityData";
 import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 

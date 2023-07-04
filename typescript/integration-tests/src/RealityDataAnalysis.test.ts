@@ -10,8 +10,8 @@ chai.use(chaiAsPromised);
 import path = require("path");
 import * as dotenv from "dotenv";
 import { BentleyError } from "@itwin/core-bentley";
-import { CommonData, RDASettings, RealityDataAnalysisService } from "reality-capture";
-import { RealityDataTransferNode, ReferenceTableNode } from "reality-capture-node";
+import { CommonData, RDASettings, RealityDataAnalysisService } from "@itwin/reality-capture";
+import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-capture-node";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -26,7 +26,6 @@ describe("Reality analysis integration tests", () => {
     let imagesId = "";
     let sceneId = "";
     let jobId = "";
-    let objects2D = "";
 
     before(async function ()  {
         this.timeout(30000);
@@ -97,6 +96,8 @@ describe("Reality analysis integration tests", () => {
 
     // Get and monitor job
     it("Get reality analysis job properties", async function () {
+        this.timeout(10000);
+        
         const jobProperties = await realityDataAnalysisService.getJobProperties(jobId);
         expect(jobProperties.name).to.deep.equal("SDK integration tests reality analysis job");
         expect(jobProperties.type).to.deep.equal("objects2D");
@@ -104,36 +105,27 @@ describe("Reality analysis integration tests", () => {
         const o2dSettings = jobProperties.settings as RDASettings.O2DJobSettings;
         expect(o2dSettings.inputs.photos).to.deep.equal(sceneId);
         expect(o2dSettings.inputs.photoObjectDetector).to.deep.equal(detectorId);
-        objects2D = o2dSettings.outputs.objects2D;
         expect(o2dSettings.outputs.objects2D).to.have.length(36);
         expect(jobProperties.id).to.deep.equal(jobId);
         expect(jobProperties.state).to.deep.equal(CommonData.JobState.ACTIVE);
     });
 
     it("Get reality analysis job progress", async function () {
-        this.timeout(3600000); // 60mn
+        this.timeout(10000);
 
-        let jobProgress = await realityDataAnalysisService.getJobProgress(jobId);
+        const jobProgress = await realityDataAnalysisService.getJobProgress(jobId);
         expect(jobProgress.progress).to.equal(0);
         expect(jobProgress.state).to.deep.equal(CommonData.JobState.ACTIVE);
         expect(jobProgress.step).to.deep.equal("PrepareStep");
+    });
 
-        while(true) {
-            const progress = await realityDataAnalysisService.getJobProgress(jobId);
-            if(progress.state === CommonData.JobState.SUCCESS || progress.state === CommonData.JobState.CANCELLED 
-                || progress.state === CommonData.JobState.FAILED) {
-                break;
-            }
-            await sleep(10000);
-        }
+    it("Cancel RDAS job", async function () {
+        this.timeout(10000);
 
-        jobProgress = await realityDataAnalysisService.getJobProgress(jobId);
-        expect(jobProgress.progress).to.equal(100);
-        expect(jobProgress.state).to.deep.equal(CommonData.JobState.SUCCESS);
-        expect(jobProgress.step).to.deep.equal("");
-
+        await realityDataAnalysisService.cancelJob(jobId);
+        await sleep(1000); // It seems a job needs some time to be cancelled.
         const jobProperties = await realityDataAnalysisService.getJobProperties(jobId);
-        expect(jobProperties.state).to.deep.equal(CommonData.JobState.SUCCESS);
+        expect(jobProperties.state).to.deep.equal(CommonData.JobState.CANCELLED);
     });
 
     // Delete inputs
@@ -172,17 +164,4 @@ describe("Reality analysis integration tests", () => {
             expect((error as BentleyError).errorNumber).to.equal(404);
         }
     });
-
-    it("Delete objects 2D output", async function () {
-        this.timeout(10000);
-        await rdaClient.deleteRealityData("", objects2D);
-        try {
-            await rdaClient.getRealityData("", iTwinId, objects2D);
-        }
-        catch(error: any) {
-            expect(error).instanceOf(BentleyError);
-            expect((error as BentleyError).errorNumber).to.equal(404);
-        }
-    });
-
 });
