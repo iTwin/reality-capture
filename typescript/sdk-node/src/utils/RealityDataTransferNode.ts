@@ -15,10 +15,10 @@ import { CommonData } from "@itwin/reality-capture";
 import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
 import { AuthorizationClient, BentleyError, BentleyStatus } from "@itwin/core-common";
 
-let FILE_GROUP_CONCURRENCY = 16; // How much file are uploaded at the same time.
-let FILE_CONCURRENCY = 8; // Parallel uploading for a single file.
-let MAX_SINGLE_SHOT_SIZE = 128 * 1024 * 1024; // 128 MB. Blob size threshold in bytes to start concurrency uploading.
-let BLOCK_SIZE = 1 * 1024 * 1024; // 1MB. Size of uploaded blocks.
+const FILE_GROUP_CONCURRENCY = 16; // How much file are uploaded at the same time.
+const FILE_CONCURRENCY = 8; // Parallel uploading for a single file.
+const MAX_SINGLE_SHOT_SIZE = 128 * 1024 * 1024; // 128 MB. Blob size threshold in bytes to start concurrency uploading.
+const BLOCK_SIZE = 1 * 1024 * 1024; // 1MB. Size of uploaded blocks.
 
 // taken from Microsoft's Azure sdk samples.
 // https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/storage/storage-blob/samples/typescript/src/basic.ts
@@ -615,7 +615,7 @@ export class RealityDataTransferNode {
                             }
                         }
                     };
-                    const blockBlobClient = await containerClient.getBlockBlobClient(this.dataTransferInfo.files[i])
+                    const blockBlobClient = await containerClient.getBlockBlobClient(this.dataTransferInfo.files[i]);
                     promises.push(this.downloadSingleFileFromAzureBlob(filePath, blockBlobClient, options, i));
                 }
                 await Promise.all(promises);
