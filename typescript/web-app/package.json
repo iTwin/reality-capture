@@ -32,6 +32,7 @@
 		"@itwin/core-orbitgt": "^4.0.0",
 		"@itwin/core-quantity": "^4.0.0",
 		"@itwin/core-react": "^4.0.0",
+		"@itwin/ecschema-metadata" : "^4.0.0",
 		"@itwin/imodel-components-react": "^4.0.0",
 		"@itwin/imodels-access-frontend": "^1.0.1",
 		"@itwin/imodels-client-management": "^1.0.1",
