@@ -71,6 +71,9 @@ export class RealityConversionService {
             let message = "Unknown error. Please ensure that the request is valid.";
 
             if (axios.isAxiosError(error)) {
+                if(!error.response)
+                    return Promise.reject(new BentleyError(error.status ?? BentleyStatus.ERROR, error.message ?? message));
+                
                 const axiosResponse = error.response!;
                 status = axiosResponse.status;
                 message = axiosResponse.data?.error?.message;
