@@ -387,7 +387,19 @@ describe("Reality Modeling unit tests", () => {
                             "submittedDateTime": "2023-03-30T15:14:57Z",
                             "startedDateTime": "2023-03-30T15:22:11Z",
                             "endedDateTime": "2023-03-30T15:39:47Z",
-                            "estimatedUnits": 2
+                            "estimatedUnits": 2,
+                            "warnings": [{
+                                    "code": "400",
+                                    "title": "Warning",
+                                    "message": "This is an warning",
+                                    "params": ["param1", "param2"]
+                            }],
+                            "errors": [{
+                                "code": "400",
+                                "title": "Error",
+                                "message": "This is an error",
+                                "params": ["param1", "param2"]
+                            }]
                         },
                         "inputs": [{"id": "imagesId"},{"id": "ccOrientationsId"}],
                         "jobSettings": {

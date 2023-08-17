@@ -176,6 +176,7 @@ describe("Reality Analysis settings unit tests", () => {
             l3dSettings.outputs.segmentation2D = "segmentation2D";
             l3dSettings.outputs.segmentation3D = "segmentation3D";
             l3dSettings.outputs.segmentedPointCloud = "segmentedPointCloud";
+            l3dSettings.outputs.segmentedPhotos = "segmentedPhotos";
             l3dSettings.computeLineWidth = true;
             l3dSettings.removeSmallComponents = 1;
             l3dSettings.exportSrs = "EPSG:4512";
@@ -183,7 +184,6 @@ describe("Reality Analysis settings unit tests", () => {
             return Promise.all([
                 expect(json).to.have.property("inputs"),
                 expect(json.inputs).to.have.length.above(0),
-                expect(json.inputs).to.deep.include({"name": "clipPolygon", "realityDataId": "clipPolygonId"}),
                 expect(json.inputs).to.deep.include({"name": "meshes", "realityDataId": "meshesId"}),
                 expect(json.inputs).to.deep.include({"name": "orientedPhotos", "realityDataId": "orientedPhotosId"}),
                 expect(json.inputs).to.deep.include({"name": "photoSegmentationDetector", "realityDataId": "photoSegmentationDetectorId"}),
@@ -735,10 +735,6 @@ describe("Reality Analysis settings unit tests", () => {
                 {
                     "name": "segmentation2D",
                     "realityDataId": "segmentation2DId"
-                },
-                {
-                    "name": "clipPolygon",
-                    "realityDataId": "clipPolygonId"
                 }
                 ],
                 "outputs": [{
@@ -796,7 +792,6 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(l3DSettings.inputs).to.have.property("orientedPhotos", "orientedPhotosId"),
                 expect(l3DSettings.inputs).to.have.property("photoSegmentationDetector", "photoSegmentationDetectorId"),
                 expect(l3DSettings.inputs).to.have.property("segmentation2D", "segmentation2DId"),
-                expect(l3DSettings.inputs).to.have.property("clipPolygon", "clipPolygonId"),
 
                 expect(l3DSettings.outputs).to.have.property("segmentation3D", "segmentation3DId"),
                 expect(l3DSettings.outputs).to.have.property("segmentedPointCloud", "segmentedPointCloudId"),
