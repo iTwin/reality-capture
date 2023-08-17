@@ -29,13 +29,11 @@ describe("Reality Modeling unit tests", () => {
 
         const clientId = process.env.IMJS_CLIENT_ID ?? "";
         const secret = process.env.IMJS_SECRET ?? "";
-        const authority = process.env.IMJS_ISSUER_URL ?? "";
-
         authorizationClient = new ServiceAuthorizationClient({
             clientId: clientId,
             clientSecret: secret,
             scope: Array.from(ContextCaptureService.getScopes()).join(" "),
-            authority: authority,
+            authority: "https://ims.bentley.com",
         });
 
         contextCaptureService = new ContextCaptureService(authorizationClient);

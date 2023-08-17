@@ -32,13 +32,11 @@ describe("Reality Analysis unit tests", () => {
         iTwinId = process.env.IMJS_PROJECT_ID ?? "";
         const clientId = process.env.IMJS_CLIENT_ID ?? "";
         const secret = process.env.IMJS_SECRET ?? "";
-        const authority = process.env.IMJS_ISSUER_URL ?? "";
-
         authorizationClient = new ServiceAuthorizationClient({
             clientId: clientId,
             clientSecret: secret,
             scope: Array.from(RealityDataAnalysisService.getScopes()).join(" "),
-            authority: authority,
+            authority: "https://ims.bentley.com",
         });
 
         realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient);
