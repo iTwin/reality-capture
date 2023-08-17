@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  integration-tests:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
@@ -41,3 +41,28 @@ jobs:
           IMJS_CLIENT_ID: ${{ secrets.CLIENT_ID }}
           IMJS_SECRET: ${{ secrets.SECRET }}
         run: pnpm test:integration
+  coverage:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [windows-latest]
+    steps:
+      - name: Checkout github repo (+ download lfs dependencies)
+        uses: actions/checkout@v3
+        with:
+          lfs: true
+      - name: Checkout LFS objects
+        run: git lfs checkout
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.12.0'
+      - name: Install packages
+        working-directory: ./
+        run: pnpm install
+      - name: Build packages
+        working-directory: ./
+        run: pnpm build
+      - run: npm run coverage

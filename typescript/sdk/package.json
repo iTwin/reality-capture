@@ -11,7 +11,7 @@
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
 		"unit-tests": "mocha ./lib/**/*.test.js --slow 0",
-		"coverage": "nyc npm run unit-tests"
+		"coverage": "nyc --check-coverage --lines 100 npm run unit-tests"
 	},
 	"keywords": [],
 	"author": {
@@ -56,6 +56,9 @@
 		"typescript": "^4.5.1"
 	},
 	"nyc": {
-		"exclude": ["src/reality-capture.ts", "**/*.test.ts", "src/utils"]
+		"exclude": ["src/reality-capture.ts", "**/*.test.ts", "src/utils"],
+		"lines": 95,
+		"functions": 100,
+		"statements": 95
 	}
 }
