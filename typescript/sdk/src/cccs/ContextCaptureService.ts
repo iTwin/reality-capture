@@ -221,6 +221,8 @@ export class ContextCaptureService {
             state: job["state"],
             location: job["dataCenter"],
             estimatedCost: job["estimatedCost"],
+            errors: [],
+            warnings: [],
         };
 
         const settings = await CCJobSettings.fromJson(job);
@@ -234,6 +236,34 @@ export class ContextCaptureService {
                 endedDateTime: job["executionInformation"]["endedDateTime"],
             };
             jobProperties.executionCost = job["executionInformation"]["estimatedUnits"];
+            if(job["executionInformation"]["errors"]) {
+                for (const error of job["executionInformation"]["errors"]) {
+                    let params = [];
+                    for (const param of error["params"]) {
+                        params.push(param);
+                    }
+                    jobProperties.errors.push({
+                        code: error["code"],
+                        title: error["title"],
+                        message: error["message"],
+                        params,
+                    });
+                }
+            }
+            if(job["executionInformation"]["warnings"]) {
+                for (const warning of job["executionInformation"]["warnings"]) {
+                    let params = [];
+                    for (const param of warning["params"]) {
+                        params.push(param);
+                    }
+                    jobProperties.errors.push({
+                        code: warning["code"],
+                        title: warning["title"],
+                        message: warning["message"],
+                        params,
+                    });
+                }
+            }
         }
         else {
             jobProperties.dates = {
