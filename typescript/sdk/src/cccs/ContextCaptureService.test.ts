@@ -389,10 +389,10 @@ describe("Reality Modeling unit tests", () => {
                             "endedDateTime": "2023-03-30T15:39:47Z",
                             "estimatedUnits": 2,
                             "warnings": [{
-                                    "code": "400",
-                                    "title": "Warning",
-                                    "message": "This is an warning",
-                                    "params": ["param1", "param2"]
+                                "code": "400",
+                                "title": "Warning",
+                                "message": "This is an warning",
+                                "params": ["param1", "param2"]
                             }],
                             "errors": [{
                                 "code": "400",
