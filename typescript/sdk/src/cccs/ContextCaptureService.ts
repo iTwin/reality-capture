@@ -238,7 +238,7 @@ export class ContextCaptureService {
             jobProperties.executionCost = job["executionInformation"]["estimatedUnits"];
             if(job["executionInformation"]["errors"]) {
                 for (const error of job["executionInformation"]["errors"]) {
-                    let params = [];
+                    const params = [];
                     for (const param of error["params"]) {
                         params.push(param);
                     }
@@ -252,7 +252,7 @@ export class ContextCaptureService {
             }
             if(job["executionInformation"]["warnings"]) {
                 for (const warning of job["executionInformation"]["warnings"]) {
-                    let params = [];
+                    const params = [];
                     for (const param of warning["params"]) {
                         params.push(param);
                     }

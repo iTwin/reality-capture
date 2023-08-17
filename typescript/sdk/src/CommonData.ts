@@ -73,5 +73,5 @@ export interface iTwinCaptureError {
 /**
  * Describe iTwin Capture job warning.
  */
-// eslint-disable-next-line no-empty-interface
-export interface iTwinCaptureWarning extends iTwinCaptureError {}
+// tslint:disable-next-line
+export type iTwinCaptureWarning = iTwinCaptureError

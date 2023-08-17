@@ -216,7 +216,7 @@ export class RealityDataAnalysisService {
             jobProperties.exitCode = job["executionInformation"]["exitCode"];
             if(job["executionInformation"]["errors"]) {
                 for (const error of job["executionInformation"]["errors"]) {
-                    let params = [];
+                    const params = [];
                     for (const param of error["params"]) {
                         params.push(param);
                     }
@@ -230,7 +230,7 @@ export class RealityDataAnalysisService {
             }
             if(job["executionInformation"]["warnings"]) {
                 for (const warning of job["executionInformation"]["warnings"]) {
-                    let params = [];
+                    const params = [];
                     for (const param of warning["params"]) {
                         params.push(param);
                     }
