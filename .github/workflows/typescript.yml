@@ -65,4 +65,6 @@ jobs:
       - name: Build packages
         working-directory: ./
         run: pnpm build
-      - run: npm run coverage
+      - name: Coverage
+        working-directory: ./typescript/sdk
+        run: npm run coverage
