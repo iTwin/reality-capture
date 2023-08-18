@@ -146,4 +146,5 @@ node_modules/
 lib/
 out/
 *.nyc_output/
+coverage/
 
