@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { JobDates, JobState } from "../CommonData";
+import { JobDates, JobState, iTwinCaptureError, iTwinCaptureWarning } from "../CommonData";
 import { JobSettings, RDAJobType } from "./Settings";
 
 /**
@@ -45,4 +45,6 @@ export interface RDAJobProperties {
     exitCode?: string;
     executionCost?: number;
     costEstimation?: RDACostParameters;
+    errors: iTwinCaptureError[];
+    warnings: iTwinCaptureWarning[];
 }

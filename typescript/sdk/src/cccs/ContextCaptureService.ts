@@ -71,6 +71,9 @@ export class ContextCaptureService {
             let message = "Unknown error. Please ensure that the request is valid.";
 
             if (axios.isAxiosError(error)) {
+                if(!error.response)
+                    return Promise.reject(new BentleyError(error.status ?? BentleyStatus.ERROR, error.message ?? message));
+                
                 const axiosResponse = error.response!;
                 status = axiosResponse.status;
                 message = axiosResponse.data?.error?.message;
@@ -218,6 +221,8 @@ export class ContextCaptureService {
             state: job["state"],
             location: job["dataCenter"],
             estimatedCost: job["estimatedCost"],
+            errors: [],
+            warnings: [],
         };
 
         const settings = await CCJobSettings.fromJson(job);
@@ -231,6 +236,34 @@ export class ContextCaptureService {
                 endedDateTime: job["executionInformation"]["endedDateTime"],
             };
             jobProperties.executionCost = job["executionInformation"]["estimatedUnits"];
+            if(job["executionInformation"]["errors"]) {
+                for (const error of job["executionInformation"]["errors"]) {
+                    const params = [];
+                    for (const param of error["params"]) {
+                        params.push(param);
+                    }
+                    jobProperties.errors.push({
+                        code: error["code"],
+                        title: error["title"],
+                        message: error["message"],
+                        params,
+                    });
+                }
+            }
+            if(job["executionInformation"]["warnings"]) {
+                for (const warning of job["executionInformation"]["warnings"]) {
+                    const params = [];
+                    for (const param of warning["params"]) {
+                        params.push(param);
+                    }
+                    jobProperties.errors.push({
+                        code: warning["code"],
+                        title: warning["title"],
+                        message: warning["message"],
+                        params,
+                    });
+                }
+            }
         }
         else {
             jobProperties.dates = {

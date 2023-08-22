@@ -18,7 +18,7 @@ import { RCJobSettings, RCJobType } from "./Utils";
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 describe("Reality conversion unit tests", () => {
-    let iTwinId = "";
+    let iTwinId = "c3739cf2-9da3-487b-b03d-f58c8eb97e5b";
     const serviceUrl = "https://api.bentley.com/realityconversion";
     let realityConversionService: RealityConversionService;
     let axiosMock = new MockAdapter(axios);
@@ -31,13 +31,11 @@ describe("Reality conversion unit tests", () => {
         iTwinId = process.env.IMJS_PROJECT_ID ?? "";
         const clientId = process.env.IMJS_CLIENT_ID ?? "";
         const secret = process.env.IMJS_SECRET ?? "";
-        const authority = process.env.IMJS_ISSUER_URL ?? "";
-
         authorizationClient = new ServiceAuthorizationClient({
             clientId: clientId,
             clientSecret: secret,
             scope: Array.from(RealityConversionService.getScopes()).join(" "),
-            authority: authority,
+            authority: "https://ims.bentley.com",
         });
 
         realityConversionService = new RealityConversionService(authorizationClient);

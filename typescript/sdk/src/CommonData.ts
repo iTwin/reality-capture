@@ -59,3 +59,19 @@ export enum RealityDataType {
     THREESM = "3SM",
     UNSTRUCTURED = "Unstructured"
 }
+
+/**
+ * Describe an iTwin Capture job error.
+ */
+export interface iTwinCaptureError {
+    code: string;
+    title: string;
+    message: string;
+    params: string[];
+}
+
+/**
+ * Describe iTwin Capture job warning.
+ */
+// tslint:disable-next-line
+export type iTwinCaptureWarning = iTwinCaptureError

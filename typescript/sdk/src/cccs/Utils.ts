@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
-import { JobDates } from "../CommonData";
+import { JobDates, iTwinCaptureError, iTwinCaptureWarning } from "../CommonData";
 
 /** Possible types of a Reality Modeling job. */
 export enum CCJobType {
@@ -54,6 +54,8 @@ export interface CCJobProperties {
     executionCost?: string;
     costEstimationParameters?: CCCostParameters;
     estimatedCost?: string;
+    errors: iTwinCaptureError[];
+    warnings: iTwinCaptureWarning[];
 }
 
 /** Possible qualities of a Reality Modeling job. */
