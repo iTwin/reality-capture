@@ -5,7 +5,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import NamedTuple, List
 
-from reality_apis.utils import ReturnValue, JobState, JobDateTime
+from reality_apis.utils import ReturnValue, JobState, JobDateTime, iTwinCaptureWarning, iTwinCaptureError
 
 
 class CCWorkspaceProperties(NamedTuple):
@@ -291,3 +291,5 @@ class CCJobProperties(NamedTuple):
     job_settings: CCJobSettings = CCJobSettings()
     cost_estimation_parameters: CCJobCostParameters = CCJobCostParameters()
     estimated_cost: float = 0.0
+    errors: List[iTwinCaptureError] = []
+    warnings: List[iTwinCaptureWarning] = []

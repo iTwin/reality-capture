@@ -12,7 +12,7 @@ from reality_apis.CCS.ccs_utils import (
     CCJobCostParameters,
     CCJobProperties,
 )
-from reality_apis.utils import ReturnValue, JobState, JobDateTime, JobProgress, __version__
+from reality_apis.utils import ReturnValue, JobState, JobDateTime, JobProgress, iTwinCaptureError, iTwinCaptureWarning, __version__
 
 
 class ContextCaptureService:
@@ -260,6 +260,7 @@ class ContextCaptureService:
             data_json = response.json()
             if response.status_code < 200 or response.status_code >= 400:
                 return ReturnValue(value=CCJobProperties(), error=self._error_msg(response.status_code, data_json))
+
             job_name = data_json["job"].get("name", "")
             job_type = CCJobType(data_json["job"].get("type", CCJobType.NONE.value))
             job_state = JobState(data_json["job"].get("state", JobState.UNKNOWN.value))
@@ -278,6 +279,10 @@ class ContextCaptureService:
                 )
             estimated_cost = float(data_json["job"].get("estimatedCost", 0.0))
             created_date_time = data_json["job"].get("createdDateTime", "")
+
+            errors = []
+            warnings = []
+
             execution = data_json["job"].get("executionInformation", None)
             if execution is not None:
                 job_date_time = JobDateTime(
@@ -287,6 +292,23 @@ class ContextCaptureService:
                     ended_date_time=execution.get("endedDateTime", ""),
                 )
                 estimated_units = float(execution.get("estimatedUnits", 0.0))
+
+                exec_errors = execution.get("errors", None)
+                if exec_errors is not None:
+                    for error in exec_errors:
+                        itwin_error = iTwinCaptureError(code=error.get("code", ""), title=error.get("title", ""), message=error.get("message", ""))
+                        params = error.get("params", [])
+                        itwin_error.params.extend(params)
+                        errors.append(itwin_error)
+
+                exec_warnings = execution.get("warnings", None)
+                if exec_warnings is not None:
+                    for warning in exec_warnings:
+                        itwin_warning = iTwinCaptureWarning(code=warning.get("code", ""), title=warning.get("title", ""), message=warning.get("message", ""))
+                        params = warning.get("params", [])
+
+                        itwin_warning.params.extend(params)
+                        warnings.append(itwin_warning)
             else:
                 job_date_time = JobDateTime(created_date_time=created_date_time)
                 estimated_units = 0.0
@@ -296,10 +318,7 @@ class ContextCaptureService:
             email = data_json["job"].get("email", "")
             work_id = data_json["job"].get("workspaceId", "")
 
-            job_settings = CCJobSettings.from_json(data_json["job"])
-
-            if job_settings.is_error():
-                return ReturnValue(value=CCJobProperties(), error=job_settings.error)
+            job_settings = CCJobSettings.from_json(data_json["job"]).value
 
             return ReturnValue(
                 value=CCJobProperties(
@@ -313,9 +332,11 @@ class ContextCaptureService:
                     email=email,
                     work_id=work_id,
                     estimated_units=estimated_units,
-                    job_settings=job_settings.value,
+                    job_settings=job_settings,
                     cost_estimation_parameters=cost_estimation_parameters,
                     estimated_cost=estimated_cost,
+                    warnings=warnings,
+                    errors=errors,
                 ),
                 error="",
             )

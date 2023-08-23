@@ -2,7 +2,7 @@
 # See LICENSE.md in the project root for license terms and full copyright notice.
 
 from enum import Enum
-from typing import TypeVar, Generic, NamedTuple
+from typing import TypeVar, Generic, NamedTuple, List
 
 from importlib import metadata
 
@@ -53,6 +53,27 @@ class JobState(Enum):
 
     # ccs
     Over = "over"
+
+
+class _iTwinCaptureErrorWarning(NamedTuple):
+    code: str = ""
+    title: str = ""
+    message: str = ""
+    params: List[str] = []
+
+
+class iTwinCaptureError(_iTwinCaptureErrorWarning):
+    """
+    Describe iTwin Capture job error.
+    """
+    pass
+
+
+class iTwinCaptureWarning(_iTwinCaptureErrorWarning):
+    """
+    Describe an iTwin Capture job warning.
+    """
+    pass
 
 
 class JobDateTime(NamedTuple):
