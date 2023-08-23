@@ -18,7 +18,7 @@ from reality_apis.RDAS.job_settings import (
     L3DJobSettings,
     ChangeDetectionJobSettings,
 )
-from reality_apis.utils import ReturnValue, JobProgress, JobState, JobDateTime, __version__
+from reality_apis.utils import ReturnValue, JobProgress, JobState, JobDateTime, iTwinCaptureError, iTwinCaptureWarning, __version__
 
 
 class RealityDataAnalysisService:
@@ -165,6 +165,10 @@ class RealityDataAnalysisService:
                     cost_estimation = cost_estimation_ret.value
 
             created_date_time = data_json["job"].get("createdDateTime", "")
+
+            errors = []
+            warnings = []
+
             execution = data_json["job"].get("executionInformation", None)
             if execution is not None:
                 job_date_time = JobDateTime(
@@ -173,8 +177,25 @@ class RealityDataAnalysisService:
                     started_date_time=execution.get("startedDateTime", ""),
                     ended_date_time=execution.get("endedDateTime", ""),
                 )
+
                 exit_code = int(execution.get("exitCode", 0))
                 estimated_units = float(execution.get("estimatedUnits", 0.0))
+
+                exec_errors = execution.get("errors", None)
+                if exec_errors is not None:
+                    for error in exec_errors:
+                        itwin_error = iTwinCaptureError(code=error.get("code", ""), title=error.get("title", ""), message=error.get("message", ""))
+                        params = error.get("params", [])
+                        itwin_error.params.extend(params)
+                        errors.append(itwin_error)
+
+                exec_warnings = execution.get("warnings", None)
+                if exec_warnings is not None:
+                    for warning in exec_warnings:
+                        itwin_warning = iTwinCaptureWarning(code=warning.get("code", ""), title=warning.get("title", ""), message=warning.get("message", ""))
+                        params = warning.get("params", [])
+                        itwin_warning.params.extend(params)
+                        warnings.append(itwin_warning)
             else:
                 job_date_time = JobDateTime(created_date_time=created_date_time)
                 exit_code = 0
@@ -200,6 +221,8 @@ class RealityDataAnalysisService:
                     iTwin_id=itwin_id,
                     data_center=data_center,
                     email=email,
+                    warnings=warnings,
+                    errors=errors,
                 ),
                 error="",
             )

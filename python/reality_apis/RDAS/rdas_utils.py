@@ -2,10 +2,10 @@
 # See LICENSE.md in the project root for license terms and full copyright notice.
 
 from __future__ import annotations
-from typing import NamedTuple
+from typing import NamedTuple, List
 from reality_apis.RDAS.job_settings import JobSettings, O2DJobSettings
 from reality_apis.RDAS.rdas_enums import RDAJobType
-from reality_apis.utils import ReturnValue, JobState, JobDateTime
+from reality_apis.utils import ReturnValue, JobState, JobDateTime, iTwinCaptureWarning, iTwinCaptureError
 
 
 class RDAJobCostParameters:
@@ -126,3 +126,5 @@ class RDAJobProperties(NamedTuple):
     iTwin_id: str = ""
     data_center: str = ""
     email: str = ""
+    errors: List[iTwinCaptureError] = []
+    warnings: List[iTwinCaptureWarning] = []
