@@ -146,6 +146,104 @@ class S2DJobSettings:
                     "realityDataId": self.inputs.photo_segmentation_detector,
                 }
             )
+        json_dict["outputs"] = list()
+        if self.outputs.segmentation2D:
+            json_dict["outputs"].append("segmentation2D")
+        if self.outputs.segmented_photos:
+            json_dict["outputs"].append("segmentedPhotos")
+        return json_dict
+
+    @classmethod
+    def from_json(cls, settings_json: dict) -> ReturnValue[S2DJobSettings]:
+        """
+        Transform json received from cloud service into settings.
+
+        Args:
+            settings_json: Dictionary with settings received from cloud service.
+        Returns:
+            New settings.
+        """
+        new_job_settings = cls()
+        try:
+            inputs_json = settings_json["inputs"]
+            for input_dict in inputs_json:
+                if input_dict["name"] == "photos":
+                    new_job_settings.inputs.photos = input_dict["realityDataId"]
+                elif input_dict["name"] == "photoSegmentationDetector":
+                    new_job_settings.inputs.photo_segmentation_detector = input_dict[
+                        "realityDataId"
+                    ]
+                else:
+                    raise TypeError(
+                        "found non expected input name:" + input_dict["name"]
+                    )
+            outputs_json = settings_json["outputs"]
+            for output_dict in outputs_json:
+                if output_dict["name"] == "segmentation2D":
+                    new_job_settings.outputs.segmentation2D = output_dict[
+                        "realityDataId"
+                    ]
+                elif output_dict["name"] == "segmentedPhotos":
+                    new_job_settings.outputs.segmented_photos = output_dict["realityDataId"]
+                else:
+                    raise TypeError(
+                        "found non expected output name:" + output_dict["name"]
+                    )
+        except (TypeError, KeyError) as e:
+            return ReturnValue(value=cls(), error=str(e))
+        return ReturnValue(value=new_job_settings, error="")
+
+    class Inputs:
+        """
+        Possible inputs for a Segmentation 2D job.
+
+        Attributes:
+            photos: Path to ContextScene with photos to analyze.
+            photo_segmentation_detector: Path to photo segmentation detector to apply.
+        """
+
+        def __init__(self) -> None:
+            self.photos: str = ""
+            self.photo_segmentation_detector: str = ""
+
+    class Outputs:
+        """
+        Possible outputs for a Segmentation 2D job.
+
+        Attributes:
+            segmentation2D: Segmented photos.
+            segmented_photos: ContextScene pointing to segmented photos.
+        """
+
+        def __init__(self) -> None:
+            self.segmentation2D: str = ""
+            self.segmented_photos: str = ""
+
+class SOrthoJobSettings:
+    """
+    Settings for Segmentation Ortho jobs.
+
+    Attributes:
+        type: Type of job settings.
+        inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing the settings to create_job.
+    """
+
+    def __init__(self) -> None:
+        self.type = RDAJobType.SOrtho
+        self.inputs = self.Inputs()
+        self.outputs = self.Outputs()
+
+    def to_json(self) -> dict:
+        """
+        Transform settings into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with settings values.
+        """
+        json_dict = dict()
+        json_dict["inputs"] = list()
         if self.inputs.orthophoto:
             json_dict["inputs"].append(
                 {"name": "orthophoto", "realityDataId": self.inputs.orthophoto}
@@ -175,7 +273,7 @@ class S2DJobSettings:
         return json_dict
 
     @classmethod
-    def from_json(cls, settings_json: dict) -> ReturnValue[S2DJobSettings]:
+    def from_json(cls, settings_json: dict) -> ReturnValue[SOrthoJobSettings]:
         """
         Transform json received from cloud service into settings.
 
@@ -188,13 +286,7 @@ class S2DJobSettings:
         try:
             inputs_json = settings_json["inputs"]
             for input_dict in inputs_json:
-                if input_dict["name"] == "photos":
-                    new_job_settings.inputs.photos = input_dict["realityDataId"]
-                elif input_dict["name"] == "photoSegmentationDetector":
-                    new_job_settings.inputs.photo_segmentation_detector = input_dict[
-                        "realityDataId"
-                    ]
-                elif input_dict["name"] == "orthophoto":
+                if input_dict["name"] == "orthophoto":
                     new_job_settings.inputs.orthophoto = input_dict["realityDataId"]
                 elif input_dict["name"] == "orthophotoSegmentationDetector":
                     new_job_settings.inputs.orthophoto_segmentation_detector = (
@@ -234,7 +326,7 @@ class S2DJobSettings:
 
     class Inputs:
         """
-        Possible inputs for a Segmentation 2D job.
+        Possible inputs for a Segmentation Ortho job.
 
         Attributes:
             photos: Path to ContextScene with photos to analyze.
@@ -244,31 +336,29 @@ class S2DJobSettings:
         """
 
         def __init__(self) -> None:
-            self.photos: str = ""
-            self.photo_segmentation_detector: str = ""
             self.orthophoto: str = ""
             self.orthophoto_segmentation_detector: str = ""
 
     class Outputs:
         """
-        Possible outputs for a Segmentation 2D job.
+        Possible outputs for a Segmentation Ortho job.
 
         Attributes:
             segmentation2D: Segmented photos.
+            segmented_photos: ContextScene pointing to segmented photos.
             polygons2D: Detected 2D polygons.
             exported_polygons2D_SHP: 2D polygons exported to ESRI shapefile.
             lines2D: Detected 2D lines.
-            segmented_photos: ContextScene pointing to segmented photos.
             exported_lines2D_SHP: 2D lines exported to ESRI shapefile.
             exported_lines2D_DGN: 2D lines exported to DGN file.
         """
 
         def __init__(self) -> None:
             self.segmentation2D: str = ""
+            self.segmented_photos: str = ""
             self.polygons2D: str = ""
             self.exported_polygons2D_SHP: str = ""
             self.lines2D: str = ""
-            self.segmented_photos: str = ""
             self.exported_lines2D_SHP: str = ""
             self.exported_lines2D_DGN: str = ""
 
@@ -1283,6 +1373,7 @@ JobSettings = TypeVar(
     "JobSettings",
     O2DJobSettings,
     S2DJobSettings,
+    SOrthoJobSettings,
     O3DJobSettings,
     S3DJobSettings,
     L3DJobSettings,
