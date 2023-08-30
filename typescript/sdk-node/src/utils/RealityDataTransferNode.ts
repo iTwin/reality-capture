@@ -548,6 +548,7 @@ export class RealityDataTransferNode {
 
     private async downloadSingleFileFromAzureBlob(fileToDownload: string, blockBlobClient: BlockBlobClient, options: BlobDownloadOptions, fileIndex: number) {
         const blobContent = await blockBlobClient.download(0, undefined, options);
+        await fs.promises.mkdir(path.dirname(fileToDownload), { recursive: true });
         await fs.promises.writeFile(fileToDownload, await streamToBuffer(blobContent.readableStreamBody!));
         const stats = fs.statSync(fileToDownload);
         this.dataTransferInfo.processedFilesSize += stats.size;
@@ -565,6 +566,7 @@ export class RealityDataTransferNode {
      */
     public async downloadRealityData(realityDataId: string, downloadPath: string, iTwinId: string): Promise<void> {
         try {
+            await fs.promises.mkdir(path.dirname(downloadPath), { recursive: true });
             this.dataTransferInfo = {
                 files: [],
                 totalFilesSize: 0,
