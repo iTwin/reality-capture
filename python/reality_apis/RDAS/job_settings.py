@@ -10,19 +10,27 @@ from reality_apis.utils import ReturnValue
 
 class O2DJobSettings:
     """
-    Settings for Object Detection 2D jobs.
+    Settings for Object 2D jobs.
 
     Attributes:
         type: Type of job settings.
         inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
         outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
             of the output) before passing the settings to create_job.
+        use_tie_points: Improve detection using tie points in photos.
+        min_photos: Minimum number of 2D objects to generate a 3D object.
+        max_dist: Maximum distance between photos and 3D objects.
+        export_srs: SRS used by exports.
     """
 
     def __init__(self) -> None:
         self.type = RDAJobType.O2D
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
+        self.use_tie_points: bool = False
+        self.min_photos: int = 0
+        self.max_dist: float = 0.0
+        self.export_srs: str = ""
 
     def to_json(self) -> dict:
         """
@@ -33,7 +41,7 @@ class O2DJobSettings:
         """
         json_dict = dict()
         json_dict["inputs"] = list()
-        if self.inputs.photos:
+        if self.inputs.oriented_photos:
             json_dict["inputs"].append(
                 {"name": "photos", "realityDataId": self.inputs.photos}
             )
@@ -44,9 +52,37 @@ class O2DJobSettings:
                     "realityDataId": self.inputs.photo_object_detector,
                 }
             )
+        if self.inputs.objects2D:
+            json_dict["inputs"].append(
+                {"name": "objects2D", "realityDataId": self.inputs.objects2D}
+            )
+        if self.inputs.point_clouds:
+            json_dict["inputs"].append(
+                {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
+            )
+        if self.inputs.meshes:
+            json_dict["inputs"].append(
+                {"name": "meshes", "realityDataId": self.inputs.meshes}
+            )
         json_dict["outputs"] = list()
         if self.outputs.objects2D:
             json_dict["outputs"].append("objects2D")
+        if self.outputs.objects3D:
+            json_dict["outputs"].append("objects3D")
+        if self.outputs.exported_objects3D_DGN:
+            json_dict["outputs"].append("exportedObjects3DDGN")
+        if self.outputs.exported_objects3D_cesium:
+            json_dict["outputs"].append("exportedObjects3DCesium")
+        if self.outputs.exported_locations3D_SHP:
+            json_dict["outputs"].append("exportedLocations3DSHP")
+        if self.use_tie_points:
+            json_dict["useTiePoints"] = "true"
+        if self.min_photos:
+            json_dict["MinPhotos"] = str(self.min_photos)
+        if self.max_dist:
+            json_dict["MaxDist"] = str(self.max_dist)
+        if self.export_srs:
+            json_dict["exportSrs"] = self.export_srs
         return json_dict
 
     @classmethod
@@ -64,11 +100,19 @@ class O2DJobSettings:
             inputs_json = settings_json["inputs"]
             for input_dict in inputs_json:
                 if input_dict["name"] == "photos":
-                    new_job_settings.inputs.photos = input_dict["realityDataId"]
+                    new_job_settings.inputs.oriented_photos = input_dict[
+                        "realityDataId"
+                    ]
                 elif input_dict["name"] == "photoObjectDetector":
                     new_job_settings.inputs.photo_object_detector = input_dict[
                         "realityDataId"
                     ]
+                elif input_dict["name"] == "pointClouds":
+                    new_job_settings.inputs.point_clouds = input_dict["realityDataId"]
+                elif input_dict["name"] == "objects2D":
+                    new_job_settings.inputs.objects2D = input_dict["realityDataId"]
+                elif input_dict["name"] == "meshes":
+                    new_job_settings.inputs.meshes = input_dict["realityDataId"]
                 else:
                     raise TypeError(
                         "found non expected input name:" + input_dict["name"]
@@ -77,37 +121,73 @@ class O2DJobSettings:
             for output_dict in outputs_json:
                 if output_dict["name"] == "objects2D":
                     new_job_settings.outputs.objects2D = output_dict["realityDataId"]
+                elif output_dict["name"] == "objects3D":
+                    new_job_settings.outputs.objects3D = output_dict["realityDataId"]
+                elif output_dict["name"] == "exportedObjects3DDGN":
+                    new_job_settings.outputs.exported_objects3D_DGN = output_dict[
+                        "realityDataId"
+                    ]
+                elif output_dict["name"] == "exportedObjects3DCesium":
+                    new_job_settings.outputs.exported_objects3D_cesium = output_dict[
+                        "realityDataId"
+                    ]
+                elif output_dict["name"] == "exportedLocations3DSHP":
+                    new_job_settings.outputs.exported_locations3D_SHP = output_dict[
+                        "realityDataId"
+                    ]
                 else:
                     raise TypeError(
                         "found non expected output name" + output_dict["name"]
                     )
+            if "exportSrs" in settings_json:
+                new_job_settings.export_srs = settings_json["exportSrs"]
+            if "minPhotos" in settings_json:
+                new_job_settings.min_photos = int(settings_json["minPhotos"])
+            if "maxDist" in settings_json:
+                new_job_settings.max_dist = float(settings_json["maxDist"])
+            if "useTiePoints" in settings_json:
+                new_job_settings.use_tie_points = bool(settings_json["useTiePoints"])
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_settings, error="")
 
     class Inputs:
         """
-        Possible inputs for an Object Detection 2D job.
+        Possible inputs for an Object 2D job.
 
         Attributes:
-            photos: Path to ContextScene with photos to analyze.
+            photos: Path to ContextScene with oriented photos to analyze.
             photo_object_detector: Path to photo object detector to apply.
+            objects2D: Given 2D objects.
+            point_clouds: Collection of point clouds.
+            meshes: Collection of meshes.
         """
 
         def __init__(self) -> None:
             self.photos: str = ""
+            self.point_clouds: str = ""
             self.photo_object_detector: str = ""
+            self.objects2D: str = ""
+            self.meshes: str = ""
 
     class Outputs:
         """
-        Possible outputs for an Object Detection 2D job.
+        Possible outputs for an Object 2D job.
 
         Attributes:
-            objects2D: Objects detected in photos.
+            objects2D: 2D objects detected by current job.
+            objects3D: Detected 3D objects.
+            exported_objects3D_DGN: DGN file export with 3D objects.
+            exported_objects3D_cesium: Cesium 3D Tiles file export with 3D objects.
+            exported_locations3D_SHP: ESRI SHP file export with locations of the 3D objects.
         """
 
         def __init__(self) -> None:
             self.objects2D: str = ""
+            self.objects3D: str = ""
+            self.exported_objects3D_DGN: str = ""
+            self.exported_objects3D_cesium: str = ""
+            self.exported_locations3D_SHP: str = ""
 
 
 class S2DJobSettings:
@@ -362,187 +442,6 @@ class SOrthoJobSettings:
             self.exported_lines2D_SHP: str = ""
             self.exported_lines2D_DGN: str = ""
 
-
-class O3DJobSettings:
-    """
-    Settings for Object Detection 3D jobs.
-
-    Attributes:
-        type: Type of job settings.
-        inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
-        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
-            of the output) before passing the settings to create_job.
-        use_tie_points: Improve detection using tie points in orientedPhotos.
-        min_photos: Minimum number of 2D objects to generate a 3D object.
-        max_dist: Maximum distance between photos and 3D objects.
-        export_srs: SRS used by exports.
-    """
-
-    def __init__(self) -> None:
-        self.type = RDAJobType.O3D
-        self.inputs = self.Inputs()
-        self.outputs = self.Outputs()
-        self.use_tie_points: bool = False
-        self.min_photos: int = 0
-        self.max_dist: float = 0.0
-        self.export_srs: str = ""
-
-    def to_json(self) -> dict:
-        """
-        Transform settings into a dictionary compatible with json.
-
-        Returns:
-            Dictionary with settings values.
-        """
-        json_dict = dict()
-        json_dict["inputs"] = list()
-        if self.inputs.oriented_photos:
-            json_dict["inputs"].append(
-                {"name": "orientedPhotos", "realityDataId": self.inputs.oriented_photos}
-            )
-        if self.inputs.photo_object_detector:
-            json_dict["inputs"].append(
-                {
-                    "name": "photoObjectDetector",
-                    "realityDataId": self.inputs.photo_object_detector,
-                }
-            )
-        if self.inputs.objects2D:
-            json_dict["inputs"].append(
-                {"name": "objects2D", "realityDataId": self.inputs.objects2D}
-            )
-        if self.inputs.point_clouds:
-            json_dict["inputs"].append(
-                {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
-            )
-        if self.inputs.meshes:
-            json_dict["inputs"].append(
-                {"name": "meshes", "realityDataId": self.inputs.meshes}
-            )
-        json_dict["outputs"] = list()
-        if self.outputs.objects2D:
-            json_dict["outputs"].append("objects2D")
-        if self.outputs.objects3D:
-            json_dict["outputs"].append("objects3D")
-        if self.outputs.exported_objects3D_DGN:
-            json_dict["outputs"].append("exportedObjects3DDGN")
-        if self.outputs.exported_objects3D_cesium:
-            json_dict["outputs"].append("exportedObjects3DCesium")
-        if self.outputs.exported_locations3D_SHP:
-            json_dict["outputs"].append("exportedLocations3DSHP")
-        if self.use_tie_points:
-            json_dict["useTiePoints"] = "true"
-        if self.min_photos:
-            json_dict["MinPhotos"] = str(self.min_photos)
-        if self.max_dist:
-            json_dict["MaxDist"] = str(self.max_dist)
-        if self.export_srs:
-            json_dict["exportSrs"] = self.export_srs
-        return json_dict
-
-    @classmethod
-    def from_json(cls, settings_json: dict) -> ReturnValue[O3DJobSettings]:
-        """
-        Transform json received from cloud service into settings.
-
-        Args:
-            settings_json: Dictionary with settings received from cloud service.
-        Returns:
-            New settings.
-        """
-        new_job_settings = cls()
-        try:
-            inputs_json = settings_json["inputs"]
-            for input_dict in inputs_json:
-                if input_dict["name"] == "orientedPhotos":
-                    new_job_settings.inputs.oriented_photos = input_dict[
-                        "realityDataId"
-                    ]
-                elif input_dict["name"] == "photoObjectDetector":
-                    new_job_settings.inputs.photo_object_detector = input_dict[
-                        "realityDataId"
-                    ]
-                elif input_dict["name"] == "pointClouds":
-                    new_job_settings.inputs.point_clouds = input_dict["realityDataId"]
-                elif input_dict["name"] == "objects2D":
-                    new_job_settings.inputs.objects2D = input_dict["realityDataId"]
-                elif input_dict["name"] == "meshes":
-                    new_job_settings.inputs.meshes = input_dict["realityDataId"]
-                else:
-                    raise TypeError(
-                        "found non expected input name:" + input_dict["name"]
-                    )
-            outputs_json = settings_json["outputs"]
-            for output_dict in outputs_json:
-                if output_dict["name"] == "objects2D":
-                    new_job_settings.outputs.objects2D = output_dict["realityDataId"]
-                elif output_dict["name"] == "objects3D":
-                    new_job_settings.outputs.objects3D = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedObjects3DDGN":
-                    new_job_settings.outputs.exported_objects3D_DGN = output_dict[
-                        "realityDataId"
-                    ]
-                elif output_dict["name"] == "exportedObjects3DCesium":
-                    new_job_settings.outputs.exported_objects3D_cesium = output_dict[
-                        "realityDataId"
-                    ]
-                elif output_dict["name"] == "exportedLocations3DSHP":
-                    new_job_settings.outputs.exported_locations3D_SHP = output_dict[
-                        "realityDataId"
-                    ]
-                else:
-                    raise TypeError(
-                        "found non expected output name" + output_dict["name"]
-                    )
-            if "exportSrs" in settings_json:
-                new_job_settings.export_srs = settings_json["exportSrs"]
-            if "minPhotos" in settings_json:
-                new_job_settings.min_photos = int(settings_json["minPhotos"])
-            if "maxDist" in settings_json:
-                new_job_settings.max_dist = float(settings_json["maxDist"])
-            if "useTiePoints" in settings_json:
-                new_job_settings.use_tie_points = bool(settings_json["useTiePoints"])
-        except (KeyError, TypeError) as e:
-            return ReturnValue(value=cls(), error=str(e))
-        return ReturnValue(value=new_job_settings, error="")
-
-    class Inputs:
-        """
-        Possible inputs for an Object Detection 3D job.
-
-        Attributes:
-            oriented_photos: Path to ContextScene with oriented photos to analyze.
-            point_clouds: Collection of point clouds.
-            photo_object_detector: Path to photo object detector to apply.
-            objects2D: Given 2D objects.
-            meshes: Collection of meshes.
-        """
-
-        def __init__(self) -> None:
-            self.oriented_photos: str = ""
-            self.point_clouds: str = ""
-            self.photo_object_detector: str = ""
-            self.objects2D: str = ""
-            self.meshes: str = ""
-
-    class Outputs:
-        """
-        Possible outputs for an Object Detection 3D job.
-
-        Attributes:
-            objects2D: 2D objects detected by current job.
-            objects3D: Detected 3D objects.
-            exported_objects3D_DGN: DGN file export with 3D objects.
-            exported_objects3D_cesium: Cesium 3D Tiles file export with 3D objects.
-            exported_locations3D_SHP: ESRI SHP file export with locations of the 3D objects.
-        """
-
-        def __init__(self) -> None:
-            self.objects2D: str = ""
-            self.objects3D: str = ""
-            self.exported_objects3D_DGN: str = ""
-            self.exported_objects3D_cesium: str = ""
-            self.exported_locations3D_SHP: str = ""
 
 
 class S3DJobSettings:
@@ -1374,7 +1273,6 @@ JobSettings = TypeVar(
     O2DJobSettings,
     S2DJobSettings,
     SOrthoJobSettings,
-    O3DJobSettings,
     S3DJobSettings,
     L3DJobSettings,
     ChangeDetectionJobSettings,

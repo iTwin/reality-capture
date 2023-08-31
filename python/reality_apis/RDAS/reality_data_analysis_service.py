@@ -12,7 +12,6 @@ from reality_apis.RDAS.rdas_enums import RDAJobType
 from reality_apis.RDAS.job_settings import (
     JobSettings,
     O2DJobSettings,
-    O3DJobSettings,
     S2DJobSettings,
     SOrthoJobSettings,
     S3DJobSettings,
@@ -143,8 +142,6 @@ class RealityDataAnalysisService:
                 settings = S2DJobSettings.from_json(data_json["job"].get("settings", {}))
             elif job_type_str == RDAJobType.SOrtho.value:
                 settings = SOrthoJobSettings.from_json(data_json["job"].get("settings", {}))
-            elif job_type_str == RDAJobType.O3D.value:
-                settings = O3DJobSettings.from_json(data_json["job"].get("settings", {}))
             elif job_type_str == RDAJobType.S3D.value:
                 settings = S3DJobSettings.from_json(data_json["job"].get("settings", {}))
             elif job_type_str == RDAJobType.L3D.value:
