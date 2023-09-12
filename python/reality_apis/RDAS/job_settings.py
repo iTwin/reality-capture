@@ -199,12 +199,20 @@ class S2DJobSettings:
         inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
         outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
             of the output) before passing the settings to create_job.
+        compute_line_width: Estimation 3D line width at each vertex.
+        remove_small_components: Remove 3D lines with total length smaller than this value.
+        export_srs: SRS used by exports.
+        min_photos: minimum number of photos with a same class for a 3D point to have its class set
     """
 
     def __init__(self) -> None:
         self.type = RDAJobType.S2D
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
+        self.compute_line_width: bool = False
+        self.remove_small_components: float = 0.0
+        self.export_srs: str = ""
+        self.min_photos: int = 0
 
     def to_json(self) -> dict:
         """
@@ -226,11 +234,44 @@ class S2DJobSettings:
                     "realityDataId": self.inputs.photo_segmentation_detector,
                 }
             )
+        if self.inputs.point_clouds:
+            json_dict["inputs"].append(
+                {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
+            )
+        if self.inputs.meshes:
+            json_dict["inputs"].append(
+                {"name": "meshes", "realityDataId": self.inputs.meshes}
+            )
+        if self.inputs.segmentation2D:
+            json_dict["inputs"].append(
+                {"name": "segmentation2D", "realityDataId": self.inputs.segmentation2D}
+            )
         json_dict["outputs"] = list()
         if self.outputs.segmentation2D:
             json_dict["outputs"].append("segmentation2D")
         if self.outputs.segmented_photos:
             json_dict["outputs"].append("segmentedPhotos")
+        if self.outputs.lines3D:
+            json_dict["outputs"].append("lines3D")
+        if self.outputs.exported_lines3D_DGN:
+            json_dict["outputs"].append("exportedLines3DDGN")
+        if self.outputs.exported_lines3D_cesium:
+            json_dict["outputs"].append("exportedLines3DCesium")
+        if self.outputs.patches3D:
+            json_dict["outputs"].append("patches3D")
+        if self.outputs.exported_patches3D_DGN:
+            json_dict["outputs"].append("exportedPatches3DDGN")
+        if self.outputs.exported_patches3D_cesium:
+            json_dict["outputs"].append("exportedPatches3DCesium")
+        if self.compute_line_width:
+            json_dict["computeLineWidth"] = "true"
+        if self.remove_small_components:
+            json_dict["removeSmallComponents"] = str(self.remove_small_components)
+        if self.export_srs:
+            json_dict["exportSrs"] = self.export_srs
+        if self.min_photos:
+            json_dict["minPhotos"] = self.min_photos
+
         return json_dict
 
     @classmethod
@@ -253,6 +294,12 @@ class S2DJobSettings:
                     new_job_settings.inputs.photo_segmentation_detector = input_dict[
                         "realityDataId"
                     ]
+                elif input_dict["name"] == "pointClouds":
+                    new_job_settings.inputs.point_clouds = input_dict["realityDataId"]
+                elif input_dict["name"] == "meshes":
+                    new_job_settings.inputs.meshes = input_dict["realityDataId"]
+                elif input_dict["name"] == "segmentation2D":
+                    new_job_settings.inputs.segmentation2D = input_dict["realityDataId"]
                 else:
                     raise TypeError(
                         "found non expected input name:" + input_dict["name"]
@@ -265,10 +312,44 @@ class S2DJobSettings:
                     ]
                 elif output_dict["name"] == "segmentedPhotos":
                     new_job_settings.outputs.segmented_photos = output_dict["realityDataId"]
+                elif output_dict["name"] == "lines3D":
+                    new_job_settings.outputs.lines3D = output_dict["realityDataId"]
+                elif output_dict["name"] == "exportedLines3DDGN":
+                    new_job_settings.outputs.exported_lines3D_DGN = output_dict[
+                        "realityDataId"
+                    ]
+                elif output_dict["name"] == "exportedLines3DCesium":
+                    new_job_settings.outputs.exported_lines3D_cesium = output_dict[
+                        "realityDataId"
+                    ]
+                elif output_dict["name"] == "patches3D":
+                    new_job_settings.outputs.patches3D = output_dict["realityDataId"]
+                elif output_dict["name"] == "exportedPatches3DDGN":
+                    new_job_settings.outputs.exported_patches3D_DGN = output_dict[
+                        "realityDataId"
+                    ]
+                elif output_dict["name"] == "exportedPatches3DCesium":
+                    new_job_settings.outputs.exported_patches3D_cesium = output_dict[
+                        "realityDataId"
+                    ]
                 else:
                     raise TypeError(
                         "found non expected output name:" + output_dict["name"]
                     )
+            if "computeLineWidth" in settings_json:
+                new_job_settings.compute_line_width = bool(
+                    settings_json["computeLineWidth"]
+                )
+            if "removeSmallComponents" in settings_json:
+                new_job_settings.remove_small_components = float(
+                    settings_json["removeSmallComponents"]
+                )
+            if "exportSrs" in settings_json:
+                new_job_settings.export_srs = settings_json["exportSrs"]
+
+            if "minPhotos" in settings_json:
+                new_job_settings.min_photos = int(settings_json["minPhotos"])
+
         except (TypeError, KeyError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_settings, error="")
@@ -280,11 +361,18 @@ class S2DJobSettings:
         Attributes:
             photos: Path to ContextScene with photos to analyze.
             photo_segmentation_detector: Path to photo segmentation detector to apply.
+            point_clouds: Collection of point clouds.
+            meshes: Collection of meshes.
+            segmentation2D: Given 2D segmentation.
+
         """
 
         def __init__(self) -> None:
             self.photos: str = ""
             self.photo_segmentation_detector: str = ""
+            self.point_clouds: str = ""
+            self.meshes: str = ""
+            self.segmentation2D: str = ""
 
     class Outputs:
         """
@@ -293,11 +381,24 @@ class S2DJobSettings:
         Attributes:
             segmentation2D: Segmented photos.
             segmented_photos: ContextScene pointing to segmented photos.
+            lines3D: Detected 3D lines.
+            exported_lines3D_DGN: DGN file export with 3D lines.
+            exported_lines3D_cesium: Cesium 3D Tiles file export with 3D lines.
+            patches3D: Detected patches.
+            exported_patches3D_DGN: DGN file export with patches.
+            exported_patches3D_cesium: Cesium 3D Tiles file export with 3D patches.
+
         """
 
         def __init__(self) -> None:
             self.segmentation2D: str = ""
             self.segmented_photos: str = ""
+            self.lines3D: str = ""
+            self.exported_lines3D_DGN: str = ""
+            self.exported_lines3D_cesium: str = ""
+            self.patches3D: str = ""
+            self.exported_patches3D_DGN: str = ""
+            self.exported_patches3D_cesium: str = ""
 
 class SOrthoJobSettings:
     """
