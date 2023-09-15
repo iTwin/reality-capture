@@ -15,7 +15,6 @@ from reality_apis.RDAS.job_settings import (
     S2DJobSettings,
     SOrthoJobSettings,
     S3DJobSettings,
-    L3DJobSettings,
     ChangeDetectionJobSettings,
 )
 from reality_apis.utils import ReturnValue, JobProgress, JobState, JobDateTime, iTwinCaptureError, iTwinCaptureWarning, __version__
@@ -144,8 +143,6 @@ class RealityDataAnalysisService:
                 settings = SOrthoJobSettings.from_json(data_json["job"].get("settings", {}))
             elif job_type_str == RDAJobType.S3D.value:
                 settings = S3DJobSettings.from_json(data_json["job"].get("settings", {}))
-            elif job_type_str == RDAJobType.L3D.value:
-                settings = L3DJobSettings.from_json(data_json["job"].get("settings", {}))
             elif job_type_str == RDAJobType.ChangeDetection.value:
                 settings = ChangeDetectionJobSettings.from_json(
                     data_json["job"].get("settings", {})

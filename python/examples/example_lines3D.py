@@ -9,7 +9,7 @@ import reality_apis.RDAS.reality_data_analysis_service as RDAS
 import reality_apis.DataTransfer.reality_data_transfer as DataTransfer
 
 from reality_apis.DataTransfer.references import ReferenceTable
-from reality_apis.RDAS.job_settings import L3DJobSettings
+from reality_apis.RDAS.job_settings import S2DJobSettings
 from reality_apis.utils import RealityDataType, JobState
 
 from config import project_id, client_id
@@ -19,7 +19,7 @@ from token_factory.token_factory import ClientInfo, SpaDesktopMobileTokenFactory
 def main():
 
     ccimage_collections = r"path to your image folder"
-    oriented_photos_context_scene = r"path to the folder where your context scene file is"
+    photos_context_scene = r"path to the folder where your context scene file is"
     photo_segmentation_detector = r"path to the folder where your detector is"
     mesh = r"path to the folder where your mesh is"
     mesh_context_scene = r"path to the folder where your context scene file that references the mesh is"
@@ -27,7 +27,7 @@ def main():
 
     job_name = "L3D job SDK sample"
     ccimage_collections_name = "Test L3D Photos"
-    oriented_photos_scene_name = "Test L3D oriented photos"
+    photos_scene_name = "Test L3D photos"
     mesh_name = "Test L3D mesh"
     mesh_scene_name = "Test L3D Scene"
     detector_name = "Test L3D detector"
@@ -86,20 +86,20 @@ def main():
             exit(1)
 
     # upload Oriented photos (ContextScene)
-    if not references.has_local_path(oriented_photos_context_scene):
+    if not references.has_local_path(photos_context_scene):
         print("No reference to ContextScene found, uploading local files to cloud")
         ret = data_transfer.upload_context_scene(
-            oriented_photos_context_scene,
-            oriented_photos_scene_name,
+            photos_context_scene,
+            photos_scene_name,
             project_id,
             references,
         )
         if ret.is_error():
             print("Error in upload:", ret.error)
             exit(1)
-        ret = references.add_reference(oriented_photos_context_scene, ret.value)
+        ret = references.add_reference(photos_context_scene, ret.value)
         if ret.is_error():
-            print("Error adding reference:", oriented_photos_context_scene)
+            print("Error adding reference:", photos_context_scene)
             exit(1)
 
     # upload detector
@@ -155,9 +155,9 @@ def main():
     print("Checked data upload")
 
     # creating job settings
-    settings = L3DJobSettings()
-    settings.inputs.oriented_photos = references.get_cloud_id_from_local_path(
-        oriented_photos_context_scene
+    settings = S2DJobSettings()
+    settings.inputs.photos = references.get_cloud_id_from_local_path(
+        photos_context_scene
     ).value
     settings.inputs.photo_segmentation_detector = (
         references.get_cloud_id_from_local_path(photo_segmentation_detector).value
