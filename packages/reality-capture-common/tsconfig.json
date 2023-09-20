@@ -1,0 +1,20 @@
+{
+  "extends": "./node_modules/@itwin/build-tools/tsconfig-base.json",
+  "compilerOptions": {
+    "outDir": "./lib",
+    "lib": ["dom", "esnext"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "types": [
+    "@types/wicg-file-system-access"
+  ],
+  "include": [
+    "./src/**/*.ts*"
+  ],
+  "exclude": [
+    "lib",
+    "node_modules"
+  ]
+}

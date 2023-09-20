@@ -1,0 +1,27 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
+/**
+ * Data types used in ProjectWise ContextShare.
+ */
+export enum RealityDataType {
+    CC_IMAGE_COLLECTION = "CCImageCollection",
+    CC_ORIENTATIONS = "CCOrientations",
+    CESIUM_3D_TILES = "Cesium3DTiles",
+    CONTEXT_DETECTOR = "ContextDetector",
+    CONTEXT_SCENE = "ContextScene",
+    DGN = "DGN",
+    LAS = "LAS",
+    LAZ = "LAZ",
+    OPC = "OPC",
+    PLY = "PLY",
+    POD = "POD",
+    POINTCLOUD = "PointCloud",
+    SCAN_COLLECTION = "ScanCollection",
+    SHP = "SHP",
+    THREEMX = "3MX",
+    THREESM = "3SM",
+    UNSTRUCTURED = "Unstructured"
+}
