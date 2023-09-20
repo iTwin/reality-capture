@@ -1,7 +1,7 @@
 {
-  "name": "@itwin/reality-capture-main",
+  "name": "@itwin/reality-capture",
   "version": "1.0.0",
-  "description": "This project contains iTwin API SDK for ContextCapture and RealityDataAnalysis as well as reality data API utils in typescript.",
+  "description": "This project contains reality-capture SDK for Reality Modeling, Reality Analysis, Reality Conversion and Reality Management APIs, as well as Reality Management utils.",
   "packageManager": "pnpm@7.14.0",
   "scripts": {
     "build": "pnpm -r run build",
