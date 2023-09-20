@@ -11,7 +11,7 @@ import { BentleyError } from "@itwin/core-bentley";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { ContextCaptureService } from "../reality-capture";
+import { ContextCaptureService } from "./ContextCaptureService";
 import { CCJobQuality, CCJobSettings, CCJobType } from "./Utils";
 import { JobState } from "@itwin/reality-capture-common";
 

@@ -1,5 +1,5 @@
 import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
-import { JobDates, JobState } from "@itwin/reality-common";
+import { JobDates, JobState } from "@itwin/reality-capture-common";
 
 /** Possible types of Reality Conversion job. */
 export enum RCJobType {
