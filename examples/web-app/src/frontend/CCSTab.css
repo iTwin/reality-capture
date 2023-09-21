@@ -1,0 +1,30 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
+.ccs-controls-group {
+    display: flex;
+    align-items: center;
+}
+
+.ccs-control {
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.ccs-progress {
+    margin-left: 10px;
+    margin-top: 10px;
+    width: 600px;
+}
+
+.ccs-sep {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.ccs-input {
+    width: 300px;
+    margin-bottom: 5px;
+}

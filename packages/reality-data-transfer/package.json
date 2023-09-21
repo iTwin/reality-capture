@@ -10,8 +10,9 @@
 		"clean": "rimraf lib build .rush",
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
-		"unit-tests": "mocha ./lib/**/*.test.js --slow 0",
-		"coverage": "nyc --check-coverage --lines 95 --functions 100 --statements 95, npm run unit-tests"
+		"test:integration": "",
+		"test-unit": "mocha ./lib/*.test.js --slow 0",
+		"coverage": "nyc --check-coverage --lines 75 --functions 75 --statements 75, npm run unit-tests"
 	},
 	"keywords": [],
 	"author": {

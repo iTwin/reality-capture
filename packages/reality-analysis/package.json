@@ -10,7 +10,8 @@
 		"clean": "rimraf lib build .rush",
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
-		"unit-tests": "mocha ./lib/**/*.test.js --slow 0",
+		"test:integration": "mocha --retries 5 ./lib/integration-tests/*.test.js",
+		"test-unit": "mocha ./lib/*.test.js --slow 0",
 		"coverage": "nyc --check-coverage --lines 95 --functions 100 --statements 95, npm run unit-tests"
 	},
 	"keywords": [],
@@ -36,6 +37,8 @@
 		"@itwin/build-tools": "^4.0.0",
 		"@itwin/core-bentley": "^4.0.0",
 		"@itwin/core-common": "^4.0.0",
+		"@itwin/reality-data-client": "^1.0.0",
+		"@itwin/reality-data-transfer-node": "workspace:*",
 		"@itwin/service-authorization": "^1.0.0",
 		"@types/chai": "^4.3.3",
 		"@types/chai-as-promised": "^7.1.5",

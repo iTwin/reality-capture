@@ -1,0 +1,26 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
+.photo-viewer-canvas {
+    position: relative;
+    margin-top: 25px;
+}
+
+.photo-viewer-controls-group {
+    display: flex;
+    align-items: center;
+    text-align: left;
+}
+
+.photo-viewer-control {
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.photo-viewer-canvas canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}

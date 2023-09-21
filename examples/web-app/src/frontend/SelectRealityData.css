@@ -1,0 +1,21 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
+.select-controls-group {
+    display: flex;
+    align-items: center;
+}
+
+.select-control {
+    margin-left: 10px;
+}
+
+.select-control-right {
+    margin-right: 10px;
+}
+
+.select-control-input {
+    width: 300px;
+}

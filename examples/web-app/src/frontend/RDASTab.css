@@ -1,0 +1,57 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
+
+.rdas-controls-group {
+    display: flex;
+    text-align: left;
+    align-items: center;
+}
+
+.rdas-control {
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.rdas-input {
+    margin-left: 10px;
+    margin-top: 10px;
+    width: 150px;
+    max-width: 30vw;
+}
+
+.rdas-sep {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.rdas-progress {
+    margin-top: 10px;
+    margin-left: 10px;
+    width: 600px;
+}
+
+.rdas-label {
+    width: 120px;
+    margin-bottom: 5px;
+}
+
+.rdas-input {
+    width: 300px;
+    margin-bottom: 5px;
+}
+
+.rdas-wrapper {
+    display: flex;
+    margin-right: 50px;
+}
+
+.rdas-left {
+    width: 45vw;
+}
+
+.rdas-right {
+    margin-left: 50px;
+    width: 45vw;
+}
