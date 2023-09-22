@@ -3,7 +3,6 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { sleep } from "@itwin/imodels-client-management";
 import { SvgPlay, SvgStop } from "@itwin/itwinui-icons-react";
 import { Button, Input, LabeledInput, ProgressLinear } from "@itwin/itwinui-react";
 import { RealityDataAccessClient } from "@itwin/reality-data-client";
@@ -18,6 +17,8 @@ interface CcProps {
     realityDataAccessClient: RealityDataAccessClient;
     authorizationClient: BrowserAuthorizationClient;
 }
+
+async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 export function ContextCapture(props: CcProps) {
     const [step, setStep] = React.useState<string>("");

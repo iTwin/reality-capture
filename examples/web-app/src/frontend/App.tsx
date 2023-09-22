@@ -49,6 +49,19 @@ export function App() {
     }, [authClient]);
     
     useEffect(() => {
+        // Temporary fix (ResizeObserver - loop limit exceeded)
+        class CalmResizeObserver extends ResizeObserver {
+            constructor(callback: ResizeObserverCallback) {
+                super((entries, observer) => {
+                    requestAnimationFrame(() => {
+                        callback(entries, observer);
+                    });
+                });
+            }
+        }
+          
+        window.ResizeObserver = CalmResizeObserver;
+
         void login();
     }, [login]);
 

@@ -3,7 +3,6 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { sleep } from "@itwin/imodels-client-management";
 import { Button, Input, LabeledInput, ProgressLinear, Select, SelectOption, ToggleSwitch } from "@itwin/itwinui-react";
 import React, { ChangeEvent, MutableRefObject, useCallback, useEffect } from "react";
 import "./RDASTab.css";
@@ -24,6 +23,8 @@ interface RdasProps {
     realityDataAccessClient: RealityDataAccessClient;
     authorizationClient: BrowserAuthorizationClient;
 }
+
+async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 export function Rdas(props: RdasProps) {
     const [rdasJobType, setRdasJobType] = React.useState<string>("");

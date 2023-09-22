@@ -5,7 +5,6 @@
 
 import { Button, LabeledInput, ProgressRadial, Select, SelectOption } from "@itwin/itwinui-react";
 import { RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
-import { sleep } from "@itwin/imodels-client-management";
 import React from "react";
 import "./SelectRealityData.css";
 import { SvgRefresh } from "@itwin/itwinui-icons-react";
@@ -24,6 +23,8 @@ interface SelectRealityDataProps {
     /** Number of suggested reality data */
     suggestionNumber?: 10 | 50 | 100 | 250 | 500;
 }
+
+async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 export function SelectRealityData(props: SelectRealityDataProps) {
     const [realityDataList, setRealityDatas] = React.useState<ITwinRealityData[]>([]);

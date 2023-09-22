@@ -7,7 +7,7 @@ import React from "react";
 import { Viewer2D } from "./Viewer2D";
 import { Viewer3D } from "./Viewer3D";
 import "./App.css";
-import { HorizontalTabs, Tab } from "@itwin/itwinui-react";
+import { HorizontalTabs, Tab, Tabs } from "@itwin/itwinui-react";
 import { Rds } from "./DataTransferTab";
 import { Rdas } from "./RDASTab";
 import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
@@ -55,7 +55,8 @@ export function TabMenu(props: TabMenu) {
     };
 
     return(
-        <HorizontalTabs
+        <Tabs
+            orientation="horizontal"
             labels={[                
                 <Tab key={0} label="RDAS" startIcon={<SvgProcess />} />,
                 <Tab key={1} label="CCS" startIcon={<SvgRealityMesh />} />,
@@ -66,6 +67,6 @@ export function TabMenu(props: TabMenu) {
             onTabSelected={setTabIndex}
             type="borderless">
             {getTabs()}
-        </HorizontalTabs> 
+        </Tabs> 
     );
 }
