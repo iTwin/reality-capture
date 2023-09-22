@@ -49,7 +49,7 @@ describe("Reality analysis integration tests", () => {
         references = new ReferenceTableNode();
 
         const realityDataClientOptions: RealityDataClientOptions = {
-            baseUrl: "https://api.bentley.com/realitydata/",
+            baseUrl: "https://api.bentley.com/reality-management",
             authorizationClient: authorizationClient,
         };
         rdaClient = new RealityDataAccessClient(realityDataClientOptions);

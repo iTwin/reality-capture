@@ -8,9 +8,9 @@ import { CCJobQuality, CCJobSettings, CCJobType, ContextCaptureService } from "@
 import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
-import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
 import { defaultProgressHook } from "@itwin/reality-data-transfer";
+import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -28,20 +28,36 @@ async function main() {
 
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
-    const secret = process.env.IMJS_SECRET ?? "";
-    const authority = process.env.IMJS_ISSUER_URL ?? "";
+    const redirectUrl = process.env.IMJS_REDIRECT_URL ?? "";
+    const env = process.env.IMJS_ENV ?? "";
+    const issuerUrl = env === "prod" ? "https://ims.bentley.com" : "https://qa-ims.bentley.com";
 
-    const authorizationClient = new ServiceAuthorizationClient({
+    const authorizationClient = new NodeCliAuthorizationClient({
         clientId: clientId,
-        clientSecret: secret,
         scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(ContextCaptureService.getScopes()).join(" "),
-        authority: authority,
+        issuerUrl: issuerUrl,
+        redirectUri: redirectUrl,
     });
+    await authorizationClient.signIn();
+
     console.log("Reality Modeling sample job - Full (Calibration + Reconstruction)");
-    const realityDataService = new RealityDataTransferNode(authorizationClient);
+    let realityDataService: RealityDataTransferNode;
+    if(env === "prod")
+        realityDataService = new RealityDataTransferNode(authorizationClient);
+    else
+        realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
+    
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
-    const contextCaptureService = new ContextCaptureService(authorizationClient);
+
+    let contextCaptureService;
+    if(env === "prod")
+        contextCaptureService = new ContextCaptureService(authorizationClient);
+    else if(env === "qa")
+        contextCaptureService = new ContextCaptureService(authorizationClient, "qa-");
+    else
+        contextCaptureService = new ContextCaptureService(authorizationClient, "dev-");
+
     console.log("Service initialized");
 
     try {

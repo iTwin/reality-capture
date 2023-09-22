@@ -273,7 +273,7 @@ export class RealityDataTransferNode {
     private authorizationClient: AuthorizationClient;
 
     /** Target service url. */
-    private serviceUrl = "https://api.bentley.com/realitydata";
+    private serviceUrl = "https://api.bentley.com/reality-management";
 
     /** Abort controller to stop the upload when it has been cancelled. */
     private abortController: AbortController;
@@ -321,7 +321,7 @@ export class RealityDataTransferNode {
     constructor(authorizationClient: AuthorizationClient, env?: string) {
         this.authorizationClient = authorizationClient;
         if(env)
-            this.serviceUrl = "https://" + env + "api.bentley.com/realitydata";
+            this.serviceUrl = "https://" + env + "api.bentley.com/reality-management";
         
         this.abortController = new AbortController();
         this.dataTransferInfo = {
@@ -342,17 +342,17 @@ export class RealityDataTransferNode {
 
     private async createRealityData(type: string, name: string, iTwinId: string, rootFile?: string): Promise<ITwinRealityData> {
         const realityDataClientOptions: RealityDataClientOptions = {
-            baseUrl: this.serviceUrl,
+            baseUrl: this.serviceUrl
         };
         const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
         const realityData = new ITwinRealityData(rdaClient, undefined, iTwinId);
         realityData.displayName = name;
         realityData.type = type;
-        realityData.description = "";
-        realityData.classification = "Undefined";
-        realityData.rootDocument = rootFile;
+        if(rootFile)
+            realityData.rootDocument = rootFile;
+
         const iTwinRealityData: ITwinRealityData = await rdaClient.createRealityData(
-            await this.authorizationClient.getAccessToken(), iTwinId, realityData);
+            await this.authorizationClient.getAccessToken(), undefined, realityData);
         return iTwinRealityData;
     }
 
@@ -566,7 +566,9 @@ export class RealityDataTransferNode {
      */
     public async downloadRealityData(realityDataId: string, downloadPath: string, iTwinId: string): Promise<void> {
         try {
-            await fs.promises.mkdir(path.dirname(downloadPath), { recursive: true });
+            if (!fs.existsSync(path.dirname(downloadPath)))
+                await fs.promises.mkdir(path.dirname(downloadPath), { recursive: true });
+            
             this.dataTransferInfo = {
                 files: [],
                 totalFilesSize: 0,

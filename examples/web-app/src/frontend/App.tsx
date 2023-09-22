@@ -32,7 +32,7 @@ export function App() {
                 prefix = "qa-";
 
             const realityDataClientOptions: RealityDataClientOptions = {
-                baseUrl: "https://" + prefix + "api.bentley.com/realitydata",
+                baseUrl: "https://" + prefix + "api.bentley.com/reality-management",
                 authorizationClient: authClient
             };
             return new RealityDataAccessClient(realityDataClientOptions);

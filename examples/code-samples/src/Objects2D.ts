@@ -8,8 +8,8 @@ import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data
 import path = require("path");
 import * as fs from "fs";
 import * as dotenv from "dotenv";
-import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
+import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -29,18 +29,32 @@ async function runObjects2DExample() {
 
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
-    const secret = process.env.IMJS_SECRET ?? "";
-    const authority = process.env.IMJS_ISSUER_URL ?? "";
+    const redirectUrl = process.env.IMJS_REDIRECT_URL ?? "";
+    const env = process.env.IMJS_ENV ?? "";
+    const issuerUrl = env === "prod" ? "https://ims.bentley.com" : "https://qa-ims.bentley.com";
 
     console.log("Reality Analysis sample job detecting 2D objects");
-    const authorizationClient = new ServiceAuthorizationClient({
+    const authorizationClient = new NodeCliAuthorizationClient({
         clientId: clientId,
-        clientSecret: secret,
         scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(RealityDataAnalysisService.getScopes()).join(" "),
-        authority: authority,
+        issuerUrl: issuerUrl,
+        redirectUri: redirectUrl,
     });
-    const realityDataService = new RealityDataTransferNode(authorizationClient);
-    const realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient);
+    await authorizationClient.signIn();
+    
+    let realityDataService: RealityDataTransferNode;
+    if(env === "prod")
+        realityDataService = new RealityDataTransferNode(authorizationClient);
+    else
+        realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
+
+    let realityDataAnalysisService;
+    if(env === "prod")
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient);
+    else if(env === "qa")
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "qa-");
+    else
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "dev-");
     console.log("Service initialized");
 
     // Creating reference table and uploading ccimageCollection, contextScene and detector if necessary (not yet on the cloud)

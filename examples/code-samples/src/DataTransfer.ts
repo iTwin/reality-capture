@@ -5,9 +5,9 @@
 
 import { RealityDataTransferNode } from "@itwin/reality-data-transfer-node";
 import * as dotenv from "dotenv";
-import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import { defaultProgressHook } from "@itwin/reality-data-transfer";
 import { RealityDataType } from "@itwin/reality-capture-common";
+import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
 
 async function runRealityDataExample() {
@@ -19,18 +19,25 @@ async function runRealityDataExample() {
 
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
-    const secret = process.env.IMJS_SECRET ?? "";
-    const authority = process.env.IMJS_ISSUER_URL ?? "";
+    const redirectUrl = process.env.IMJS_REDIRECT_URL ?? "";
+    const env = process.env.IMJS_ENV ?? "";
+    const issuerUrl = env === "prod" ? "https://ims.bentley.com" : "https://qa-ims.bentley.com";
 
     console.log("Reality Data Transfer example");
-    const authorizationClient = new ServiceAuthorizationClient({
+    const authorizationClient = new NodeCliAuthorizationClient({
         clientId: clientId,
-        clientSecret: secret,
         scope: Array.from(RealityDataTransferNode.getScopes()).join(" "),
-        authority: authority,
+        issuerUrl: issuerUrl,
+        redirectUri: redirectUrl,
     });
+    await authorizationClient.signIn();
     
-    const realityDataService = new RealityDataTransferNode(authorizationClient);
+    let realityDataService: RealityDataTransferNode;
+    if(env === "prod")
+        realityDataService = new RealityDataTransferNode(authorizationClient);
+    else
+        realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
+    
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
     console.log("Service initialized");

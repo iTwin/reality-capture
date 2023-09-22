@@ -8,9 +8,9 @@ import { L3DJobSettings, RealityDataAnalysisService } from "@itwin/reality-captu
 import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
-import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import { defaultProgressHook } from "@itwin/reality-data-transfer";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
+import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -34,22 +34,37 @@ async function runLines3DExample() {
 
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
-    const secret = process.env.IMJS_SECRET ?? "";
-    const authority = process.env.IMJS_ISSUER_URL ?? "";
+    const redirectUrl = process.env.IMJS_REDIRECT_URL ?? "";
+    const env = process.env.IMJS_ENV ?? "";
+    const issuerUrl = env === "prod" ? "https://ims.bentley.com" : "https://qa-ims.bentley.com";
 
     console.log("Reality Analysis sample job detecting 3D lines");
-    const authorizationClient = new ServiceAuthorizationClient({
+    const authorizationClient = new NodeCliAuthorizationClient({
         clientId: clientId,
-        clientSecret: secret,
         scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(RealityDataAnalysisService.getScopes()).join(" "),
-        authority: authority,
+        issuerUrl: issuerUrl,
+        redirectUri: redirectUrl,
     });
-    const realityDataService = new RealityDataTransferNode(authorizationClient);
+    await authorizationClient.signIn();
+    
+    let realityDataService: RealityDataTransferNode;
+    if(env === "prod")
+        realityDataService = new RealityDataTransferNode(authorizationClient);
+    else
+        realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
+
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
-    const realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient);
-    console.log("Service initialized");
 
+    let realityDataAnalysisService;
+    if(env === "prod")
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient);
+    else if(env === "qa")
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "qa-");
+    else
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "dev-");
+
+    console.log("Service initialized");
 
     // Creating reference table and uploading ccimageCollection, oriented photos, mesh, mesh contextScene and detector if necessary (not yet on the cloud)
     const references = new ReferenceTableNode();

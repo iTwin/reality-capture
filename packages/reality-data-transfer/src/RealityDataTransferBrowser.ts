@@ -185,7 +185,7 @@ export class RealityDataTransferBrowser {
     private authorizationClient: AuthorizationClient;
 
     /** Target service url. */
-    private serviceUrl = "https://api.bentley.com/realitydata";
+    private serviceUrl = "https://api.bentley.com/reality-management";
     
     /** Abort controller to stop the upload when the upload has been cancelled. */
     private abortController: AbortController;
@@ -228,7 +228,7 @@ export class RealityDataTransferBrowser {
     constructor(authorizationClient: AuthorizationClient, env?: string) {
         this.authorizationClient = authorizationClient;
         if(env)
-            this.serviceUrl = "https://" + env + "api.bentley.com/realitydata";
+            this.serviceUrl = "https://" + env + "api.bentley.com/reality-management";
         
         this.abortController = new AbortController();
     }
