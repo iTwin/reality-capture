@@ -32,11 +32,11 @@ describe("Reality Modeling integration tests", () => {
 
     before(async function ()  {    
         this.timeout(20000);
-        dotenv.config();
+        dotenv.config({ path: path.resolve(__dirname, "../../../../.env") });
 
-        iTwinId = process.env.IMJS_PROJECT_ID ?? "";
-        const clientId = process.env.IMJS_CLIENT_ID ?? "";
-        const secret = process.env.IMJS_SECRET ?? "";
+        iTwinId = process.env.IMJS_INTEGRATION_TESTS_PROJECT_ID ?? "";
+        const clientId = process.env.IMJS_INTEGRATION_TESTS_CLIENT_ID ?? "";
+        const secret = process.env.IMJS_INTEGRATION_TESTS_SECRET ?? "";
 
         const authorizationClient = new ServiceAuthorizationClient({
             clientId: clientId,
@@ -76,7 +76,7 @@ describe("Reality Modeling integration tests", () => {
     // Create and upload inputs
     it("Upload images", async function () {
         this.timeout(60000);
-        imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../data/CC/Images/"), 
+        imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../../../data/CC/Images/"), 
             "SDK integration tests images", RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
         expect(imagesId).is.not.undefined;
         expect(imagesId).to.have.length(36);
@@ -85,7 +85,7 @@ describe("Reality Modeling integration tests", () => {
 
     it("Upload CC orientations", async function () {
         this.timeout(10000);
-        ccOrientationsId = await realityDataTransfer.uploadCCOrientations(path.resolve(__dirname, "../data/CC/Orientation"), 
+        ccOrientationsId = await realityDataTransfer.uploadCCOrientations(path.resolve(__dirname, "../../../../data/CC/Orientation"), 
             "SDK integration tests CC orientations", iTwinId, references);
         expect(ccOrientationsId).is.not.undefined;
         expect(ccOrientationsId).to.have.length(36);

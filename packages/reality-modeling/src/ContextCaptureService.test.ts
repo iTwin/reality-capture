@@ -28,8 +28,8 @@ describe("Reality Modeling unit tests", () => {
         this.timeout(30000);
         dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
-        const clientId = process.env.IMJS_CLIENT_ID ?? "";
-        const secret = process.env.IMJS_SECRET ?? "";
+        const clientId = process.env.UNIT_TESTS_IMJS_CLIENT_ID ?? "";
+        const secret = process.env.UNIT_TESTS_IMJS_SECRET ?? "";
         authorizationClient = new ServiceAuthorizationClient({
             clientId: clientId,
             clientSecret: secret,
