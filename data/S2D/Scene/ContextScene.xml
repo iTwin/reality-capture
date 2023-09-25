@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContextScene version="3.0">
+    <PhotoCollection>    
+        <Photos>
+            <Photo id="3">
+                <ImagePath>0:image007.jpg</ImagePath>
+            </Photo>
+            <Photo id="0">
+                <ImagePath>0:image001.jpg</ImagePath>
+            </Photo>
+            <Photo id="1">
+                <ImagePath>0:image003.jpg</ImagePath>
+            </Photo>
+            <Photo id="2">
+                <ImagePath>0:image005.jpg</ImagePath>
+            </Photo>
+        </Photos>
+    </PhotoCollection>    
+	<References>
+		<Reference id="0">
+			<Path>0</Path>
+		</Reference>
+	</References>
+</ContextScene>
