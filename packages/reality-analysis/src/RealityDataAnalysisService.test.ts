@@ -14,7 +14,7 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { JobState } from "@itwin/reality-capture-common";
 import { O2DJobSettings, RDAJobType } from "./Settings";
-
+import path from "path";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -27,7 +27,7 @@ describe("Reality Analysis unit tests", () => {
 
     before(async function ()  {
         this.timeout(30000);
-        dotenv.config();
+        dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
         iTwinId = process.env.IMJS_PROJECT_ID ?? "";
         const clientId = process.env.IMJS_CLIENT_ID ?? "";

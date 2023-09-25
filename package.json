@@ -22,6 +22,6 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "beachball": "^2.33.3"
+    "beachball": "^2.37.0"
   }
 }

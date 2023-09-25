@@ -9,7 +9,10 @@
 		"build": "npm run clean && tsc",
 		"clean": "rimraf lib build .rush",
 		"lint": "eslint ./src --ext .ts,.tsx ",
-		"lint-fix": "eslint ./src --fix --ext .ts,.tsx"
+		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
+		"test:integration": "",
+		"test:unit": "",
+		"coverage": ""
 	},
 	"keywords": [],
 	"author": {

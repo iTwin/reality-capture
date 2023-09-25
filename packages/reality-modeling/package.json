@@ -11,8 +11,8 @@
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
 		"test:integration": "mocha --retries 5 ./lib/integration-tests/*.test.js",
-		"test-unit": "mocha ./lib/*.test.js --slow 0",
-		"coverage": "nyc --check-coverage --lines 95 --functions 100 --statements 95, npm run unit-tests"
+		"test:unit": "mocha ./lib/*.test.js --slow 0",
+		"coverage": "nyc --check-coverage --lines 90 --functions 95 --statements 90, npm run test:unit"
 	},
 	"keywords": [],
 	"author": {

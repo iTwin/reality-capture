@@ -14,6 +14,7 @@ import MockAdapter from "axios-mock-adapter";
 import { ContextCaptureService } from "./ContextCaptureService";
 import { CCJobQuality, CCJobSettings, CCJobType } from "./Utils";
 import { JobState } from "@itwin/reality-capture-common";
+import path from "path";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -25,7 +26,7 @@ describe("Reality Modeling unit tests", () => {
 
     before(async function ()  {
         this.timeout(30000);
-        dotenv.config();
+        dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
         const clientId = process.env.IMJS_CLIENT_ID ?? "";
         const secret = process.env.IMJS_SECRET ?? "";

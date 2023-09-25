@@ -8,7 +8,6 @@ import chaiAsPromised from "chai-as-promised";
 import { ReferenceTableBrowser } from "./ReferenceTableBrowser";
 chai.use(chaiAsPromised);
 
-
 export function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 describe("Reference table tests", () => {
