@@ -1,0 +1,6 @@
+.*jpg filter=lfs diff=lfs merge=lfs -text
+.*3mxb filter=lfs diff=lfs merge=lfs -text
+.*pb filter=lfs diff=lfs merge=lfs -text
+.*las filter=lfs diff=lfs merge=lfs -text
+.*onnx filter=lfs diff=lfs merge=lfs -text
+.*JPG filter=lfs diff=lfs merge=lfs -text
