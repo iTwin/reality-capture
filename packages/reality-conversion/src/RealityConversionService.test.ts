@@ -30,8 +30,8 @@ describe("Reality conversion unit tests", () => {
         dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
         iTwinId = process.env.IMJS_UNIT_TESTS_PROJECT_ID ?? "";
-        const clientId = process.env.UNIT_TESTS_IMJS_CLIENT_ID ?? "";
-        const secret = process.env.UNIT_TESTS_IMJS_SECRET ?? "";
+        const clientId = process.env.IMJS_UNIT_TESTS_CLIENT_ID ?? "";
+        const secret = process.env.IMJS_UNIT_TESTS_SECRET ?? "";
         authorizationClient = new ServiceAuthorizationClient({
             clientId: clientId,
             clientSecret: secret,
