@@ -1,0 +1,76 @@
+{
+  "name": "@itwin/reality-data-client",
+  "version": "1.1.0",
+  "description": "HTTP Client for the iTwin Platform Reality Data APIs",
+  "main": "lib/cjs/reality-data-client.js",
+  "module": "lib/esm/reality-data-client.js",
+  "typings": "lib/cjs/reality-data-client",
+  "license": "MIT",
+  "keywords": [
+    "Bentley",
+    "iTwin",
+    "BIM",
+    "iModel",
+    "Reality Data Client"
+  ],
+  "author": {
+    "name": "Bentley Systems, Inc.",
+    "url": "http://www.bentley.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iTwin/reality-data-client"
+  },
+  "scripts": {
+    "compile": "npm run -s build",
+    "build": "npm run -s build:cjs && npm run -s build:esm",
+    "build:cjs": "tsc 1>&2 --outDir lib/cjs",
+    "build:esm": "tsc 1>&2 --module ES2020 --outDir lib/esm",
+    "clean": "rimraf lib",
+    "extract-api": "betools extract-api --entry=reality-data-client",
+    "docs": "betools docs --includes=../../generated-docs/extract --json=../../generated-docs/clients/reality-data-client/file.json --tsIndexFile=reality-data-client.ts --onlyJson",
+    "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
+    "lint:fix": "npm run lint -- --fix",
+    "webpackTests": "webpack --config ./src/test/utils/webpack.config.js 1>&2",
+    "test": "",
+    "test:integration": "npm run build && npm run -s webpackTests && npm run -s test:integration:chrome",
+    "test:integration:chrome": "certa -r chrome --grep \"#integration\"",
+    "test:integration:electron": "certa -r electron --grep \"#integration\"",
+    "change": "beachball change",
+    "check": "beachball check",
+    "version-bump": "beachball bump",
+    "publish-packages": "beachball publish",
+    "version-bump-dev": "beachball bump --config beachball.config.dev.js --keep-change-files",
+    "publish-packages-dev": "beachball publish --config beachball.config.dev.js --keep-change-files"
+  },
+  "dependencies": {
+    "@itwin/core-geometry": "^4.0.0",
+    "axios": "^1.3.6"
+  },
+  "devDependencies": {
+    "@itwin/build-tools": "^4.0.0",
+    "@itwin/certa": "^4.0.0",
+    "@itwin/core-bentley": "^4.0.0",
+    "@itwin/core-common": "^4.0.0",
+    "@itwin/eslint-plugin": "^4.0.0-dev.41",
+    "@itwin/oidc-signin-tool": "^4.0.0",
+    "@types/chai": "^4.3.0",
+    "@types/chai-as-promised": "^7.1.4",
+    "@types/mocha": "^9.1.0",
+    "beachball": "^2.31.12",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "dotenv": "^16.0.3",
+    "dotenv-expand": "^5.1.0",
+    "eslint": "^8.36.0",
+    "eslint-plugin-deprecation": "^1.3.3",
+    "rimraf": "^4.4.1",
+    "source-map-loader": "^1.0.0",
+    "typescript": "~4.6.4",
+    "webpack": "^5.76.0",
+    "webpack-cli": "^5.0.2"
+  },
+  "peerDependencies": {
+    "@itwin/core-bentley": "^4.0.0"
+  }
+}
