@@ -1,7 +1,7 @@
 {
   "name": "@itwin/reality-data-client",
   "version": "1.1.0",
-  "description": "HTTP Client for the iTwin Platform Reality Data APIs",
+  "description": "HTTP Client for the iTwin Platform Reality Management APIs",
   "main": "lib/cjs/reality-data-client.js",
   "module": "lib/esm/reality-data-client.js",
   "typings": "lib/cjs/reality-data-client",
@@ -19,7 +19,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/iTwin/reality-data-client"
+    "url": "https://github.com/iTwin/reality-capture.git",
+    "directory": "packages/reality-data-client"
   },
   "scripts": {
     "compile": "npm run -s build",

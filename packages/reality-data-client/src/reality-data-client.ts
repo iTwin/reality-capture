@@ -7,7 +7,7 @@ export * from "./RealityData";
 export * from "./Projects";
 
 /** @docs-package-description
- * The reality-data-client package contains client wrappers for sending requests to the Reality Data API.
+ * The reality-data-client package contains client wrappers for sending requests to the Reality Management API.
  */
 
 /**
