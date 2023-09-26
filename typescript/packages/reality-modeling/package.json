@@ -1,5 +1,5 @@
 {
-	"name": "@itwin/reality-capture-modeling",
+	"name": "@itwin/reality-modeling",
 	"version": "0.1.0-dev.1",
 	"description": "Reality Modeling sdk to run modeling jobs",
 	"main": "lib/index.js",
@@ -22,7 +22,7 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/iTwin/reality-capture.git",
-		"directory": "packages/reality-capture-modeling"
+		"directory": "typescript/packages/reality-modeling"
 	},
 	"license": "MIT",
 	"dependencies": {
