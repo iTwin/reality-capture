@@ -9,7 +9,7 @@
     "lint": "pnpm -r run lint",
     "lint-fix": "pnpm -r run lint-fix",
     "coverage": "pnpm -r --workspace-concurrency=1 run coverage",
-    "integration-tests": "pnpm -r --workspace-concurrency=1 run test:integration",
+    "integration-tests": "pnpm -r run test:integration",
     "change": "beachball change",
     "check": "beachball check",
     "version-bump": "beachball bump",
