@@ -27,7 +27,6 @@
 	"license": "MIT",
 	"dependencies": {
 		"@azure/abort-controller": "^1.1.0",
-		"@itwin/reality-capture-common": "workspace:*",
 		"@azure/storage-blob": "^12.8.0",
 		"@xmldom/xmldom": "^0.8.6",
 		"uuid": "^9.0.0"
@@ -37,7 +36,8 @@
 		"@itwin/core-bentley": "^4.0.0",
 		"@itwin/core-common": "^4.0.0",
 		"@itwin/core-geometry": "^4.0.0",
-		"@itwin/reality-data-client": "^1.0.0"
+		"@itwin/reality-capture-common": "workspace:*",
+		"@itwin/reality-data-client": "workspace:*"
 	},
 	"devDependencies": {
 		"@itwin/build-tools": "^4.0.0",
