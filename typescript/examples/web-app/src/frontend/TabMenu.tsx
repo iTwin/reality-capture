@@ -7,7 +7,7 @@ import React from "react";
 import { Viewer2D } from "./Viewer2D";
 import { Viewer3D } from "./Viewer3D";
 import "./App.css";
-import { HorizontalTabs, Tab, Tabs } from "@itwin/itwinui-react";
+import { Tab, Tabs } from "@itwin/itwinui-react";
 import { Rds } from "./DataTransferTab";
 import { Rdas } from "./RDASTab";
 import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
