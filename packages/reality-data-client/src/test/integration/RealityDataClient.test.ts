@@ -52,7 +52,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert.isDefined(iTwinId);
   });
 
-  it("should properly redirect configured URL to proper Reality Data API URL", async () => {
+  it("should properly redirect configured URL to proper Reality Management API URL", async () => {
 
     // dev
     const realityDataClientConfigDev: RealityDataClientOptions = {
