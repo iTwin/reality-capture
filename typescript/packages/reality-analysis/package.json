@@ -1,5 +1,5 @@
 {
-	"name": "@itwin/reality-analysis",
+	"name": "@itwin/reality-capture-analysis",
 	"version": "0.1.0-dev.1",
 	"description": "Reality Analysis sdk to run analysis jobs",
 	"main": "lib/index.js",

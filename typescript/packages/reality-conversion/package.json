@@ -1,5 +1,5 @@
 {
-	"name": "@itwin/reality-conversion",
+	"name": "@itwin/reality-capture-conversion",
 	"version": "0.1.0-dev.1",
 	"description": "Reality conversion sdk to run conversion jobs",
 	"main": "lib/index.js",
