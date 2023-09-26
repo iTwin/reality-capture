@@ -47,7 +47,7 @@ Every change must be tested with proper unit tests.
 
 ### Build Instructions
 
-See sub Readme files in typescript/sdk, typescript/web-app or python/ for more  information about build instructions.
+See sub Readme files in typescript/packages, typescript/examples or python/ for more  information about build instructions.
 
 > Note: It is a good idea to `npm install` after each `git pull` as dependencies may have changed.
 ### Making and testing changes

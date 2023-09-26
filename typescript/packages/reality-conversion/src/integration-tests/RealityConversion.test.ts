@@ -30,7 +30,7 @@ describe("Reality Conversion integration tests", () => {
 
     before(async function ()  {    
         this.timeout(20000);
-        dotenv.config({ path: path.resolve(__dirname, "../../../../.env") });
+        dotenv.config({ path: path.resolve(__dirname, "../../../../../.env") });
 
         iTwinId = process.env.IMJS_INTEGRATION_TESTS_PROJECT_ID ?? "";
         const clientId = process.env.IMJS_INTEGRATION_TESTS_CLIENT_ID ?? "";
@@ -57,7 +57,7 @@ describe("Reality Conversion integration tests", () => {
     // Create and upload inputs
     it("Upload LAS", async function () {
         this.timeout(60000);
-        lasId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../../../data/RCS/LAS/"), 
+        lasId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../../../../data/RCS/LAS/"), 
             "SDK integration tests reality conversion LAS", RealityDataType.LAS, iTwinId);
         expect(lasId).is.not.undefined;
         expect(lasId).to.have.length(36);

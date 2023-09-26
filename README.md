@@ -8,15 +8,15 @@ Copyright © Bentley Systems, Incorporated. All rights reserved. See
 This repository contains Reality Capture SDKs for Reality Modeling, Reality Analysis, Reality Conversion and Reality Management services, as well as Reality Management API utils. It provides classes, functions and examples to create reality data, upload local data to ContextShare, run Analysis/Conversion/Modeling jobs and download results.
 Besides, a typescript web application example is available to show how to create a web application running the whole workflow and displaying the results in the browser.
 
-- [Reality Management](./packages/reality-data-client/README.md)
-- [Reality Analysis](./packages/reality-analysis/README.md)
-- [Reality Conversion](./packages/reality-conversion/README.md)
-- [Reality Modeling](./packages/reality-modeling/README.md)
+- [Reality Management](./typescript/packages/reality-data-client/README.md)
+- [Reality Analysis](./typescript/packages/reality-analysis/README.md)
+- [Reality Conversion](./typescript/packages/reality-conversion/README.md)
+- [Reality Modeling](./typescript/packages/reality-modeling/README.md)
 
 Reality data utils to upload and download results
 
-- [Reality Data utils (Browser)](./packages/reality-data-transfer/README.md)
-- [Reality Data utils (Node)](./packages/reality-data-transfer-node/README.md)
+- [Reality Data utils (Browser)](./typescript/packages/reality-data-transfer/README.md)
+- [Reality Data utils (Node)](./typescript/packages/reality-data-transfer-node/README.md)
 
 All the packages are available in python, except Reality Management
 

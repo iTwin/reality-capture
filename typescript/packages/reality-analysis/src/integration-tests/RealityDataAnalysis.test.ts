@@ -31,7 +31,7 @@ describe("Reality analysis integration tests", () => {
 
     before(async function ()  {
         this.timeout(30000);
-        dotenv.config({ path: path.resolve(__dirname, "../../../../.env") });
+        dotenv.config({ path: path.resolve(__dirname, "../../../../../.env") });
 
         iTwinId = process.env.IMJS_INTEGRATION_TESTS_PROJECT_ID ?? "";
         const clientId = process.env.IMJS_INTEGRATION_TESTS_CLIENT_ID ?? "";
@@ -58,7 +58,7 @@ describe("Reality analysis integration tests", () => {
     // Create and upload inputs
     it("Upload reality analysis detector", async function () {
         this.timeout(120000);
-        detectorId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../../../data/O2D/Coco2017_v1.19/"), 
+        detectorId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../../../../data/O2D/Coco2017_v1.19/"), 
             "SDK integration tests reality analysis detector", RealityDataType.CONTEXT_DETECTOR, iTwinId);
         expect(detectorId).is.not.undefined;
         expect(detectorId).to.have.length(36);
@@ -66,7 +66,7 @@ describe("Reality analysis integration tests", () => {
 
     it("Upload reality analysis images", async function () {
         this.timeout(60000);
-        imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../../../data/O2D/Images"), 
+        imagesId = await realityDataTransfer.uploadRealityData(path.resolve(__dirname, "../../../../../data/O2D/Images"), 
             "SDK integration tests reality analysis images", RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
         expect(imagesId).is.not.undefined;
         expect(imagesId).to.have.length(36);
@@ -75,7 +75,7 @@ describe("Reality analysis integration tests", () => {
 
     it("Upload reality analysis scene", async function () {
         this.timeout(10000);
-        sceneId = await realityDataTransfer.uploadContextScene(path.resolve(__dirname, "../../../../data/O2D/Scene"), 
+        sceneId = await realityDataTransfer.uploadContextScene(path.resolve(__dirname, "../../../../../data/O2D/Scene"), 
             "SDK integration tests reality analysis scene", iTwinId, references);
         expect(sceneId).is.not.undefined;
         expect(sceneId).to.have.length(36);
