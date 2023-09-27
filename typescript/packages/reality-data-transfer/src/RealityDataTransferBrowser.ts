@@ -243,9 +243,6 @@ export class RealityDataTransferBrowser {
 
     /**
      * Download reality data from ProjectWise ContextShare.
-     * This function should not be used for ContextScenes that contain dependencies to data you have locally as the
-     * paths will point to ids in the ProjectWise ContextShare.
-     * Use downloadContextScene instead.
      * @param {string} realityDataId The ID of the reality data to download.
      * @param {string} iTwinId iTwin project associated to the reality data.
      * @param {ReferenceTableBrowser} referenceTable (optional) A table mapping local path of dependencies to their ID.
@@ -345,9 +342,6 @@ export class RealityDataTransferBrowser {
 
     /**
      * Upload reality data to ProjectWise ContextShare.
-     * This function should not be used for ContextScenes or CCOrientations that contain dependencies to other data
-     * unless those dependencies are already uploaded and the file you want to upload points to their id. 
-     * Use uploadContextScene or uploadCCOrientation instead.
      * @param {File[]} files Files to upload.
      * @param {RealityDataType} type RealityDataType of the data.
      * @param {string} name Name of the created entry on ProjectWise ContextShare.
