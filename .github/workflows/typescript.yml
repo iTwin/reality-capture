@@ -1,4 +1,4 @@
-name: Typescript workflow
+name: CI Build
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Checkout github repo (+ download lfs dependencies)
         uses: actions/checkout@v3
@@ -32,6 +32,8 @@ jobs:
       - name: Build packages
         working-directory: ./
         run: pnpm build
+      - name: Beachball check
+        run: pnpm check
       - name: EsLint
         working-directory: ./
         run: pnpm lint
@@ -41,6 +43,13 @@ jobs:
           IMJS_INTEGRATION_TESTS_PROJECT_ID: ${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}
           IMJS_INTEGRATION_TESTS_CLIENT_ID: ${{ secrets.INTEGRATION_TESTS_CLIENT_ID }}
           IMJS_INTEGRATION_TESTS_SECRET: ${{ secrets.INTEGRATION_TESTS_SECRET }}
+          IMJS_OIDC_BROWSER_TEST_CLIENT_ID: ${{ secrets.IMJS_OIDC_BROWSER_TEST_CLIENT_ID }}
+          IMJS_OIDC_BROWSER_TEST_REDIRECT_URI: ${{ vars.IMJS_OIDC_BROWSER_TEST_REDIRECT_URI }}
+          IMJS_OIDC_BROWSER_TEST_SCOPES: ${{ vars.IMJS_OIDC_BROWSER_TEST_SCOPES }}
+          IMJS_TEST_REGULAR_USER_NAME: ${{ vars.IMJS_TEST_REGULAR_USER_NAME }}
+          IMJS_TEST_REGULAR_USER_PASSWORD: ${{ secrets.IMJS_TEST_REGULAR_USER_PASSWORD }}
+          IMJS_TEST_MANAGER_USER_NAME: ${{ vars.IMJS_TEST_MANAGER_USER_NAME }}
+          IMJS_TEST_MANAGER_USER_PASSWORD: ${{ secrets.IMJS_TEST_MANAGER_USER_PASSWORD }}
         run: pnpm integration-tests
   coverage:
     runs-on: ${{ matrix.operating-system }}
