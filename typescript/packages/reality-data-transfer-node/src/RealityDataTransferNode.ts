@@ -273,7 +273,7 @@ export class RealityDataTransferNode {
     private authorizationClient: AuthorizationClient;
 
     /** Target service url. */
-    private serviceUrl = "https://api.bentley.com/reality-management";
+    private serviceUrl = "https://api.bentley.com/reality-management/reality-data";
 
     /** Abort controller to stop the upload when it has been cancelled. */
     private abortController: AbortController;
@@ -321,8 +321,8 @@ export class RealityDataTransferNode {
     constructor(authorizationClient: AuthorizationClient, env?: string) {
         this.authorizationClient = authorizationClient;
         if(env)
-            this.serviceUrl = "https://" + env + "api.bentley.com/reality-management";
-        
+            this.serviceUrl = "https://" + env + "api.bentley.com/reality-management/reality-data";
+
         this.abortController = new AbortController();
         this.dataTransferInfo = {
             files: [],
@@ -352,7 +352,7 @@ export class RealityDataTransferNode {
             realityData.rootDocument = rootFile;
 
         const iTwinRealityData: ITwinRealityData = await rdaClient.createRealityData(
-            await this.authorizationClient.getAccessToken(), undefined, realityData);
+            await this.authorizationClient.getAccessToken(), iTwinId, realityData);
         return iTwinRealityData;
     }
 
