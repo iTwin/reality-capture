@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        operating-system: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Checkout github repo (+ download lfs dependencies)
         uses: actions/checkout@v3
@@ -33,6 +33,7 @@ jobs:
         working-directory: ./
         run: pnpm build
       - name: Beachball check
+        working-directory: ./
         run: pnpm check
       - name: EsLint
         working-directory: ./
