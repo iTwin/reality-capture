@@ -1,0 +1,79 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "pwa-node",
+            "request": "launch",
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\lib\\cjs\\reality-data-client.js",
+            "outFiles": [
+                "${workspaceFolder}/lib/**/*.js"
+            ]
+        },
+        { /* DEBUG TEST */
+            "name": "[NODE] Certa Test Runner for Clients Tests",
+      
+            "cwd": "${workspaceFolder}",
+            "type": "pwa-node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+              "run",
+              "test:integration:chrome",
+              "--",
+              "--debug"
+            ],
+            "outFiles": [
+              "${workspaceFolder}/lib/**/*.js",
+              "${workspaceFolder}/lib/**/**/*.js",
+              "${workspaceFolder}/lib/**/**/**/*.js"
+              //"${workspaceFolder}/tools/certa/lib/**/*.js"
+            ],
+            "outputCapture": "std",
+            "attachSimplePort": 5858, // NB: This must match ports.debugging in full-stack-tests/core/certa.json
+            "cascadeTerminateToConfigurations": [
+              "[BROWSER] Clients Tests"
+            ]
+          },
+          { /* PARTIAL */
+            "name": "[BROWSER] Clients Tests",
+            "presentation": {
+              "hidden": true
+            },
+            "type": "pwa-chrome",
+            "request": "attach",
+            "port": 9223, // NB: This must match ports.frontendDebugging in core/frontend/certa.json
+            "timeout": 20000,
+            "outFiles": [
+                "${workspaceFolder}/lib/**/*.js",
+                "${workspaceFolder}/lib/**/**/*.js",
+                "${workspaceFolder}/lib/**/**/**/*.js",
+              "${workspaceFolder}/tools/certa/lib/**/*.js"
+            ],
+            "cascadeTerminateToConfigurations": [
+              "[NODE] Certa Test Runner for Clients Tests"
+            ]
+          },
+          {
+            "name": "Certa Tests (backend)",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/@itwin/certa/bin/certa",
+            "args": [ "--debug", "-r", "chrome" ],
+            "outputCapture": "std", // Needed to correctly print test results to Debug Console
+            "port": 5858 // Must match ports.debugging in certa.json
+          },
+          {
+            "name": "Certa Tests (frontend)",
+            "type": "chrome",
+            "request": "attach",
+            "port": 9223, // Must match ports.frontendDebugging in certa.json
+          },
+    ]
+}
