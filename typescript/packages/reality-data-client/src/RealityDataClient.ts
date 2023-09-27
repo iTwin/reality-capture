@@ -333,7 +333,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * Creates a RealityData
    * @param accessToken The client request context.
    * @param iTwinId id of associated iTwin
-   * @param iTwinRealityDAta the realityData to create
+   * @param iTwinRealityData the realityData to create
    * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
    * @throws [[BentleyError]] with code 403 when user does not have required permissions to create a reality data
    * @throws [[BentleyError]] with code 422 when the request is invalid
@@ -374,7 +374,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
   * Modifies an existing RealityData
   * @param accessToken The client request context.
   * @param iTwinId id of associated iTwin
-  * @param iTwinRealityDAta the realityData to modify
+  * @param iTwinRealityData the realityData to modify
   * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
   * @throws [[BentleyError]] with code 404 when the specified reality data was not found
   * @throws [[BentleyError]] with code 422 when the request is invalid
@@ -417,7 +417,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
   /**
    * Deletes a RealityData
    * @param accessToken The client request context.
-   * @param iTwinRealityDAta the realityData to delete
+   * @param realityDataId the realityData to delete
    * @returns true if successful (204 response), false if not
    * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
    * @throws [[BentleyError]] with code 404 when the specified reality data was not found

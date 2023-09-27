@@ -173,6 +173,7 @@ export class ITwinRealityData implements RealityData {
 
   /**
      * Gets a tile access url URL object
+     * @param accessToken The client request context.
      * @param writeAccess Optional boolean indicating if write access is requested. Default is false for read-only access.
      * @returns app URL object for blob url
      * @beta
