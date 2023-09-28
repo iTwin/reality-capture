@@ -157,7 +157,7 @@ class RealityDataTransfer:
 
         # ask for the rd container
         response = self._session.get(
-            "https://" + self._service_url + f"/realitydata/{rd_id}/container?projectId={iTwin_id}&access=Write",
+            "https://" + self._service_url + f"/realitydata/{rd_id}/container?iTwinId={iTwin_id}&access=Write",
             headers=self._get_header())
         try:
             data_json = response.json()
@@ -398,7 +398,7 @@ class RealityDataTransfer:
             True if download was successful, and a potential error message.
         """
         response = self._session.get(
-            "https://" + self._service_url + f"/realitydata/{data_id}/container?projectId={iTwin_id}&access=Read",
+            "https://" + self._service_url + f"/realitydata/{data_id}/container?iTwinId={iTwin_id}&access=Read",
             headers=self._get_header())
 
         try:
