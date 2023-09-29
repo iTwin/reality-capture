@@ -1,7 +1,7 @@
 # Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 # See LICENSE.md in the project root for license terms and full copyright notice.
 
-# Sample creating and submitting a Reality Analysis job detecting 3D lines
+# Sample creating and submitting a Reality Analysis job detecting 3D lines from S2D
 import os
 import time
 
@@ -25,12 +25,12 @@ def main():
     mesh_context_scene = r"path to the folder where your context scene file that references the mesh is"
     output_path = r"path to the folder where you want to save outputs"
 
-    job_name = "L3D job SDK sample"
-    ccimage_collections_name = "Test L3D Photos"
-    photos_scene_name = "Test L3D photos"
-    mesh_name = "Test L3D mesh"
-    mesh_scene_name = "Test L3D Scene"
-    detector_name = "Test L3D detector"
+    job_name = "3D from S2D job SDK sample"
+    ccimage_collections_name = "Test 3D from S2D Photos"
+    photos_scene_name = "Test 3D from S2D photos"
+    mesh_name = "Test 3D from S2D mesh"
+    mesh_scene_name = "Test 3D from S2D Scene"
+    detector_name = "Test 3D from S2D detector"
 
     print("Reality Analysis sample job detecting 3D lines")
 
