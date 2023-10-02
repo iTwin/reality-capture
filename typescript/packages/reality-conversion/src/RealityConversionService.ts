@@ -76,7 +76,10 @@ export class RealityConversionService {
                 
                 const axiosResponse = error.response!;
                 status = axiosResponse.status;
-                message = axiosResponse.data?.error?.message  + "\nDetails : " + JSON.stringify(axiosResponse.data.error?.details);
+                if(axiosResponse.data.error?.details)
+                    message = axiosResponse.data?.error?.message + ". Details : " + JSON.stringify(axiosResponse.data.error?.details);
+                else
+                    message = axiosResponse.data?.error?.message;
             } 
             else {
                 const bentleyError = error as BentleyError;
