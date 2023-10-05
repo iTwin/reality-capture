@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import path = require("path");
+import path from "path";
 import { L3DJobSettings, RealityDataAnalysisService } from "@itwin/reality-capture-analysis";
 import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import * as fs from "fs";

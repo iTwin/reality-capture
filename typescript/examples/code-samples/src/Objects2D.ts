@@ -5,7 +5,7 @@
 
 import { O2DJobSettings, RealityDataAnalysisService } from "@itwin/reality-capture-analysis";
 import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
-import path = require("path");
+import path from "path";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
