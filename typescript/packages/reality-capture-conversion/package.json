@@ -12,8 +12,8 @@
 		"clean": "rimraf lib build .rush",
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
-		"test:integration": "mocha --retries 5 ./lib/integration-tests/*.test.js",
-		"test:unit": "mocha ./lib/*.test.js --slow 0",
+		"test:integration": "mocha --retries 5 ./lib/cjs/integration-tests/*.test.js",
+		"test:unit": "mocha ./lib/cjs/*.test.js --slow 0",
 		"coverage": "nyc --check-coverage --lines 90 --functions 95 --statements 90, npm run test:unit"
 	},
 	"keywords": [],
