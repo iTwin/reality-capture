@@ -20,7 +20,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/iTwin/reality-capture.git",
-    "directory": "packages/reality-data-client"
+    "directory": "typescript/packages/reality-data-client"
   },
   "scripts": {
     "compile": "npm run -s build",
