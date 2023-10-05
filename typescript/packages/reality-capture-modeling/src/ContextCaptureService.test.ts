@@ -26,7 +26,7 @@ describe("Reality Modeling unit tests", () => {
 
     before(async function ()  {
         this.timeout(30000);
-        dotenv.config({ path: path.resolve(__dirname, "../../../../.env") });
+        dotenv.config({ path: path.resolve(__dirname, "../../../../../.env") });
 
         const clientId = process.env.IMJS_UNIT_TESTS_CLIENT_ID ?? "";
         const secret = process.env.IMJS_UNIT_TESTS_SECRET ?? "";
