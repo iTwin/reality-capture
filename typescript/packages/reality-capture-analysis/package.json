@@ -1,10 +1,10 @@
 {
-	"name": "@itwin/reality-capture-conversion",
+	"name": "@itwin/reality-capture-analysis",
 	"version": "0.1.0-dev.1",
-	"description": "Reality conversion sdk to run conversion jobs",
-	"main": "lib/index.js",
-	"module": "lib/index.js",
-	"source": "src/index.ts",
+	"description": "Reality Analysis sdk to run analysis jobs",
+	"main": "lib/cjs/index.js",
+	"module": "lib/esm/index.js",
+	"typings": "lib/cjs/index",
 	"scripts": {
 		"build": "npm run clean && tsc",
 		"clean": "rimraf lib build .rush",
@@ -22,7 +22,7 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/iTwin/reality-capture.git",
-		"directory": "typescript/packages/reality-conversion"
+		"directory": "typescript/packages/reality-capture-analysis"
 	},
 	"license": "MIT",
 	"dependencies": {

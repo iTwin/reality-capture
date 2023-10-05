@@ -2,9 +2,9 @@
 	"name": "@itwin/reality-data-transfer-node",
 	"version": "0.1.0-dev.1",
 	"description": "Utils to upload local data to context share (in Node environment)",
-	"main": "lib/index.js",
-	"module": "lib/index.js",
-	"source": "src/index.ts",
+	"main": "lib/cjs/index.js",
+	"module": "lib/esm/index.js",
+	"typings": "lib/cjs/index",
 	"scripts": {
 		"build": "npm run clean && tsc",
 		"clean": "rimraf lib build .rush",

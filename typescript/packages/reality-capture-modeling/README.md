@@ -1,10 +1,10 @@
-# @itwin/reality-modeling
+# @itwin/reality-capture-modeling
 
 Copyright © Bentley Systems, Incorporated. All rights reserved. See LICENSE.md for license terms and full copyright notice.
 
 ## Description
 
-The **@itwin/reality-modeling** package contains a sdk to send requests to the Reality Modeling API, part of the iTwin platform.
+The **@itwin/reality-capture-modeling** package contains a sdk to send requests to the Reality Modeling API, part of the iTwin platform.
 
 iTwin.js is an open source platform for creating, querying, modifying, and displaying Infrastructure Digital Twins. To learn more about the iTwin Platform and its APIs, visit the iTwin developer portal.
 

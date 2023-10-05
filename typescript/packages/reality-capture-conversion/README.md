@@ -1,10 +1,10 @@
-# @itwin/reality-conversion
+# @itwin/reality-capture-conversion
 
 Copyright © Bentley Systems, Incorporated. All rights reserved. See LICENSE.md for license terms and full copyright notice.
 
 ## Description
 
-The **@itwin/reality-conversion** package contains a sdk to send requests to the Reality Conversion API, part of the iTwin platform.
+The **@itwin/reality-capture-conversion** package contains a sdk to send requests to the Reality Conversion API, part of the iTwin platform.
 
 iTwin.js is an open source platform for creating, querying, modifying, and displaying Infrastructure Digital Twins. To learn more about the iTwin Platform and its APIs, visit the iTwin developer portal.
 

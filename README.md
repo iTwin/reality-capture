@@ -9,9 +9,9 @@ This repository contains Reality Capture SDKs for Reality Modeling, Reality Anal
 Besides, a typescript web application example is available to show how to create a web application running the whole workflow and displaying the results in the browser.
 
 - [Reality Management](./typescript/packages/reality-data-client/README.md)
-- [Reality Analysis](./typescript/packages/reality-analysis/README.md)
-- [Reality Conversion](./typescript/packages/reality-conversion/README.md)
-- [Reality Modeling](./typescript/packages/reality-modeling/README.md)
+- [Reality Analysis](./typescript/packages/reality-capture-analysis/README.md)
+- [Reality Conversion](./typescript/packages/reality-capture-conversion/README.md)
+- [Reality Modeling](./typescript/packages/reality-capture-modeling/README.md)
 
 Reality data utils to upload and download results
 
