@@ -8,7 +8,7 @@ import { AbortController } from "@azure/abort-controller";
 import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
 import * as fs from "fs";
 import * as os from "os";
-import path = require("path");
+import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { ReferenceTableNode } from "./ReferenceTableNode";
 import { RealityDataType } from "@itwin/reality-capture-common";
