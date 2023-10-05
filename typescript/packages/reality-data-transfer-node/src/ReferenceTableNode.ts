@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as fs from "fs";
-import path = require("path");
+import path from "path";
 
 /**
  * A bi-directional map of local data paths and their corresponding cloud ID.

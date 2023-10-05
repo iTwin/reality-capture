@@ -7,7 +7,7 @@ import { RealityDataAccessClient, RealityDataClientOptions } from "@itwin/realit
 import chai, { expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
-import path = require("path");
+import path from "path";
 import * as dotenv from "dotenv";
 import { BentleyError } from "@itwin/core-bentley";
 import { RealityDataAnalysisService } from "../RealityDataAnalysisService";

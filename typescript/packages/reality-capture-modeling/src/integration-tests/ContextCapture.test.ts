@@ -8,7 +8,7 @@ import chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 import { BentleyError } from "@itwin/core-bentley";
 import * as dotenv from "dotenv";
-import path = require("path");
+import path from "path";
 import { RealityDataClientOptions, RealityDataAccessClient } from "@itwin/reality-data-client";
 import { ContextCaptureService } from "../ContextCaptureService";
 import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
