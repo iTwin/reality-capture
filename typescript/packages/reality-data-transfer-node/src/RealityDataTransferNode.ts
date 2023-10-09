@@ -428,6 +428,7 @@ export class RealityDataTransferNode {
                     const fd = fs.openSync(fileToUpload, "r");
                     const buffer = Buffer.alloc(chunkSize);
                     fs.readSync(fd, buffer, 0, chunkSize, start);
+                    fs.closeSync(fd);
                     const blockId = btoa("block-" + j.toString().padStart(6, "0"));
                     blockIds.push(blockId);
 
