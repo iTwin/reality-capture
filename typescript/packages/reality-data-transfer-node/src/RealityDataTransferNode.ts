@@ -286,7 +286,7 @@ export class RealityDataTransferNode {
 
     private currentPercentage;
 
-    private blocksToCommit: Map<string, string[]>  // <blobName, blockIds>
+    private blocksToCommit: Map<string, string[]>;  // <blobName, blockIds>
 
     private uploadPromises: any[];
 
