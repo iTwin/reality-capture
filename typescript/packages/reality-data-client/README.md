@@ -28,7 +28,7 @@ This client uses the `AccessToken` class from  __@iTwin/core-bentley__ to repres
 
 ### ITwinRealityData
 
-Implements the `RealityData` interface from  __@itwin/core-common__ and represents a single reality data. This class contains properties representing the descriptive data related to a reality data, as well as an access point to the data stored in a blob container. `ITwinRealityData` are bound to an `iTwinId`, which is the identifier of a Project. [More information about the Projects API here.](https://developer.bentley.com/apis/projects/overview/)
+Implements the `RealityData` interface from  __@itwin/core-common__ and represents a single reality data. This class contains properties representing the descriptive data related to a reality data, as well as an access point to the data stored in a blob container. `ITwinRealityData` are bound to an `iTwinId`, which is the identifier of an iTwin. [More information about the iTwin API here.](https://developer.bentley.com/apis/itwins/)
 
 ITwinRealityData implements a `getBlobUrl()` method that returns the location of the reality data's blob content. This resource is also cached, as to limit the amount of API calls and SAS keys keys to generate.
 
