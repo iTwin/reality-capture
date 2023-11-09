@@ -405,31 +405,23 @@ function parseSegmentation2DJson(jsonDoc: any, contextScene: ContextScene, docUr
     for (const photoId in jsonDoc.Annotations.Segmentation2D) {
         const photoIdNumber = parseInt(photoId);
         const segPath = jsonDoc.Annotations.Segmentation2D[photoId].Path;
-        console.log("segPath : ", segPath);
         const imagePathParts = segPath.split(":");
-        console.log("imagePathParts : ", imagePathParts);
         if(imagePathParts.length === 2) {
-            console.log("imagePathParts[0] : ",imagePathParts[0]);
             const referenceId = parseInt(imagePathParts[0]);
-            console.log("referenceId : ",referenceId);
             const reference = contextScene.references.get(referenceId);
-            console.log("reference : ",reference);
             if(reference === undefined)
                 continue; // Reference doesn't exist.
             
             // Add the image name in the full azure storage image collection url so it can be displayed in the frontend.
             const referenceParts = reference.collectionStorageUrl.split(reference.collectionId);
-            console.log("referenceParts : ",referenceParts);
             if(referenceParts.length < 2)
                 continue; // The reference is supposed to be split in two parts : azure storage url and the file access.
 
             let access = referenceParts[1];
-            console.log("access : ",access);
             if(access[0] === "/")
                 access = access.substring(1);
             
             const imageStorageUrl = referenceParts[0] + reference.collectionId + "/" + imagePathParts[1] + access;
-            console.log("imageStorageUrl : ",imageStorageUrl);
             contextScene.photos.get(photoIdNumber)!.segmentation2D = {
                 id : photoIdNumber,
                 path: imageStorageUrl
