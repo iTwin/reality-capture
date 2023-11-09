@@ -109,6 +109,18 @@ async function parseReferences(xmlDoc: XMLDocument, contextScene: ContextScene, 
     }
 }
 
+async function parseReferencesJson(json: any, contextScene: ContextScene, realityDataAccessClient: RealityDataAccessClient) {
+    for (const referenceId in json.References) {
+        let referencePath = json.References[referenceId].Path;
+        referencePath = referencePath.replace(/\\/g, "/");
+        referencePath = referencePath.replace("rds:", "");
+        const realityData: ITwinRealityData = await realityDataAccessClient.getRealityData("", 
+            process.env.IMJS_PROJECT_ID, referencePath);
+        const azureBlobUrl = await realityData.getBlobUrl("", "");
+        contextScene.references.set(parseInt(referenceId), {collectionId: referencePath, collectionStorageUrl: azureBlobUrl.toString()});
+    }
+}
+
 /**
  * Parse image collection in @see {@link xmlDoc}.
  * @param xmlDoc context scene to parse.
@@ -155,6 +167,37 @@ function parsePhotoCollection(xmlDoc: XMLDocument, contextScene: ContextScene) {
     }
 }
 
+function parsePhotoCollectionJson(jsonDoc: any, contextScene: ContextScene) {
+    for (const photoId in jsonDoc.PhotoCollection.Photos) {
+        const imagePath = jsonDoc.PhotoCollection.Photos[photoId].ImagePath;
+        const imagePathParts = imagePath.split(":");
+        if(imagePathParts.length === 2) {
+            const referenceId = parseInt(imagePathParts[0]);
+            const reference = contextScene.references.get(referenceId);
+            if(reference === undefined)
+                continue; // Reference doesn't exist.
+            
+            // Add the image name in the full azure storage image collection url so it can be displayed in the frontend.
+            const referenceParts = reference.collectionStorageUrl.split(reference.collectionId);
+            if(referenceParts.length < 2)
+                continue; // The reference is supposed to be split in two parts : azure storage url and the file access.
+
+            let access = referenceParts[1];
+            if(access[0] === "/")
+                access = access.substring(1);
+            
+            const imageStorageUrl = referenceParts[0] + reference.collectionId + "/" + imagePathParts[1] + access;
+
+            contextScene.photos.set(parseInt(photoId), { path: imageStorageUrl, name: imagePathParts[1], objects2D: [], segmentation2D: {id: -1, path: ""} });
+        }
+        else {
+            const imagePathParts = imagePath.split("/");
+            const imageName = imagePathParts.length === 0 ? imagePath : imagePathParts[imagePathParts.length - 1];
+            contextScene.photos.set(parseInt(photoId), { path: imagePath, name : imageName, objects2D: [], segmentation2D: {id: -1, path: ""} });
+        }
+    }
+}
+
 /**
  * Parse 2D objects in @see {@link xmlDoc}.
  * @param xmlDoc context scene to parse.
@@ -189,6 +232,30 @@ function parseObjects2D(xmlDoc: XMLDocument, contextScene: ContextScene) {
             const ymax = parseFloat(box2D[0].childNodes[7].textContent!);
             
             contextScene.photos.get(photoId)!.objects2D.push({
+                labelId: labelId,
+                xmin,
+                ymin,
+                xmax,
+                ymax,
+            });
+        }
+    }
+}
+
+function parseObjects2DJson(jsonDoc: any, contextScene: ContextScene) {
+    for (const photoId in jsonDoc.Annotations.Objects2D) {
+        const objects = jsonDoc.Annotations.Objects2D[photoId];
+        for (const object2DId in objects) {
+            const object2D = jsonDoc.Annotations.Objects2D[photoId][object2DId];
+            const labelId = parseInt((object2D as any).LabelInfo.LabelId);
+            const box2D = (object2D as any).Box2D;
+
+            const xmin = parseFloat(box2D.xmin);
+            const ymin = parseFloat(box2D.ymin);
+            const xmax = parseFloat(box2D.xmax);
+            const ymax = parseFloat(box2D.ymax);
+
+            contextScene.photos.get(parseInt(photoId))!.objects2D.push({
                 labelId: labelId,
                 xmin,
                 ymin,
@@ -242,6 +309,42 @@ function parseLabels(xmlDoc: XMLDocument, contextScene: ContextScene) {
     }
 }
 
+function parseLabelsJson(jsonDoc: any, contextScene: ContextScene) {
+    const colors: Color[] = [
+        {r: 102, g: 102, b: 0},
+        {r: 0, g: 255, b: 255}, // cyan for Id=1 (usually the first created label)
+        {r: 127, g: 0, b: 255},
+        {r: 0, g: 128, b: 255},
+        {r: 0, g: 255, b: 128},
+        {r: 128, g: 255, b: 0},
+        {r: 255, g: 128, b: 0},
+        {r: 0, g: 153, b: 153},
+        {r: 0, g: 153, b: 0},
+        {r: 153, g: 153, b: 0},
+        {r: 0, g: 76, b: 153},
+        {r: 0, g: 153, b: 76},
+        {r: 76, g: 153, b: 0},
+        {r: 153, g: 76, b: 0},
+        {r: 102, g: 255, b: 255},
+        {r: 102, g: 255, b: 102},
+        {r: 255, g: 255, b: 102},
+        {r: 178, g: 102, b: 255},
+        {r: 102, g:  178, b: 255},
+        {r: 102, g: 255, b: 178},
+        {r: 178, g: 255, b: 102},
+        {r: 255, g: 178, b: 102},
+    ];
+    
+    if(!jsonDoc.Annotations || !jsonDoc.Annotations.Labels)
+        return;
+
+    for (const labelIdString in jsonDoc.Annotations.Labels) {
+        const labelId = parseInt(labelIdString);
+        const color = labelId ? colors[labelId % colors.length] : {r: 0, g: 0, b: 0};
+        contextScene.labels.set(labelId, color);
+    }
+}
+
 /**
  * Parse 2D segmentation in @see {@link xmlDoc}.
  * @param xmlDoc context scene to parse.
@@ -285,13 +388,61 @@ function parseSegmentation2D(xmlDoc: XMLDocument, contextScene: ContextScene, do
             };
         }
         else {
-            const splitUrl = docUrl.split("?sv");
+            const splitUrl = docUrl.split("?skoid");
             if(splitUrl.length < 2)
                 return;
 
-            const imageStorageUrl = splitUrl[0] + imagePathValue + "?sv" + splitUrl[1];
+            const imageStorageUrl = splitUrl[0] + imagePathValue + "?skoid" + splitUrl[1];
             contextScene.photos.get(photoId)!.segmentation2D = {
                 id : photoId,
+                path: imageStorageUrl
+            };
+        }
+    }
+}
+
+function parseSegmentation2DJson(jsonDoc: any, contextScene: ContextScene, docUrl:string) {
+    for (const photoId in jsonDoc.Annotations.Segmentation2D) {
+        const photoIdNumber = parseInt(photoId);
+        const segPath = jsonDoc.Annotations.Segmentation2D[photoId].Path;
+        console.log("segPath : ", segPath);
+        const imagePathParts = segPath.split(":");
+        console.log("imagePathParts : ", imagePathParts);
+        if(imagePathParts.length === 2) {
+            console.log("imagePathParts[0] : ",imagePathParts[0]);
+            const referenceId = parseInt(imagePathParts[0]);
+            console.log("referenceId : ",referenceId);
+            const reference = contextScene.references.get(referenceId);
+            console.log("reference : ",reference);
+            if(reference === undefined)
+                continue; // Reference doesn't exist.
+            
+            // Add the image name in the full azure storage image collection url so it can be displayed in the frontend.
+            const referenceParts = reference.collectionStorageUrl.split(reference.collectionId);
+            console.log("referenceParts : ",referenceParts);
+            if(referenceParts.length < 2)
+                continue; // The reference is supposed to be split in two parts : azure storage url and the file access.
+
+            let access = referenceParts[1];
+            console.log("access : ",access);
+            if(access[0] === "/")
+                access = access.substring(1);
+            
+            const imageStorageUrl = referenceParts[0] + reference.collectionId + "/" + imagePathParts[1] + access;
+            console.log("imageStorageUrl : ",imageStorageUrl);
+            contextScene.photos.get(photoIdNumber)!.segmentation2D = {
+                id : photoIdNumber,
+                path: imageStorageUrl
+            };
+        }
+        else {
+            const splitUrl = docUrl.split("?skoid");
+            if(splitUrl.length < 2)
+                return;
+
+            const imageStorageUrl = splitUrl[0] + segPath + "?skoid" + splitUrl[1];
+            contextScene.photos.get(photoIdNumber)!.segmentation2D = {
+                id : photoIdNumber,
                 path: imageStorageUrl
             };
         }
@@ -307,6 +458,7 @@ export async function parseContextScene(realityDataAccessClient: RealityDataAcce
     };
 
     let xmlDoc: Document | undefined = undefined;
+    let jsonDoc: any | undefined = undefined;
     const realityData: ITwinRealityData = await realityDataAccessClient.getRealityData("", 
         process.env.IMJS_PROJECT_ID, sceneId);
     const azureBlobUrl = await realityData.getBlobUrl("", "");
@@ -322,23 +474,36 @@ export async function parseContextScene(realityDataAccessClient: RealityDataAcce
         const containerClient = new ContainerClient(azureBlobUrl.toString());
         const iter = await containerClient.listBlobsFlat();
         for await (const blob of iter) 
-        {
-            if(blob.name != "ContextScene.xml")
-                continue;
-            
-            const blobContent = await containerClient.getBlockBlobClient(blob.name).download(0);
-            const blobBody = await blobContent.blobBody;
-            const text = await blobBody!.text();
-            xmlDoc = new DOMParser().parseFromString(text, "text/xml");
+        {         
+            if(blob.name === "ContextScene.xml") {
+                const blobContent = await containerClient.getBlockBlobClient(blob.name).download(0);
+                const blobBody = await blobContent.blobBody;
+                const text = await blobBody!.text();
+                xmlDoc = new DOMParser().parseFromString(text, "text/xml");
+            }
+            else if(blob.name === "ContextScene.json") {
+                const blobContent = await containerClient.getBlockBlobClient(blob.name).download(0);
+                const blobBody = await blobContent.blobBody;
+                const text = await blobBody!.text();
+                jsonDoc = JSON.parse(text);
+            }
         }
-        if(!xmlDoc) 
-            throw new Error("Can't find " + sceneId);
     }
 
-    await parseReferences(xmlDoc, contextScene, realityDataAccessClient);
-    parsePhotoCollection(xmlDoc, contextScene);
-    parseLabels(xmlDoc, contextScene);
-    parseObjects2D(xmlDoc, contextScene);
-    parseSegmentation2D(xmlDoc, contextScene, azureBlobUrl.toString());
+    if(xmlDoc) {
+        await parseReferences(xmlDoc, contextScene, realityDataAccessClient);
+        parsePhotoCollection(xmlDoc, contextScene);
+        parseLabels(xmlDoc, contextScene);
+        parseObjects2D(xmlDoc, contextScene);
+        parseSegmentation2D(xmlDoc, contextScene, azureBlobUrl.toString());
+    }
+    else if(jsonDoc) {
+        await parseReferencesJson(jsonDoc, contextScene, realityDataAccessClient);
+        parsePhotoCollectionJson(jsonDoc, contextScene);
+        parseLabelsJson(jsonDoc, contextScene);
+        parseObjects2DJson(jsonDoc, contextScene);
+        parseSegmentation2DJson(jsonDoc, contextScene, azureBlobUrl.toString());
+        
+    }
     return contextScene;
 }

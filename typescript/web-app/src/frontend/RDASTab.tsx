@@ -61,6 +61,7 @@ export function Rdas(props: RdasProps) {
         else if(selectedValue === "segmentation2D" || selectedValue === "segmentation2DOrtho") {
             const settings = new RDASettings.S2DJobSettings();
             settings.outputs.segmentation2D = "segmentation2D";
+            settings.outputs.segmentedPhotos = "segmentedPhotos";
             setJobSettings(settings);
         }
         else if(selectedValue === "lines3D") {
@@ -144,7 +145,7 @@ export function Rdas(props: RdasProps) {
         setJobSettings(settings);
     };
 
-    const setS2DOutput = (output: "segmentation2D" | "polygons2D" | "lines2D" | "exportedPolygons2DSHP", isRequested: boolean): void => {
+    const setS2DOutput = (output: "segmentation2D" | "segmentedPhotos" | "polygons2D" | "lines2D" | "exportedPolygons2DSHP", isRequested: boolean): void => {
         const target = new RDASettings.S2DJobSettings();
         const settings = Object.assign(target, jobSettings as RDASettings.S2DJobSettings);
         settings.outputs[output] = isRequested ? output : "";
@@ -267,6 +268,8 @@ export function Rdas(props: RdasProps) {
             return (<div className="rdas-controls-group">
                 <ToggleSwitch className="rdas-control" label={"segmentation2D"} checked={(jobSettings as RDASettings.S2DJobSettings).outputs.segmentation2D !== ""} 
                     labelPosition={"left"} disabled={true} />
+                <ToggleSwitch className="rdas-control" label={"segmentedPhotos"} checked={(jobSettings as RDASettings.S2DJobSettings).outputs.segmentedPhotos !== ""} 
+                    labelPosition={"left"} disabled={true} />
             </div>);
         case "segmentation2DOrtho":
             return (<div className="rdas-controls-group">
@@ -334,6 +337,11 @@ export function Rdas(props: RdasProps) {
                     <LabeledInput className="rdas-control" displayStyle="inline" label="exportedPolygons2DSHP" disabled={true} 
                         value={(jobSettings as RDASettings.S2DJobSettings).outputs.exportedPolygons2DSHP === "exportedPolygons2DSHP" 
                             ? "" : (jobSettings as RDASettings.S2DJobSettings).outputs.exportedPolygons2DSHP}/>
+                )}
+                {(jobSettings as RDASettings.S2DJobSettings).outputs.segmentedPhotos &&(
+                    <LabeledInput className="rdas-control" displayStyle="inline" label="segmentedPhotos" disabled={true} 
+                        value={(jobSettings as RDASettings.S2DJobSettings).outputs.segmentedPhotos === "segmentedPhotos" 
+                            ? "" : (jobSettings as RDASettings.S2DJobSettings).outputs.segmentedPhotos}/>
                 )}
             </>);
         case "lines3D":
