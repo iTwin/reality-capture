@@ -23,6 +23,6 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "beachball": "^2.37.0"
+    "beachball": "^2.39.0"
   }
 }
