@@ -1,4 +1,4 @@
-name: Typescript workflow
+name: CI Build
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
         run: git lfs checkout
       - uses: pnpm/action-setup@v2
         with:
-          version: 7
+          version: 8
       - uses: actions/setup-node@v3
         with:
           node-version: '18.12.0'
@@ -36,12 +36,19 @@ jobs:
         working-directory: ./
         run: pnpm lint
       - name: Run SDK Integration Tests
-        working-directory: ./typescript/integration-tests
+        working-directory: ./
         env:
-          IMJS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
-          IMJS_CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          IMJS_SECRET: ${{ secrets.SECRET }}
-        run: pnpm test:integration
+          IMJS_INTEGRATION_TESTS_PROJECT_ID: ${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}
+          IMJS_INTEGRATION_TESTS_CLIENT_ID: ${{ secrets.INTEGRATION_TESTS_CLIENT_ID }}
+          IMJS_INTEGRATION_TESTS_SECRET: ${{ secrets.INTEGRATION_TESTS_SECRET }}
+          IMJS_OIDC_BROWSER_TEST_CLIENT_ID: ${{ secrets.IMJS_OIDC_BROWSER_TEST_CLIENT_ID }}
+          IMJS_OIDC_BROWSER_TEST_REDIRECT_URI: ${{ vars.IMJS_OIDC_BROWSER_TEST_REDIRECT_URI }}
+          IMJS_OIDC_BROWSER_TEST_SCOPES: ${{ vars.IMJS_OIDC_BROWSER_TEST_SCOPES }}
+          IMJS_TEST_REGULAR_USER_NAME: ${{ vars.IMJS_TEST_REGULAR_USER_NAME }}
+          IMJS_TEST_REGULAR_USER_PASSWORD: ${{ secrets.IMJS_TEST_REGULAR_USER_PASSWORD }}
+          IMJS_TEST_MANAGER_USER_NAME: ${{ vars.IMJS_TEST_MANAGER_USER_NAME }}
+          IMJS_TEST_MANAGER_USER_PASSWORD: ${{ secrets.IMJS_TEST_MANAGER_USER_PASSWORD }}
+        run: pnpm integration-tests
   coverage:
     runs-on: ${{ matrix.operating-system }}
     strategy:
@@ -56,7 +63,7 @@ jobs:
         run: git lfs checkout
       - uses: pnpm/action-setup@v2
         with:
-          version: 7
+          version: 8
       - uses: actions/setup-node@v3
         with:
           node-version: '18.12.0'
@@ -67,9 +74,9 @@ jobs:
         working-directory: ./
         run: pnpm build
       - name: Coverage
-        working-directory: ./typescript/sdk
+        working-directory: ./
         env:
-          IMJS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
-          IMJS_CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          IMJS_SECRET: ${{ secrets.SECRET }}
-        run: npm run coverage
+          IMJS_UNIT_TESTS_PROJECT_ID: ${{ secrets.UNIT_TESTS_PROJECT_ID }}
+          IMJS_UNIT_TESTS_CLIENT_ID: ${{ secrets.UNIT_TESTS_CLIENT_ID }}
+          IMJS_UNIT_TESTS_SECRET: ${{ secrets.UNIT_TESTS_SECRET }}
+        run: pnpm coverage

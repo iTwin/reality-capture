@@ -47,11 +47,31 @@ Every change must be tested with proper unit tests.
 
 ### Build Instructions
 
-See sub Readme files in typescript/sdk, typescript/web-app or python/ for more  information about build instructions.
+See sub Readme files in typescript/packages, typescript/examples or python/ for more  information about build instructions.
 
 > Note: It is a good idea to `npm install` after each `git pull` as dependencies may have changed.
-### Making and testing changes
+### Making and Testing Changes
 
 1. Make source code changes on a new Git branch
 2. Locally commit changes: `git commit` (or use the Visual Studio Code user interface)
 3. Publish changes on the branch and open a pull request.
+
+### Developer Notes
+
+#### reality-data-client
+
+To build, run and test locally, this checklist below can help solve most issues.
+
+- Delete node_modules folder if it's been a while.
+- Verify local .env file. Check if test user credentials and all variables are good.
+- Verify iTwin platform client ID in case it needs to be updated. <https://developer.bentley.com/my-apps/>
+- Verify Node version. This client should match the Node version requirement from `itwinjs-core` as described here in `nodeSupportedVersionRange` : <https://github.com/iTwin/itwinjs-core/blob/master/rush.json>
+
+Example commands below to install, clean, build and test :
+- `npm i`
+- `npm run clean`
+- `npm run build`
+- `npm run lint`
+- `npm run test:integration` to run integration tests locally.
+- `beachball change` to generate a changelog entry.
+  - We use [beachball](https://github.com/microsoft/beachball) to manage versioning and changelogs.

@@ -98,19 +98,18 @@ class RealityDataTransfer:
             rootfile: str = "",
     ) -> ReturnValue[str]:
         rd_dict = {
-            "realityData": {
+            {
                 "displayName": name,
-                "classification": "Undefined",
                 "type": data_type.value,
             }
         }
         if iTwin_id != "":
-            rd_dict["projectId"] = iTwin_id
+            rd_dict["iTwinId"] = iTwin_id
         if rootfile != "":
-            rd_dict["realityData"]["rootDocument"] = rootfile
+            rd_dict["rootDocument"] = rootfile
         json_data = json.dumps(rd_dict)
 
-        response = self._session.post("https://" + self._service_url + "/realitydata/", json_data,
+        response = self._session.post("https://" + self._service_url + "/reality-management/reality-data/", json_data,
                                       headers=self._get_header())
         try:
             data_json = response.json()
@@ -125,12 +124,12 @@ class RealityDataTransfer:
     def _update_reality_data(
             self, rd_id: str, update_dict: dict, iTwin_id: str = ""
     ) -> ReturnValue[str]:
-        rd_dict = {"realityData": update_dict}
+        rd_dict = {update_dict}
         if iTwin_id != "":
-            rd_dict["projectId"] = iTwin_id
+            rd_dict["iTwinId"] = iTwin_id
         json_data = json.dumps(rd_dict)
 
-        response = self._session.patch("https://" + self._service_url + f"/realitydata/{rd_id}", json_data,
+        response = self._session.patch("https://" + self._service_url + f"/reality-management/reality-data/{rd_id}", json_data,
                                        headers=self._get_header())
         try:
             data_json = response.json()
@@ -157,7 +156,7 @@ class RealityDataTransfer:
 
         # ask for the rd container
         response = self._session.get(
-            "https://" + self._service_url + f"/realitydata/{rd_id}/container?projectId={iTwin_id}&access=Write",
+            "https://" + self._service_url + f"/reality-management/reality-data/{rd_id}/container?iTwinId={iTwin_id}&access=Write",
             headers=self._get_header())
         try:
             data_json = response.json()
@@ -398,7 +397,7 @@ class RealityDataTransfer:
             True if download was successful, and a potential error message.
         """
         response = self._session.get(
-            "https://" + self._service_url + f"/realitydata/{data_id}/container?projectId={iTwin_id}&access=Read",
+            "https://" + self._service_url + f"/reality-management/reality-data/{data_id}/container?iTwinId={iTwin_id}&access=Read",
             headers=self._get_header())
 
         try:
@@ -548,7 +547,7 @@ class RealityDataTransfer:
             True if download was successful, and a potential error message.
         """
         response = self._session.delete(
-            "https://" + self._service_url + f"/realitydata/{rd_id}",
+            "https://" + self._service_url + f"/reality-management/reality-data/{rd_id}",
             headers=self._get_header())
 
         try:

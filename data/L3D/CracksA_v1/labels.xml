@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<Labels>    
+	<Label id="0">
+        <Name>background</Name>
+    </Label>
+    <Label id="1">
+        <Name>crack</Name>
+        <Line>true</Line>
+    </Label>
+</Labels>

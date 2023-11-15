@@ -1,0 +1,35 @@
+{
+  "name": "@itwin/reality-data-client",
+  "entries": [
+    {
+      "date": "Tue, 11 Jul 2023 14:02:19 GMT",
+      "tag": "@itwin/reality-data-client_v1.1.0",
+      "version": "1.1.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "Marc-Andre.Cote@bentley.com",
+            "package": "@itwin/reality-data-client",
+            "commit": "a691cd835d2a447a2c6ad2187ba48818469d0b30",
+            "comment": "- Ported iTwin/reality-data-client to [Reality Management API](https://developer.bentley.com/apis/reality-management/) following deprecation of [Reality Data API](https://developer.bentley.com/apis/reality-data/) \n- No breaking changes should occur.\n- Interfaces with iTwin/core-common should still be respected\n- `getRealityDataProjects` method is now deprecated\n- `getRealityDataITwins` added to replace deprecated `getRealityDataProjects` method\n- `accessControl` property is now deprecated as it is not in Reality Management API. Still defined in `ITwinRealityData` object but does not do anything."
+          }
+        ]
+      }
+    },
+    {
+      "date": "Wed, 31 May 2023 21:24:48 GMT",
+      "tag": "@itwin/reality-data-client_v1.0.0",
+      "version": "1.0.0",
+      "comments": {
+        "major": [
+          {
+            "author": "aruniverse@users.noreply.github.com",
+            "package": "@itwin/reality-data-client",
+            "commit": "56c052e89c57a3862caf1c38dedef018792fee17",
+            "comment": "1.0 release of iTwin/reality-data-client"
+          }
+        ]
+      }
+    }
+  ]
+}
