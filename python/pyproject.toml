@@ -26,7 +26,7 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 exclude = ["reality_apis*docs*"]
-include = ["reality_apis*", "token_factory"]
+include = ["reality_apis*", "token_factory","contextscene"]
 
 [project.urls]
 "Homepage" = "https://https://github.com/iTwin/reality-apis-samples/tree/main/python"
