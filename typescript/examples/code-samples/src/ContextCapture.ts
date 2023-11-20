@@ -5,11 +5,10 @@
 
 import path from "path";
 import { CCJobQuality, CCJobSettings, CCJobType, ContextCaptureService } from "@itwin/reality-capture-modeling";
-import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
-import { defaultProgressHook } from "@itwin/reality-data-transfer";
+import { RealityDataTransferNode, ReferenceTableNode, defaultProgressHook } from "@itwin/reality-data-transfer";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }

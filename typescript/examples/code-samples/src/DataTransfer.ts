@@ -3,9 +3,8 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { RealityDataTransferNode } from "@itwin/reality-data-transfer-node";
 import * as dotenv from "dotenv";
-import { defaultProgressHook } from "@itwin/reality-data-transfer";
+import { RealityDataTransferNode, defaultProgressHook } from "@itwin/reality-data-transfer";
 import { RealityDataType } from "@itwin/reality-capture-common";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 

@@ -4,9 +4,7 @@
 	"description": "Reality Capture SDKs examples",
 	"private": true,
 	"scripts": {
-		"build": "npm run -s build:cjs && npm run -s build:esm",
-		"build:cjs": "tsc 1>&2 --outDir lib/cjs",
-		"build:esm": "tsc 1>&2 --module ES2020 --outDir lib/esm",
+		"build": "tsc 1>&2",
 		"clean": "rimraf lib build .rush",
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
@@ -31,7 +29,6 @@
 		"@itwin/reality-capture-conversion": "workspace:*",
 		"@itwin/reality-capture-modeling": "workspace:*",
 		"@itwin/reality-data-transfer": "workspace:*",
-		"@itwin/reality-data-transfer-node": "workspace:*",
 		"@itwin/reality-data-client": "^1.0.0",
 		"dotenv": "^16.0.3"
 	},
@@ -42,6 +39,6 @@
 		"@typescript-eslint/parser": "^5.30.6",
 		"eslint": "^8.19.0",
 		"rimraf": "^3.0.2",
-		"typescript": "^4.5.1"
+		"typescript": "^5.0.0"
 	}
 }

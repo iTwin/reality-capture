@@ -4,12 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { O2DJobSettings, RealityDataAnalysisService } from "@itwin/reality-capture-analysis";
-import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import path from "path";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
+import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }

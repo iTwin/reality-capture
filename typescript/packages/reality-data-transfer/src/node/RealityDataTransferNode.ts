@@ -267,6 +267,16 @@ interface DataTransferInfo {
 }
 
 /**
+ * Default hook to display progress.
+ * @param {number} progress current progress (percentage).
+ * @returns {boolean} false if the upload/download has been cancelled.
+ */
+export function defaultProgressHook(progress: number): boolean {
+    console.log("Current progress : " + progress + "%.");
+    return true;
+}
+
+/**
  * Utility class to upload and download reality data in ContextShare.
  */
 export class RealityDataTransferNode {

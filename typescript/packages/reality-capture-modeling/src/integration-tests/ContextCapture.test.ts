@@ -11,10 +11,11 @@ import * as dotenv from "dotenv";
 import path from "path";
 import { RealityDataClientOptions, RealityDataAccessClient } from "@itwin/reality-data-client";
 import { ContextCaptureService } from "../ContextCaptureService";
-import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
 import { CCJobQuality, CCJobSettings, CCJobType } from "../Utils";
+import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer";
+
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 

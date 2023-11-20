@@ -5,10 +5,9 @@
 
 import  path from "path";
 import { RCJobSettings, RealityConversionService } from "@itwin/reality-capture-conversion";
-import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
-import { defaultProgressHook } from "@itwin/reality-data-transfer";
+import { RealityDataTransferNode, ReferenceTableNode, defaultProgressHook } from "@itwin/reality-data-transfer";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 

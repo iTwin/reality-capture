@@ -2,13 +2,20 @@
 	"name": "@itwin/reality-data-transfer",
 	"version": "0.1.0-dev.1",
 	"description": "Utils to upload local data to context share",
-	"main": "lib/cjs/index.js",
-	"module": "lib/esm/index.js",
-	"typings": "lib/cjs/index",
+	"exports": {
+		"node": {
+		  "types": "./lib/esm/NodeMain.d.ts",
+		  "require": "./lib/esm/NodeMain.js"
+		},
+		"default": {
+		  "types": "./lib/esm/BrowserMain.d.ts",
+		  "import": "./lib/esm/BrowserMain.js"
+		}
+	  },
 	"scripts": {
 		"build": "npm run -s build:cjs && npm run -s build:esm",
 		"build:cjs": "tsc 1>&2 --outDir lib/cjs",
-		"build:esm": "tsc 1>&2 --module ES2020 --outDir lib/esm",
+		"build:esm": "tsc 1>&2 --module ESNext --outDir lib/esm",
 		"clean": "rimraf lib build .rush",
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
@@ -28,22 +35,33 @@
 	},
 	"license": "MIT",
 	"dependencies": {
-		"@azure/storage-blob": "^12.13.0"
+		"@azure/abort-controller": "^1.1.0",
+		"@azure/storage-blob": "^12.8.0",
+		"@xmldom/xmldom": "^0.8.6",
+		"uuid": "^9.0.0"
 	},
 	"peerDependencies": {
+		"@itwin/core-backend": "^4.0.0",
 		"@itwin/core-bentley": "^4.0.0",
-		"@itwin/core-common": "^4.0.0"
+		"@itwin/core-common": "^4.0.0",
+		"@itwin/core-geometry": "^4.0.0",
+		"@itwin/reality-capture-common": "workspace:*",
+		"@itwin/reality-data-client": "workspace:*"
 	},
 	"devDependencies": {
 		"@itwin/build-tools": "^4.0.0",
+		"@itwin/core-backend": "^4.0.0",
 		"@itwin/core-bentley": "^4.0.0",
 		"@itwin/core-common": "^4.0.0",
+		"@itwin/core-geometry": "^4.0.0",
 		"@itwin/reality-capture-common": "workspace:*",
 		"@itwin/reality-data-client": "workspace:*",
 		"@itwin/service-authorization": "^1.0.0",
 		"@types/chai": "^4.3.3",
 		"@types/chai-as-promised": "^7.1.5",
 		"@types/mocha": "^10.0.0",
+		"@types/node": "^18.12.0",
+		"@types/uuid": "^9.0.0",
 		"@types/wicg-file-system-access": "^2020.9.5",
 		"axios-mock-adapter": "^1.21.3",
 		"chai": "^4.3.6",

@@ -11,10 +11,10 @@ import path from "path";
 import * as dotenv from "dotenv";
 import { BentleyError } from "@itwin/core-bentley";
 import { RealityDataAnalysisService } from "../RealityDataAnalysisService";
-import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
 import { O2DJobSettings } from "../Settings";
+import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
