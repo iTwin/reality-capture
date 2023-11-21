@@ -5,7 +5,8 @@
 	"exports": {
 		"node": {
 		  "types": "./lib/esm/NodeMain.d.ts",
-		  "require": "./lib/esm/NodeMain.js"
+		  "import": "./lib/esm/NodeMain.js",
+		  "require": "./lib/cjs/NodeMain.js"
 		},
 		"default": {
 		  "types": "./lib/esm/BrowserMain.d.ts",
