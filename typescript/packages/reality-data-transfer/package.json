@@ -20,7 +20,7 @@
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
 		"test:integration": "",
-		"test:unit": "mocha ./lib/cjs/*.test.js --slow 0",
+		"test:unit": "mocha ./lib/cjs/**/*.test.js --slow 0",
 		"coverage": "nyc --check-coverage --lines 75 --functions 75 --statements 75, npm run test:unit"
 	},
 	"keywords": [],
