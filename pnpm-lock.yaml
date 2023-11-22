@@ -208,6 +208,15 @@ importers:
 
   typescript/packages/reality-capture-analysis:
     dependencies:
+      '@itwin/reality-capture-common':
+        specifier: workspace:*
+        version: link:../reality-capture-common
+      '@itwin/reality-data-client':
+        specifier: workspace:*
+        version: link:../reality-data-client
+      '@itwin/reality-data-transfer':
+        specifier: workspace:*
+        version: link:../reality-data-transfer
       axios:
         specifier: ^1.6.0
         version: 1.6.0
@@ -221,15 +230,6 @@ importers:
       '@itwin/core-common':
         specifier: ^4.0.0
         version: 4.2.0(@itwin/core-bentley@4.2.0)(@itwin/core-geometry@4.2.0)
-      '@itwin/reality-capture-common':
-        specifier: workspace:*
-        version: link:../reality-capture-common
-      '@itwin/reality-data-client':
-        specifier: workspace:*
-        version: link:../reality-data-client
-      '@itwin/reality-data-transfer':
-        specifier: workspace:*
-        version: link:../reality-data-transfer
       '@itwin/service-authorization':
         specifier: ^1.0.0
         version: 1.0.3(@itwin/core-bentley@4.2.0)(@itwin/core-geometry@4.2.0)
@@ -308,6 +308,15 @@ importers:
 
   typescript/packages/reality-capture-conversion:
     dependencies:
+      '@itwin/reality-capture-common':
+        specifier: workspace:*
+        version: link:../reality-capture-common
+      '@itwin/reality-data-client':
+        specifier: workspace:*
+        version: link:../reality-data-client
+      '@itwin/reality-data-transfer':
+        specifier: workspace:*
+        version: link:../reality-data-transfer
       axios:
         specifier: ^1.6.0
         version: 1.6.0
@@ -321,15 +330,6 @@ importers:
       '@itwin/core-common':
         specifier: ^4.0.0
         version: 4.2.0(@itwin/core-bentley@4.2.0)(@itwin/core-geometry@4.2.0)
-      '@itwin/reality-capture-common':
-        specifier: workspace:*
-        version: link:../reality-capture-common
-      '@itwin/reality-data-client':
-        specifier: workspace:*
-        version: link:../reality-data-client
-      '@itwin/reality-data-transfer':
-        specifier: workspace:*
-        version: link:../reality-data-transfer
       '@itwin/service-authorization':
         specifier: ^1.0.0
         version: 1.0.3(@itwin/core-bentley@4.2.0)(@itwin/core-geometry@4.2.0)
@@ -372,6 +372,15 @@ importers:
 
   typescript/packages/reality-capture-modeling:
     dependencies:
+      '@itwin/reality-capture-common':
+        specifier: workspace:*
+        version: link:../reality-capture-common
+      '@itwin/reality-data-client':
+        specifier: workspace:*
+        version: link:../reality-data-client
+      '@itwin/reality-data-transfer':
+        specifier: workspace:*
+        version: link:../reality-data-transfer
       axios:
         specifier: ^1.6.0
         version: 1.6.0
@@ -385,15 +394,6 @@ importers:
       '@itwin/core-common':
         specifier: ^4.0.0
         version: 4.2.0(@itwin/core-bentley@4.2.0)(@itwin/core-geometry@4.2.0)
-      '@itwin/reality-capture-common':
-        specifier: workspace:*
-        version: link:../reality-capture-common
-      '@itwin/reality-data-client':
-        specifier: workspace:*
-        version: link:../reality-data-client
-      '@itwin/reality-data-transfer':
-        specifier: workspace:*
-        version: link:../reality-data-transfer
       '@itwin/service-authorization':
         specifier: ^1.0.0
         version: 1.0.3(@itwin/core-bentley@4.2.0)(@itwin/core-geometry@4.2.0)
@@ -515,6 +515,12 @@ importers:
       '@azure/storage-blob':
         specifier: ^12.8.0
         version: 12.12.0
+      '@itwin/reality-capture-common':
+        specifier: workspace:*
+        version: link:../reality-capture-common
+      '@itwin/reality-data-client':
+        specifier: workspace:*
+        version: link:../reality-data-client
       '@xmldom/xmldom':
         specifier: ^0.8.6
         version: 0.8.10
@@ -537,12 +543,6 @@ importers:
       '@itwin/core-geometry':
         specifier: ^4.0.0
         version: 4.2.0
-      '@itwin/reality-capture-common':
-        specifier: workspace:*
-        version: link:../reality-capture-common
-      '@itwin/reality-data-client':
-        specifier: workspace:*
-        version: link:../reality-data-client
       '@itwin/service-authorization':
         specifier: ^1.0.0
         version: 1.0.3(@itwin/core-bentley@4.2.0)(@itwin/core-geometry@4.2.0)

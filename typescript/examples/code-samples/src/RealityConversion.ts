@@ -39,20 +39,20 @@ async function main() {
     
     let realityDataService: RealityDataTransferNode;
     if(env === "prod")
-        realityDataService = new RealityDataTransferNode(authorizationClient);
+        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     else
-        realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
+        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
 
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
 
     let realityConversionService;
     if(env === "prod")
-        realityConversionService = new RealityConversionService(authorizationClient);
+        realityConversionService = new RealityConversionService(authorizationClient.getAccessToken.bind(authorizationClient));
     else if(env === "qa")
-        realityConversionService = new RealityConversionService(authorizationClient, "qa-");
+        realityConversionService = new RealityConversionService(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
     else
-        realityConversionService = new RealityConversionService(authorizationClient, "dev-");
+        realityConversionService = new RealityConversionService(authorizationClient.getAccessToken.bind(authorizationClient), "dev-");
     console.log("Service initialized");
 
     try {

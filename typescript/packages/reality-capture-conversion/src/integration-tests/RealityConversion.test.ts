@@ -6,7 +6,6 @@
 import chai, { expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
-import { BentleyError } from "@itwin/core-bentley";
 import * as dotenv from "dotenv";
 import path from "path";
 import { RealityDataClientOptions, RealityDataAccessClient } from "@itwin/reality-data-client";
@@ -43,8 +42,8 @@ describe("Reality Conversion integration tests", () => {
             authority: "https://ims.bentley.com",
         });
 
-        realityConversionService = new RealityConversionService(authorizationClient);
-        realityDataTransfer = new RealityDataTransferNode(authorizationClient);
+        realityConversionService = new RealityConversionService(authorizationClient.getAccessToken.bind(authorizationClient));
+        realityDataTransfer = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
         references = new ReferenceTableNode();
 
         const realityDataClientOptions: RealityDataClientOptions = {
@@ -107,8 +106,7 @@ describe("Reality Conversion integration tests", () => {
             await rdaClient.getRealityData("", iTwinId, lasId);
         }
         catch(error: any) {
-            expect(error).to.be.instanceOf(BentleyError);
-            expect((error as BentleyError).errorNumber).to.equal(404);
+            expect(error.message).to.include("Requested reality data is not available");
         }
     });
 
@@ -119,8 +117,7 @@ describe("Reality Conversion integration tests", () => {
             await rdaClient.getRealityData("", iTwinId, opcId);
         }
         catch(error: any) {
-            expect(error).to.be.instanceOf(BentleyError);
-            expect((error as BentleyError).errorNumber).to.equal(404);
+            expect(error.message).to.include("Requested reality data is not available");
         }
     });
 });

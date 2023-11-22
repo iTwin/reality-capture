@@ -5,27 +5,25 @@
 
 import { JobProgress, JobState } from "@itwin/reality-capture-common";
 import { CCCostParameters, CCJobProperties, CCJobSettings, CCJobType, CCWorkspaceProperties } from "./Utils";
-import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
-import { AuthorizationClient } from "@itwin/core-common";
 import axios from "axios";
 
 /**
  * Service handling communication with Reality Modeling Service
  */
 export class ContextCaptureService {
-    /** Authorization client to generate access token. */
-    private authorizationClient: AuthorizationClient;
+    /** Callback to get an access token */
+    private getAccessToken: () => Promise<string>;
 
     /** Target service url. */
     private serviceUrl = "https://api.bentley.com/contextcapture";
 
     /**
      * Create a new ContextCaptureService.
-     * @param {AuthorizationClient} authorizationClient Authorization client to generate access token.
+     * @param {() => Promise<string>} getAccessToken Callback to get an access token.
      * @param {string} env (optional) Target environment.
      */
-    constructor(authorizationClient: AuthorizationClient, env?: string) {
-        this.authorizationClient = authorizationClient;
+    constructor(getAccessToken: () => Promise<string>, env?: string) {
+        this.getAccessToken = getAccessToken;
         if(env)
             this.serviceUrl = "https://" + env + "api.bentley.com/contextcapture";
     }
@@ -45,7 +43,7 @@ export class ContextCaptureService {
             {
                 "content-type": "application/json",
                 "accept": "application/vnd.bentley.v1+json",
-                "authorization": await this.authorizationClient.getAccessToken(),
+                "authorization": await this.getAccessToken(),
             };
 
             if(method === "GET")
@@ -57,10 +55,10 @@ export class ContextCaptureService {
             else if(method === "PATCH")
                 response = await axios.patch(url, payload, {headers, url, method});
             else 
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Wrong request method"));
+                return Promise.reject(new Error("Wrong request method"));
 
             if (!okRet.includes(response.status)) {
-                return Promise.reject(new BentleyError(response.status, response.statusText ?? "Wrong request response code, expected : ", okRet));
+                return Promise.reject(new Error(response.statusText ?? "Wrong request response code, expected : " + okRet));
             }
 
             return response.data;
@@ -72,7 +70,7 @@ export class ContextCaptureService {
 
             if (axios.isAxiosError(error)) {
                 if(!error.response)
-                    return Promise.reject(new BentleyError(error.status ?? BentleyStatus.ERROR, error.message ?? message));
+                    return Promise.reject(new Error(error.message ?? message));
                 
                 const axiosResponse = error.response!;
                 status = axiosResponse.status;
@@ -82,13 +80,9 @@ export class ContextCaptureService {
                     message = axiosResponse.data?.error?.message;
             } 
             else {
-                const bentleyError = error as BentleyError;
-                if (bentleyError !== undefined) {
-                    status = bentleyError.errorNumber;
-                    message = bentleyError.message;
-                }
+                message = error.message;
             }
-            return Promise.reject(new BentleyError(status, message));
+            return Promise.reject(new Error(message));
         }
     }
 

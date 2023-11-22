@@ -6,27 +6,25 @@
 import { ChangeDetectionJobSettings, ExtractGroundJobSettings, JobSettings, L3DJobSettings, O2DJobSettings, O3DJobSettings, RDAJobType, S2DJobSettings, S3DJobSettings } from "./Settings";
 import { RDACostParameters, RDAJobProperties } from "./Utils";
 import { JobProgress, JobState } from "@itwin/reality-capture-common";
-import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
-import { AuthorizationClient } from "@itwin/core-common";
 import axios from "axios";
 
 /**
  * Service handling communication with Reality Analysis Service.
  */
 export class RealityDataAnalysisService {
-    /** Authorization client to generate access token. */
-    private authorizationClient: AuthorizationClient;
+    /** Callback to get an access token */
+    private getAccessToken: () => Promise<string>;
 
     /** Target service url. */
     private serviceUrl = "https://api.bentley.com/realitydataanalysis";
 
     /**
      * Create a new RealityDataAnalysisService.
-     * @param {AuthorizationClient} authorizationClient Authorization client to generate access token.
+     * @param {() => Promise<string>} getAccessToken Callback to get the access token.
      * @param {string} env (optional) Target environment.
      */
-    constructor(authorizationClient: AuthorizationClient, env?: string) {
-        this.authorizationClient = authorizationClient;
+    constructor(getAccessToken: () => Promise<string>, env?: string) {
+        this.getAccessToken = getAccessToken;
         if(env)
             this.serviceUrl = "https://" + env + "api.bentley.com/realitydataanalysis";
     }
@@ -46,7 +44,7 @@ export class RealityDataAnalysisService {
             {
                 "content-type": "application/json",
                 "accept": "application/vnd.bentley.itwin-platform.v1+json",
-                "authorization": await this.authorizationClient.getAccessToken(),
+                "authorization": await this.getAccessToken(),
             };
 
             if(method === "GET")
@@ -58,10 +56,10 @@ export class RealityDataAnalysisService {
             else if(method === "PATCH")
                 response = await axios.patch(url, payload, {headers, url, method});
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Wrong request method"));
+                return Promise.reject(new Error("Wrong request method"));
 
             if (!okRet.includes(response.status)) {
-                return Promise.reject(new BentleyError(response.status, response.statusText ?? "Wrong request response code, expected : ", okRet));
+                return Promise.reject(new Error(response.statusText ?? "Wrong request response code, expected : " + okRet));
             }
 
             return response.data;
@@ -73,7 +71,7 @@ export class RealityDataAnalysisService {
 
             if (axios.isAxiosError(error)) {
                 if(!error.response)
-                    return Promise.reject(new BentleyError(error.status ?? BentleyStatus.ERROR, error.message ?? message));
+                    return Promise.reject(new Error(error.message ?? message));
                 
                 const axiosResponse = error.response!;
                 status = axiosResponse.status;
@@ -83,13 +81,9 @@ export class RealityDataAnalysisService {
                     message = axiosResponse.data?.error?.message;
             } 
             else {
-                const bentleyError = error as BentleyError;
-                if (bentleyError !== undefined) {
-                    status = bentleyError.errorNumber;
-                    message = bentleyError.message;
-                }
+                message = error.message;
             }
-            return Promise.reject(new BentleyError(status, message));
+            return Promise.reject(new Error(message));
         }
     }
 
@@ -203,8 +197,7 @@ export class RealityDataAnalysisService {
             settings = await ExtractGroundJobSettings.fromJson(job["settings"]);
         }
         else
-            return Promise.reject(new BentleyError(BentleyStatus.ERROR,
-                "Can't get job properties of unknown type : " + job["type"]));
+            return Promise.reject(new Error("Can't get job properties of unknown type : " + job["type"]));
 
         jobProperties.settings = settings;
 

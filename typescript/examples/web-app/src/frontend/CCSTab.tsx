@@ -33,7 +33,7 @@ export function ContextCapture(props: CcProps) {
 
     const initCc = useCallback(async () => {
         const prefix = process.env.IMJS_URL_PREFIX ?? "";
-        contextCaptureService.current = new ContextCaptureService(props.authorizationClient, prefix);
+        contextCaptureService.current = new ContextCaptureService(props.authorizationClient.getAccessToken.bind(props.authorizationClient), prefix);
     }, []);
 
     useEffect(() => {

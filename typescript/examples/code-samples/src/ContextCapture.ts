@@ -42,20 +42,20 @@ async function main() {
     console.log("Reality Modeling sample job - Full (Calibration + Reconstruction)");
     let realityDataService: RealityDataTransferNode;
     if(env === "prod")
-        realityDataService = new RealityDataTransferNode(authorizationClient);
+        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     else
-        realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
+        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
     
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
 
     let contextCaptureService;
     if(env === "prod")
-        contextCaptureService = new ContextCaptureService(authorizationClient);
+        contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient));
     else if(env === "qa")
-        contextCaptureService = new ContextCaptureService(authorizationClient, "qa-");
+        contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
     else
-        contextCaptureService = new ContextCaptureService(authorizationClient, "dev-");
+        contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient), "dev-");
 
     console.log("Service initialized");
 
