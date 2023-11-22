@@ -168,7 +168,7 @@ describe("Reality Analysis unit tests", () => {
             if(axiosMock.history.get.length === 0)
                 return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
 
-            return expect(res).to.eventually.be.rejectedWith(Error).and.have.property("message", "Axios error");
+            return expect(res).to.eventually.be.rejectedWith(Error).and.have.property("message", "Error 404 Axios error");
         });
 
         it("Error", async function () {
