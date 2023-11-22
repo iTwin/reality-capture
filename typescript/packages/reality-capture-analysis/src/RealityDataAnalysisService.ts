@@ -66,7 +66,6 @@ export class RealityDataAnalysisService {
 
         }
         catch (error: any) {
-            let status = 422;
             let message = "Unknown error. Please ensure that the request is valid.";
 
             if (axios.isAxiosError(error)) {
@@ -74,11 +73,10 @@ export class RealityDataAnalysisService {
                     return Promise.reject(new Error(error.message ?? message));
                 
                 const axiosResponse = error.response!;
-                status = axiosResponse.status;
                 if(axiosResponse.data.error?.details)
-                    message = axiosResponse.data?.error?.message + ". Details : " + JSON.stringify(axiosResponse.data.error?.details);
+                    message = "Error " + axiosResponse.status + " " + axiosResponse.data?.error?.message + ". Details : " + JSON.stringify(axiosResponse.data.error?.details);
                 else
-                    message = axiosResponse.data?.error?.message;
+                    message = "Error " + axiosResponse.status + " " + axiosResponse.data?.error?.message;
             } 
             else {
                 message = error.message;
