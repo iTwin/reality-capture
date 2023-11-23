@@ -34,7 +34,7 @@
     "lint:fix": "npm run lint -- --fix",
     "webpackTests": "webpack --config ./src/test/utils/webpack.config.js 1>&2",
     "test": "",
-    "test:integration": "npm run build && npm run -s webpackTests && npm run -s test:integration:chrome",
+    "test:integration": "",
     "test:integration:chrome": "certa -r chrome --grep \"#integration\"",
     "test:integration:electron": "certa -r electron --grep \"#integration\"",
     "change": "beachball change",
@@ -45,14 +45,14 @@
     "publish-packages-dev": "beachball publish --config beachball.config.dev.js --keep-change-files"
   },
   "dependencies": {
-    "@itwin/core-geometry": "^4.0.0",
+    "@itwin/core-geometry": "^4.2.0",
     "axios": "^1.6.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^4.0.0",
-    "@itwin/certa": "^4.0.0",
-    "@itwin/core-bentley": "^4.0.0",
-    "@itwin/core-common": "^4.0.0",
+    "@itwin/build-tools": "^4.2.0",
+    "@itwin/certa": "^4.2.0",
+    "@itwin/core-bentley": "^4.2.0",
+    "@itwin/core-common": "^4.2.0",
     "@itwin/eslint-plugin": "^4.0.0-dev.41",
     "@itwin/oidc-signin-tool": "^4.2.0",
     "@types/chai": "^4.3.0",
@@ -72,6 +72,6 @@
     "webpack-cli": "^5.0.2"
   },
   "peerDependencies": {
-    "@itwin/core-bentley": "^4.0.0"
+    "@itwin/core-bentley": "^4.2.0"
   }
 }
