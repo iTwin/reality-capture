@@ -34,7 +34,7 @@
     "lint:fix": "npm run lint -- --fix",
     "webpackTests": "webpack --config ./src/test/utils/webpack.config.js 1>&2",
     "test": "",
-    "test:integration": "",
+    "test:integration": "npm run build && npm run -s webpackTests && npm run -s test:integration:chrome",
     "test:integration:chrome": "certa -r chrome --grep \"#integration\"",
     "test:integration:electron": "certa -r electron --grep \"#integration\"",
     "change": "beachball change",
