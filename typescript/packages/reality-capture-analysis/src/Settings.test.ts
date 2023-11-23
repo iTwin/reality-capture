@@ -6,7 +6,6 @@
 import chai, { expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
-import { BentleyError } from "@itwin/core-bentley";
 import { ChangeDetectionJobSettings, ExtractGroundJobSettings, L3DJobSettings, O2DJobSettings, O3DJobSettings, S2DJobSettings, S3DJobSettings } from "./Settings";
 
 
@@ -326,7 +325,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const o2DSettings = O2DJobSettings.fromJson(json);
-            return expect(o2DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
+            return expect(o2DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input name : invalid");
         });
 
         it("Invalid output", async function () {
@@ -343,7 +342,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const o2DSettings = O2DJobSettings.fromJson(json);
-            return expect(o2DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
+            return expect(o2DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output name : invalid");
         });
     });
 
@@ -433,7 +432,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const o3DSettings = O3DJobSettings.fromJson(json);
-            return expect(o3DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
+            return expect(o3DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input name : invalid");
         });
 
         it("Invalid output", async function () {
@@ -450,7 +449,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const o3DSettings = O3DJobSettings.fromJson(json);
-            return expect(o3DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
+            return expect(o3DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output name : invalid");
         });
     });
 
@@ -536,7 +535,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const s2DSettings = S2DJobSettings.fromJson(json);
-            return expect(s2DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
+            return expect(s2DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input name : invalid");
         });
 
         it("Invalid output", async function () {
@@ -553,7 +552,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const s2DSettings = S2DJobSettings.fromJson(json);
-            return expect(s2DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
+            return expect(s2DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output name : invalid");
         });
     });
 
@@ -684,7 +683,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const s3DSettings = S3DJobSettings.fromJson(json);
-            return expect(s3DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
+            return expect(s3DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input name : invalid");
         });
 
         it("Invalid output", async function () {
@@ -701,7 +700,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const s3DSettings = S3DJobSettings.fromJson(json);
-            return expect(s3DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
+            return expect(s3DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output name : invalid");
         });
     });
 
@@ -824,7 +823,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const l3DSettings = L3DJobSettings.fromJson(json);
-            return expect(l3DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
+            return expect(l3DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input name : invalid");
         });
 
         it("Invalid output", async function () {
@@ -841,7 +840,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const s3DSettings = S3DJobSettings.fromJson(json);
-            return expect(s3DSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
+            return expect(s3DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output name : invalid");
         });
     });
 
@@ -917,7 +916,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const changeDetectionSettings = ChangeDetectionJobSettings.fromJson(json);
-            return expect(changeDetectionSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
+            return expect(changeDetectionSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input name : invalid");
         });
 
         it("Invalid output", async function () {
@@ -934,7 +933,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const changeDetectionSettings = ChangeDetectionJobSettings.fromJson(json);
-            return expect(changeDetectionSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
+            return expect(changeDetectionSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output name : invalid");
         });
     });
 
@@ -1013,7 +1012,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const extractGroundSettings = ExtractGroundJobSettings.fromJson(json);
-            return expect(extractGroundSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input name : invalid");
+            return expect(extractGroundSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input name : invalid");
         });
 
         it("Invalid output", async function () {
@@ -1030,7 +1029,7 @@ describe("Reality Analysis settings unit tests", () => {
                 ]
             };
             const extractGroundSettings = ExtractGroundJobSettings.fromJson(json);
-            return expect(extractGroundSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output name : invalid");
+            return expect(extractGroundSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output name : invalid");
         });
     });
 });

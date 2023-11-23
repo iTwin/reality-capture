@@ -9,10 +9,10 @@ import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions } f
 import * as fs from "fs";
 import * as os from "os";
 import path from "path";
-import { v4 as uuidv4 } from "uuid";
 import { ReferenceTableNode } from "./ReferenceTableNode";
 import { RealityDataType } from "@itwin/reality-capture-common";
 import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
+import * as crypto from "crypto";
 
 const BLOCK_CONCURRENCY = 16; // How much blocks are uploaded at the same time.
 const BLOCK_SIZE = 100 * 1024 * 1024; // 100MB. Size of uploaded blocks.
@@ -67,7 +67,7 @@ async function getUploadFilesInfo(uploadInfo: DataTransferInfo, root: string, cu
 }
 
 async function getUniqueTmpDir(): Promise<string> {
-    const tmpDir = path.join(os.tmpdir(), "Bentley/ContextCapture Internal/", uuidv4());
+    const tmpDir = path.join(os.tmpdir(), "Bentley/ContextCapture Internal/", crypto.randomUUID());
     await fs.promises.mkdir(tmpDir, { recursive: true });
     return tmpDir;
 }
