@@ -4,7 +4,7 @@
 	"description": "Utils to upload local data to context share",
 	"exports": {
 		"node": {
-		  "types": "./lib/esm/NodeMain.d.ts",
+		  "types": "./lib/cjs/NodeMain.d.ts",
 		  "import": "./lib/esm/NodeMain.js",
 		  "require": "./lib/cjs/NodeMain.js"
 		},
