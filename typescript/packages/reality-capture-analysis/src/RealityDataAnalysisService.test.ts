@@ -60,7 +60,7 @@ describe("Reality Analysis unit tests", () => {
                 "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
                 "settings": {
                     "inputs": [{
-                        "name": "photos",
+                        "name": "orientedPhotos",
                         "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
                     },
                     {
@@ -82,7 +82,7 @@ describe("Reality Analysis unit tests", () => {
                                 "name": "objects2D",
                             }],
                             "inputs": [{
-                                "name": "photos",
+                                "name": "orientedPhotos",
                                 "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
                             },
                             {
@@ -95,7 +95,7 @@ describe("Reality Analysis unit tests", () => {
                 });
 
             const settings = new O2DJobSettings();
-            settings.inputs.photos = "8e9f7e7a-f37e-4d74-a1e7-df7325944757";
+            settings.inputs.orientedPhotos = "8e9f7e7a-f37e-4d74-a1e7-df7325944757";
             settings.inputs.photoObjectDetector = "9fbbe885-9086-4b98-b6a5-8024657bcff4";
             settings.outputs.objects2D = "objects2D";
             const jobName = "Reality Analysis unit test";
@@ -113,7 +113,7 @@ describe("Reality Analysis unit tests", () => {
                     "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
                     "settings": {
                         "inputs": [{
-                            "name": "photos",
+                            "name": "orientedPhotos",
                             "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
                         },
                         {
@@ -290,7 +290,7 @@ describe("Reality Analysis unit tests", () => {
                                 "realityDataId": "60d8a846-7ad2-40e4-aed1-5adfe2dc79a4"
                             }],
                             "inputs": [{
-                                "name": "photos",
+                                "name": "orientedPhotos",
                                 "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
                             },
                             {
@@ -395,7 +395,7 @@ describe("Reality Analysis unit tests", () => {
                                 "realityDataId": "60d8a846-7ad2-40e4-aed1-5adfe2dc79a4"
                             }],
                             "inputs": [{
-                                "name": "photos",
+                                "name": "orientedPhotos",
                                 "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
                             },
                             {

@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import path from "path";
-import { L3DJobSettings, RealityDataAnalysisService } from "@itwin/reality-capture-analysis";
+import { S2DJobSettings, RealityDataAnalysisService } from "@itwin/reality-capture-analysis";
 import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
@@ -17,7 +17,7 @@ export async function sleep(ms: number) { return new Promise(resolve => setTimeo
 
 async function runLines3DExample() {
     const imageCollection = "path to your image folder";
-    const orientedPhotosContextScene = "path to the folder where your context scene file is";
+    const photosContextScene  = "path to the folder where your context scene file is";
     const photoSegmentationDetector = "path to the folder where your detector is";
     const mesh = "path to the folder where your mesh is";
     const meshContextScene = "path to the folder where your context scene file that references the mesh is";
@@ -25,12 +25,12 @@ async function runLines3DExample() {
 
     dotenv.config();
 
-    const jobName = "L3D job SDK sample";
-    const imageCollectionName = "Test L3D Photos";
-    const orientedPhotosName = "Test L3D oriented photos";
-    const meshName = "Test L3D mesh";
-    const contextSceneName = "Test L3D Scene";
-    const detectorName = "Test L3D detector";
+    const jobName = "S2D job SDK sample";
+    const imageCollectionName = "Test S2D Photos";
+    const photosSceneName = "Test S2D oriented photos";
+    const meshName = "Test S2D mesh";
+    const contextSceneName = "Test S2D Scene";
+    const detectorName = "Test S2D detector";
 
     const projectId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
@@ -83,10 +83,10 @@ async function runLines3DExample() {
     }
 
     // Upload Oriented photos (contextScene)
-    if(!references.hasLocalPath(orientedPhotosContextScene)) {
+    if(!references.hasLocalPath(photosContextScene)) {
         console.log("No reference to oriented photos ContextScene found, uploading local files to cloud");
-        const id = await realityDataService.uploadContextScene(orientedPhotosContextScene, orientedPhotosName, projectId, references);
-        references.addReference(orientedPhotosContextScene, id);
+        const id = await realityDataService.uploadContextScene(photosContextScene, photosSceneName, projectId, references);
+        references.addReference(photosContextScene, id);
     }
 
     // Upload Detector
@@ -115,8 +115,8 @@ async function runLines3DExample() {
     await references.save(referencesPath);
     console.log("Checked data upload");
 
-    const settings = new L3DJobSettings();
-    settings.inputs.orientedPhotos = references.getCloudIdFromLocalPath(orientedPhotosContextScene);
+    const settings = new S2DJobSettings();
+    settings.inputs.photos = references.getCloudIdFromLocalPath(photosContextScene);
     settings.inputs.photoSegmentationDetector = references.getCloudIdFromLocalPath(photoSegmentationDetector);
     settings.inputs.meshes = references.getCloudIdFromLocalPath(meshContextScene);
     settings.outputs.lines3D = "lines3D";
@@ -156,7 +156,7 @@ async function runLines3DExample() {
     console.log("Retrieving outputs ids");
     const properties = await realityDataAnalysisService.getJobProperties(jobId);
     console.log("Downloading outputs");
-    const lines3dId = (properties.settings as L3DJobSettings).outputs.lines3D;
+    const lines3dId = (properties.settings as S2DJobSettings).outputs.lines3D;
     realityDataService.downloadContextScene(lines3dId, outputPath, projectId, references);
     console.log("Successfully downloaded output");
 }

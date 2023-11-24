@@ -92,7 +92,7 @@ async function runObjects2DExample() {
     console.log("Checked data upload");
 
     const settings = new O2DJobSettings();
-    settings.inputs.photos = references.getCloudIdFromLocalPath(photoContextScene);
+    settings.inputs.orientedPhotos = references.getCloudIdFromLocalPath(photoContextScene);
     settings.inputs.photoObjectDetector = references.getCloudIdFromLocalPath(photoObjectDetector);
     settings.outputs.objects2D = "objects2D";
     console.log("Settings created");

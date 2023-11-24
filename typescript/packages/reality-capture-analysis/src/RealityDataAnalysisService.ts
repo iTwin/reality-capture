@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { ChangeDetectionJobSettings, ExtractGroundJobSettings, JobSettings, L3DJobSettings, O2DJobSettings, O3DJobSettings, RDAJobType, S2DJobSettings, S3DJobSettings } from "./Settings";
+import { ChangeDetectionJobSettings, ExtractGroundJobSettings, JobSettings, SOrthoJobSettings, O2DJobSettings, RDAJobType, S2DJobSettings, S3DJobSettings } from "./Settings";
 import { RDACostParameters, RDAJobProperties } from "./Utils";
 import { JobProgress, JobState } from "@itwin/reality-capture-common";
 import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
@@ -187,14 +187,11 @@ export class RealityDataAnalysisService {
         else if (job["type"] === RDAJobType.S2D) {
             settings = await S2DJobSettings.fromJson(job["settings"]);
         }
-        else if (job["type"] === RDAJobType.O3D) {
-            settings = await O3DJobSettings.fromJson(job["settings"]);
+        else if (job["type"] === RDAJobType.SOrtho) {
+            settings = await SOrthoJobSettings.fromJson(job["settings"]);
         }
         else if (job["type"] === RDAJobType.S3D) {
             settings = await S3DJobSettings.fromJson(job["settings"]);
-        }
-        else if (job["type"] === RDAJobType.L3D) {
-            settings = await L3DJobSettings.fromJson(job["settings"]);
         }
         else if (job["type"] === RDAJobType.ChangeDetection) {
             settings = await ChangeDetectionJobSettings.fromJson(job["settings"]);

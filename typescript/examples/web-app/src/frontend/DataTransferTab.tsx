@@ -162,6 +162,48 @@ export function Rds(props: RdsProps) {
         return paths.length > 0;
     };
 
+    const listPathsToResolveJson = async (file: File, type: RealityDataType.CONTEXT_SCENE | RealityDataType.CC_ORIENTATIONS): Promise<boolean> => {
+        const paths: string[] = [];
+        if (type === RealityDataType.CONTEXT_SCENE) {
+            const text = await file.text();
+            const json = JSON.parse(text);
+
+            for (const referenceId in json.References) {
+                let referencePath = json.References[referenceId].Path;
+                referencePath = referencePath.replace(/\\/g, "/");
+
+                if (!props.referenceTable.getCloudIdFromLocalPath(referencePath))
+                    paths.push(referencePath);
+            }
+        }
+        else {
+            const text = await file.text();
+            const json = JSON.parse(text);
+
+            for (const photo in json.Photos) {
+                let imagePath = json.References[photo].ImagePath;
+                let maskPath = json.References[photo].MaskPath;
+                imagePath = imagePath.replace(/\\/g, "/");
+                maskPath = maskPath.replace(/\\/g, "/");
+
+
+                const dirName = imagePath.substring(0, imagePath.lastIndexOf("/"));
+                if (!props.referenceTable.getCloudIdFromLocalPath(dirName) && !paths.includes(dirName))
+                    paths.push(dirName);
+
+                if (maskPath.length) {
+                    const maskDirName = maskPath.substring(0, maskPath.lastIndexOf("/"));
+                    if (!props.referenceTable.getCloudIdFromLocalPath(maskDirName) && !paths.includes(maskDirName))
+                        paths.push(maskDirName);
+                }
+            }
+        }
+
+        setContextScenePaths(paths);
+        setContextSceneIds(new Array<string>(paths.length));
+        return paths.length > 0;
+    };
+
     const onUploadFiles = async (): Promise<void> => {
         setUploadedDataId("");
         if (props.useReferenceTable && (uploadedDataType === RealityDataType.CONTEXT_SCENE || uploadedDataType === RealityDataType.CC_ORIENTATIONS)) {
