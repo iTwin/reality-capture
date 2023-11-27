@@ -181,7 +181,7 @@ export class RealityDataTransferBrowser {
     private getAccessToken: () => Promise<string>;
 
     /** Target service url. */
-    private serviceUrl = "https://api.bentley.com/reality-management";
+    private serviceUrl = "https://api.bentley.com/reality-management/reality-data";
     
     /** Abort controller to stop the upload when the upload has been cancelled. */
     private abortController: AbortController;
@@ -224,7 +224,7 @@ export class RealityDataTransferBrowser {
     constructor(getAccessToken: () => Promise<string>, env?: string) {
         this.getAccessToken = getAccessToken;
         if(env)
-            this.serviceUrl = "https://" + env + "api.bentley.com/reality-management";
+            this.serviceUrl = "https://" + env + "api.bentley.com/reality-management/reality-data";
         
         this.abortController = new AbortController();
     }
@@ -328,9 +328,9 @@ export class RealityDataTransferBrowser {
         const realityData = new ITwinRealityData(rdaClient, undefined, iTwinId);
         realityData.displayName = name;
         realityData.type = type;
-        realityData.description = "";
-        realityData.classification = "Undefined";
-        realityData.rootDocument = rootFile;
+        if(rootFile)
+            realityData.rootDocument = rootFile;
+
         const iTwinRealityData: ITwinRealityData = await rdaClient.createRealityData(
             await this.getAccessToken(), iTwinId, realityData);
         return iTwinRealityData;
