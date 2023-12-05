@@ -28,7 +28,7 @@
 	},
 	"license": "MIT",
 	"devDependencies": {
-		"@itwin/build-tools": "^4.2.0",
+		"@itwin/build-tools": "^4.0.0",
 		"@types/chai": "^4.3.3",
 		"@types/chai-as-promised": "^7.1.5",
 		"@types/mocha": "^10.0.0",

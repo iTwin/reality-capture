@@ -33,7 +33,7 @@
 		"dotenv": "^16.0.3"
 	},
 	"devDependencies": {
-		"@itwin/build-tools": "^4.2.0",
+		"@itwin/build-tools": "^4.0.0",
 		"@types/node": "^18.12.0",
 		"@typescript-eslint/eslint-plugin": "^5.30.6",
 		"@typescript-eslint/parser": "^5.30.6",
