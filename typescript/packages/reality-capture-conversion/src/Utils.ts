@@ -167,10 +167,10 @@ export class RCJobSettings {
         const outputsJson = settingsJson["outputs"];
         newJobSettings.outputs.opc = [];
         for (const output of outputsJson) {
-            if (output["format"] === "OPC")
+            if (output["type"] === "OPC")
                 newJobSettings.outputs.opc.push(output["id"]);
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output format : " + output["format"]));
+                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output type : " + output["type"]));
         }
 
         if(settingsJson["options"]) {

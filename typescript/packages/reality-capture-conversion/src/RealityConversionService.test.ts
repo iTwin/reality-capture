@@ -75,7 +75,7 @@ describe("Reality conversion unit tests", () => {
                         "iTwinId": "510cd1a3-3703-4729-b08c-fecd9c87c3be",
                         "dataCenter": "East US",
                         "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
-                        "outputs": [{"format": "OPC", "id": "OPCId"}],
+                        "outputs": [{"type": "OPC", "id": "OPCId"}],
                         "options": {
                             "processingEngines": 8
                         },
@@ -279,7 +279,7 @@ describe("Reality conversion unit tests", () => {
                         "dataCenter": "East US",
                         "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
                         "outputs": [{
-                            "format": "OPC", "id": "opcId"
+                            "type": "OPC", "id": "opcId"
                         }],
                         "options": {
                             "processingEngines": 8

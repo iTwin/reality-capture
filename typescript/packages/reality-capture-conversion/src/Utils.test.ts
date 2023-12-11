@@ -40,7 +40,7 @@ describe("Reality Conversion utils unit tests", () => {
     it("Settings from json", async function () {
         const json = {
             "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
-            "outputs": [{"format": "OPC", "id": "OPCId"}],
+            "outputs": [{"type": "OPC", "id": "OPCId"}],
             "options": {
                 "processingEngines": 8,               
             },
@@ -64,7 +64,7 @@ describe("Reality Conversion utils unit tests", () => {
     it("Settings from json (unexpected input)", async function () {
         const json = {
             "inputs": [{"type": "Invalid", "id": "lasId"}],
-            "outputs": [{"format": "OPC", "id": "OPCId"}],
+            "outputs": [{"type": "OPC", "id": "OPCId"}],
             "options": {
                 "processingEngines": 8,               
             },
@@ -76,7 +76,7 @@ describe("Reality Conversion utils unit tests", () => {
     it("Settings from json (unexpected output)", async function () {
         const json = {
             "inputs": [{"type": "LAS", "id": "lasId"}],
-            "outputs": [{"format": "Invalid", "id": "OPCId"}],
+            "outputs": [{"type": "Invalid", "id": "OPCId"}],
             "options": {
                 "processingEngines": 8,               
             },
