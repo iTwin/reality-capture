@@ -25,12 +25,15 @@ class RCJobSettings:
         outputs: Possible outputs for this job. Fill the types of outputs you want for the job with True before passing
             the settings to create_job.
         engines: Quantity of engines to be used by the job.
+        merge: If true, all the input files from multiple containers will be merged into one output file. Else output
+            file will be created per input file.
     """
 
     def __init__(self) -> None:
         self.inputs: RCJobSettings.Inputs = self.Inputs()
         self.outputs: RCJobSettings.Outputs = self.Outputs()
         self.engines: int = 0
+        self.merge: bool = True
 
     def to_json(self) -> tuple[dict, dict, dict]:
         """
@@ -44,20 +47,20 @@ class RCJobSettings:
         inputs_dict = {"inputs": list()}
 
         for rd_id in self.inputs.LAS:
-            inputs_dict["inputs"].append({"type": "LAS", "id": rd_id})
+            inputs_dict["inputs"].append({"id": rd_id})
         for rd_id in self.inputs.LAZ:
-            inputs_dict["inputs"].append({"type": "LAZ", "id": rd_id})
+            inputs_dict["inputs"].append({"id": rd_id})
         for rd_id in self.inputs.PLY:
-            inputs_dict["inputs"].append({"type": "PLY", "id": rd_id})
+            inputs_dict["inputs"].append({"id": rd_id})
         for rd_id in self.inputs.E57:
-            inputs_dict["inputs"].append({"type": "E57", "id": rd_id})
+            inputs_dict["inputs"].append({"id": rd_id})
 
         outputs_dict = {"outputs": list()}
 
         if self.outputs.OPC:
             outputs_dict["outputs"].append("OPC")
 
-        options_dict = {"options": {"processingEngines": self.engines}}
+        options_dict = {"options": {"processingEngines": self.engines, "merge": str(self.merge)}}
 
         return inputs_dict, outputs_dict, options_dict
 
@@ -91,15 +94,16 @@ class RCJobSettings:
             outputs_json = settings_json.get("outputs", [])
             new_job_settings.outputs.OPC = []
             for output_dict in outputs_json:
-                if output_dict["format"] == "OPC":
+                if output_dict["type"] == "OPC":
                     new_job_settings.outputs.OPC.append(output_dict["id"])
                 else:
                     raise TypeError(
-                        "found non expected output format" + output_dict["format"]
+                        "found non expected output type" + output_dict["type"]
                     )
 
             options_json = settings_json.get("options", {})
             new_job_settings.engines = int(options_json.get("processingEngines", 0))
+            new_job_settings.merge = bool(options_json.get("merge", True))
 
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
