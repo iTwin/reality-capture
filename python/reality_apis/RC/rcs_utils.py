@@ -59,6 +59,8 @@ class RCJobSettings:
 
         if self.outputs.OPC:
             outputs_dict["outputs"].append("OPC")
+        if self.outputs.PNTS:
+            outputs_dict["outputs"].append("PNTS")
 
         options_dict = {"options": {"processingEngines": self.engines, "merge": str(self.merge)}}
 
@@ -92,10 +94,14 @@ class RCJobSettings:
                     )
 
             outputs_json = settings_json.get("outputs", [])
-            new_job_settings.outputs.OPC = []
+
             for output_dict in outputs_json:
                 if output_dict["type"] == "OPC":
+                    new_job_settings.outputs.OPC = []
                     new_job_settings.outputs.OPC.append(output_dict["id"])
+                if output_dict["type"] == "PNTS":
+                    new_job_settings.outputs.PNTS = []
+                    new_job_settings.outputs.PNTS.append(output_dict["id"])
                 else:
                     raise TypeError(
                         "found non expected output type" + output_dict["type"]
@@ -132,10 +138,12 @@ class RCJobSettings:
 
         Attributes:
             OPC: Either a boolean to indicate conversion type or a list of created OPC files ids.
+            PNTS: Either a boolean to indicate conversion type or a list of created PNTS files ids.
         """
 
         def __init__(self) -> None:
             self.OPC: Union[bool, List[str]] = False
+            self.PNTS: Union[bool, List[str]] = False
 
 
 class RCJobCostParameters:
