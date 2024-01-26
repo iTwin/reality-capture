@@ -82,6 +82,6 @@ describe("Reality Conversion utils unit tests", () => {
             },
         };
         const realityConversionSettings = RCJobSettings.fromJson(json);
-        return expect(realityConversionSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected type format : Invalid");
+        return expect(realityConversionSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output type : Invalid");
     });
 });

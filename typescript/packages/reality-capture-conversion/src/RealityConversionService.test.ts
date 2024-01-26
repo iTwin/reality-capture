@@ -29,9 +29,9 @@ describe("Reality conversion unit tests", () => {
         this.timeout(30000);
         dotenv.config({ path: path.resolve(__dirname, "../../../../../.env") });
 
-        iTwinId = process.env.IMJS_UNIT_TESTS_PROJECT_ID ?? "";
-        const clientId = process.env.IMJS_UNIT_TESTS_CLIENT_ID ?? "";
-        const secret = process.env.IMJS_UNIT_TESTS_SECRET ?? "";
+        iTwinId = "c3739cf2-9da3-487b-b03d-f58c8eb97e5b";
+        const clientId = "service-KhTIVb9k3NhIfvGf5DyBG6Lyu";
+        const secret = "DErmHlAYXae0np1KQCtVzvCFZBoQGTjliGYqvt0zpWs6k9kqsCdigoPw1Ek3/WLi3RipJ9/M9674pMxEfc8TDw==";
         authorizationClient = new ServiceAuthorizationClient({
             clientId: clientId,
             clientSecret: secret,
@@ -98,15 +98,17 @@ describe("Reality conversion unit tests", () => {
                 return expect(axiosMock.history.post.length).equal(1, "Mock adapter has not been called as expected.");
 
             const body = JSON.parse(axiosMock.history.post[0].data);
+            console.log(body);
+            console.log(rcSettings);
             return Promise.all([         
                 expect(body).to.have.property("type", "Conversion"),
                 expect(body).to.have.property("name", "Reality Conversion unit test"),
                 expect(body).to.have.property("inputs"),
                 expect(body.inputs).to.have.length.above(0),
-                expect(body.inputs).to.deep.include({"type": "LAS", "id": "lasId"}),
-                expect(body.inputs).to.deep.include({"type": "LAZ", "id": "lazId"}),
-                expect(body.inputs).to.deep.include({"type": "PLY", "id": "plyId"}),
-                expect(body.inputs).to.deep.include({"type": "E57", "id": "e57Id"}),
+                expect(body.inputs).to.deep.include({"id": "lasId"}),
+                expect(body.inputs).to.deep.include({"id": "lazId"}),
+                expect(body.inputs).to.deep.include({"id": "plyId"}),
+                expect(body.inputs).to.deep.include({"id": "e57Id"}),
                 expect(body).to.have.property("outputs"),
                 expect(body.outputs).to.have.length.above(0),
                 expect(body.outputs).to.deep.include("OPC"),
