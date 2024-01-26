@@ -24,10 +24,10 @@ describe("Reality Conversion utils unit tests", () => {
         return Promise.all([
             expect(json).to.have.property("inputs"),
             expect(json.inputs).to.have.length.above(0),
-            expect(json.inputs).to.deep.include({ "type": "LAS", "id": "lasId" }),
-            expect(json.inputs).to.deep.include({ "type": "LAZ", "id": "lazId" }),
-            expect(json.inputs).to.deep.include({ "type": "PLY", "id": "plyId" }),
-            expect(json.inputs).to.deep.include({ "type": "E57", "id": "e57Id" }),
+            expect(json.inputs).to.deep.include({ "id": "lasId" }),
+            expect(json.inputs).to.deep.include({ "id": "lazId" }),
+            expect(json.inputs).to.deep.include({ "id": "plyId" }),
+            expect(json.inputs).to.deep.include({ "id": "e57Id" }),
             expect(json).to.have.property("outputs"),
             expect(json.outputs).to.have.length.above(0),
             expect(json.outputs).to.deep.include("OPC"),
@@ -82,6 +82,6 @@ describe("Reality Conversion utils unit tests", () => {
             },
         };
         const realityConversionSettings = RCJobSettings.fromJson(json);
-        return expect(realityConversionSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output format : Invalid");
+        return expect(realityConversionSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected type format : Invalid");
     });
 });

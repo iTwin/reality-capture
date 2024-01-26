@@ -58,7 +58,7 @@ describe("Reality conversion unit tests", () => {
                 "type": "Conversion",
                 "name": "Reality Conversion unit test",
                 "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
+                "inputs": [{"id": "lasId"}, {"id": "lazId"}, {"id": "plyId"}, {"id": "e57Id"}],
                 "outputs": ["OPC"],
                 "options": {
                     "processingEngines": 8,               
