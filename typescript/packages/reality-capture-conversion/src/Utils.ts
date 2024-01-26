@@ -158,7 +158,8 @@ export class RCJobSettings {
         if(this.options) {
             if(this.options.engines)
                 json["options"]["processingEngines"] = this.options.engines;
-            json["options"]["merge"] = this.options.engines;
+            if(this.options.merge)
+                json["options"]["merge"] = this.options.merge;
             
         }
 
@@ -200,7 +201,8 @@ export class RCJobSettings {
         if(settingsJson["options"]) {
             if(settingsJson["options"]["processingEngines"])
                 newJobSettings.options.engines = settingsJson["options"]["processingEngines"];
-            newJobSettings.options.merge = settingsJson["options"]["merge"];
+            if(settingsJson["options"]["merge"])
+                newJobSettings.options.merge = settingsJson["options"]["merge"];
         }
 
         return newJobSettings;

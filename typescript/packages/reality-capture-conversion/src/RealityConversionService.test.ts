@@ -29,9 +29,9 @@ describe("Reality conversion unit tests", () => {
         this.timeout(30000);
         dotenv.config({ path: path.resolve(__dirname, "../../../../../.env") });
 
-        iTwinId = "c3739cf2-9da3-487b-b03d-f58c8eb97e5b";
-        const clientId = "service-KhTIVb9k3NhIfvGf5DyBG6Lyu";
-        const secret = "DErmHlAYXae0np1KQCtVzvCFZBoQGTjliGYqvt0zpWs6k9kqsCdigoPw1Ek3/WLi3RipJ9/M9674pMxEfc8TDw==";
+        iTwinId = process.env.IMJS_UNIT_TESTS_PROJECT_ID ?? "";
+        const clientId = process.env.IMJS_UNIT_TESTS_CLIENT_ID ?? "";
+        const secret = process.env.IMJS_UNIT_TESTS_SECRET ?? "";
         authorizationClient = new ServiceAuthorizationClient({
             clientId: clientId,
             clientSecret: secret,
@@ -61,8 +61,9 @@ describe("Reality conversion unit tests", () => {
                 "inputs": [{"id": "lasId"}, {"id": "lazId"}, {"id": "plyId"}, {"id": "e57Id"}],
                 "outputs": ["OPC"],
                 "options": {
-                    "processingEngines": 8,               
-                },
+                    "processingEngines": 8,
+                    "merge": false
+                }
             }).reply(201, 
                 {
                     "job": {
@@ -77,7 +78,8 @@ describe("Reality conversion unit tests", () => {
                         "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
                         "outputs": [{"type": "OPC", "id": "OPCId"}],
                         "options": {
-                            "processingEngines": 8
+                            "processingEngines": 8,
+                            "merge": false
                         },
                     }
                 });
@@ -89,8 +91,9 @@ describe("Reality conversion unit tests", () => {
             rcSettings.inputs.ply = ["plyId"];
             rcSettings.outputs.opc = true;
             rcSettings.options.engines = 8;
+            rcSettings.options.merge = false;
             const jobName = "Reality Conversion unit test";
-                        
+            
             const id = realityConversionService.createJob(rcSettings, jobName, iTwinId);
             await sleep(2000);
 
@@ -98,8 +101,6 @@ describe("Reality conversion unit tests", () => {
                 return expect(axiosMock.history.post.length).equal(1, "Mock adapter has not been called as expected.");
 
             const body = JSON.parse(axiosMock.history.post[0].data);
-            console.log(body);
-            console.log(rcSettings);
             return Promise.all([         
                 expect(body).to.have.property("type", "Conversion"),
                 expect(body).to.have.property("name", "Reality Conversion unit test"),
@@ -114,6 +115,7 @@ describe("Reality conversion unit tests", () => {
                 expect(body.outputs).to.deep.include("OPC"),
                 expect(body).to.have.property("options"),
                 expect(body.options).to.have.property("processingEngines", 8),
+                expect(body.options).to.have.property("merge", false),
                 expect(id).to.eventually.deep.equal("cc3d35cc-416a-4262-9714-b359da70b419"),
             ]);
         });
