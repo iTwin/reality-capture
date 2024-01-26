@@ -15,10 +15,10 @@ import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function runObjects2DExample() {
-    const imageCollection = "D:\\Photo_Object-Face_and_License_Plates\\images";
-    const photoContextScene = "D:\\Photo_Object-Face_and_License_Plates\\ContextScene";
-    const photoObjectDetector = "D:\\Photo_Object-Face_and_License_Plates\\Face_&_License_plates_1";
-    const outputPath = "D:\\output";
+    const imageCollection = "path to your image collection";
+    const photoContextScene = "path to the folder where your context scene file is";
+    const photoObjectDetector = "path to the folder where your detector is";
+    const outputPath = "path to the folder where you want to save outputs";
 
     dotenv.config();
 

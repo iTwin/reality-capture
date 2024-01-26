@@ -23,5 +23,6 @@ export enum RealityDataType {
     SHP = "SHP",
     THREEMX = "3MX",
     THREESM = "3SM",
+    E57 = "E57",
     UNSTRUCTURED = "Unstructured"
 }
