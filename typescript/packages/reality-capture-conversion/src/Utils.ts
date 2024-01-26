@@ -187,15 +187,11 @@ export class RCJobSettings {
         }
         const outputsJson = settingsJson["outputs"];
         newJobSettings.outputs.opc = [];
+        newJobSettings.outputs.pnts = [];
         for (const output of outputsJson) {
             if (output["type"] === "OPC")
                 newJobSettings.outputs.opc.push(output["id"]);
-            else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output type : " + output["type"]));
-        }
-        newJobSettings.outputs.pnts = [];
-        for (const output of outputsJson) {
-            if (output["type"] === "PNTS")
+            else if (output["type"] === "PNTS")
                 newJobSettings.outputs.pnts.push(output["id"]);
             else
                 return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output type : " + output["type"]));
