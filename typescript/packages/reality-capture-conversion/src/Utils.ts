@@ -50,12 +50,21 @@ class RCOuputs {
     /** Either a boolean to indicate conversion type or a list of created OPC files ids. */
     opc: boolean | string[];
 
+    /** Either a boolean to indicate conversion type or a list of created PNTS files ids. */
+    pnts: boolean | string[];
+
     constructor() {
         /**
          * Either a boolean to indicate conversion type or a list of created OPC files ids.
          * @type {boolean | string[]}
          */
         this.opc = false;
+
+        /**
+         * Either a boolean to indicate conversion type or a list of created PNTS files ids.
+         * @type {boolean | string[]}
+         */
+        this.pnts = false;
     }
 }
 
@@ -65,6 +74,8 @@ class RCOuputs {
 class RCOptions {
     /** Quantity of engines to be used by the job. */
     engines: number;
+    /** If true, all the input files from multiple containers will be merged into one output file. Else output file will be created per input file. */
+    merge: boolean;
 
     constructor() {
         /**
@@ -72,6 +83,11 @@ class RCOptions {
          * @type { number }
          */
         this.engines = 0;
+
+        /** If true, all the input files from multiple containers will be merged into one output file. Else output file will be created per input file. 
+         * @type { boolean }
+         */
+        this.merge = true;
     }
 }
 
@@ -112,31 +128,37 @@ export class RCJobSettings {
             "outputs": [],
             "options": {
                 "processingEngines": this.options.engines,
+                "merge" : this.options.merge,
             }
         };
 
         this.inputs.las.forEach((id) => {
-            json["inputs"].push({ "type": "LAS", "id": id });
+            json["inputs"].push({ "id": id });
         });
 
         this.inputs.laz.forEach((id) => {
-            json["inputs"].push({ "type": "LAZ", "id": id });
+            json["inputs"].push({ "id": id });
         });
 
         this.inputs.ply.forEach((id) => {
-            json["inputs"].push({ "type": "PLY", "id": id });
+            json["inputs"].push({ "id": id });
         });
 
         this.inputs.e57.forEach((id) => {
-            json["inputs"].push({ "type": "E57", "id": id });
+            json["inputs"].push({ "id": id });
         });
 
         if (this.outputs.opc)
             json["outputs"].push("OPC");
 
+        if (this.outputs.pnts)
+            json["outputs"].push("PNTS");
+
         if(this.options) {
             if(this.options.engines)
                 json["options"]["processingEngines"] = this.options.engines;
+            if(this.options.merge)
+                json["options"]["merge"] = this.options.merge;
             
         }
 
@@ -165,17 +187,21 @@ export class RCJobSettings {
         }
         const outputsJson = settingsJson["outputs"];
         newJobSettings.outputs.opc = [];
+        newJobSettings.outputs.pnts = [];
         for (const output of outputsJson) {
-            if (output["format"] === "OPC")
+            if (output["type"] === "OPC")
                 newJobSettings.outputs.opc.push(output["id"]);
+            else if (output["type"] === "PNTS")
+                newJobSettings.outputs.pnts.push(output["id"]);
             else
-                return Promise.reject(new Error("Found unexpected output format : " + output["format"]));
+                return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
 
         if(settingsJson["options"]) {
             if(settingsJson["options"]["processingEngines"])
                 newJobSettings.options.engines = settingsJson["options"]["processingEngines"];
-            
+            if(settingsJson["options"]["merge"])
+                newJobSettings.options.merge = settingsJson["options"]["merge"];
         }
 
         return newJobSettings;

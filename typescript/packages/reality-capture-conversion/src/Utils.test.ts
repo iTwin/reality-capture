@@ -23,10 +23,10 @@ describe("Reality Conversion utils unit tests", () => {
         return Promise.all([
             expect(json).to.have.property("inputs"),
             expect(json.inputs).to.have.length.above(0),
-            expect(json.inputs).to.deep.include({ "type": "LAS", "id": "lasId" }),
-            expect(json.inputs).to.deep.include({ "type": "LAZ", "id": "lazId" }),
-            expect(json.inputs).to.deep.include({ "type": "PLY", "id": "plyId" }),
-            expect(json.inputs).to.deep.include({ "type": "E57", "id": "e57Id" }),
+            expect(json.inputs).to.deep.include({ "id": "lasId" }),
+            expect(json.inputs).to.deep.include({ "id": "lazId" }),
+            expect(json.inputs).to.deep.include({ "id": "plyId" }),
+            expect(json.inputs).to.deep.include({ "id": "e57Id" }),
             expect(json).to.have.property("outputs"),
             expect(json.outputs).to.have.length.above(0),
             expect(json.outputs).to.deep.include("OPC"),
@@ -39,7 +39,7 @@ describe("Reality Conversion utils unit tests", () => {
     it("Settings from json", async function () {
         const json = {
             "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
-            "outputs": [{"format": "OPC", "id": "OPCId"}],
+            "outputs": [{"type": "OPC", "id": "OPCId"}],
             "options": {
                 "processingEngines": 8,               
             },
@@ -63,7 +63,7 @@ describe("Reality Conversion utils unit tests", () => {
     it("Settings from json (unexpected input)", async function () {
         const json = {
             "inputs": [{"type": "Invalid", "id": "lasId"}],
-            "outputs": [{"format": "OPC", "id": "OPCId"}],
+            "outputs": [{"type": "OPC", "id": "OPCId"}],
             "options": {
                 "processingEngines": 8,               
             },
@@ -75,12 +75,12 @@ describe("Reality Conversion utils unit tests", () => {
     it("Settings from json (unexpected output)", async function () {
         const json = {
             "inputs": [{"type": "LAS", "id": "lasId"}],
-            "outputs": [{"format": "Invalid", "id": "OPCId"}],
+            "outputs": [{"type": "Invalid", "id": "OPCId"}],
             "options": {
                 "processingEngines": 8,               
             },
         };
         const realityConversionSettings = RCJobSettings.fromJson(json);
-        return expect(realityConversionSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output format : Invalid");
+        return expect(realityConversionSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output type : Invalid");
     });
 });

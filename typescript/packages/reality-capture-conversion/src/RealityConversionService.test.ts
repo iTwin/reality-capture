@@ -57,11 +57,12 @@ describe("Reality conversion unit tests", () => {
                 "type": "Conversion",
                 "name": "Reality Conversion unit test",
                 "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
+                "inputs": [{"id": "lasId"}, {"id": "lazId"}, {"id": "plyId"}, {"id": "e57Id"}],
                 "outputs": ["OPC"],
                 "options": {
-                    "processingEngines": 8,               
-                },
+                    "processingEngines": 8,
+                    "merge": false
+                }
             }).reply(201, 
                 {
                     "job": {
@@ -74,9 +75,10 @@ describe("Reality conversion unit tests", () => {
                         "iTwinId": "510cd1a3-3703-4729-b08c-fecd9c87c3be",
                         "dataCenter": "East US",
                         "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
-                        "outputs": [{"format": "OPC", "id": "OPCId"}],
+                        "outputs": [{"type": "OPC", "id": "OPCId"}],
                         "options": {
-                            "processingEngines": 8
+                            "processingEngines": 8,
+                            "merge": false
                         },
                     }
                 });
@@ -88,8 +90,9 @@ describe("Reality conversion unit tests", () => {
             rcSettings.inputs.ply = ["plyId"];
             rcSettings.outputs.opc = true;
             rcSettings.options.engines = 8;
+            rcSettings.options.merge = false;
             const jobName = "Reality Conversion unit test";
-                        
+            
             const id = realityConversionService.createJob(rcSettings, jobName, iTwinId);
             await sleep(2000);
 
@@ -102,15 +105,16 @@ describe("Reality conversion unit tests", () => {
                 expect(body).to.have.property("name", "Reality Conversion unit test"),
                 expect(body).to.have.property("inputs"),
                 expect(body.inputs).to.have.length.above(0),
-                expect(body.inputs).to.deep.include({"type": "LAS", "id": "lasId"}),
-                expect(body.inputs).to.deep.include({"type": "LAZ", "id": "lazId"}),
-                expect(body.inputs).to.deep.include({"type": "PLY", "id": "plyId"}),
-                expect(body.inputs).to.deep.include({"type": "E57", "id": "e57Id"}),
+                expect(body.inputs).to.deep.include({"id": "lasId"}),
+                expect(body.inputs).to.deep.include({"id": "lazId"}),
+                expect(body.inputs).to.deep.include({"id": "plyId"}),
+                expect(body.inputs).to.deep.include({"id": "e57Id"}),
                 expect(body).to.have.property("outputs"),
                 expect(body.outputs).to.have.length.above(0),
                 expect(body.outputs).to.deep.include("OPC"),
                 expect(body).to.have.property("options"),
                 expect(body.options).to.have.property("processingEngines", 8),
+                expect(body.options).to.have.property("merge", false),
                 expect(id).to.eventually.deep.equal("cc3d35cc-416a-4262-9714-b359da70b419"),
             ]);
         });
@@ -272,7 +276,7 @@ describe("Reality conversion unit tests", () => {
                         "dataCenter": "East US",
                         "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
                         "outputs": [{
-                            "format": "OPC", "id": "opcId"
+                            "type": "OPC", "id": "opcId"
                         }],
                         "options": {
                             "processingEngines": 8
