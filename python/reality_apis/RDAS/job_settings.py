@@ -41,7 +41,7 @@ class O2DJobSettings:
         """
         json_dict = dict()
         json_dict["inputs"] = list()
-        if self.inputs.oriented_photos:
+        if self.inputs.photos:
             json_dict["inputs"].append(
                 {"name": "photos", "realityDataId": self.inputs.photos}
             )
@@ -78,9 +78,9 @@ class O2DJobSettings:
         if self.use_tie_points:
             json_dict["useTiePoints"] = "true"
         if self.min_photos:
-            json_dict["MinPhotos"] = str(self.min_photos)
+            json_dict["minPhotos"] = str(self.min_photos)
         if self.max_dist:
-            json_dict["MaxDist"] = str(self.max_dist)
+            json_dict["maxDist"] = str(self.max_dist)
         if self.export_srs:
             json_dict["exportSrs"] = self.export_srs
         return json_dict
@@ -100,7 +100,7 @@ class O2DJobSettings:
             inputs_json = settings_json["inputs"]
             for input_dict in inputs_json:
                 if input_dict["name"] == "photos":
-                    new_job_settings.inputs.oriented_photos = input_dict[
+                    new_job_settings.inputs.photos = input_dict[
                         "realityDataId"
                     ]
                 elif input_dict["name"] == "photoObjectDetector":
@@ -257,12 +257,12 @@ class S2DJobSettings:
             json_dict["outputs"].append("exportedLines3DDGN")
         if self.outputs.exported_lines3D_cesium:
             json_dict["outputs"].append("exportedLines3DCesium")
-        if self.outputs.patches3D:
-            json_dict["outputs"].append("patches3D")
-        if self.outputs.exported_patches3D_DGN:
-            json_dict["outputs"].append("exportedPatches3DDGN")
-        if self.outputs.exported_patches3D_cesium:
-            json_dict["outputs"].append("exportedPatches3DCesium")
+        if self.outputs.polygons3D:
+            json_dict["outputs"].append("polygons3D")
+        if self.outputs.exported_polygons3D_DGN:
+            json_dict["outputs"].append("exportedPolygons3DDGN")
+        if self.outputs.exported_polygons3D_cesium:
+            json_dict["outputs"].append("exportedPolygons3DCesium")
         if self.compute_line_width:
             json_dict["computeLineWidth"] = "true"
         if self.remove_small_components:
@@ -322,14 +322,14 @@ class S2DJobSettings:
                     new_job_settings.outputs.exported_lines3D_cesium = output_dict[
                         "realityDataId"
                     ]
-                elif output_dict["name"] == "patches3D":
-                    new_job_settings.outputs.patches3D = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedPatches3DDGN":
-                    new_job_settings.outputs.exported_patches3D_DGN = output_dict[
+                elif output_dict["name"] == "polygons3D":
+                    new_job_settings.outputs.polygons3D = output_dict["realityDataId"]
+                elif output_dict["name"] == "exportedPolygons3DDGN":
+                    new_job_settings.outputs.exported_polygons3D_DGN = output_dict[
                         "realityDataId"
                     ]
-                elif output_dict["name"] == "exportedPatches3DCesium":
-                    new_job_settings.outputs.exported_patches3D_cesium = output_dict[
+                elif output_dict["name"] == "exportedPolygons3DCesium":
+                    new_job_settings.outputs.exported_polygons3D_cesium = output_dict[
                         "realityDataId"
                     ]
                 else:
@@ -384,9 +384,9 @@ class S2DJobSettings:
             lines3D: Detected 3D lines.
             exported_lines3D_DGN: DGN file export with 3D lines.
             exported_lines3D_cesium: Cesium 3D Tiles file export with 3D lines.
-            patches3D: Detected patches.
-            exported_patches3D_DGN: DGN file export with patches.
-            exported_patches3D_cesium: Cesium 3D Tiles file export with 3D patches.
+            polygons3D: Detected polygons.
+            exported_polygons3D_DGN: DGN file export with polygons.
+            exported_polygons3D_cesium: Cesium 3D Tiles file export with 3D polygons.
 
         """
 
@@ -396,9 +396,9 @@ class S2DJobSettings:
             self.lines3D: str = ""
             self.exported_lines3D_DGN: str = ""
             self.exported_lines3D_cesium: str = ""
-            self.patches3D: str = ""
-            self.exported_patches3D_DGN: str = ""
-            self.exported_patches3D_cesium: str = ""
+            self.polygons3D: str = ""
+            self.exported_polygons3D_DGN: str = ""
+            self.exported_polygons3D_cesium: str = ""
 
 class SOrthoJobSettings:
     """
@@ -629,12 +629,12 @@ class S3DJobSettings:
             json_dict["outputs"].append("exportedLines3DDGN")
         if self.outputs.exported_lines3D_cesium:
             json_dict["outputs"].append("exportedLines3DCesium")
-        if self.outputs.patches3D:
-            json_dict["outputs"].append("patches3D")
-        if self.outputs.exported_patches3D_DGN:
-            json_dict["outputs"].append("exportedPatches3DDGN")
-        if self.outputs.exported_patches3D_cesium:
-            json_dict["outputs"].append("exportedPatches3DCesium")
+        if self.outputs.polygons3D:
+            json_dict["outputs"].append("polygons3D")
+        if self.outputs.exported_polygons3D_DGN:
+            json_dict["outputs"].append("exportedPolygons3DDGN")
+        if self.outputs.exported_polygons3D_cesium:
+            json_dict["outputs"].append("exportedPolygons3DCesium")
 
         if self.compute_line_width:
             json_dict["computeLineWidth"] = "true"
@@ -728,14 +728,14 @@ class S3DJobSettings:
                     new_job_settings.outputs.exported_lines3D_cesium = output_dict[
                         "realityDataId"
                     ]
-                elif output_dict["name"] == "patches3D":
-                    new_job_settings.outputs.patches3D = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedPatches3DDGN":
-                    new_job_settings.outputs.exported_patches3D_DGN = output_dict[
+                elif output_dict["name"] == "polygons3D":
+                    new_job_settings.outputs.polygons3D = output_dict["realityDataId"]
+                elif output_dict["name"] == "exportedPolygons3DDGN":
+                    new_job_settings.outputs.exported_polygons3D_DGN = output_dict[
                         "realityDataId"
                     ]
-                elif output_dict["name"] == "exportedPatches3DCesium":
-                    new_job_settings.outputs.exported_patches3D_cesium = output_dict[
+                elif output_dict["name"] == "exportedPolygons3DCesium":
+                    new_job_settings.outputs.exported_polygons3D_cesium = output_dict[
                         "realityDataId"
                     ]
                 else:
@@ -796,9 +796,9 @@ class S3DJobSettings:
             lines3D: Detected 3D lines.
             exported_lines3D_DGN: DGN file export with 3D lines.
             exported_lines3D_cesium: Cesium 3D Tiles file export with 3D lines.
-            patches3D: Detected patches.
-            exported_patches3D_DGN: DGN file export with patches.
-            exported_patches3D_cesium: Cesium 3D Tiles file export with 3D patches.
+            polygons3D: Detected polygons.
+            exported_polygons3D_DGN: DGN file export with polygons.
+            exported_polygons3D_cesium: Cesium 3D Tiles file export with 3D polygons.
         """
 
         def __init__(self) -> None:
@@ -815,9 +815,9 @@ class S3DJobSettings:
             self.lines3D: str = ""
             self.exported_lines3D_DGN: str = ""
             self.exported_lines3D_cesium: str = ""
-            self.patches3D: str = ""
-            self.exported_patches3D_DGN: str = ""
-            self.exported_patches3D_cesium: str = ""
+            self.polygons3D: str = ""
+            self.exported_polygons3D_DGN: str = ""
+            self.exported_polygons3D_cesium: str = ""
 
 class ChangeDetectionJobSettings:
     """
