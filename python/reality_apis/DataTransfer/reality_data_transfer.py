@@ -98,10 +98,8 @@ class RealityDataTransfer:
             rootfile: str = "",
     ) -> ReturnValue[str]:
         rd_dict = {
-            {
-                "displayName": name,
-                "type": data_type.value,
-            }
+            "displayName": name,
+            "type": data_type.value,
         }
         if iTwin_id != "":
             rd_dict["iTwinId"] = iTwin_id
@@ -124,7 +122,7 @@ class RealityDataTransfer:
     def _update_reality_data(
             self, rd_id: str, update_dict: dict, iTwin_id: str = ""
     ) -> ReturnValue[str]:
-        rd_dict = {update_dict}
+        rd_dict = update_dict
         if iTwin_id != "":
             rd_dict["iTwinId"] = iTwin_id
         json_data = json.dumps(rd_dict)
@@ -156,13 +154,13 @@ class RealityDataTransfer:
 
         # ask for the rd container
         response = self._session.get(
-            "https://" + self._service_url + f"/reality-management/reality-data/{rd_id}/container?iTwinId={iTwin_id}&access=Write",
+            "https://" + self._service_url + f"/reality-management/reality-data/{rd_id}/writeaccess?iTwinId={iTwin_id}",
             headers=self._get_header())
         try:
             data_json = response.json()
             if response.status_code < 200 or response.status_code >= 400:
                 return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
-            sas_uri = data_json["container"]["_links"]["containerUrl"]["href"]
+            sas_uri = data_json["_links"]["containerUrl"]["href"]
         except json.decoder.JSONDecodeError:
             return ReturnValue(value=False, error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
         except KeyError as e:
@@ -397,14 +395,14 @@ class RealityDataTransfer:
             True if download was successful, and a potential error message.
         """
         response = self._session.get(
-            "https://" + self._service_url + f"/reality-management/reality-data/{data_id}/container?iTwinId={iTwin_id}&access=Read",
+            "https://" + self._service_url + f"/reality-management/reality-data/{data_id}/readaccess?iTwinId={iTwin_id}",
             headers=self._get_header())
 
         try:
             data_json = response.json()
             if response.status_code < 200 or response.status_code >= 400:
                 return ReturnValue(value="", error=self._error_msg(response.status_code, data_json))
-            sas_uri = data_json["container"]["_links"]["containerUrl"]["href"]
+            sas_uri = data_json["_links"]["containerUrl"]["href"]
         except json.decoder.JSONDecodeError:
             return ReturnValue(value=False, error=self._error_msg(response.status_code, {"error": {"message": response.text}}))
         except KeyError as e:
