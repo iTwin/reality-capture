@@ -22,7 +22,7 @@ export enum RDAJobType {
  */
 class O2DInputs {
     /** Path to ContextScene with oriented photos to analyze. */
-    orientedPhotos: string; // TODO : photos or orientedPhotos?
+    photos: string;
     /** Path to photo object detector to apply. */
     photoObjectDetector: string;
     /** Given 2D objects. */
@@ -37,7 +37,7 @@ class O2DInputs {
          * Path to ContextScene with oriented photos to analyze.
          * @type {string}
          */
-        this.orientedPhotos = "";
+        this.photos = "";
         /**
          * Path to photo object detector to apply.
          * @type {string}
@@ -171,8 +171,8 @@ export class O2DJobSettings {
     public toJson(): any {
         const json: any = {};
         json["inputs"] = [];
-        if (this.inputs.orientedPhotos)
-            json["inputs"].push({ "name": "orientedPhotos", "realityDataId": this.inputs.orientedPhotos });
+        if (this.inputs.photos)
+            json["inputs"].push({ "name": "photos", "realityDataId": this.inputs.photos });
 
         if (this.inputs.photoObjectDetector)
             json["inputs"].push({ "name": "photoObjectDetector", "realityDataId": this.inputs.photoObjectDetector });
@@ -226,8 +226,8 @@ export class O2DJobSettings {
         const newJobSettings = new O2DJobSettings();
         const inputsJson = settingsJson["inputs"];
         for (const input of inputsJson) {
-            if (input["name"] === "orientedPhotos")
-                newJobSettings.inputs.orientedPhotos = input["realityDataId"];
+            if (input["name"] === "photos")
+                newJobSettings.inputs.photos = input["realityDataId"];
             else if (input["name"] === "photoObjectDetector")
                 newJobSettings.inputs.photoObjectDetector = input["realityDataId"];
             else if (input["name"] === "meshes")
@@ -325,12 +325,12 @@ class S2DOutputs {
     exportedLines3DDGN: string;
     /** Cesium 3D Tiles file export with 3D lines. */
     exportedLines3DCesium: string;
-    /** Detected patches. */
-    patches3D: string;
-    /** DGN file export with patches. */
-    exportedPatches3DDGN: string;
-    /** Cesium 3D Tiles file export with 3D patches. */
-    exportedPatches3DCesium: string;
+    /** Detected polygons. */
+    polygons3D: string;
+    /** DGN file export with polygons. */
+    exportedPolygons3DDGN: string;
+    /** Cesium 3D Tiles file export with 3D polygons. */
+    exportedPolygons3DCesium: string;
 
     constructor() {
         /**
@@ -359,20 +359,20 @@ class S2DOutputs {
          */
         this.exportedLines3DCesium = "";
         /**
-         * Detected patches.
+         * Detected polygons.
          * @type {string}
          */
-        this.patches3D = "";
+        this.polygons3D = "";
         /**
-         * DGN file export with patches.
+         * DGN file export with polygons.
          * @type {string}
          */
-        this.exportedPatches3DDGN = "";
+        this.exportedPolygons3DDGN = "";
         /**
-         * Cesium 3D Tiles file export with 3D patches.
+         * Cesium 3D Tiles file export with 3D polygons.
          * @type {string}
          */
-        this.exportedPatches3DCesium = "";
+        this.exportedPolygons3DCesium = "";
     }
 }
 
@@ -468,14 +468,14 @@ export class S2DJobSettings {
         if(this.outputs.lines3D)
             json["outputs"].push("lines3D");
 
-        if(this.outputs.patches3D)
-            json["outputs"].push("patches3D");
+        if(this.outputs.polygons3D)
+            json["outputs"].push("polygons3D");
 
-        if(this.outputs.exportedPatches3DDGN)
-            json["outputs"].push("exportedPatches3DDGN");
+        if(this.outputs.exportedPolygons3DDGN)
+            json["outputs"].push("exportedPolygons3DDGN");
 
-        if(this.outputs.exportedPatches3DCesium)
-            json["outputs"].push("exportedPatches3DCesium");
+        if(this.outputs.exportedPolygons3DCesium)
+            json["outputs"].push("exportedPolygons3DCesium");
 
         if(this.outputs.exportedLines3DCesium)
             json["outputs"].push("exportedLines3DCesium");
@@ -526,14 +526,14 @@ export class S2DJobSettings {
                 newJobSettings.outputs.segmentation2D = output["realityDataId"];
             else if(output["name"] === "segmentedPhotos")
                 newJobSettings.outputs.segmentedPhotos = output["realityDataId"];
-            else if(output["name"] === "patches3D")
-                newJobSettings.outputs.patches3D = output["realityDataId"];
+            else if(output["name"] === "polygons3D")
+                newJobSettings.outputs.polygons3D = output["realityDataId"];
             else if(output["name"] === "lines3D")
                 newJobSettings.outputs.lines3D = output["realityDataId"];
-            else if(output["name"] === "exportedPatches3DDGN")
-                newJobSettings.outputs.exportedPatches3DDGN = output["realityDataId"];
-            else if(output["name"] === "exportedPatches3DCesium")
-                newJobSettings.outputs.exportedPatches3DCesium = output["realityDataId"];
+            else if(output["name"] === "exportedPolygons3DDGN")
+                newJobSettings.outputs.exportedPolygons3DDGN = output["realityDataId"];
+            else if(output["name"] === "exportedPolygons3DCesium")
+                newJobSettings.outputs.exportedPolygons3DCesium = output["realityDataId"];
             else if(output["name"] === "exportedLines3DDGN")
                 newJobSettings.outputs.exportedLines3DDGN = output["realityDataId"];
             else if(output["name"] === "exportedLines3DCesium")
@@ -654,7 +654,7 @@ export class SOrthoJobSettings {
          * Type of job settings.
          * @type {RDAJobType}
          */
-        this.type = RDAJobType.S2D;
+        this.type = RDAJobType.SOrtho;
         /**
          * Possible inputs for this job.
          * @type {SOrthoInputs}
@@ -817,12 +817,12 @@ class S3DOutputs {
     exportedLines3DDGN: string;
     /** Cesium 3D Tiles file export with 3D lines. */
     exportedLines3DCesium: string;
-    /** Detected patches. */
-    patches3D: string;
-    /** DGN file export with patches. */
-    exportedPatches3DDGN: string;
-    /** Cesium 3D Tiles file export with 3D patches. */
-    exportedPatches3DCesium: string;
+    /** Detected polygons. */
+    polygons3D: string;
+    /** DGN file export with polygons. */
+    exportedPolygons3DDGN: string;
+    /** Cesium 3D Tiles file export with 3D polygons. */
+    exportedPolygons3DCesium: string;
     /** Detected 3D lines. */
     lines3D: string;
 
@@ -888,20 +888,20 @@ class S3DOutputs {
          */
         this.exportedLines3DCesium = "";
         /**
-         * Detected patches.
+         * Detected polygons.
          * @type {string}
          */
-        this.patches3D = "";
+        this.polygons3D = "";
         /**
-         * DGN file export with patches.
+         * DGN file export with polygons.
          * @type {string}
          */
-        this.exportedPatches3DDGN = "";
+        this.exportedPolygons3DDGN = "";
         /**
-         * Cesium 3D Tiles file export with 3D patches.
+         * Cesium 3D Tiles file export with 3D polygons.
          * @type {string}
          */
-        this.exportedPatches3DCesium = "";
+        this.exportedPolygons3DCesium = "";
         /**
          * Detected 3D lines.
          * @type {string}
@@ -1030,17 +1030,17 @@ export class S3DJobSettings {
         if (this.outputs.exportedLines3DCesium)
             json["outputs"].push("exportedLines3DCesium");
 
-        if (this.outputs.patches3D)
-            json["outputs"].push("patches3D");
+        if (this.outputs.polygons3D)
+            json["outputs"].push("polygons3D");
 
         if (this.outputs.lines3D)
             json["outputs"].push("lines3D");
 
-        if (this.outputs.exportedPatches3DDGN)
-            json["outputs"].push("exportedPatches3DDGN");
+        if (this.outputs.exportedPolygons3DDGN)
+            json["outputs"].push("exportedPolygons3DDGN");
 
-        if (this.outputs.exportedPatches3DCesium)
-            json["outputs"].push("exportedPatches3DCesium");
+        if (this.outputs.exportedPolygons3DCesium)
+            json["outputs"].push("exportedPolygons3DCesium");
         
         if (this.exportSrs)
             json["exportSrs"] = this.exportSrs;
@@ -1105,14 +1105,14 @@ export class S3DJobSettings {
                 newJobSettings.outputs.exportedLines3DDGN = output["realityDataId"];
             else if (output["name"] === "exportedLines3DCesium")
                 newJobSettings.outputs.exportedLines3DCesium = output["realityDataId"];
-            else if (output["name"] === "patches3D")
-                newJobSettings.outputs.patches3D = output["realityDataId"];
+            else if (output["name"] === "polygons3D")
+                newJobSettings.outputs.polygons3D = output["realityDataId"];
             else if (output["name"] === "lines3D")
                 newJobSettings.outputs.lines3D = output["realityDataId"];
-            else if (output["name"] === "exportedPatches3DDGN")
-                newJobSettings.outputs.exportedPatches3DDGN = output["realityDataId"];
-            else if (output["name"] === "exportedPatches3DCesium")
-                newJobSettings.outputs.exportedPatches3DCesium = output["realityDataId"];
+            else if (output["name"] === "exportedPolygons3DDGN")
+                newJobSettings.outputs.exportedPolygons3DDGN = output["realityDataId"];
+            else if (output["name"] === "exportedPolygons3DCesium")
+                newJobSettings.outputs.exportedPolygons3DCesium = output["realityDataId"];
             else
                 return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output name : " + output["name"]));
         }
