@@ -8,7 +8,7 @@ version = "1.1.3"
 authors = [
   { name="Bentley Systems" },
 ]
-description = "This package contains a SDK for Reality Modeling, Reality Analysis and Reality Conversion iTwin APIs as well as Reality Data API utils. It provides classes, functions and examples to upload local data to ContextShare, run jobs and download the results."
+description = "This package contains a SDK for Reality Modeling, Reality Analysis and Reality Conversion iTwin APIs as well as Reality Management API utils. It provides classes, functions and examples to upload local data to ContextShare, run jobs and download the results."
 readme = "README.md"
 license =  {text = "MIT"}
 requires-python = ">=3.8"
@@ -33,4 +33,4 @@ include = ["reality_apis*", "token_factory","contextscene"]
 "Reality Analysis Api reference" = "https://developer.bentley.com/apis/realitydataanalysis/"
 "Reality Modeling Api reference" = "https://developer.bentley.com/apis/contextcapture/"
 "Reality Conversion Api reference" = "https://developer.bentley.com/apis/realityconversion/"
-"Reality Data Api reference" = "https://developer.bentley.com/apis/reality-data/"
+"Reality Management Api reference" = "https://developer.bentley.com/apis/reality-management/"

@@ -15,8 +15,8 @@ import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function main() {
-    const lazPointCloud = "D:\\Datasets\\Conversions";
-    const outputPath = "D:\\output";
+    const lazPointCloud = "path to the laz you want to convert";
+    const outputPath = "path to the folder where you want to save outputs";
 
     dotenv.config();
 

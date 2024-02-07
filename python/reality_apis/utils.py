@@ -32,6 +32,7 @@ class RealityDataType(Enum):
     ThreeMX = "3MX"
     ThreeSM = "3SM"
     Cesium = "Cesium3DTiles"
+    E57 = "E57"
     Unstructured = "Unstructured"
 
 
