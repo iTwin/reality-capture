@@ -86,7 +86,7 @@ describe("Reality analysis integration tests", () => {
         this.timeout(10000);
 
         const settings = new O2DJobSettings();
-        settings.inputs.orientedPhotos = sceneId;
+        settings.inputs.photos = sceneId;
         settings.inputs.photoObjectDetector = detectorId;
         settings.outputs.objects2D = "objects2D";
 
@@ -105,7 +105,7 @@ describe("Reality analysis integration tests", () => {
         expect(jobProperties.type).to.deep.equal("objects2D");
         expect(jobProperties.iTwinId).to.deep.equal(iTwinId);
         const o2dSettings = jobProperties.settings as O2DJobSettings;
-        expect(o2dSettings.inputs.orientedPhotos).to.deep.equal(sceneId);
+        expect(o2dSettings.inputs.photos).to.deep.equal(sceneId);
         expect(o2dSettings.inputs.photoObjectDetector).to.deep.equal(detectorId);
         expect(o2dSettings.outputs.objects2D).to.have.length(36);
         expect(jobProperties.id).to.deep.equal(jobId);

@@ -124,7 +124,7 @@ export function Rdas(props: RdasProps) {
         await realityDataAnalysisService.current.cancelJob(jobId);
     };
 
-    const setO2DInput = (input: "orientedPhotos" | "photoObjectDetector", value: string): void => {
+    const setO2DInput = (input: "photos" | "photoObjectDetector", value: string): void => {
         const target = new O2DJobSettings();
         const settings = Object.assign(target, jobSettings as O2DJobSettings);
         settings.inputs[input] = value;
@@ -189,8 +189,8 @@ export function Rdas(props: RdasProps) {
                 <div>
                     <div className="rdas-control">
                         <SelectRealityData key={0} realityDataAccessClient={props.realityDataAccessClient} placeholder={"Select photos (context scene)"} 
-                            onSelectedDataChange={(select: string) => setO2DInput("orientedPhotos", select)}
-                            realityDataType={["ContextScene"]} selectedRealityData={(jobSettings as O2DJobSettings).inputs["orientedPhotos"]} />
+                            onSelectedDataChange={(select: string) => setO2DInput("photos", select)}
+                            realityDataType={["ContextScene"]} selectedRealityData={(jobSettings as O2DJobSettings).inputs["photos"]} />
                     </div>
                     <div className="rdas-control">
                         <SelectRealityData key={1} realityDataAccessClient={props.realityDataAccessClient} placeholder={"Select photo object detector"} 

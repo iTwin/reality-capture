@@ -16,7 +16,7 @@ describe("Reality Analysis settings unit tests", () => {
     describe("Settings to json", () => {
         it("O2D", function () {
             const o2dSettings = new O2DJobSettings();
-            o2dSettings.inputs.orientedPhotos = "orientedPhotosId";
+            o2dSettings.inputs.photos = "orientedPhotosId";
             o2dSettings.inputs.photoObjectDetector = "photoObjectDetectorId";
             o2dSettings.inputs.meshes = "meshesId";
             o2dSettings.inputs.objects2D = "objects2DId";
@@ -64,10 +64,10 @@ describe("Reality Analysis settings unit tests", () => {
 
             s2dSettings.outputs.segmentation2D = "segmentation2D";
             s2dSettings.outputs.segmentedPhotos = "segmentedPhotos";
-            s2dSettings.outputs.patches3D = "patches3D";
+            s2dSettings.outputs.polygons3D = "polygons3D";
             s2dSettings.outputs.lines3D = "lines3D";
-            s2dSettings.outputs.exportedPatches3DDGN = "exportedPatches3DDGN";
-            s2dSettings.outputs.exportedPatches3DCesium = "exportedPatches3DCesium";
+            s2dSettings.outputs.exportedPolygons3DDGN = "exportedPolygons3DDGN";
+            s2dSettings.outputs.exportedPolygons3DCesium = "exportedPolygons3DCesium";
             s2dSettings.outputs.exportedLines3DDGN = "exportedLines3DDGN";
             s2dSettings.outputs.exportedLines3DCesium = "exportedLines3DCesium";
 
@@ -89,10 +89,10 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(json.outputs).to.have.length.above(0),
                 expect(json.outputs).to.deep.include("segmentation2D"),
                 expect(json.outputs).to.deep.include("segmentedPhotos"),
-                expect(json.outputs).to.deep.include("patches3D"),
+                expect(json.outputs).to.deep.include("polygons3D"),
                 expect(json.outputs).to.deep.include("lines3D"),
-                expect(json.outputs).to.deep.include("exportedPatches3DDGN"),
-                expect(json.outputs).to.deep.include("exportedPatches3DCesium"),
+                expect(json.outputs).to.deep.include("exportedPolygons3DDGN"),
+                expect(json.outputs).to.deep.include("exportedPolygons3DCesium"),
                 expect(json.outputs).to.deep.include("exportedLines3DDGN"),
                 expect(json.outputs).to.deep.include("exportedLines3DCesium"),
                 expect(json.computeLineWidth).to.deep.equal(true),
@@ -139,14 +139,14 @@ describe("Reality Analysis settings unit tests", () => {
             s3dSettings.inputs.segmentation3D = "segmentation3DId";
             s3dSettings.inputs.clipPolygon = "clipPolygonId";
             s3dSettings.outputs.lines3D = "lines3D";
-            s3dSettings.outputs.patches3D = "patches3D";
+            s3dSettings.outputs.polygons3D = "polygons3D";
             s3dSettings.outputs.exportedLocations3DSHP = "exportedLocations3DSHP";
             s3dSettings.outputs.exportedObjects3DCesium = "exportedObjects3DCesium";
             s3dSettings.outputs.exportedObjects3DDGN = "exportedObjects3DDGN";
             s3dSettings.outputs.exportedLines3DDGN = "exportedLines3DDGN";
             s3dSettings.outputs.exportedLines3DCesium = "exportedLines3DCesium";
-            s3dSettings.outputs.exportedPatches3DDGN = "exportedPatches3DDGN";
-            s3dSettings.outputs.exportedPatches3DCesium = "exportedPatches3DCesium";
+            s3dSettings.outputs.exportedPolygons3DDGN = "exportedPolygons3DDGN";
+            s3dSettings.outputs.exportedLines3DCesium = "exportedPolygons3DCesium";
             s3dSettings.outputs.exportedSegmentation3DLAS = "exportedSegmentation3DLAS";
             s3dSettings.outputs.exportedSegmentation3DLAZ = "exportedSegmentation3DLAZ";
             s3dSettings.outputs.exportedSegmentation3DPLY = "exportedSegmentation3DPLY";
@@ -182,9 +182,9 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(json.outputs).to.deep.include("segmentedPointCloud"),
                 expect(json.outputs).to.deep.include("exportedLines3DDGN"),
                 expect(json.outputs).to.deep.include("exportedLines3DCesium"),
-                expect(json.outputs).to.deep.include("patches3D"),
-                expect(json.outputs).to.deep.include("exportedPatches3DDGN"),
-                expect(json.outputs).to.deep.include("exportedPatches3DCesium"),
+                expect(json.outputs).to.deep.include("polygons3D"),
+                expect(json.outputs).to.deep.include("exportedPolygons3DDGN"),
+                expect(json.outputs).to.deep.include("exportedPolygons3DCesium"),
                 expect(json.outputs).to.deep.include("lines3D"),
 
                 expect(json.saveConfidence).to.deep.equal(true),
@@ -412,16 +412,16 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "lines3DId"
                 },
                 {
-                    "name": "patches3D",
-                    "realityDataId": "patches3DId"
+                    "name": "polygons3D",
+                    "realityDataId": "polygons3DId"
                 },
                 {
-                    "name": "exportedPatches3DDGN",
-                    "realityDataId": "exportedPatches3DDGNId"
+                    "name": "exportedPolygons3DDGN",
+                    "realityDataId": "exportedPolygons3DDGNId"
                 },
                 {
-                    "name": "exportedPatches3DCesium",
-                    "realityDataId": "exportedPatches3DCesiumId"
+                    "name": "exportedPolygons3DCesium",
+                    "realityDataId": "exportedPolygons3DCesiumId"
                 },
                 {
                     "name": "exportedLines3DDGN",
@@ -448,10 +448,10 @@ describe("Reality Analysis settings unit tests", () => {
 
                 expect(s2DSettings.outputs).to.have.property("segmentation2D", "segmentation2DId"),
                 expect(s2DSettings.outputs).to.have.property("segmentedPhotos", "segmentedPhotosId"),
-                expect(s2DSettings.outputs).to.have.property("patches3D", "patches3DId"),
+                expect(s2DSettings.outputs).to.have.property("polygons3D", "polygons3DId"),
                 expect(s2DSettings.outputs).to.have.property("lines3D", "lines3DId"),
-                expect(s2DSettings.outputs).to.have.property("exportedPatches3DDGN", "exportedPatches3DDGNId"),
-                expect(s2DSettings.outputs).to.have.property("exportedPatches3DCesium", "exportedPatches3DCesiumId"),
+                expect(s2DSettings.outputs).to.have.property("exportedPolygons3DDGN", "exportedPolygons3DDGNId"),
+                expect(s2DSettings.outputs).to.have.property("exportedPolygons3DCesium", "exportedPolygons3DCesiumId"),
                 expect(s2DSettings.outputs).to.have.property("exportedLines3DDGN", "exportedLines3DDGNId"),
                 expect(s2DSettings.outputs).to.have.property("exportedLines3DCesium", "exportedLines3DCesiumId"),
 
@@ -667,16 +667,16 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "exportedLines3DCesiumId"
                 },
                 {
-                    "name": "patches3D",
-                    "realityDataId": "patches3DId"
+                    "name": "polygons3D",
+                    "realityDataId": "polygons3DId"
                 },
                 {
-                    "name": "exportedPatches3DDGN",
-                    "realityDataId": "exportedPatches3DDGNId"
+                    "name": "exportedPolygons3DDGN",
+                    "realityDataId": "exportedPolygons3DDGNId"
                 },
                 {
-                    "name": "exportedPatches3DCesium",
-                    "realityDataId": "exportedPatches3DCesiumId"
+                    "name": "exportedPolygons3DCesium",
+                    "realityDataId": "exportedPolygons3DCesiumId"
                 },
                 {
                     "name": "lines3D",
@@ -707,9 +707,9 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(s3DSettings.outputs).to.have.property("exportedLocations3DSHP", "exportedLocations3DSHPId"),
                 expect(s3DSettings.outputs).to.have.property("exportedLines3DDGN", "exportedLines3DDGNId"),
                 expect(s3DSettings.outputs).to.have.property("exportedLines3DCesium", "exportedLines3DCesiumId"),
-                expect(s3DSettings.outputs).to.have.property("patches3D", "patches3DId"),
-                expect(s3DSettings.outputs).to.have.property("exportedPatches3DDGN", "exportedPatches3DDGNId"),
-                expect(s3DSettings.outputs).to.have.property("exportedPatches3DCesium", "exportedPatches3DCesiumId"),
+                expect(s3DSettings.outputs).to.have.property("polygons3D", "polygons3DId"),
+                expect(s3DSettings.outputs).to.have.property("exportedPolygons3DDGN", "exportedPolygons3DDGNId"),
+                expect(s3DSettings.outputs).to.have.property("exportedPolygons3DCesium", "exportedPolygons3DCesiumId"),
                 expect(s3DSettings.outputs).to.have.property("lines3D", "lines3DId"),
 
                 expect(s3DSettings.saveConfidence).to.deep.equal(true),
