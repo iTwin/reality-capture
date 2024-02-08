@@ -28,6 +28,6 @@ jobs:
 
       - name: Publish packages
         run: |
-          pnpm publish ./typescript/sdk ./typescript/sdk-node --access public
+          pnpm publish ./typescript/packages/reality-capture-analysis ./typescript/packages/reality-capture-common ./typescript/packages/reality-capture-conversion ./typescript/packages/reality-capture-modeling ./typescript/packages/reality-data-transfer --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
