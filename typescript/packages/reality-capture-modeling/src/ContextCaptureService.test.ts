@@ -7,7 +7,6 @@ import chai, { expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 import * as dotenv from "dotenv";
-import { BentleyError } from "@itwin/core-bentley";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import MockAdapter from "axios-mock-adapter";
@@ -37,7 +36,7 @@ describe("Reality Modeling unit tests", () => {
             authority: "https://ims.bentley.com",
         });
 
-        contextCaptureService = new ContextCaptureService(authorizationClient);
+        contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient));
     });
 
     beforeEach(async function () {
@@ -151,7 +150,7 @@ describe("Reality Modeling unit tests", () => {
             axiosMock.onGet(serviceUrl + "/jobs/id2").reply(200, { });
             const res = (contextCaptureService as any).submitRequest("jobs/id2", "INVALID", [200]);
 
-            return expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Wrong request method");
+            return expect(res).to.eventually.be.rejectedWith(Error).and.have.property("message", "Wrong request method");
         });
 
         it("Wrong response code", async function () {
@@ -162,7 +161,7 @@ describe("Reality Modeling unit tests", () => {
             if(axiosMock.history.get.length === 0)
                 return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
 
-            return expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("errorNumber", 201);
+            return expect(res).to.eventually.be.rejectedWith(Error).and.have.property("message", "Wrong request response code, expected : 200");
         });
 
         it("Axios error", async function () {
@@ -174,24 +173,18 @@ describe("Reality Modeling unit tests", () => {
             if(axiosMock.history.get.length === 0)
                 return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
 
-            return Promise.all([
-                expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("errorNumber", 404),
-                expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Axios error"),
-            ]);
+            return expect(res).to.eventually.be.rejectedWith(Error).and.have.property("message", "Error 404 Axios error");
         });
 
-        it("Bentley error", async function () {
-            axiosMock.onGet(serviceUrl + "/jobs/id5").reply(() => Promise.reject(new BentleyError(404, "Bentley Error")));
+        it("Error", async function () {
+            axiosMock.onGet(serviceUrl + "/jobs/id5").reply(() => Promise.reject(new Error("Error")));
             const res = (contextCaptureService as any).submitRequest("jobs/id5", "GET", [200]);
             await sleep(500);
 
             if(axiosMock.history.get.length === 0)
                 return expect(axiosMock.history.get.length).equal(1, "Mock adapter has not been called as expected.");
 
-            return Promise.all([
-                expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("errorNumber", 404),
-                expect(res).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Bentley Error"),
-            ]);
+            return expect(res).to.eventually.be.rejectedWith(Error).and.have.property("message", "Error");
         });
 
     });

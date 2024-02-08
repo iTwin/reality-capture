@@ -9,11 +9,10 @@ import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions } f
 import * as fs from "fs";
 import * as os from "os";
 import path from "path";
-import { v4 as uuidv4 } from "uuid";
 import { ReferenceTableNode } from "./ReferenceTableNode";
 import { RealityDataType } from "@itwin/reality-capture-common";
 import { DOMParser, XMLSerializer } from "@xmldom/xmldom";
-import { AuthorizationClient, BentleyError, BentleyStatus } from "@itwin/core-common";
+import * as crypto from "crypto";
 
 const BLOCK_CONCURRENCY = 16; // How much blocks are uploaded at the same time.
 const BLOCK_SIZE = 100 * 1024 * 1024; // 100MB. Size of uploaded blocks.
@@ -68,7 +67,7 @@ async function getUploadFilesInfo(uploadInfo: DataTransferInfo, root: string, cu
 }
 
 async function getUniqueTmpDir(): Promise<string> {
-    const tmpDir = path.join(os.tmpdir(), "Bentley/ContextCapture Internal/", uuidv4());
+    const tmpDir = path.join(os.tmpdir(), "Bentley/ContextCapture Internal/", crypto.randomUUID());
     await fs.promises.mkdir(tmpDir, { recursive: true });
     return tmpDir;
 }
@@ -98,32 +97,28 @@ async function replaceXMLScene(scenePath: string, outputPath: string, references
     for (let i = 0; i < sceneReferences.length; i++) {
         const referencePath = sceneReferences[i].getElementsByTagName("Path");
         if (!referencePath.length)
-            return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                "Invalid context scene" + scenePath + ", the reference " + sceneReferences[i] + " has no path."));
+            return Promise.reject(new Error("Invalid context scene" + scenePath + ", the reference " + sceneReferences[i] + " has no path."));
 
         let pathValue = referencePath[0].textContent;
         if (!pathValue)
-            return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                "Invalid context scene" + scenePath + ", the reference " + sceneReferences[i] + " has no path content."));
+            return Promise.reject(new Error("Invalid context scene" + scenePath + ", the reference " + sceneReferences[i] + " has no path content."));
 
         pathValue = pathValue.replace(/\\/g, "/");
         if (localToCloud) {
             const cloudId = references.getCloudIdFromLocalPath(pathValue);
             if (!cloudId)
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Can't replace local path with cloud id "));
+                return Promise.reject(new Error("Can't replace local path with cloud id "));
 
             referencePath[0].textContent = "rds:" + cloudId;
         }
         else {
             if (pathValue.substring(0, 4) !== "rds:")
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                    "Invalid context scene" + scenePath + ", the reference " + pathValue + "doesn't start with 'rds:'."));
+                return Promise.reject(new Error("Invalid context scene" + scenePath + ", the reference " + pathValue + "doesn't start with 'rds:'."));
 
             const cloudId = pathValue.substring(4);
             const localPath = references.getLocalPathFromCloudId(cloudId);
             if (!localPath)
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                    "Can't replace cloud id " + cloudId + "path with local path, does not exist in references"));
+                return Promise.reject(new Error("Can't replace cloud id " + cloudId + "path with local path, does not exist in references"));
 
             referencePath[0].textContent = localPath;
         }
@@ -145,19 +140,18 @@ async function replaceJSONScene(scenePath: string, outputPath: string, reference
         if (localToCloud) {
             const cloudId = references.getCloudIdFromLocalPath(referencePath);
             if (!cloudId)
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Can't replace local path " + referencePath + " with cloud id "));
+                return Promise.reject(new Error("Can't replace local path " + referencePath + " with cloud id "));
 
             json.References[referenceId].Path = "rds:" + cloudId;
         }
         else {
             if (referencePath.substring(0, 4) !== "rds:")
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                    "Invalid context scene" + scenePath + ", the reference " + referencePath + "doesn't start with 'rds:'."));
+                return Promise.reject(new Error("Invalid context scene" + scenePath + ", the reference " + referencePath + "doesn't start with 'rds:'."));
 
             const id = referencePath.substring(4);
             const localPath = references.getLocalPathFromCloudId(id);
             if (!localPath)
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Can't replace cloud id path with local path"));
+                return Promise.reject(new Error("Can't replace cloud id path with local path"));
 
             json.References[referenceId].Path = localPath;
         }
@@ -177,13 +171,11 @@ async function replaceCCOrientationsReferences(ccOrientationPath: string, output
         const imagePath = photos[i].getElementsByTagName("ImagePath");
         const maskPath = photos[i].getElementsByTagName("MaskPath");
         if (!imagePath.length)
-            return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                "Invalid cc orientations " + ccOrientationPath + ", the image " + photos[i] + " has no path."));
+            return Promise.reject(new Error("Invalid cc orientations " + ccOrientationPath + ", the image " + photos[i] + " has no path."));
 
         let pathValue = imagePath[0].textContent;
         if (!pathValue)
-            return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                "Invalid cc orientations" + ccOrientationPath + ", the image " + photos[i] + " has no path content."));
+            return Promise.reject(new Error("Invalid cc orientations" + ccOrientationPath + ", the image " + photos[i] + " has no path content."));
 
         pathValue = pathValue.replace(/\\/g, "/");
 
@@ -191,21 +183,18 @@ async function replaceCCOrientationsReferences(ccOrientationPath: string, output
             const cloudId = references.getCloudIdFromLocalPath(path.dirname(pathValue));
             const fileName = path.basename(pathValue);
             if (!cloudId)
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                    "Can't replace local path " + pathValue + " with cloud id : does not exist in reference table"));
+                return Promise.reject(new Error("Can't replace local path " + pathValue + " with cloud id : does not exist in reference table"));
 
             imagePath[0].textContent = path.join(cloudId, fileName);
             if (maskPath.length) {
                 let maskPathValue = maskPath[0].textContent;
                 if (!maskPathValue)
-                    return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                        "Invalid cc orientations" + ccOrientationPath + ", the mask " + photos[i] + " has no path content."));
+                    return Promise.reject(new Error("Invalid cc orientations" + ccOrientationPath + ", the mask " + photos[i] + " has no path content."));
 
                 maskPathValue = maskPathValue.replace(/\\/g, "/");
                 const maskCloudId = references.getCloudIdFromLocalPath(path.dirname(maskPathValue));
                 if (!maskCloudId)
-                    return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                        "Can't replace local path " + maskPathValue + " with mask cloud id."));
+                    return Promise.reject(new Error("Can't replace local path " + maskPathValue + " with mask cloud id."));
 
                 maskPath[0].textContent = path.join(maskCloudId, path.basename(pathValue));
             }
@@ -213,33 +202,28 @@ async function replaceCCOrientationsReferences(ccOrientationPath: string, output
         else {
             const splittedImagePath = pathValue.split("/");
             if (!splittedImagePath.length)
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                    "Invalid image path, the reference " + pathValue + " is not a path."));
+                return Promise.reject(new Error("Invalid image path, the reference " + pathValue + " is not a path."));
 
             const cloudId = splittedImagePath[0];
             const localPath = references.getLocalPathFromCloudId(cloudId);
             if (!localPath)
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                    "Can't replace cloud id " + cloudId + " path with local path, does not exist in references"));
+                return Promise.reject(new Error("Can't replace cloud id " + cloudId + " path with local path, does not exist in references"));
 
             imagePath[0].textContent = localPath + "/" + splittedImagePath[splittedImagePath.length - 1];
             if (maskPath.length) {
                 let maskPathValue = maskPath[0].textContent;
                 if (!maskPathValue)
-                    return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                        "Invalid cc orientations " + ccOrientationPath + ", the mask " + photos[i] + " has no path content."));
+                    return Promise.reject(new Error("Invalid cc orientations " + ccOrientationPath + ", the mask " + photos[i] + " has no path content."));
 
                 maskPathValue = maskPathValue.replace(/\\/g, "/");
                 const splittedMaskPath = maskPathValue.split("/");
                 if (!splittedMaskPath.length)
-                    return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                        "Invalid image path, the reference " + maskPathValue + " is not a path."));
+                    return Promise.reject(new Error("Invalid image path, the reference " + maskPathValue + " is not a path."));
 
                 const maskCloudId = splittedMaskPath[0];
                 const maskLocalPath = references.getLocalPathFromCloudId(maskCloudId);
                 if (!maskLocalPath)
-                    return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
-                        "Can't replace cloud id " + maskCloudId + "path with local path, does not exist in references"));
+                    return Promise.reject(new Error("Can't replace cloud id " + maskCloudId + "path with local path, does not exist in references"));
 
                 maskPath[0].textContent = maskLocalPath;
             }
@@ -267,11 +251,21 @@ interface DataTransferInfo {
 }
 
 /**
+ * Default hook to display progress.
+ * @param {number} progress current progress (percentage).
+ * @returns {boolean} false if the upload/download has been cancelled.
+ */
+export function defaultProgressHook(progress: number): boolean {
+    console.log("Current progress : " + progress + "%.");
+    return true;
+}
+
+/**
  * Utility class to upload and download reality data in ContextShare.
  */
 export class RealityDataTransferNode {
-    /** Authorization client to generate access token. */
-    private authorizationClient: AuthorizationClient;
+    /** Callback to get an access token */
+    private getAccessToken: () => Promise<string>;
 
     /** Target service url. */
     private serviceUrl = "https://api.bentley.com/reality-management/reality-data";
@@ -322,11 +316,11 @@ export class RealityDataTransferNode {
 
     /**
      * Create a new RealityDataTransferService.
-     * @param {AuthorizationClient} authorizationClient Authorization client to generate access token.
+     * @param {() => Promise<string>} getAccessToken Callback to get the access token.
      * @param {string} env (optional) Target environment.
      */
-    constructor(authorizationClient: AuthorizationClient, env?: string) {
-        this.authorizationClient = authorizationClient;
+    constructor(getAccessToken: () => Promise<string>, env?: string) {
+        this.getAccessToken = getAccessToken;
         if(env)
             this.serviceUrl = "https://" + env + "api.bentley.com/reality-management/reality-data";
         
@@ -363,7 +357,7 @@ export class RealityDataTransferNode {
             realityData.rootDocument = rootFile;
 
         const iTwinRealityData: ITwinRealityData = await rdaClient.createRealityData(
-            await this.authorizationClient.getAccessToken(), iTwinId, realityData);
+            await this.getAccessToken(), iTwinId, realityData);
         return iTwinRealityData;
     }
 
@@ -430,7 +424,7 @@ export class RealityDataTransferNode {
         this.currentProcessedFiles = new Array(BLOCK_CONCURRENCY).fill(0);
         this.uploadPromises = [];
         for (const [blobName, blockIds] of this.blocksToCommit.entries()) {
-            const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.authorizationClient.getAccessToken(), "", true);
+            const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.getAccessToken(), "", true);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
             const blockBlobClient = containerClient.getBlockBlobClient(blobName);
             await blockBlobClient.commitBlockList(blockIds);
@@ -471,7 +465,7 @@ export class RealityDataTransferNode {
                 if(chunksCount > 1) {
                     // Upload large file
                     for (let j = 0; j < chunksCount; j++) {
-                        const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.authorizationClient.getAccessToken(), "", true);
+                        const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.getAccessToken(), "", true);
                         const containerClient = new ContainerClient(azureBlobUrl.toString());
                         const blockBlobClient = containerClient.getBlockBlobClient(container === "" ? this.dataTransferInfo.files[i] : path.join(container, this.dataTransferInfo.files[i]));
 
@@ -497,7 +491,7 @@ export class RealityDataTransferNode {
                 }
                 else {
                     // Upload small file (single block)
-                    const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.authorizationClient.getAccessToken(), "", true);
+                    const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.getAccessToken(), "", true);
                     const containerClient = new ContainerClient(azureBlobUrl.toString());
                     const blockBlobClient = containerClient.getBlockBlobClient(container === "" ? this.dataTransferInfo.files[i] : 
                         path.join(container, this.dataTransferInfo.files[i]));
@@ -524,8 +518,7 @@ export class RealityDataTransferNode {
             if(error.name === "AbortError")
                 return;
             
-            return Promise.reject(new BentleyError(BentleyStatus.ERROR,
-                "Can't upload reality data : " + iTwinRealityData + ", error : " + error));
+            return Promise.reject(new Error("Can't upload reality data : " + iTwinRealityData + ", error : " + error));
         }
     }
 
@@ -567,7 +560,7 @@ export class RealityDataTransferNode {
             baseUrl: this.serviceUrl,
         };
         const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
-        const iTwinRealityData = await rdaClient.getRealityData(await this.authorizationClient.getAccessToken(), iTwinId, workspaceId);
+        const iTwinRealityData = await rdaClient.getRealityData(await this.getAccessToken(), iTwinId, workspaceId);
         await this.uploadToAzureBlob(dataPath, iTwinRealityData, path.join(jobId, "data")); // Upload in /job_id/data
     }
 
@@ -587,7 +580,7 @@ export class RealityDataTransferNode {
         try {
             const orientationFiles = await listFiles(sceneFolderPath);
             if (!orientationFiles[0].includes("ContextScene"))
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
+                return Promise.reject(new Error(
                     "The folder to upload doesn't contain any file named 'ContextScene'."));
 
             const scenePath = path.join(sceneFolderPath, orientationFiles[0]);
@@ -618,7 +611,7 @@ export class RealityDataTransferNode {
         try {
             const orientationFiles = await listFiles(orientationFolderPath);
             if (!orientationFiles.includes("Orientations.xml"))
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, 
+                return Promise.reject(new Error(
                     "The folder to upload doesn't contain any file named 'Orientations.xml'."));
 
             const orientationPath = path.join(orientationFolderPath, "Orientations.xml");
@@ -683,8 +676,8 @@ export class RealityDataTransferNode {
                 baseUrl: this.serviceUrl,
             };
             const rdaClient = new RealityDataAccessClient(realityDataClientOptions);
-            const iTwinRealityData: ITwinRealityData = await rdaClient.getRealityData(await this.authorizationClient.getAccessToken(), iTwinId, realityDataId);
-            const azureBlobUrl = await iTwinRealityData.getBlobUrl(await this.authorizationClient.getAccessToken(), "", false);
+            const iTwinRealityData: ITwinRealityData = await rdaClient.getRealityData(await this.getAccessToken(), iTwinId, realityDataId);
+            const azureBlobUrl = await iTwinRealityData.getBlobUrl(await this.getAccessToken(), "", false);
             const containerClient = new ContainerClient(azureBlobUrl.toString());
             const iter = await containerClient.listBlobsFlat();
 
@@ -746,8 +739,7 @@ export class RealityDataTransferNode {
             if(error.name === "AbortError")
                 return;
             
-            return Promise.reject(new BentleyError(BentleyStatus.ERROR,
-                "Can't upload reality data : " + realityDataId + ", error : " + error));
+            return Promise.reject(new Error("Can't upload reality data : " + realityDataId + ", error : " + error));
         }
     }
 

@@ -15,8 +15,7 @@ Besides, a typescript web application example is available to show how to create
 
 Reality data utils to upload and download results
 
-- [Reality Data utils (Browser)](./typescript/packages/reality-data-transfer/README.md)
-- [Reality Data utils (Node)](./typescript/packages/reality-data-transfer-node/README.md)
+- [Reality Data utils](./typescript/packages/reality-data-transfer/README.md)
 
 All the packages are available in python, except Reality Management
 

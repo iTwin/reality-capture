@@ -5,10 +5,9 @@
 
 import  path from "path";
 import { RCJobSettings, RealityConversionService } from "@itwin/reality-capture-conversion";
-import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
-import { defaultProgressHook } from "@itwin/reality-data-transfer";
+import { RealityDataTransferNode, ReferenceTableNode, defaultProgressHook } from "@itwin/reality-data-transfer";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
@@ -40,20 +39,20 @@ async function main() {
     
     let realityDataService: RealityDataTransferNode;
     if(env === "prod")
-        realityDataService = new RealityDataTransferNode(authorizationClient);
+        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     else
-        realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
+        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
 
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
 
     let realityConversionService;
     if(env === "prod")
-        realityConversionService = new RealityConversionService(authorizationClient);
+        realityConversionService = new RealityConversionService(authorizationClient.getAccessToken.bind(authorizationClient));
     else if(env === "qa")
-        realityConversionService = new RealityConversionService(authorizationClient, "qa-");
+        realityConversionService = new RealityConversionService(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
     else
-        realityConversionService = new RealityConversionService(authorizationClient, "dev-");
+        realityConversionService = new RealityConversionService(authorizationClient.getAccessToken.bind(authorizationClient), "dev-");
     console.log("Service initialized");
 
     try {

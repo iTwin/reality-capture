@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "./lib",
     "lib": ["dom", "esnext"],
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
     "esModuleInterop": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,

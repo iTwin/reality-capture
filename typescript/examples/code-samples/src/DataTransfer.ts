@@ -3,9 +3,8 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { RealityDataTransferNode } from "@itwin/reality-data-transfer-node";
 import * as dotenv from "dotenv";
-import { defaultProgressHook } from "@itwin/reality-data-transfer";
+import { RealityDataTransferNode, defaultProgressHook } from "@itwin/reality-data-transfer";
 import { RealityDataType } from "@itwin/reality-capture-common";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
@@ -34,9 +33,9 @@ async function runRealityDataExample() {
     
     let realityDataService: RealityDataTransferNode;
     if(env === "prod")
-        realityDataService = new RealityDataTransferNode(authorizationClient);
+        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     else
-        realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
+        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
     
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);

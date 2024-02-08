@@ -3,15 +3,11 @@
   "compilerOptions": {
     "declaration": false,
     "declarationMap": false,
-    "skipLibCheck": true,
     "outDir": "./lib",
     "jsx": "react",
     "allowJs": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "types": [
       "@bentley/react-scripts"
     ],
