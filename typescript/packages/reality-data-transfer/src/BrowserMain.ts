@@ -3,5 +3,5 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-export * from "./RealityDataTransferNode";
-export * from "./ReferenceTableNode";
+export * from "./browser/RealityDataTransferBrowser";
+export * from "./browser/ReferenceTableBrowser";

@@ -46,7 +46,7 @@ export function Rdas(props: RdasProps) {
 
     const initRdas = useCallback(async () => {
         const prefix = process.env.IMJS_URL_PREFIX ?? "";
-        realityDataAnalysisService.current = new RealityDataAnalysisService(props.authorizationClient, prefix);
+        realityDataAnalysisService.current = new RealityDataAnalysisService(props.authorizationClient.getAccessToken.bind(props.authorizationClient), prefix);
     }, []);
     
     useEffect(() => {

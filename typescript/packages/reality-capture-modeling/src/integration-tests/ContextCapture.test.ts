@@ -6,15 +6,15 @@
 import chai, { expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
-import { BentleyError } from "@itwin/core-bentley";
 import * as dotenv from "dotenv";
 import path from "path";
 import { RealityDataClientOptions, RealityDataAccessClient } from "@itwin/reality-data-client";
 import { ContextCaptureService } from "../ContextCaptureService";
-import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
 import { CCJobQuality, CCJobSettings, CCJobType } from "../Utils";
+import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer";
+
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -45,8 +45,8 @@ describe("Reality Modeling integration tests", () => {
             authority: "https://ims.bentley.com",
         });
 
-        contextCaptureService = new ContextCaptureService(authorizationClient);
-        realityDataTransfer = new RealityDataTransferNode(authorizationClient);
+        contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient));
+        realityDataTransfer = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
         references = new ReferenceTableNode();
 
         const realityDataClientOptions: RealityDataClientOptions = {
@@ -140,8 +140,7 @@ describe("Reality Modeling integration tests", () => {
             await rdaClient.getRealityData("", iTwinId, imagesId);
         }
         catch(error: any) {
-            expect(error).to.be.instanceOf(BentleyError);
-            expect((error as BentleyError).errorNumber).to.equal(404);
+            expect(error.message).to.include("Requested reality data is not available");
         }
     });
 
@@ -152,8 +151,7 @@ describe("Reality Modeling integration tests", () => {
             await rdaClient.getRealityData("", iTwinId, ccOrientationsId);
         }
         catch(error: any) {
-            expect(error).to.be.instanceOf(BentleyError);
-            expect((error as BentleyError).errorNumber).to.equal(404);
+            expect(error.message).to.include("Requested reality data is not available");
         }
     });
 
@@ -164,7 +162,7 @@ describe("Reality Modeling integration tests", () => {
             await contextCaptureService.getWorkspace(workspaceId);
         }
         catch(error: any) {
-            expect((error as BentleyError).errorNumber).to.equal(404);
+            expect(error.message).to.include("Requested workspace is not available");
         }
     });
 });

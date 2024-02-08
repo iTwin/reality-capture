@@ -3,11 +3,8 @@
 	"version": "0.1.0-dev.1",
 	"description": "Sample web application to upload data, run reality capture jobs (Analysis, Conversion and Modeling) and display the productions",
 	"private": true,
-	"main": "lib/index.js",
 	"scripts": {
-		"build": "npm run -s build:cjs && npm run -s build:esm",
-		"build:cjs": "tsc 1>&2 --outDir lib/cjs",
-		"build:esm": "tsc 1>&2 --module ES2020 --outDir lib/esm",
+		"build": "tsc 1>&2",
 		"clean": "rimraf lib build .rush",
 		"lint": "eslint ./src --ext .ts,.tsx ",
 		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
@@ -70,7 +67,7 @@
 		"eslint": "^8.19.0",
 		"eslint-plugin-react": "^7.30.1",
 		"rimraf": "^3.0.2",
-		"typescript": "^4.5.1"
+		"typescript": "^5.0.0"
 	},
 	"browserslist": [
 		"last 4 chrome version",

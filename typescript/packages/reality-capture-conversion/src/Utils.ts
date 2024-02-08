@@ -1,4 +1,3 @@
-import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
 import { JobDates, JobState } from "@itwin/reality-capture-common";
 
 /** Possible types of Reality Conversion job. */
@@ -184,7 +183,7 @@ export class RCJobSettings {
             else if (input["type"] === "E57")
                 newJobSettings.inputs.e57.push(input["id"]);
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected input type : " + input["type"]));
+                return Promise.reject(new Error("Found unexpected input type : " + input["type"]));
         }
         const outputsJson = settingsJson["outputs"];
         newJobSettings.outputs.opc = [];
@@ -195,7 +194,7 @@ export class RCJobSettings {
             else if (output["type"] === "PNTS")
                 newJobSettings.outputs.pnts.push(output["id"]);
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output type : " + output["type"]));
+                return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
 
         if(settingsJson["options"]) {

@@ -56,7 +56,7 @@ export function Rds(props: RdsProps) {
         if(prefix === "dev-")
             prefix = "qa-";
         
-        realityDataTransfer.current = new RealityDataTransferBrowser(props.authorizationClient, prefix);
+        realityDataTransfer.current = new RealityDataTransferBrowser(props.authorizationClient.getAccessToken.bind(props.authorizationClient), prefix);
         realityDataTransfer.current.setUploadHook(uploadProgressHook);
         realityDataTransfer.current.setDownloadHook(downloadProgressHook);
     }, []);

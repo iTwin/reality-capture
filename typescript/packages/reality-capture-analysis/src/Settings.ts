@@ -3,8 +3,6 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
-
 /** Possible types of a job. */
 export enum RDAJobType {
     NONE = "not recognized",
@@ -236,7 +234,7 @@ export class O2DJobSettings {
             else if (input["name"] === "pointClouds")
                 newJobSettings.inputs.pointClouds = input["realityDataId"];
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected input name : " + input["name"]));
+                return Promise.reject(new Error("Found unexpected input name : " + input["name"]));
         }
         const outputsJson = settingsJson["outputs"];
         for (const output of outputsJson) {
@@ -251,7 +249,7 @@ export class O2DJobSettings {
             else if (output["name"] === "exportedLocations3DSHP")
                 newJobSettings.outputs.exportedLocations3DSHP = output["realityDataId"];
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output name : " + output["name"]));
+                return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
         }
         if ("exportSrs" in settingsJson)
             newJobSettings.exportSrs = settingsJson["exportSrs"];
@@ -517,7 +515,7 @@ export class S2DJobSettings {
             else if (input["name"] === "segmentation2D")
                 newJobSettings.inputs.segmentation2D = input["realityDataId"];
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected input name : " + input["name"]));
+                return Promise.reject(new Error("Found unexpected input name : " + input["name"]));
         }
         const outputsJson = settingsJson["outputs"];
         for (const output of outputsJson) {
@@ -538,7 +536,7 @@ export class S2DJobSettings {
             else if(output["name"] === "exportedLines3DCesium")
                 newJobSettings.outputs.exportedLines3DCesium = output["realityDataId"];
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output name : " + output["name"]));
+                return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
         }
         if ("exportSrs" in settingsJson)
             newJobSettings.exportSrs = settingsJson["exportSrs"];
@@ -718,7 +716,7 @@ export class SOrthoJobSettings {
             else if (input["name"] === "photoSegmentationDetector")
                 newJobSettings.inputs.orthophotoSegmentationDetector = input["realityDataId"];
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected input name : " + input["name"]));
+                return Promise.reject(new Error("Found unexpected input name : " + input["name"]));
         }
         const outputsJson = settingsJson["outputs"];
         for (const output of outputsJson) {
@@ -737,7 +735,7 @@ export class SOrthoJobSettings {
             else if(output["name"] === "exportedLines2DDGN")
                 newJobSettings.outputs.exportedLines2DDGN = output["realityDataId"];
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output name : " + output["name"]));
+                return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
         }
 
         return newJobSettings;
@@ -1076,7 +1074,7 @@ export class S3DJobSettings {
             else if (input["name"] === "clipPolygon")
                 newJobSettings.inputs.clipPolygon = input["realityDataId"];
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected input name : " + input["name"]));
+                return Promise.reject(new Error("Found unexpected input name : " + input["name"]));
         }
         const outputsJson = settingsJson["outputs"];
         for (const output of outputsJson) {
@@ -1113,7 +1111,7 @@ export class S3DJobSettings {
             else if (output["name"] === "exportedPolygons3DCesium")
                 newJobSettings.outputs.exportedPolygons3DCesium = output["realityDataId"];
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output name : " + output["name"]));
+                return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
         }
         if ("saveConfidence" in settingsJson)
             newJobSettings.saveConfidence = JSON.parse(settingsJson["saveConfidence"]);
@@ -1311,7 +1309,7 @@ export class ExtractGroundJobSettings {
             else if (input["name"] === "clipPolygon")
                 newJobSettings.inputs.clipPolygon = input["realityDataId"];
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected input name : " + input["name"]));
+                return Promise.reject(new Error("Found unexpected input name : " + input["name"]));
         }
         const outputsJson = settingsJson["outputs"];
         for (const output of outputsJson) {
@@ -1326,7 +1324,7 @@ export class ExtractGroundJobSettings {
             else if (output["name"] === "exportedSegmentation3DLAS")
                 newJobSettings.outputs.exportedSegmentation3DLAS = output["realityDataId"];
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output name : " + output["name"]));
+                return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
         }
         
         if ("exportSrs" in settingsJson)
@@ -1546,7 +1544,7 @@ export class ChangeDetectionJobSettings {
             else if (input["name"] === "meshes2")
                 newJobSettings.inputs.meshes2 = input["realityDataId"];
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected input name : " + input["name"]));
+                return Promise.reject(new Error("Found unexpected input name : " + input["name"]));
         }
         const outputsJson = settingsJson["outputs"];
         for (const output of outputsJson) {
@@ -1555,7 +1553,7 @@ export class ChangeDetectionJobSettings {
             else if (output["name"] === "exportedLocations3DSHP")
                 newJobSettings.outputs.exportedLocations3DSHP = output["realityDataId"];
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output name : " + output["name"]));
+                return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
         }
         if ("colorThresholdLow" in settingsJson)
             newJobSettings.colorThresholdLow = JSON.parse(settingsJson["colorThresholdLow"]);

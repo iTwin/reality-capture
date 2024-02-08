@@ -4,12 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { O2DJobSettings, RealityDataAnalysisService } from "@itwin/reality-capture-analysis";
-import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import path from "path";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
+import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -44,17 +44,17 @@ async function runObjects2DExample() {
     
     let realityDataService: RealityDataTransferNode;
     if(env === "prod")
-        realityDataService = new RealityDataTransferNode(authorizationClient);
+        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     else
-        realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
+        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
 
     let realityDataAnalysisService;
     if(env === "prod")
-        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient);
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient));
     else if(env === "qa")
-        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "qa-");
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
     else
-        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "dev-");
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient), "dev-");
     console.log("Service initialized");
 
     // Creating reference table and uploading ccimageCollection, contextScene and detector if necessary (not yet on the cloud)

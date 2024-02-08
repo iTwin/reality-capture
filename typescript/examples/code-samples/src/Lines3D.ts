@@ -5,10 +5,9 @@
 
 import path from "path";
 import { S2DJobSettings, RealityDataAnalysisService } from "@itwin/reality-capture-analysis";
-import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
-import { defaultProgressHook } from "@itwin/reality-data-transfer";
+import { RealityDataTransferNode, ReferenceTableNode, defaultProgressHook } from "@itwin/reality-data-transfer";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
@@ -49,20 +48,20 @@ async function runLines3DExample() {
     
     let realityDataService: RealityDataTransferNode;
     if(env === "prod")
-        realityDataService = new RealityDataTransferNode(authorizationClient);
+        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     else
-        realityDataService = new RealityDataTransferNode(authorizationClient, "qa-");
+        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
 
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
 
     let realityDataAnalysisService;
     if(env === "prod")
-        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient);
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient));
     else if(env === "qa")
-        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "qa-");
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
     else
-        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient, "dev-");
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient), "dev-");
 
     console.log("Service initialized");
 

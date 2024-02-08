@@ -3,7 +3,6 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { BentleyError } from "@itwin/core-bentley";
 import chai, { expect } from "chai";
 import chaiAsPromised from "chai-as-promised";
 import { RCJobSettings } from "./Utils";
@@ -70,7 +69,7 @@ describe("Reality Conversion utils unit tests", () => {
             },
         };
         const realityConversionSettings = RCJobSettings.fromJson(json);
-        return expect(realityConversionSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected input type : Invalid");
+        return expect(realityConversionSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input type : Invalid");
     });
 
     it("Settings from json (unexpected output)", async function () {
@@ -82,6 +81,6 @@ describe("Reality Conversion utils unit tests", () => {
             },
         };
         const realityConversionSettings = RCJobSettings.fromJson(json);
-        return expect(realityConversionSettings).to.eventually.be.rejectedWith(BentleyError).and.have.property("message", "Found unexpected output type : Invalid");
+        return expect(realityConversionSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output type : Invalid");
     });
 });

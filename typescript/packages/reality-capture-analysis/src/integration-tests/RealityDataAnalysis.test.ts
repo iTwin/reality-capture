@@ -9,12 +9,11 @@ import chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 import path from "path";
 import * as dotenv from "dotenv";
-import { BentleyError } from "@itwin/core-bentley";
 import { RealityDataAnalysisService } from "../RealityDataAnalysisService";
-import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer-node";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
 import { O2DJobSettings } from "../Settings";
+import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -44,8 +43,8 @@ describe("Reality analysis integration tests", () => {
             authority: "https://ims.bentley.com",
         });
 
-        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient);
-        realityDataTransfer = new RealityDataTransferNode(authorizationClient);
+        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient));
+        realityDataTransfer = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
         references = new ReferenceTableNode();
 
         const realityDataClientOptions: RealityDataClientOptions = {
@@ -138,8 +137,7 @@ describe("Reality analysis integration tests", () => {
             await rdaClient.getRealityData("", iTwinId, imagesId);
         }
         catch(error: any) {
-            expect(error).instanceOf(BentleyError);
-            expect((error as BentleyError).errorNumber).to.equal(404);
+            expect(error.message).to.include("Requested reality data is not available");
         }
     });
 
@@ -150,8 +148,7 @@ describe("Reality analysis integration tests", () => {
             await rdaClient.getRealityData("", iTwinId, sceneId);
         }
         catch(error: any) {
-            expect(error).instanceOf(BentleyError);
-            expect((error as BentleyError).errorNumber).to.equal(404);
+            expect(error.message).to.include("Requested reality data is not available");
         }
     });
 
@@ -162,8 +159,7 @@ describe("Reality analysis integration tests", () => {
             await rdaClient.getRealityData("", iTwinId, detectorId);
         }
         catch(error: any) {
-            expect(error).instanceOf(BentleyError);
-            expect((error as BentleyError).errorNumber).to.equal(404);
+            expect(error.message).to.include("Requested reality data is not available");
         }
     });
 });

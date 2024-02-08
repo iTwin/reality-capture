@@ -3,7 +3,6 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { BentleyError, BentleyStatus } from "@itwin/core-bentley";
 import { JobDates, iTwinCaptureError, iTwinCaptureWarning } from "@itwin/reality-capture-common";
 
 /** Possible types of a Reality Modeling job. */
@@ -378,7 +377,7 @@ export class CCJobSettings {
             else if (output["format"] === "WebReady ScalableMesh")
                 newJobSettings.outputs.webReadyScalableMesh = output["id"];
             else
-                return Promise.reject(new BentleyError(BentleyStatus.ERROR, "Found unexpected output name : " + output["format"]));
+                return Promise.reject(new Error("Found unexpected output name : " + output["format"]));
         }
         if ("cacheSettings" in settingsJson["jobSettings"])
             newJobSettings.cacheSettings = {
