@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
 
       - name: Use Node.js 18
         uses: actions/setup-node@v3
@@ -35,11 +37,10 @@ jobs:
       - name: Run integration tests
         run: pnpm integration-tests
 
-      - name: Configure git
-        run: |
-          git config --global user.email imodeljs-admin@users.noreply.github.com
-          git config --global user.name imodeljs-admin 
-
       - name: Publish packages
         run: |
-          pnpm publish-packages --new --branch ${{ github.ref_name }} --token ${{ secrets.NPM_AUTH_TOKEN }} --message "Version bump [skip actions][publish docs]"
+          git config --local user.email imodeljs-admin@users.noreply.github.com
+          git config --local user.name imodeljs-admin 
+          pnpm publish-packages --new --branch ${{ github.ref_name }} --message "Version bump [skip actions][publish docs]"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
