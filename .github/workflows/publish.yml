@@ -42,4 +42,4 @@ jobs:
 
       - name: Publish packages
         run: |
-          pnpm publish --new --branch ${{ github.ref_name }} --token ${{ secrets.NPM_AUTH_TOKEN }}
+          pnpm publish-packages --new --branch ${{ github.ref_name }} --token ${{ secrets.NPM_AUTH_TOKEN }} --message "Version bump [skip actions][publish docs]"
