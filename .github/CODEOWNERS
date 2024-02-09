@@ -1,6 +1,6 @@
 * @dbiguenet @lr06 @RenaudKeriven @arianacarnielli @mcote01 @MarcBedard8
  
-/.github/workflows/publish.yml @aruniverse @itwin/oss-admins
+.github/workflows/publish.yaml @aruniverse @itwin/oss-admins
  
 python/ @arianacarnielli @dbiguenet
  
