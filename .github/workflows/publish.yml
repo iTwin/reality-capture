@@ -1,4 +1,4 @@
-name: Publish @itwin/reality-capture and @itwin/reality-capture-node to NPM
+name: Publish packages to NPM
 
 on: workflow_dispatch
 
@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
 
       - name: Use Node.js 18
         uses: actions/setup-node@v3
@@ -26,8 +28,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile=true
 
+      - name: Build
+        run: pnpm build
+
+      - name: Run unit tests
+        run: pnpm coverage
+
+      - name: Run integration tests
+        run: pnpm integration-tests
+
       - name: Publish packages
         run: |
-          pnpm publish ./typescript/packages/reality-capture-analysis ./typescript/packages/reality-capture-common ./typescript/packages/reality-capture-conversion ./typescript/packages/reality-capture-modeling ./typescript/packages/reality-data-transfer --access public
+          git config --local user.email imodeljs-admin@users.noreply.github.com
+          git config --local user.name imodeljs-admin 
+          pnpm publish-packages --new --branch ${{ github.ref_name }} --message "Version bump [skip actions]"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
