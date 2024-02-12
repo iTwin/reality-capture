@@ -1,6 +1,6 @@
 {
 	"name": "@itwin/reality-capture-common",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"description": "Reality Capture services common classes and interfaces",
 	"main": "lib/cjs/index.js",
 	"module": "lib/esm/index.js",
