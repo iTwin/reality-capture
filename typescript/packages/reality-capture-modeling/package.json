@@ -1,6 +1,6 @@
 {
 	"name": "@itwin/reality-capture-modeling",
-	"version": "0.1.0-dev.1",
+	"version": "1.0.0",
 	"description": "Reality Modeling sdk to run modeling jobs",
 	"main": "lib/cjs/index.js",
 	"module": "lib/esm/index.js",
