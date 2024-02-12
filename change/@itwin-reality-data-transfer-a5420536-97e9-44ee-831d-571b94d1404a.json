@@ -1,0 +1,7 @@
+{
+  "type": "major",
+  "comment": "Initial version 1.0.0",
+  "packageName": "@itwin/reality-data-transfer",
+  "email": "110406974+dbiguenet@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
