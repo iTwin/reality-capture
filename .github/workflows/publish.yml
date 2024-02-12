@@ -13,6 +13,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
+          lfs: true
 
       - name: Use Node.js 18
         uses: actions/setup-node@v3
@@ -32,9 +33,24 @@ jobs:
         run: pnpm build
 
       - name: Run unit tests
+        env:
+          IMJS_UNIT_TESTS_PROJECT_ID: ${{ secrets.UNIT_TESTS_PROJECT_ID }}
+          IMJS_UNIT_TESTS_CLIENT_ID: ${{ secrets.UNIT_TESTS_CLIENT_ID }}
+          IMJS_UNIT_TESTS_SECRET: ${{ secrets.UNIT_TESTS_SECRET }}
         run: pnpm coverage
 
       - name: Run integration tests
+        env:
+          IMJS_INTEGRATION_TESTS_PROJECT_ID: ${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}
+          IMJS_INTEGRATION_TESTS_CLIENT_ID: ${{ secrets.INTEGRATION_TESTS_CLIENT_ID }}
+          IMJS_INTEGRATION_TESTS_SECRET: ${{ secrets.INTEGRATION_TESTS_SECRET }}
+          IMJS_OIDC_BROWSER_TEST_CLIENT_ID: ${{ secrets.IMJS_OIDC_BROWSER_TEST_CLIENT_ID }}
+          IMJS_OIDC_BROWSER_TEST_REDIRECT_URI: ${{ vars.IMJS_OIDC_BROWSER_TEST_REDIRECT_URI }}
+          IMJS_OIDC_BROWSER_TEST_SCOPES: ${{ vars.IMJS_OIDC_BROWSER_TEST_SCOPES }}
+          IMJS_TEST_REGULAR_USER_NAME: ${{ vars.IMJS_TEST_REGULAR_USER_NAME }}
+          IMJS_TEST_REGULAR_USER_PASSWORD: ${{ secrets.IMJS_TEST_REGULAR_USER_PASSWORD }}
+          IMJS_TEST_MANAGER_USER_NAME: ${{ vars.IMJS_TEST_MANAGER_USER_NAME }}
+          IMJS_TEST_MANAGER_USER_PASSWORD: ${{ secrets.IMJS_TEST_MANAGER_USER_PASSWORD }}
         run: pnpm integration-tests
 
       - name: Publish packages
