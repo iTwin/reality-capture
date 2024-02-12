@@ -156,9 +156,9 @@ export function Rdas(props: RdasProps) {
         const target = new O2DJobSettings();
         const settings = Object.assign(target, jobSettings as O2DJobSettings);
         if(parameter === "useTiePoints")
-            settings[parameter] = value as boolean;
+            settings.options[parameter] = value as boolean;
         else
-            settings[parameter] = value as number;
+            settings.options[parameter] = value as number;
         setJobSettings(settings);
     };
 
@@ -166,9 +166,9 @@ export function Rdas(props: RdasProps) {
         const target = new S2DJobSettings();
         const settings = Object.assign(target, jobSettings as S2DJobSettings);
         if(parameter === "computeLineWidth")
-            settings[parameter] = value as boolean;
+            settings.options[parameter] = value as boolean;
         else
-            settings[parameter] = value as number;
+            settings.options[parameter] = value as number;
         setJobSettings(settings);
     };
 
@@ -176,9 +176,9 @@ export function Rdas(props: RdasProps) {
         const target = new S3DJobSettings();
         const settings = Object.assign(target, jobSettings as S3DJobSettings);
         if(parameter === "removeSmallComponents")
-            settings[parameter] = value as number;
+            settings.options[parameter] = value as number;
         else
-            settings[parameter] = value as boolean;
+            settings.options[parameter] = value as boolean;
         setJobSettings(settings);
     };
 
@@ -274,16 +274,16 @@ export function Rdas(props: RdasProps) {
                 <div>
                     <div className="rdas-controls-group">
                         <div className="rdas-control">Min photos</div>
-                        <Input className="rdas-input" value={(jobSettings as O2DJobSettings).minPhotos} size="small" 
+                        <Input className="rdas-input" value={(jobSettings as O2DJobSettings).options.minPhotos} size="small" 
                             step={1} type="number" max={1000} min={1} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setO2DParameter("minPhotos", parseInt(event.target.value))}/> 
                     </div>
                     <div className="rdas-controls-group">
                         <div className="rdas-control">Max dist</div>
-                        <Input className="rdas-input" value={(jobSettings as O2DJobSettings).maxDist} size="small" 
+                        <Input className="rdas-input" value={(jobSettings as O2DJobSettings).options.maxDist} size="small" 
                             step={1} type="number" max={1000} min={1} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setO2DParameter("maxDist", parseInt(event.target.value))}/> 
                     </div>
                     <div className="rdas-controls-group">
-                        <ToggleSwitch className="rdas-control" label={"Use tie points"} checked={(jobSettings as O2DJobSettings).useTiePoints !== false} 
+                        <ToggleSwitch className="rdas-control" label={"Use tie points"} checked={(jobSettings as O2DJobSettings).options.useTiePoints !== false} 
                             labelPosition={"left"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setO2DParameter("useTiePoints", e.target.checked);}}/>
                     </div>
                 </div>
@@ -293,16 +293,16 @@ export function Rdas(props: RdasProps) {
                 <div>
                     <div className="rdas-controls-group">
                         <div className="rdas-control">Min photos</div>
-                        <Input className="rdas-input" value={(jobSettings as S2DJobSettings).minPhotos} size="small" 
+                        <Input className="rdas-input" value={(jobSettings as S2DJobSettings).options.minPhotos} size="small" 
                             step={1} type="number" max={1000} min={1} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setS2DParameter("minPhotos", parseInt(event.target.value))}/> 
                     </div>
                     <div className="rdas-controls-group">
                         <div className="rdas-control">Remove small components</div>
-                        <Input className="rdas-input" value={(jobSettings as S2DJobSettings).removeSmallComponents} size="small" 
+                        <Input className="rdas-input" value={(jobSettings as S2DJobSettings).options.removeSmallComponents} size="small" 
                             step={1} type="number" max={1000} min={1} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setS2DParameter("removeSmallComponents", parseInt(event.target.value))}/> 
                     </div>
                     <div className="rdas-controls-group">
-                        <ToggleSwitch className="rdas-control" label={"Compute line width"} checked={(jobSettings as S2DJobSettings).computeLineWidth !== false} 
+                        <ToggleSwitch className="rdas-control" label={"Compute line width"} checked={(jobSettings as S2DJobSettings).options.computeLineWidth !== false} 
                             labelPosition={"left"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setS2DParameter("computeLineWidth", e.target.checked);}}/>
                     </div>
                 </div>
@@ -314,15 +314,15 @@ export function Rdas(props: RdasProps) {
                 <div>
                     <div className="rdas-controls-group">
                         <div className="rdas-control">Remove small components</div>
-                        <Input className="rdas-input" value={(jobSettings as S3DJobSettings).removeSmallComponents} size="small" 
+                        <Input className="rdas-input" value={(jobSettings as S3DJobSettings).options.removeSmallComponents} size="small" 
                             step={1} type="number" max={1000} min={1} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setS3DParameter("removeSmallComponents", parseInt(event.target.value))}/> 
                     </div>
                     <div className="rdas-controls-group">
-                        <ToggleSwitch className="rdas-control" label={"Save confidence"} checked={(jobSettings as S3DJobSettings).saveConfidence !== false} 
+                        <ToggleSwitch className="rdas-control" label={"Save confidence"} checked={(jobSettings as S3DJobSettings).options.saveConfidence !== false} 
                             labelPosition={"left"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setS3DParameter("saveConfidence", e.target.checked);}}/>
                     </div>
                     <div className="rdas-controls-group">
-                        <ToggleSwitch className="rdas-control" label={"Compute line width"} checked={(jobSettings as S3DJobSettings).computeLineWidth !== false} 
+                        <ToggleSwitch className="rdas-control" label={"Compute line width"} checked={(jobSettings as S3DJobSettings).options.computeLineWidth !== false} 
                             labelPosition={"left"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setS3DParameter("computeLineWidth", e.target.checked);}}/>
                     </div>
                 </div>

@@ -25,10 +25,10 @@ describe("Reality Analysis settings unit tests", () => {
             o2dSettings.outputs.exportedObjects3DDGN = "exportedObjects3DDGN";
             o2dSettings.outputs.exportedObjects3DCesium = "exportedObjects3DCesium";
             o2dSettings.outputs.exportedLocations3DSHP = "exportedLocations3DSHP";
-            o2dSettings.useTiePoints = true;
-            o2dSettings.minPhotos = 10;
-            o2dSettings.maxDist = 100;
-            o2dSettings.exportSrs = "EPSG:2788";
+            o2dSettings.options.useTiePoints = true;
+            o2dSettings.options.minPhotos = 10;
+            o2dSettings.options.maxDist = 100;
+            o2dSettings.options.exportSrs = "EPSG:2788";
             const json = o2dSettings.toJson();
             return Promise.all([
                 expect(json).to.have.property("inputs"),
@@ -46,10 +46,10 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(json.outputs).to.deep.include("exportedObjects3DCesium"),
                 expect(json.outputs).to.deep.include("exportedLocations3DSHP"),
 
-                expect(json.useTiePoints).to.deep.equal(true),
-                expect(json.minPhotos).to.deep.equal(10),
-                expect(json.maxDist).to.deep.equal(100),
-                expect(json.exportSrs).to.deep.equal("EPSG:2788"),
+                expect(json.options.useTiePoints).to.deep.equal(true),
+                expect(json.options.minPhotos).to.deep.equal(10),
+                expect(json.options.maxDist).to.deep.equal(100),
+                expect(json.options.exportSrs).to.deep.equal("EPSG:2788"),
             ]);
         });
 
@@ -70,10 +70,10 @@ describe("Reality Analysis settings unit tests", () => {
             s2dSettings.outputs.exportedLines3DDGN = "exportedLines3DDGN";
             s2dSettings.outputs.exportedLines3DCesium = "exportedLines3DCesium";
 
-            s2dSettings.computeLineWidth = true;
-            s2dSettings.removeSmallComponents = 1;
-            s2dSettings.exportSrs = "EPSG:4512";
-            s2dSettings.minPhotos = 10;
+            s2dSettings.options.computeLineWidth = true;
+            s2dSettings.options.removeSmallComponents = 1;
+            s2dSettings.options.exportSrs = "EPSG:4512";
+            s2dSettings.options.minPhotos = 10;
 
             const json = s2dSettings.toJson();
             return Promise.all([
@@ -94,10 +94,10 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(json.outputs).to.deep.include("exportedPolygons3DCesium"),
                 expect(json.outputs).to.deep.include("exportedLines3DDGN"),
                 expect(json.outputs).to.deep.include("exportedLines3DCesium"),
-                expect(json.computeLineWidth).to.deep.equal(true),
-                expect(json.removeSmallComponents).to.deep.equal(1),
-                expect(json.exportSrs).to.deep.equal("EPSG:4512"),
-                expect(json.minPhotos).to.deep.equal(10),
+                expect(json.options.computeLineWidth).to.deep.equal(true),
+                expect(json.options.removeSmallComponents).to.deep.equal(1),
+                expect(json.options.exportSrs).to.deep.equal("EPSG:4512"),
+                expect(json.options.minPhotos).to.deep.equal(10),
             ]);
         });
 
@@ -153,10 +153,10 @@ describe("Reality Analysis settings unit tests", () => {
             s3dSettings.outputs.objects3D = "objects3D";
             s3dSettings.outputs.segmentation3D = "segmentation3D";
             s3dSettings.outputs.segmentedPointCloud = "segmentedPointCloud";
-            s3dSettings.saveConfidence = true;
-            s3dSettings.computeLineWidth = true;
-            s3dSettings.removeSmallComponents = 1;
-            s3dSettings.exportSrs = "EPSG:7132";
+            s3dSettings.options.saveConfidence = true;
+            s3dSettings.options.computeLineWidth = true;
+            s3dSettings.options.removeSmallComponents = 1;
+            s3dSettings.options.exportSrs = "EPSG:7132";
             const json = s3dSettings.toJson();
             return Promise.all([
                 expect(json).to.have.property("inputs"),
@@ -186,10 +186,10 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(json.outputs).to.deep.include("exportedPolygons3DCesium"),
                 expect(json.outputs).to.deep.include("lines3D"),
 
-                expect(json.saveConfidence).to.deep.equal(true),
-                expect(json.exportSrs).to.deep.equal("EPSG:7132"),
-                expect(json.computeLineWidth).to.deep.equal(true),
-                expect(json.removeSmallComponents).to.deep.equal(1),
+                expect(json.options.saveConfidence).to.deep.equal(true),
+                expect(json.options.exportSrs).to.deep.equal("EPSG:7132"),
+                expect(json.options.computeLineWidth).to.deep.equal(true),
+                expect(json.options.removeSmallComponents).to.deep.equal(1),
             ]);
         });
 
@@ -201,13 +201,13 @@ describe("Reality Analysis settings unit tests", () => {
             changeDetectionSettings.inputs.pointClouds2 = "pointClouds2Id";
             changeDetectionSettings.outputs.exportedLocations3DSHP = "exportedLocations3DSHP";
             changeDetectionSettings.outputs.objects3D = "objects3D";
-            changeDetectionSettings.colorThresholdLow = 10;
-            changeDetectionSettings.colorThresholdHigh = 50;
-            changeDetectionSettings.distThresholdLow = 10;
-            changeDetectionSettings.distThresholdHigh = 50;
-            changeDetectionSettings.resolution = 100;
-            changeDetectionSettings.minPoints = 1000;
-            changeDetectionSettings.exportSrs = "EPSG:5712";
+            changeDetectionSettings.options.colorThresholdLow = 10;
+            changeDetectionSettings.options.colorThresholdHigh = 50;
+            changeDetectionSettings.options.distThresholdLow = 10;
+            changeDetectionSettings.options.distThresholdHigh = 50;
+            changeDetectionSettings.options.resolution = 100;
+            changeDetectionSettings.options.minPoints = 1000;
+            changeDetectionSettings.options.exportSrs = "EPSG:5712";
             const json = changeDetectionSettings.toJson();
             return Promise.all([
                 expect(json).to.have.property("inputs"),
@@ -222,13 +222,13 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(json.outputs).to.deep.include("exportedLocations3DSHP"),
                 expect(json.outputs).to.deep.include("objects3D"),
                 
-                expect(json.colorThresholdLow).to.deep.equal("10"),
-                expect(json.colorThresholdHigh).to.deep.equal("50"),
-                expect(json.distThresholdLow).to.deep.equal("10"),
-                expect(json.distThresholdHigh).to.deep.equal("50"),
-                expect(json.resolution).to.deep.equal("100"),
-                expect(json.minPoints).to.deep.equal("1000"),
-                expect(json.exportSrs).to.deep.equal("EPSG:5712"),
+                expect(json.options.colorThresholdLow).to.deep.equal("10"),
+                expect(json.options.colorThresholdHigh).to.deep.equal("50"),
+                expect(json.options.distThresholdLow).to.deep.equal("10"),
+                expect(json.options.distThresholdHigh).to.deep.equal("50"),
+                expect(json.options.resolution).to.deep.equal("100"),
+                expect(json.options.minPoints).to.deep.equal("1000"),
+                expect(json.options.exportSrs).to.deep.equal("EPSG:5712"),
             ]);
         });
 
@@ -243,7 +243,7 @@ describe("Reality Analysis settings unit tests", () => {
             extractGroundSettings.outputs.exportedSegmentation3DPOD = "exportedSegmentation3DPOD";
             extractGroundSettings.outputs.segmentation3D = "segmentation3D";
             extractGroundSettings.outputs.segmentedPointCloud = "segmentedPointCloud";
-            extractGroundSettings.exportSrs = "EPSG:6712";
+            extractGroundSettings.options.exportSrs = "EPSG:6712";
             const json = extractGroundSettings.toJson();
             return Promise.all([
                 expect(json).to.have.property("inputs"),
@@ -261,7 +261,7 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(json.outputs).to.deep.include("segmentation3D"),
                 expect(json.outputs).to.deep.include("segmentedPointCloud"),
 
-                expect(json.exportSrs).to.deep.equal("EPSG:6712"),
+                expect(json.options.exportSrs).to.deep.equal("EPSG:6712"),
             ]);
         });
 
@@ -312,10 +312,12 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "exportedLocations3DSHPId"
                 }
                 ],
-                "useTiePoints": "true",
-                "minPhotos": "10",
-                "maxDist": "100",
-                "exportSrs": "EPSG:7415"
+                "options": {
+                    "useTiePoints": "true",
+                    "minPhotos": "10",
+                    "maxDist": "100",
+                    "exportSrs": "EPSG:7415"
+                }
             };
             const o2DSettings = await O2DJobSettings.fromJson(json);
             return Promise.all([
@@ -332,10 +334,10 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(o2DSettings.outputs).to.have.property("exportedObjects3DCesium", "exportedObjects3DCesiumId"),
                 expect(o2DSettings.outputs).to.have.property("exportedLocations3DSHP", "exportedLocations3DSHPId"),
 
-                expect(o2DSettings.useTiePoints).to.deep.equal(true),
-                expect(o2DSettings.minPhotos).to.deep.equal(10),
-                expect(o2DSettings.maxDist).to.deep.equal(100),
-                expect(o2DSettings.exportSrs).to.deep.equal("EPSG:7415"),
+                expect(o2DSettings.options.useTiePoints).to.deep.equal(true),
+                expect(o2DSettings.options.minPhotos).to.deep.equal(10),
+                expect(o2DSettings.options.maxDist).to.deep.equal(100),
+                expect(o2DSettings.options.exportSrs).to.deep.equal("EPSG:7415"),
             ]);
         });
 
@@ -431,10 +433,12 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "exportedLines3DCesiumId"
                 },
                 ],
-                "minPhotos": "10",
-                "exportSrs": "EPSG:7415",
-                "computeLineWidth": "true",
-                "removeSmallComponents": "1"
+                "options": {
+                    "minPhotos": "10",
+                    "exportSrs": "EPSG:7415",
+                    "computeLineWidth": "true",
+                    "removeSmallComponents": "1"
+                }
             };
             const s2DSettings = await S2DJobSettings.fromJson(json);
             return Promise.all([
@@ -454,10 +458,10 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(s2DSettings.outputs).to.have.property("exportedLines3DDGN", "exportedLines3DDGNId"),
                 expect(s2DSettings.outputs).to.have.property("exportedLines3DCesium", "exportedLines3DCesiumId"),
 
-                expect(s2DSettings.computeLineWidth).to.deep.equal(true),
-                expect(s2DSettings.minPhotos).to.deep.equal(10),
-                expect(s2DSettings.removeSmallComponents).to.deep.equal(1),
-                expect(s2DSettings.exportSrs).to.deep.equal("EPSG:7415"),
+                expect(s2DSettings.options.computeLineWidth).to.deep.equal(true),
+                expect(s2DSettings.options.minPhotos).to.deep.equal(10),
+                expect(s2DSettings.options.removeSmallComponents).to.deep.equal(1),
+                expect(s2DSettings.options.exportSrs).to.deep.equal("EPSG:7415"),
             ]);
         });
 
@@ -682,8 +686,12 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "lines3DId"
                 }
                 ],
-                "saveConfidence": "true",
-                "exportSrs": "EPSG:2841"
+                "options": {
+                    "saveConfidence": "true",
+                    "exportSrs": "EPSG:2841",
+                    "removeSmallComponents" : "1",
+                    "computeLineWidth" : "true"
+                }
             };
             const s3DSettings = await S3DJobSettings.fromJson(json);
             return Promise.all([
@@ -711,8 +719,10 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(s3DSettings.outputs).to.have.property("exportedPolygons3DCesium", "exportedPolygons3DCesiumId"),
                 expect(s3DSettings.outputs).to.have.property("lines3D", "lines3DId"),
 
-                expect(s3DSettings.saveConfidence).to.deep.equal(true),
-                expect(s3DSettings.exportSrs).to.deep.equal("EPSG:2841"),
+                expect(s3DSettings.options.saveConfidence).to.deep.equal(true),
+                expect(s3DSettings.options.exportSrs).to.deep.equal("EPSG:2841"),
+                expect(s3DSettings.options.computeLineWidth).to.deep.equal(true),
+                expect(s3DSettings.options.removeSmallComponents).to.deep.equal(1),
             ]);
         });
 
@@ -780,13 +790,15 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "exportedLocations3DSHPId"
                 }
                 ],
-                "colorThresholdLow": "10",
-                "colorThresholdHigh": "100",
-                "distThresholdLow": "10",
-                "distThresholdHigh": "100",
-                "resolution": "100",
-                "minPoints": "1000",
-                "exportSrs": "EPSG:5912"
+                "options": {
+                    "colorThresholdLow": "10",
+                    "colorThresholdHigh": "100",
+                    "distThresholdLow": "10",
+                    "distThresholdHigh": "100",
+                    "resolution": "100",
+                    "minPoints": "1000",
+                    "exportSrs": "EPSG:5912"
+                }
             };
             const changeDetectionSettings = await ChangeDetectionJobSettings.fromJson(json);
             return Promise.all([
@@ -799,13 +811,13 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(changeDetectionSettings.outputs).to.have.property("objects3D", "objects3DId"),
                 expect(changeDetectionSettings.outputs).to.have.property("exportedLocations3DSHP", "exportedLocations3DSHPId"),
 
-                expect(changeDetectionSettings.colorThresholdLow).to.deep.equal(10),
-                expect(changeDetectionSettings.colorThresholdHigh).to.deep.equal(100),
-                expect(changeDetectionSettings.distThresholdLow).to.deep.equal(10),
-                expect(changeDetectionSettings.distThresholdHigh).to.deep.equal(100),
-                expect(changeDetectionSettings.resolution).to.deep.equal(100),
-                expect(changeDetectionSettings.minPoints).to.deep.equal(1000),
-                expect(changeDetectionSettings.exportSrs).to.deep.equal("EPSG:5912")
+                expect(changeDetectionSettings.options.colorThresholdLow).to.deep.equal(10),
+                expect(changeDetectionSettings.options.colorThresholdHigh).to.deep.equal(100),
+                expect(changeDetectionSettings.options.distThresholdLow).to.deep.equal(10),
+                expect(changeDetectionSettings.options.distThresholdHigh).to.deep.equal(100),
+                expect(changeDetectionSettings.options.resolution).to.deep.equal(100),
+                expect(changeDetectionSettings.options.minPoints).to.deep.equal(1000),
+                expect(changeDetectionSettings.options.exportSrs).to.deep.equal("EPSG:5912")
             ]);
         });
 
@@ -885,7 +897,9 @@ describe("Reality Analysis settings unit tests", () => {
                     "realityDataId": "exportedSegmentation3DLAZId"
                 }
                 ],
-                "exportSrs": "EPSG:5912"
+                "options": {
+                    "exportSrs": "EPSG:5912"
+                }
             };
             const extractGroundSettings = await ExtractGroundJobSettings.fromJson(json);
             return Promise.all([
@@ -901,7 +915,7 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(extractGroundSettings.outputs).to.have.property("exportedSegmentation3DLAS", "exportedSegmentation3DLASId"),
                 expect(extractGroundSettings.outputs).to.have.property("exportedSegmentation3DLAZ", "exportedSegmentation3DLAZId"),
 
-                expect(extractGroundSettings.exportSrs).to.deep.equal("EPSG:5912")
+                expect(extractGroundSettings.options.exportSrs).to.deep.equal("EPSG:5912")
             ]);
         });
 

@@ -38,7 +38,7 @@ class RealityDataAnalysisService:
             "Authorization": None,
             "User-Agent": f"Reality Analysis Python SDK/{__version__}",
             "Content-type": "application/json",
-            "Accept": "application/vnd.bentley.itwin-platform.v1+json",
+            "Accept": "application/vnd.bentley.ras-v2-test+json",
         }
 
     def _get_header(self) -> dict:

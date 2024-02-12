@@ -102,17 +102,10 @@ class O2DOutputs {
     }
 }
 
-/** Settings for Object Detection 2D jobs. */
-export class O2DJobSettings {
-    /** Type of job settings. */
-    type: RDAJobType;
-    /** Possible inputs for this job. */
-    inputs: O2DInputs;
-    /** 
-     * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
-     */
-    outputs: O2DOutputs;
+/**
+ * Possible options for an Objects 2D job
+ */
+class O2DOptions {
     /** Improve detection using tie points in photos. */
     useTiePoints: boolean;
     /** Minimum number of 2D objects to generate a 3D object. */
@@ -123,22 +116,6 @@ export class O2DJobSettings {
     exportSrs: string;
 
     constructor() {
-        /**
-         * Type of job settings.
-         * @type {RDAJobType}
-         */
-        this.type = RDAJobType.O2D;
-        /** 
-         * Possible inputs for this job. 
-         * @type {O2DInputs}
-         */
-        this.inputs = new O2DInputs();
-        /** 
-         * Possible outputs for this job. 
-         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
-         * @type {O2DOutputs}
-         */
-        this.outputs = new O2DOutputs();
         /**
          * Improve detection using tie points in orientedPhotos.
          * @type {boolean}
@@ -159,6 +136,45 @@ export class O2DJobSettings {
          * @type {string}
          */
         this.exportSrs = "";
+    }
+}
+
+/** Settings for Object Detection 2D jobs. */
+export class O2DJobSettings {
+    /** Type of job settings. */
+    type: RDAJobType;
+    /** Possible inputs for this job. */
+    inputs: O2DInputs;
+    /** 
+     * Possible outputs for this job. 
+     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+     */
+    outputs: O2DOutputs;
+    /** Possible options for this job. */
+    options: O2DOptions;
+
+    constructor() {
+        /**
+         * Type of job settings.
+         * @type {RDAJobType}
+         */
+        this.type = RDAJobType.O2D;
+        /** 
+         * Possible inputs for this job. 
+         * @type {O2DInputs}
+         */
+        this.inputs = new O2DInputs();
+        /** 
+         * Possible outputs for this job. 
+         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+         * @type {O2DOutputs}
+         */
+        this.outputs = new O2DOutputs();
+        /**
+         * Possible options for this job.
+         * @type {O2DOptions}
+         */
+        this.options = new O2DOptions();
     }
 
     /**
@@ -199,17 +215,17 @@ export class O2DJobSettings {
         if (this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
 
-        if (this.useTiePoints)
-            json["useTiePoints"] = "true";
+        if (this.options.useTiePoints)
+            json["options"]["useTiePoints"] = "true";
 
-        if (this.minPhotos)
-            json["minPhotos"] = this.minPhotos.toString();
+        if (this.options.minPhotos)
+            json["options"]["minPhotos"] = this.options.minPhotos.toString();
 
-        if (this.maxDist)
-            json["maxDist"] = this.maxDist.toString();
+        if (this.options.maxDist)
+            json["options"]["maxDist"] = this.options.maxDist.toString();
 
-        if (this.exportSrs)
-            json["exportSrs"] = this.exportSrs;
+        if (this.options.exportSrs)
+            json["options"]["exportSrs"] = this.options.exportSrs;
 
         return json;
     }
@@ -251,14 +267,17 @@ export class O2DJobSettings {
             else
                 return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
         }
-        if ("exportSrs" in settingsJson)
-            newJobSettings.exportSrs = settingsJson["exportSrs"];
-        if ("minPhotos" in settingsJson)
-            newJobSettings.minPhotos = JSON.parse(settingsJson["minPhotos"]);
-        if ("maxDist" in settingsJson)
-            newJobSettings.maxDist = JSON.parse(settingsJson["maxDist"]);
-        if ("useTiePoints" in settingsJson)
-            newJobSettings.useTiePoints = JSON.parse(settingsJson["useTiePoints"]);
+        if("options" in settingsJson) {
+            const options = settingsJson["options"];
+            if ("exportSrs" in options)
+                newJobSettings.options.exportSrs = options["exportSrs"];
+            if ("minPhotos" in options)
+                newJobSettings.options.minPhotos = JSON.parse(options["minPhotos"]);
+            if ("maxDist" in options)
+                newJobSettings.options.maxDist = JSON.parse(options["maxDist"]);
+            if ("useTiePoints" in options)
+                newJobSettings.options.useTiePoints = JSON.parse(options["useTiePoints"]);
+        }
 
         return newJobSettings;
     }
@@ -374,18 +393,9 @@ class S2DOutputs {
 }
 
 /**
- * Settings for Segmentation 2D jobs.
+ * Possible options for an Segmentation 2D job
  */
-export class S2DJobSettings {
-    /** Type of job settings. */
-    type: RDAJobType;
-    /** Possible inputs for this job. */
-    inputs: S2DInputs;
-    /** 
-     * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob.
-     */
-    outputs: S2DOutputs;
+class S2DOptions {
     /** Estimation 3D line width at each vertex. */
     computeLineWidth: boolean;
     /** Remove 3D lines with total length smaller than this value. */
@@ -396,21 +406,6 @@ export class S2DJobSettings {
     minPhotos: number;
 
     constructor() {
-        /**
-         * Type of job settings.
-         * @type {RDAJobType}
-         */
-        this.type = RDAJobType.S2D;
-        /**
-         * Possible inputs for this job.
-         * @type {S2DInputs}
-         */
-        this.inputs = new S2DInputs();
-        /**
-         * Possible outputs for this job.
-         * @type {S2DOutputs}
-         */
-        this.outputs = new S2DOutputs();
         /**
          * Estimation 3D line width at each vertex.
          * @type {boolean}
@@ -430,7 +425,47 @@ export class S2DJobSettings {
          * Minimum number of photos with a same class for a 3D point to have its class set.
          * @type {number}
          */
-        this.minPhotos = 0;
+        this.minPhotos = 0;        
+    }
+}
+
+/**
+ * Settings for Segmentation 2D jobs.
+ */
+export class S2DJobSettings {
+    /** Type of job settings. */
+    type: RDAJobType;
+    /** Possible inputs for this job. */
+    inputs: S2DInputs;
+    /** 
+     * Possible outputs for this job. 
+     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob.
+     */
+    outputs: S2DOutputs;
+    /** Possible options for this job. */
+    options: S2DOptions;
+
+    constructor() {
+        /**
+         * Type of job settings.
+         * @type {RDAJobType}
+         */
+        this.type = RDAJobType.S2D;
+        /**
+         * Possible inputs for this job.
+         * @type {S2DInputs}
+         */
+        this.inputs = new S2DInputs();
+        /**
+         * Possible outputs for this job.
+         * @type {S2DOutputs}
+         */
+        this.outputs = new S2DOutputs();
+        /**
+         * Possible options for this job.
+         * @type {S2DOptions}
+         */
+        this.options = new S2DOptions();
     }
 
     /**
@@ -480,17 +515,17 @@ export class S2DJobSettings {
         if(this.outputs.exportedLines3DDGN)
             json["outputs"].push("exportedLines3DDGN");
 
-        if (this.computeLineWidth)
-            json["computeLineWidth"] = "true";
+        if (this.options.computeLineWidth)
+            json["options"]["computeLineWidth"] = "true";
 
-        if (this.removeSmallComponents)
-            json["removeSmallComponents"] = this.removeSmallComponents.toString();
+        if (this.options.removeSmallComponents)
+            json["options"]["removeSmallComponents"] = this.options.removeSmallComponents.toString();
 
-        if (this.minPhotos)
-            json["minPhotos"] = this.minPhotos.toString();
+        if (this.options.minPhotos)
+            json["options"]["minPhotos"] = this.options.minPhotos.toString();
         
-        if (this.exportSrs)
-            json["exportSrs"] = this.exportSrs;
+        if (this.options.exportSrs)
+            json["options"]["exportSrs"] = this.options.exportSrs;
 
         return json;
     }
@@ -538,14 +573,17 @@ export class S2DJobSettings {
             else
                 return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
         }
-        if ("exportSrs" in settingsJson)
-            newJobSettings.exportSrs = settingsJson["exportSrs"];
-        if ("minPhotos" in settingsJson)
-            newJobSettings.minPhotos = JSON.parse(settingsJson["minPhotos"]);
-        if ("computeLineWidth" in settingsJson)
-            newJobSettings.computeLineWidth = JSON.parse(settingsJson["computeLineWidth"]);
-        if ("removeSmallComponents" in settingsJson)
-            newJobSettings.removeSmallComponents = JSON.parse(settingsJson["removeSmallComponents"]);
+        if("options" in settingsJson) {
+            const options = settingsJson["options"];
+            if ("exportSrs" in options)
+                newJobSettings.options.exportSrs = options["exportSrs"];
+            if ("minPhotos" in options)
+                newJobSettings.options.minPhotos = JSON.parse(options["minPhotos"]);
+            if ("computeLineWidth" in options)
+                newJobSettings.options.computeLineWidth = JSON.parse(options["computeLineWidth"]);
+            if ("removeSmallComponents" in options)
+                newJobSettings.options.removeSmallComponents = JSON.parse(options["removeSmallComponents"]);
+        }
 
         return newJobSettings;
     }
@@ -908,18 +946,9 @@ class S3DOutputs {
 }
 
 /**
- * Settings for Segmentation 3D jobs.
+ * Possible options for an Segmentation 3D job
  */
-export class S3DJobSettings {
-    /** Type of job settings. */
-    type: RDAJobType;
-    /** Possible inputs for this job settings. */
-    inputs: S3DInputs;
-    /** 
-     * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
-     */
-    outputs: S3DOutputs;
+class S3DOptions {
     /** If confidence is saved in 3D segmentation files or not. */
     saveConfidence: boolean;
     /** Estimation 3D line width at each vertex. */
@@ -927,25 +956,9 @@ export class S3DJobSettings {
     /** Remove 3D lines with total length smaller than this value. */
     removeSmallComponents: number;
     /** SRS used by exports. */
-    exportSrs: string;
+    exportSrs: string;    
 
     constructor() {
-        /**
-         * Type of job settings.
-         * @type {RDAJobType}
-         */
-        this.type = RDAJobType.S3D;
-        /**
-         * Possible inputs for this job settings.
-         * @type {S3DInputs}
-         */
-        this.inputs = new S3DInputs();
-        /**
-         * Possible outputs for this job. 
-         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
-         * @type {S3DOutputs}
-         */
-        this.outputs = new S3DOutputs();
         /**
          * If confidence is saved on output files or not.
          * @type {boolean}
@@ -965,7 +978,48 @@ export class S3DJobSettings {
          * SRS used by exports.
          * @type {string}
          */
-        this.exportSrs = "";
+        this.exportSrs = "";              
+    }
+}
+
+/**
+ * Settings for Segmentation 3D jobs.
+ */
+export class S3DJobSettings {
+    /** Type of job settings. */
+    type: RDAJobType;
+    /** Possible inputs for this job settings. */
+    inputs: S3DInputs;
+    /** 
+     * Possible outputs for this job. 
+     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+     */
+    outputs: S3DOutputs;
+    /** Possible options for this job. */
+    options: S3DOptions;
+
+    constructor() {
+        /**
+         * Type of job settings.
+         * @type {RDAJobType}
+         */
+        this.type = RDAJobType.S3D;
+        /**
+         * Possible inputs for this job settings.
+         * @type {S3DInputs}
+         */
+        this.inputs = new S3DInputs();
+        /**
+         * Possible outputs for this job. 
+         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+         * @type {S3DOutputs}
+         */
+        this.outputs = new S3DOutputs();
+        /**
+         * Possible options for this job.
+         * @type {S3DOptions}
+         */
+        this.options = new S3DOptions();
     }
 
     /**
@@ -1039,17 +1093,17 @@ export class S3DJobSettings {
         if (this.outputs.exportedPolygons3DCesium)
             json["outputs"].push("exportedPolygons3DCesium");
         
-        if (this.exportSrs)
-            json["exportSrs"] = this.exportSrs;
+        if (this.options.exportSrs)
+            json["options"]["exportSrs"] = this.options.exportSrs;
 
-        if (this.saveConfidence)
-            json["saveConfidence"] = "true";
+        if (this.options.saveConfidence)
+            json["options"]["saveConfidence"] = "true";
 
-        if (this.removeSmallComponents)
-            json["removeSmallComponents"] = this.removeSmallComponents.toString();
+        if (this.options.removeSmallComponents)
+            json["options"]["removeSmallComponents"] = this.options.removeSmallComponents.toString();
 
-        if (this.computeLineWidth)
-            json["computeLineWidth"] = "true";
+        if (this.options.computeLineWidth)
+            json["options"]["computeLineWidth"] = "true";
 
         return json;
     }
@@ -1113,17 +1167,20 @@ export class S3DJobSettings {
             else
                 return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
         }
-        if ("saveConfidence" in settingsJson)
-            newJobSettings.saveConfidence = JSON.parse(settingsJson["saveConfidence"]);
-        
-        if ("exportSrs" in settingsJson)
-            newJobSettings.exportSrs = settingsJson["exportSrs"];
+        if("options" in settingsJson) {
+            const options = settingsJson["options"];
+            if ("saveConfidence" in options)
+                newJobSettings.options.saveConfidence = JSON.parse(options["saveConfidence"]);
+            
+            if ("exportSrs" in options)
+                newJobSettings.options.exportSrs = options["exportSrs"];
 
-        if ("removeSmallComponents" in settingsJson)
-            newJobSettings.removeSmallComponents = JSON.parse(settingsJson["removeSmallComponents"]);
+            if ("removeSmallComponents" in options)
+                newJobSettings.options.removeSmallComponents = JSON.parse(options["removeSmallComponents"]);
 
-        if ("computeLineWidth" in settingsJson)
-            newJobSettings.computeLineWidth = JSON.parse(settingsJson["computeLineWidth"]);
+            if ("computeLineWidth" in options)
+                newJobSettings.options.computeLineWidth = JSON.parse(options["computeLineWidth"]);
+        }
 
         return newJobSettings;
     }
@@ -1211,6 +1268,22 @@ class ExtractGroundOutputs {
 }
 
 /**
+ * Possible options for an Extract Ground job
+ */
+class ExtractGroundOptions {
+    /** SRS used by exports. */
+    exportSrs: string;    
+
+    constructor() {
+        /**
+         * SRS used by exports.
+         * @type {string}
+         */
+        this.exportSrs = "";
+    }
+}
+
+/**
  * Settings for Extract ground jobs.
  */
 export class ExtractGroundJobSettings {
@@ -1223,8 +1296,8 @@ export class ExtractGroundJobSettings {
      * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
      */
     outputs: ExtractGroundOutputs;
-    /** SRS used by exports. */
-    exportSrs: string;
+    /** Possible options for this job. */
+    options: ExtractGroundOptions;
 
     constructor() {
         /**
@@ -1244,10 +1317,10 @@ export class ExtractGroundJobSettings {
          */
         this.outputs = new ExtractGroundOutputs();
         /**
-         * SRS used by exports.
-         * @type {string}
+         * Possible options for this job.
+         * @type {ExtractGroundOptions}
          */
-        this.exportSrs = "";
+        this.options = new ExtractGroundOptions();
     }
 
     /**
@@ -1285,8 +1358,8 @@ export class ExtractGroundJobSettings {
         if (this.outputs.exportedSegmentation3DLAZ)
             json["outputs"].push("exportedSegmentation3DLAZ");
 
-        if (this.exportSrs)
-            json["exportSrs"] = this.exportSrs;
+        if (this.options.exportSrs)
+            json["outputs"]["exportSrs"] = this.options.exportSrs;
         
         return json;
     }
@@ -1326,9 +1399,11 @@ export class ExtractGroundJobSettings {
             else
                 return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
         }
-        
-        if ("exportSrs" in settingsJson)
-            newJobSettings.exportSrs = settingsJson["exportSrs"];
+        if("options" in settingsJson) {
+            const options = settingsJson["options"];
+            if ("exportSrs" in options)
+                newJobSettings.options.exportSrs = options["exportSrs"];
+        }
         
         return newJobSettings;
     }
@@ -1395,50 +1470,25 @@ class ChangeDetectionOutputs {
 }
 
 /**
- * Settings for Change Detection jobs.
+ * Possible options for a Change Detection job
  */
-export class ChangeDetectionJobSettings {
-    /** Type of job settings. */
-    type: RDAJobType;
-    /** Possible inputs for this job settings. */
-    inputs: ChangeDetectionInputs;
-    /** 
-     * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
-     */
-    outputs: ChangeDetectionOutputs;
-    /** Low threshold to detect color changes (hysteresis detection). */
-    colorThresholdLow: number;
-    /** High threshold to detect color changes (hysteresis detection). */
-    colorThresholdHigh: number;
-    /** Low threshold to detect spatial changes (hysteresis detection). */
-    distThresholdLow: number;
-    /** High threshold to detect spatial changes (hysteresis detection). */
-    distThresholdHigh: number;
-    /** Target point cloud resolution when starting from meshes. */
-    resolution: number;
-    /** Minimum number of points in a region to be considered as a change. */
-    minPoints: number;
-    /** SRS used by exports. */
-    exportSrs: string;
+class ChangeDetectionOptions {
+        /** Low threshold to detect color changes (hysteresis detection). */
+        colorThresholdLow: number;
+        /** High threshold to detect color changes (hysteresis detection). */
+        colorThresholdHigh: number;
+        /** Low threshold to detect spatial changes (hysteresis detection). */
+        distThresholdLow: number;
+        /** High threshold to detect spatial changes (hysteresis detection). */
+        distThresholdHigh: number;
+        /** Target point cloud resolution when starting from meshes. */
+        resolution: number;
+        /** Minimum number of points in a region to be considered as a change. */
+        minPoints: number;
+        /** SRS used by exports. */
+        exportSrs: string;
 
     constructor() {
-        /**
-         * Type of job settings.
-         * @type {RDAJobType}
-         */
-        this.type = RDAJobType.ChangeDetection;
-        /**
-         * Possible inputs for this job settings.
-         * @type {ChangeDetectionInputs}
-         */
-        this.inputs = new ChangeDetectionInputs();
-        /**
-         * Possible outputs for this job. 
-         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
-         * @type {ChangeDetectionOutputs}
-         */
-        this.outputs = new ChangeDetectionOutputs();
         /**
          * Low threshold to detect color changes (hysteresis detection).
          * @type {number}
@@ -1475,6 +1525,47 @@ export class ChangeDetectionJobSettings {
          */
         this.exportSrs = "";
     }
+}
+
+/**
+ * Settings for Change Detection jobs.
+ */
+export class ChangeDetectionJobSettings {
+    /** Type of job settings. */
+    type: RDAJobType;
+    /** Possible inputs for this job settings. */
+    inputs: ChangeDetectionInputs;
+    /** 
+     * Possible outputs for this job. 
+     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+     */
+    outputs: ChangeDetectionOutputs;
+    /** Possible options for this job. */
+    options: ChangeDetectionOptions;
+
+    constructor() {
+        /**
+         * Type of job settings.
+         * @type {RDAJobType}
+         */
+        this.type = RDAJobType.ChangeDetection;
+        /**
+         * Possible inputs for this job settings.
+         * @type {ChangeDetectionInputs}
+         */
+        this.inputs = new ChangeDetectionInputs();
+        /**
+         * Possible outputs for this job. 
+         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+         * @type {ChangeDetectionOutputs}
+         */
+        this.outputs = new ChangeDetectionOutputs();
+        /**
+         * Possible options for this job.
+         * @type {ChangeDetectionOptions}
+         */
+        this.options = new ChangeDetectionOptions();
+    }
 
     /**
      * Transform settings into json.
@@ -1502,26 +1593,26 @@ export class ChangeDetectionJobSettings {
         if (this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
 
-        if (this.colorThresholdLow)
-            json["colorThresholdLow"] = this.colorThresholdLow.toString();
+        if (this.options.colorThresholdLow)
+            json["options"]["colorThresholdLow"] = this.options.colorThresholdLow.toString();
 
-        if (this.colorThresholdHigh)
-            json["colorThresholdHigh"] = this.colorThresholdHigh.toString();
+        if (this.options.colorThresholdHigh)
+            json["options"]["colorThresholdHigh"] = this.options.colorThresholdHigh.toString();
 
-        if (this.distThresholdLow)
-            json["distThresholdLow"] = this.distThresholdLow.toString();
+        if (this.options.distThresholdLow)
+            json["options"]["distThresholdLow"] = this.options.distThresholdLow.toString();
 
-        if (this.distThresholdHigh)
-            json["distThresholdHigh"] = this.distThresholdHigh.toString();
+        if (this.options.distThresholdHigh)
+            json["options"]["distThresholdHigh"] = this.options.distThresholdHigh.toString();
 
-        if (this.resolution)
-            json["resolution"] = this.resolution.toString();
+        if (this.options.resolution)
+            json["options"]["resolution"] = this.options.resolution.toString();
 
-        if (this.minPoints)
-            json["minPoints"] = this.minPoints.toString();
+        if (this.options.minPoints)
+            json["options"]["minPoints"] = this.options.minPoints.toString();
 
-        if (this.exportSrs)
-            json["exportSrs"] = this.exportSrs;
+        if (this.options.exportSrs)
+            json["options"]["exportSrs"] = this.options.exportSrs;
         
         return json;
     }
@@ -1555,20 +1646,23 @@ export class ChangeDetectionJobSettings {
             else
                 return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
         }
-        if ("colorThresholdLow" in settingsJson)
-            newJobSettings.colorThresholdLow = JSON.parse(settingsJson["colorThresholdLow"]);
-        if ("colorThresholdHigh" in settingsJson)
-            newJobSettings.colorThresholdHigh = JSON.parse(settingsJson["colorThresholdHigh"]);
-        if ("distThresholdLow" in settingsJson)
-            newJobSettings.distThresholdLow = JSON.parse(settingsJson["distThresholdLow"]);
-        if ("distThresholdHigh" in settingsJson)
-            newJobSettings.distThresholdHigh = JSON.parse(settingsJson["distThresholdHigh"]);
-        if ("resolution" in settingsJson)
-            newJobSettings.resolution = JSON.parse(settingsJson["resolution"]);
-        if ("minPoints" in settingsJson)
-            newJobSettings.minPoints = JSON.parse(settingsJson["minPoints"]);
-        if ("exportSrs" in settingsJson)
-            newJobSettings.exportSrs = settingsJson["exportSrs"];
+        if("options" in settingsJson) {
+            const options = settingsJson["options"];
+            if ("colorThresholdLow" in options)
+                newJobSettings.options.colorThresholdLow = JSON.parse(options["colorThresholdLow"]);
+            if ("colorThresholdHigh" in options)
+                newJobSettings.options.colorThresholdHigh = JSON.parse(options["colorThresholdHigh"]);
+            if ("distThresholdLow" in options)
+                newJobSettings.options.distThresholdLow = JSON.parse(options["distThresholdLow"]);
+            if ("distThresholdHigh" in options)
+                newJobSettings.options.distThresholdHigh = JSON.parse(options["distThresholdHigh"]);
+            if ("resolution" in options)
+                newJobSettings.options.resolution = JSON.parse(options["resolution"]);
+            if ("minPoints" in options)
+                newJobSettings.options.minPoints = JSON.parse(options["minPoints"]);
+            if ("exportSrs" in options)
+                newJobSettings.options.exportSrs = options["exportSrs"];
+        }
         
         return newJobSettings;
     }

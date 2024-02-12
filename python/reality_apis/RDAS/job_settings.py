@@ -17,20 +17,14 @@ class O2DJobSettings:
         inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
         outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
             of the output) before passing the settings to create_job.
-        use_tie_points: Improve detection using tie points in photos.
-        min_photos: Minimum number of 2D objects to generate a 3D object.
-        max_dist: Maximum distance between photos and 3D objects.
-        export_srs: SRS used by exports.
+        options: Possible options for this job.
     """
 
     def __init__(self) -> None:
         self.type = RDAJobType.O2D
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
-        self.use_tie_points: bool = False
-        self.min_photos: int = 0
-        self.max_dist: float = 0.0
-        self.export_srs: str = ""
+        self.options = self.Options()
 
     def to_json(self) -> dict:
         """
@@ -75,14 +69,15 @@ class O2DJobSettings:
             json_dict["outputs"].append("exportedObjects3DCesium")
         if self.outputs.exported_locations3D_SHP:
             json_dict["outputs"].append("exportedLocations3DSHP")
-        if self.use_tie_points:
-            json_dict["useTiePoints"] = "true"
-        if self.min_photos:
-            json_dict["minPhotos"] = str(self.min_photos)
-        if self.max_dist:
-            json_dict["maxDist"] = str(self.max_dist)
-        if self.export_srs:
-            json_dict["exportSrs"] = self.export_srs
+        json_dict["options"] = dict()
+        if self.options.use_tie_points:
+            json_dict["options"]["useTiePoints"] = "true"
+        if self.options.min_photos:
+            json_dict["options"]["minPhotos"] = str(self.options.min_photos)
+        if self.options.max_dist:
+            json_dict["options"]["maxDist"] = str(self.options.max_dist)
+        if self.options.export_srs:
+            json_dict["options"]["exportSrs"] = self.options.export_srs
         return json_dict
 
     @classmethod
@@ -139,14 +134,16 @@ class O2DJobSettings:
                     raise TypeError(
                         "found non expected output name" + output_dict["name"]
                     )
-            if "exportSrs" in settings_json:
-                new_job_settings.export_srs = settings_json["exportSrs"]
-            if "minPhotos" in settings_json:
-                new_job_settings.min_photos = int(settings_json["minPhotos"])
-            if "maxDist" in settings_json:
-                new_job_settings.max_dist = float(settings_json["maxDist"])
-            if "useTiePoints" in settings_json:
-                new_job_settings.use_tie_points = bool(settings_json["useTiePoints"])
+            if "options" in settings_json:
+                options = settings_json["options"]
+                if "exportSrs" in options:
+                    new_job_settings.options.export_srs = options["exportSrs"]
+                if "minPhotos" in options:
+                    new_job_settings.options.min_photos = int(options["minPhotos"])
+                if "maxDist" in options:
+                    new_job_settings.options.max_dist = float(options["maxDist"])
+                if "useTiePoints" in options:
+                    new_job_settings.options.use_tie_points = bool(options["useTiePoints"])
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_settings, error="")
@@ -189,6 +186,23 @@ class O2DJobSettings:
             self.exported_objects3D_cesium: str = ""
             self.exported_locations3D_SHP: str = ""
 
+    class Options:
+        """
+        Possible outputs for an Object 2D job.
+
+        Attributes:
+            use_tie_points: Improve detection using tie points in photos.
+            min_photos: Minimum number of 2D objects to generate a 3D object.
+            max_dist: Maximum distance between photos and 3D objects.
+            export_srs: SRS used by exports.
+        """
+
+        def __init__(self) -> None:
+            self.use_tie_points: bool = False
+            self.min_photos: int = 0
+            self.max_dist: float = 0.0
+            self.export_srs: str = ""
+
 
 class S2DJobSettings:
     """
@@ -199,20 +213,14 @@ class S2DJobSettings:
         inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
         outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
             of the output) before passing the settings to create_job.
-        compute_line_width: Estimation 3D line width at each vertex.
-        remove_small_components: Remove 3D lines with total length smaller than this value.
-        export_srs: SRS used by exports.
-        min_photos: minimum number of photos with a same class for a 3D point to have its class set
+        options: Possible options for this job.
     """
 
     def __init__(self) -> None:
         self.type = RDAJobType.S2D
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
-        self.compute_line_width: bool = False
-        self.remove_small_components: float = 0.0
-        self.export_srs: str = ""
-        self.min_photos: int = 0
+        self.options = self.Options()
 
     def to_json(self) -> dict:
         """
@@ -263,14 +271,15 @@ class S2DJobSettings:
             json_dict["outputs"].append("exportedPolygons3DDGN")
         if self.outputs.exported_polygons3D_cesium:
             json_dict["outputs"].append("exportedPolygons3DCesium")
-        if self.compute_line_width:
-            json_dict["computeLineWidth"] = "true"
-        if self.remove_small_components:
-            json_dict["removeSmallComponents"] = str(self.remove_small_components)
-        if self.export_srs:
-            json_dict["exportSrs"] = self.export_srs
-        if self.min_photos:
-            json_dict["minPhotos"] = self.min_photos
+        json_dict["options"] = dict()
+        if self.options.compute_line_width:
+            json_dict["outputs"]["computeLineWidth"] = "true"
+        if self.options.remove_small_components:
+            json_dict["outputs"]["removeSmallComponents"] = str(self.options.remove_small_components)
+        if self.options.export_srs:
+            json_dict["outputs"]["exportSrs"] = self.options.export_srs
+        if self.options.min_photos:
+            json_dict["outputs"]["minPhotos"] = self.options.min_photos
 
         return json_dict
 
@@ -336,19 +345,21 @@ class S2DJobSettings:
                     raise TypeError(
                         "found non expected output name:" + output_dict["name"]
                     )
-            if "computeLineWidth" in settings_json:
-                new_job_settings.compute_line_width = bool(
-                    settings_json["computeLineWidth"]
-                )
-            if "removeSmallComponents" in settings_json:
-                new_job_settings.remove_small_components = float(
-                    settings_json["removeSmallComponents"]
-                )
-            if "exportSrs" in settings_json:
-                new_job_settings.export_srs = settings_json["exportSrs"]
+            if "options" in settings_json:
+                options = settings_json["options"]
+                if "computeLineWidth" in options:
+                    new_job_settings.options.compute_line_width = bool(
+                        options["computeLineWidth"]
+                    )
+                if "removeSmallComponents" in options:
+                    new_job_settings.options.remove_small_components = float(
+                        options["removeSmallComponents"]
+                    )
+                if "exportSrs" in options:
+                    new_job_settings.options.export_srs = options["exportSrs"]
 
-            if "minPhotos" in settings_json:
-                new_job_settings.min_photos = int(settings_json["minPhotos"])
+                if "minPhotos" in options:
+                    new_job_settings.options.min_photos = int(options["minPhotos"])
 
         except (TypeError, KeyError) as e:
             return ReturnValue(value=cls(), error=str(e))
@@ -399,6 +410,24 @@ class S2DJobSettings:
             self.polygons3D: str = ""
             self.exported_polygons3D_DGN: str = ""
             self.exported_polygons3D_cesium: str = ""
+
+    class Options:
+        """
+        Possible options for a Segmentation 2D job.
+
+        Attributes:
+            compute_line_width: Estimation 3D line width at each vertex.
+            remove_small_components: Remove 3D lines with total length smaller than this value.
+            export_srs: SRS used by exports.
+            min_photos: minimum number of photos with a same class for a 3D point to have its class set
+        """
+
+        def __init__(self) -> None:
+            self.compute_line_width: bool = False
+            self.remove_small_components: float = 0.0
+            self.export_srs: str = ""
+            self.min_photos: int = 0
+
 
 class SOrthoJobSettings:
     """
@@ -510,8 +539,6 @@ class SOrthoJobSettings:
         Possible inputs for a Segmentation Ortho job.
 
         Attributes:
-            photos: Path to ContextScene with photos to analyze.
-            photo_segmentation_detector: Path to photo segmentation detector to apply.
             orthophoto: Path to orthophoto to analyse.
             orthophoto_segmentation_detector: Path to orthophoto segmentation detector to apply.
         """
@@ -544,7 +571,6 @@ class SOrthoJobSettings:
             self.exported_lines2D_DGN: str = ""
 
 
-
 class S3DJobSettings:
     """
     Settings for Segmentation 3D jobs.
@@ -554,20 +580,14 @@ class S3DJobSettings:
         inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
         outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
             of the output) before passing the settings to create_job.
-        save_confidence: If confidence is saved in 3D segmentation files or not.
-        compute_line_width: Estimation 3D line width at each vertex.
-        remove_small_components: Remove 3D lines with total length smaller than this value.
-        export_srs: SRS used by exports.
+        options: Possible options for this job.
     """
 
     def __init__(self) -> None:
         self.type = RDAJobType.S3D
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
-        self.save_confidence: bool = False
-        self.compute_line_width: bool = False
-        self.remove_small_components: float = 0.0
-        self.export_srs: str = ""
+        self.options = self.Options()
 
     def to_json(self) -> dict:
         """
@@ -635,15 +655,15 @@ class S3DJobSettings:
             json_dict["outputs"].append("exportedPolygons3DDGN")
         if self.outputs.exported_polygons3D_cesium:
             json_dict["outputs"].append("exportedPolygons3DCesium")
-
-        if self.compute_line_width:
-            json_dict["computeLineWidth"] = "true"
-        if self.remove_small_components:
-            json_dict["removeSmallComponents"] = str(self.remove_small_components)
-        if self.save_confidence:
-            json_dict["saveConfidence"] = "true"
-        if self.export_srs:
-            json_dict["exportSrs"] = self.export_srs
+        json_dict["options"] = dict()
+        if self.options.compute_line_width:
+            json_dict["options"]["computeLineWidth"] = "true"
+        if self.options.remove_small_components:
+            json_dict["options"]["removeSmallComponents"] = str(self.options.remove_small_components)
+        if self.options.save_confidence:
+            json_dict["options"]["saveConfidence"] = "true"
+        if self.options.export_srs:
+            json_dict["options"]["exportSrs"] = self.options.export_srs
 
         return json_dict
 
@@ -742,19 +762,20 @@ class S3DJobSettings:
                     raise TypeError(
                         "found non expected output name:" + output_dict["name"]
                     )
-
-            if "saveConfidence" in settings_json:
-                new_job_settings.save_confidence = bool(settings_json["saveConfidence"])
-            if "computeLineWidth" in settings_json:
-                new_job_settings.compute_line_width = bool(
-                    settings_json["computeLineWidth"]
-                )
-            if "removeSmallComponents" in settings_json:
-                new_job_settings.remove_small_components = float(
-                    settings_json["removeSmallComponents"]
-                )
-            if "exportSrs" in settings_json:
-                new_job_settings.export_srs = settings_json["exportSrs"]
+            if "options" in settings_json:
+                options = settings_json["options"]
+                if "saveConfidence" in options:
+                    new_job_settings.options.save_confidence = bool(options["saveConfidence"])
+                if "computeLineWidth" in options:
+                    new_job_settings.options.compute_line_width = bool(
+                        options["computeLineWidth"]
+                    )
+                if "removeSmallComponents" in options:
+                    new_job_settings.options.remove_small_components = float(
+                        options["removeSmallComponents"]
+                    )
+                if "exportSrs" in options:
+                    new_job_settings.options.export_srs = options["exportSrs"]
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_settings, error="")
@@ -819,6 +840,24 @@ class S3DJobSettings:
             self.exported_polygons3D_DGN: str = ""
             self.exported_polygons3D_cesium: str = ""
 
+    class Options:
+        """
+        Possible options for a Segmentation 3D job.
+
+        Attributes:
+            save_confidence: If confidence is saved in 3D segmentation files or not.
+            compute_line_width: Estimation 3D line width at each vertex.
+            remove_small_components: Remove 3D lines with total length smaller than this value.
+            export_srs: SRS used by exports.
+        """
+
+        def __init__(self) -> None:
+            self.save_confidence: bool = False
+            self.compute_line_width: bool = False
+            self.remove_small_components: float = 0.0
+            self.export_srs: str = ""
+
+
 class ChangeDetectionJobSettings:
     """
     Settings for Change Detection jobs.
@@ -828,26 +867,14 @@ class ChangeDetectionJobSettings:
         inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
         outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
             of the output) before passing the settings to create_job.
-        color_threshold_low: Low threshold to detect color changes (hysteresis detection).
-        color_threshold_high: High threshold to detect color changes (hysteresis detection).
-        dist_threshold_low: Low threshold to detect spatial changes (hysteresis detection).
-        dist_threshold_high: High threshold to detect spatial changes (hysteresis detection).
-        resolution: Target point cloud resolution when starting from meshes.
-        min_points: Minimum number of points in a region to be considered as a change.
-        export_srs: SRS used by exports.
+        options: Possible options for this job.
     """
 
     def __init__(self) -> None:
         self.type = RDAJobType.ChangeDetection
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
-        self.color_threshold_low: float = 0.0
-        self.color_threshold_high: float = 0.0
-        self.dist_threshold_low: float = 0.0
-        self.dist_threshold_high: float = 0.0
-        self.resolution: float = 0.0
-        self.min_points: int = 0
-        self.export_srs: str = ""
+        self.options = self.Options()
 
     def to_json(self) -> dict:
         """
@@ -879,20 +906,21 @@ class ChangeDetectionJobSettings:
             json_dict["outputs"].append("objects3D")
         if self.outputs.exported_locations3D_SHP:
             json_dict["outputs"].append("exportedLocations3DSHP")
-        if self.color_threshold_low:
-            json_dict["colorThresholdLow"] = str(self.color_threshold_low)
-        if self.color_threshold_high:
-            json_dict["colorThresholdHigh"] = str(self.color_threshold_high)
-        if self.dist_threshold_low:
-            json_dict["distThresholdLow"] = str(self.dist_threshold_low)
-        if self.dist_threshold_high:
-            json_dict["distThresholdHigh"] = str(self.dist_threshold_high)
-        if self.resolution:
-            json_dict["resolution"] = str(self.resolution)
-        if self.min_points:
-            json_dict["minPoints"] = str(self.min_points)
-        if self.export_srs:
-            json_dict["exportSrs"] = self.export_srs
+        json_dict["options"] = dict()
+        if self.options.color_threshold_low:
+            json_dict["options"]["colorThresholdLow"] = str(self.options.color_threshold_low)
+        if self.options.color_threshold_high:
+            json_dict["options"]["colorThresholdHigh"] = str(self.options.color_threshold_high)
+        if self.options.dist_threshold_low:
+            json_dict["options"]["distThresholdLow"] = str(self.options.dist_threshold_low)
+        if self.options.dist_threshold_high:
+            json_dict["options"]["distThresholdHigh"] = str(self.options.dist_threshold_high)
+        if self.options.resolution:
+            json_dict["options"]["resolution"] = str(self.options.resolution)
+        if self.options.min_points:
+            json_dict["options"]["minPoints"] = str(self.options.min_points)
+        if self.options.export_srs:
+            json_dict["options"]["exportSrs"] = self.options.export_srs
         return json_dict
 
     @classmethod
@@ -933,28 +961,30 @@ class ChangeDetectionJobSettings:
                     raise TypeError(
                         "found non expected output name:" + output_dict["name"]
                     )
-            if "colorThresholdLow" in settings_json:
-                new_job_settings.color_threshold_low = float(
-                    settings_json["colorThresholdLow"]
-                )
-            if "colorThresholdHigh" in settings_json:
-                new_job_settings.color_threshold_high = float(
-                    settings_json["colorThresholdHigh"]
-                )
-            if "distThresholdLow" in settings_json:
-                new_job_settings.dist_threshold_low = float(
-                    settings_json["distThresholdLow"]
-                )
-            if "distThresholdHigh" in settings_json:
-                new_job_settings.dist_threshold_high = float(
-                    settings_json["distThresholdHigh"]
-                )
-            if "resolution" in settings_json:
-                new_job_settings.resolution = float(settings_json["resolution"])
-            if "minPoints" in settings_json:
-                new_job_settings.min_points = int(settings_json["minPoints"])
-            if "exportSrs" in settings_json:
-                new_job_settings.export_srs = settings_json["exportSrs"]
+            if "options" in settings_json:
+                options = settings_json["options"]
+                if "colorThresholdLow" in options:
+                    new_job_settings.options.color_threshold_low = float(
+                        options["colorThresholdLow"]
+                    )
+                if "colorThresholdHigh" in options:
+                    new_job_settings.options.color_threshold_high = float(
+                        options["colorThresholdHigh"]
+                    )
+                if "distThresholdLow" in options:
+                    new_job_settings.options.dist_threshold_low = float(
+                        options["distThresholdLow"]
+                    )
+                if "distThresholdHigh" in options:
+                    new_job_settings.options.dist_threshold_high = float(
+                        options["distThresholdHigh"]
+                    )
+                if "resolution" in options:
+                    new_job_settings.options.resolution = float(options["resolution"])
+                if "minPoints" in options:
+                    new_job_settings.options.min_points = int(options["minPoints"])
+                if "exportSrs" in options:
+                    new_job_settings.options.export_srs = options["exportSrs"]
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_settings, error="")
@@ -989,6 +1019,29 @@ class ChangeDetectionJobSettings:
             self.objects3D: str = ""
             self.exported_locations3D_SHP: str = ""
 
+    class Options:
+        """
+        Possible options for a Change Detection 2D job.
+
+        Attributes:
+            color_threshold_low: Low threshold to detect color changes (hysteresis detection).
+            color_threshold_high: High threshold to detect color changes (hysteresis detection).
+            dist_threshold_low: Low threshold to detect spatial changes (hysteresis detection).
+            dist_threshold_high: High threshold to detect spatial changes (hysteresis detection).
+            resolution: Target point cloud resolution when starting from meshes.
+            min_points: Minimum number of points in a region to be considered as a change.
+            export_srs: SRS used by exports.
+        """
+
+        def __init__(self) -> None:
+            self.color_threshold_low: float = 0.0
+            self.color_threshold_high: float = 0.0
+            self.dist_threshold_low: float = 0.0
+            self.dist_threshold_high: float = 0.0
+            self.resolution: float = 0.0
+            self.min_points: int = 0
+            self.export_srs: str = ""
+
 
 class ExtractGroundJobSettings:
     """
@@ -999,14 +1052,14 @@ class ExtractGroundJobSettings:
         inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
         outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
             of the output) before passing the settings to create_job.
-        export_srs: SRS used by exports.
+        options: Possible options for this job
     """
 
     def __init__(self) -> None:
         self.type = RDAJobType.ExtractGround
         self.inputs = self.Inputs()
         self.outputs = self.Outputs()
-        self.export_srs: str = ""
+        self.options = self.Options()
 
     def to_json(self) -> dict:
         """
@@ -1048,8 +1101,9 @@ class ExtractGroundJobSettings:
             json_dict["outputs"].append("exportedSegmentation3DLAS")
         if self.outputs.exported_segmentation3D_LAZ:
             json_dict["outputs"].append("exportedSegmentation3DLAZ")
-        if self.export_srs:
-            json_dict["exportSrs"] = self.export_srs
+        json_dict["options"] = dict()
+        if self.options.export_srs:
+            json_dict["options"]["exportSrs"] = self.options.export_srs
         return json_dict
 
     @classmethod
@@ -1106,8 +1160,10 @@ class ExtractGroundJobSettings:
                     raise TypeError(
                         "found non expected output name:" + output_dict["name"]
                     )
-            if "exportSrs" in settings_json:
-                new_job_settings.export_srs = settings_json["exportSrs"]
+            if "options" in settings_json:
+                options = settings_json["options"]
+                if "exportSrs" in settings_json:
+                    new_job_settings.export_srs = settings_json["exportSrs"]
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_settings, error="")
@@ -1147,6 +1203,17 @@ class ExtractGroundJobSettings:
             self.exported_segmentation3D_POD: str = ""
             self.exported_segmentation3D_LAS: str = ""
             self.exported_segmentation3D_LAZ: str = ""
+
+    class Options:
+        """
+        Possible options for an Extract Ground 2D job.
+
+        Attributes:
+            export_srs: SRS used by exports.
+        """
+
+        def __init__(self) -> None:
+            self.export_srs: str = ""
 
 
 JobSettings = TypeVar(

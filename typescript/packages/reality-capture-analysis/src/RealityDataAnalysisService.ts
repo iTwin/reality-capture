@@ -43,7 +43,7 @@ export class RealityDataAnalysisService {
             const headers =
             {
                 "content-type": "application/json",
-                "accept": "application/vnd.bentley.itwin-platform.v1+json",
+                "accept": "application/vnd.bentley.ras-v2-test+json",
                 "authorization": await this.getAccessToken(),
             };
 
@@ -101,11 +101,14 @@ export class RealityDataAnalysisService {
      * @returns {string} Created job id.
      */
     public async createJob(settings: JobSettings, name: string, iTwinId: string): Promise<string> {
+        const settingsJson = settings.toJson();
         const body = {
             "type": settings.type,
             "name": name,
             "iTwinId": iTwinId,
-            "settings": settings.toJson()
+            "inputs": settingsJson.inputs,
+            "outputs": settingsJson.outputs,
+            "options": settingsJson.options
         };
         const response = await this.submitRequest("jobs", "POST", [201], body);
         return response["job"]["id"];
