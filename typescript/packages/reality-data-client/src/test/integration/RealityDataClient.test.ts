@@ -1,3 +1,6 @@
+/* eslint-disable deprecation/deprecation */
+/* eslint-disable indent */
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 /*---------------------------------------------------------------------------------------------
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
@@ -155,7 +158,6 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(realityData);
     // get all projects information
 
-    // eslint-disable-next-line deprecation/deprecation
     const projects = await realityDataAccessClient.getRealityDataProjects(accessToken, realityData.id);
     chai.assert(projects);
     chai.assert(projects.length === 2);
@@ -218,7 +220,6 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(realityDatas);
 
     realityDatas.forEach((value) => {
-      // chai.assert(value.rootDocument ); // not every RealityData has a root document.
       chai.assert(value.iTwinId === iTwinId);
       chai.assert(value.type);
       chai.assert(value.id);
@@ -320,6 +321,150 @@ describe("RealityServicesClient Normal (#integration)", () => {
 
   });
 
+  it("should query reality data using the $orderby parameter", async () => {
+    const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
+
+    const realityDataQueryCriteria: RealityDataQueryCriteria = {
+      getFullRepresentation: true,
+      top: 10,
+      orderBy: "createdDateTime desc",
+    };
+
+    const realityDataResponse = await realityDataAccessClient.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
+
+    const realityDatas = realityDataResponse.realityDatas;
+    chai.assert(realityDatas);
+
+    let lastCreatedTime = Date.now();
+
+    realityDatas.forEach((value) => {
+      chai.assert(value.iTwinId === iTwinId);
+      chai.assert(value.type);
+      chai.assert(value.id);
+      chai.assert(value.createdDateTime!.getTime() <= lastCreatedTime);
+      lastCreatedTime = value.createdDateTime!.getTime()!;
+    });
+  });
+
+  it("should query reality data using the $search parameter with the search term: This is a fairly simple description.", async () => {
+    const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
+
+    const realityDataQueryCriteria: RealityDataQueryCriteria = {
+      getFullRepresentation: true,
+      top: 10,
+      search: "This is a fairly simple description.",
+    };
+
+    const realityDataResponse = await realityDataAccessClient.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
+
+    const realityDatas = realityDataResponse.realityDatas;
+    chai.assert(realityDatas && realityDatas.length > 0, "No reality data found. Please verify test reality data exists with description 'This is a fairly simple description.'.");
+
+    realityDatas.forEach((value) => {
+      chai.assert(value.iTwinId === iTwinId);
+      chai.assert(value.type);
+      chai.assert(value.id);
+      chai.assert(value.description!.includes("This is a fairly simple description."));
+    });
+  });
+
+  it("should query reality data using the types parameter", async () => {
+    const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
+
+    const types = ["3MX", "3SM"];
+    const realityDataQueryCriteria: RealityDataQueryCriteria = {
+      top: 10,
+      types: types,
+    };
+
+    const realityDataResponse = await realityDataAccessClient.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
+
+    const realityDatas = realityDataResponse.realityDatas;
+    chai.assert(realityDatas && realityDatas.length > 0, "No reality data found. Please verify test reality data exists with types 3MX and 3SM.");
+
+    realityDatas.forEach((value) => {
+      chai.assert(value.iTwinId === iTwinId);
+      chai.assert(value.type);
+      chai.assert(value.id);
+      chai.assert(value.type === "3MX" || value.type === "3SM");
+    });
+  });
+
+  it("should query reality data using the acquisitionDateTime parameter", async () => {
+    const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
+    const realityDataQueryCriteria: RealityDataQueryCriteria = {
+      getFullRepresentation: true,
+      top: 10,
+      acquisitionDates: {
+        startDateTime: new Date(2017,5,12),
+        endDateTime: new Date(2023,5,12)
+      }
+    };
+
+    const realityDataResponse = await realityDataAccessClient.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
+
+    const realityDatas = realityDataResponse.realityDatas;
+    chai.assert(realityDatas && realityDatas.length > 0, "No reality data found. Please verify test reality data exists with acquisition dates between 2017-05-12 and 2023-05-12.");
+
+    realityDatas.forEach((value) => {
+      chai.assert(value.iTwinId === iTwinId);
+      chai.assert(value.type);
+      chai.assert(value.id);
+      chai.assert(value.acquisition);
+      chai.assert(value.acquisition?.startDateTime);
+      chai.assert(value.acquisition?.startDateTime!.getTime() >= new Date(2017,5,12).getTime());
+      chai.assert(value.acquisition?.startDateTime!.getTime() <= new Date(2022,5,12).getTime());
+    });
+  });
+
+  it("should query reality data using the createdDateTime parameter", async () => {
+    const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
+    const realityDataQueryCriteria: RealityDataQueryCriteria = {
+      getFullRepresentation: true,
+      top: 10,
+      createdDateTime: {
+        startDateTime: new Date(2021,5,12),
+        endDateTime: new Date(2022,5,12)
+      }
+    };
+
+    const realityDataResponse = await realityDataAccessClient.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
+
+    const realityDatas = realityDataResponse.realityDatas;
+    chai.assert(realityDatas && realityDatas.length > 0, "No reality data found. Please verify test reality data exists with creation dates between 2021-05-12 and 2022-05-12.");
+
+    realityDatas.forEach((value) => {
+      chai.assert(value.iTwinId === iTwinId);
+      chai.assert(value.type);
+      chai.assert(value.id);
+      chai.assert(value.createdDateTime);
+      chai.assert(value.createdDateTime!.getTime() >= new Date(2021,5,12).getTime());
+      chai.assert(value.createdDateTime!.getTime() <= new Date(2022,5,12).getTime());
+    });
+  });
+
+  it("should query reality data using the tag parameter", async () => {
+    const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
+
+    const realityDataQueryCriteria: RealityDataQueryCriteria = {
+      getFullRepresentation: true,
+      top: 10,
+      tag: "tag1",
+    };
+
+    const realityDataResponse = await realityDataAccessClient.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
+
+    const realityDatas = realityDataResponse.realityDatas;
+    chai.assert(realityDatas && realityDatas.length > 0, "No reality data found. Please verify test reality data exists with tag 'tag1'.");
+
+    realityDatas.forEach((value) => {
+      chai.assert(value.iTwinId === iTwinId);
+      chai.assert(value.type);
+      chai.assert(value.id);
+      chai.assert(value.tag!.includes("tag1"));
+    });
+  });
+
   it("should be able to retrieve reality data properties for every reality data associated with iTwin within an extent", async () => {
 
     const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
@@ -340,7 +485,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     const realityDataResponse = await realityDataAccessClient.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
 
     chai.expect(realityDataResponse);
-
+  
     // currently in prod, only one result should be possible
     /*
       id: 'de1badb3-012f-4f18-b28a-57d3f2164ba8',
@@ -350,7 +495,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
       }
     */
     // with http request : https://api.bentley.com/reality-management/realitydata/?iTwinId=614a3c70-cc9f-4de9-af87-f834002ca19e&$top=10&extent=-80.35221279383678,40.6693689301031,-80.32437826187261,40.68067531423824'
-    chai.expect(realityDataResponse.realityDatas.length === 1);
+    chai.expect(realityDataResponse.realityDatas.length === 1, "No reality data found. Please verify test reality data exists within the given extent.");
     chai.assert(realityDataResponse.realityDatas[0].id === "de1badb3-012f-4f18-b28a-57d3f2164ba8");
 
   });

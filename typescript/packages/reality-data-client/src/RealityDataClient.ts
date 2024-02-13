@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /*---------------------------------------------------------------------------------------------
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
@@ -52,6 +53,30 @@ export interface RealityDataQueryCriteria {
   top?: number;
   /** Continuation token to get current query's next results.*/
   continuationToken?: string;
+
+  /**Parameter that enable to order reality data in ascending or descending order. Default is ascending.Example : displayName desc */
+  orderBy?: string;
+  /**searches given string Reality Data TODO get swagger doc */
+  search?: string;
+
+  /**queries for Reality Data of specified types.*/
+  types?: string[];
+
+  /**queries for Reality Data in which the acquisition is in given date range.*/
+  acquisitionDates?: DateRange;
+
+  /**queries for Reality Data where the creation date is in given date range.*/
+  createdDateTime?: DateRange;
+
+  /**queries for Reality Data with exact matching tag.*/
+  tag?: string;
+}
+
+
+export interface DateRange {
+  startDateTime: Date;
+  endDateTime: Date;
+  //acquirer: string; probably not available
 }
 
 /**
@@ -201,12 +226,40 @@ export class RealityDataAccessClient implements RealityDataAccess {
           const extent = `${Angle.radiansToDegrees(iModelRange.low.x)},${Angle.radiansToDegrees(iModelRange.low.y)},${Angle.radiansToDegrees(iModelRange.high.x)},${Angle.radiansToDegrees(iModelRange.high.y)}`;
           url.searchParams.append("extent",extent);
         }
+
+        if (criteria.orderBy) {
+          url.searchParams.append("$orderby", criteria.orderBy);
+        }
+
+        if (criteria.search) {
+          url.searchParams.append("$search", criteria.search);
+        }
+
+        if (criteria.types) {
+          url.searchParams.append("types", criteria.types.join(","));
+        }
+
+        if (criteria.acquisitionDates) {
+          const startDateTime = this.formatIsoString(criteria.acquisitionDates.startDateTime);
+          const endDateTime = this.formatIsoString(criteria.acquisitionDates.endDateTime);
+          url.searchParams.append("acquisitionDateTime", startDateTime + "/" + endDateTime);
+        }
+
+        if (criteria.createdDateTime) {
+          const startDateTime = this.formatIsoString(criteria.createdDateTime.startDateTime);
+          const endDateTime = this.formatIsoString(criteria.createdDateTime.endDateTime);
+          url.searchParams.append("createdDateTime", `${startDateTime}/${endDateTime}`);
+        }
+
+        if(criteria.tag) {
+          url.searchParams.append("tag", criteria.tag);
+        }
       }
       const response = await axios.get(url.href, getRequestConfig(accessTokenResolved, "GET", url.href, this.apiVersion, (criteria?.getFullRepresentation === true ? true : false)));
       // Axios throws on 4XX and 5XX; we make sure the response here is 200
       if (response.status !== 200)
         throw new BentleyError(422, iTwinId ? `Could not fetch reality data with iTwinId ${iTwinId}`
-          : `Could not fetch reality data`);
+          : "Could not fetch reality data");
 
       const realityDatasResponseBody = response.data;
 
@@ -224,6 +277,16 @@ export class RealityDataAccessClient implements RealityDataAccess {
     } catch (error) {
       return this.handleError(error);
     }
+  }
+
+  /**
+   * trims milliseconds from date.toISOString() method to conform to for date parameters in APIM. 
+   * See https://developer.bentley.com/apis/reality-management/operations/get-all-reality-data/#request-parameters
+   * @param date 
+   * @returns dateTime string in format YYYY-MM-DDTHH:mm:ssZ e.g. 2021-08-01T00:00:00Z
+   */
+  private formatIsoString(date: Date) : string {
+    return date.toISOString().slice(0, -5) + "Z";
   }
 
   private extractContinuationToken(url: string | undefined): string | undefined {
