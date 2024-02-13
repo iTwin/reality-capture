@@ -1,55 +1,57 @@
 {
-	"name": "@itwin/reality-capture-conversion",
-	"version": "0.1.0-dev.1",
-	"description": "Reality conversion sdk to run conversion jobs",
-	"main": "lib/cjs/index.js",
-	"module": "lib/esm/index.js",
-	"typings": "lib/cjs/index",
-	"scripts": {
-		"build": "npm run -s build:cjs && npm run -s build:esm",
-		"build:cjs": "tsc 1>&2 --outDir lib/cjs",
-		"build:esm": "tsc 1>&2 --module ES2020 --outDir lib/esm",
-		"clean": "rimraf lib build .rush",
-		"lint": "eslint ./src --ext .ts,.tsx ",
-		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
-		"test:integration": "mocha --retries 5 ./lib/cjs/integration-tests/*.test.js",
-		"test:unit": "mocha ./lib/cjs/*.test.js --slow 0",
-		"coverage": "nyc --check-coverage --lines 90 --functions 95 --statements 90, npm run test:unit"
-	},
-	"keywords": [],
-	"author": {
-		"name": "Bentley Systems, Inc.",
-		"url": "http://www.bentley.com"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/iTwin/reality-capture",
-		"directory": "typescript/packages/reality-capture-conversion"
-	},
-	"license": "MIT",
-	"dependencies": {
-		"axios": "^1.6.0"
-	},
-	"devDependencies": {
-		"@itwin/build-tools": "^4.0.0",
-		"@itwin/reality-capture-common": "workspace:*",
-		"@itwin/reality-data-client": "workspace:*",
-		"@itwin/reality-data-transfer": "workspace:*",
-		"@itwin/service-authorization": "^1.0.0",
-		"@types/chai": "^4.3.3",
-		"@types/chai-as-promised": "^7.1.5",
-		"@types/mocha": "^10.0.0",
-		"axios-mock-adapter": "^1.21.3",
-		"chai": "^4.3.6",
-		"chai-as-promised": "^7.1.1",
-		"dotenv": "^16.0.3",
-		"eslint": "^8.19.0",
-		"mocha": "^10.1.0",
-		"nyc": "^15.1.0",
-		"rimraf": "^3.0.2",
-		"typescript": "^5.0.0"
-	},
-	"nyc": {
-		"exclude": ["src/index.ts"]
-	}
+  "name": "@itwin/reality-capture-conversion",
+  "version": "1.0.0",
+  "description": "Reality conversion sdk to run conversion jobs",
+  "main": "lib/cjs/index.js",
+  "module": "lib/esm/index.js",
+  "typings": "lib/cjs/index",
+  "scripts": {
+    "build": "npm run -s build:cjs && npm run -s build:esm",
+    "build:cjs": "tsc 1>&2 --outDir lib/cjs",
+    "build:esm": "tsc 1>&2 --module ES2020 --outDir lib/esm",
+    "clean": "rimraf lib build .rush",
+    "lint": "eslint ./src --ext .ts,.tsx ",
+    "lint-fix": "eslint ./src --fix --ext .ts,.tsx",
+    "test:integration": "mocha --retries 5 ./lib/cjs/integration-tests/*.test.js",
+    "test:unit": "mocha ./lib/cjs/*.test.js --slow 0",
+    "coverage": "nyc --check-coverage --lines 90 --functions 95 --statements 90, npm run test:unit"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Bentley Systems, Inc.",
+    "url": "http://www.bentley.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iTwin/reality-capture",
+    "directory": "typescript/packages/reality-capture-conversion"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@itwin/build-tools": "^4.0.0",
+    "@itwin/reality-capture-common": "workspace:*",
+    "@itwin/reality-data-client": "workspace:*",
+    "@itwin/reality-data-transfer": "workspace:*",
+    "@itwin/service-authorization": "^1.0.0",
+    "@types/chai": "^4.3.3",
+    "@types/chai-as-promised": "^7.1.5",
+    "@types/mocha": "^10.0.0",
+    "axios-mock-adapter": "^1.21.3",
+    "chai": "^4.3.6",
+    "chai-as-promised": "^7.1.1",
+    "dotenv": "^16.0.3",
+    "eslint": "^8.19.0",
+    "mocha": "^10.1.0",
+    "nyc": "^15.1.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^5.0.0"
+  },
+  "nyc": {
+    "exclude": [
+      "src/index.ts"
+    ]
+  }
 }

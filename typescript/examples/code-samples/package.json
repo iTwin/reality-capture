@@ -1,44 +1,44 @@
 {
-	"name": "reality-capture-examples",
-	"version": "0.1.0-dev.1",
-	"description": "Reality Capture SDKs examples",
-	"private": true,
-	"scripts": {
-		"build": "tsc 1>&2",
-		"clean": "rimraf lib build .rush",
-		"lint": "eslint ./src --ext .ts,.tsx ",
-		"lint-fix": "eslint ./src --fix --ext .ts,.tsx",
-		"start-cc-example": "node ./lib/ContextCapture.js",
-		"start-l3d-example": "node ./lib/Lines3D.js",
-		"start-o2d-example": "node ./lib/Objects2D.js",
-		"start-data-example": "node ./lib/DataTransfer.js",
-		"start-rcs-example": "node ./lib/RealityConversion.js",
-		"coverage": "",
-		"integration-tests": ""
-	},
-	"keywords": [],
-	"author": {
-		"name": "Bentley Systems, Inc.",
-		"url": "http://www.bentley.com"
-	},
-	"license": "MIT",
-	"dependencies": {
-		"@itwin/node-cli-authorization": "^1.0.0",
-		"@itwin/reality-capture-common": "workspace:*",
-		"@itwin/reality-capture-analysis": "workspace:*",
-		"@itwin/reality-capture-conversion": "workspace:*",
-		"@itwin/reality-capture-modeling": "workspace:*",
-		"@itwin/reality-data-transfer": "workspace:*",
-		"@itwin/reality-data-client": "^1.0.0",
-		"dotenv": "^16.0.3"
-	},
-	"devDependencies": {
-		"@itwin/build-tools": "^4.0.0",
-		"@types/node": "^18.12.0",
-		"@typescript-eslint/eslint-plugin": "^5.30.6",
-		"@typescript-eslint/parser": "^5.30.6",
-		"eslint": "^8.19.0",
-		"rimraf": "^3.0.2",
-		"typescript": "^5.0.0"
-	}
+  "name": "reality-capture-examples",
+  "version": "0.1.0-dev.1",
+  "description": "Reality Capture SDKs examples",
+  "private": true,
+  "scripts": {
+    "build": "tsc 1>&2",
+    "clean": "rimraf lib build .rush",
+    "lint": "eslint ./src --ext .ts,.tsx ",
+    "lint-fix": "eslint ./src --fix --ext .ts,.tsx",
+    "start-cc-example": "node ./lib/ContextCapture.js",
+    "start-l3d-example": "node ./lib/Lines3D.js",
+    "start-o2d-example": "node ./lib/Objects2D.js",
+    "start-data-example": "node ./lib/DataTransfer.js",
+    "start-rcs-example": "node ./lib/RealityConversion.js",
+    "coverage": "",
+    "integration-tests": ""
+  },
+  "keywords": [],
+  "author": {
+    "name": "Bentley Systems, Inc.",
+    "url": "http://www.bentley.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@itwin/node-cli-authorization": "^1.0.0",
+    "@itwin/reality-capture-common": "workspace:*",
+    "@itwin/reality-capture-analysis": "workspace:*",
+    "@itwin/reality-capture-conversion": "workspace:*",
+    "@itwin/reality-capture-modeling": "workspace:*",
+    "@itwin/reality-data-transfer": "workspace:*",
+    "@itwin/reality-data-client": "^1.0.0",
+    "dotenv": "^16.0.3"
+  },
+  "devDependencies": {
+    "@itwin/build-tools": "^4.0.0",
+    "@types/node": "^18.12.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
+    "@typescript-eslint/parser": "^5.30.6",
+    "eslint": "^8.19.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^5.0.0"
+  }
 }

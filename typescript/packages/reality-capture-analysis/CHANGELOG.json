@@ -1,0 +1,20 @@
+{
+  "name": "@itwin/reality-capture-analysis",
+  "entries": [
+    {
+      "date": "Mon, 12 Feb 2024 17:17:32 GMT",
+      "version": "1.0.0",
+      "tag": "@itwin/reality-capture-analysis_v1.0.0",
+      "comments": {
+        "major": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-capture-analysis",
+            "commit": "2b7049bc8c104a2434f5123b98670dfc45c7be6d",
+            "comment": "Initial version 1.0.0"
+          }
+        ]
+      }
+    }
+  ]
+}
