@@ -1,4 +1,3 @@
-/* eslint-disable deprecation/deprecation */
 /* eslint-disable indent */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /*---------------------------------------------------------------------------------------------
@@ -461,7 +460,8 @@ describe("RealityServicesClient Normal (#integration)", () => {
       chai.assert(value.iTwinId === iTwinId);
       chai.assert(value.type);
       chai.assert(value.id);
-      chai.assert(value.tag!.includes("tag1"));
+      chai.assert(value.tags);
+      chai.assert(value.tags!.includes("tag1"));
     });
   });
 
@@ -509,9 +509,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(realityDataResponse.dataset === "Dataset");
     chai.assert(realityDataResponse.group === "GroupId");
     chai.assert(realityDataResponse.description === "Description of the reality data");
-
     chai.assert(realityDataResponse.rootDocument === "samples/sample.3mx");
-
     chai.assert(realityDataResponse.acquisition != null);
     chai.assert(isInstanceOfDate(realityDataResponse.acquisition?.startDateTime));
     chai.assert(realityDataResponse.acquisition?.startDateTime.getTime() === new Date("2021-05-12T20:03:12Z").getTime());
@@ -557,7 +555,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
         longitude: 2.1,
       },
     };
-
+    realityData.tags = ["tag1", "tag2"];
     realityData.authoring = false;
 
     const realityDataAdded = await realityDataAccessClient.createRealityData(accessToken, iTwinId, realityData);
@@ -579,6 +577,8 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(realityDataAdded.extent!.northEast.latitude === 1.1);
     chai.assert(realityDataAdded.extent!.northEast.longitude === 2.1);
 
+    chai.assert(realityDataAdded.tags!.includes("tag1"));
+    chai.assert(realityDataAdded.tags!.includes("tag2"));
     chai.assert(realityDataAdded.authoring === false);
     chai.assert(realityDataAdded.dataCenterLocation === "East US");
 
@@ -587,10 +587,42 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(realityDataAdded.createdDateTime!.getTime());
     // At creation the last accessed time stamp remains null. ?
 
+    console.log(realityDataAdded);
+
     realityDataAdded.displayName = "MODIFIED iTwinjs RealityData Client create and delete test";
+    realityDataAdded.group = "MODIFIED Test group";
+    realityDataAdded.dataset = "MODIFIED Test Dataset for iTwinjs";
+    realityDataAdded.description = "MODIFIED Dummy description for a test reality data";
+    realityDataAdded.rootDocument = "MODIFIED RootDocumentFile.txt";
+    realityDataAdded.classification = "Model";
+    realityDataAdded.type = "3SM";
+    realityDataAdded.acquisition = {
+      startDateTime:  new Date("2021-05-10T09:46:16Z"),
+      endDateTime: new Date("2021-05-10T10:46:16Z"),
+      acquirer:  "MODIFIED John Doe Surveying using Leico model 123A Point Cloud Scanner",
+    };
+    realityDataAdded.extent = { southWest: { latitude: 1.1, longitude: 2.0 }, northEast: { latitude: 1.2, longitude: 2.1 } };
+    realityDataAdded.tags = ["tag1", "tag2", "tag3"];
+
     const realityDataModified = await realityDataAccessClient.modifyRealityData(accessToken, iTwinId, realityDataAdded);
 
     chai.assert(realityDataModified.displayName === realityDataAdded.displayName);
+    chai.assert(realityDataModified.group === realityDataAdded.group);
+    chai.assert(realityDataModified.dataset === realityDataAdded.dataset);
+    chai.assert(realityDataModified.description === realityDataAdded.description);
+    chai.assert(realityDataModified.rootDocument === realityDataAdded.rootDocument);
+    chai.assert(realityDataModified.classification === realityDataAdded.classification);
+    chai.assert(realityDataModified.type?.toLowerCase() === realityDataAdded.type.toLowerCase());
+    chai.assert(realityDataModified.acquisition!.acquirer === realityDataAdded.acquisition.acquirer);
+    chai.assert(realityDataModified.acquisition!.startDateTime.getTime() === realityDataAdded.acquisition.startDateTime.getTime());
+    chai.assert(realityDataModified.acquisition!.endDateTime!.getTime() === realityDataAdded.acquisition.endDateTime!.getTime());
+    chai.assert(realityDataModified.extent!.southWest.latitude === 1.1);
+    chai.assert(realityDataModified.extent!.southWest.longitude === 2.0);
+    chai.assert(realityDataModified.extent!.northEast.latitude === 1.2);
+    chai.assert(realityDataModified.extent!.northEast.longitude === 2.1);
+    chai.assert(realityDataModified.tags!.includes("tag1"));
+    chai.assert(realityDataModified.tags!.includes("tag2"));
+    chai.assert(realityDataModified.tags!.includes("tag3"));
 
     chai.assert(await realityDataAccessClient.deleteRealityData(accessToken, realityDataAdded.id));
   });

@@ -85,7 +85,7 @@ export class ITwinRealityData implements RealityData {
   public dataCenterLocation?: string;
   public description?: string;
   public rootDocument?: string;
-  public tag?: string[];
+  public tags?: string[];
   public acquisition?: Acquisition;
   public size?: number;
   public authoring?: boolean;
@@ -124,7 +124,7 @@ export class ITwinRealityData implements RealityData {
       this.dataCenterLocation = realityData.dataCenterLocation;
       this.description = realityData.description;
       this.rootDocument = realityData.rootDocument;
-      this.tag = realityData.tag;
+      this.tags = realityData.tags;
       if (realityData.acquisition) {
         this.acquisition = (realityData.acquisition as Acquisition);
         this.acquisition.startDateTime = new Date(realityData.acquisition.startDateTime);
