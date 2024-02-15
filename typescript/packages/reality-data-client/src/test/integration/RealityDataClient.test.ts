@@ -43,7 +43,7 @@ const realityDataClientConfig: RealityDataClientOptions = {
 describe("RealityServicesClient Normal (#integration)", () => {
 
   const iTwinId: GuidString = TestConfig.integrationTestsItwinId;
-  const iTwinIdProjects: GuidString = TestConfig.integrationTestsItwinIdProjects;
+  const iTwinId2: GuidString = TestConfig.integrationTestsItwinIdProjects;
 
   const realityDataAccessClient = new RealityDataAccessClient();
 
@@ -78,7 +78,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
       },
       iTwinId);
     rdTestProjects = await realityDataAccessClient.createRealityData(accessToken, iTwinId, rdTestProjects);
-    await realityDataAccessClient.associateRealityData(accessToken, iTwinIdProjects, rdTestProjects.id);
+    await realityDataAccessClient.associateRealityData(accessToken, iTwinId2, rdTestProjects.id);
     chai.assert(rdTestProjects, "Failed to create test reality data");
 
     realityDataIdProjects = rdTestProjects.id;
@@ -91,7 +91,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(deleteResult, "Failed to delete test reality data");
 
 
-    const dissociateResult = await realityDataAccessClient.dissociateRealityData(accessToken, iTwinIdProjects, realityDataIdProjects);
+    const dissociateResult = await realityDataAccessClient.dissociateRealityData(accessToken, iTwinId2, realityDataIdProjects);
     chai.assert(dissociateResult, "Failed to dissociate test reality data");
     const deleteResult2 = await realityDataAccessClient.deleteRealityData(accessToken, realityDataIdProjects);
     chai.assert(deleteResult2, "Failed to delete test reality data");
@@ -550,38 +550,10 @@ describe("RealityServicesClient Normal (#integration)", () => {
 
   });
 
-  it("should get a realityData and should create an ITwinRealityData instance with proper types", async () => {
-    const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
-    const realityDataResponse = await realityDataAccessClient.getRealityData(accessToken, iTwinId, "ac78eae2-496a-4d26-a87d-1dab0b93ab00");
-
-    chai.assert(realityDataResponse.id === "ac78eae2-496a-4d26-a87d-1dab0b93ab00");
-    chai.assert(realityDataResponse.displayName === "property test realityData");
-    chai.assert(realityDataResponse.dataset === "Dataset");
-    chai.assert(realityDataResponse.group === "GroupId");
-    chai.assert(realityDataResponse.description === "Description of the reality data");
-    chai.assert(realityDataResponse.rootDocument === "samples/sample.3mx");
-    chai.assert(realityDataResponse.acquisition != null);
-    chai.assert(isInstanceOfDate(realityDataResponse.acquisition?.startDateTime));
-    chai.assert(realityDataResponse.acquisition?.startDateTime.getTime() === new Date("2021-05-12T20:03:12Z").getTime());
-    chai.assert(isInstanceOfDate(realityDataResponse.acquisition?.endDateTime));
-    chai.assert(realityDataResponse.acquisition?.endDateTime.getTime() === new Date("2021-05-15T05:07:18Z").getTime());
-    chai.assert(realityDataResponse.acquisition?.acquirer === "Data Acquisition Inc.");
-    chai.assert(realityDataResponse.extent != null);
-    chai.assert(realityDataResponse.extent?.southWest.latitude === 50.1171);
-    chai.assert(realityDataResponse.extent?.southWest.longitude === -122.9543);
-    chai.assert(realityDataResponse.extent?.northEast.latitude === 50.1172);
-    chai.assert(realityDataResponse.extent?.northEast.longitude === -122.9543);
-    chai.assert(realityDataResponse.authoring === false);
-    chai.assert(realityDataResponse.dataCenterLocation === "East US");
-    chai.assert(realityDataResponse.modifiedDateTime?.getTime() === new Date("2021-12-01T21:17:38Z").getTime());
-    chai.assert(realityDataResponse.lastAccessedDateTime?.getTime() === new Date("2021-12-01T21:17:38Z").getTime());
-    chai.assert(realityDataResponse.createdDateTime?.getTime() === new Date("2021-12-01T21:17:38Z").getTime());
-
-  });
-
-  it("should be able to create, then modify a reality data (without specific identifier) and delete it", async () => {
+  it("should be able to create, modify, then delete a Reality Data", async () => {
     const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
 
+    // this test also serves as a property test.
     const realityData = new ITwinRealityData(realityDataAccessClient);
     realityData.displayName = "iTwinjs RealityData Client create and delete test";
     realityData.dataset = "Test Dataset for iTwinjs";
@@ -674,11 +646,8 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(await realityDataAccessClient.deleteRealityData(accessToken, realityDataAdded.id));
   });
 
-  it("should be able to create RealityData, associate, dissociate, and delete it", async () => {
+  it("should be able to create, associate, dissociate, and delete RealityData", async () => {
     const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
-
-    const iTwinId2 = "84856374-51ed-4f13-a386-6721e01f87a3"; // Integration Tests for Reality Data Client 2
-
     const realityData = new ITwinRealityData(realityDataAccessClient);
     realityData.displayName = "iTwinjs RealityData Client associate and dissociate test";
     realityData.classification = "Undefined";
@@ -693,7 +662,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(await realityDataAccessClient.deleteRealityData(accessToken, realityDataAdded.id));
   });
 
-  it("should be able to create RealityData, modify, and delete (Without iTwinId)", async () => {
+  it("should be able to create modify, and delete  Reality Data, (Without iTwinId)", async () => {
     const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
 
     const realityData = new ITwinRealityData(realityDataAccessClient);
