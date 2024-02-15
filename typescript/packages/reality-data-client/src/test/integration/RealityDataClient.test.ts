@@ -42,16 +42,59 @@ const realityDataClientConfig: RealityDataClientOptions = {
 
 describe("RealityServicesClient Normal (#integration)", () => {
 
-  let iTwinId: GuidString;
+  const iTwinId: GuidString = TestConfig.integrationTestsItwinId;
+  const iTwinIdProjects: GuidString = TestConfig.integrationTestsItwinIdProjects;
 
-  const tilesId: string = "f2065aea-5dcd-49e2-9077-e082dde506bc";
+  const realityDataAccessClient = new RealityDataAccessClient();
+
+  let realityDataId: string;
+  let realityDataIdProjects: string;
 
   let accessToken: AccessToken;
 
   before(async () => {
+
+    //get token
     accessToken = await TestConfig.getAccessToken();
-    iTwinId = TestConfig.integrationTestsItwinId;
+
     chai.assert.isDefined(iTwinId);
+
+    // create a test reality data
+    let rdTest = new ITwinRealityData(realityDataAccessClient,
+      {
+        displayName: "iTwinjs reality-data-client test, can be deleted",
+        type: "3MX",
+      },
+      iTwinId);
+    rdTest = await realityDataAccessClient.createRealityData(accessToken, iTwinId, rdTest);
+    chai.assert(rdTest, "Failed to create test reality data");
+    realityDataId = rdTest.id;
+
+    // create a test reality data
+    let rdTestProjects = new ITwinRealityData(realityDataAccessClient,
+      {
+        displayName: "iTwinjs reality-data-client projects, can be deleted",
+        type: "3MX",
+      },
+      iTwinId);
+    rdTestProjects = await realityDataAccessClient.createRealityData(accessToken, iTwinId, rdTestProjects);
+    await realityDataAccessClient.associateRealityData(accessToken, iTwinIdProjects, rdTestProjects.id);
+    chai.assert(rdTestProjects, "Failed to create test reality data");
+
+    realityDataIdProjects = rdTestProjects.id;
+  });
+
+  after(async() => {
+    // delete the test reality data
+    console.log("Cleaning test reality data");
+    const deleteResult = await realityDataAccessClient.deleteRealityData(accessToken, realityDataId);
+    chai.assert(deleteResult, "Failed to delete test reality data");
+
+
+    const dissociateResult = await realityDataAccessClient.dissociateRealityData(accessToken, iTwinIdProjects, realityDataIdProjects);
+    chai.assert(dissociateResult, "Failed to dissociate test reality data");
+    const deleteResult2 = await realityDataAccessClient.deleteRealityData(accessToken, realityDataIdProjects);
+    chai.assert(deleteResult2, "Failed to delete test reality data");
   });
 
   it("should properly redirect configured URL to proper Reality Management API URL", async () => {
@@ -101,17 +144,15 @@ describe("RealityServicesClient Normal (#integration)", () => {
 
   it("should return a RealityData URL properly from a given ID", async () => {
     try {
-      const realityDataId = "f2065aea-5dcd-49e2-9077-e082dde506bc";
-      const realityDataAccessClient = new RealityDataAccessClient();
 
       // test with iTwinId
       let realityDataUrl = await realityDataAccessClient.getRealityDataUrl(iTwinId, realityDataId);
-      const expectedUrl = `${realityDataClientConfig.baseUrl}/f2065aea-5dcd-49e2-9077-e082dde506bc?iTwinId=${iTwinId}`;
+      const expectedUrl = `${realityDataClientConfig.baseUrl}/${realityDataId}?iTwinId=${iTwinId}`;
       chai.assert(realityDataUrl === expectedUrl);
 
       // test without iTwinId
       realityDataUrl = await realityDataAccessClient.getRealityDataUrl(undefined, realityDataId);
-      chai.assert(realityDataUrl === `${realityDataClientConfig.baseUrl}/f2065aea-5dcd-49e2-9077-e082dde506bc`);
+      chai.assert(realityDataUrl === `${realityDataClientConfig.baseUrl}/${realityDataId}`);
 
     } catch (errorResponse: any) {
       throw Error(`Test error: ${errorResponse}`);
@@ -121,15 +162,15 @@ describe("RealityServicesClient Normal (#integration)", () => {
   it("should return a RealityData from a given ID", async () => {
     try {
       const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
-      let realityData = await realityDataAccessClient.getRealityData(accessToken, iTwinId, tilesId);
+      let realityData = await realityDataAccessClient.getRealityData(accessToken, iTwinId, realityDataId);
       chai.assert(realityData);
-      chai.assert(realityData.id === tilesId);
+      chai.assert(realityData.id === realityDataId);
 
       // test without iTwinId
       await delay(1000);
-      realityData = await realityDataAccessClient.getRealityData(accessToken, undefined, tilesId);
+      realityData = await realityDataAccessClient.getRealityData(accessToken, undefined, realityDataId);
       chai.assert(realityData);
-      chai.assert(realityData.id === tilesId);
+      chai.assert(realityData.id === realityDataId);
 
     } catch (errorResponse: any) {
       throw Error(`Test error: ${errorResponse}`);
@@ -139,9 +180,9 @@ describe("RealityServicesClient Normal (#integration)", () => {
   it("should return a RealityData from a given ID and respect RealityDataAccessProps interfaces", async () => {
     try {
       const realityDataAccessClient: RealityDataAccess = new RealityDataAccessClient(realityDataClientConfig);
-      const realityData: RealityData = await realityDataAccessClient.getRealityData(accessToken, iTwinId, tilesId);
+      const realityData: RealityData = await realityDataAccessClient.getRealityData(accessToken, iTwinId, realityDataId);
       chai.assert(realityData);
-      chai.assert(realityData.id === tilesId);
+      chai.assert(realityData.id === realityDataId);
     } catch (errorResponse: any) {
       throw Error(`Test error: ${errorResponse}`);
     }
@@ -152,7 +193,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
 
     // displayName: iTwinjs RealityData Client get projects test, id: d344d5ec-5068-4752-9432-ff1c8f087111
-    const realityData = await realityDataAccessClient.getRealityData(accessToken, iTwinId, "d344d5ec-5068-4752-9432-ff1c8f087111");
+    const realityData = await realityDataAccessClient.getRealityData(accessToken, iTwinId, realityDataIdProjects);
 
     chai.assert(realityData);
     // get all projects information
@@ -171,7 +212,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
 
     // displayName: iTwinjs RealityData Client get projects test, id: d344d5ec-5068-4752-9432-ff1c8f087111
-    const realityData = await realityDataAccessClient.getRealityData(accessToken, iTwinId, "d344d5ec-5068-4752-9432-ff1c8f087111");
+    const realityData = await realityDataAccessClient.getRealityData(accessToken, iTwinId, realityDataIdProjects);
 
     chai.assert(realityData);
     // get all projects information
@@ -186,7 +227,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
 
   it("should be able to retrieve the azure blob url", async () => {
     const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
-    const realityData = await realityDataAccessClient.getRealityData(accessToken, iTwinId, tilesId);
+    const realityData = await realityDataAccessClient.getRealityData(accessToken, iTwinId, realityDataId);
     const url: URL = await realityData.getBlobUrl(accessToken, "test");
     chai.assert(url);
     chai.assert(url.toString().includes("test"));
@@ -205,7 +246,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     // test without iTwinId
     await delay(1000);
 
-    const realityData2 = await realityDataAccessClient.getRealityData(accessToken, undefined, tilesId);
+    const realityData2 = await realityDataAccessClient.getRealityData(accessToken, undefined, realityDataId);
     const url3: URL = await realityData2.getBlobUrl(accessToken, "test");
     chai.assert(url3);
     chai.assert(url3.toString().includes("test"));
@@ -467,8 +508,22 @@ describe("RealityServicesClient Normal (#integration)", () => {
 
   it("should be able to retrieve reality data properties for every reality data associated with iTwin within an extent", async () => {
 
-    const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
+    // arrange
+    let rdWithExtent = new ITwinRealityData(realityDataAccessClient,
+      {
+        displayName: "iTwinjs reality-data-client test with extent, can be deleted",
+        type: "3SM",
+        extent: {
+          southWest: { latitude: 40.6706, longitude: -80.3455 },
+          northEast: { latitude: 40.6716, longitude: -80.3359 }
+        }
+      },
+      iTwinId);
+      rdWithExtent = await realityDataAccessClient.createRealityData(accessToken, iTwinId, rdWithExtent);
+    chai.assert(rdWithExtent, "Failed to create test reality data");
+    const rdWithExtentId = rdWithExtent.id;
 
+    // act
     const cornerSpatial = new Array<Point3d>();
     cornerSpatial.push(new Point3d(813907, -4775048, 4135438));
     cornerSpatial.push(new Point3d(814123, -4776318, 4135438));
@@ -484,19 +539,14 @@ describe("RealityServicesClient Normal (#integration)", () => {
     };
     const realityDataResponse = await realityDataAccessClient.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
 
-    chai.expect(realityDataResponse);
-  
-    // currently in prod, only one result should be possible
-    /*
-      id: 'de1badb3-012f-4f18-b28a-57d3f2164ba8',
-      extent: {
-        southWest: { latitude: 40.6706, longitude: -80.3455 },
-        northEast: { latitude: 40.6716, longitude: -80.3359 }
-      }
-    */
-    // with http request : https://api.bentley.com/reality-management/realitydata/?iTwinId=614a3c70-cc9f-4de9-af87-f834002ca19e&$top=10&extent=-80.35221279383678,40.6693689301031,-80.32437826187261,40.68067531423824'
-    chai.expect(realityDataResponse.realityDatas.length === 1, "No reality data found. Please verify test reality data exists within the given extent.");
-    chai.assert(realityDataResponse.realityDatas[0].id === "de1badb3-012f-4f18-b28a-57d3f2164ba8");
+    // assert
+    chai.assert(realityDataResponse);
+    chai.assert(realityDataResponse.realityDatas.length > 0, "No reality data found. Please verify test reality data exists within the given extent.");
+    chai.assert(realityDataResponse.realityDatas.filter(rd => rd.id === rdWithExtentId).length > 0);
+
+    // delete the test reality data
+    const deleteResult = await realityDataAccessClient.deleteRealityData(accessToken, rdWithExtentId);
+    chai.assert(deleteResult, "Failed to delete test reality data");
 
   });
 
@@ -585,9 +635,6 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(realityDataAdded.modifiedDateTime!.getTime());
     chai.assert(realityDataAdded.lastAccessedDateTime!.getTime());
     chai.assert(realityDataAdded.createdDateTime!.getTime());
-    // At creation the last accessed time stamp remains null. ?
-
-    console.log(realityDataAdded);
 
     realityDataAdded.displayName = "MODIFIED iTwinjs RealityData Client create and delete test";
     realityDataAdded.group = "MODIFIED Test group";
@@ -670,7 +717,7 @@ describe("RealityServicesClient Errors (#integration)", () => {
 
   let iTwinId: GuidString;
 
-  const nonexistentTilesId: string = "f2065aea-5dcd-49e2-9077-000000000000";
+  const nonExistentRealityDataId: string = "f2065aea-5dcd-49e2-9077-000000000000";
 
   let accessToken: AccessToken;
 
@@ -696,7 +743,7 @@ describe("RealityServicesClient Errors (#integration)", () => {
   it("should throw a 404 error when Reality Data ID does not exist.", async () => {
     const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
     try {
-      await realityDataAccessClient.getRealityData(accessToken, iTwinId, nonexistentTilesId);
+      await realityDataAccessClient.getRealityData(accessToken, iTwinId, nonExistentRealityDataId);
     } catch (errorResponse: any) {
       chai.assert(errorResponse.errorNumber === 404, `Error code should be 404. It is ${errorResponse.errorNumber}.`);
       return;
@@ -753,7 +800,7 @@ describe("RealityServicesClient Errors (#integration)", () => {
   it("should throw a 404 error when reality data id does not exist (modifying a reality data)", async () => {
     const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
     const realityData = new ITwinRealityData(realityDataAccessClient);
-    realityData.id = nonexistentTilesId;
+    realityData.id = nonExistentRealityDataId;
     realityData.displayName = "MODIFIED iTwinjs RealityData";
     realityData.dataset = "Test Dataset for iTwinjs";
     realityData.description = "Dummy description for a test reality data";
@@ -771,7 +818,7 @@ describe("RealityServicesClient Errors (#integration)", () => {
   it("should throw a 404 error when reality data id does not exist (deleting a reality data)", async () => {
     const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
     try {
-      await realityDataAccessClient.deleteRealityData(accessToken, nonexistentTilesId);
+      await realityDataAccessClient.deleteRealityData(accessToken, nonExistentRealityDataId);
     } catch (errorResponse: any) {
       chai.assert(errorResponse.errorNumber === 404, `Error code should be 404. It is ${errorResponse.errorNumber}.`);
       return;
@@ -782,7 +829,7 @@ describe("RealityServicesClient Errors (#integration)", () => {
   it("should throw a 404 error when reality data id does not exist (associate a reality data)", async () => {
     const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
     try {
-      await realityDataAccessClient.associateRealityData(accessToken, iTwinId, nonexistentTilesId);
+      await realityDataAccessClient.associateRealityData(accessToken, iTwinId, nonExistentRealityDataId);
     } catch (errorResponse: any) {
       chai.assert(errorResponse.errorNumber === 404, `Error code should be 404. It is ${errorResponse.errorNumber}.`);
       return;
@@ -793,7 +840,7 @@ describe("RealityServicesClient Errors (#integration)", () => {
   it("should throw a 404 error when reality data id does not exist (dissociate a reality data)", async () => {
     const realityDataAccessClient = new RealityDataAccessClient(realityDataClientConfig);
     try {
-      await realityDataAccessClient.dissociateRealityData(accessToken, iTwinId, nonexistentTilesId);
+      await realityDataAccessClient.dissociateRealityData(accessToken, iTwinId, nonExistentRealityDataId);
     } catch (errorResponse: any) {
       chai.assert(errorResponse.errorNumber === 404, `Error code should be 404. It is ${errorResponse.errorNumber}.`);
       return;

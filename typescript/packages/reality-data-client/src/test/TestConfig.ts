@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /*---------------------------------------------------------------------------------------------
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
@@ -10,6 +11,7 @@ import { getAccessTokenFromBackend, type TestUserCredentials, TestUsers } from "
 export class TestConfig {
   // iTwin id used by tests
   public static readonly integrationTestsItwinId: string = "614a3c70-cc9f-4de9-af87-f834002ca19e"; // iTwin name = "Integration tests for reality-data-client"
+  public static readonly integrationTestsItwinIdProjects: string = "84856374-51ed-4f13-a386-6721e01f87a3"; // iTwin name = "Integration tests for reality-data-client"
   /** Login the specified user and return the AuthorizationToken */
   public static async getAccessToken(user: TestUserCredentials = TestUsers.regular): Promise<AccessToken> {
     return getAccessTokenFromBackend(user);
