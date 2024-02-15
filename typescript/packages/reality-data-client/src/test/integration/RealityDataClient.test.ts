@@ -51,7 +51,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
   let realityDataIdProjects: string;
 
   // test RealityData for listing tests.
-  let realityDataList: ITwinRealityData[] = [];
+ const realityDataList: ITwinRealityData[] = [];
 
 
   let accessToken: AccessToken;
