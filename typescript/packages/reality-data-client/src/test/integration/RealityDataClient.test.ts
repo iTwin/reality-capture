@@ -50,6 +50,10 @@ describe("RealityServicesClient Normal (#integration)", () => {
   let realityDataId: string;
   let realityDataIdProjects: string;
 
+  // test RealityData for listing tests.
+  let realityDataList: ITwinRealityData[] = [];
+
+
   let accessToken: AccessToken;
 
   before(async () => {
@@ -58,7 +62,9 @@ describe("RealityServicesClient Normal (#integration)", () => {
     accessToken = await TestConfig.getAccessToken();
 
     chai.assert.isDefined(iTwinId);
+    chai.assert.isDefined(iTwinId2);
 
+    console.log("Creating test reality data...");
     // create a test reality data
     let rdTest = new ITwinRealityData(realityDataAccessClient,
       {
@@ -70,7 +76,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(rdTest, "Failed to create test reality data");
     realityDataId = rdTest.id;
 
-    // create a test reality data
+    // create a test reality data associated to both iTwins
     let rdTestProjects = new ITwinRealityData(realityDataAccessClient,
       {
         displayName: "iTwinjs reality-data-client projects, can be deleted",
@@ -81,20 +87,41 @@ describe("RealityServicesClient Normal (#integration)", () => {
     await realityDataAccessClient.associateRealityData(accessToken, iTwinId2, rdTestProjects.id);
     chai.assert(rdTestProjects, "Failed to create test reality data");
 
+    //create 10 reality data for listing tests
+    for (let i = 0; i < 10; i++) {
+      let rd = new ITwinRealityData(realityDataAccessClient,
+        {
+          displayName: `iTwinjs reality-data-client listing test ${i}, can be deleted`,
+          type: "3MX",
+        },
+        iTwinId);
+      rd = await realityDataAccessClient.createRealityData(accessToken, iTwinId, rd);
+      chai.assert(rd, `Failed to create test reality data ${i}`);
+      realityDataList.push(rd);
+    }
+
     realityDataIdProjects = rdTestProjects.id;
+
+    console.log("Creating test reality data...done");
   });
 
   after(async() => {
     // delete the test reality data
-    console.log("Cleaning test reality data");
+    console.log("Cleaning test reality data...");
     const deleteResult = await realityDataAccessClient.deleteRealityData(accessToken, realityDataId);
     chai.assert(deleteResult, "Failed to delete test reality data");
-
 
     const dissociateResult = await realityDataAccessClient.dissociateRealityData(accessToken, iTwinId2, realityDataIdProjects);
     chai.assert(dissociateResult, "Failed to dissociate test reality data");
     const deleteResult2 = await realityDataAccessClient.deleteRealityData(accessToken, realityDataIdProjects);
     chai.assert(deleteResult2, "Failed to delete test reality data");
+
+    // delete the test reality data for listing tests
+    for (let i = 0; i < 10; i++) {
+      const deleteResult = await realityDataAccessClient.deleteRealityData(accessToken, realityDataList[i].id);
+      chai.assert(deleteResult, `Failed to delete test reality data ${i}`);
+    }
+    console.log("Cleaning test reality data...done");
   });
 
   it("should properly redirect configured URL to proper Reality Management API URL", async () => {
@@ -290,7 +317,6 @@ describe("RealityServicesClient Normal (#integration)", () => {
     };
 
     const realityDataResponse = await realityDataAccessClient.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
-
     const realityDatas = realityDataResponse.realityDatas;
     chai.assert(realityDatas);
 
