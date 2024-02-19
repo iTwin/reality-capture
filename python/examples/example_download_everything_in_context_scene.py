@@ -15,13 +15,9 @@ import xml.etree.ElementTree as Et
 
 
 def main():
-    #context_scene_cloud_id = r"Context scene identifier in Context Share"
-    #context_scene_file_name = r"Context scene file name (include extension)"
-    #output_path = r"path to the folder where you want to save downloaded files"
-
-    context_scene_cloud_id = r"a1fa1346-8d9d-4b74-acdc-d1c69f3e98b5"
-    context_scene_file_name = r"ContextScene.xml"
-    output_path = r"D:\output"
+    context_scene_cloud_id = r"Context scene identifier in Context Share"
+    context_scene_file_name = r"Context scene file name (include extension)"
+    output_path = r"path to the folder where you want to save downloaded files"
 
     scope_set = {
         "realitydata:modify",
@@ -56,7 +52,7 @@ def main():
     ref_index = 0
     with open(context_scene_local_path, "r", encoding="utf-8") as file:
         if context_scene_local_path.endswith('.xml'):
-            # xml
+            # xml (deprecated)
             tree = Et.ElementTree()
             tree.parse(file)
             root = tree.getroot()
