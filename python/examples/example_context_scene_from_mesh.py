@@ -26,7 +26,7 @@ FORMAT_3D = ["opc", "OPC", "3SM", "3sm", "3MX", "3mx"]
 def main():
     # Initialize empty ContextScene
     context_scene = ContextScene()
-    # Initialize empty Reference dictionnay
+    # Initialize empty Reference dictionary
     reference_dict = ReferencesCS()
     meshes = Meshes()
 
@@ -44,13 +44,13 @@ def main():
     for (root, dirs, files) in os.walk(INPUT_FOLDER, topdown=True):
         if any(files):
             for _ in files:
+                srs_3mx = SpatialReferenceSystems()
                 if _[-3:] in FORMAT_3D:
                     mesh_name = _[:-4]
                     meshes.add_mesh(Mesh(len(meshes.meshes.keys()), mesh_name, f"{tmp_ref[root]}:{_}"))
                     if _[-3:] == "3mx":
                         with open(os.path.join(root, _)) as json_file:
                             data_3mx = json.load(json_file)
-                            srs_3mx = SpatialReferenceSystems()
                             srs_3mx.set_id(len(srs_3mx.srs))
                             srs_3mx.add_srs(len(srs_3mx.srs), data_3mx["layers"][0]["SRS"])
                 meshCollection = MeshCollection(meshes.meshes)
