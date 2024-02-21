@@ -43,7 +43,7 @@ export class RealityDataAnalysisService {
             const headers =
             {
                 "content-type": "application/json",
-                "accept": "application/vnd.bentley.ras-v2-test+json",
+                "accept": "application/vnd.bentley.itwin-platform.v1+json",
                 "authorization": await this.getAccessToken(),
             };
 
