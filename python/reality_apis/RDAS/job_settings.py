@@ -37,26 +37,26 @@ class O2DJobSettings:
         json_dict["inputs"] = list()
         if self.inputs.photos:
             json_dict["inputs"].append(
-                {"name": "photos", "realityDataId": self.inputs.photos}
+                {"type": "photos", "id": self.inputs.photos}
             )
         if self.inputs.photo_object_detector:
             json_dict["inputs"].append(
                 {
-                    "name": "photoObjectDetector",
-                    "realityDataId": self.inputs.photo_object_detector,
+                    "type": "photoObjectDetector",
+                    "id": self.inputs.photo_object_detector,
                 }
             )
         if self.inputs.objects2D:
             json_dict["inputs"].append(
-                {"name": "objects2D", "realityDataId": self.inputs.objects2D}
+                {"type": "objects2D", "id": self.inputs.objects2D}
             )
         if self.inputs.point_clouds:
             json_dict["inputs"].append(
-                {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
+                {"type": "pointClouds", "id": self.inputs.point_clouds}
             )
         if self.inputs.meshes:
             json_dict["inputs"].append(
-                {"name": "meshes", "realityDataId": self.inputs.meshes}
+                {"type": "meshes", "id": self.inputs.meshes}
             )
         json_dict["outputs"] = list()
         if self.outputs.objects2D:
@@ -94,45 +94,45 @@ class O2DJobSettings:
         try:
             inputs_json = settings_json["inputs"]
             for input_dict in inputs_json:
-                if input_dict["name"] == "photos":
+                if input_dict["type"] == "photos":
                     new_job_settings.inputs.photos = input_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif input_dict["name"] == "photoObjectDetector":
+                elif input_dict["type"] == "photoObjectDetector":
                     new_job_settings.inputs.photo_object_detector = input_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif input_dict["name"] == "pointClouds":
-                    new_job_settings.inputs.point_clouds = input_dict["realityDataId"]
-                elif input_dict["name"] == "objects2D":
-                    new_job_settings.inputs.objects2D = input_dict["realityDataId"]
-                elif input_dict["name"] == "meshes":
-                    new_job_settings.inputs.meshes = input_dict["realityDataId"]
+                elif input_dict["type"] == "pointClouds":
+                    new_job_settings.inputs.point_clouds = input_dict["id"]
+                elif input_dict["type"] == "objects2D":
+                    new_job_settings.inputs.objects2D = input_dict["id"]
+                elif input_dict["type"] == "meshes":
+                    new_job_settings.inputs.meshes = input_dict["id"]
                 else:
                     raise TypeError(
-                        "found non expected input name:" + input_dict["name"]
+                        "found non expected input name:" + input_dict["type"]
                     )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
-                if output_dict["name"] == "objects2D":
-                    new_job_settings.outputs.objects2D = output_dict["realityDataId"]
-                elif output_dict["name"] == "objects3D":
-                    new_job_settings.outputs.objects3D = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedObjects3DDGN":
+                if output_dict["type"] == "objects2D":
+                    new_job_settings.outputs.objects2D = output_dict["id"]
+                elif output_dict["type"] == "objects3D":
+                    new_job_settings.outputs.objects3D = output_dict["id"]
+                elif output_dict["type"] == "exportedObjects3DDGN":
                     new_job_settings.outputs.exported_objects3D_DGN = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedObjects3DCesium":
+                elif output_dict["type"] == "exportedObjects3DCesium":
                     new_job_settings.outputs.exported_objects3D_cesium = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedLocations3DSHP":
+                elif output_dict["type"] == "exportedLocations3DSHP":
                     new_job_settings.outputs.exported_locations3D_SHP = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
                 else:
                     raise TypeError(
-                        "found non expected output name" + output_dict["name"]
+                        "found non expected output name" + output_dict["type"]
                     )
             if "options" in settings_json:
                 options = settings_json["options"]
@@ -233,26 +233,26 @@ class S2DJobSettings:
         json_dict["inputs"] = list()
         if self.inputs.photos:
             json_dict["inputs"].append(
-                {"name": "photos", "realityDataId": self.inputs.photos}
+                {"type": "photos", "id": self.inputs.photos}
             )
         if self.inputs.photo_segmentation_detector:
             json_dict["inputs"].append(
                 {
-                    "name": "photoSegmentationDetector",
-                    "realityDataId": self.inputs.photo_segmentation_detector,
+                    "type": "photoSegmentationDetector",
+                    "id": self.inputs.photo_segmentation_detector,
                 }
             )
         if self.inputs.point_clouds:
             json_dict["inputs"].append(
-                {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
+                {"type": "pointClouds", "id": self.inputs.point_clouds}
             )
         if self.inputs.meshes:
             json_dict["inputs"].append(
-                {"name": "meshes", "realityDataId": self.inputs.meshes}
+                {"type": "meshes", "id": self.inputs.meshes}
             )
         if self.inputs.segmentation2D:
             json_dict["inputs"].append(
-                {"name": "segmentation2D", "realityDataId": self.inputs.segmentation2D}
+                {"type": "segmentation2D", "id": self.inputs.segmentation2D}
             )
         json_dict["outputs"] = list()
         if self.outputs.segmentation2D:
@@ -297,53 +297,53 @@ class S2DJobSettings:
         try:
             inputs_json = settings_json["inputs"]
             for input_dict in inputs_json:
-                if input_dict["name"] == "photos":
-                    new_job_settings.inputs.photos = input_dict["realityDataId"]
-                elif input_dict["name"] == "photoSegmentationDetector":
+                if input_dict["type"] == "photos":
+                    new_job_settings.inputs.photos = input_dict["id"]
+                elif input_dict["type"] == "photoSegmentationDetector":
                     new_job_settings.inputs.photo_segmentation_detector = input_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif input_dict["name"] == "pointClouds":
-                    new_job_settings.inputs.point_clouds = input_dict["realityDataId"]
-                elif input_dict["name"] == "meshes":
-                    new_job_settings.inputs.meshes = input_dict["realityDataId"]
-                elif input_dict["name"] == "segmentation2D":
-                    new_job_settings.inputs.segmentation2D = input_dict["realityDataId"]
+                elif input_dict["type"] == "pointClouds":
+                    new_job_settings.inputs.point_clouds = input_dict["id"]
+                elif input_dict["type"] == "meshes":
+                    new_job_settings.inputs.meshes = input_dict["id"]
+                elif input_dict["type"] == "segmentation2D":
+                    new_job_settings.inputs.segmentation2D = input_dict["id"]
                 else:
                     raise TypeError(
-                        "found non expected input name:" + input_dict["name"]
+                        "found non expected input name:" + input_dict["type"]
                     )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
-                if output_dict["name"] == "segmentation2D":
+                if output_dict["type"] == "segmentation2D":
                     new_job_settings.outputs.segmentation2D = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "segmentedPhotos":
-                    new_job_settings.outputs.segmented_photos = output_dict["realityDataId"]
-                elif output_dict["name"] == "lines3D":
-                    new_job_settings.outputs.lines3D = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedLines3DDGN":
+                elif output_dict["type"] == "segmentedPhotos":
+                    new_job_settings.outputs.segmented_photos = output_dict["id"]
+                elif output_dict["type"] == "lines3D":
+                    new_job_settings.outputs.lines3D = output_dict["id"]
+                elif output_dict["type"] == "exportedLines3DDGN":
                     new_job_settings.outputs.exported_lines3D_DGN = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedLines3DCesium":
+                elif output_dict["type"] == "exportedLines3DCesium":
                     new_job_settings.outputs.exported_lines3D_cesium = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "polygons3D":
-                    new_job_settings.outputs.polygons3D = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedPolygons3DDGN":
+                elif output_dict["type"] == "polygons3D":
+                    new_job_settings.outputs.polygons3D = output_dict["id"]
+                elif output_dict["type"] == "exportedPolygons3DDGN":
                     new_job_settings.outputs.exported_polygons3D_DGN = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedPolygons3DCesium":
+                elif output_dict["type"] == "exportedPolygons3DCesium":
                     new_job_settings.outputs.exported_polygons3D_cesium = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
                 else:
                     raise TypeError(
-                        "found non expected output name:" + output_dict["name"]
+                        "found non expected output name:" + output_dict["type"]
                     )
             if "options" in settings_json:
                 options = settings_json["options"]
@@ -456,13 +456,13 @@ class SOrthoJobSettings:
         json_dict["inputs"] = list()
         if self.inputs.orthophoto:
             json_dict["inputs"].append(
-                {"name": "orthophoto", "realityDataId": self.inputs.orthophoto}
+                {"type": "orthophoto", "id": self.inputs.orthophoto}
             )
         if self.inputs.orthophoto_segmentation_detector:
             json_dict["inputs"].append(
                 {
-                    "name": "orthophotoSegmentationDetector",
-                    "realityDataId": self.inputs.orthophoto_segmentation_detector,
+                    "type": "orthophotoSegmentationDetector",
+                    "id": self.inputs.orthophoto_segmentation_detector,
                 }
             )
         json_dict["outputs"] = list()
@@ -496,39 +496,39 @@ class SOrthoJobSettings:
         try:
             inputs_json = settings_json["inputs"]
             for input_dict in inputs_json:
-                if input_dict["name"] == "orthophoto":
-                    new_job_settings.inputs.orthophoto = input_dict["realityDataId"]
-                elif input_dict["name"] == "orthophotoSegmentationDetector":
+                if input_dict["type"] == "orthophoto":
+                    new_job_settings.inputs.orthophoto = input_dict["id"]
+                elif input_dict["type"] == "orthophotoSegmentationDetector":
                     new_job_settings.inputs.orthophoto_segmentation_detector = (
-                        input_dict["realityDataId"]
+                        input_dict["id"]
                     )
                 else:
                     raise TypeError(
-                        "found non expected input name:" + input_dict["name"]
+                        "found non expected input name:" + input_dict["type"]
                     )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
-                if output_dict["name"] == "segmentation2D":
+                if output_dict["type"] == "segmentation2D":
                     new_job_settings.outputs.segmentation2D = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "segmentedPhotos":
-                    new_job_settings.outputs.segmented_photos = output_dict["realityDataId"]
-                elif output_dict["name"] == "polygons2D":
-                    new_job_settings.outputs.polygons2D = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedPolygons2DSHP":
+                elif output_dict["type"] == "segmentedPhotos":
+                    new_job_settings.outputs.segmented_photos = output_dict["id"]
+                elif output_dict["type"] == "polygons2D":
+                    new_job_settings.outputs.polygons2D = output_dict["id"]
+                elif output_dict["type"] == "exportedPolygons2DSHP":
                     new_job_settings.outputs.exported_polygons2D_SHP = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "lines2D":
-                    new_job_settings.outputs.lines2D = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedLines2DDGN":
-                    new_job_settings.outputs.exported_lines2D_DGN = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedLines2DSHP":
-                    new_job_settings.outputs.exported_lines2D_SHP = output_dict["realityDataId"]
+                elif output_dict["type"] == "lines2D":
+                    new_job_settings.outputs.lines2D = output_dict["id"]
+                elif output_dict["type"] == "exportedLines2DDGN":
+                    new_job_settings.outputs.exported_lines2D_DGN = output_dict["id"]
+                elif output_dict["type"] == "exportedLines2DSHP":
+                    new_job_settings.outputs.exported_lines2D_SHP = output_dict["id"]
                 else:
                     raise TypeError(
-                        "found non expected output name:" + output_dict["name"]
+                        "found non expected output type:" + output_dict["type"]
                     )
         except (TypeError, KeyError) as e:
             return ReturnValue(value=cls(), error=str(e))
@@ -578,7 +578,7 @@ class S3DJobSettings:
     Attributes:
         type: Type of job settings.
         inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
-        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the type
             of the output) before passing the settings to create_job.
         options: Possible options for this job.
     """
@@ -600,26 +600,26 @@ class S3DJobSettings:
         json_dict["inputs"] = list()
         if self.inputs.point_clouds:
             json_dict["inputs"].append(
-                {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
+                {"type": "pointClouds", "id": self.inputs.point_clouds}
             )
         if self.inputs.meshes:
             json_dict["inputs"].append(
-                {"name": "meshes", "realityDataId": self.inputs.meshes}
+                {"type": "meshes", "id": self.inputs.meshes}
             )
         if self.inputs.point_cloud_segmentation_detector:
             json_dict["inputs"].append(
                 {
-                    "name": "pointCloudSegmentationDetector",
-                    "realityDataId": self.inputs.point_cloud_segmentation_detector,
+                    "type": "pointCloudSegmentationDetector",
+                    "id": self.inputs.point_cloud_segmentation_detector,
                 }
             )
         if self.inputs.segmentation3D:
             json_dict["inputs"].append(
-                {"name": "segmentation3D", "realityDataId": self.inputs.segmentation3D}
+                {"type": "segmentation3D", "id": self.inputs.segmentation3D}
             )
         if self.inputs.clip_polygon:
             json_dict["inputs"].append(
-                {"name": "clipPolygon", "realityDataId": self.inputs.clip_polygon}
+                {"type": "clipPolygon", "id": self.inputs.clip_polygon}
             )
 
         json_dict["outputs"] = list()
@@ -681,86 +681,86 @@ class S3DJobSettings:
         try:
             inputs_json = settings_json["inputs"]
             for input_dict in inputs_json:
-                if input_dict["name"] == "pointClouds":
-                    new_job_settings.inputs.point_clouds = input_dict["realityDataId"]
-                elif input_dict["name"] == "meshes":
-                    new_job_settings.inputs.meshes = input_dict["realityDataId"]
-                elif input_dict["name"] == "pointCloudSegmentationDetector":
+                if input_dict["type"] == "pointClouds":
+                    new_job_settings.inputs.point_clouds = input_dict["id"]
+                elif input_dict["type"] == "meshes":
+                    new_job_settings.inputs.meshes = input_dict["id"]
+                elif input_dict["type"] == "pointCloudSegmentationDetector":
                     new_job_settings.inputs.point_cloud_segmentation_detector = (
-                        input_dict["realityDataId"]
+                        input_dict["id"]
                     )
-                elif input_dict["name"] == "segmentation3D":
-                    new_job_settings.inputs.segmentation3D = input_dict["realityDataId"]
-                elif input_dict["name"] == "clipPolygon":
-                    new_job_settings.inputs.clip_polygon = input_dict["realityDataId"]
+                elif input_dict["type"] == "segmentation3D":
+                    new_job_settings.inputs.segmentation3D = input_dict["id"]
+                elif input_dict["type"] == "clipPolygon":
+                    new_job_settings.inputs.clip_polygon = input_dict["id"]
                 else:
                     raise TypeError(
-                        "found non expected input name:" + input_dict["name"]
+                        "found non expected input type:" + input_dict["type"]
                     )
 
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
-                if output_dict["name"] == "segmentation3D":
+                if output_dict["type"] == "segmentation3D":
                     new_job_settings.outputs.segmentation3D = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "segmentedPointCloud":
+                elif output_dict["type"] == "segmentedPointCloud":
                     new_job_settings.outputs.segmented_point_cloud = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedSegmentation3DPOD":
+                elif output_dict["type"] == "exportedSegmentation3DPOD":
                     new_job_settings.outputs.exported_segmentation3D_POD = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedSegmentation3DLAS":
+                elif output_dict["type"] == "exportedSegmentation3DLAS":
                     new_job_settings.outputs.exported_segmentation3D_LAS = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedSegmentation3DLAZ":
+                elif output_dict["type"] == "exportedSegmentation3DLAZ":
                     new_job_settings.outputs.exported_segmentation3D_LAZ = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedSegmentation3DPLY":
+                elif output_dict["type"] == "exportedSegmentation3DPLY":
                     new_job_settings.outputs.exported_segmentation3D_PLY = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "objects3D":
-                    new_job_settings.outputs.objects3D = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedObjects3DDGN":
+                elif output_dict["type"] == "objects3D":
+                    new_job_settings.outputs.objects3D = output_dict["id"]
+                elif output_dict["type"] == "exportedObjects3DDGN":
                     new_job_settings.outputs.exported_objects3D_DGN = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedObjects3DCesium":
+                elif output_dict["type"] == "exportedObjects3DCesium":
                     new_job_settings.outputs.exported_objects3D_cesium = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedLocations3DSHP":
+                elif output_dict["type"] == "exportedLocations3DSHP":
                     new_job_settings.outputs.exported_locations3D_SHP = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "lines3D":
-                    new_job_settings.outputs.lines3D = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedLines3DDGN":
+                elif output_dict["type"] == "lines3D":
+                    new_job_settings.outputs.lines3D = output_dict["id"]
+                elif output_dict["type"] == "exportedLines3DDGN":
                     new_job_settings.outputs.exported_lines3D_DGN = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedLines3DCesium":
+                elif output_dict["type"] == "exportedLines3DCesium":
                     new_job_settings.outputs.exported_lines3D_cesium = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "polygons3D":
-                    new_job_settings.outputs.polygons3D = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedPolygons3DDGN":
+                elif output_dict["type"] == "polygons3D":
+                    new_job_settings.outputs.polygons3D = output_dict["id"]
+                elif output_dict["type"] == "exportedPolygons3DDGN":
                     new_job_settings.outputs.exported_polygons3D_DGN = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedPolygons3DCesium":
+                elif output_dict["type"] == "exportedPolygons3DCesium":
                     new_job_settings.outputs.exported_polygons3D_cesium = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
                 else:
                     raise TypeError(
-                        "found non expected output name:" + output_dict["name"]
+                        "found non expected output type:" + output_dict["type"]
                     )
             if "options" in settings_json:
                 options = settings_json["options"]
@@ -865,7 +865,7 @@ class ChangeDetectionJobSettings:
     Attributes:
         type: Type of job settings.
         inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
-        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the type
             of the output) before passing the settings to create_job.
         options: Possible options for this job.
     """
@@ -887,19 +887,19 @@ class ChangeDetectionJobSettings:
         json_dict["inputs"] = list()
         if self.inputs.point_clouds1:
             json_dict["inputs"].append(
-                {"name": "pointClouds1", "realityDataId": self.inputs.point_clouds1}
+                {"type": "pointClouds1", "id": self.inputs.point_clouds1}
             )
         if self.inputs.point_clouds2:
             json_dict["inputs"].append(
-                {"name": "pointClouds2", "realityDataId": self.inputs.point_clouds2}
+                {"type": "pointClouds2", "id": self.inputs.point_clouds2}
             )
         if self.inputs.meshes1:
             json_dict["inputs"].append(
-                {"name": "meshes1", "realityDataId": self.inputs.meshes1}
+                {"type": "meshes1", "id": self.inputs.meshes1}
             )
         if self.inputs.meshes2:
             json_dict["inputs"].append(
-                {"name": "meshes2", "realityDataId": self.inputs.meshes2}
+                {"type": "meshes2", "id": self.inputs.meshes2}
             )
         json_dict["outputs"] = list()
         if self.outputs.objects3D:
@@ -937,29 +937,29 @@ class ChangeDetectionJobSettings:
         try:
             inputs_json = settings_json["inputs"]
             for input_dict in inputs_json:
-                if input_dict["name"] == "pointClouds1":
-                    new_job_settings.inputs.point_clouds1 = input_dict["realityDataId"]
-                elif input_dict["name"] == "pointClouds2":
-                    new_job_settings.inputs.point_clouds2 = input_dict["realityDataId"]
-                elif input_dict["name"] == "meshes1":
-                    new_job_settings.inputs.meshes1 = input_dict["realityDataId"]
-                elif input_dict["name"] == "meshes2":
-                    new_job_settings.inputs.meshes2 = input_dict["realityDataId"]
+                if input_dict["type"] == "pointClouds1":
+                    new_job_settings.inputs.point_clouds1 = input_dict["id"]
+                elif input_dict["type"] == "pointClouds2":
+                    new_job_settings.inputs.point_clouds2 = input_dict["id"]
+                elif input_dict["type"] == "meshes1":
+                    new_job_settings.inputs.meshes1 = input_dict["id"]
+                elif input_dict["type"] == "meshes2":
+                    new_job_settings.inputs.meshes2 = input_dict["id"]
                 else:
                     raise TypeError(
-                        "found non expected input name:" + input_dict["name"]
+                        "found non expected input type:" + input_dict["type"]
                     )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
-                if output_dict["name"] == "objects3D":
-                    new_job_settings.outputs.objects3D = output_dict["realityDataId"]
-                elif output_dict["name"] == "exportedLocations3DSHP":
+                if output_dict["type"] == "objects3D":
+                    new_job_settings.outputs.objects3D = output_dict["id"]
+                elif output_dict["type"] == "exportedLocations3DSHP":
                     new_job_settings.outputs.exported_locations3D_SHP = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
                 else:
                     raise TypeError(
-                        "found non expected output name:" + output_dict["name"]
+                        "found non expected output type:" + output_dict["type"]
                     )
             if "options" in settings_json:
                 options = settings_json["options"]
@@ -1050,7 +1050,7 @@ class ExtractGroundJobSettings:
     Attributes:
         type: Type of job settings.
         inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
-        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the type
             of the output) before passing the settings to create_job.
         options: Possible options for this job
     """
@@ -1072,22 +1072,22 @@ class ExtractGroundJobSettings:
         json_dict["inputs"] = list()
         if self.inputs.point_clouds:
             json_dict["inputs"].append(
-                {"name": "pointClouds", "realityDataId": self.inputs.point_clouds}
+                {"type": "pointClouds", "id": self.inputs.point_clouds}
             )
         if self.inputs.meshes:
             json_dict["inputs"].append(
-                {"name": "meshes", "realityDataId": self.inputs.meshes}
+                {"type": "meshes", "id": self.inputs.meshes}
             )
         if self.inputs.point_cloud_segmentation_detector:
             json_dict["inputs"].append(
                 {
-                    "name": "pointCloudSegmentationDetector",
-                    "realityDataId": self.inputs.point_cloud_segmentation_detector,
+                    "type": "pointCloudSegmentationDetector",
+                    "id": self.inputs.point_cloud_segmentation_detector,
                 }
             )
         if self.inputs.clip_polygon:
             json_dict["inputs"].append(
-                {"name": "clipPolygon", "realityDataId": self.inputs.clip_polygon}
+                {"type": "clipPolygon", "id": self.inputs.clip_polygon}
             )
 
         json_dict["outputs"] = list()
@@ -1120,45 +1120,45 @@ class ExtractGroundJobSettings:
         try:
             inputs_json = settings_json["inputs"]
             for input_dict in inputs_json:
-                if input_dict["name"] == "pointClouds":
-                    new_job_settings.inputs.point_clouds = input_dict["realityDataId"]
-                elif input_dict["name"] == "meshes":
-                    new_job_settings.inputs.meshes = input_dict["realityDataId"]
-                elif input_dict["name"] == "pointCloudSegmentationDetector":
+                if input_dict["type"] == "pointClouds":
+                    new_job_settings.inputs.point_clouds = input_dict["id"]
+                elif input_dict["type"] == "meshes":
+                    new_job_settings.inputs.meshes = input_dict["id"]
+                elif input_dict["type"] == "pointCloudSegmentationDetector":
                     new_job_settings.inputs.point_cloud_segmentation_detector = (
-                        input_dict["realityDataId"]
+                        input_dict["id"]
                     )
-                elif input_dict["name"] == "clipPolygon":
-                    new_job_settings.inputs.clip_polygon = input_dict["realityDataId"]
+                elif input_dict["type"] == "clipPolygon":
+                    new_job_settings.inputs.clip_polygon = input_dict["id"]
                 else:
                     raise TypeError(
-                        "found non expected input name:" + input_dict["name"]
+                        "found non expected input type:" + input_dict["type"]
                     )
             outputs_json = settings_json["outputs"]
             for output_dict in outputs_json:
-                if output_dict["name"] == "segmentation3D":
+                if output_dict["type"] == "segmentation3D":
                     new_job_settings.outputs.segmentation3D = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "segmentedPointCloud":
+                elif output_dict["type"] == "segmentedPointCloud":
                     new_job_settings.outputs.segmented_point_cloud = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedSegmentation3DPOD":
+                elif output_dict["type"] == "exportedSegmentation3DPOD":
                     new_job_settings.outputs.exported_segmentation3D_POD = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedSegmentation3DLAS":
+                elif output_dict["type"] == "exportedSegmentation3DLAS":
                     new_job_settings.outputs.exported_segmentation3D_LAS = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
-                elif output_dict["name"] == "exportedSegmentation3DLAZ":
+                elif output_dict["type"] == "exportedSegmentation3DLAZ":
                     new_job_settings.outputs.exported_segmentation3D_LAZ = output_dict[
-                        "realityDataId"
+                        "id"
                     ]
                 else:
                     raise TypeError(
-                        "found non expected output name:" + output_dict["name"]
+                        "found non expected output type:" + output_dict["type"]
                     )
             if "options" in settings_json:
                 options = settings_json["options"]

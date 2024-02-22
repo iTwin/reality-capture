@@ -66,14 +66,18 @@ class RealityDataAnalysisService:
         Returns:
             The ID of the job, and a potential error message.
         """
-        # take job_settings and create the json settings we need to send
+        # take job_settings and create the json settings we need to
+        settings_json = settings.to_json()
         jc_dict = {
             "name": job_name,
             "iTwinId": iTwin_id,
             "type": settings.type.value,
-            "settings": settings.to_json(),
+            "inputs": settings_json["inputs"],
+            "outputs": settings_json["outputs"],
+            "options": settings_json["options"],
         }
         job_json = json.dumps(jc_dict)
+        print(job_json)
         # send the json settings
         response = self._session.post("https://" + self._service_url + "/realitydataanalysis/jobs", job_json,
                                       headers=self._get_header())

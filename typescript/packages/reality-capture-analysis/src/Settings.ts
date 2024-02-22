@@ -147,7 +147,7 @@ export class O2DJobSettings {
     inputs: O2DInputs;
     /** 
      * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+     * Fill the outputs you want for the job with a string (normally the type of the output) before passing it to createJob. 
      */
     outputs: O2DOutputs;
     /** Possible options for this job. */
@@ -166,7 +166,7 @@ export class O2DJobSettings {
         this.inputs = new O2DInputs();
         /** 
          * Possible outputs for this job. 
-         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+         * Fill the outputs you want for the job with a string (normally the type of the output) before passing it to createJob. 
          * @type {O2DOutputs}
          */
         this.outputs = new O2DOutputs();
@@ -185,19 +185,19 @@ export class O2DJobSettings {
         const json: any = {};
         json["inputs"] = [];
         if (this.inputs.photos)
-            json["inputs"].push({ "name": "photos", "realityDataId": this.inputs.photos });
+            json["inputs"].push({ "type": "photos", "id": this.inputs.photos });
 
         if (this.inputs.photoObjectDetector)
-            json["inputs"].push({ "name": "photoObjectDetector", "realityDataId": this.inputs.photoObjectDetector });
+            json["inputs"].push({ "type": "photoObjectDetector", "id": this.inputs.photoObjectDetector });
 
         if (this.inputs.objects2D)
-            json["inputs"].push({ "name": "objects2D", "realityDataId": this.inputs.objects2D });
+            json["inputs"].push({ "type": "objects2D", "id": this.inputs.objects2D });
 
         if (this.inputs.pointClouds)
-            json["inputs"].push({ "name": "pointClouds", "realityDataId": this.inputs.pointClouds });
+            json["inputs"].push({ "type": "pointClouds", "id": this.inputs.pointClouds });
 
         if (this.inputs.meshes)
-            json["inputs"].push({ "name": "meshes", "realityDataId": this.inputs.meshes });
+            json["inputs"].push({ "type": "meshes", "id": this.inputs.meshes });
 
         json["outputs"] = [];
         if (this.outputs.objects2D)
@@ -239,33 +239,33 @@ export class O2DJobSettings {
         const newJobSettings = new O2DJobSettings();
         const inputsJson = settingsJson["inputs"];
         for (const input of inputsJson) {
-            if (input["name"] === "photos")
-                newJobSettings.inputs.photos = input["realityDataId"];
-            else if (input["name"] === "photoObjectDetector")
-                newJobSettings.inputs.photoObjectDetector = input["realityDataId"];
-            else if (input["name"] === "meshes")
-                newJobSettings.inputs.meshes = input["realityDataId"];
-            else if (input["name"] === "objects2D")
-                newJobSettings.inputs.objects2D = input["realityDataId"];
-            else if (input["name"] === "pointClouds")
-                newJobSettings.inputs.pointClouds = input["realityDataId"];
+            if (input["type"] === "photos")
+                newJobSettings.inputs.photos = input["id"];
+            else if (input["type"] === "photoObjectDetector")
+                newJobSettings.inputs.photoObjectDetector = input["id"];
+            else if (input["type"] === "meshes")
+                newJobSettings.inputs.meshes = input["id"];
+            else if (input["type"] === "objects2D")
+                newJobSettings.inputs.objects2D = input["id"];
+            else if (input["type"] === "pointClouds")
+                newJobSettings.inputs.pointClouds = input["id"];
             else
-                return Promise.reject(new Error("Found unexpected input name : " + input["name"]));
+                return Promise.reject(new Error("Found unexpected input type : " + input["type"]));
         }
         const outputsJson = settingsJson["outputs"];
         for (const output of outputsJson) {
-            if (output["name"] === "objects2D")
-                newJobSettings.outputs.objects2D = output["realityDataId"];
-            else if (output["name"] === "objects3D")
-                newJobSettings.outputs.objects3D = output["realityDataId"];
-            else if (output["name"] === "exportedObjects3DDGN")
-                newJobSettings.outputs.exportedObjects3DDGN = output["realityDataId"];
-            else if (output["name"] === "exportedObjects3DCesium")
-                newJobSettings.outputs.exportedObjects3DCesium = output["realityDataId"];
-            else if (output["name"] === "exportedLocations3DSHP")
-                newJobSettings.outputs.exportedLocations3DSHP = output["realityDataId"];
+            if (output["type"] === "objects2D")
+                newJobSettings.outputs.objects2D = output["id"];
+            else if (output["type"] === "objects3D")
+                newJobSettings.outputs.objects3D = output["id"];
+            else if (output["type"] === "exportedObjects3DDGN")
+                newJobSettings.outputs.exportedObjects3DDGN = output["id"];
+            else if (output["type"] === "exportedObjects3DCesium")
+                newJobSettings.outputs.exportedObjects3DCesium = output["id"];
+            else if (output["type"] === "exportedLocations3DSHP")
+                newJobSettings.outputs.exportedLocations3DSHP = output["id"];
             else
-                return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
+                return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
         if("options" in settingsJson) {
             const options = settingsJson["options"];
@@ -439,7 +439,7 @@ export class S2DJobSettings {
     inputs: S2DInputs;
     /** 
      * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob.
+     * Fill the outputs you want for the job with a string (normally the type of the output) before passing it to createJob.
      */
     outputs: S2DOutputs;
     /** Possible options for this job. */
@@ -476,19 +476,19 @@ export class S2DJobSettings {
         const json: any = {};
         json["inputs"] = [];
         if (this.inputs.photos)
-            json["inputs"].push({ "name": "photos", "realityDataId": this.inputs.photos });
+            json["inputs"].push({ "type": "photos", "id": this.inputs.photos });
 
         if (this.inputs.photoSegmentationDetector)
-            json["inputs"].push({ "name": "photoSegmentationDetector", "realityDataId": this.inputs.photoSegmentationDetector });
+            json["inputs"].push({ "type": "photoSegmentationDetector", "id": this.inputs.photoSegmentationDetector });
 
         if (this.inputs.meshes)
-            json["inputs"].push({ "name": "meshes", "realityDataId": this.inputs.meshes });
+            json["inputs"].push({ "type": "meshes", "id": this.inputs.meshes });
 
         if (this.inputs.pointClouds)
-            json["inputs"].push({ "name": "pointClouds", "realityDataId": this.inputs.pointClouds });
+            json["inputs"].push({ "type": "pointClouds", "id": this.inputs.pointClouds });
 
         if (this.inputs.segmentation2D)
-            json["inputs"].push({ "name": "segmentation2D", "realityDataId": this.inputs.segmentation2D });
+            json["inputs"].push({ "type": "segmentation2D", "id": this.inputs.segmentation2D });
 
         json["outputs"] = [];
         if (this.outputs.segmentation2D)
@@ -539,39 +539,39 @@ export class S2DJobSettings {
         const newJobSettings = new S2DJobSettings();
         const inputsJson = settingsJson["inputs"];
         for (const input of inputsJson) {
-            if (input["name"] === "photos")
-                newJobSettings.inputs.photos = input["realityDataId"];
-            else if (input["name"] === "photoSegmentationDetector")
-                newJobSettings.inputs.photoSegmentationDetector = input["realityDataId"];
-            else if (input["name"] === "meshes")
-                newJobSettings.inputs.meshes = input["realityDataId"];
-            else if (input["name"] === "pointClouds")
-                newJobSettings.inputs.pointClouds = input["realityDataId"];
-            else if (input["name"] === "segmentation2D")
-                newJobSettings.inputs.segmentation2D = input["realityDataId"];
+            if (input["type"] === "photos")
+                newJobSettings.inputs.photos = input["id"];
+            else if (input["type"] === "photoSegmentationDetector")
+                newJobSettings.inputs.photoSegmentationDetector = input["id"];
+            else if (input["type"] === "meshes")
+                newJobSettings.inputs.meshes = input["id"];
+            else if (input["type"] === "pointClouds")
+                newJobSettings.inputs.pointClouds = input["id"];
+            else if (input["type"] === "segmentation2D")
+                newJobSettings.inputs.segmentation2D = input["id"];
             else
-                return Promise.reject(new Error("Found unexpected input name : " + input["name"]));
+                return Promise.reject(new Error("Found unexpected input type : " + input["type"]));
         }
         const outputsJson = settingsJson["outputs"];
         for (const output of outputsJson) {
-            if (output["name"] === "segmentation2D")
-                newJobSettings.outputs.segmentation2D = output["realityDataId"];
-            else if(output["name"] === "segmentedPhotos")
-                newJobSettings.outputs.segmentedPhotos = output["realityDataId"];
-            else if(output["name"] === "polygons3D")
-                newJobSettings.outputs.polygons3D = output["realityDataId"];
-            else if(output["name"] === "lines3D")
-                newJobSettings.outputs.lines3D = output["realityDataId"];
-            else if(output["name"] === "exportedPolygons3DDGN")
-                newJobSettings.outputs.exportedPolygons3DDGN = output["realityDataId"];
-            else if(output["name"] === "exportedPolygons3DCesium")
-                newJobSettings.outputs.exportedPolygons3DCesium = output["realityDataId"];
-            else if(output["name"] === "exportedLines3DDGN")
-                newJobSettings.outputs.exportedLines3DDGN = output["realityDataId"];
-            else if(output["name"] === "exportedLines3DCesium")
-                newJobSettings.outputs.exportedLines3DCesium = output["realityDataId"];
+            if (output["type"] === "segmentation2D")
+                newJobSettings.outputs.segmentation2D = output["id"];
+            else if(output["type"] === "segmentedPhotos")
+                newJobSettings.outputs.segmentedPhotos = output["id"];
+            else if(output["type"] === "polygons3D")
+                newJobSettings.outputs.polygons3D = output["id"];
+            else if(output["type"] === "lines3D")
+                newJobSettings.outputs.lines3D = output["id"];
+            else if(output["type"] === "exportedPolygons3DDGN")
+                newJobSettings.outputs.exportedPolygons3DDGN = output["id"];
+            else if(output["type"] === "exportedPolygons3DCesium")
+                newJobSettings.outputs.exportedPolygons3DCesium = output["id"];
+            else if(output["type"] === "exportedLines3DDGN")
+                newJobSettings.outputs.exportedLines3DDGN = output["id"];
+            else if(output["type"] === "exportedLines3DCesium")
+                newJobSettings.outputs.exportedLines3DCesium = output["id"];
             else
-                return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
+                return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
         if("options" in settingsJson) {
             const options = settingsJson["options"];
@@ -680,7 +680,7 @@ export class SOrthoJobSettings {
     inputs: SOrthoInputs;
     /** 
      * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob.
+     * Fill the outputs you want for the job with a string (normally the type of the output) before passing it to createJob.
      */
     outputs: SOrthoOutputs;
 
@@ -710,10 +710,10 @@ export class SOrthoJobSettings {
         const json: any = {};
         json["inputs"] = [];
         if (this.inputs.orthophoto)
-            json["inputs"].push({ "name": "orthophoto", "realityDataId": this.inputs.orthophoto });
+            json["inputs"].push({ "type": "orthophoto", "id": this.inputs.orthophoto });
 
         if (this.inputs.orthophoto)
-            json["inputs"].push({ "name": "orthophotoSegmentationDetector", "realityDataId": this.inputs.orthophotoSegmentationDetector });
+            json["inputs"].push({ "type": "orthophotoSegmentationDetector", "id": this.inputs.orthophotoSegmentationDetector });
 
         json["outputs"] = [];
         if (this.outputs.segmentation2D)
@@ -749,31 +749,31 @@ export class SOrthoJobSettings {
         const newJobSettings = new SOrthoJobSettings();
         const inputsJson = settingsJson["inputs"];
         for (const input of inputsJson) {
-            if (input["name"] === "photos")
-                newJobSettings.inputs.orthophoto = input["realityDataId"];
-            else if (input["name"] === "photoSegmentationDetector")
-                newJobSettings.inputs.orthophotoSegmentationDetector = input["realityDataId"];
+            if (input["type"] === "photos")
+                newJobSettings.inputs.orthophoto = input["id"];
+            else if (input["type"] === "photoSegmentationDetector")
+                newJobSettings.inputs.orthophotoSegmentationDetector = input["id"];
             else
-                return Promise.reject(new Error("Found unexpected input name : " + input["name"]));
+                return Promise.reject(new Error("Found unexpected input type : " + input["type"]));
         }
         const outputsJson = settingsJson["outputs"];
         for (const output of outputsJson) {
-            if (output["name"] === "segmentation2D")
-                newJobSettings.outputs.segmentation2D = output["realityDataId"];
-            else if(output["name"] === "segmentedPhotos")
-                newJobSettings.outputs.segmentedPhotos = output["realityDataId"];
-            else if(output["name"] === "polygons2D")
-                newJobSettings.outputs.polygons2D = output["realityDataId"];
-            else if(output["name"] === "lines2D")
-                newJobSettings.outputs.lines2D = output["realityDataId"];
-            else if(output["name"] === "exportedPolygons2DSHP")
-                newJobSettings.outputs.exportedPolygons2DSHP = output["realityDataId"];
-            else if(output["name"] === "exportedLines2DSHP")
-                newJobSettings.outputs.exportedLines2DSHP = output["realityDataId"];
-            else if(output["name"] === "exportedLines2DDGN")
-                newJobSettings.outputs.exportedLines2DDGN = output["realityDataId"];
+            if (output["type"] === "segmentation2D")
+                newJobSettings.outputs.segmentation2D = output["id"];
+            else if(output["type"] === "segmentedPhotos")
+                newJobSettings.outputs.segmentedPhotos = output["id"];
+            else if(output["type"] === "polygons2D")
+                newJobSettings.outputs.polygons2D = output["id"];
+            else if(output["type"] === "lines2D")
+                newJobSettings.outputs.lines2D = output["id"];
+            else if(output["type"] === "exportedPolygons2DSHP")
+                newJobSettings.outputs.exportedPolygons2DSHP = output["id"];
+            else if(output["type"] === "exportedLines2DSHP")
+                newJobSettings.outputs.exportedLines2DSHP = output["id"];
+            else if(output["type"] === "exportedLines2DDGN")
+                newJobSettings.outputs.exportedLines2DDGN = output["id"];
             else
-                return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
+                return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
 
         return newJobSettings;
@@ -992,7 +992,7 @@ export class S3DJobSettings {
     inputs: S3DInputs;
     /** 
      * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+     * Fill the outputs you want for the job with a string (normally the type of the output) before passing it to createJob. 
      */
     outputs: S3DOutputs;
     /** Possible options for this job. */
@@ -1011,7 +1011,7 @@ export class S3DJobSettings {
         this.inputs = new S3DInputs();
         /**
          * Possible outputs for this job. 
-         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+         * Fill the outputs you want for the job with a string (normally the type of the output) before passing it to createJob. 
          * @type {S3DOutputs}
          */
         this.outputs = new S3DOutputs();
@@ -1030,19 +1030,19 @@ export class S3DJobSettings {
         const json: any = {};
         json["inputs"] = [];
         if (this.inputs.pointClouds)
-            json["inputs"].push({ "name": "pointClouds", "realityDataId": this.inputs.pointClouds });
+            json["inputs"].push({ "type": "pointClouds", "id": this.inputs.pointClouds });
 
         if (this.inputs.meshes)
-            json["inputs"].push({ "name": "meshes", "realityDataId": this.inputs.meshes });
+            json["inputs"].push({ "type": "meshes", "id": this.inputs.meshes });
         
         if (this.inputs.pointCloudSegmentationDetector)
-            json["inputs"].push({ "name": "pointCloudSegmentationDetector", "realityDataId": this.inputs.pointCloudSegmentationDetector });
+            json["inputs"].push({ "type": "pointCloudSegmentationDetector", "id": this.inputs.pointCloudSegmentationDetector });
         
         if (this.inputs.segmentation3D)
-            json["inputs"].push({ "name": "segmentation3D", "realityDataId": this.inputs.segmentation3D });
+            json["inputs"].push({ "type": "segmentation3D", "id": this.inputs.segmentation3D });
 
         if (this.inputs.clipPolygon)
-            json["inputs"].push({ "name": "clipPolygon", "realityDataId": this.inputs.clipPolygon });
+            json["inputs"].push({ "type": "clipPolygon", "id": this.inputs.clipPolygon });
         
         json["outputs"] = [];
         if (this.outputs.segmentation3D)
@@ -1117,55 +1117,55 @@ export class S3DJobSettings {
         const newJobSettings = new S3DJobSettings();
         const inputsJson = settingsJson["inputs"];
         for (const input of inputsJson) {
-            if (input["name"] === "pointClouds")
-                newJobSettings.inputs.pointClouds = input["realityDataId"];
-            else if (input["name"] === "meshes")
-                newJobSettings.inputs.meshes = input["realityDataId"];
-            else if (input["name"] === "pointCloudSegmentationDetector")
-                newJobSettings.inputs.pointCloudSegmentationDetector = input["realityDataId"];
-            else if (input["name"] === "segmentation3D")
-                newJobSettings.inputs.segmentation3D = input["realityDataId"];
-            else if (input["name"] === "clipPolygon")
-                newJobSettings.inputs.clipPolygon = input["realityDataId"];
+            if (input["type"] === "pointClouds")
+                newJobSettings.inputs.pointClouds = input["id"];
+            else if (input["type"] === "meshes")
+                newJobSettings.inputs.meshes = input["id"];
+            else if (input["type"] === "pointCloudSegmentationDetector")
+                newJobSettings.inputs.pointCloudSegmentationDetector = input["id"];
+            else if (input["type"] === "segmentation3D")
+                newJobSettings.inputs.segmentation3D = input["id"];
+            else if (input["type"] === "clipPolygon")
+                newJobSettings.inputs.clipPolygon = input["id"];
             else
-                return Promise.reject(new Error("Found unexpected input name : " + input["name"]));
+                return Promise.reject(new Error("Found unexpected input type : " + input["type"]));
         }
         const outputsJson = settingsJson["outputs"];
         for (const output of outputsJson) {
-            if (output["name"] === "segmentation3D")
-                newJobSettings.outputs.segmentation3D = output["realityDataId"];
-            else if (output["name"] === "segmentedPointCloud")
-                newJobSettings.outputs.segmentedPointCloud = output["realityDataId"];
-            else if (output["name"] === "exportedSegmentation3DPOD")
-                newJobSettings.outputs.exportedSegmentation3DPOD = output["realityDataId"];
-            else if (output["name"] === "exportedSegmentation3DLAS")
-                newJobSettings.outputs.exportedSegmentation3DLAS = output["realityDataId"];
-            else if (output["name"] === "exportedSegmentation3DLAZ")
-                newJobSettings.outputs.exportedSegmentation3DLAZ = output["realityDataId"];
-            else if (output["name"] === "exportedSegmentation3DPLY")
-                newJobSettings.outputs.exportedSegmentation3DPLY = output["realityDataId"];
-            else if (output["name"] === "objects3D")
-                newJobSettings.outputs.objects3D = output["realityDataId"];
-            else if (output["name"] === "exportedObjects3DDGN")
-                newJobSettings.outputs.exportedObjects3DDGN = output["realityDataId"];
-            else if (output["name"] === "exportedObjects3DCesium")
-                newJobSettings.outputs.exportedObjects3DCesium = output["realityDataId"];
-            else if (output["name"] === "exportedLocations3DSHP")
-                newJobSettings.outputs.exportedLocations3DSHP = output["realityDataId"];
-            else if (output["name"] === "exportedLines3DDGN")
-                newJobSettings.outputs.exportedLines3DDGN = output["realityDataId"];
-            else if (output["name"] === "exportedLines3DCesium")
-                newJobSettings.outputs.exportedLines3DCesium = output["realityDataId"];
-            else if (output["name"] === "polygons3D")
-                newJobSettings.outputs.polygons3D = output["realityDataId"];
-            else if (output["name"] === "lines3D")
-                newJobSettings.outputs.lines3D = output["realityDataId"];
-            else if (output["name"] === "exportedPolygons3DDGN")
-                newJobSettings.outputs.exportedPolygons3DDGN = output["realityDataId"];
-            else if (output["name"] === "exportedPolygons3DCesium")
-                newJobSettings.outputs.exportedPolygons3DCesium = output["realityDataId"];
+            if (output["type"] === "segmentation3D")
+                newJobSettings.outputs.segmentation3D = output["id"];
+            else if (output["type"] === "segmentedPointCloud")
+                newJobSettings.outputs.segmentedPointCloud = output["id"];
+            else if (output["type"] === "exportedSegmentation3DPOD")
+                newJobSettings.outputs.exportedSegmentation3DPOD = output["id"];
+            else if (output["type"] === "exportedSegmentation3DLAS")
+                newJobSettings.outputs.exportedSegmentation3DLAS = output["id"];
+            else if (output["type"] === "exportedSegmentation3DLAZ")
+                newJobSettings.outputs.exportedSegmentation3DLAZ = output["id"];
+            else if (output["type"] === "exportedSegmentation3DPLY")
+                newJobSettings.outputs.exportedSegmentation3DPLY = output["id"];
+            else if (output["type"] === "objects3D")
+                newJobSettings.outputs.objects3D = output["id"];
+            else if (output["type"] === "exportedObjects3DDGN")
+                newJobSettings.outputs.exportedObjects3DDGN = output["id"];
+            else if (output["type"] === "exportedObjects3DCesium")
+                newJobSettings.outputs.exportedObjects3DCesium = output["id"];
+            else if (output["type"] === "exportedLocations3DSHP")
+                newJobSettings.outputs.exportedLocations3DSHP = output["id"];
+            else if (output["type"] === "exportedLines3DDGN")
+                newJobSettings.outputs.exportedLines3DDGN = output["id"];
+            else if (output["type"] === "exportedLines3DCesium")
+                newJobSettings.outputs.exportedLines3DCesium = output["id"];
+            else if (output["type"] === "polygons3D")
+                newJobSettings.outputs.polygons3D = output["id"];
+            else if (output["type"] === "lines3D")
+                newJobSettings.outputs.lines3D = output["id"];
+            else if (output["type"] === "exportedPolygons3DDGN")
+                newJobSettings.outputs.exportedPolygons3DDGN = output["id"];
+            else if (output["type"] === "exportedPolygons3DCesium")
+                newJobSettings.outputs.exportedPolygons3DCesium = output["id"];
             else
-                return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
+                return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
         if("options" in settingsJson) {
             const options = settingsJson["options"];
@@ -1293,7 +1293,7 @@ export class ExtractGroundJobSettings {
     inputs: ExtractGroundInputs;
     /** 
      * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+     * Fill the outputs you want for the job with a string (normally the type of the output) before passing it to createJob. 
      */
     outputs: ExtractGroundOutputs;
     /** Possible options for this job. */
@@ -1312,7 +1312,7 @@ export class ExtractGroundJobSettings {
         this.inputs = new ExtractGroundInputs();
         /**
          * Possible outputs for this job. 
-         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+         * Fill the outputs you want for the job with a string (normally the type of the output) before passing it to createJob. 
          * @type {ExtractGroundOutputs}
          */
         this.outputs = new ExtractGroundOutputs();
@@ -1331,16 +1331,16 @@ export class ExtractGroundJobSettings {
         const json: any = {};
         json["inputs"] = [];
         if (this.inputs.pointClouds)
-            json["inputs"].push({ "name": "pointClouds", "realityDataId": this.inputs.pointClouds });
+            json["inputs"].push({ "type": "pointClouds", "id": this.inputs.pointClouds });
 
         if (this.inputs.meshes)
-            json["inputs"].push({ "name": "meshes", "realityDataId": this.inputs.meshes });
+            json["inputs"].push({ "type": "meshes", "id": this.inputs.meshes });
 
         if (this.inputs.pointCloudSegmentationDetector)
-            json["inputs"].push({ "name": "pointCloudSegmentationDetector", "realityDataId": this.inputs.pointCloudSegmentationDetector });
+            json["inputs"].push({ "type": "pointCloudSegmentationDetector", "id": this.inputs.pointCloudSegmentationDetector });
 
         if (this.inputs.clipPolygon)
-            json["inputs"].push({ "name": "clipPolygon", "realityDataId": this.inputs.clipPolygon });
+            json["inputs"].push({ "type": "clipPolygon", "id": this.inputs.clipPolygon });
 
         json["outputs"] = [];
         if (this.outputs.segmentation3D)
@@ -1373,31 +1373,31 @@ export class ExtractGroundJobSettings {
         const newJobSettings = new ExtractGroundJobSettings();
         const inputsJson = settingsJson["inputs"];
         for (const input of inputsJson) {
-            if (input["name"] === "pointClouds")
-                newJobSettings.inputs.pointClouds = input["realityDataId"];
-            else if (input["name"] === "meshes")
-                newJobSettings.inputs.meshes = input["realityDataId"];
-            else if (input["name"] === "pointCloudSegmentationDetector")
-                newJobSettings.inputs.pointCloudSegmentationDetector = input["realityDataId"];
-            else if (input["name"] === "clipPolygon")
-                newJobSettings.inputs.clipPolygon = input["realityDataId"];
+            if (input["type"] === "pointClouds")
+                newJobSettings.inputs.pointClouds = input["id"];
+            else if (input["type"] === "meshes")
+                newJobSettings.inputs.meshes = input["id"];
+            else if (input["type"] === "pointCloudSegmentationDetector")
+                newJobSettings.inputs.pointCloudSegmentationDetector = input["id"];
+            else if (input["type"] === "clipPolygon")
+                newJobSettings.inputs.clipPolygon = input["id"];
             else
-                return Promise.reject(new Error("Found unexpected input name : " + input["name"]));
+                return Promise.reject(new Error("Found unexpected input type : " + input["type"]));
         }
         const outputsJson = settingsJson["outputs"];
         for (const output of outputsJson) {
-            if (output["name"] === "segmentation3D")
-                newJobSettings.outputs.segmentation3D = output["realityDataId"];
-            else if (output["name"] === "segmentedPointCloud")
-                newJobSettings.outputs.segmentedPointCloud = output["realityDataId"];
-            else if (output["name"] === "exportedSegmentation3DPOD")
-                newJobSettings.outputs.exportedSegmentation3DPOD = output["realityDataId"];
-            else if (output["name"] === "exportedSegmentation3DLAZ")
-                newJobSettings.outputs.exportedSegmentation3DLAZ = output["realityDataId"];
-            else if (output["name"] === "exportedSegmentation3DLAS")
-                newJobSettings.outputs.exportedSegmentation3DLAS = output["realityDataId"];
+            if (output["type"] === "segmentation3D")
+                newJobSettings.outputs.segmentation3D = output["id"];
+            else if (output["type"] === "segmentedPointCloud")
+                newJobSettings.outputs.segmentedPointCloud = output["id"];
+            else if (output["type"] === "exportedSegmentation3DPOD")
+                newJobSettings.outputs.exportedSegmentation3DPOD = output["id"];
+            else if (output["type"] === "exportedSegmentation3DLAZ")
+                newJobSettings.outputs.exportedSegmentation3DLAZ = output["id"];
+            else if (output["type"] === "exportedSegmentation3DLAS")
+                newJobSettings.outputs.exportedSegmentation3DLAS = output["id"];
             else
-                return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
+                return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
         if("options" in settingsJson) {
             const options = settingsJson["options"];
@@ -1537,7 +1537,7 @@ export class ChangeDetectionJobSettings {
     inputs: ChangeDetectionInputs;
     /** 
      * Possible outputs for this job. 
-     * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+     * Fill the outputs you want for the job with a string (normally the type of the output) before passing it to createJob. 
      */
     outputs: ChangeDetectionOutputs;
     /** Possible options for this job. */
@@ -1556,7 +1556,7 @@ export class ChangeDetectionJobSettings {
         this.inputs = new ChangeDetectionInputs();
         /**
          * Possible outputs for this job. 
-         * Fill the outputs you want for the job with a string (normally the name of the output) before passing it to createJob. 
+         * Fill the outputs you want for the job with a string (normally the type of the output) before passing it to createJob. 
          * @type {ChangeDetectionOutputs}
          */
         this.outputs = new ChangeDetectionOutputs();
@@ -1575,16 +1575,16 @@ export class ChangeDetectionJobSettings {
         const json: any = {};
         json["inputs"] = [];
         if (this.inputs.pointClouds1)
-            json["inputs"].push({ "name": "pointClouds1", "realityDataId": this.inputs.pointClouds1 });
+            json["inputs"].push({ "type": "pointClouds1", "id": this.inputs.pointClouds1 });
 
         if (this.inputs.pointClouds2)
-            json["inputs"].push({ "name": "pointClouds2", "realityDataId": this.inputs.pointClouds2 });
+            json["inputs"].push({ "type": "pointClouds2", "id": this.inputs.pointClouds2 });
 
         if (this.inputs.meshes1)
-            json["inputs"].push({ "name": "meshes1", "realityDataId": this.inputs.meshes1 });
+            json["inputs"].push({ "type": "meshes1", "id": this.inputs.meshes1 });
 
         if (this.inputs.meshes2)
-            json["inputs"].push({ "name": "meshes2", "realityDataId": this.inputs.meshes2 });
+            json["inputs"].push({ "type": "meshes2", "id": this.inputs.meshes2 });
 
         json["outputs"] = [];
         if (this.outputs.objects3D)
@@ -1626,25 +1626,25 @@ export class ChangeDetectionJobSettings {
         const newJobSettings = new ChangeDetectionJobSettings();
         const inputsJson = settingsJson["inputs"];
         for (const input of inputsJson) {
-            if (input["name"] === "pointClouds1")
-                newJobSettings.inputs.pointClouds1 = input["realityDataId"];
-            else if (input["name"] === "pointClouds2")
-                newJobSettings.inputs.pointClouds2 = input["realityDataId"];
-            else if (input["name"] === "meshes1")
-                newJobSettings.inputs.meshes1 = input["realityDataId"];
-            else if (input["name"] === "meshes2")
-                newJobSettings.inputs.meshes2 = input["realityDataId"];
+            if (input["type"] === "pointClouds1")
+                newJobSettings.inputs.pointClouds1 = input["id"];
+            else if (input["type"] === "pointClouds2")
+                newJobSettings.inputs.pointClouds2 = input["id"];
+            else if (input["type"] === "meshes1")
+                newJobSettings.inputs.meshes1 = input["id"];
+            else if (input["type"] === "meshes2")
+                newJobSettings.inputs.meshes2 = input["id"];
             else
-                return Promise.reject(new Error("Found unexpected input name : " + input["name"]));
+                return Promise.reject(new Error("Found unexpected input type : " + input["type"]));
         }
         const outputsJson = settingsJson["outputs"];
         for (const output of outputsJson) {
-            if (output["name"] === "objects3D")
-                newJobSettings.outputs.objects3D = output["realityDataId"];
-            else if (output["name"] === "exportedLocations3DSHP")
-                newJobSettings.outputs.exportedLocations3DSHP = output["realityDataId"];
+            if (output["type"] === "objects3D")
+                newJobSettings.outputs.objects3D = output["id"];
+            else if (output["type"] === "exportedLocations3DSHP")
+                newJobSettings.outputs.exportedLocations3DSHP = output["id"];
             else
-                return Promise.reject(new Error("Found unexpected output name : " + output["name"]));
+                return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
         if("options" in settingsJson) {
             const options = settingsJson["options"];
