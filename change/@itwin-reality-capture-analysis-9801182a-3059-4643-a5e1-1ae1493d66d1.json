@@ -1,6 +1,6 @@
 {
   "type": "patch",
-  "comment": "Fix RCS SDK (typescript & python)",
+  "comment": "Fix RCS Bug (Merge option default value was true instead of false)",
   "packageName": "@itwin/reality-capture-analysis",
   "email": "110406974+dbiguenet@users.noreply.github.com",
   "dependentChangeType": "patch"
