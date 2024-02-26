@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Implemented Additional Request Parameters & RealityData Tags",
-  "packageName": "@itwin/reality-data-client",
-  "email": "Marc-Andre.Cote@bentley.com",
-  "dependentChangeType": "patch"
-}
