@@ -33,7 +33,7 @@ class RCJobSettings:
         self.inputs: RCJobSettings.Inputs = self.Inputs()
         self.outputs: RCJobSettings.Outputs = self.Outputs()
         self.engines: int = 0
-        self.merge: bool = True
+        self.merge: bool = False
 
     def to_json(self) -> tuple[dict, dict, dict]:
         """
@@ -99,7 +99,7 @@ class RCJobSettings:
                 if output_dict["type"] == "OPC":
                     new_job_settings.outputs.OPC = []
                     new_job_settings.outputs.OPC.append(output_dict["id"])
-                if output_dict["type"] == "PNTS":
+                elif output_dict["type"] == "PNTS":
                     new_job_settings.outputs.PNTS = []
                     new_job_settings.outputs.PNTS.append(output_dict["id"])
                 else:
