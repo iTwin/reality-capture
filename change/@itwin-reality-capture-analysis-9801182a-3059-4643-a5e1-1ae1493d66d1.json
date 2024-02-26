@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Fix RCS SDK (typescript & python)",
+  "packageName": "@itwin/reality-capture-analysis",
+  "email": "110406974+dbiguenet@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
