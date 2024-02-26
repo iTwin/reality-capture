@@ -279,7 +279,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
   }
 
   /**
-   * trims milliseconds from date.toISOString() method to conform to for date parameters in APIM.
+   * trims milliseconds from date.toISOString() method to conform to for date parameters in the API.
    * See https://developer.bentley.com/apis/reality-management/operations/get-all-reality-data/#request-parameters
    * @param date date to format
    * @returns dateTime string in format YYYY-MM-DDTHH:mm:ssZ e.g. 2021-08-01T00:00:00Z

@@ -265,7 +265,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
 
     // cache test, wait 1 second and make the same call again, url should be the same.
     await delay(1000);
-    const fakeAccessToken = "fake"; // this ensures that we are not executing a request to APIM for a new SAS url, otherwise it would fail
+    const fakeAccessToken = "fake"; // this ensures that we are not executing a request to the API for a new SAS url, otherwise it would fail
     const url2: URL = await realityData.getBlobUrl(fakeAccessToken, "test");
     chai.assert(url.href === url2.href);
 
