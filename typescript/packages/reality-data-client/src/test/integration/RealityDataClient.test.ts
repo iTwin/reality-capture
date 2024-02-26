@@ -42,8 +42,8 @@ const realityDataClientConfig: RealityDataClientOptions = {
 
 describe("RealityServicesClient Normal (#integration)", () => {
 
-  const iTwinId: GuidString = TestConfig.integrationTestsItwinId;
-  const iTwinId2: GuidString = TestConfig.integrationTestsItwinIdProjects;
+  const iTwinId: GuidString = TestConfig.integrationTestsITwinId;
+  const iTwinId2: GuidString = TestConfig.integrationTestsITwinIdProjects;
 
   const realityDataAccessClient = new RealityDataAccessClient();
 
@@ -718,7 +718,7 @@ describe("RealityServicesClient Errors (#integration)", () => {
 
   before(async () => {
     accessToken = await TestConfig.getAccessToken();
-    iTwinId = TestConfig.integrationTestsItwinId;
+    iTwinId = TestConfig.integrationTestsITwinId;
     chai.assert.isDefined(iTwinId);
   });
 
