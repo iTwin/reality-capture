@@ -16,13 +16,10 @@ import { TestConfig } from "../TestConfig";
 import { ITwinRealityData } from "../../RealityData";
 
 /* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/no-shadow */
 
 async function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function isInstanceOfDate(object: any): object is Date {
-  return object;
 }
 
 chai.config.showDiff = true;
@@ -51,20 +48,21 @@ describe("RealityServicesClient Normal (#integration)", () => {
   let realityDataIdProjects: string;
 
   // test RealityData for listing tests.
- const realityDataList: ITwinRealityData[] = [];
-
+  const realityDataList: ITwinRealityData[] = [];
 
   let accessToken: AccessToken;
 
   before(async () => {
 
-    //get token
+    // get token
     accessToken = await TestConfig.getAccessToken();
 
     chai.assert.isDefined(iTwinId);
     chai.assert.isDefined(iTwinId2);
 
+    /* eslint-disable no-console */
     console.log("Creating test reality data...");
+
     // create a test reality data
     let rdTest = new ITwinRealityData(realityDataAccessClient,
       {
@@ -87,7 +85,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     await realityDataAccessClient.associateRealityData(accessToken, iTwinId2, rdTestProjects.id);
     chai.assert(rdTestProjects, "Failed to create test reality data");
 
-    //create 10 reality data for listing tests
+    // create 10 reality data for listing tests
     for (let i = 0; i < 10; i++) {
       let rd = new ITwinRealityData(realityDataAccessClient,
         {
@@ -102,12 +100,15 @@ describe("RealityServicesClient Normal (#integration)", () => {
 
     realityDataIdProjects = rdTestProjects.id;
 
+    /* eslint-disable no-console */
     console.log("Creating test reality data...done");
   });
 
-  after(async() => {
+  after(async () => {
     // delete the test reality data
+    /* eslint-disable no-console */
     console.log("Cleaning test reality data...");
+
     const deleteResult = await realityDataAccessClient.deleteRealityData(accessToken, realityDataId);
     chai.assert(deleteResult, "Failed to delete test reality data");
 
@@ -121,6 +122,8 @@ describe("RealityServicesClient Normal (#integration)", () => {
       const deleteResult = await realityDataAccessClient.deleteRealityData(accessToken, realityDataList[i].id);
       chai.assert(deleteResult, `Failed to delete test reality data ${i}`);
     }
+
+    /* eslint-disable no-console */
     console.log("Cleaning test reality data...done");
   });
 
@@ -225,6 +228,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(realityData);
     // get all projects information
 
+    // eslint-disable-next-line deprecation/deprecation
     const projects = await realityDataAccessClient.getRealityDataProjects(accessToken, realityData.id);
     chai.assert(projects);
     chai.assert(projects.length === 2);
@@ -440,7 +444,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     const types = ["3MX", "3SM"];
     const realityDataQueryCriteria: RealityDataQueryCriteria = {
       top: 10,
-      types: types,
+      types,
     };
 
     const realityDataResponse = await realityDataAccessClient.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
@@ -463,8 +467,8 @@ describe("RealityServicesClient Normal (#integration)", () => {
       top: 10,
       acquisitionDates: {
         startDateTime: new Date(2017,5,12),
-        endDateTime: new Date(2023,5,12)
-      }
+        endDateTime: new Date(2023,5,12),
+      },
     };
 
     const realityDataResponse = await realityDataAccessClient.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
@@ -478,8 +482,8 @@ describe("RealityServicesClient Normal (#integration)", () => {
       chai.assert(value.id);
       chai.assert(value.acquisition);
       chai.assert(value.acquisition?.startDateTime);
-      chai.assert(value.acquisition?.startDateTime!.getTime() >= new Date(2017,5,12).getTime());
-      chai.assert(value.acquisition?.startDateTime!.getTime() <= new Date(2022,5,12).getTime());
+      chai.assert(value.acquisition?.startDateTime.getTime() >= new Date(2017,5,12).getTime());
+      chai.assert(value.acquisition?.startDateTime.getTime() <= new Date(2022,5,12).getTime());
     });
   });
 
@@ -490,8 +494,8 @@ describe("RealityServicesClient Normal (#integration)", () => {
       top: 10,
       createdDateTime: {
         startDateTime: new Date(2021,5,12),
-        endDateTime: new Date(2022,5,12)
-      }
+        endDateTime: new Date(2022,5,12),
+      },
     };
 
     const realityDataResponse = await realityDataAccessClient.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
@@ -504,8 +508,8 @@ describe("RealityServicesClient Normal (#integration)", () => {
       chai.assert(value.type);
       chai.assert(value.id);
       chai.assert(value.createdDateTime);
-      chai.assert(value.createdDateTime!.getTime() >= new Date(2021,5,12).getTime());
-      chai.assert(value.createdDateTime!.getTime() <= new Date(2022,5,12).getTime());
+      chai.assert(value.createdDateTime.getTime() >= new Date(2021,5,12).getTime());
+      chai.assert(value.createdDateTime.getTime() <= new Date(2022,5,12).getTime());
     });
   });
 
@@ -528,7 +532,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
       chai.assert(value.type);
       chai.assert(value.id);
       chai.assert(value.tags);
-      chai.assert(value.tags!.includes("tag1"));
+      chai.assert(value.tags.includes("tag1"));
     });
   });
 
@@ -541,11 +545,11 @@ describe("RealityServicesClient Normal (#integration)", () => {
         type: "3SM",
         extent: {
           southWest: { latitude: 40.6706, longitude: -80.3455 },
-          northEast: { latitude: 40.6716, longitude: -80.3359 }
-        }
+          northEast: { latitude: 40.6716, longitude: -80.3359 },
+        },
       },
       iTwinId);
-      rdWithExtent = await realityDataAccessClient.createRealityData(accessToken, iTwinId, rdWithExtent);
+    rdWithExtent = await realityDataAccessClient.createRealityData(accessToken, iTwinId, rdWithExtent);
     chai.assert(rdWithExtent, "Failed to create test reality data");
     const rdWithExtentId = rdWithExtent.id;
 
@@ -568,7 +572,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     // assert
     chai.assert(realityDataResponse);
     chai.assert(realityDataResponse.realityDatas.length > 0, "No reality data found. Please verify test reality data exists within the given extent.");
-    chai.assert(realityDataResponse.realityDatas.filter(rd => rd.id === rdWithExtentId).length > 0);
+    chai.assert(realityDataResponse.realityDatas.filter((rd) => rd.id === rdWithExtentId).length > 0);
 
     // delete the test reality data
     const deleteResult = await realityDataAccessClient.deleteRealityData(accessToken, rdWithExtentId);

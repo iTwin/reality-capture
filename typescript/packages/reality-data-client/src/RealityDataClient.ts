@@ -54,29 +54,28 @@ export interface RealityDataQueryCriteria {
   /** Continuation token to get current query's next results.*/
   continuationToken?: string;
 
-  /**Parameter that enable to order reality data in ascending or descending order. Default is ascending.Example : displayName desc */
+  /** Parameter that enable to order reality data in ascending or descending order. Default is ascending.Example : displayName desc */
   orderBy?: string;
-  /**searches given string Reality Data TODO get swagger doc */
+  /** Searches given string Reality Data TODO get swagger doc */
   search?: string;
 
-  /**queries for Reality Data of specified types.*/
+  /** Queries for Reality Data of specified types.*/
   types?: string[];
 
-  /**queries for Reality Data in which the acquisition is in given date range.*/
+  /** Queries for Reality Data in which the acquisition is in given date range.*/
   acquisitionDates?: DateRange;
 
-  /**queries for Reality Data where the creation date is in given date range.*/
+  /** Queries for Reality Data where the creation date is in given date range.*/
   createdDateTime?: DateRange;
 
-  /**queries for Reality Data with exact matching tag.*/
+  /** Queries for Reality Data with exact matching tag.*/
   tag?: string;
 }
 
-
+/** Date range*/
 export interface DateRange {
   startDateTime: Date;
   endDateTime: Date;
-  //acquirer: string; probably not available
 }
 
 /**
@@ -242,7 +241,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
         if (criteria.acquisitionDates) {
           const startDateTime = this.formatIsoString(criteria.acquisitionDates.startDateTime);
           const endDateTime = this.formatIsoString(criteria.acquisitionDates.endDateTime);
-          url.searchParams.append("acquisitionDateTime", startDateTime + "/" + endDateTime);
+          url.searchParams.append("acquisitionDateTime", `${startDateTime}/${endDateTime}`);
         }
 
         if (criteria.createdDateTime) {
@@ -280,13 +279,13 @@ export class RealityDataAccessClient implements RealityDataAccess {
   }
 
   /**
-   * trims milliseconds from date.toISOString() method to conform to for date parameters in APIM. 
+   * trims milliseconds from date.toISOString() method to conform to for date parameters in APIM.
    * See https://developer.bentley.com/apis/reality-management/operations/get-all-reality-data/#request-parameters
-   * @param date 
+   * @param date date to format
    * @returns dateTime string in format YYYY-MM-DDTHH:mm:ssZ e.g. 2021-08-01T00:00:00Z
    */
-  private formatIsoString(date: Date) : string {
-    return date.toISOString().slice(0, -5) + "Z";
+  private formatIsoString(date: Date): string {
+    return `${date.toISOString().slice(0, -5)}Z`;
   }
 
   private extractContinuationToken(url: string | undefined): string | undefined {
