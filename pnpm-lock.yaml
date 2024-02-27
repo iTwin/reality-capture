@@ -30,7 +30,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/reality-capture-modeling
       '@itwin/reality-data-client':
-        specifier: ^1.2.0
+        specifier: workspace:*
         version: link:../../packages/reality-data-client
       '@itwin/reality-data-transfer':
         specifier: workspace:*
@@ -142,7 +142,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/reality-capture-modeling
       '@itwin/reality-data-client':
-        specifier: ^1.2.0
+        specifier: workspace:*
         version: link:../../packages/reality-data-client
       '@itwin/reality-data-transfer':
         specifier: workspace:*
