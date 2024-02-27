@@ -53,7 +53,7 @@ export interface RealityDataQueryCriteria {
 
   /** If supplied, queries a maximum number of first results Found. Max 500. If not supplied, the query should return the first 100 RealityData found.*/
   top?: number;
-  
+
   /** Continuation token to get current query's next results.*/
   continuationToken?: string;
 
