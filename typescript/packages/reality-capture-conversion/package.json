@@ -1,6 +1,6 @@
 {
   "name": "@itwin/reality-capture-conversion",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Reality conversion sdk to run conversion jobs",
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
