@@ -73,9 +73,10 @@ class RealityDataAnalysisService:
             "iTwinId": iTwin_id,
             "type": settings.type.value,
             "inputs": settings_json["inputs"],
-            "outputs": settings_json["outputs"],
-            "options": settings_json["options"],
+            "outputs": settings_json["outputs"]
         }
+        if "options" in settings_json:
+            jc_dict["options"] = settings_json["options"]
         job_json = json.dumps(jc_dict)
         print(job_json)
         # send the json settings
@@ -140,17 +141,15 @@ class RealityDataAnalysisService:
                 return ReturnValue(value=RDAJobProperties(), error="no Job type")
 
             if job_type_str == RDAJobType.O2D.value:
-                settings = O2DJobSettings.from_json(data_json["job"].get("settings", {}))
+                settings = O2DJobSettings.from_json(data_json["job"])
             elif job_type_str == RDAJobType.S2D.value:
-                settings = S2DJobSettings.from_json(data_json["job"].get("settings", {}))
+                settings = S2DJobSettings.from_json(data_json["job"])
             elif job_type_str == RDAJobType.SOrtho.value:
-                settings = SOrthoJobSettings.from_json(data_json["job"].get("settings", {}))
+                settings = SOrthoJobSettings.from_json(data_json["job"])
             elif job_type_str == RDAJobType.S3D.value:
-                settings = S3DJobSettings.from_json(data_json["job"].get("settings", {}))
+                settings = S3DJobSettings.from_json(data_json["job"])
             elif job_type_str == RDAJobType.ChangeDetection.value:
-                settings = ChangeDetectionJobSettings.from_json(
-                    data_json["job"].get("settings", {})
-                )
+                settings = ChangeDetectionJobSettings.from_json(data_json["job"])
             else:
                 return ReturnValue(
                     value=RDAJobProperties(), error="Job Type not recognized"

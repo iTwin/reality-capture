@@ -273,13 +273,13 @@ class S2DJobSettings:
             json_dict["outputs"].append("exportedPolygons3DCesium")
         json_dict["options"] = dict()
         if self.options.compute_line_width:
-            json_dict["outputs"]["computeLineWidth"] = "true"
+            json_dict["options"]["computeLineWidth"] = "true"
         if self.options.remove_small_components:
-            json_dict["outputs"]["removeSmallComponents"] = str(self.options.remove_small_components)
+            json_dict["options"]["removeSmallComponents"] = str(self.options.remove_small_components)
         if self.options.export_srs:
-            json_dict["outputs"]["exportSrs"] = self.options.export_srs
+            json_dict["options"]["exportSrs"] = self.options.export_srs
         if self.options.min_photos:
-            json_dict["outputs"]["minPhotos"] = self.options.min_photos
+            json_dict["options"]["minPhotos"] = self.options.min_photos
 
         return json_dict
 
