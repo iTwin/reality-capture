@@ -2,6 +2,21 @@
   "name": "@itwin/reality-data-client",
   "entries": [
     {
+      "date": "Mon, 26 Feb 2024 20:54:34 GMT",
+      "version": "1.2.0",
+      "tag": "@itwin/reality-data-client_v1.2.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "Marc-Andre.Cote@bentley.com",
+            "package": "@itwin/reality-data-client",
+            "commit": "85cee933611277f38c2c013e986765a8286b4939",
+            "comment": "Implemented Additional Request Parameters & RealityData Tags"
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 11 Jul 2023 14:02:19 GMT",
       "tag": "@itwin/reality-data-client_v1.1.0",
       "version": "1.1.0",

@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /*---------------------------------------------------------------------------------------------
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
@@ -84,6 +85,7 @@ export class ITwinRealityData implements RealityData {
   public dataCenterLocation?: string;
   public description?: string;
   public rootDocument?: string;
+  public tags?: string[];
   public acquisition?: Acquisition;
   public size?: number;
   public authoring?: boolean;
@@ -122,6 +124,7 @@ export class ITwinRealityData implements RealityData {
       this.dataCenterLocation = realityData.dataCenterLocation;
       this.description = realityData.description;
       this.rootDocument = realityData.rootDocument;
+      this.tags = realityData.tags;
       if (realityData.acquisition) {
         this.acquisition = (realityData.acquisition as Acquisition);
         this.acquisition.startDateTime = new Date(realityData.acquisition.startDateTime);
@@ -152,7 +155,7 @@ export class ITwinRealityData implements RealityData {
      * @returns string url for blob data
      * @beta
      */
-  public async getBlobUrl(accessToken: AccessToken, blobPath: string, writeAccess: boolean = false): Promise<URL> {
+  public async getBlobUrl(accessToken: AccessToken, blobPath: string, writeAccess = false): Promise<URL> {
     const accessTokenResolved = await this.resolveAccessToken(accessToken);
     const url = await this.getContainerUrl(accessTokenResolved, writeAccess);
     if (blobPath === undefined)
@@ -178,10 +181,10 @@ export class ITwinRealityData implements RealityData {
      * @returns app URL object for blob url
      * @beta
      */
-  private async getContainerUrl(accessToken: AccessToken, writeAccess: boolean = false): Promise<URL> {
+  private async getContainerUrl(accessToken: AccessToken, writeAccess = false): Promise<URL> {
 
     if (!this.client)
-      throw new BentleyError(422, `Invalid container request (RealityDataAccessClient is not set).`);
+      throw new BentleyError(422, "Invalid container request (RealityDataAccessClient is not set).");
 
     const access = (writeAccess === true ? "Write" : "Read");
     const accessTokenResolved = await this.resolveAccessToken(accessToken);
@@ -203,7 +206,7 @@ export class ITwinRealityData implements RealityData {
         const response = await axios.get(url.href, requestOptions);
 
         if (!response.data) {
-          throw new BentleyError(422, `Invalid container request (API returned an unexpected response).`);
+          throw new BentleyError(422, "Invalid container request (API returned an unexpected response).");
         }
 
         // update cache
@@ -216,7 +219,7 @@ export class ITwinRealityData implements RealityData {
       }
       return this._containerCache.getCache(access)!.url;
     } catch (errorResponse: any) {
-      throw new BentleyError(422, `Invalid container request.`);
+      throw new BentleyError(422, "Invalid container request.");
     }
   }
 }

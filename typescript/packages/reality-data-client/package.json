@@ -1,6 +1,6 @@
 {
   "name": "@itwin/reality-data-client",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "HTTP Client for the iTwin Platform Reality Management APIs",
   "main": "lib/cjs/reality-data-client.js",
   "module": "lib/esm/reality-data-client.js",
@@ -37,7 +37,7 @@
     "test:integration": "npm run build && npm run -s webpackTests && npm run -s test:integration:chrome",
     "test:integration:chrome": "certa -r chrome --grep \"#integration\"",
     "test:integration:electron": "certa -r electron --grep \"#integration\"",
-    "change": "beachball change",
+    "change": "beachball change --no-commit",
     "check": "beachball check",
     "version-bump": "beachball bump",
     "publish-packages": "beachball publish",
