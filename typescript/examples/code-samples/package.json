@@ -29,7 +29,7 @@
     "@itwin/reality-capture-conversion": "workspace:*",
     "@itwin/reality-capture-modeling": "workspace:*",
     "@itwin/reality-data-transfer": "workspace:*",
-    "@itwin/reality-data-client": "^1.2.0",
+    "@itwin/reality-data-client": "workspace:*",
     "dotenv": "^16.0.3"
   },
   "devDependencies": {
