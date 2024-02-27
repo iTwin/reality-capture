@@ -30,7 +30,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/reality-capture-modeling
       '@itwin/reality-data-client':
-        specifier: ^1.0.0
+        specifier: ^1.2.0
         version: link:../../packages/reality-data-client
       '@itwin/reality-data-transfer':
         specifier: workspace:*
@@ -142,7 +142,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/reality-capture-modeling
       '@itwin/reality-data-client':
-        specifier: ^1.0.0
+        specifier: ^1.2.0
         version: link:../../packages/reality-data-client
       '@itwin/reality-data-transfer':
         specifier: workspace:*
@@ -3247,8 +3247,8 @@ packages:
       '@itwin/presentation-common': 4.2.0(@itwin/core-bentley@4.2.4)(@itwin/core-common@4.2.3)(@itwin/core-quantity@4.2.0)(@itwin/ecschema-metadata@4.2.0)
     dev: false
 
-  /@itwin/reality-data-client@1.1.0(@itwin/core-bentley@4.2.4):
-    resolution: {integrity: sha512-mPcBFaufYjmwO+PqmPlFe6GD8PyN8phIbZZvt5QUwgRJI/B/oE6pYDJrvIaFG8D2slDOc3nlbQKbk8vTnBWQ9A==}
+  /@itwin/reality-data-client@1.2.0(@itwin/core-bentley@4.2.4):
+    resolution: {integrity: sha512-ajNpn5H91iu1v64Bq0etDbUWdJKT/fMhdpeMYM0NpInKT5+wGgVSHFOCVXbeEb5Ik+gMBZXlg8OZlPaclXLlSQ==}
     peerDependencies:
       '@itwin/core-bentley': ^4.0.0
     dependencies:
@@ -3328,7 +3328,7 @@ packages:
       '@itwin/presentation-common': 4.2.0(@itwin/core-bentley@4.2.4)(@itwin/core-common@4.2.3)(@itwin/core-quantity@4.2.0)(@itwin/ecschema-metadata@4.2.0)
       '@itwin/presentation-components': 4.3.0(@itwin/appui-abstract@4.2.0)(@itwin/components-react@4.6.2)(@itwin/core-bentley@4.2.4)(@itwin/core-common@4.2.3)(@itwin/core-frontend@4.2.0)(@itwin/core-react@4.6.2)(@itwin/imodel-components-react@4.6.2)(@itwin/presentation-common@4.2.0)(@itwin/presentation-frontend@4.2.0)(@types/react@18.0.0)(react-dom@18.2.0)(react@18.2.0)
       '@itwin/presentation-frontend': 4.2.0(@itwin/core-bentley@4.2.4)(@itwin/core-common@4.2.3)(@itwin/core-frontend@4.2.0)(@itwin/core-quantity@4.2.0)(@itwin/ecschema-metadata@4.2.0)(@itwin/presentation-common@4.2.0)
-      '@itwin/reality-data-client': 1.1.0(@itwin/core-bentley@4.2.4)
+      '@itwin/reality-data-client': 1.2.0(@itwin/core-bentley@4.2.4)
       lodash.isequal: 4.5.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
