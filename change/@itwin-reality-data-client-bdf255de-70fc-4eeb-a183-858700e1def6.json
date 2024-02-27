@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "clarified documentation",
+  "packageName": "@itwin/reality-data-client",
+  "email": "Marc-Andre.Cote@bentley.com",
+  "dependentChangeType": "patch"
+}
