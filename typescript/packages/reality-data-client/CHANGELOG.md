@@ -1,8 +1,16 @@
 # Change Log - @itwin/reality-data-client
 
-This log was last generated on Tue, 11 Jul 2023 14:02:19 GMT and should not be manually modified.
+This log was last generated on Mon, 26 Feb 2024 20:54:34 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 1.2.0
+
+Mon, 26 Feb 2024 20:54:34 GMT
+
+### Minor changes
+
+- Implemented Additional Request Parameters & RealityData Tags (Marc-Andre.Cote@bentley.com)
 
 ## 1.1.0
 

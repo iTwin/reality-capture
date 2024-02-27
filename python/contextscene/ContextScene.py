@@ -62,7 +62,7 @@ class ContextScene:
         if self.point_cloud_collection:
             result["PointCloudCollection"] = self.point_cloud_collection
         if self.annotations:
-            result["Annotations"] = self.annotations
+            result["Annotations"] = self.annotations.annotationCS
         if self.references:
             result["References"] = self.references.ref
         return result
@@ -79,6 +79,7 @@ class ContextScene:
         """
         context_scene = os.path.join(output_path, "ContextScene.json")
         context_dict = self.cs_to_dict()
+        print(context_dict)
         with open(context_scene, 'w', encoding='utf8') as json_file_handler:
             json_file_handler.write(json.dumps(context_dict, indent=4))
 
@@ -307,13 +308,13 @@ class Annotations:
         self.annotationCS = dict()
 
     def set_labels(self, label):
-        self.annotationCS["Labels"] = label
+        self.annotationCS["Labels"] = label.labels
 
     def set_segmentation2D(self, segmentation2D):
-        self.annotationCS["Segmentation2D"] = segmentation2D
+        self.annotationCS["Segmentation2D"] = segmentation2D.segmentation2D
 
     def set_objects2D(self, objects2D):
-        self.annotationCS["Objects2D"] = objects2D
+        self.annotationCS["Objects2D"] = objects2D.objects2D
 
 
 class LabelInfo:
@@ -350,7 +351,7 @@ class Objects2D_dict:
         self.dict_objects2D = dict()
 
     def add_object(self, object_id, label_info, box2D):
-        self.dict_objects2D[object_id] = {"LabelInfo": label_info, "Box2D": box2D}
+        self.dict_objects2D[object_id] = {"LabelInfo": label_info, "Box2D": box2D.get_box2D()}
 
 
 class Objects2D:
@@ -366,7 +367,7 @@ class Objects2D:
 
 class SpatialReferenceSystems:
     """
-    SpatialReferenceSystems is for the spécification of the spatial reference systems of the reality data used
+    SpatialReferenceSystems is for the specification of the spatial reference systems of the reality data used
     """
     def __init__(self):
         self.srs = dict()
