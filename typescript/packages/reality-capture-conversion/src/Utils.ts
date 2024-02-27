@@ -87,7 +87,7 @@ class RCOptions {
         /** If true, all the input files from multiple containers will be merged into one output file. Else output file will be created per input file. 
          * @type { boolean }
          */
-        this.merge = true;
+        this.merge = false;
     }
 }
 
