@@ -43,32 +43,36 @@ export enum ApiVersion {
  * @beta
  */
 export interface RealityDataQueryCriteria {
+
   /** If supplied, only reality data overlapping this range will be included. */
   extent?: CartographicRange;
-  /** If true, return all properties for every RealityData found in query.
-   * If false or undefined, return a minimal representation containing id, displayName and type, along with a url to get full realityData details. */
+
+  /** If true, return all properties for every reality data found in query.
+   * If false or undefined, return a minimal representation containing id, displayName and type, along with a url to get full reality data details. */
   getFullRepresentation?: boolean;
-  /** If supplied, queries a maximum number of first results Found. Max 500. If not supplied, the query should return the first 100 RealityData found.
-  */
+
+  /** If supplied, queries a maximum number of first results Found. Max 500. If not supplied, the query should return the first 100 RealityData found.*/
   top?: number;
+  
   /** Continuation token to get current query's next results.*/
   continuationToken?: string;
 
-  /** Parameter that enable to order reality data in ascending or descending order. Default is ascending.Example : displayName desc */
+  /** Parameter that orders reality data in ascending or descending order. Default is ascending (asc). Can be used on any simple text, date or number property. Example : size desc */
   orderBy?: string;
-  /** Searches given string Reality Data TODO get swagger doc */
+
+  /** Searches the given text (case insensitive) in reality data's text properties, such as in Group, DisplayName, Description, RootDocument, Acquirer, Tags. */
   search?: string;
 
-  /** Queries for Reality Data of specified types.*/
+  /** Queries for reality data of specified types.*/
   types?: string[];
 
-  /** Queries for Reality Data in which the acquisition is in given date range.*/
+  /** Queries for reality data in which the acquisition is in given date range.*/
   acquisitionDates?: DateRange;
 
-  /** Queries for Reality Data where the creation date is in given date range.*/
+  /** Queries for reality data where the creation date is in given date range.*/
   createdDateTime?: DateRange;
 
-  /** Queries for Reality Data with exact matching tag.*/
+  /** Queries for reality data with exact matching tag.*/
   tag?: string;
 }
 
