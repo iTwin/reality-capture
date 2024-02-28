@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Updated documentation in RealityData listing query parameters",
+  "packageName": "@itwin/reality-data-client",
+  "email": "Marc-Andre.Cote@bentley.com",
+  "dependentChangeType": "patch"
+}
