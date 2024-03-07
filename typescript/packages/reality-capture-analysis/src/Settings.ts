@@ -215,7 +215,7 @@ export class O2DJobSettings {
         if (this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
 
-        json["options"] = [];
+        json["options"] = {};
         if (this.options.useTiePoints)
             json["options"]["useTiePoints"] = "true";
 
@@ -516,7 +516,7 @@ export class S2DJobSettings {
         if(this.outputs.exportedLines3DDGN)
             json["outputs"].push("exportedLines3DDGN");
 
-        json["options"] = [];
+        json["options"] = {};
         if (this.options.computeLineWidth)
             json["options"]["computeLineWidth"] = "true";
 
@@ -1095,7 +1095,7 @@ export class S3DJobSettings {
         if (this.outputs.exportedPolygons3DCesium)
             json["outputs"].push("exportedPolygons3DCesium");
         
-        json["options"] = [];
+        json["options"] = {};
         if (this.options.exportSrs)
             json["options"]["exportSrs"] = this.options.exportSrs;
 
@@ -1361,7 +1361,7 @@ export class ExtractGroundJobSettings {
         if (this.outputs.exportedSegmentation3DLAZ)
             json["outputs"].push("exportedSegmentation3DLAZ");
 
-        json["options"] = [];
+        json["options"] = {};
         if (this.options.exportSrs)
             json["outputs"]["exportSrs"] = this.options.exportSrs;
         
@@ -1597,7 +1597,7 @@ export class ChangeDetectionJobSettings {
         if (this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
 
-        json["options"] = [];
+        json["options"] = {};
         if (this.options.colorThresholdLow)
             json["options"]["colorThresholdLow"] = this.options.colorThresholdLow.toString();
 
