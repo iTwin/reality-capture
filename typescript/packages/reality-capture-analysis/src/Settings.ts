@@ -751,9 +751,9 @@ export class SOrthoJobSettings {
         const newJobSettings = new SOrthoJobSettings();
         const inputsJson = settingsJson["inputs"];
         for (const input of inputsJson) {
-            if (input["type"] === "photos")
+            if (input["type"] === "orthophoto")
                 newJobSettings.inputs.orthophoto = input["id"];
-            else if (input["type"] === "photoSegmentationDetector")
+            else if (input["type"] === "orthophotoSegmentationDetector")
                 newJobSettings.inputs.orthophotoSegmentationDetector = input["id"];
             else
                 return Promise.reject(new Error("Found unexpected input type : " + input["type"]));
