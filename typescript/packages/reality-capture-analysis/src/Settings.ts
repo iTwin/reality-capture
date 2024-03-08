@@ -8,7 +8,7 @@ export enum RDAJobType {
     NONE = "not recognized",
     O2D = "objects2D",
     S2D = "segmentation2D",
-    SOrtho = "segmentationOrtho",
+    SOrtho = "segmentationOrthophoto",
     S3D = "segmentation3D",
     ChangeDetection = "changeDetection",
     ExtractGround = "extractGround"

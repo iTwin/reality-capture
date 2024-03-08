@@ -16,7 +16,7 @@ import { JobState } from "@itwin/reality-capture-common";
 enum RdasJobTypes {
     O2D = "objects2D",
     S2D = "segmentation2D",
-    SOrtho = "segmentationOrtho",
+    SOrtho = "segmentationOrthophoto",
     S3D = "segmentation3D",
 }
 
