@@ -111,18 +111,18 @@ describe("Reality Analysis unit tests", () => {
                     "type": "objects2D",
                     "name": "Reality Analysis unit test",
                     "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                        "inputs": [
-                            {
-                                "type": "photos",
-                                "id": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
-                            },
-                            {
-                                "type": "photoObjectDetector",
-                                "id": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
-                            }
-                        ],
-                        "outputs": ["objects2D"],
-                        "options":{}
+                    "inputs": [
+                        {
+                            "type": "photos",
+                            "id": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
+                        },
+                        {
+                            "type": "photoObjectDetector",
+                            "id": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
+                        }
+                    ],
+                    "outputs": ["objects2D"],
+                    "options":{}
                 })),
                 expect(id).to.eventually.deep.equal("6f51448f-6377-4330-9ab0-f13fe994b3f1"),
             ]);
