@@ -60,11 +60,11 @@ describe("Reality Analysis unit tests", () => {
                 "inputs": [
                     {
                         "type": "photos",
-                        "id": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
+                        "id": "photosId"
                     },
                     {
                         "type": "photoObjectDetector",
-                        "id": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
+                        "id": "photoObjectDetectorId"
                     }
                 ],
                 "outputs": ["objects2D"],
@@ -84,19 +84,19 @@ describe("Reality Analysis unit tests", () => {
                         "inputs": [
                             {
                                 "type": "photos",
-                                "id": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
+                                "id": "photosId"
                             },
                             {
                                 "type": "photoObjectDetector",
-                                "id": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
+                                "id": "photoObjectDetectorId"
                             }
                         ]
                     }
                 });
 
             const settings = new O2DJobSettings();
-            settings.inputs.photos = "8e9f7e7a-f37e-4d74-a1e7-df7325944757";
-            settings.inputs.photoObjectDetector = "9fbbe885-9086-4b98-b6a5-8024657bcff4";
+            settings.inputs.photos = "photosId";
+            settings.inputs.photoObjectDetector = "photoObjectDetectorId";
             settings.outputs.objects2D = "objects2D";
             const jobName = "Reality Analysis unit test";
                         
@@ -114,11 +114,11 @@ describe("Reality Analysis unit tests", () => {
                     "inputs": [
                         {
                             "type": "photos",
-                            "id": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
+                            "id": "photosId"
                         },
                         {
                             "type": "photoObjectDetector",
-                            "id": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
+                            "id": "photoObjectDetectorId"
                         }
                     ],
                     "outputs": ["objects2D"],
@@ -281,17 +281,17 @@ describe("Reality Analysis unit tests", () => {
                         "outputs": [
                             {
                                 "type": "objects2D",
-                                "id": "60d8a846-7ad2-40e4-aed1-5adfe2dc79a4"
+                                "id": "objects2DId"
                             }
                         ],
                         "inputs": [
                             {
                                 "type": "photos",
-                                "id": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
+                                "id": "photosId"
                             },
                             {
                                 "type": "photoObjectDetector",
-                                "id": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
+                                "id": "photoObjectDetectorId"
                             }
                         ],
                         "options":{
@@ -358,8 +358,8 @@ describe("Reality Analysis unit tests", () => {
                     inputs: {
                         meshes: "",
                         objects2D: "",
-                        photos: "8e9f7e7a-f37e-4d74-a1e7-df7325944757",
-                        photoObjectDetector: "9fbbe885-9086-4b98-b6a5-8024657bcff4",
+                        photos: "photosId",
+                        photoObjectDetector: "photoObjectDetectorId",
                         pointClouds: ""
                     },
                     options: {
@@ -372,7 +372,7 @@ describe("Reality Analysis unit tests", () => {
                         exportedLocations3DSHP: "",
                         exportedObjects3DCesium: "",
                         exportedObjects3DDGN: "",
-                        objects2D: "60d8a846-7ad2-40e4-aed1-5adfe2dc79a4",
+                        objects2D: "objects2DId",
                         objects3D: ""
                     },
                 }),
@@ -403,17 +403,17 @@ describe("Reality Analysis unit tests", () => {
                         "outputs": [
                             {
                                 "type": "objects2D",
-                                "id": "60d8a846-7ad2-40e4-aed1-5adfe2dc79a4"
+                                "id": "objects2DId"
                             }
                         ],
                         "inputs": [
                             {
                                 "type": "photos",
-                                "id": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
+                                "id": "photosId"
                             },
                             {
                                 "type": "photoObjectDetector",
-                                "id": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
+                                "id": "photoObjectDetectorId"
                             }
                         ],
                         "options":{},

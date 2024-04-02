@@ -14,7 +14,7 @@ import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-async function runLines3DExample() {
+async function runSegmentation2DExample() {
     const imageCollection = "path to your image folder";
     const photosContextScene  = "path to the folder where your context scene file is";
     const photoSegmentationDetector = "path to the folder where your detector is";
@@ -37,7 +37,7 @@ async function runLines3DExample() {
     const env = process.env.IMJS_ENV ?? "";
     const issuerUrl = env === "prod" ? "https://ims.bentley.com" : "https://qa-ims.bentley.com";
 
-    console.log("Reality Analysis sample job detecting 3D lines");
+    console.log("Reality Analysis sample job producing 2D segmentation and 3D lines");
     const authorizationClient = new NodeCliAuthorizationClient({
         clientId: clientId,
         scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(RealityDataAnalysisService.getScopes()).join(" "),
@@ -160,4 +160,4 @@ async function runLines3DExample() {
     console.log("Successfully downloaded output");
 }
 
-runLines3DExample();
+runSegmentation2DExample();
