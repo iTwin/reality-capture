@@ -1363,7 +1363,7 @@ export class ExtractGroundJobSettings {
 
         json["options"] = {};
         if (this.options.exportSrs)
-            json["outputs"]["exportSrs"] = this.options.exportSrs;
+            json["options"]["exportSrs"] = this.options.exportSrs;
         
         return json;
     }

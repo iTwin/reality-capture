@@ -15,7 +15,7 @@ describe("Reality Analysis settings unit tests", () => {
     describe("Settings to json", () => {
         it("O2D", function () {
             const o2dSettings = new O2DJobSettings();
-            o2dSettings.inputs.photos = "orientedPhotosId";
+            o2dSettings.inputs.photos = "photosId";
             o2dSettings.inputs.photoObjectDetector = "photoObjectDetectorId";
             o2dSettings.inputs.meshes = "meshesId";
             o2dSettings.inputs.objects2D = "objects2DId";
@@ -33,11 +33,11 @@ describe("Reality Analysis settings unit tests", () => {
             return Promise.all([
                 expect(json).to.have.property("inputs"),
                 expect(json.inputs).to.have.length.above(0),
-                expect(json.inputs).to.deep.include({"name": "orientedPhotos", "realityDataId": "orientedPhotosId"}),
-                expect(json.inputs).to.deep.include({"name": "photoObjectDetector", "realityDataId": "photoObjectDetectorId"}),
-                expect(json.inputs).to.deep.include({"name": "meshes", "realityDataId": "meshesId"}),
-                expect(json.inputs).to.deep.include({"name": "objects2D", "realityDataId": "objects2DId"}),
-                expect(json.inputs).to.deep.include({"name": "pointClouds", "realityDataId": "pointCloudsId"}),
+                expect(json.inputs).to.deep.include({"type": "photos", "id": "photosId"}),
+                expect(json.inputs).to.deep.include({"type": "photoObjectDetector", "id": "photoObjectDetectorId"}),
+                expect(json.inputs).to.deep.include({"type": "meshes", "id": "meshesId"}),
+                expect(json.inputs).to.deep.include({"type": "objects2D", "id": "objects2DId"}),
+                expect(json.inputs).to.deep.include({"type": "pointClouds", "id": "pointCloudsId"}),
                 expect(json).to.have.property("outputs"),
                 expect(json.outputs).to.have.length.above(0),
                 expect(json.outputs).to.deep.include("objects2D"),
@@ -46,9 +46,9 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(json.outputs).to.deep.include("exportedObjects3DCesium"),
                 expect(json.outputs).to.deep.include("exportedLocations3DSHP"),
 
-                expect(json.options.useTiePoints).to.deep.equal(true),
-                expect(json.options.minPhotos).to.deep.equal(10),
-                expect(json.options.maxDist).to.deep.equal(100),
+                expect(json.options.useTiePoints).to.deep.equal("true"),
+                expect(json.options.minPhotos).to.deep.equal("10"),
+                expect(json.options.maxDist).to.deep.equal("100"),
                 expect(json.options.exportSrs).to.deep.equal("EPSG:2788"),
             ]);
         });
@@ -79,11 +79,11 @@ describe("Reality Analysis settings unit tests", () => {
             return Promise.all([
                 expect(json).to.have.property("inputs"),
                 expect(json.inputs).to.have.length.above(0),
-                expect(json.inputs).to.deep.include({"name": "photoSegmentationDetector", "realityDataId": "photoSegmentationDetectorId"}),
-                expect(json.inputs).to.deep.include({"name": "photos", "realityDataId": "photosId"}),
-                expect(json.inputs).to.deep.include({"name": "meshes", "realityDataId": "meshesId"}),
-                expect(json.inputs).to.deep.include({"name": "pointClouds", "realityDataId": "pointCloudsId"}),
-                expect(json.inputs).to.deep.include({"name": "segmentation2D", "realityDataId": "segmentation2DId"}),
+                expect(json.inputs).to.deep.include({"type": "photoSegmentationDetector", "id": "photoSegmentationDetectorId"}),
+                expect(json.inputs).to.deep.include({"type": "photos", "id": "photosId"}),
+                expect(json.inputs).to.deep.include({"type": "meshes", "id": "meshesId"}),
+                expect(json.inputs).to.deep.include({"type": "pointClouds", "id": "pointCloudsId"}),
+                expect(json.inputs).to.deep.include({"type": "segmentation2D", "id": "segmentation2DId"}),
                 expect(json).to.have.property("outputs"),
                 expect(json.outputs).to.have.length.above(0),
                 expect(json.outputs).to.deep.include("segmentation2D"),
@@ -94,10 +94,10 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(json.outputs).to.deep.include("exportedPolygons3DCesium"),
                 expect(json.outputs).to.deep.include("exportedLines3DDGN"),
                 expect(json.outputs).to.deep.include("exportedLines3DCesium"),
-                expect(json.options.computeLineWidth).to.deep.equal(true),
-                expect(json.options.removeSmallComponents).to.deep.equal(1),
+                expect(json.options.computeLineWidth).to.deep.equal("true"),
+                expect(json.options.removeSmallComponents).to.deep.equal("1"),
                 expect(json.options.exportSrs).to.deep.equal("EPSG:4512"),
-                expect(json.options.minPhotos).to.deep.equal(10),
+                expect(json.options.minPhotos).to.deep.equal("10"),
             ]);
         });
 
@@ -116,8 +116,8 @@ describe("Reality Analysis settings unit tests", () => {
             return Promise.all([
                 expect(json).to.have.property("inputs"),
                 expect(json.inputs).to.have.length.above(0),
-                expect(json.inputs).to.deep.include({"name": "orthophoto", "realityDataId": "orthophotoId"}),
-                expect(json.inputs).to.deep.include({"name": "orthophotoSegmentationDetector", "realityDataId": "orthophotoSegmentationDetectorId"}),
+                expect(json.inputs).to.deep.include({"type": "orthophoto", "id": "orthophotoId"}),
+                expect(json.inputs).to.deep.include({"type": "orthophotoSegmentationDetector", "id": "orthophotoSegmentationDetectorId"}),
                 expect(json).to.have.property("outputs"),
                 expect(json.outputs).to.have.length.above(0),
                 expect(json.outputs).to.deep.include("exportedLines2DDGN"),
@@ -145,7 +145,7 @@ describe("Reality Analysis settings unit tests", () => {
             s3dSettings.outputs.exportedLines3DDGN = "exportedLines3DDGN";
             s3dSettings.outputs.exportedLines3DCesium = "exportedLines3DCesium";
             s3dSettings.outputs.exportedPolygons3DDGN = "exportedPolygons3DDGN";
-            s3dSettings.outputs.exportedLines3DCesium = "exportedPolygons3DCesium";
+            s3dSettings.outputs.exportedPolygons3DCesium = "exportedPolygons3DCesium";
             s3dSettings.outputs.exportedSegmentation3DLAS = "exportedSegmentation3DLAS";
             s3dSettings.outputs.exportedSegmentation3DLAZ = "exportedSegmentation3DLAZ";
             s3dSettings.outputs.exportedSegmentation3DPLY = "exportedSegmentation3DPLY";
@@ -161,11 +161,11 @@ describe("Reality Analysis settings unit tests", () => {
             return Promise.all([
                 expect(json).to.have.property("inputs"),
                 expect(json.inputs).to.have.length.above(0),
-                expect(json.inputs).to.deep.include({"name": "meshes", "realityDataId": "meshesId"}),
-                expect(json.inputs).to.deep.include({"name": "pointCloudSegmentationDetector", "realityDataId": "pointCloudSegmentationDetectorId"}),
-                expect(json.inputs).to.deep.include({"name": "pointClouds", "realityDataId": "pointCloudsId"}),
-                expect(json.inputs).to.deep.include({"name": "segmentation3D", "realityDataId": "segmentation3DId"}),
-                expect(json.inputs).to.deep.include({"name": "clipPolygon", "realityDataId": "clipPolygonId"}),
+                expect(json.inputs).to.deep.include({"type": "meshes", "id": "meshesId"}),
+                expect(json.inputs).to.deep.include({"type": "pointCloudSegmentationDetector", "id": "pointCloudSegmentationDetectorId"}),
+                expect(json.inputs).to.deep.include({"type": "pointClouds", "id": "pointCloudsId"}),
+                expect(json.inputs).to.deep.include({"type": "segmentation3D", "id": "segmentation3DId"}),
+                expect(json.inputs).to.deep.include({"type": "clipPolygon", "id": "clipPolygonId"}),
 
                 expect(json).to.have.property("outputs"),
                 expect(json.outputs).to.have.length.above(0),
@@ -186,10 +186,10 @@ describe("Reality Analysis settings unit tests", () => {
                 expect(json.outputs).to.deep.include("exportedPolygons3DCesium"),
                 expect(json.outputs).to.deep.include("lines3D"),
 
-                expect(json.options.saveConfidence).to.deep.equal(true),
+                expect(json.options.saveConfidence).to.deep.equal("true"),
                 expect(json.options.exportSrs).to.deep.equal("EPSG:7132"),
-                expect(json.options.computeLineWidth).to.deep.equal(true),
-                expect(json.options.removeSmallComponents).to.deep.equal(1),
+                expect(json.options.computeLineWidth).to.deep.equal("true"),
+                expect(json.options.removeSmallComponents).to.deep.equal("1"),
             ]);
         });
 
@@ -212,10 +212,10 @@ describe("Reality Analysis settings unit tests", () => {
             return Promise.all([
                 expect(json).to.have.property("inputs"),
                 expect(json.inputs).to.have.length.above(0),
-                expect(json.inputs).to.deep.include({"name": "meshes1", "realityDataId": "meshes1Id"}),
-                expect(json.inputs).to.deep.include({"name": "meshes2", "realityDataId": "meshes2Id"}),
-                expect(json.inputs).to.deep.include({"name": "pointClouds1", "realityDataId": "pointClouds1Id"}),
-                expect(json.inputs).to.deep.include({"name": "pointClouds2", "realityDataId": "pointClouds2Id"}),
+                expect(json.inputs).to.deep.include({"type": "meshes1", "id": "meshes1Id"}),
+                expect(json.inputs).to.deep.include({"type": "meshes2", "id": "meshes2Id"}),
+                expect(json.inputs).to.deep.include({"type": "pointClouds1", "id": "pointClouds1Id"}),
+                expect(json.inputs).to.deep.include({"type": "pointClouds2", "id": "pointClouds2Id"}),
 
                 expect(json).to.have.property("outputs"),
                 expect(json.outputs).to.have.length.above(0),
@@ -248,10 +248,10 @@ describe("Reality Analysis settings unit tests", () => {
             return Promise.all([
                 expect(json).to.have.property("inputs"),
                 expect(json.inputs).to.have.length.above(0),
-                expect(json.inputs).to.deep.include({"name": "clipPolygon", "realityDataId": "clipPolygonId"}),
-                expect(json.inputs).to.deep.include({"name": "meshes", "realityDataId": "meshesId"}),
-                expect(json.inputs).to.deep.include({"name": "pointCloudSegmentationDetector", "realityDataId": "pointCloudSegmentationDetectorId"}),
-                expect(json.inputs).to.deep.include({"name": "pointClouds", "realityDataId": "pointCloudsId"}),
+                expect(json.inputs).to.deep.include({"type": "clipPolygon", "id": "clipPolygonId"}),
+                expect(json.inputs).to.deep.include({"type": "meshes", "id": "meshesId"}),
+                expect(json.inputs).to.deep.include({"type": "pointCloudSegmentationDetector", "id": "pointCloudSegmentationDetectorId"}),
+                expect(json.inputs).to.deep.include({"type": "pointClouds", "id": "pointCloudsId"}),
 
                 expect(json).to.have.property("outputs"),
                 expect(json.outputs).to.have.length.above(0),
@@ -271,45 +271,45 @@ describe("Reality Analysis settings unit tests", () => {
         it("Valid json", async function () {
             const json = {
                 "inputs": [{
-                    "name": "orientedPhotos",
-                    "realityDataId": "orientedPhotosId"
+                    "type": "photos",
+                    "id": "photosId"
                 },
                 {
-                    "name": "photoObjectDetector",
-                    "realityDataId": "photoObjectDetectorId"
+                    "type": "photoObjectDetector",
+                    "id": "photoObjectDetectorId"
                 },
                 {
-                    "name": "meshes",
-                    "realityDataId": "meshesId"
+                    "type": "meshes",
+                    "id": "meshesId"
                 },
                 {
-                    "name": "objects2D",
-                    "realityDataId": "objects2DId"
+                    "type": "objects2D",
+                    "id": "objects2DId"
                 },
                 {
-                    "name": "pointClouds",
-                    "realityDataId": "pointCloudsId"
+                    "type": "pointClouds",
+                    "id": "pointCloudsId"
                 }
                 ],
                 "outputs": [{
-                    "name": "objects2D",
-                    "realityDataId": "objects2DId"
+                    "type": "objects2D",
+                    "id": "objects2DId"
                 },
                 {
-                    "name": "objects3D",
-                    "realityDataId": "objects3DId"
+                    "type": "objects3D",
+                    "id": "objects3DId"
                 },
                 {
-                    "name": "exportedObjects3DDGN",
-                    "realityDataId": "exportedObjects3DDGNId"
+                    "type": "exportedObjects3DDGN",
+                    "id": "exportedObjects3DDGNId"
                 },
                 {
-                    "name": "exportedObjects3DCesium",
-                    "realityDataId": "exportedObjects3DCesiumId"
+                    "type": "exportedObjects3DCesium",
+                    "id": "exportedObjects3DCesiumId"
                 },
                 {
-                    "name": "exportedLocations3DSHP",
-                    "realityDataId": "exportedLocations3DSHPId"
+                    "type": "exportedLocations3DSHP",
+                    "id": "exportedLocations3DSHPId"
                 }
                 ],
                 "options": {
@@ -322,7 +322,7 @@ describe("Reality Analysis settings unit tests", () => {
             const o2DSettings = await O2DJobSettings.fromJson(json);
             return Promise.all([
                 expect(o2DSettings.type).to.deep.equal("objects2D"),
-                expect(o2DSettings.inputs).to.have.property("orientedPhotos", "orientedPhotosId"),
+                expect(o2DSettings.inputs).to.have.property("photos", "photosId"),
                 expect(o2DSettings.inputs).to.have.property("photoObjectDetector", "photoObjectDetectorId"),
                 expect(o2DSettings.inputs).to.have.property("meshes", "meshesId"),
                 expect(o2DSettings.inputs).to.have.property("objects2D", "objects2DId"),
@@ -344,35 +344,35 @@ describe("Reality Analysis settings unit tests", () => {
         it("Invalid input", async function () {
             const json = {
                 "inputs": [{
-                    "name": "invalid",
-                    "realityDataId": "photosId"
+                    "type": "invalid",
+                    "id": "photosId"
                 }
                 ],
                 "outputs": [{
-                    "name": "objects2D",
-                    "realityDataId": "objects2DId"
+                    "type": "objects2D",
+                    "id": "objects2DId"
                 }
                 ]
             };
             const o2DSettings = O2DJobSettings.fromJson(json);
-            return expect(o2DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input name : invalid");
+            return expect(o2DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input type : invalid");
         });
 
         it("Invalid output", async function () {
             const json = {
                 "inputs": [{
-                    "name": "orientedPhotos",
-                    "realityDataId": "photosId"
+                    "type": "photos",
+                    "id": "photosId"
                 }
                 ],
                 "outputs": [{
-                    "name": "invalid",
-                    "realityDataId": "objects2DId"
+                    "type": "invalid",
+                    "id": "objects2DId"
                 }
                 ]
             };
             const o2DSettings = O2DJobSettings.fromJson(json);
-            return expect(o2DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output name : invalid");
+            return expect(o2DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output type : invalid");
         });
     });
 
@@ -380,57 +380,57 @@ describe("Reality Analysis settings unit tests", () => {
         it("Valid json", async function () {
             const json = {
                 "inputs": [{
-                    "name": "photos",
-                    "realityDataId": "photosId"
+                    "type": "photos",
+                    "id": "photosId"
                 },
                 {
-                    "name": "photoSegmentationDetector",
-                    "realityDataId": "photoSegmentationDetectorId"
+                    "type": "photoSegmentationDetector",
+                    "id": "photoSegmentationDetectorId"
                 },
                 {
-                    "name": "meshes",
-                    "realityDataId": "meshesId"
+                    "type": "meshes",
+                    "id": "meshesId"
                 },
                 {
-                    "name": "pointClouds",
-                    "realityDataId": "pointCloudsId"
+                    "type": "pointClouds",
+                    "id": "pointCloudsId"
                 },
                 {
-                    "name": "segmentation2D",
-                    "realityDataId": "segmentation2DId"
+                    "type": "segmentation2D",
+                    "id": "segmentation2DId"
                 }
                 ],
                 "outputs": [{
-                    "name": "segmentation2D",
-                    "realityDataId": "segmentation2DId"
+                    "type": "segmentation2D",
+                    "id": "segmentation2DId"
                 },
                 {
-                    "name": "segmentedPhotos",
-                    "realityDataId": "segmentedPhotosId"
+                    "type": "segmentedPhotos",
+                    "id": "segmentedPhotosId"
                 },
                 {
-                    "name": "lines3D",
-                    "realityDataId": "lines3DId"
+                    "type": "lines3D",
+                    "id": "lines3DId"
                 },
                 {
-                    "name": "polygons3D",
-                    "realityDataId": "polygons3DId"
+                    "type": "polygons3D",
+                    "id": "polygons3DId"
                 },
                 {
-                    "name": "exportedPolygons3DDGN",
-                    "realityDataId": "exportedPolygons3DDGNId"
+                    "type": "exportedPolygons3DDGN",
+                    "id": "exportedPolygons3DDGNId"
                 },
                 {
-                    "name": "exportedPolygons3DCesium",
-                    "realityDataId": "exportedPolygons3DCesiumId"
+                    "type": "exportedPolygons3DCesium",
+                    "id": "exportedPolygons3DCesiumId"
                 },
                 {
-                    "name": "exportedLines3DDGN",
-                    "realityDataId": "exportedLines3DDGNId"
+                    "type": "exportedLines3DDGN",
+                    "id": "exportedLines3DDGNId"
                 },
                 {
-                    "name": "exportedLines3DCesium",
-                    "realityDataId": "exportedLines3DCesiumId"
+                    "type": "exportedLines3DCesium",
+                    "id": "exportedLines3DCesiumId"
                 },
                 ],
                 "options": {
@@ -468,35 +468,35 @@ describe("Reality Analysis settings unit tests", () => {
         it("Invalid input", async function () {
             const json = {
                 "inputs": [{
-                    "name": "invalid",
-                    "realityDataId": "photosId"
+                    "type": "invalid",
+                    "id": "photosId"
                 }
                 ],
                 "outputs": [{
-                    "name": "segmentation2D",
-                    "realityDataId": "segmentation2DId"
+                    "type": "segmentation2D",
+                    "id": "segmentation2DId"
                 }
                 ]
             };
             const s2DSettings = S2DJobSettings.fromJson(json);
-            return expect(s2DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input name : invalid");
+            return expect(s2DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input type : invalid");
         });
 
         it("Invalid output", async function () {
             const json = {
                 "inputs": [{
-                    "name": "photos",
-                    "realityDataId": "photosId"
+                    "type": "photos",
+                    "id": "photosId"
                 }
                 ],
                 "outputs": [{
-                    "name": "invalid",
-                    "realityDataId": "segmentation2DId"
+                    "type": "invalid",
+                    "id": "segmentation2DId"
                 }
                 ]
             };
             const s2DSettings = S2DJobSettings.fromJson(json);
-            return expect(s2DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output name : invalid");
+            return expect(s2DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output type : invalid");
         });
     });
 
@@ -504,51 +504,47 @@ describe("Reality Analysis settings unit tests", () => {
         it("Valid json", async function () {
             const json = {
                 "inputs": [{
-                    "name": "orthophoto",
-                    "realityDataId": "orthophotoId"
+                    "type": "orthophoto",
+                    "id": "orthophotoId"
                 },
                 {
-                    "name": "orthophotoSegmentationDetector",
-                    "realityDataId": "orthophotoSegmentationDetectorId"
+                    "type": "orthophotoSegmentationDetector",
+                    "id": "orthophotoSegmentationDetectorId"
                 }
                 ],
                 "outputs": [{
-                    "name": "segmentation2D",
-                    "realityDataId": "segmentation2DId"
+                    "type": "segmentation2D",
+                    "id": "segmentation2DId"
                 },
                 {
-                    "name": "segmentedPhotos",
-                    "realityDataId": "segmentedPhotosId"
+                    "type": "segmentedPhotos",
+                    "id": "segmentedPhotosId"
                 },
                 {
-                    "name": "lines3D",
-                    "realityDataId": "lines3DId"
+                    "type": "polygons2D",
+                    "id": "polygons2DId"
                 },
                 {
-                    "name": "polygons2D",
-                    "realityDataId": "polygons2DId"
+                    "type": "exportedPolygons2DSHP",
+                    "id": "exportedPolygons2DSHPId"
                 },
                 {
-                    "name": "exportedPolygons2DSHP",
-                    "realityDataId": "exportedPolygons2DSHPId"
+                    "type": "lines2D",
+                    "id": "lines2DId"
                 },
                 {
-                    "name": "lines2D",
-                    "realityDataId": "lines2DId"
+                    "type": "exportedLines2DSHP",
+                    "id": "exportedLines2DSHPId"
                 },
                 {
-                    "name": "exportedLines2DSHP",
-                    "realityDataId": "exportedLines2DSHPId"
-                },
-                {
-                    "name": "exportedLines2DDGN",
-                    "realityDataId": "exportedLines2DDGNId"
+                    "type": "exportedLines2DDGN",
+                    "id": "exportedLines2DDGNId"
                 },
                 ]
             };
             const orthoSettings = await SOrthoJobSettings.fromJson(json);
             return Promise.all([
-                expect(orthoSettings.type).to.deep.equal("segmentation2D"),
+                expect(orthoSettings.type).to.deep.equal("segmentationOrthophoto"),
                 expect(orthoSettings.inputs).to.have.property("orthophoto", "orthophotoId"),
                 expect(orthoSettings.inputs).to.have.property("orthophotoSegmentationDetector", "orthophotoSegmentationDetectorId"),
 
@@ -565,35 +561,35 @@ describe("Reality Analysis settings unit tests", () => {
         it("Invalid input", async function () {
             const json = {
                 "inputs": [{
-                    "name": "invalid",
-                    "realityDataId": "photosId"
+                    "type": "invalid",
+                    "id": "photosId"
                 }
                 ],
                 "outputs": [{
-                    "name": "segmentation2D",
-                    "realityDataId": "segmentation2DId"
+                    "type": "segmentation2D",
+                    "id": "segmentation2DId"
                 }
                 ]
             };
             const orthoSettings = SOrthoJobSettings.fromJson(json);
-            return expect(orthoSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input name : invalid");
+            return expect(orthoSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input type : invalid");
         });
 
         it("Invalid output", async function () {
             const json = {
                 "inputs": [{
-                    "name": "orthophoto",
-                    "realityDataId": "orthophotoId"
+                    "type": "orthophoto",
+                    "id": "orthophotoId"
                 }
                 ],
                 "outputs": [{
-                    "name": "invalid",
-                    "realityDataId": "segmentation2DId"
+                    "type": "invalid",
+                    "id": "segmentation2DId"
                 }
                 ]
             };
             const orthoSettings = SOrthoJobSettings.fromJson(json);
-            return expect(orthoSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output name : invalid");
+            return expect(orthoSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output type : invalid");
         });
     });
 
@@ -601,89 +597,89 @@ describe("Reality Analysis settings unit tests", () => {
         it("Valid json", async function () {
             const json = {
                 "inputs": [{
-                    "name": "pointClouds",
-                    "realityDataId": "pointCloudsId"
+                    "type": "pointClouds",
+                    "id": "pointCloudsId"
                 },
                 {
-                    "name": "meshes",
-                    "realityDataId": "meshesId"
+                    "type": "meshes",
+                    "id": "meshesId"
                 },
                 {
-                    "name": "pointCloudSegmentationDetector",
-                    "realityDataId": "pointCloudSegmentationDetectorId"
+                    "type": "pointCloudSegmentationDetector",
+                    "id": "pointCloudSegmentationDetectorId"
                 },
                 {
-                    "name": "segmentation3D",
-                    "realityDataId": "segmentation3DId"
+                    "type": "segmentation3D",
+                    "id": "segmentation3DId"
                 },
                 {
-                    "name": "clipPolygon",
-                    "realityDataId": "clipPolygonId"
+                    "type": "clipPolygon",
+                    "id": "clipPolygonId"
                 }
                 ],
                 "outputs": [{
-                    "name": "segmentation3D",
-                    "realityDataId": "segmentation3DId"
+                    "type": "segmentation3D",
+                    "id": "segmentation3DId"
                 },
                 {
-                    "name": "segmentedPointCloud",
-                    "realityDataId": "segmentedPointCloudId"
+                    "type": "segmentedPointCloud",
+                    "id": "segmentedPointCloudId"
                 },
                 {
-                    "name": "exportedSegmentation3DPOD",
-                    "realityDataId": "exportedSegmentation3DPODId"
+                    "type": "exportedSegmentation3DPOD",
+                    "id": "exportedSegmentation3DPODId"
                 },
                 {
-                    "name": "exportedSegmentation3DLAS",
-                    "realityDataId": "exportedSegmentation3DLASId"
+                    "type": "exportedSegmentation3DLAS",
+                    "id": "exportedSegmentation3DLASId"
                 },
                 {
-                    "name": "exportedSegmentation3DLAZ",
-                    "realityDataId": "exportedSegmentation3DLAZId"
+                    "type": "exportedSegmentation3DLAZ",
+                    "id": "exportedSegmentation3DLAZId"
                 },
                 {
-                    "name": "exportedSegmentation3DPLY",
-                    "realityDataId": "exportedSegmentation3DPLYId"
+                    "type": "exportedSegmentation3DPLY",
+                    "id": "exportedSegmentation3DPLYId"
                 },
                 {
-                    "name": "objects3D",
-                    "realityDataId": "objects3DId"
+                    "type": "objects3D",
+                    "id": "objects3DId"
                 },
                 {
-                    "name": "exportedObjects3DDGN",
-                    "realityDataId": "exportedObjects3DDGNId"
+                    "type": "exportedObjects3DDGN",
+                    "id": "exportedObjects3DDGNId"
                 },
                 {
-                    "name": "exportedObjects3DCesium",
-                    "realityDataId": "exportedObjects3DCesiumId"
+                    "type": "exportedObjects3DCesium",
+                    "id": "exportedObjects3DCesiumId"
                 },
                 {
-                    "name": "exportedLocations3DSHP",
-                    "realityDataId": "exportedLocations3DSHPId"
+                    "type": "exportedLocations3DSHP",
+                    "id": "exportedLocations3DSHPId"
                 },
                 {
-                    "name": "exportedLines3DDGN",
-                    "realityDataId": "exportedLines3DDGNId"
+                    "type": "exportedLines3DDGN",
+                    "id": "exportedLines3DDGNId"
                 },
                 {
-                    "name": "exportedLines3DCesium",
-                    "realityDataId": "exportedLines3DCesiumId"
+                    "type": "exportedLines3DCesium",
+                    "id": "exportedLines3DCesiumId"
                 },
                 {
-                    "name": "polygons3D",
-                    "realityDataId": "polygons3DId"
+                    "type": "polygons3D",
+                    "id": "polygons3DId"
                 },
                 {
-                    "name": "exportedPolygons3DDGN",
-                    "realityDataId": "exportedPolygons3DDGNId"
+                    "type": "exportedPolygons3DDGN",
+                    "id": "exportedPolygons3DDGNId"
                 },
                 {
-                    "name": "exportedPolygons3DCesium",
-                    "realityDataId": "exportedPolygons3DCesiumId"
+                    "type": "exportedPolygons3DCesium",
+                    "id": "exportedPolygons3DCesiumId"
                 },
                 {
-                    "name": "lines3D",
-                    "realityDataId": "lines3DId"
+                    "type": "lines3D",
+                    "id": "lines3DId"
                 }
                 ],
                 "options": {
@@ -729,35 +725,35 @@ describe("Reality Analysis settings unit tests", () => {
         it("Invalid input", async function () {
             const json = {
                 "inputs": [{
-                    "name": "invalid",
-                    "realityDataId": "pointCloudsId"
+                    "type": "invalid",
+                    "id": "pointCloudsId"
                 }
                 ],
                 "outputs": [{
-                    "name": "segmentation3D",
-                    "realityDataId": "segmentation3DId"
+                    "type": "segmentation3D",
+                    "id": "segmentation3DId"
                 }
                 ]
             };
             const s3DSettings = S3DJobSettings.fromJson(json);
-            return expect(s3DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input name : invalid");
+            return expect(s3DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input type : invalid");
         });
 
         it("Invalid output", async function () {
             const json = {
                 "inputs": [{
-                    "name": "pointClouds",
-                    "realityDataId": "pointCloudsId"
+                    "type": "pointClouds",
+                    "id": "pointCloudsId"
                 }
                 ],
                 "outputs": [{
-                    "name": "invalid",
-                    "realityDataId": "segmentation3DId"
+                    "type": "invalid",
+                    "id": "segmentation3DId"
                 }
                 ]
             };
             const s3DSettings = S3DJobSettings.fromJson(json);
-            return expect(s3DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output name : invalid");
+            return expect(s3DSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output type : invalid");
         });
     });
 
@@ -765,29 +761,29 @@ describe("Reality Analysis settings unit tests", () => {
         it("Valid json", async function () {
             const json = {
                 "inputs": [{
-                    "name": "pointClouds1",
-                    "realityDataId": "pointClouds1Id"
+                    "type": "pointClouds1",
+                    "id": "pointClouds1Id"
                 },
                 {
-                    "name": "pointClouds2",
-                    "realityDataId": "pointClouds2Id"
+                    "type": "pointClouds2",
+                    "id": "pointClouds2Id"
                 },
                 {
-                    "name": "meshes1",
-                    "realityDataId": "meshes1Id"
+                    "type": "meshes1",
+                    "id": "meshes1Id"
                 },
                 {
-                    "name": "meshes2",
-                    "realityDataId": "meshes2Id"
+                    "type": "meshes2",
+                    "id": "meshes2Id"
                 }
                 ],
                 "outputs": [{
-                    "name": "objects3D",
-                    "realityDataId": "objects3DId"
+                    "type": "objects3D",
+                    "id": "objects3DId"
                 },
                 {
-                    "name": "exportedLocations3DSHP",
-                    "realityDataId": "exportedLocations3DSHPId"
+                    "type": "exportedLocations3DSHP",
+                    "id": "exportedLocations3DSHPId"
                 }
                 ],
                 "options": {
@@ -824,35 +820,35 @@ describe("Reality Analysis settings unit tests", () => {
         it("Invalid input", async function () {
             const json = {
                 "inputs": [{
-                    "name": "invalid",
-                    "realityDataId": "pointClouds1Id"
+                    "type": "invalid",
+                    "id": "pointClouds1Id"
                 }
                 ],
                 "outputs": [{
-                    "name": "objects3D",
-                    "realityDataId": "objects3DId"
+                    "type": "objects3D",
+                    "id": "objects3DId"
                 }
                 ]
             };
             const changeDetectionSettings = ChangeDetectionJobSettings.fromJson(json);
-            return expect(changeDetectionSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input name : invalid");
+            return expect(changeDetectionSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input type : invalid");
         });
 
         it("Invalid output", async function () {
             const json = {
                 "inputs": [{
-                    "name": "meshes1",
-                    "realityDataId": "meshes1Id"
+                    "type": "meshes1",
+                    "id": "meshes1Id"
                 }
                 ],
                 "outputs": [{
-                    "name": "invalid",
-                    "realityDataId": "objects3DId"
+                    "type": "invalid",
+                    "id": "objects3DId"
                 }
                 ]
             };
             const changeDetectionSettings = ChangeDetectionJobSettings.fromJson(json);
-            return expect(changeDetectionSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output name : invalid");
+            return expect(changeDetectionSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output type : invalid");
         });
     });
 
@@ -860,41 +856,41 @@ describe("Reality Analysis settings unit tests", () => {
         it("Valid json", async function () {
             const json = {
                 "inputs": [{
-                    "name": "pointClouds",
-                    "realityDataId": "pointCloudsId"
+                    "type": "pointClouds",
+                    "id": "pointCloudsId"
                 },
                 {
-                    "name": "meshes",
-                    "realityDataId": "meshesId"
+                    "type": "meshes",
+                    "id": "meshesId"
                 },
                 {
-                    "name": "pointCloudSegmentationDetector",
-                    "realityDataId": "pointCloudSegmentationDetectorId"
+                    "type": "pointCloudSegmentationDetector",
+                    "id": "pointCloudSegmentationDetectorId"
                 },
                 {
-                    "name": "clipPolygon",
-                    "realityDataId": "clipPolygonId"
+                    "type": "clipPolygon",
+                    "id": "clipPolygonId"
                 }
                 ],
                 "outputs": [{
-                    "name": "segmentation3D",
-                    "realityDataId": "segmentation3DId"
+                    "type": "segmentation3D",
+                    "id": "segmentation3DId"
                 },
                 {
-                    "name": "segmentedPointCloud",
-                    "realityDataId": "segmentedPointCloudId"
+                    "type": "segmentedPointCloud",
+                    "id": "segmentedPointCloudId"
                 },
                 {
-                    "name": "exportedSegmentation3DPOD",
-                    "realityDataId": "exportedSegmentation3DPODId"
+                    "type": "exportedSegmentation3DPOD",
+                    "id": "exportedSegmentation3DPODId"
                 },
                 {
-                    "name": "exportedSegmentation3DLAS",
-                    "realityDataId": "exportedSegmentation3DLASId"
+                    "type": "exportedSegmentation3DLAS",
+                    "id": "exportedSegmentation3DLASId"
                 },
                 {
-                    "name": "exportedSegmentation3DLAZ",
-                    "realityDataId": "exportedSegmentation3DLAZId"
+                    "type": "exportedSegmentation3DLAZ",
+                    "id": "exportedSegmentation3DLAZId"
                 }
                 ],
                 "options": {
@@ -922,35 +918,35 @@ describe("Reality Analysis settings unit tests", () => {
         it("Invalid input", async function () {
             const json = {
                 "inputs": [{
-                    "name": "invalid",
-                    "realityDataId": "clipPolygonId"
+                    "type": "invalid",
+                    "id": "clipPolygonId"
                 }
                 ],
                 "outputs": [{
-                    "name": "segmentation3D",
-                    "realityDataId": "segmentation3DId"
+                    "type": "segmentation3D",
+                    "id": "segmentation3DId"
                 }
                 ]
             };
             const extractGroundSettings = ExtractGroundJobSettings.fromJson(json);
-            return expect(extractGroundSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input name : invalid");
+            return expect(extractGroundSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected input type : invalid");
         });
 
         it("Invalid output", async function () {
             const json = {
                 "inputs": [{
-                    "name": "pointClouds",
-                    "realityDataId": "pointCloudsId"
+                    "type": "pointClouds",
+                    "id": "pointCloudsId"
                 }
                 ],
                 "outputs": [{
-                    "name": "invalid",
-                    "realityDataId": "segmentation3DId"
+                    "type": "invalid",
+                    "id": "segmentation3DId"
                 }
                 ]
             };
             const extractGroundSettings = ExtractGroundJobSettings.fromJson(json);
-            return expect(extractGroundSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output name : invalid");
+            return expect(extractGroundSettings).to.eventually.be.rejectedWith(Error).and.have.property("message", "Found unexpected output type : invalid");
         });
     });
 });
