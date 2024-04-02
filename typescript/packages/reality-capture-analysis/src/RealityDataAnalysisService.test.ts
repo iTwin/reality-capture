@@ -56,7 +56,7 @@ describe("Reality Analysis unit tests", () => {
             axiosMock.onPost(serviceUrl + "/jobs", {
                 "type": "objects2D",
                 "name": "Reality Analysis unit test",
-                "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                "iTwinId": iTwinId,
                 "inputs": [
                     {
                         "type": "photos",
@@ -75,7 +75,7 @@ describe("Reality Analysis unit tests", () => {
                         "id": "6f51448f-6377-4330-9ab0-f13fe994b3f1",
                         "type": "objects2D",
                         "name": "Reality Analysis unit test",
-                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                        "iTwinId": iTwinId,
                         "outputs": [
                             {
                                 "type": "objects2D",
@@ -110,7 +110,7 @@ describe("Reality Analysis unit tests", () => {
                 expect(axiosMock.history.post[0].data).deep.equal(JSON.stringify({
                     "type": "objects2D",
                     "name": "Reality Analysis unit test",
-                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                    "iTwinId": iTwinId,
                     "inputs": [
                         {
                             "type": "photos",
@@ -304,7 +304,7 @@ describe("Reality Analysis unit tests", () => {
                         "dataCenter": "EastUs",
                         "type": "objects2D",
                         "name": "Reality Analysis unit test",
-                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                        "iTwinId": iTwinId,
                         "costEstimation": {
                             "gigaPixels": 2,
                             "sceneWidth": 4.5,
@@ -345,7 +345,7 @@ describe("Reality Analysis unit tests", () => {
             return Promise.all([
                 expect(properties).to.eventually.have.property("name", "Reality Analysis unit test"),
                 expect(properties).to.eventually.have.property("type", RDAJobType.O2D), // Other types are tested in Settings unit tests
-                expect(properties).to.eventually.have.property("iTwinId", "c3739cf2-9da3-487b-b03d-f58c8eb97e5b"),
+                expect(properties).to.eventually.have.property("iTwinId", iTwinId),
                 expect(properties).to.eventually.have.property("id", "6f51448f-6377-4330-9ab0-f13fe994b3f1"),
                 expect(properties).to.eventually.have.property("email", "example@bentley.com"),
                 expect(properties).to.eventually.have.property("state", JobState.SUCCESS),
@@ -424,7 +424,7 @@ describe("Reality Analysis unit tests", () => {
                         "dataCenter": "EastUs",
                         "type": "invalidJobType",
                         "name": "SDK unit test",
-                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                        "iTwinId": iTwinId,
                     }
                 });
             const properties = realityDataAnalysisService.getJobProperties("invalid");
