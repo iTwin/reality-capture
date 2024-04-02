@@ -111,7 +111,7 @@ export class RealityDataAnalysisService {
             //"options": settingsJson.options
         } as any;
         if(settingsJson.options)
-            body.options = settingsJson.options
+            body.options = settingsJson.options;
         const response = await this.submitRequest("jobs", "POST", [201], body);
         return response["job"]["id"];
     }

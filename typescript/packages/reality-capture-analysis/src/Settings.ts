@@ -1477,20 +1477,20 @@ class ChangeDetectionOutputs {
  * Possible options for a Change Detection job
  */
 class ChangeDetectionOptions {
-        /** Low threshold to detect color changes (hysteresis detection). */
-        colorThresholdLow: number;
-        /** High threshold to detect color changes (hysteresis detection). */
-        colorThresholdHigh: number;
-        /** Low threshold to detect spatial changes (hysteresis detection). */
-        distThresholdLow: number;
-        /** High threshold to detect spatial changes (hysteresis detection). */
-        distThresholdHigh: number;
-        /** Target point cloud resolution when starting from meshes. */
-        resolution: number;
-        /** Minimum number of points in a region to be considered as a change. */
-        minPoints: number;
-        /** SRS used by exports. */
-        exportSrs: string;
+    /** Low threshold to detect color changes (hysteresis detection). */
+    colorThresholdLow: number;
+    /** High threshold to detect color changes (hysteresis detection). */
+    colorThresholdHigh: number;
+    /** Low threshold to detect spatial changes (hysteresis detection). */
+    distThresholdLow: number;
+    /** High threshold to detect spatial changes (hysteresis detection). */
+    distThresholdHigh: number;
+    /** Target point cloud resolution when starting from meshes. */
+    resolution: number;
+    /** Minimum number of points in a region to be considered as a change. */
+    minPoints: number;
+    /** SRS used by exports. */
+    exportSrs: string;
 
     constructor() {
         /**
