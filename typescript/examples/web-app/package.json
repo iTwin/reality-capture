@@ -46,7 +46,7 @@
     "@itwin/reality-capture-analysis": "workspace:*",
     "@itwin/reality-capture-modeling": "workspace:*",
     "@itwin/reality-data-transfer": "workspace:*",
-    "@itwin/reality-data-client": "^1.2.0",
+    "@itwin/reality-data-client": "workspace:*",
     "@itwin/web-viewer-react": "^4.0.0",
     "@itwin/webgl-compatibility": "^4.0.0",
     "buffer": "^6.0.3",

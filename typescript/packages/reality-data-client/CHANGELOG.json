@@ -2,6 +2,21 @@
   "name": "@itwin/reality-data-client",
   "entries": [
     {
+      "date": "Wed, 28 Feb 2024 14:48:34 GMT",
+      "version": "1.2.1",
+      "tag": "@itwin/reality-data-client_v1.2.1",
+      "comments": {
+        "patch": [
+          {
+            "author": "Marc-Andre.Cote@bentley.com",
+            "package": "@itwin/reality-data-client",
+            "commit": "1db484be28fee97ae41be1ec197614332443aa95",
+            "comment": "Updated documentation in RealityData listing query parameters"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 26 Feb 2024 20:54:34 GMT",
       "version": "1.2.0",
       "tag": "@itwin/reality-data-client_v1.2.0",
