@@ -1,8 +1,16 @@
 # Change Log - @itwin/reality-capture-analysis
 
-This log was last generated on Tue, 27 Feb 2024 10:21:57 GMT and should not be manually modified.
+This log was last generated on Thu, 04 Apr 2024 07:42:20 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 1.1.0
+
+Thu, 04 Apr 2024 07:42:20 GMT
+
+### Minor changes
+
+- RAS new job types and new API (110406974+dbiguenet@users.noreply.github.com)
 
 ## 1.0.1
 
