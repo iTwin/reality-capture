@@ -12,10 +12,9 @@ from reality_apis.RDAS.rdas_enums import RDAJobType
 from reality_apis.RDAS.job_settings import (
     JobSettings,
     O2DJobSettings,
-    O3DJobSettings,
     S2DJobSettings,
+    SOrthoJobSettings,
     S3DJobSettings,
-    L3DJobSettings,
     ChangeDetectionJobSettings,
 )
 from reality_apis.utils import ReturnValue, JobProgress, JobState, JobDateTime, iTwinCaptureError, iTwinCaptureWarning, __version__
@@ -67,14 +66,19 @@ class RealityDataAnalysisService:
         Returns:
             The ID of the job, and a potential error message.
         """
-        # take job_settings and create the json settings we need to send
+        # take job_settings and create the json settings we need to
+        settings_json = settings.to_json()
         jc_dict = {
             "name": job_name,
             "iTwinId": iTwin_id,
             "type": settings.type.value,
-            "settings": settings.to_json(),
+            "inputs": settings_json["inputs"],
+            "outputs": settings_json["outputs"]
         }
+        if "options" in settings_json:
+            jc_dict["options"] = settings_json["options"]
         job_json = json.dumps(jc_dict)
+        print(job_json)
         # send the json settings
         response = self._session.post("https://" + self._service_url + "/realitydataanalysis/jobs", job_json,
                                       headers=self._get_header())
@@ -137,19 +141,15 @@ class RealityDataAnalysisService:
                 return ReturnValue(value=RDAJobProperties(), error="no Job type")
 
             if job_type_str == RDAJobType.O2D.value:
-                settings = O2DJobSettings.from_json(data_json["job"].get("settings", {}))
+                settings = O2DJobSettings.from_json(data_json["job"])
             elif job_type_str == RDAJobType.S2D.value:
-                settings = S2DJobSettings.from_json(data_json["job"].get("settings", {}))
-            elif job_type_str == RDAJobType.O3D.value:
-                settings = O3DJobSettings.from_json(data_json["job"].get("settings", {}))
+                settings = S2DJobSettings.from_json(data_json["job"])
+            elif job_type_str == RDAJobType.SOrtho.value:
+                settings = SOrthoJobSettings.from_json(data_json["job"])
             elif job_type_str == RDAJobType.S3D.value:
-                settings = S3DJobSettings.from_json(data_json["job"].get("settings", {}))
-            elif job_type_str == RDAJobType.L3D.value:
-                settings = L3DJobSettings.from_json(data_json["job"].get("settings", {}))
+                settings = S3DJobSettings.from_json(data_json["job"])
             elif job_type_str == RDAJobType.ChangeDetection.value:
-                settings = ChangeDetectionJobSettings.from_json(
-                    data_json["job"].get("settings", {})
-                )
+                settings = ChangeDetectionJobSettings.from_json(data_json["job"])
             else:
                 return ReturnValue(
                     value=RDAJobProperties(), error="Job Type not recognized"

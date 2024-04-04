@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { ChangeDetectionJobSettings, ExtractGroundJobSettings, JobSettings, L3DJobSettings, O2DJobSettings, O3DJobSettings, RDAJobType, S2DJobSettings, S3DJobSettings } from "./Settings";
+import { ChangeDetectionJobSettings, ExtractGroundJobSettings, JobSettings, SOrthoJobSettings, O2DJobSettings, RDAJobType, S2DJobSettings, S3DJobSettings } from "./Settings";
 import { RDACostParameters, RDAJobProperties } from "./Utils";
 import { JobProgress, JobState } from "@itwin/reality-capture-common";
 import axios from "axios";
@@ -101,12 +101,17 @@ export class RealityDataAnalysisService {
      * @returns {string} Created job id.
      */
     public async createJob(settings: JobSettings, name: string, iTwinId: string): Promise<string> {
+        const settingsJson = settings.toJson();
         const body = {
             "type": settings.type,
             "name": name,
             "iTwinId": iTwinId,
-            "settings": settings.toJson()
-        };
+            "inputs": settingsJson.inputs,
+            "outputs": settingsJson.outputs,
+            //"options": settingsJson.options
+        } as any;
+        if(settingsJson.options)
+            body.options = settingsJson.options;
         const response = await this.submitRequest("jobs", "POST", [201], body);
         return response["job"]["id"];
     }
@@ -174,25 +179,22 @@ export class RealityDataAnalysisService {
 
         let settings: JobSettings;
         if (job["type"] === RDAJobType.O2D) {
-            settings = await O2DJobSettings.fromJson(job["settings"]);
+            settings = await O2DJobSettings.fromJson(job);
         }
         else if (job["type"] === RDAJobType.S2D) {
-            settings = await S2DJobSettings.fromJson(job["settings"]);
+            settings = await S2DJobSettings.fromJson(job);
         }
-        else if (job["type"] === RDAJobType.O3D) {
-            settings = await O3DJobSettings.fromJson(job["settings"]);
+        else if (job["type"] === RDAJobType.SOrtho) {
+            settings = await SOrthoJobSettings.fromJson(job);
         }
         else if (job["type"] === RDAJobType.S3D) {
-            settings = await S3DJobSettings.fromJson(job["settings"]);
-        }
-        else if (job["type"] === RDAJobType.L3D) {
-            settings = await L3DJobSettings.fromJson(job["settings"]);
+            settings = await S3DJobSettings.fromJson(job);
         }
         else if (job["type"] === RDAJobType.ChangeDetection) {
-            settings = await ChangeDetectionJobSettings.fromJson(job["settings"]);
+            settings = await ChangeDetectionJobSettings.fromJson(job);
         }
         else if (job["type"] === RDAJobType.ExtractGround) {
-            settings = await ExtractGroundJobSettings.fromJson(job["settings"]);
+            settings = await ExtractGroundJobSettings.fromJson(job);
         }
         else
             return Promise.reject(new Error("Can't get job properties of unknown type : " + job["type"]));

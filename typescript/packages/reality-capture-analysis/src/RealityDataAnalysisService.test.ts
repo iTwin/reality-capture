@@ -56,46 +56,47 @@ describe("Reality Analysis unit tests", () => {
             axiosMock.onPost(serviceUrl + "/jobs", {
                 "type": "objects2D",
                 "name": "Reality Analysis unit test",
-                "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                "settings": {
-                    "inputs": [{
-                        "name": "photos",
-                        "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
+                "iTwinId": iTwinId,
+                "inputs": [
+                    {
+                        "type": "photos",
+                        "id": "photosId"
                     },
                     {
-                        "name": "photoObjectDetector",
-                        "realityDataId": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
+                        "type": "photoObjectDetector",
+                        "id": "photoObjectDetectorId"
                     }
-                    ],
-                    "outputs": ["objects2D"]
-                }
+                ],
+                "outputs": ["objects2D"],
+                "options":{}
             }).reply(201, 
                 {
                     "job": {                  
                         "id": "6f51448f-6377-4330-9ab0-f13fe994b3f1",
                         "type": "objects2D",
                         "name": "Reality Analysis unit test",
-                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                        "settings": {
-                            "outputs": [{
-                                "name": "objects2D",
-                            }],
-                            "inputs": [{
-                                "name": "photos",
-                                "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
+                        "iTwinId": iTwinId,
+                        "outputs": [
+                            {
+                                "type": "objects2D",
+                            }
+                        ],
+                        "inputs": [
+                            {
+                                "type": "photos",
+                                "id": "photosId"
                             },
                             {
-                                "name": "photoObjectDetector",
-                                "realityDataId": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
+                                "type": "photoObjectDetector",
+                                "id": "photoObjectDetectorId"
                             }
-                            ]
-                        },
+                        ]
                     }
                 });
 
             const settings = new O2DJobSettings();
-            settings.inputs.photos = "8e9f7e7a-f37e-4d74-a1e7-df7325944757";
-            settings.inputs.photoObjectDetector = "9fbbe885-9086-4b98-b6a5-8024657bcff4";
+            settings.inputs.photos = "photosId";
+            settings.inputs.photoObjectDetector = "photoObjectDetectorId";
             settings.outputs.objects2D = "objects2D";
             const jobName = "Reality Analysis unit test";
                         
@@ -109,19 +110,19 @@ describe("Reality Analysis unit tests", () => {
                 expect(axiosMock.history.post[0].data).deep.equal(JSON.stringify({
                     "type": "objects2D",
                     "name": "Reality Analysis unit test",
-                    "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                    "settings": {
-                        "inputs": [{
-                            "name": "photos",
-                            "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
+                    "iTwinId": iTwinId,
+                    "inputs": [
+                        {
+                            "type": "photos",
+                            "id": "photosId"
                         },
                         {
-                            "name": "photoObjectDetector",
-                            "realityDataId": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
+                            "type": "photoObjectDetector",
+                            "id": "photoObjectDetectorId"
                         }
-                        ],
-                        "outputs": ["objects2D"]
-                    }
+                    ],
+                    "outputs": ["objects2D"],
+                    "options":{}
                 })),
                 expect(id).to.eventually.deep.equal("6f51448f-6377-4330-9ab0-f13fe994b3f1"),
             ]);
@@ -277,20 +278,24 @@ describe("Reality Analysis unit tests", () => {
                 {
                     "job": {
                         "state": "success",
-                        "settings": {
-                            "outputs": [{
-                                "name": "objects2D",
-                                "realityDataId": "60d8a846-7ad2-40e4-aed1-5adfe2dc79a4"
-                            }],
-                            "inputs": [{
-                                "name": "photos",
-                                "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
+                        "outputs": [
+                            {
+                                "type": "objects2D",
+                                "id": "objects2DId"
+                            }
+                        ],
+                        "inputs": [
+                            {
+                                "type": "photos",
+                                "id": "photosId"
                             },
                             {
-                                "name": "photoObjectDetector",
-                                "realityDataId": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
+                                "type": "photoObjectDetector",
+                                "id": "photoObjectDetectorId"
                             }
-                            ]
+                        ],
+                        "options":{
+                            "maxDist": 1
                         },
                         "createdDateTime": "2023-03-30T15:14:55Z",
                         "lastModifiedDateTime": "2023-03-30T15:14:55Z",
@@ -299,7 +304,7 @@ describe("Reality Analysis unit tests", () => {
                         "dataCenter": "EastUs",
                         "type": "objects2D",
                         "name": "Reality Analysis unit test",
-                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                        "iTwinId": iTwinId,
                         "costEstimation": {
                             "gigaPixels": 2,
                             "sceneWidth": 4.5,
@@ -340,7 +345,7 @@ describe("Reality Analysis unit tests", () => {
             return Promise.all([
                 expect(properties).to.eventually.have.property("name", "Reality Analysis unit test"),
                 expect(properties).to.eventually.have.property("type", RDAJobType.O2D), // Other types are tested in Settings unit tests
-                expect(properties).to.eventually.have.property("iTwinId", "c3739cf2-9da3-487b-b03d-f58c8eb97e5b"),
+                expect(properties).to.eventually.have.property("iTwinId", iTwinId),
                 expect(properties).to.eventually.have.property("id", "6f51448f-6377-4330-9ab0-f13fe994b3f1"),
                 expect(properties).to.eventually.have.property("email", "example@bentley.com"),
                 expect(properties).to.eventually.have.property("state", JobState.SUCCESS),
@@ -351,11 +356,24 @@ describe("Reality Analysis unit tests", () => {
                 expect(properties).to.eventually.have.deep.property("settings", {
                     type: "objects2D",
                     inputs: {
-                        photos: "8e9f7e7a-f37e-4d74-a1e7-df7325944757",
-                        photoObjectDetector: "9fbbe885-9086-4b98-b6a5-8024657bcff4",
+                        meshes: "",
+                        objects2D: "",
+                        photos: "photosId",
+                        photoObjectDetector: "photoObjectDetectorId",
+                        pointClouds: ""
+                    },
+                    options: {
+                        exportSrs: "",
+                        maxDist: 1,
+                        minPhotos: 0,
+                        useTiePoints: false
                     },
                     outputs: {
-                        objects2D: "60d8a846-7ad2-40e4-aed1-5adfe2dc79a4",
+                        exportedLocations3DSHP: "",
+                        exportedObjects3DCesium: "",
+                        exportedObjects3DDGN: "",
+                        objects2D: "objects2DId",
+                        objects3D: ""
                     },
                 }),
                 expect(properties).to.eventually.have.deep.property("dates", {
@@ -382,21 +400,23 @@ describe("Reality Analysis unit tests", () => {
                 {
                     "job": {
                         "state": "success",
-                        "settings": {
-                            "outputs": [{
-                                "name": "objects2D",
-                                "realityDataId": "60d8a846-7ad2-40e4-aed1-5adfe2dc79a4"
-                            }],
-                            "inputs": [{
-                                "name": "photos",
-                                "realityDataId": "8e9f7e7a-f37e-4d74-a1e7-df7325944757"
+                        "outputs": [
+                            {
+                                "type": "objects2D",
+                                "id": "objects2DId"
+                            }
+                        ],
+                        "inputs": [
+                            {
+                                "type": "photos",
+                                "id": "photosId"
                             },
                             {
-                                "name": "photoObjectDetector",
-                                "realityDataId": "9fbbe885-9086-4b98-b6a5-8024657bcff4"
+                                "type": "photoObjectDetector",
+                                "id": "photoObjectDetectorId"
                             }
-                            ]
-                        },
+                        ],
+                        "options":{},
                         "createdDateTime": "2023-03-30T15:14:55Z",
                         "lastModifiedDateTime": "2023-03-30T15:14:55Z",
                         "id": "6f51448f-6377-4330-9ab0-f13fe994b3f1",
@@ -404,7 +424,7 @@ describe("Reality Analysis unit tests", () => {
                         "dataCenter": "EastUs",
                         "type": "invalidJobType",
                         "name": "SDK unit test",
-                        "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
+                        "iTwinId": iTwinId,
                     }
                 });
             const properties = realityDataAnalysisService.getJobProperties("invalid");

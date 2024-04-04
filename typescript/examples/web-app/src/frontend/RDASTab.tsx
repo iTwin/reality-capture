@@ -10,13 +10,14 @@ import { SelectRealityData } from "./SelectRealityData";
 import { RealityDataAccessClient } from "@itwin/reality-data-client";
 import { SvgPlay, SvgStop } from "@itwin/itwinui-icons-react";
 import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
-import { JobSettings, L3DJobSettings, O2DJobSettings, RealityDataAnalysisService, S2DJobSettings } from "@itwin/reality-capture-analysis";
+import { JobSettings, O2DJobSettings, RealityDataAnalysisService, S2DJobSettings, S3DJobSettings, SOrthoJobSettings } from "@itwin/reality-capture-analysis";
 import { JobState } from "@itwin/reality-capture-common";
 
 enum RdasJobTypes {
     O2D = "objects2D",
     S2D = "segmentation2D",
-    L3D = "lines3D",
+    SOrtho = "segmentationOrthophoto",
+    S3D = "segmentation3D",
 }
 
 interface RdasProps {
@@ -39,8 +40,8 @@ export function Rdas(props: RdasProps) {
     const selectOptions: SelectOption<string>[] = [
         { value: RdasJobTypes.O2D, label: RdasJobTypes.O2D },
         { value: RdasJobTypes.S2D, label: RdasJobTypes.S2D },
-        { value: RdasJobTypes.S2D + "Ortho", label: RdasJobTypes.S2D + "Ortho" },
-        { value: RdasJobTypes.L3D, label: RdasJobTypes.L3D },
+        { value: RdasJobTypes.SOrtho, label: RdasJobTypes.SOrtho },
+        { value: RdasJobTypes.S3D, label: RdasJobTypes.S3D },
     ];
 
     const initRdas = useCallback(async () => {
@@ -55,19 +56,24 @@ export function Rdas(props: RdasProps) {
     const onRdasJobTypeChange = (selectedValue: string): void => {
         setRdasJobType(selectedValue);
         // Set a default output for each job type.
-        if(selectedValue === "objects2D") {
+        if(selectedValue === RdasJobTypes.O2D) {
             const settings = new O2DJobSettings();
-            settings.outputs.objects2D = "objects2D";
+            settings.outputs.objects2D = RdasJobTypes.O2D;
             setJobSettings(settings);
         }
-        else if(selectedValue === "segmentation2D" || selectedValue === "segmentation2DOrtho") {
+        else if(selectedValue === RdasJobTypes.S2D) {
             const settings = new S2DJobSettings();
-            settings.outputs.segmentation2D = "segmentation2D";
+            settings.outputs.segmentation2D = RdasJobTypes.S2D;
             setJobSettings(settings);
         }
-        else if(selectedValue === "lines3D") {
-            const settings = new L3DJobSettings();
-            settings.outputs.lines3D = "lines3D";
+        else if(selectedValue === RdasJobTypes.SOrtho) {
+            const settings = new SOrthoJobSettings();
+            settings.outputs.segmentation2D = RdasJobTypes.SOrtho;
+            setJobSettings(settings);
+        }
+        else if(selectedValue === RdasJobTypes.S3D) {
+            const settings = new S3DJobSettings();
+            settings.outputs.segmentation3D = RdasJobTypes.S3D;
             setJobSettings(settings);
         }
     };
@@ -132,44 +138,53 @@ export function Rdas(props: RdasProps) {
         setJobSettings(settings);
     };
 
-    const setOrthoS2DInput = (input: "orthophoto" | "orthophotoSegmentationDetector", value: string): void => {
-        const target = new S2DJobSettings();
-        const settings = Object.assign(target, jobSettings as S2DJobSettings);
+    const setOrthoInput = (input: "orthophoto" | "orthophotoSegmentationDetector", value: string): void => {
+        const target = new SOrthoJobSettings();
+        const settings = Object.assign(target, jobSettings as SOrthoJobSettings);
         settings.inputs[input] = value;
         setJobSettings(settings);
     };
 
-    const setL3DInput = (input: "meshes" | "orientedPhotos" | "photoSegmentationDetector" | "segmentation3D" | "segmentation2D", value: string): void => {
-        const target = new L3DJobSettings();
-        const settings = Object.assign(target, jobSettings as L3DJobSettings);
+    const setS3DInput = (input: "pointClouds" | "meshes" | "segmentation3D" | "pointCloudSegmentationDetector", value: string): void => {
+        const target = new S3DJobSettings();
+        const settings = Object.assign(target, jobSettings as S3DJobSettings);
         settings.inputs[input] = value;
         setJobSettings(settings);
     };
 
-    const setS2DOutput = (output: "segmentation2D" | "polygons2D" | "lines2D" | "exportedPolygons2DSHP", isRequested: boolean): void => {
+    const setO2DParameter = (parameter: "maxDist" | "minPhotos" | "useTiePoints", value: number | boolean): void => {
+        const target = new O2DJobSettings();
+        const settings = Object.assign(target, jobSettings as O2DJobSettings);
+        if(parameter === "useTiePoints")
+            settings.options[parameter] = value as boolean;
+        else
+            settings.options[parameter] = value as number;
+        setJobSettings(settings);
+    };
+
+    const setS2DParameter = (parameter: "computeLineWidth" | "removeSmallComponents" | "minPhotos", value: number | boolean): void => {
         const target = new S2DJobSettings();
         const settings = Object.assign(target, jobSettings as S2DJobSettings);
-        settings.outputs[output] = isRequested ? output : "";
+        if(parameter === "computeLineWidth")
+            settings.options[parameter] = value as boolean;
+        else
+            settings.options[parameter] = value as number;
         setJobSettings(settings);
     };
 
-    const setL3DOutput = (output: "segmentation2D" | "lines3D" | "exportedLines3DDGN" | "exportedLines3DCesium", isRequested: boolean): void => {
-        const target = new L3DJobSettings();
-        const settings = Object.assign(target, jobSettings as L3DJobSettings);
-        settings.outputs[output] = isRequested ? output : "";
-        setJobSettings(settings);
-    };
-
-    const onRemoveSmallComponentsChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        const target = new L3DJobSettings();
-        const settings = Object.assign(target, jobSettings as L3DJobSettings);
-        settings.removeSmallComponents = Number(e.target.value);
+    const setS3DParameter = (parameter: "computeLineWidth" | "removeSmallComponents" | "saveConfidence", value: number | boolean): void => {
+        const target = new S3DJobSettings();
+        const settings = Object.assign(target, jobSettings as S3DJobSettings);
+        if(parameter === "removeSmallComponents")
+            settings.options[parameter] = value as number;
+        else
+            settings.options[parameter] = value as boolean;
         setJobSettings(settings);
     };
 
     const getInputControls = () => {
         switch(rdasJobType) {
-        case "objects2D":
+        case RdasJobTypes.O2D:
             return (
                 <div>
                     <div className="rdas-control">
@@ -184,7 +199,7 @@ export function Rdas(props: RdasProps) {
                     </div>
                 </div>
             );
-        case "segmentation2D":
+        case RdasJobTypes.S2D:
             return (
                 <div>
                     <div className="rdas-control">
@@ -199,58 +214,117 @@ export function Rdas(props: RdasProps) {
                     </div>
                 </div>
             );
-        case "segmentation2DOrtho":
+        case RdasJobTypes.SOrtho:
             return (
                 <div>
                     <div className="rdas-control">
                         <SelectRealityData key={0} realityDataAccessClient={props.realityDataAccessClient} placeholder={"Select orthophoto (context scene)"}
-                            onSelectedDataChange={(select: string) => setOrthoS2DInput("orthophoto", select)}
-                            realityDataType={["ContextScene"]} selectedRealityData={(jobSettings as S2DJobSettings).inputs["orthophoto"]} />
+                            onSelectedDataChange={(select: string) => setOrthoInput("orthophoto", select)}
+                            realityDataType={["ContextScene"]} selectedRealityData={(jobSettings as SOrthoJobSettings).inputs["orthophoto"]} />
                     </div>
                     <div className="rdas-control">
                         <SelectRealityData key={1} realityDataAccessClient={props.realityDataAccessClient} 
                             placeholder={"Select orthophoto segmentation detector"}
-                            onSelectedDataChange={(select: string) => setOrthoS2DInput("orthophotoSegmentationDetector", select)}
+                            onSelectedDataChange={(select: string) => setOrthoInput("orthophotoSegmentationDetector", select)}
                             realityDataType={["ContextDetector"]} 
-                            selectedRealityData={(jobSettings as S2DJobSettings).inputs["orthophotoSegmentationDetector"]} />
+                            selectedRealityData={(jobSettings as SOrthoJobSettings).inputs["orthophotoSegmentationDetector"]} />
                     </div>
                 </div>
             );
-        case "lines3D":
+        case RdasJobTypes.S3D:
             return (
                 <div>
                     <div className="rdas-control">
-                        <SelectRealityData key={0} realityDataAccessClient={props.realityDataAccessClient} placeholder={"Select meshes (context scene)"} 
-                            onSelectedDataChange={(select: string) => setL3DInput("meshes", select)}
-                            realityDataType={["ContextScene"]} selectedRealityData={(jobSettings as L3DJobSettings).inputs["meshes"]} />
+                        <SelectRealityData key={0} realityDataAccessClient={props.realityDataAccessClient} placeholder={"Select orthophoto (context scene)"}
+                            onSelectedDataChange={(select: string) => setS3DInput("pointClouds", select)}
+                            realityDataType={["ContextScene"]} selectedRealityData={(jobSettings as S3DJobSettings).inputs["pointClouds"]} />
                     </div>
                     <div className="rdas-control">
-                        <SelectRealityData key={2} realityDataAccessClient={props.realityDataAccessClient} 
-                            placeholder={"Select oriented photos (context scene)"} 
-                            onSelectedDataChange={(select: string) => setL3DInput("orientedPhotos", select)}
-                            realityDataType={["ContextScene"]} selectedRealityData={(jobSettings as L3DJobSettings).inputs["orientedPhotos"]} />
+                        <SelectRealityData key={1} realityDataAccessClient={props.realityDataAccessClient}
+                            placeholder={"Select point cloud segmentation detector"}
+                            onSelectedDataChange={(select: string) => setS3DInput("pointCloudSegmentationDetector", select)}
+                            realityDataType={["ContextDetector"]}
+                            selectedRealityData={(jobSettings as S3DJobSettings).inputs["pointCloudSegmentationDetector"]} />
                     </div>
                     <div className="rdas-control">
-                        <p className="rdas-controls-group">Detection : </p>
-                        <div >
-                            <SelectRealityData key={3} realityDataAccessClient={props.realityDataAccessClient} placeholder={"Select photo segmentation detector"} 
-                                onSelectedDataChange={(select: string) => {
-                                    setL3DInput("photoSegmentationDetector", select);
-                                    setL3DInput("segmentation2D", "");
-                                }}
-                                realityDataType={["ContextDetector"]} selectedRealityData={(jobSettings as L3DJobSettings).inputs["photoSegmentationDetector"]} />    
-                        </div>                       
-                        <p className="rdas-controls-group"> OR </p>
-                        <div >
-                            <SelectRealityData key={4} realityDataAccessClient={props.realityDataAccessClient} placeholder={"Select segmentation2D (context scene)"} 
-                                onSelectedDataChange={(select: string) => {
-                                    setL3DInput("segmentation2D", select);
-                                    setL3DOutput("segmentation2D", false);
-                                    setL3DInput("photoSegmentationDetector", "");
-                                }}
-                                realityDataType={["ContextScene"]} selectedRealityData={(jobSettings as L3DJobSettings).inputs["segmentation2D"]} />
-                        </div>
-                    </div>                 
+                        <SelectRealityData key={2} realityDataAccessClient={props.realityDataAccessClient}
+                            placeholder={"Select meshes (context scene)"}
+                            onSelectedDataChange={(select: string) => setS3DInput("meshes", select)}
+                            realityDataType={["ContextScene"]}
+                            selectedRealityData={(jobSettings as S3DJobSettings).inputs["meshes"]} />
+                    </div>
+                    <div className="rdas-control">
+                        <SelectRealityData key={3} realityDataAccessClient={props.realityDataAccessClient}
+                            placeholder={"Select segmentation 3D (context scene)"}
+                            onSelectedDataChange={(select: string) => setS3DInput("segmentation3D", select)}
+                            realityDataType={["ContextScene"]}
+                            selectedRealityData={(jobSettings as S3DJobSettings).inputs["segmentation3D"]} />
+                    </div>
+                </div>
+            );
+        default:
+            return <></>;
+        }
+    };
+
+    const getParametersControls = () => {
+        switch(rdasJobType) {
+        case RdasJobTypes.O2D:
+            return (
+                <div>
+                    <div className="rdas-controls-group">
+                        <div className="rdas-control">Min photos</div>
+                        <Input className="rdas-input" value={(jobSettings as O2DJobSettings).options.minPhotos} size="small" 
+                            step={1} type="number" max={1000} min={1} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setO2DParameter("minPhotos", parseInt(event.target.value))}/> 
+                    </div>
+                    <div className="rdas-controls-group">
+                        <div className="rdas-control">Max dist</div>
+                        <Input className="rdas-input" value={(jobSettings as O2DJobSettings).options.maxDist} size="small" 
+                            step={1} type="number" max={1000} min={1} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setO2DParameter("maxDist", parseInt(event.target.value))}/> 
+                    </div>
+                    <div className="rdas-controls-group">
+                        <ToggleSwitch className="rdas-control" label={"Use tie points"} checked={(jobSettings as O2DJobSettings).options.useTiePoints !== false} 
+                            labelPosition={"left"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setO2DParameter("useTiePoints", e.target.checked);}}/>
+                    </div>
+                </div>
+            );
+        case RdasJobTypes.S2D:
+            return (
+                <div>
+                    <div className="rdas-controls-group">
+                        <div className="rdas-control">Min photos</div>
+                        <Input className="rdas-input" value={(jobSettings as S2DJobSettings).options.minPhotos} size="small" 
+                            step={1} type="number" max={1000} min={1} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setS2DParameter("minPhotos", parseInt(event.target.value))}/> 
+                    </div>
+                    <div className="rdas-controls-group">
+                        <div className="rdas-control">Remove small components</div>
+                        <Input className="rdas-input" value={(jobSettings as S2DJobSettings).options.removeSmallComponents} size="small" 
+                            step={1} type="number" max={1000} min={1} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setS2DParameter("removeSmallComponents", parseInt(event.target.value))}/> 
+                    </div>
+                    <div className="rdas-controls-group">
+                        <ToggleSwitch className="rdas-control" label={"Compute line width"} checked={(jobSettings as S2DJobSettings).options.computeLineWidth !== false} 
+                            labelPosition={"left"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setS2DParameter("computeLineWidth", e.target.checked);}}/>
+                    </div>
+                </div>
+            );
+        case RdasJobTypes.SOrtho:
+            return <></>;
+        case RdasJobTypes.S3D:
+            return (
+                <div>
+                    <div className="rdas-controls-group">
+                        <div className="rdas-control">Remove small components</div>
+                        <Input className="rdas-input" value={(jobSettings as S3DJobSettings).options.removeSmallComponents} size="small" 
+                            step={1} type="number" max={1000} min={1} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setS3DParameter("removeSmallComponents", parseInt(event.target.value))}/> 
+                    </div>
+                    <div className="rdas-controls-group">
+                        <ToggleSwitch className="rdas-control" label={"Save confidence"} checked={(jobSettings as S3DJobSettings).options.saveConfidence !== false} 
+                            labelPosition={"left"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setS3DParameter("saveConfidence", e.target.checked);}}/>
+                    </div>
+                    <div className="rdas-controls-group">
+                        <ToggleSwitch className="rdas-control" label={"Compute line width"} checked={(jobSettings as S3DJobSettings).options.computeLineWidth !== false} 
+                            labelPosition={"left"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setS3DParameter("computeLineWidth", e.target.checked);}}/>
+                    </div>
                 </div>
             );
         default:
@@ -260,45 +334,25 @@ export function Rdas(props: RdasProps) {
 
     const getOutputControls = () => {
         switch(rdasJobType){
-        case "objects2D":
+        case RdasJobTypes.O2D:
             return (<div className="rdas-controls-group">
                 <ToggleSwitch className="rdas-control" label={"objects2D"} checked={(jobSettings as O2DJobSettings).outputs.objects2D !== ""} 
                     labelPosition={"left"} disabled={true} />
             </div>);
-        case "segmentation2D":
+        case RdasJobTypes.S2D:
             return (<div className="rdas-controls-group">
                 <ToggleSwitch className="rdas-control" label={"segmentation2D"} checked={(jobSettings as S2DJobSettings).outputs.segmentation2D !== ""} 
                     labelPosition={"left"} disabled={true} />
             </div>);
-        case "segmentation2DOrtho":
+        case RdasJobTypes.SOrtho:
             return (<div className="rdas-controls-group">
-                <ToggleSwitch className="rdas-control" label={"segmentation2D"} checked={(jobSettings as S2DJobSettings).outputs.segmentation2D !== ""} 
-                    labelPosition={"left"} disabled={true} 
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setS2DOutput("segmentation2D", e.target.checked);}} />
-                <ToggleSwitch className="rdas-control" label={"polygons2D"} checked={(jobSettings as S2DJobSettings).outputs.polygons2D !== ""} 
-                    labelPosition={"left"} disabled={jobId !== ""} 
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setS2DOutput("polygons2D", e.target.checked);}} />
-                <ToggleSwitch className="rdas-control" label={"lines2D"} checked={(jobSettings as S2DJobSettings).outputs.lines2D !== ""} 
-                    labelPosition={"left"} disabled={jobId !== ""} 
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setS2DOutput("lines2D", e.target.checked);}} />
-                <ToggleSwitch className="rdas-control" label={"exports"} checked={(jobSettings as S2DJobSettings).outputs.exportedPolygons2DSHP !== ""} 
-                    labelPosition={"left"} disabled={jobId !== ""} 
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setS2DOutput("exportedPolygons2DSHP", e.target.checked);}} />
+                <ToggleSwitch className="rdas-control" label={"segmentation2D"} checked={(jobSettings as SOrthoJobSettings).outputs.segmentation2D !== ""} 
+                    labelPosition={"left"} disabled={true} />
             </div>);
-        case "lines3D":
+        case RdasJobTypes.S3D:
             return (<div className="rdas-controls-group">
-                <ToggleSwitch className="rdas-control" label={"lines3D"} checked={(jobSettings as L3DJobSettings).outputs.lines3D !== ""} 
-                    labelPosition={"left"} disabled={true} 
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setL3DOutput("lines3D", e.target.checked);}} />  
-                <ToggleSwitch className="rdas-control" label={"segmentation2D"} checked={(jobSettings as L3DJobSettings).outputs.segmentation2D !== ""} 
-                    labelPosition={"left"} disabled={jobId !== "" || (jobSettings as L3DJobSettings).inputs.segmentation2D != ""} 
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setL3DOutput("segmentation2D", e.target.checked);}} />                         
-                <ToggleSwitch className="rdas-control" label={"exports"} checked={(jobSettings as L3DJobSettings).outputs.exportedLines3DCesium !== ""} 
-                    labelPosition={"left"} disabled={jobId !== ""} 
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setL3DOutput("exportedLines3DCesium", e.target.checked);
-                        setL3DOutput("exportedLines3DDGN", e.target.checked);
-                    }} />
+                <ToggleSwitch className="rdas-control" label={"segmentation3D"} checked={(jobSettings as S3DJobSettings).outputs.segmentation3D !== ""} 
+                    labelPosition={"left"} disabled={true} />
             </div>);
         default:
             return <></>;
@@ -307,58 +361,35 @@ export function Rdas(props: RdasProps) {
 
     const getOutputs = () => {
         switch(rdasJobType){
-        case "objects2D":
+        case RdasJobTypes.O2D:
             return (<>
                 {(jobSettings as O2DJobSettings).outputs.objects2D && (
                     <LabeledInput className="rdas-control" displayStyle="inline" label="objects2D" disabled={true} 
                         value={(jobSettings as O2DJobSettings).outputs.objects2D === "objects2D" ? "" : (jobSettings as O2DJobSettings).outputs.objects2D}/>
                 )}
             </>);
-        case "segmentation2D":
-        case "segmentation2DOrtho":
+        case RdasJobTypes.S2D:
             return (<>
                 {(jobSettings as S2DJobSettings).outputs.segmentation2D && (
                     <LabeledInput className="rdas-control" displayStyle="inline" label="segmentation2D" disabled={true} 
                         value={(jobSettings as S2DJobSettings).outputs.segmentation2D === "segmentation2D" 
                             ? "" : (jobSettings as S2DJobSettings).outputs.segmentation2D}/>
                 )}
-                {(jobSettings as S2DJobSettings).outputs.polygons2D &&(
-                    <LabeledInput className="rdas-control" displayStyle="inline" label="polygons2D" disabled={true} 
-                        value={(jobSettings as S2DJobSettings).outputs.polygons2D === "polygons2D" 
-                            ? "" : (jobSettings as S2DJobSettings).outputs.polygons2D}/>
-                )}
-                {(jobSettings as S2DJobSettings).outputs.lines2D &&(
-                    <LabeledInput className="rdas-control" displayStyle="inline" label="lines2D" disabled={true} 
-                        value={(jobSettings as S2DJobSettings).outputs.lines2D === "lines2D" 
-                            ? "" : (jobSettings as S2DJobSettings).outputs.lines2D}/>
-                )}
-                {(jobSettings as S2DJobSettings).outputs.exportedPolygons2DSHP &&(
-                    <LabeledInput className="rdas-control" displayStyle="inline" label="exportedPolygons2DSHP" disabled={true} 
-                        value={(jobSettings as S2DJobSettings).outputs.exportedPolygons2DSHP === "exportedPolygons2DSHP" 
-                            ? "" : (jobSettings as S2DJobSettings).outputs.exportedPolygons2DSHP}/>
+            </>);
+        case RdasJobTypes.SOrtho:
+            return (<>
+                {(jobSettings as SOrthoJobSettings).outputs.segmentation2D && (
+                    <LabeledInput className="rdas-control" displayStyle="inline" label="segmentation2D" disabled={true} 
+                        value={(jobSettings as SOrthoJobSettings).outputs.segmentation2D === "segmentation2D" 
+                            ? "" : (jobSettings as SOrthoJobSettings).outputs.segmentation2D}/>
                 )}
             </>);
-        case "lines3D":
+        case RdasJobTypes.S3D:
             return (<>
-                {(jobSettings as L3DJobSettings).outputs.lines3D &&(
-                    <LabeledInput className="rdas-control" displayStyle="inline" label="lines3D" disabled={true} 
-                        value={(jobSettings as L3DJobSettings).outputs.lines3D === "lines3D" 
-                            ? "" : (jobSettings as L3DJobSettings).outputs.lines3D}/>
-                )}
-                {(jobSettings as L3DJobSettings).outputs.segmentation2D && (
-                    <LabeledInput className="rdas-control" displayStyle="inline" label="segmentation2D" disabled={true} 
-                        value={(jobSettings as L3DJobSettings).outputs.segmentation2D === "segmentation2D" 
-                            ? "" : (jobSettings as L3DJobSettings).outputs.segmentation2D}/>
-                )}               
-                {(jobSettings as L3DJobSettings).outputs.exportedLines3DCesium &&(
-                    <LabeledInput className="rdas-control" displayStyle="inline" label="exportedLines3DCesium" disabled={true} 
-                        value={(jobSettings as L3DJobSettings).outputs.exportedLines3DCesium === "exportedLines3DCesium" 
-                            ? "" : (jobSettings as L3DJobSettings).outputs.exportedLines3DCesium}/>
-                )}
-                {(jobSettings as L3DJobSettings).outputs.exportedLines3DDGN &&(
-                    <LabeledInput className="rdas-control" displayStyle="inline" label="exportedLines3DDGN" disabled={true} 
-                        value={(jobSettings as L3DJobSettings).outputs.exportedLines3DDGN === "exportedLines3DDGN" 
-                            ? "" : (jobSettings as L3DJobSettings).outputs.exportedLines3DDGN}/>
+                {(jobSettings as S3DJobSettings).outputs.segmentation3D && (
+                    <LabeledInput className="rdas-control" displayStyle="inline" label="segmentation3D" disabled={true} 
+                        value={(jobSettings as S3DJobSettings).outputs.segmentation3D === "segmentation3D" 
+                            ? "" : (jobSettings as S3DJobSettings).outputs.segmentation3D}/>
                 )}
             </>);
         default:
@@ -395,18 +426,10 @@ export function Rdas(props: RdasProps) {
                                 <h3 className="rdas-control">Outputs</h3>
                             </div>
                             {getOutputControls()}
-                            {rdasJobType === "lines3D" && (
-                                <div>
-                                    <div className="rdas-controls-group">
-                                        <h3 className="rdas-control">Parameters</h3>
-                                    </div>
-                                    <div className="rdas-controls-group">
-                                        <h3 className="rdas-control">Remove lines shorter than</h3>
-                                        <Input className="rdas-input" value={(jobSettings as L3DJobSettings).removeSmallComponents} size="small" 
-                                            step={0.01} type="number" max={1000} min={0} onChange={onRemoveSmallComponentsChange}/> 
-                                    </div>
-                                </div>
-                            )}
+                            <div className="rdas-controls-group">
+                                <h3 className="rdas-control">Parameters</h3>
+                            </div>
+                            {getParametersControls()}
                         </div>
                     </div>              
                     <div className="rdas-controls-group">
