@@ -151,6 +151,7 @@ export function Viewer2D(props: Viewer2DProps) {
 
         for(let i = 0; i < depthData.length; i++) {
             if(depthData[i] > 0) {
+                console.log(depthData[i]);
                 S2DImage[i * 4] = 255;
                 S2DImage[i * 4 + 1] = 0;
                 S2DImage[i * 4 + 2] = 0;

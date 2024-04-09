@@ -58,22 +58,24 @@ export function Rdas(props: RdasProps) {
         // Set a default output for each job type.
         if(selectedValue === RdasJobTypes.O2D) {
             const settings = new O2DJobSettings();
-            settings.outputs.objects2D = RdasJobTypes.O2D;
+            settings.outputs.objects2D = "objects2D";
             setJobSettings(settings);
         }
         else if(selectedValue === RdasJobTypes.S2D) {
             const settings = new S2DJobSettings();
-            settings.outputs.segmentation2D = RdasJobTypes.S2D;
+            settings.outputs.segmentation2D = "segmentation2D";
+            settings.outputs.segmentedPhotos = "segmentedPhotos";
             setJobSettings(settings);
         }
         else if(selectedValue === RdasJobTypes.SOrtho) {
             const settings = new SOrthoJobSettings();
-            settings.outputs.segmentation2D = RdasJobTypes.SOrtho;
+            settings.outputs.segmentation2D = "segmentation2D";
+            settings.outputs.segmentedPhotos = "segmentedPhotos";
             setJobSettings(settings);
         }
         else if(selectedValue === RdasJobTypes.S3D) {
             const settings = new S3DJobSettings();
-            settings.outputs.segmentation3D = RdasJobTypes.S3D;
+            settings.outputs.segmentation3D = "segmentation3D";
             setJobSettings(settings);
         }
     };
@@ -343,10 +345,14 @@ export function Rdas(props: RdasProps) {
             return (<div className="rdas-controls-group">
                 <ToggleSwitch className="rdas-control" label={"segmentation2D"} checked={(jobSettings as S2DJobSettings).outputs.segmentation2D !== ""} 
                     labelPosition={"left"} disabled={true} />
+                <ToggleSwitch className="rdas-control" label={"segmentedPhotos"} checked={(jobSettings as S2DJobSettings).outputs.segmentedPhotos !== ""} 
+                    labelPosition={"left"} disabled={true} />
             </div>);
         case RdasJobTypes.SOrtho:
             return (<div className="rdas-controls-group">
                 <ToggleSwitch className="rdas-control" label={"segmentation2D"} checked={(jobSettings as SOrthoJobSettings).outputs.segmentation2D !== ""} 
+                    labelPosition={"left"} disabled={true} />
+                <ToggleSwitch className="rdas-control" label={"segmentedPhotos"} checked={(jobSettings as S2DJobSettings).outputs.segmentedPhotos !== ""} 
                     labelPosition={"left"} disabled={true} />
             </div>);
         case RdasJobTypes.S3D:
@@ -375,6 +381,11 @@ export function Rdas(props: RdasProps) {
                         value={(jobSettings as S2DJobSettings).outputs.segmentation2D === "segmentation2D" 
                             ? "" : (jobSettings as S2DJobSettings).outputs.segmentation2D}/>
                 )}
+                {(jobSettings as S2DJobSettings).outputs.segmentedPhotos && (
+                    <LabeledInput className="rdas-control" displayStyle="inline" label="segmentedPhotos" disabled={true} 
+                        value={(jobSettings as S2DJobSettings).outputs.segmentedPhotos === "segmentedPhotos" 
+                            ? "" : (jobSettings as S2DJobSettings).outputs.segmentedPhotos}/>
+                )}
             </>);
         case RdasJobTypes.SOrtho:
             return (<>
@@ -382,6 +393,11 @@ export function Rdas(props: RdasProps) {
                     <LabeledInput className="rdas-control" displayStyle="inline" label="segmentation2D" disabled={true} 
                         value={(jobSettings as SOrthoJobSettings).outputs.segmentation2D === "segmentation2D" 
                             ? "" : (jobSettings as SOrthoJobSettings).outputs.segmentation2D}/>
+                )}
+                {(jobSettings as S2DJobSettings).outputs.segmentedPhotos && (
+                    <LabeledInput className="rdas-control" displayStyle="inline" label="segmentedPhotos" disabled={true} 
+                        value={(jobSettings as S2DJobSettings).outputs.segmentedPhotos === "segmentedPhotos" 
+                            ? "" : (jobSettings as S2DJobSettings).outputs.segmentedPhotos}/>
                 )}
             </>);
         case RdasJobTypes.S3D:
