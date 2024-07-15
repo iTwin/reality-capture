@@ -6,6 +6,8 @@ Copyright © Bentley Systems, Incorporated. All rights reserved. See LICENSE.md 
 
 The __@iTwin/reality-data-client__ package contains client wrappers for sending requests to the Reality Management API, part of the iTwin platform.
 
+You must use version `v1.1.0` or greater, as earlier versions uses the deprecated Reality Data API.
+
 [iTwin.js](http://www.itwinjs.org) is an open source platform for creating, querying, modifying, and displaying Infrastructure Digital Twins. To learn more about the iTwin Platform and its APIs, visit the [iTwin developer portal](https://developer.bentley.com/).
 
 ## Documentation
@@ -14,7 +16,7 @@ Visit the [iTwin developer portal](https://developer.bentley.com/apis/reality-ma
 
 ## Requirements
 
-A registered application in the iTwin Platform is needed for using the Reality Data Client. Documentation for registering an application can be found [here.](https://developer.bentley.com/tutorials/register-and-modify-application/) Make sure that your application is associated with **Reality Management** and **Visualization** and has `realitydata:read realitydata:modify` scopes enabled. 
+A registered application in the iTwin Platform is needed for using the Reality Data Client. Documentation for registering an application can be found [here.](https://developer.bentley.com/tutorials/register-and-modify-application/) Make sure that your application has the `itwin-platform` scope enabled.
 
 To use the Reality Management API you will need to have an access to an iTwin. If you don't have one already, contact one of your Organization Administrators or take some time to go through the following tutorial: Create an [iTwin](https://developer.bentley.com/tutorials/create-and-query-itwins-guide/).
 

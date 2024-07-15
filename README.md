@@ -5,7 +5,7 @@ Copyright © Bentley Systems, Incorporated. All rights reserved. See
 
 ## About this Repository
 
-This repository contains Reality Capture SDKs for Reality Modeling, Reality Analysis, Reality Conversion and Reality Management services, as well as Reality Management API utils. It provides classes, functions and examples to create reality data, upload local data to ContextShare, run Analysis/Conversion/Modeling jobs and download results.
+This repository contains Reality Capture SDKs for Reality Modeling, Reality Analysis, Reality Conversion and Reality Management services, as well as Reality Management API utils. It provides classes, functions and examples to create reality data, upload local data to Reality Management, run Analysis/Conversion/Modeling jobs and download results.
 Besides, a typescript web application example is available to show how to create a web application running the whole workflow and displaying the results in the browser.
 
 - [Reality Management](./typescript/packages/reality-data-client/README.md)
