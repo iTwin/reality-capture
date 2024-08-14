@@ -214,7 +214,7 @@ importers:
     devDependencies:
       '@itwin/build-tools':
         specifier: ^4.0.0
-        version: 4.2.0(@types/node@18.18.6)
+        version: 4.2.0
       '@itwin/reality-capture-common':
         specifier: workspace:*
         version: link:../reality-capture-common
@@ -268,7 +268,7 @@ importers:
     devDependencies:
       '@itwin/build-tools':
         specifier: ^4.0.0
-        version: 4.2.0(@types/node@18.18.6)
+        version: 4.2.0
       '@types/chai':
         specifier: ^4.3.3
         version: 4.3.9
@@ -308,7 +308,7 @@ importers:
     devDependencies:
       '@itwin/build-tools':
         specifier: ^4.0.0
-        version: 4.2.0(@types/node@18.18.6)
+        version: 4.2.0
       '@itwin/reality-capture-common':
         specifier: workspace:*
         version: link:../reality-capture-common
@@ -366,7 +366,7 @@ importers:
     devDependencies:
       '@itwin/build-tools':
         specifier: ^4.0.0
-        version: 4.2.0(@types/node@18.18.6)
+        version: 4.2.0
       '@itwin/reality-capture-common':
         specifier: workspace:*
         version: link:../reality-capture-common
@@ -427,7 +427,7 @@ importers:
     devDependencies:
       '@itwin/build-tools':
         specifier: ^4.0.0
-        version: 4.2.0(@types/node@18.18.6)
+        version: 4.2.0
       '@itwin/certa':
         specifier: ^4.0.0
         version: 4.2.0
@@ -2802,7 +2802,7 @@ packages:
       oidc-client: 1.11.5
     dev: false
 
-  /@itwin/build-tools@4.2.0(@types/node@18.18.6):
+  /@itwin/build-tools@4.2.0:
     resolution: {integrity: sha512-AfaKxbb9lliFAKKMjMAJSm1gcv5gOjSTmtLrzeIAhfGOhDOrDZOkcflMZsOFikqHmwf4hVmNp2kl9JwMP8Gkrg==}
     hasBin: true
     dependencies:
@@ -2817,6 +2817,30 @@ packages:
       rimraf: 3.0.2
       tree-kill: 1.2.2
       typedoc: 0.23.28(typescript@5.0.4)
+      typedoc-plugin-merge-modules: 4.1.0(typedoc@0.23.28)
+      typescript: 5.0.4
+      wtfnode: 0.9.1
+      yargs: 17.7.2
+    transitivePeerDependencies:
+      - '@types/node'
+      - supports-color
+    dev: true
+
+  /@itwin/build-tools@4.2.0(@types/node@18.18.6):
+    resolution: {integrity: sha512-AfaKxbb9lliFAKKMjMAJSm1gcv5gOjSTmtLrzeIAhfGOhDOrDZOkcflMZsOFikqHmwf4hVmNp2kl9JwMP8Gkrg==}
+    hasBin: true
+    dependencies:
+      '@microsoft/api-extractor': 7.36.4(@types/node@18.18.6)
+      chalk: 3.0.0
+      cpx2: 3.0.2
+      cross-spawn: 7.0.3
+      fs-extra: 8.1.0
+      glob: 7.2.3
+      mocha: 10.2.0
+      mocha-junit-reporter: 2.2.1(mocha@10.2.0)
+      rimraf: 3.0.2
+      tree-kill: 1.2.2
+      typedoc: 0.23.28(typescript@4.6.4)
       typedoc-plugin-merge-modules: 4.1.0(typedoc@0.23.28)
       typescript: 5.0.4
       wtfnode: 0.9.1
@@ -3925,7 +3949,7 @@ packages:
       '@types/base64-js': 1.3.1
       '@types/jquery': 3.5.24
       base64-js: 1.5.1
-      follow-redirects: 1.15.3
+      follow-redirects: 1.15.6
       form-data: 4.0.0
       opener: 1.5.2
     transitivePeerDependencies:
@@ -14821,6 +14845,20 @@ packages:
       typedoc: 0.23.x || 0.24.x
     dependencies:
       typedoc: 0.23.28(typescript@5.0.4)
+    dev: true
+
+  /typedoc@0.23.28(typescript@4.6.4):
+    resolution: {integrity: sha512-9x1+hZWTHEQcGoP7qFmlo4unUoVJLB0H/8vfO/7wqTnZxg4kPuji9y3uRzEu0ZKez63OJAUmiGhUrtukC6Uj3w==}
+    engines: {node: '>= 14.14'}
+    hasBin: true
+    peerDependencies:
+      typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x
+    dependencies:
+      lunr: 2.3.9
+      marked: 4.3.0
+      minimatch: 7.4.6
+      shiki: 0.14.5
+      typescript: 4.6.4
     dev: true
 
   /typedoc@0.23.28(typescript@5.0.4):
