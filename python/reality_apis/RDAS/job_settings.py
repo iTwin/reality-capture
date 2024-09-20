@@ -67,8 +67,12 @@ class O2DJobSettings:
             json_dict["outputs"].append("exportedObjects3DDGN")
         if self.outputs.exported_objects3D_cesium:
             json_dict["outputs"].append("exportedObjects3DCesium")
+        if self.outputs.exported_objects3D_geojson:
+            json_dict["outputs"].append("exportedObjects3DGeoJSON")
         if self.outputs.exported_locations3D_SHP:
             json_dict["outputs"].append("exportedLocations3DSHP")
+        if self.outputs.exported_locations3D_geojson:
+            json_dict["outputs"].append("exportedLocations3DGeoJSON")
         json_dict["options"] = dict()
         if self.options.use_tie_points:
             json_dict["options"]["useTiePoints"] = "true"
@@ -126,8 +130,16 @@ class O2DJobSettings:
                     new_job_settings.outputs.exported_objects3D_cesium = output_dict[
                         "id"
                     ]
+                elif output_dict["type"] == "exportedObjects3DGeoJSON":
+                    new_job_settings.outputs.exported_objects3D_geojson = output_dict[
+                        "id"
+                    ]
                 elif output_dict["type"] == "exportedLocations3DSHP":
                     new_job_settings.outputs.exported_locations3D_SHP = output_dict[
+                        "id"
+                    ]
+                elif output_dict["type"] == "exportedLocations3DGeoJSON":
+                    new_job_settings.outputs.exported_locations3D_geojson = output_dict[
                         "id"
                     ]
                 else:
@@ -176,7 +188,9 @@ class O2DJobSettings:
             objects3D: Detected 3D objects.
             exported_objects3D_DGN: DGN file export with 3D objects.
             exported_objects3D_cesium: Cesium 3D Tiles file export with 3D objects.
+            exported_objects3D_geojson: GeoJSON file export with 3D objects.
             exported_locations3D_SHP: ESRI SHP file export with locations of the 3D objects.
+            exported_locations3D_geojson: GeoJSON file export with locations of the 3D objects.
         """
 
         def __init__(self) -> None:
@@ -184,7 +198,9 @@ class O2DJobSettings:
             self.objects3D: str = ""
             self.exported_objects3D_DGN: str = ""
             self.exported_objects3D_cesium: str = ""
+            self.exported_objects3D_geojson: str = ""
             self.exported_locations3D_SHP: str = ""
+            self.exported_locations3D_geojson: str = ""
 
     class Options:
         """
@@ -265,12 +281,16 @@ class S2DJobSettings:
             json_dict["outputs"].append("exportedLines3DDGN")
         if self.outputs.exported_lines3D_cesium:
             json_dict["outputs"].append("exportedLines3DCesium")
+        if self.outputs.exported_lines3D_geojson:
+            json_dict["outputs"].append("exportedLines3DGeoJSON")
         if self.outputs.polygons3D:
             json_dict["outputs"].append("polygons3D")
         if self.outputs.exported_polygons3D_DGN:
             json_dict["outputs"].append("exportedPolygons3DDGN")
         if self.outputs.exported_polygons3D_cesium:
             json_dict["outputs"].append("exportedPolygons3DCesium")
+        if self.outputs.exported_polygons3D_geojson:
+            json_dict["outputs"].append("exportedPolygons3DGeoJSON")
         json_dict["options"] = dict()
         if self.options.compute_line_width:
             json_dict["options"]["computeLineWidth"] = "true"
@@ -331,6 +351,10 @@ class S2DJobSettings:
                     new_job_settings.outputs.exported_lines3D_cesium = output_dict[
                         "id"
                     ]
+                elif output_dict["type"] == "exportedLines3DGeoJSON":
+                    new_job_settings.outputs.exported_lines3D_geojson = output_dict[
+                        "id"
+                    ]
                 elif output_dict["type"] == "polygons3D":
                     new_job_settings.outputs.polygons3D = output_dict["id"]
                 elif output_dict["type"] == "exportedPolygons3DDGN":
@@ -339,6 +363,10 @@ class S2DJobSettings:
                     ]
                 elif output_dict["type"] == "exportedPolygons3DCesium":
                     new_job_settings.outputs.exported_polygons3D_cesium = output_dict[
+                        "id"
+                    ]
+                elif output_dict["type"] == "exportedPolygons3DGeoJSON":
+                    new_job_settings.outputs.exported_polygons3D_geojson = output_dict[
                         "id"
                     ]
                 else:
@@ -395,9 +423,11 @@ class S2DJobSettings:
             lines3D: Detected 3D lines.
             exported_lines3D_DGN: DGN file export with 3D lines.
             exported_lines3D_cesium: Cesium 3D Tiles file export with 3D lines.
+            exported_lines3D_geojson: GeoJSON file export with 3D lines.
             polygons3D: Detected polygons.
             exported_polygons3D_DGN: DGN file export with polygons.
             exported_polygons3D_cesium: Cesium 3D Tiles file export with 3D polygons.
+            exported_polygons3D_geojson GeoJSON file export with 3D polygons.
 
         """
 
@@ -407,9 +437,11 @@ class S2DJobSettings:
             self.lines3D: str = ""
             self.exported_lines3D_DGN: str = ""
             self.exported_lines3D_cesium: str = ""
+            self.exported_lines3D_geojson: str = ""
             self.polygons3D: str = ""
             self.exported_polygons3D_DGN: str = ""
             self.exported_polygons3D_cesium: str = ""
+            self.exported_polygons3D_geojson: str = ""
 
     class Options:
         """
@@ -474,12 +506,16 @@ class SOrthoJobSettings:
             json_dict["outputs"].append("polygons2D")
         if self.outputs.exported_polygons2D_SHP:
             json_dict["outputs"].append("exportedPolygons2DSHP")
+        if self.outputs.exported_polygons2D_geojson:
+            json_dict["outputs"].append("exportedPolygons2DGeoJSON")
         if self.outputs.lines2D:
             json_dict["outputs"].append("lines2D")
         if self.outputs.exported_lines2D_DGN:
             json_dict["outputs"].append("exportedLines2DDGN")
         if self.outputs.exported_lines2D_SHP:
             json_dict["outputs"].append("exportedLines2DSHP")
+        if self.outputs.exported_lines2D_geojson:
+            json_dict["outputs"].append("exportedLines2DGeoJSON")
         return json_dict
 
     @classmethod
@@ -520,12 +556,18 @@ class SOrthoJobSettings:
                     new_job_settings.outputs.exported_polygons2D_SHP = output_dict[
                         "id"
                     ]
+                elif output_dict["type"] == "exportedPolygons2DGeoJSON":
+                    new_job_settings.outputs.exported_polygons2D_geojson = output_dict[
+                        "id"
+                    ]
                 elif output_dict["type"] == "lines2D":
                     new_job_settings.outputs.lines2D = output_dict["id"]
                 elif output_dict["type"] == "exportedLines2DDGN":
                     new_job_settings.outputs.exported_lines2D_DGN = output_dict["id"]
                 elif output_dict["type"] == "exportedLines2DSHP":
                     new_job_settings.outputs.exported_lines2D_SHP = output_dict["id"]
+                elif output_dict["type"] == "exportedLines2DGeoJSON":
+                    new_job_settings.outputs.exported_lines2D_geojson = output_dict["id"]
                 else:
                     raise TypeError(
                         "found non expected output type:" + output_dict["type"]
@@ -556,9 +598,11 @@ class SOrthoJobSettings:
             segmented_photos: ContextScene pointing to segmented photos.
             polygons2D: Detected 2D polygons.
             exported_polygons2D_SHP: 2D polygons exported to ESRI shapefile.
+            exported_polygons2D_geojson: 2D polygons exported to GeoJSON.
             lines2D: Detected 2D lines.
             exported_lines2D_SHP: 2D lines exported to ESRI shapefile.
             exported_lines2D_DGN: 2D lines exported to DGN file.
+            exported_lines2D_geojson: 2D lines exported to GeoJSON file.
         """
 
         def __init__(self) -> None:
@@ -566,9 +610,11 @@ class SOrthoJobSettings:
             self.segmented_photos: str = ""
             self.polygons2D: str = ""
             self.exported_polygons2D_SHP: str = ""
+            self.exported_polygons2D_geojson: str = ""
             self.lines2D: str = ""
             self.exported_lines2D_SHP: str = ""
             self.exported_lines2D_DGN: str = ""
+            self.exported_lines2D_geojson: str = ""
 
 
 class S3DJobSettings:
@@ -641,20 +687,28 @@ class S3DJobSettings:
             json_dict["outputs"].append("exportedObjects3DDGN")
         if self.outputs.exported_objects3D_cesium:
             json_dict["outputs"].append("exportedObjects3DCesium")
+        if self.outputs.exported_objects3D_geojson:
+            json_dict["outputs"].append("exportedObjects3DGeoJSON")
         if self.outputs.exported_locations3D_SHP:
             json_dict["outputs"].append("exportedLocations3DSHP")
+        if self.outputs.exported_locations3D_geojson:
+            json_dict["outputs"].append("exportedLocations3DGeoJSON")
         if self.outputs.lines3D:
             json_dict["outputs"].append("lines3D")
         if self.outputs.exported_lines3D_DGN:
             json_dict["outputs"].append("exportedLines3DDGN")
         if self.outputs.exported_lines3D_cesium:
             json_dict["outputs"].append("exportedLines3DCesium")
+        if self.outputs.exported_lines3D_geojson:
+            json_dict["outputs"].append("exportedLines3DGeoJSON")
         if self.outputs.polygons3D:
             json_dict["outputs"].append("polygons3D")
         if self.outputs.exported_polygons3D_DGN:
             json_dict["outputs"].append("exportedPolygons3DDGN")
         if self.outputs.exported_polygons3D_cesium:
             json_dict["outputs"].append("exportedPolygons3DCesium")
+        if self.outputs.exported_polygons3D_geojson:
+            json_dict["outputs"].append("exportedPolygons3DGeoJSON")
         json_dict["options"] = dict()
         if self.options.compute_line_width:
             json_dict["options"]["computeLineWidth"] = "true"
@@ -734,8 +788,16 @@ class S3DJobSettings:
                     new_job_settings.outputs.exported_objects3D_cesium = output_dict[
                         "id"
                     ]
+                elif output_dict["type"] == "exportedObjects3DGeoJSON":
+                    new_job_settings.outputs.exported_objects3D_geojson = output_dict[
+                        "id"
+                    ]
                 elif output_dict["type"] == "exportedLocations3DSHP":
                     new_job_settings.outputs.exported_locations3D_SHP = output_dict[
+                        "id"
+                    ]
+                elif output_dict["type"] == "exportedLocations3DGeoJSON":
+                    new_job_settings.outputs.exported_locations3D_geojson = output_dict[
                         "id"
                     ]
                 elif output_dict["type"] == "lines3D":
@@ -748,6 +810,10 @@ class S3DJobSettings:
                     new_job_settings.outputs.exported_lines3D_cesium = output_dict[
                         "id"
                     ]
+                elif output_dict["type"] == "exportedLines3DGeoJSON":
+                    new_job_settings.outputs.exported_lines3D_geojson = output_dict[
+                        "id"
+                    ]
                 elif output_dict["type"] == "polygons3D":
                     new_job_settings.outputs.polygons3D = output_dict["id"]
                 elif output_dict["type"] == "exportedPolygons3DDGN":
@@ -756,6 +822,10 @@ class S3DJobSettings:
                     ]
                 elif output_dict["type"] == "exportedPolygons3DCesium":
                     new_job_settings.outputs.exported_polygons3D_cesium = output_dict[
+                        "id"
+                    ]
+                elif output_dict["type"] == "exportedPolygons3DGeoJSON":
+                    new_job_settings.outputs.exported_polygons3D_geojson = output_dict[
                         "id"
                     ]
                 else:
@@ -813,13 +883,17 @@ class S3DJobSettings:
             objects3D: 3D objects inferred from 3D segmentation.
             exported_objects3D_DGN: DGN file export with 3D objects.
             exported_objects3D_cesium: Cesium 3D Tiles file export with 3D objects
+            exported_objects3D_geojson: GeoJSON file export with 3D objects
             exported_locations3D_SHP: ESRI SHP file export with locations of the 3D objects
+            exported_locations3D_geojson: GeoJSON file export with locations of the 3D objects
             lines3D: Detected 3D lines.
             exported_lines3D_DGN: DGN file export with 3D lines.
             exported_lines3D_cesium: Cesium 3D Tiles file export with 3D lines.
+            exported_lines3D_geojson: GeoJSON file export with 3D lines.
             polygons3D: Detected polygons.
             exported_polygons3D_DGN: DGN file export with polygons.
             exported_polygons3D_cesium: Cesium 3D Tiles file export with 3D polygons.
+            exported_polygons3D_geojson: GeoJSON file export with 3D polygons.
         """
 
         def __init__(self) -> None:
@@ -832,13 +906,17 @@ class S3DJobSettings:
             self.objects3D: str = ""
             self.exported_objects3D_DGN: str = ""
             self.exported_objects3D_cesium: str = ""
+            self.exported_objects3D_geojson: str = ""
             self.exported_locations3D_SHP: str = ""
+            self.exported_locations3D_geojson: str = ""
             self.lines3D: str = ""
             self.exported_lines3D_DGN: str = ""
             self.exported_lines3D_cesium: str = ""
+            self.exported_lines3D_geojson: str = ""
             self.polygons3D: str = ""
             self.exported_polygons3D_DGN: str = ""
             self.exported_polygons3D_cesium: str = ""
+            self.exported_polygons3D_geojson: str = ""
 
     class Options:
         """
@@ -906,6 +984,8 @@ class ChangeDetectionJobSettings:
             json_dict["outputs"].append("objects3D")
         if self.outputs.exported_locations3D_SHP:
             json_dict["outputs"].append("exportedLocations3DSHP")
+        if self.outputs.exported_locations3D_GeoJSON:
+            json_dict["outputs"].append("exportedLocations3DGeoJSON")
         json_dict["options"] = dict()
         if self.options.color_threshold_low:
             json_dict["options"]["colorThresholdLow"] = str(self.options.color_threshold_low)
@@ -955,6 +1035,10 @@ class ChangeDetectionJobSettings:
                     new_job_settings.outputs.objects3D = output_dict["id"]
                 elif output_dict["type"] == "exportedLocations3DSHP":
                     new_job_settings.outputs.exported_locations3D_SHP = output_dict[
+                        "id"
+                    ]
+                elif output_dict["type"] == "exportedLocations3DGeoJSON":
+                    new_job_settings.outputs.exported_locations3D_geojson = output_dict[
                         "id"
                     ]
                 else:
@@ -1013,11 +1097,13 @@ class ChangeDetectionJobSettings:
         Attributes:
             objects3D: Regions with changes.
             exported_locations3D_SHP: ESRI SHP file export with locations of regions with changes.
+            exported_locations3D_geojson:GeoJSON export with locations of regions with changes.
         """
 
         def __init__(self) -> None:
             self.objects3D: str = ""
             self.exported_locations3D_SHP: str = ""
+            self.exported_locations3D_geojson: str = ""
 
     class Options:
         """
