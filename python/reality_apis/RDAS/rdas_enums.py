@@ -16,3 +16,4 @@ class RDAJobType(Enum):
     S3D = "segmentation3D"
     ChangeDetection = "changeDetection"
     ExtractGround = "extractGround"
+    EvalS2D = "evalS2D"
