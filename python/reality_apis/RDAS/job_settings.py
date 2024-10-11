@@ -459,29 +459,30 @@ class EvalS2DJobSettings:
         json_dict["outputs"] = list()
         json_dict["inputs"].append(
             {
-                "prediction_scene_path": self.inputs.prediction_scene_path
+                "prediction": self.inputs.prediction
             },
         )
         json_dict["inputs"].append(
             {
-                "gt_scene_path": self.inputs.gt_scene_path
+                "reference": self.inputs.reference
             }
         )
         json_dict["outputs"].append(
             {
-                "dir_to_save_report": self.outputs.dir_to_save_report
+                "report": self.outputs.report
             }
         )
         json_dict["outputs"].append(
             {
-                "dir_to_save_masks": self.outputs.dir_to_save_masks
+                "segmentedPhotos": self.outputs.segmentedPhotos
             }
         )
         json_dict["outputs"].append(
             {
-                "dir_to_save_save_content_scene": self.outputs.dir_to_save_save_content_scene
+                "segmentation2D": self.outputs.segmentation2D
             }
         )
+        return json_dict
 
     @classmethod
     def from_json(cls, settings_json: dict) -> ReturnValue[S2DJobSettings]:
@@ -495,12 +496,12 @@ class EvalS2DJobSettings:
         """
         new_job_settings = cls()
         try:
-            new_job_settings.inputs.gt_scene_path = settings_json["inputs"]["gt_scene_path"]
-            new_job_settings.inputs.prediction_scene_path = settings_json["inputs"]["prediction_scene_path"]
-            new_job_settings.outputs.dir_to_save_report = settings_json["outputs"]["dir_to_save_report"]
-            new_job_settings.outputs.dir_to_save_masks = settings_json["outputs"]["dir_to_save_masks"]
-            new_job_settings.outputs.dir_to_save_save_content_scene = settings_json["outputs"][
-                "dir_to_save_save_content_scene"]
+            new_job_settings.inputs.reference = settings_json["inputs"]["reference"]
+            new_job_settings.inputs.prediction = settings_json["inputs"]["prediction"]
+            new_job_settings.outputs.report = settings_json["outputs"]["report"]
+            new_job_settings.outputs.segmentedPhotos = settings_json["outputs"]["segmentedPhotos"]
+            new_job_settings.outputs.segmentation2D = settings_json["outputs"][
+                "segmentation2D"]
         except (TypeError, KeyError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_settings, error="")
@@ -519,8 +520,8 @@ class EvalS2DJobSettings:
         """
 
         def __init__(self) -> None:
-            self.prediction_scene_path: str = ""
-            self.gt_scene_path: str = ""
+            self.prediction: str = ""
+            self.reference: str = ""
 
     class Outputs:
         """
@@ -539,9 +540,9 @@ class EvalS2DJobSettings:
         """
 
         def __init__(self) -> None:
-            self.dir_to_save_report: str = ""
-            self.dir_to_save_masks: str = ""
-            self.dir_to_save_save_content_scene: str = ""
+            self.report: str = ""
+            self.segmentedPhotos: str = ""
+            self.segmentation2D: str = ""
 
     class Options:
         """
