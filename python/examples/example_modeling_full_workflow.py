@@ -27,7 +27,7 @@ def main():
     # Use a service iTwin application. It will not open a popup during the authentication (used for pipelines and automated tasks), but it will be the owner of the created iTwin.
     # You will not be able to access the iTwin, unless you add your mail as a member of the iTwin.
     token_factory = ServiceTokenFactory(client_info)
-    # Otherwise, you can create a Desktop/Mobile itwin application, it will open a popup during the authentication, but you will be able the owner of the created iTwin
+    # Otherwise, you can create a Desktop/Mobile itwin application, it will open a popup during the authentication, but you will be the owner of the created iTwin
     # token_factory = SpaDesktopMobileTokenFactory(client_info)
 
     # iTwin
