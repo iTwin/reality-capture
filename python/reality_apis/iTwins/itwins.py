@@ -39,7 +39,7 @@ class iTwinStatus(Enum):
 
 class iTwinSettings:
     """
-        Full representation of a iTwin.
+        Full representation of an iTwin.
 
         Attributes:
             iTwin_class: The Class of your iTwin.
