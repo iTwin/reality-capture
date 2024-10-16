@@ -1,6 +1,7 @@
 # Sample creating and submitting a Reality Modeling job
 import os
 import time
+import xml.etree.ElementTree as Et
 
 import reality_apis.CCS.context_capture_service as CCS
 import reality_apis.DataTransfer.reality_data_transfer as DataTransfer
@@ -50,7 +51,9 @@ def main():
 
     # Data
     ccimage_collections = r"your image collection (folder)"
-    ccorientations = r"your ccorientations (folder with an Orientations.xml file inside)"
+    # If you don't have any ccorientations, assign an empty string to create a simplified ccorientions
+    # A ccorientation file will be created in output_path
+    ccorientations = r"your ccorientations (folder with an Orientations.xml file inside)."
     output_path = r"path where the outputs will be generated"
 
     # Other
@@ -126,6 +129,12 @@ def main():
             print("Error adding reference:", ret.error)
             exit(1)
         print("Upload done")
+
+    # Create ccorientations if needed
+    if ccorientations == "":
+        createBulkCCOrientationsFromPhotos(ccimage_collections, references.get_cloud_id_from_local_path(ccimage_collections),
+                                           os.path.join(output_path, "BulkCCOrientations"))
+        print("CCOrientations created successfully.")
 
     # upload ccorientations
     if not references.has_local_path(ccorientations):
@@ -297,3 +306,20 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+def createBulkCCOrientationsFromPhotos(images_path, images_cloud_id, bulk_ccorientations_path):
+    root = Et.Element("Block")
+    Et.SubElement(root, "Name").text = "Block_1"
+
+    bulk = Et.SubElement(root, "BulkPhotos")
+    for image, id in os.listdir(images_path):
+        photo = Et.SubElement(bulk, "Photo")
+        Et.SubElement(photo, "Id").text = id
+        Et.SubElement(photo, "ImagePath").text = os.path.join(images_cloud_id, image)
+
+    Et.SubElement(root, "ControlPoints")
+    Et.SubElement(root, "PositioningConstraints")
+
+    tree = Et.ElementTree(root)
+    os.makedirs(bulk_ccorientations_path)
+    tree.write(os.path.join(bulk_ccorientations_path, "Orientations.xml"))
