@@ -1,233 +1,167 @@
-# Sample creating and submitting a Reality Modeling job
 import os
 import time
+import xml.etree.ElementTree as Et
+import tempfile
 
 import reality_apis.CCS.context_capture_service as CCS
 import reality_apis.DataTransfer.reality_data_transfer as DataTransfer
 import reality_apis.iTwins.itwins as iTwins
 
-from reality_apis.DataTransfer.references import ReferenceTable
 from reality_apis.CCS.ccs_utils import CCJobSettings, CCJobQuality, CCJobType
 from reality_apis.utils import RealityDataType, JobState
 
-from token_factory.token_factory import ClientInfo, ServiceTokenFactory, SpaDesktopMobileTokenFactory
+from token_factory.token_factory import ClientInfo, ServiceTokenFactory
 
-
-def main():
-    # ---------User inputs----------
-
-    # Authentication & iTwin app
-    client_id = "your client id"
-    client_secret = "your client secret"
+def authenticate(client_id, client_secret):
+    print("Authentication...")
+    # Scopes needed to upload/download data and run Modeling jobs
     scope_set = {
-        "itwin-platform",  # should not be modified
+        "itwin-platform", # should not be modified
     }
-    client_info = ClientInfo(client_id, scope_set)  # should not be modified
-    client_info.secret = client_secret  # should not be modified
+    client_info = ClientInfo(client_id, scope_set)
+    client_info.secret = client_secret
     # Use a service iTwin application. It will not open a popup during the authentication (used for pipelines and automated tasks), but it will be the owner of the created iTwin.
     # You will not be able to access the iTwin, unless you add your mail as a member of the iTwin.
     token_factory = ServiceTokenFactory(client_info)
-    # Otherwise, you can create a Desktop/Mobile itwin application, it will open a popup during the authentication, but you will be the owner of the created iTwin
-    # token_factory = SpaDesktopMobileTokenFactory(client_info)
-
-    # iTwin
-    # a) Use an existing iTwin
-    iTwin_id = "your iTwin/project id"
-    # b) If you don't have an iTwin, assign an empty string to iTwin_id variable, and provide these parameters :
-    # Once the iTwin is created, please, assign the id to iTwin_id variable
-    # Required :
-    iTwin_class = iTwins.iTwinClass.ENDEAVOR
-    iTwin_subclass = iTwins.iTwinSubClass.PROJECT
-    iTwin_display_name = "The name of your iTwin"
-    # Not required :
-    iTwin_type = ""
-    iTwin_number = ""
-    iTwin_geographic_location = ""
-    iTwin_iana_time_zone = ""
-    iTwin_data_center_location = ""
-    iTwin_status = iTwins.iTwinStatus.ACTIVE
-    iTwin_parent_id = ""
-
-    # Data
-    ccimage_collections = r"your image collection (folder)"
-    ccorientations = r"your ccorientations (folder with an Orientations.xml file inside)"
-    output_path = r"path where the outputs will be generated"
-
-    # Other
-    at_job_name = "AT job"
-    reconstruction_job_name = "Reconstruction job"
-    workspace_name = "Reality Modeling SDK test workspace"
-    ccimage_collections_name = "Test Photos"
-    ccorientations_name = "Test ccorientations"
-
-    # ------------------------------
-
-    # 1) Authentication
-    # Scopes needed to upload/download data and run Modeling jobs
-    print("Authentication...")
-    # initializing Data Transfer, iTwins and Modeling services
+    # Initializing Data Transfer, iTwins and Modeling services
     iTwin_sdk = iTwins.iTwinsApiWrapper(token_factory)
     data_transfer = DataTransfer.RealityDataTransfer(token_factory)
-    service_cc = CCS.ContextCaptureService(token_factory)
-    print("Services initialized")
-
-    # 2) Create an iTwin (if iTwin_id is not provided)
-    if iTwin_id == "":
-        print("Creating an iTwin...")
-        iTwins_settings = iTwins.iTwinSettings()
-        iTwins_settings.iTwin_class = iTwin_class
-        iTwins_settings.iTwin_subclass = iTwin_subclass
-        iTwins_settings.display_name = iTwin_display_name
-        iTwins_settings.type = iTwin_type
-        iTwins_settings.number = iTwin_number
-        iTwins_settings.geographic_location = iTwin_geographic_location
-        iTwins_settings.iana_time_zone = iTwin_iana_time_zone
-        iTwins_settings.data_center_location = iTwin_data_center_location
-        iTwins_settings.status = iTwin_status
-        iTwins_settings.parent_id = iTwin_parent_id
-        ret = iTwin_sdk.create_iTwin(iTwins_settings)
-        if ret.is_error():
-            print("Error while creating iTwin:", ret.error)
-            exit(1)
-        iTwin_id = ret.value
-        print("Created iTwin : " + iTwin_id)
-    else:
-        print("No need to create an iTwin, currently using ", iTwin_id)
-
-    # 3) Upload images
     # adding hook to follow upload and download status
     data_transfer.set_progress_hook(DataTransfer.example_hook)
-    # creating reference table. It will save a file in output_path to avoid to upload images each time we run the script
-    references = ReferenceTable()
-    references_path = os.path.join(output_path, "test_references_python.txt")
-    if os.path.isfile(references_path):
-        print("Loading preexistent references")
-        ret = references.load(references_path)
-        if ret.is_error():
-            print("Error while loading preexisting references:", ret.error)
-            exit(1)
+    service_cc = CCS.ContextCaptureService(token_factory)
+    print("Authentication Done.")
+    return iTwin_sdk, data_transfer, service_cc
 
-    # upload images
-    if not references.has_local_path(ccimage_collections):
-        print(
-            "No reference to CCimage Collections found, uploading local files to cloud"
-        )
-        ret = data_transfer.upload_reality_data(
-            ccimage_collections,
-            ccimage_collections_name,
-            RealityDataType.CCImageCollection,
-            iTwin_id,
-        )
-        if ret.is_error():
-            print("Error in upload:", ret.error)
-            exit(1)
-        ret = references.add_reference(ccimage_collections, ret.value)
-        if ret.is_error():
-            print("Error adding reference:", ret.error)
-            exit(1)
-        print("Upload done")
+def create_at_input_from_photos(images_path, images_cloud_id, at_input_path):
+    # Create a simplified orientations file. See https://developer.bentley.com/apis/contextcapture/cc-ori/
+    root = Et.Element("BlocksExchange")
+    block = Et.SubElement(root, "Block")
+    Et.SubElement(block, "Name").text = "Block_1"
+    bulk = Et.SubElement(block, "BulkPhotos")
+    image_id = 0
+    for image in os.listdir(images_path):
+        if image.split(".")[-1] == "jpg" or image.split(".")[-1] == "JPG":
+            photo = Et.SubElement(bulk, "Photo")
+            Et.SubElement(photo, "Id").text = str(image_id)
+            image_cloud_path = os.path.join(images_cloud_id, image).replace("\\", "/")
+            Et.SubElement(photo, "ImagePath").text = image_cloud_path
+            image_id += 1
+    Et.SubElement(block, "ControlPoints")
+    Et.SubElement(block, "PositioningConstraints")
 
-    # upload ccorientations
-    if not references.has_local_path(ccorientations):
-        print("No reference to cc orientations found, uploading local files to cloud")
-        ret = data_transfer.upload_ccorientation(
-            ccorientations, ccorientations_name, iTwin_id, references
-        )
-        if ret.is_error():
-            print("Error in upload:", ret.error)
-            exit(1)
-        ret = references.add_reference(ccorientations, ret.value)
-        if ret.is_error():
-            print("Error adding reference:", ccorientations)
-            exit(1)
+    tree = Et.ElementTree(root)
+    Et.indent(tree, space="\t", level=0)
+    tree.write(os.path.join(at_input_path, "Orientations.xml"), xml_declaration=True, encoding="utf-8")
 
-    # saving references (so we don't need to re-upload next time)
-    ret = references.save(references_path)
+def create_iTwin(iTwin_sdk, iTwin_display_name, iTwin_data_center_location, iTwin_class = iTwins.iTwinClass.ENDEAVOR, iTwin_subclass = iTwins.iTwinSubClass.PROJECT, iTwin_type = "",
+                 iTwin_number = "", iTwin_geographic_location = "", iTwin_iana_time_zone = "",
+                 iTwin_status = iTwins.iTwinStatus.ACTIVE, iTwin_parent_id = ""):
+    print("Creating an iTwin...")
+    iTwins_settings = iTwins.iTwinSettings()
+    iTwins_settings.iTwin_class = iTwin_class
+    iTwins_settings.iTwin_subclass = iTwin_subclass
+    iTwins_settings.display_name = iTwin_display_name
+    iTwins_settings.type = iTwin_type
+    iTwins_settings.number = iTwin_number
+    iTwins_settings.geographic_location = iTwin_geographic_location
+    iTwins_settings.iana_time_zone = iTwin_iana_time_zone
+    iTwins_settings.data_center_location = iTwin_data_center_location
+    iTwins_settings.status = iTwin_status
+    iTwins_settings.parent_id = iTwin_parent_id
+    ret = iTwin_sdk.create_iTwin(iTwins_settings)
     if ret.is_error():
-        print("Error saving references:", ret.error)
+        print("Error while creating iTwin:", ret.error)
         exit(1)
-    print("Checked data upload")
+    iTwin_id = ret.value
+    print("iTwin created successfully : " + iTwin_id)
+    return iTwin_id
 
-    # 4) Perform AT
-    # create workspace, it will contain temporary files
-    ret = service_cc.create_workspace(workspace_name, iTwin_id)
+def upload_data(data_transfer, photos_path, iTwin_id):
+    # Upload images
+    print("Uploading local photos")
+    ret_upload_photos = data_transfer.upload_reality_data(photos_path, "Photos CCImageCollection", RealityDataType.CCImageCollection, iTwin_id)
+    if ret_upload_photos.is_error():
+        print("Error in photos upload:", ret_upload_photos.error)
+        exit(1)
+    print("Photos upload done")
+
+    # Create AT input from photos
+    print("Creating AT input file")
+    # Save the file in a temporary folder
+    temp_dir = tempfile.TemporaryDirectory()
+    temp_dir_path = temp_dir.name
+    create_at_input_from_photos(photos_path, ret_upload_photos.value, temp_dir_path)
+    at_input = fr"{temp_dir_path}"
+    print("AT input file created successfully, saved in : ", temp_dir_path)
+
+    # Upload AT input file
+    ret_upload_at_input = data_transfer.upload_ccorientation(at_input, "AT Input", iTwin_id)
+    if ret_upload_at_input.is_error():
+        print("Error in upload:", ret_upload_at_input.error)
+        exit(1)
+
+    print("AT input upload done")
+    return ret_upload_photos.value, ret_upload_at_input.value
+
+def create_workspace(service_cc, iTwin_id):
+    ret = service_cc.create_workspace("Example workspace name", iTwin_id)
     if ret.is_error():
         print("Error creating workspace:", ret.error)
         exit(1)
-    workspace_id = ret.value
     print("Workspace created")
+    return ret.value
 
-    # create settings for Calibration job (AT)
+def create_and_submit_at(service_cc, workspace_id, photos_cloud_id, at_input_id):
+    # Create settings for AT job
     at_settings = CCJobSettings()
     at_settings.inputs = [
-        references.get_cloud_id_from_local_path(ccimage_collections).value,
-        references.get_cloud_id_from_local_path(ccorientations).value,
+        photos_cloud_id,
+        at_input_id,
     ]
     at_settings.mesh_quality = CCJobQuality.EXTRA
-    # It produces calibrated photos
-    at_settings.outputs.ccorientation = "ccorientations" # a non empty string will make the job generate the output
+    # Will produce calibrated photos
+    at_settings.outputs.ccorientation = "CCorientations"  # a non empty string will make the job generate the output
     print("AT Settings created")
 
-    # creating and submitting Calibration (AT) job
-    ret = service_cc.create_job(CCJobType.CALIBRATION, at_settings, at_job_name, workspace_id)
-    if ret.is_error():
-        print("Error in submit:", ret.error)
+    # Creating and submitting AT job
+    ret_create_at = service_cc.create_job(CCJobType.CALIBRATION, at_settings, "AT job name", workspace_id)
+    if ret_create_at.is_error():
+        print("Error in AT job creation :", ret_create_at.error)
         exit(1)
     print("Created AT Job")
-    at_job_id = ret.value
-    ret = service_cc.submit_job(at_job_id)
-    if ret.is_error():
-        print("Error in submit:", ret.error)
+    at_job_id = ret_create_at.value
+    ret_submit_at = service_cc.submit_job(at_job_id)
+    if ret_submit_at.is_error():
+        print("Error in submit AT :", ret_submit_at.error)
         exit(1)
-    print("Submitted AT Job")
+    print("AT submitted")
+    return at_job_id
 
-    # 5) Monitor AT
-    while True:
-        progress_ret = service_cc.get_job_progress(at_job_id)
-        if progress_ret.is_error():
-            print("Error while getting progress:", progress_ret.error)
-            exit(1)
-        job_progress = progress_ret.value
-        if (
-                job_progress.state == JobState.SUCCESS
-                or job_progress.state == JobState.Completed
-                or job_progress.state == JobState.Over
-        ):
-            break
-        elif (
-                job_progress.state == JobState.ACTIVE
-                or job_progress.state == JobState.Running
-        ):
-            print(f"Progress: {str(job_progress.progress)}%, step: {job_progress.step}")
-        elif job_progress.state == JobState.CANCELLED:
-            print("AT Job cancelled")
-            exit(0)
-        elif job_progress.state == JobState.FAILED:
-            print("AT Job Failed")
-            print(f"Progress: {str(job_progress.progress)}%, step: {job_progress.step}")
-            exit(1)
-        time.sleep(60)
-    print("AT Job done")
-
-    # 6) Submit reconstruction job (to generate cesium tiles)
-    # We need to get the cloud id of the calibrated ccorientation produced in the AT to submit this job
+def get_at_output_id(service_cc, at_job_id):
     cloud_settings_ret = service_cc.get_job_properties(at_job_id)
     cloud_settings = cloud_settings_ret.value.job_settings
-    ccorientation_id = cloud_settings.outputs.ccorientation
+    at_output_id = cloud_settings.outputs.ccorientation
+    return at_output_id
 
-    # create settings for Reconstruction job, it needs the images and the ccorientation.
+def get_cesium_tiles_id(service_cc, recons_job_id):
+    cloud_settings_ret = service_cc.get_job_properties(recons_job_id)
+    cloud_settings = cloud_settings_ret.value.job_settings
+    cesium_id = cloud_settings.outputs.cesium_3D_tiles
+    return cesium_id
+
+def create_and_submit_reconstruction(service_cc, workspace_id, photos_cloud_id, at_output_id):
+    # Create settings for Reconstruction job, it needs the photos and the AT output.
     recons_settings = CCJobSettings()
     recons_settings.inputs = [
-        references.get_cloud_id_from_local_path(ccimage_collections).value,
-        ccorientation_id,
+        photos_cloud_id,
+        at_output_id,
     ]
     recons_settings.mesh_quality = CCJobQuality.EXTRA
-    # It produces cesium tiles
     recons_settings.outputs.cesium_3D_tiles = "cesium3dTiles"
     print("Reconstruction Settings created")
 
-    # creating and submitting Reconstruction job
-    ret = service_cc.create_job(CCJobType.RECONSTRUCTION, recons_settings, reconstruction_job_name, workspace_id)
+    # Creating and submitting Reconstruction job
+    ret = service_cc.create_job(CCJobType.RECONSTRUCTION, recons_settings, "Reconstruction job name", workspace_id)
     if ret.is_error():
         print("Error in submit:", ret.error)
         exit(1)
@@ -238,10 +172,41 @@ def main():
         print("Error in submit:", ret.error)
         exit(1)
     print("Submitted Reconstruction Job")
+    return recons_job_id
 
-    # 7) Monitor Reconstruction
+def download_at_output(data_transfer, at_output_id, output_path, iTwin_id):
+    print("Downloading AT output...")
+    at_output_path = os.path.join(output_path, "AT_Output")
+    if not (os.path.exists(at_output_path) and os.path.isdir(at_output_path)):
+        os.makedirs(at_output_path)
+    ret_down = data_transfer.download_ccorientation(at_output_id, at_output_path, iTwin_id)
+    if ret_down.is_error():
+        print(
+            "Error while downloading AT output with id {}: {}".format(
+                at_output_id, ret_down.error
+            )
+        )
+        exit(1)
+    print("Successfully downloaded AT output")
+
+def download_cesium_tiles(data_transfer, cesium_id, output_path, iTwin_id):
+    print("Downloading cesium tiles...")
+    cesium_output_path = os.path.join(output_path, "Cesium_Output")
+    if not (os.path.exists(cesium_output_path) and os.path.isdir(cesium_output_path)):
+        os.makedirs(cesium_output_path)
+    ret_down = data_transfer.download_reality_data(cesium_id, cesium_output_path, iTwin_id)
+    if ret_down.is_error():
+        print(
+            "Error while downloading cesium tiles with id {}: {}".format(
+                cesium_id, ret_down.error
+            )
+        )
+        exit(1)
+    print("Successfully downloaded cesium tiles")
+
+def monitor_job(service_cc, job_id):
     while True:
-        progress_ret = service_cc.get_job_progress(recons_job_id)
+        progress_ret = service_cc.get_job_progress(job_id)
         if progress_ret.is_error():
             print("Error while getting progress:", progress_ret.error)
             exit(1)
@@ -258,42 +223,64 @@ def main():
         ):
             print(f"Progress: {str(job_progress.progress)}%, step: {job_progress.step}")
         elif job_progress.state == JobState.CANCELLED:
-            print("Reconstruction Job cancelled")
+            print("Job cancelled")
             exit(0)
         elif job_progress.state == JobState.FAILED:
-            print("Reconstruction Job Failed")
+            print("Job Failed")
             print(f"Progress: {str(job_progress.progress)}%, step: {job_progress.step}")
             exit(1)
         time.sleep(60)
-    print("Reconstruction Job done")
 
-    # 8) Download calibrated ccorientations
-    print("Downloading ccorientations...")
-    ret_down = data_transfer.download_ccorientation(ccorientation_id, output_path, iTwin_id, references)
-    if ret_down.is_error():
-        print(
-            "Error while downloading ccorientations with id {}: {}".format(
-                ccorientation_id, ret_down.error
-            )
-        )
-        exit(1)
-    print("Successfully downloaded ccorientations")
+def main():
+    # ---------User inputs----------
 
-    # 8) Download cesium tiles
-    print("Downloading cesium tiles...")
-    cloud_settings_ret = service_cc.get_job_properties(recons_job_id)
-    cloud_settings = cloud_settings_ret.value.job_settings
-    cesium_id = cloud_settings.outputs.cesium_3D_tiles
+    # Authentication
+    client_id = "your client id" # iTwin service app id, see https://developer.bentley.com/my-apps/
+    client_secret = "your client secret"
 
-    ret_down = data_transfer.download_reality_data(cesium_id, output_path, iTwin_id)
-    if ret_down.is_error():
-        print(
-            "Error while downloading cesium tiles with id {}: {}".format(
-                cesium_id, ret_down.error
-            )
-        )
-        exit(1)
-    print("Successfully downloaded cesium tiles")
+    # iTwin
+    iTwin_display_name = "The name of your iTwin"
+    iTwin_data_center_location = "Australia East" # The data center where the data for this iTwin will be persisted
+
+    # Input and output data
+    photos_path = r"your_photos" # Path where your photos are located
+    output_path = r"your_output_path" # Where the output data will be downloaded
+
+    # ------------------------------
+
+    # 1) Authentication
+    iTwin_sdk, data_transfer, service_cc = authenticate(client_id, client_secret)
+
+    # 2) Create an iTwin
+    iTwin_id = create_iTwin(iTwin_sdk, iTwin_display_name, iTwin_data_center_location)
+
+    # 3) Upload data to run Modeling jobs on cloud
+    photos_cloud_id, at_output_id = upload_data(data_transfer, photos_path, iTwin_id)
+
+    # 4) Submit AT job, to get calibrated photos
+    # Create job workspace, it will contain temporary files
+    workspace_id = create_workspace(service_cc, iTwin_id)
+    at_job_id = create_and_submit_at(service_cc, workspace_id, photos_cloud_id, at_output_id)
+
+    # 5) Monitor AT job
+    monitor_job(service_cc, at_job_id)
+    print("AT Job completed")
+
+    # 6) Submit reconstruction job (to generate cesium tiles)
+    # To submit the reconstruction job, we need to get the AT output cloud id
+    at_output_id = get_at_output_id(service_cc, at_job_id)
+    recons_job_id = create_and_submit_reconstruction(service_cc, workspace_id, photos_cloud_id, at_output_id)
+
+    # 7) Monitor Reconstruction
+    monitor_job(service_cc, recons_job_id)
+    print("Reconstruction Job completed")
+
+    # 8) Download AT output
+    download_at_output(data_transfer, at_output_id, output_path, iTwin_id)
+
+    # 9) Download Reconstruction output (cesium tiles)
+    cesium_id = get_cesium_tiles_id(service_cc, recons_job_id)
+    download_cesium_tiles(data_transfer, cesium_id, output_path, iTwin_id)
 
 if __name__ == "__main__":
     main()
