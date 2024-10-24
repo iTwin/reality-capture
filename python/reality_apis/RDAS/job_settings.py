@@ -984,7 +984,7 @@ class ChangeDetectionJobSettings:
             json_dict["outputs"].append("objects3D")
         if self.outputs.exported_locations3D_SHP:
             json_dict["outputs"].append("exportedLocations3DSHP")
-        if self.outputs.exported_locations3D_GeoJSON:
+        if self.outputs.exported_locations3D_geojson:
             json_dict["outputs"].append("exportedLocations3DGeoJSON")
         json_dict["options"] = dict()
         if self.options.color_threshold_low:
