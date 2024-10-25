@@ -554,6 +554,131 @@ class EvalS2DJobSettings:
             export_srs: SRS used by exports.
             min_photos: minimum number of photos with a same class for a 3D point to have its class set
         """
+class EvalSOrthoJobSettings:
+    """
+    Settings for Segmentation 2D jobs.
+
+    Attributes:
+        type: Type of job settings.
+        inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing the settings to create_job.
+        options: Possible options for this job.
+    """
+
+    def __init__(self) -> None:
+        self.type = RDAJobType.EvalSOrtho
+        self.inputs = self.Inputs()
+        self.outputs = self.Outputs()
+        self.options = self.Options()
+
+    def to_json(self) -> dict:
+        """
+        Transform settings into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with settings values.
+        """
+        json_dict = dict()
+        json_dict["inputs"] = list()
+        json_dict["outputs"] = list()
+        json_dict["inputs"].append(
+            {
+                "prediction": self.inputs.prediction
+            },
+        )
+        json_dict["inputs"].append(
+            {
+                "reference": self.inputs.reference
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "report": self.outputs.report
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "segmentedPhotos": self.outputs.segmentedPhotos
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "segmentation2D": self.outputs.segmentation2D
+            }
+        )
+        return json_dict
+
+    @classmethod
+    def from_json(cls, settings_json: dict) -> ReturnValue[S2DJobSettings]:
+        """
+        Transform json received from cloud service into settings.
+
+        Args:
+            settings_json: Dictionary with settings received from cloud service.
+        Returns:
+            New settings.
+        """
+        new_job_settings = cls()
+        try:
+            new_job_settings.inputs.reference = settings_json["inputs"]["reference"]
+            new_job_settings.inputs.prediction = settings_json["inputs"]["prediction"]
+            new_job_settings.outputs.report = settings_json["outputs"]["report"]
+            new_job_settings.outputs.segmentedPhotos = settings_json["outputs"]["segmentedPhotos"]
+            new_job_settings.outputs.segmentation2D = settings_json["outputs"][
+                "segmentation2D"]
+        except (TypeError, KeyError) as e:
+            return ReturnValue(value=cls(), error=str(e))
+        return ReturnValue(value=new_job_settings, error="")
+
+    class Inputs:
+        """
+        Possible inputs for a Segmentation 2D job.
+
+        Attributes:
+            photos: Path to ContextScene with photos to analyze.
+            photo_segmentation_detector: Path to photo segmentation detector to apply.
+            point_clouds: Collection of point clouds.
+            meshes: Collection of meshes.
+            segmentation2D: Given 2D segmentation.
+
+        """
+
+        def __init__(self) -> None:
+            self.prediction: str = ""
+            self.reference: str = ""
+
+    class Outputs:
+        """
+        Possible outputs for a Segmentation 2D job.
+
+        Attributes:
+            segmentation2D: Segmented photos.
+            segmented_photos: ContextScene pointing to segmented photos.
+            lines3D: Detected 3D lines.
+            exported_lines3D_DGN: DGN file export with 3D lines.
+            exported_lines3D_cesium: Cesium 3D Tiles file export with 3D lines.
+            polygons3D: Detected polygons.
+            exported_polygons3D_DGN: DGN file export with polygons.
+            exported_polygons3D_cesium: Cesium 3D Tiles file export with 3D polygons.
+
+        """
+
+        def __init__(self) -> None:
+            self.report: str = ""
+            self.segmentedPhotos: str = ""
+            self.segmentation2D: str = ""
+
+    class Options:
+        """
+        Possible options for a Segmentation 2D job.
+
+        Attributes:
+            compute_line_width: Estimation 3D line width at each vertex.
+            remove_small_components: Remove 3D lines with total length smaller than this value.
+            export_srs: SRS used by exports.
+            min_photos: minimum number of photos with a same class for a 3D point to have its class set
+        """
 
 
 class SOrthoJobSettings:
