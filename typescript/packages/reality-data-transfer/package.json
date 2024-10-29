@@ -37,10 +37,10 @@
   "license": "MIT",
   "dependencies": {
     "@azure/abort-controller": "^1.1.0",
-    "@azure/storage-blob": "^12.8.0",
+    "@azure/storage-blob": "^12.25.0",
     "@itwin/reality-capture-common": "workspace:*",
     "@itwin/reality-data-client": "workspace:*",
-    "@xmldom/xmldom": "^0.8.6"
+    "@xmldom/xmldom": "^0.9.5"
   },
   "devDependencies": {
     "@itwin/build-tools": "^4.6.0",
@@ -56,7 +56,7 @@
     "eslint": "^8.19.0",
     "mocha": "^10.5.0",
     "nyc": "^15.1.0",
-    "rimraf": "^3.0.2",
+    "rimraf": "^6.0.0",
     "typescript": "^5.0.0"
   }
 }
