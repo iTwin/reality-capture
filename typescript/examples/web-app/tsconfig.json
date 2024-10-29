@@ -8,9 +8,6 @@
     "allowJs": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": [
-      "@bentley/react-scripts"
-    ],
     "lib": [
       "dom",
       "dom.iterable",
