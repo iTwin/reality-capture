@@ -4,4 +4,4 @@ lib/
 coverage/
 .env
 .idea/
-
+*.configStore/
