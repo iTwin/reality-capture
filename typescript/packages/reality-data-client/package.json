@@ -49,7 +49,7 @@
     "axios": "^1.7.4"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^4.6.0",
+    "@itwin/build-tools": "^4.0.0",
     "@itwin/certa": "^4.0.0",
     "@itwin/core-bentley": "^4.0.0",
     "@itwin/core-common": "^4.0.0",
