@@ -13,16 +13,19 @@ import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-async function main() {
+async function runConversionexample() {
+    /**
+     * This example converts a laz file to opc format and downloads the opc file locally.
+     */
     const lazPointCloud = "path to the laz you want to convert";
-    const outputPath = "path to the folder where you want to save outputs";
+    const outputPath = "path to the folder where you want to save the opc file";
 
     dotenv.config();
 
     const jobName = "RCS LAZ to OPC sample";
     const lazName = "RCS LAZ Input";
 
-    const projectId = process.env.IMJS_PROJECT_ID ?? "";
+    const iTwinId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const redirectUrl = process.env.IMJS_REDIRECT_URL ?? "";
     const env = process.env.IMJS_ENV ?? "";
@@ -67,7 +70,7 @@ async function main() {
         // Upload LAZ
         if(!references.hasLocalPath(lazPointCloud)) {
             console.log("No reference to LAZ point cloud found, uploading local files to cloud");
-            const id = await realityDataService.uploadRealityData(lazPointCloud, lazName, RealityDataType.LAZ, projectId);
+            const id = await realityDataService.uploadRealityData(lazPointCloud, lazName, RealityDataType.LAZ, iTwinId);
             references.addReference(lazPointCloud, id);
         }
 
@@ -80,7 +83,7 @@ async function main() {
 
         console.log("Settings created");
 
-        const jobId = await realityConversionService.createJob(settings, jobName, projectId);
+        const jobId = await realityConversionService.createJob(settings, jobName, iTwinId);
         console.log("Job created");
 
         await realityConversionService.submitJob(jobId);
@@ -114,7 +117,7 @@ async function main() {
         console.log("Downloading outputs");
         const opc = properties.settings.outputs.opc as string[];
         if(opc.length > 0) {
-            await realityDataService.downloadRealityData(opc[0], outputPath, projectId);
+            await realityDataService.downloadRealityData(opc[0], outputPath, iTwinId);
             console.log("Successfully downloaded output");
         }
     }
@@ -123,4 +126,4 @@ async function main() {
     }
 }
 
-main();
+runConversionexample();

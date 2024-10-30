@@ -43,3 +43,4 @@ Stores the local path and cloud id of each uploaded data. When uploading a new r
 
 ## Usage example
 
+An example is available to show how to upload local data and download reality data. See [Reality Reality data example](./../../examples/code-samples/src/DataTransfer.ts)
