@@ -62,6 +62,7 @@ export function TabMenu(props: TabMenu) {
                 <Tab key={1} label="CCS" startIcon={<SvgRealityMesh />} />,
                 <Tab key={2} label="Data Transfer" startIcon={<SvgUpload />} />,
                 <Tab key={3} label="2D viewer" startIcon={<Svg2D />} />,
+                //<Tab key={4} label="3D viewer" startIcon={<Svg3D />} />,
             ]}
             onTabSelected={setTabIndex}
             type="borderless">
