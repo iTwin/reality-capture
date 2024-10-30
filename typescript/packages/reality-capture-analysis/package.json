@@ -31,7 +31,7 @@
     "axios": "^1.7.4"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^4.6.0",
+    "@itwin/build-tools": "^4.0.0",
     "@itwin/reality-capture-common": "workspace:*",
     "@itwin/reality-data-client": "workspace:*",
     "@itwin/reality-data-transfer": "workspace:*",
