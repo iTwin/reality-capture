@@ -35,7 +35,7 @@
     "@itwin/reality-capture-common": "workspace:*",
     "@itwin/reality-data-client": "workspace:*",
     "@itwin/reality-data-transfer": "workspace:*",
-    "@itwin/service-authorization": "^1.2.0",
+    "@itwin/service-authorization": "^1.0.0",
     "@types/chai": "^4.3.3",
     "@types/chai-as-promised": "^7.1.5",
     "@types/mocha": "^10.0.0",

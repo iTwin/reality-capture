@@ -37,13 +37,13 @@
   "license": "MIT",
   "dependencies": {
     "@azure/abort-controller": "^1.1.0",
-    "@azure/storage-blob": "^12.25.0",
+    "@azure/storage-blob": "^12.8.0",
     "@itwin/reality-capture-common": "workspace:*",
     "@itwin/reality-data-client": "workspace:*",
-    "@xmldom/xmldom": "^0.9.5"
+    "@xmldom/xmldom": "^0.8.6"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^4.6.0",
+    "@itwin/build-tools": "^4.0.0",
     "@types/chai": "^4.3.3",
     "@types/chai-as-promised": "^7.1.5",
     "@types/mocha": "^10.0.0",
@@ -57,6 +57,6 @@
     "mocha": "^10.1.0",
     "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
-    "typescript": "^5.0.0"
+    "typescript": "^4.5.1"
   }
 }
