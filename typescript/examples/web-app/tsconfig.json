@@ -1,11 +1,10 @@
 {
   "extends": "./node_modules/@itwin/build-tools/tsconfig-base.json",
   "compilerOptions": {
-    "declaration": false,
-    "declarationMap": false,
-    "outDir": "./lib",
-    "jsx": "react",
     "allowJs": true,
+    "checkJs": true,
+    "esModuleInterop": true,
+    "jsx": "react",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "lib": [
@@ -13,7 +12,9 @@
       "dom.iterable",
       "esnext"
     ],
-    "strict": true
+    "outDir": "./lib",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
   },
   "include": [
     "./src/**/*.ts",

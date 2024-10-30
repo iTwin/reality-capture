@@ -32,7 +32,7 @@ export function ContextCapture(props: CcProps) {
     const contextCaptureService = React.useRef() as MutableRefObject<ContextCaptureService>;
 
     const initCc = useCallback(async () => {
-        const prefix = process.env.IMJS_URL_PREFIX ?? "";
+        const prefix = import.meta.env.IMJS_URL_PREFIX ?? "";
         contextCaptureService.current = new ContextCaptureService(props.authorizationClient.getAccessToken.bind(props.authorizationClient), prefix);
     }, []);
 
@@ -49,7 +49,7 @@ export function ContextCapture(props: CcProps) {
         settings.outputs.cesium3DTiles = "cesium3DTiles";
 
         const workspaceId = await contextCaptureService.current.createWorkspace(jobName + " workspace", 
-            process.env.IMJS_PROJECT_ID!);
+            import.meta.env.IMJS_PROJECT_ID!);
         const id = await contextCaptureService.current.createJob(CCJobType.FULL, settings, jobName, workspaceId);
         await contextCaptureService.current.submitJob(id);
         setJobId(id);
