@@ -31,6 +31,6 @@
     "@itwin/build-tools": "^4.0.0",
     "eslint": "^8.19.0",
     "rimraf": "^6.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "~5.1.0"
   }
 }
