@@ -111,7 +111,7 @@ export class ITwinRealityData implements RealityData {
    * Creates an instance of RealityData.
    * @beta
    */
-  public constructor(client: RealityDataAccessClient, realityData?: any | undefined, iTwinId?: any | undefined) {
+  public constructor(client: RealityDataAccessClient, realityData?: ITwinRealityData | undefined, iTwinId?: string | undefined) {
 
     this.client = client!;
     this._containerCache = new ContainerCache();
@@ -126,9 +126,9 @@ export class ITwinRealityData implements RealityData {
       this.rootDocument = realityData.rootDocument;
       this.tags = realityData.tags;
       if (realityData.acquisition) {
-        this.acquisition = (realityData.acquisition as Acquisition);
-        this.acquisition.startDateTime = new Date(realityData.acquisition.startDateTime);
-        this.acquisition.endDateTime = realityData.acquisition.endDateTime ? new Date(realityData.acquisition.endDateTime) : undefined;
+        this.acquisition = realityData.acquisition;
+        this.acquisition.startDateTime = realityData.acquisition.startDateTime;
+        this.acquisition.endDateTime = realityData.acquisition.endDateTime ? realityData.acquisition.endDateTime : undefined;
         this.acquisition.acquirer = realityData.acquisition.acquirer ? realityData.acquisition.acquirer : undefined;
       }
       this.size = realityData.size;
@@ -138,9 +138,9 @@ export class ITwinRealityData implements RealityData {
       this.extent = realityData.extent;
       // eslint-disable-next-line deprecation/deprecation
       this.accessControl = realityData.accessControl;
-      this.modifiedDateTime = new Date(realityData.modifiedDateTime);
-      this.lastAccessedDateTime = new Date(realityData.lastAccessedDateTime);
-      this.createdDateTime = new Date(realityData.createdDateTime);
+      this.modifiedDateTime = realityData.modifiedDateTime;
+      this.lastAccessedDateTime = realityData.lastAccessedDateTime;
+      this.createdDateTime = realityData.createdDateTime;
     }
 
     if (iTwinId)
