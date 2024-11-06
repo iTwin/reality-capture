@@ -30,7 +30,7 @@ const clientsLib = path.resolve(__dirname, "../../../lib/cjs");
 function createConfig(shouldInstrument) {
   const config = {
     mode: "development",
-    entry: glob.sync(path.resolve(clientsLib, "test/**/*.test.js")),
+    entry: glob.sync(path.resolve(clientsLib, "test/**/*.test.js").replace(/\\/g, '/')),
     output: {
       path: path.resolve(clientsLib, "test/webpack/"),
       filename: "bundled-tests.js",
