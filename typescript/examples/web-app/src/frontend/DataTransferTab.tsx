@@ -52,7 +52,7 @@ export function Rds(props: RdsProps) {
     const realityDataTransfer = React.useRef() as MutableRefObject<RealityDataTransferBrowser>;
 
     const initRds = useCallback(async () => {
-        let prefix = process.env.IMJS_URL_PREFIX ?? "";
+        let prefix = import.meta.env.IMJS_URL_PREFIX ?? "";
         if(prefix === "dev-")
             prefix = "qa-";
         
@@ -212,7 +212,7 @@ export function Rds(props: RdsProps) {
         }
 
         const realityDataId = await realityDataTransfer.current.uploadRealityDataBrowser(filesToUpload, uploadedDataType, uploadedDataName,
-            process.env.IMJS_PROJECT_ID!, rootDocumentName.length > 0 ? rootDocumentName : undefined, 
+            import.meta.env.IMJS_PROJECT_ID!, rootDocumentName.length > 0 ? rootDocumentName : undefined, 
             props.useReferenceTable === true ? props.referenceTable : undefined);
         
         if(realityDataId)
@@ -232,7 +232,7 @@ export function Rds(props: RdsProps) {
     };
 
     const onDownloadFiles = async (): Promise<void> => {
-        await realityDataTransfer.current.downloadRealityDataBrowser(downloadId, process.env.IMJS_PROJECT_ID ?? "", props.useReferenceTable === 
+        await realityDataTransfer.current.downloadRealityDataBrowser(downloadId, import.meta.env.IMJS_PROJECT_ID ?? "", props.useReferenceTable === 
             true ? props.referenceTable : undefined);
         setDownloadProgress(100);
     };

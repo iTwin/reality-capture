@@ -8,11 +8,11 @@
     "clean": "rimraf lib build .rush",
     "lint": "eslint ./src --ext .ts,.tsx ",
     "lint-fix": "eslint ./src --fix --ext .ts,.tsx",
-    "start-cc-example": "node ./lib/ContextCapture.js",
-    "start-l3d-example": "node ./lib/Lines3D.js",
-    "start-o2d-example": "node ./lib/Objects2D.js",
+    "start-modeling-example": "node ./lib/Modeling.js",
     "start-data-example": "node ./lib/DataTransfer.js",
+    "start-o2d-example": "node ./lib/Objects2D.js",
     "start-rcs-example": "node ./lib/RealityConversion.js",
+    "start-s2d-example": "node ./lib/Segmentation2D.js",
     "coverage": "",
     "integration-tests": ""
   },
@@ -38,7 +38,7 @@
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "@typescript-eslint/parser": "^5.30.6",
     "eslint": "^8.19.0",
-    "rimraf": "^3.0.2",
+    "rimraf": "^3.0.0",
     "typescript": "^5.0.0"
   }
 }

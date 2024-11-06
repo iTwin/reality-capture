@@ -5,7 +5,7 @@
 
 import React from "react";
 import { Viewer2D } from "./Viewer2D";
-import { Viewer3D } from "./Viewer3D";
+//import { Viewer3D } from "./Viewer3D";
 import "./App.css";
 import { Tab, Tabs } from "@itwin/itwinui-react";
 import { Rds } from "./DataTransferTab";
@@ -41,14 +41,14 @@ export function TabMenu(props: TabMenu) {
         case 1:
             return <ContextCapture realityDataAccessClient={props.realityDataAccessClient} authorizationClient={props.authorizationClient}/>;
         case 2:
-            return <Viewer2D realityDataAccessClient={props.realityDataAccessClient}/>;
-        case 3:
-            return <Viewer3D realityDataAccessClient={props.realityDataAccessClient} 
-                authClient={props.authorizationClient}/>;
-        case 4:
             return <Rds referenceTable={referenceTable} authorizationClient={props.authorizationClient} onReferenceTableChanged={onReferenceTableChanged} 
                 realityDataAccessClient={props.realityDataAccessClient} useReferenceTable={useReferenceTable} 
                 onUseReferenceTableChanged={onUseReferenceTableChanged} />;
+        case 3:
+            return <Viewer2D realityDataAccessClient={props.realityDataAccessClient}/>;
+        /*case 4:
+            return <Viewer3D realityDataAccessClient={props.realityDataAccessClient} 
+                authClient={props.authorizationClient}/>;*/
         default:
             return <Rdas realityDataAccessClient={props.realityDataAccessClient} authorizationClient={props.authorizationClient}/>;
         }
@@ -60,9 +60,9 @@ export function TabMenu(props: TabMenu) {
             labels={[                
                 <Tab key={0} label="RDAS" startIcon={<SvgProcess />} />,
                 <Tab key={1} label="CCS" startIcon={<SvgRealityMesh />} />,
-                <Tab key={2} label="2D viewer" startIcon={<Svg2D />} />,
-                <Tab key={3} label="3D viewer" startIcon={<Svg3D />} />,
-                <Tab key={4} label="Data Transfer" startIcon={<SvgUpload />} />,
+                <Tab key={2} label="Data Transfer" startIcon={<SvgUpload />} />,
+                <Tab key={3} label="2D viewer" startIcon={<Svg2D />} />,
+                //<Tab key={4} label="3D viewer" startIcon={<Svg3D />} />,
             ]}
             onTabSelected={setTabIndex}
             type="borderless">

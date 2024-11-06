@@ -46,7 +46,7 @@ export function SelectRealityData(props: SelectRealityDataProps) {
         const suggestionNumber = props.suggestionNumber ?? 10;
         setLoading(true);
         do {
-            response = await props.realityDataAccessClient.getRealityDatas("", process.env.IMJS_PROJECT_ID, 
+            response = await props.realityDataAccessClient.getRealityDatas("", import.meta.env.IMJS_PROJECT_ID, 
                 {top: 500, continuationToken: continuationToken ?? undefined});
             continuationToken = response.continuationToken ?? "";
 
