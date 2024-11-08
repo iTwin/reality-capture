@@ -18,3 +18,4 @@ class RDAJobType(Enum):
     ExtractGround = "extractGround"
     EvalS2D = "evalS2D"
     EvalSOrtho = "evalSOrtho"
+    EvalO2D = "evalO2d"
