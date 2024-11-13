@@ -19,3 +19,4 @@ class RDAJobType(Enum):
     EvalS2D = "evalS2D"
     EvalSOrtho = "evalSOrtho"
     EvalO2D = "evalO2d"
+    EvalO3D = "evalO3d"
