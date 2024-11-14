@@ -62,7 +62,7 @@ export function ReferenceManager(props: ReferenceManagerProps) {
         props.referenceTable.entries.forEach((value: string, key: string) => {
             data.push({path: key, id: value});
         });
-        return <Table className="reference-control" columns={[{Header: "Table", columns: columns},]} 
+        return <Table className="reference-control" columns={columns} 
             emptyTableContent={props.useReferenceTable === true ? "No reference." : "Disabled references."}
             data={props.useReferenceTable === true ? data : []} isLoading={isLoading} 
             style={{ width: 900, maxWidth: "50vw", height: 700, maxHeight: "40vh" }}/>;

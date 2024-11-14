@@ -47,9 +47,8 @@ Every change must be tested with proper unit tests.
 
 ### Build Instructions
 
-See sub Readme files in typescript/packages, typescript/examples or python/ for more  information about build instructions.
+See Readme file for more  information about build instructions.
 
-> Note: It is a good idea to `npm install` after each `git pull` as dependencies may have changed.
 ### Making and Testing Changes
 
 1. Make source code changes on a new Git branch

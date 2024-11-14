@@ -9,16 +9,19 @@ import * as fs from "fs";
 import * as dotenv from "dotenv";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
-import { RealityDataTransferNode, ReferenceTableNode } from "@itwin/reality-data-transfer";
+import { RealityDataTransferNode, ReferenceTableNode, defaultProgressHook } from "@itwin/reality-data-transfer";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function runObjects2DExample() {
-    const imageCollection = "path to your image collection";
-    const photoContextScene = "path to the folder where your context scene file is";
+    /**
+     * This example submits an objects2d analysis job, and downloads an annotations context scene
+     */
+    const imageCollection = "path to your images";
+    const photoContextScene = "path to the folder where your context scene file is referenced";
     const photoObjectDetector = "path to the folder where your detector is";
-    const outputPath = "path to the folder where you want to save outputs";
+    const outputPath = "path to the folder where you want to save the annotatations context scene";
 
     dotenv.config();
 
@@ -27,7 +30,7 @@ async function runObjects2DExample() {
     const contextSceneName = "Test Moto Scene";
     const detectorName = "Test O2D Photo Detector";
 
-    const projectId = process.env.IMJS_PROJECT_ID ?? "";
+    const iTwinId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const redirectUrl = process.env.IMJS_REDIRECT_URL ?? "";
     const env = process.env.IMJS_ENV ?? "";
@@ -48,6 +51,9 @@ async function runObjects2DExample() {
     else
         realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
 
+    realityDataService.setUploadHook(defaultProgressHook);
+    realityDataService.setDownloadHook(defaultProgressHook);
+
     let realityDataAnalysisService;
     if(env === "prod")
         realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient));
@@ -57,7 +63,7 @@ async function runObjects2DExample() {
         realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient), "dev-");
     console.log("Service initialized");
 
-    // Creating reference table and uploading ccimageCollection, contextScene and detector if necessary (not yet on the cloud)
+    // Creating reference table and uploading images, contextScene and detector if necessary (not yet on the cloud)
     const references = new ReferenceTableNode();
     const referencesPath = path.join(outputPath, "test_references_typescript.txt");
     if(fs.existsSync(referencesPath) && fs.lstatSync(referencesPath).isFile()) {
@@ -65,18 +71,18 @@ async function runObjects2DExample() {
         await references.load(referencesPath);
     }
 
-    // Upload CCImageCollection
+    // Upload images
     if(!references.hasLocalPath(imageCollection)) {
-        console.log("No reference to CCimage Collections found, uploading local files to cloud");
+        console.log("No reference to images found, uploading local files to cloud");
         const id = await realityDataService.uploadRealityData(imageCollection, imageCollectionName, 
-            RealityDataType.CC_IMAGE_COLLECTION, projectId);
+            RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
         references.addReference(imageCollection, id);
     }
 
     // Upload ContextScene
     if(!references.hasLocalPath(photoContextScene)) {
         console.log("No reference to ContextScene found, uploading local files to cloud");
-        const id = await realityDataService.uploadContextScene(photoContextScene, contextSceneName, projectId, references);
+        const id = await realityDataService.uploadContextScene(photoContextScene, contextSceneName, iTwinId, references);
         references.addReference(photoContextScene, id);
     }
 
@@ -84,7 +90,7 @@ async function runObjects2DExample() {
     if(!references.hasLocalPath(photoObjectDetector)) {
         console.log("No reference to detector found, uploading local files to cloud");
         const id = await realityDataService.uploadRealityData(photoObjectDetector, detectorName, RealityDataType.CONTEXT_DETECTOR, 
-            projectId);
+            iTwinId);
         references.addReference(photoObjectDetector, id);
     }
 
@@ -97,7 +103,7 @@ async function runObjects2DExample() {
     settings.outputs.objects2D = "objects2D";
     console.log("Settings created");
 
-    const jobId = await realityDataAnalysisService.createJob(settings, jobName, projectId);
+    const jobId = await realityDataAnalysisService.createJob(settings, jobName, iTwinId);
     console.log("Job created");
 
     await realityDataAnalysisService.submitJob(jobId);
@@ -130,7 +136,7 @@ async function runObjects2DExample() {
     const properties = await realityDataAnalysisService.getJobProperties(jobId);
     console.log("Downloading outputs");
     const objects2DId = (properties.settings as O2DJobSettings).outputs.objects2D;
-    realityDataService.downloadContextScene(objects2DId, outputPath, projectId, references);
+    realityDataService.downloadContextScene(objects2DId, outputPath, iTwinId, references);
     console.log("Successfully downloaded output");
 }
 

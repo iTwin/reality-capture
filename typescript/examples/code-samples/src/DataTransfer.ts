@@ -8,15 +8,17 @@ import { RealityDataTransferNode, defaultProgressHook } from "@itwin/reality-dat
 import { RealityDataType } from "@itwin/reality-capture-common";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
-
 async function runRealityDataExample() {
-    const imageCollection = "path to the folder yu want to upload";
+    /**
+     * This example uploads an images folder in the cloud, and downloads it
+     */
+    const images = "path to the images you want to upload";
     const outputPath = "path to the folder where you want to save downloads";
-    const imageCollectionName = "Test Moto Photos";
+    const imagesName = "Test Upload Moto Photos";
 
     dotenv.config();
 
-    const projectId = process.env.IMJS_PROJECT_ID ?? "";
+    const iTwinId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const redirectUrl = process.env.IMJS_REDIRECT_URL ?? "";
     const env = process.env.IMJS_ENV ?? "";
@@ -41,16 +43,15 @@ async function runRealityDataExample() {
     realityDataService.setDownloadHook(defaultProgressHook);
     console.log("Service initialized");
 
-    // Upload CCImageCollection
-    console.log("Uploading CCImagesCollection to cloud");
-    const id = await realityDataService.uploadRealityData(imageCollection, imageCollectionName, 
-        RealityDataType.CC_IMAGE_COLLECTION, projectId);
-    console.log("CCImagesCollection uploaded successfully");
+    // Upload images
+    console.log("Uploading images to cloud");
+    const id = await realityDataService.uploadRealityData(images, imagesName, RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
+    console.log("Images uploaded successfully");
 
-    // Download CCImageCollection
-    console.log("Downloading CCImagesCollection");
-    await realityDataService.downloadRealityData(id, outputPath, projectId);
-    console.log("CCImagesCollection downloaded successfully");
+    // Download images
+    console.log("Downloading images");
+    await realityDataService.downloadRealityData(id, outputPath, iTwinId);
+    console.log("Images downloaded successfully");
 }
 
 runRealityDataExample();

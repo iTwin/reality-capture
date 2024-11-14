@@ -30,7 +30,7 @@ To build and run the source code locally you will need a few things:
 - Build the project
 
   ```sh
-  pnpm run build
+  npm run build
   ```
 
 - Create a new `.env` file, based on `template.env`. Fill in the required fields in the `.env` configuration file.
@@ -40,9 +40,16 @@ To build and run the source code locally you will need a few things:
 
 - Run reality data creation example
   
+- Run context capture example
+  
   ```sh
   cd examples/code-samples
-  npm run start-rd-example
+  npm run start-cc-example
+  ```
+
+  ```sh
+  cd examples/code-samples
+  npm run start-data-example
   ```
 
 - Run 2d objects detection example
@@ -52,16 +59,16 @@ To build and run the source code locally you will need a few things:
   npm run start-o2d-example
   ```
 
-- Run 3d lines detection example
+- Run reality conversion example
   
   ```sh
   cd examples/code-samples
-  npm run start-l3d-example
+  npm run start-rcs-example
   ```
 
-- Run context capture example
+- Run 2d segmentation example
   
   ```sh
   cd examples/code-samples
-  npm run start-cc-example
+  npm run start-s2d-example
   ```

@@ -3,4 +3,6 @@ lib/
 *.nyc_output/
 coverage/
 .env
-
+.idea/
+*.configStore/
+dist/

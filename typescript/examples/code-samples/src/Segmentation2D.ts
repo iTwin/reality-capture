@@ -15,7 +15,10 @@ import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function runSegmentation2DExample() {
-    const imageCollection = "path to your image folder";
+    /**
+     * This example submits an segmentation2d analysis job, and downloads an annotations context scene
+     */
+    const images = "path to your image folder";
     const photosContextScene  = "path to the folder where your context scene file is";
     const photoSegmentationDetector = "path to the folder where your detector is";
     const mesh = "path to the folder where your mesh is";
@@ -25,13 +28,13 @@ async function runSegmentation2DExample() {
     dotenv.config();
 
     const jobName = "S2D job SDK sample";
-    const imageCollectionName = "Test S2D Photos";
+    const imagesName = "Test S2D Photos";
     const photosSceneName = "Test S2D oriented photos";
     const meshName = "Test S2D mesh";
     const contextSceneName = "Test S2D Scene";
     const detectorName = "Test S2D detector";
 
-    const projectId = process.env.IMJS_PROJECT_ID ?? "";
+    const iTwinId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const redirectUrl = process.env.IMJS_REDIRECT_URL ?? "";
     const env = process.env.IMJS_ENV ?? "";
@@ -74,17 +77,16 @@ async function runSegmentation2DExample() {
     }
 
     // Upload CCImageCollection
-    if(!references.hasLocalPath(imageCollection)) {
+    if(!references.hasLocalPath(images)) {
         console.log("No reference to CCimage Collections found, uploading local files to cloud");
-        const id = await realityDataService.uploadRealityData(imageCollection, imageCollectionName, 
-            RealityDataType.CC_IMAGE_COLLECTION, projectId);
-        references.addReference(imageCollection, id);
+        const id = await realityDataService.uploadRealityData(images, imagesName, RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
+        references.addReference(images, id);
     }
 
     // Upload Oriented photos (contextScene)
     if(!references.hasLocalPath(photosContextScene)) {
         console.log("No reference to oriented photos ContextScene found, uploading local files to cloud");
-        const id = await realityDataService.uploadContextScene(photosContextScene, photosSceneName, projectId, references);
+        const id = await realityDataService.uploadContextScene(photosContextScene, photosSceneName, iTwinId, references);
         references.addReference(photosContextScene, id);
     }
 
@@ -92,22 +94,21 @@ async function runSegmentation2DExample() {
     if(!references.hasLocalPath(photoSegmentationDetector)) {
         console.log("No reference to detector found, uploading local files to cloud");
         const id = await realityDataService.uploadRealityData(photoSegmentationDetector, detectorName, RealityDataType.CONTEXT_DETECTOR, 
-            projectId);
+            iTwinId);
         references.addReference(photoSegmentationDetector, id);
     }
 
     // Upload Mesh
     if(!references.hasLocalPath(mesh)) {
         console.log("No reference to mesh found, uploading local files to cloud");
-        const id = await realityDataService.uploadRealityData(mesh, meshName, RealityDataType.THREEMX, 
-            projectId);
+        const id = await realityDataService.uploadRealityData(mesh, meshName, RealityDataType.THREEMX, iTwinId);
         references.addReference(mesh, id);
     }
 
     // Upload Mesh ContextScene
     if(!references.hasLocalPath(meshContextScene)) {
         console.log("No reference to mesh ContextScene found, uploading local files to cloud");
-        const id = await realityDataService.uploadContextScene(meshContextScene, contextSceneName, projectId, references);
+        const id = await realityDataService.uploadContextScene(meshContextScene, contextSceneName, iTwinId, references);
         references.addReference(meshContextScene, id);
     }
 
@@ -123,7 +124,7 @@ async function runSegmentation2DExample() {
 
     console.log("Settings created");
 
-    const jobId = await realityDataAnalysisService.createJob(settings, jobName, projectId);
+    const jobId = await realityDataAnalysisService.createJob(settings, jobName, iTwinId);
     console.log("Job created");
 
     await realityDataAnalysisService.submitJob(jobId);
@@ -156,7 +157,7 @@ async function runSegmentation2DExample() {
     const properties = await realityDataAnalysisService.getJobProperties(jobId);
     console.log("Downloading outputs");
     const lines3dId = (properties.settings as S2DJobSettings).outputs.lines3D;
-    realityDataService.downloadContextScene(lines3dId, outputPath, projectId, references);
+    realityDataService.downloadContextScene(lines3dId, outputPath, iTwinId, references);
     console.log("Successfully downloaded output");
 }
 

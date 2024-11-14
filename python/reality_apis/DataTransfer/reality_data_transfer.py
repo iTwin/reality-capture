@@ -158,7 +158,6 @@ class RealityDataTransfer:
             headers=self._get_header())
         try:
             data_json = response.json()
-            print(data_json)
             if response.status_code < 200 or response.status_code >= 400:
                 return ReturnValue(value=False, error=self._error_msg(response.status_code, data_json))
             sas_uri = data_json["_links"]["containerUrl"]["href"]
