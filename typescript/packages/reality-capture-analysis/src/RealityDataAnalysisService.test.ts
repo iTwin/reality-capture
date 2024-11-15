@@ -370,8 +370,10 @@ describe("Reality Analysis unit tests", () => {
                     },
                     outputs: {
                         exportedLocations3DSHP: "",
+                        exportedLocations3DGeoJSON: "",
                         exportedObjects3DCesium: "",
                         exportedObjects3DDGN: "",
+                        exportedObjects3DGeoJSON: "",
                         objects2D: "objects2DId",
                         objects3D: ""
                     },
