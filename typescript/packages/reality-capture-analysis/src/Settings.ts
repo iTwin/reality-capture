@@ -70,8 +70,12 @@ class O2DOutputs {
     exportedObjects3DDGN: string;
     /** Cesium 3D Tiles file export with 3D objects. */
     exportedObjects3DCesium: string;
+    /** GeoJSON file export with 3D objects. */
+    exportedObjects3DGeoJSON: string;
     /** ESRI SHP file export with locations of the 3D objects. */
     exportedLocations3DSHP: string;
+    /** GeoJSON file export with locations of the 3D objects. */
+    exportedLocations3DGeoJSON: string;
 
     constructor() {
         /**
@@ -95,10 +99,20 @@ class O2DOutputs {
          */
         this.exportedObjects3DCesium = "";
         /**
+         * GeoJSON file export with 3D objects.
+         * @type {string}
+         */
+        this.exportedObjects3DGeoJSON = "";
+        /**
          * ESRI SHP file export with locations of the 3D objects.
          * @type {string}
          */
         this.exportedLocations3DSHP = "";
+        /**
+         * GeoJSON file export with locations of the 3D objects.
+         * @type {string}
+         */
+        this.exportedLocations3DGeoJSON = "";
     }
 }
 
@@ -212,8 +226,14 @@ export class O2DJobSettings {
         if (this.outputs.exportedObjects3DCesium)
             json["outputs"].push("exportedObjects3DCesium");
 
+        if (this.outputs.exportedObjects3DGeoJSON)
+            json["outputs"].push("exportedObjects3DGeoJSON");
+
         if (this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
+
+        if (this.outputs.exportedLocations3DGeoJSON)
+            json["outputs"].push("exportedLocations3DGeoJSON");
 
         json["options"] = {};
         if (this.options.useTiePoints)
@@ -263,8 +283,12 @@ export class O2DJobSettings {
                 newJobSettings.outputs.exportedObjects3DDGN = output["id"];
             else if (output["type"] === "exportedObjects3DCesium")
                 newJobSettings.outputs.exportedObjects3DCesium = output["id"];
+            else if (output["type"] === "exportedObjects3DGeoJSON")
+                newJobSettings.outputs.exportedObjects3DGeoJSON = output["id"];
             else if (output["type"] === "exportedLocations3DSHP")
                 newJobSettings.outputs.exportedLocations3DSHP = output["id"];
+            else if (output["type"] === "exportedLocations3DGeoJSON")
+                newJobSettings.outputs.exportedLocations3DGeoJSON = output["id"];
             else
                 return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
@@ -342,12 +366,16 @@ class S2DOutputs {
     exportedLines3DDGN: string;
     /** Cesium 3D Tiles file export with 3D lines. */
     exportedLines3DCesium: string;
+    /** GeoJSON file export with 3D lines. */
+    exportedLines3DGeoJSON: string;
     /** Detected polygons. */
     polygons3D: string;
     /** DGN file export with polygons. */
     exportedPolygons3DDGN: string;
     /** Cesium 3D Tiles file export with 3D polygons. */
     exportedPolygons3DCesium: string;
+    /** GeoJSON file export with 3D polygons. */
+    exportedPolygons3DGeoJSON: string;
 
     constructor() {
         /**
@@ -376,6 +404,11 @@ class S2DOutputs {
          */
         this.exportedLines3DCesium = "";
         /**
+         * GeoJSON file export with 3D lines.
+         * @type {string}
+         */
+        this.exportedLines3DGeoJSON = "";
+        /**
          * Detected polygons.
          * @type {string}
          */
@@ -390,6 +423,11 @@ class S2DOutputs {
          * @type {string}
          */
         this.exportedPolygons3DCesium = "";
+        /**
+         * GeoJSON file export with 3D polygons.
+         * @type {string}
+         */
+        this.exportedPolygons3DGeoJSON = "";
     }
 }
 
@@ -510,11 +548,17 @@ export class S2DJobSettings {
         if(this.outputs.exportedPolygons3DCesium)
             json["outputs"].push("exportedPolygons3DCesium");
 
+        if(this.outputs.exportedPolygons3DGeoJSON)
+            json["outputs"].push("exportedPolygons3DGeoJSON");
+
         if(this.outputs.exportedLines3DCesium)
             json["outputs"].push("exportedLines3DCesium");
 
         if(this.outputs.exportedLines3DDGN)
             json["outputs"].push("exportedLines3DDGN");
+
+        if(this.outputs.exportedLines3DGeoJSON)
+            json["outputs"].push("exportedLines3DGeoJSON");
 
         json["options"] = {};
         if (this.options.computeLineWidth)
@@ -568,10 +612,14 @@ export class S2DJobSettings {
                 newJobSettings.outputs.exportedPolygons3DDGN = output["id"];
             else if(output["type"] === "exportedPolygons3DCesium")
                 newJobSettings.outputs.exportedPolygons3DCesium = output["id"];
+            else if(output["type"] === "exportedPolygons3DGeoJSON")
+                newJobSettings.outputs.exportedPolygons3DGeoJSON = output["id"];
             else if(output["type"] === "exportedLines3DDGN")
                 newJobSettings.outputs.exportedLines3DDGN = output["id"];
             else if(output["type"] === "exportedLines3DCesium")
                 newJobSettings.outputs.exportedLines3DCesium = output["id"];
+            else if(output["type"] === "exportedLines3DGeoJSON")
+                newJobSettings.outputs.exportedLines3DGeoJSON = output["id"];
             else
                 return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
@@ -626,12 +674,16 @@ class SOrthoOutputs {
     polygons2D: string;
     /** 2D polygons exported to ESRI shapefile. */
     exportedPolygons2DSHP: string;
+    /** 2D polygons exported to GeoJSON file. */
+    exportedPolygons2DGeoJSON: string;
     /** Detected 2D lines. */
     lines2D: string;
     /** 2D lines exported to ESRI shapefile. */
     exportedLines2DSHP: string;
     /** 2D lines exported to DGN file. */
     exportedLines2DDGN: string;
+    /** 2D lines exported to GeoJSON file. */
+    exportedLines2DGeoJSON: string;
 
     constructor() {
         /**
@@ -655,6 +707,11 @@ class SOrthoOutputs {
          */
         this.exportedPolygons2DSHP = "";
         /**
+         * 2D polygons exported to GeoJSON file.
+         * @type {string}
+         */
+        this.exportedPolygons2DGeoJSON = "";
+        /**
          * Detected 2D lines.
          * @type {string}
          */
@@ -669,6 +726,11 @@ class SOrthoOutputs {
          * @type {string}
          */
         this.exportedLines2DDGN = "";
+        /**
+         * 2D lines exported to GeoJSON file.
+         * @type {string}
+         */
+        this.exportedLines2DGeoJSON = "";
     }
 }
 
@@ -733,11 +795,17 @@ export class SOrthoJobSettings {
         if(this.outputs.exportedPolygons2DSHP)
             json["outputs"].push("exportedPolygons2DSHP");
 
+        if(this.outputs.exportedPolygons2DGeoJSON)
+            json["outputs"].push("exportedPolygons2DGeoJSON");
+
         if(this.outputs.exportedLines2DSHP)
             json["outputs"].push("exportedLines2DSHP");
 
         if(this.outputs.exportedLines2DDGN)
             json["outputs"].push("exportedLines2DDGN");
+
+        if(this.outputs.exportedLines2DGeoJSON)
+            json["outputs"].push("exportedLines2DGeoJSON");
 
         return json;
     }
@@ -770,10 +838,14 @@ export class SOrthoJobSettings {
                 newJobSettings.outputs.lines2D = output["id"];
             else if(output["type"] === "exportedPolygons2DSHP")
                 newJobSettings.outputs.exportedPolygons2DSHP = output["id"];
+            else if(output["type"] === "exportedPolygons2DGeoJSON")
+                newJobSettings.outputs.exportedPolygons2DGeoJSON = output["id"];
             else if(output["type"] === "exportedLines2DSHP")
                 newJobSettings.outputs.exportedLines2DSHP = output["id"];
             else if(output["type"] === "exportedLines2DDGN")
                 newJobSettings.outputs.exportedLines2DDGN = output["id"];
+            else if(output["type"] === "exportedLines2DGeoJSON")
+                newJobSettings.outputs.exportedLines2DGeoJSON = output["id"];
             else
                 return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
@@ -848,20 +920,28 @@ class S3DOutputs {
     exportedObjects3DDGN: string;
     /** Cesium 3D Tiles file export with 3D objects. */
     exportedObjects3DCesium: string;
+    /** GeoJSON file export with 3D objects. */
+    exportedObjects3DGeoJSON: string;
     /** ESRI SHP file export with locations of the 3D objects. */
     exportedLocations3DSHP: string;
+    /** GeoJSON file export with locations of the 3D objects. */
+    exportedLocations3DGeoJSON: string;
+    /** Detected 3D lines. */
+    lines3D: string;
     /** DGN file export with 3D lines. */
     exportedLines3DDGN: string;
     /** Cesium 3D Tiles file export with 3D lines. */
     exportedLines3DCesium: string;
+    /** Cesium GeoJSON file export with 3D lines. */
+    exportedLines3DGeoJSON: string;
     /** Detected polygons. */
     polygons3D: string;
     /** DGN file export with polygons. */
     exportedPolygons3DDGN: string;
     /** Cesium 3D Tiles file export with 3D polygons. */
     exportedPolygons3DCesium: string;
-    /** Detected 3D lines. */
-    lines3D: string;
+    /** GeoJSON file export with 3D polygons. */
+    exportedPolygons3DGeoJSON: string;
 
     constructor() {
         /**
@@ -910,10 +990,25 @@ class S3DOutputs {
          */
         this.exportedObjects3DCesium = "";
         /**
+         * GeoJSON file export with 3D objects.
+         * @type {string}
+         */
+        this.exportedObjects3DGeoJSON = "";
+        /**
          * ESRI SHP file export with locations of the 3D objects.
          * @type {string}
          */
         this.exportedLocations3DSHP = "";
+        /**
+         * GeoJSON file export with locations of the 3D objects.
+         * @type {string}
+         */
+        this.exportedLocations3DGeoJSON = "";
+        /**
+         * Detected 3D lines.
+         * @type {string}
+         */
+        this.lines3D = "";
         /**
          * DGN file export with 3D lines.
          * @type {string}
@@ -924,6 +1019,11 @@ class S3DOutputs {
          * @type {string}
          */
         this.exportedLines3DCesium = "";
+        /**
+         * GeoJSON file export with 3D lines.
+         * @type {string}
+         */
+        this.exportedLines3DGeoJSON = "";
         /**
          * Detected polygons.
          * @type {string}
@@ -940,10 +1040,10 @@ class S3DOutputs {
          */
         this.exportedPolygons3DCesium = "";
         /**
-         * Detected 3D lines.
+         * GeoJSON file export with 3D polygons.
          * @type {string}
          */
-        this.lines3D = "";
+        this.exportedPolygons3DGeoJSON = "";
     }
 }
 
@@ -1074,14 +1174,23 @@ export class S3DJobSettings {
         if (this.outputs.exportedObjects3DCesium)
             json["outputs"].push("exportedObjects3DCesium");
 
+        if (this.outputs.exportedObjects3DGeoJSON)
+            json["outputs"].push("exportedObjects3DGeoJSON");
+
         if (this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
+
+        if (this.outputs.exportedLocations3DGeoJSON)
+            json["outputs"].push("exportedLocations3DGeoJSON");
 
         if (this.outputs.exportedLines3DDGN)
             json["outputs"].push("exportedLines3DDGN");
 
         if (this.outputs.exportedLines3DCesium)
             json["outputs"].push("exportedLines3DCesium");
+
+        if (this.outputs.exportedLines3DGeoJSON)
+            json["outputs"].push("exportedLines3DGeoJSON");
 
         if (this.outputs.polygons3D)
             json["outputs"].push("polygons3D");
@@ -1094,6 +1203,9 @@ export class S3DJobSettings {
 
         if (this.outputs.exportedPolygons3DCesium)
             json["outputs"].push("exportedPolygons3DCesium");
+
+        if (this.outputs.exportedPolygons3DGeoJSON)
+            json["outputs"].push("exportedPolygons3DGeoJSON");
         
         json["options"] = {};
         if (this.options.exportSrs)
@@ -1153,12 +1265,18 @@ export class S3DJobSettings {
                 newJobSettings.outputs.exportedObjects3DDGN = output["id"];
             else if (output["type"] === "exportedObjects3DCesium")
                 newJobSettings.outputs.exportedObjects3DCesium = output["id"];
+            else if (output["type"] === "exportedObjects3DGeoJSON")
+                newJobSettings.outputs.exportedObjects3DGeoJSON = output["id"];
             else if (output["type"] === "exportedLocations3DSHP")
                 newJobSettings.outputs.exportedLocations3DSHP = output["id"];
+            else if (output["type"] === "exportedLocations3DGeoJSON")
+                newJobSettings.outputs.exportedLocations3DGeoJSON = output["id"];
             else if (output["type"] === "exportedLines3DDGN")
                 newJobSettings.outputs.exportedLines3DDGN = output["id"];
             else if (output["type"] === "exportedLines3DCesium")
                 newJobSettings.outputs.exportedLines3DCesium = output["id"];
+            else if (output["type"] === "exportedLines3DGeoJSON")
+                newJobSettings.outputs.exportedLines3DGeoJSON = output["id"];
             else if (output["type"] === "polygons3D")
                 newJobSettings.outputs.polygons3D = output["id"];
             else if (output["type"] === "lines3D")
@@ -1167,6 +1285,8 @@ export class S3DJobSettings {
                 newJobSettings.outputs.exportedPolygons3DDGN = output["id"];
             else if (output["type"] === "exportedPolygons3DCesium")
                 newJobSettings.outputs.exportedPolygons3DCesium = output["id"];
+            else if (output["type"] === "exportedPolygons3DGeoJSON")
+                newJobSettings.outputs.exportedPolygons3DGeoJSON = output["id"];
             else
                 return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
@@ -1458,6 +1578,8 @@ class ChangeDetectionOutputs {
     objects3D: string;
     /** ESRI SHP file export with locations of regions with changes. */
     exportedLocations3DSHP: string;
+    /** GeoJSON file export with locations of regions with changes. */
+    exportedLocations3DGeoJSON: string;
 
     constructor() {
         /**
@@ -1470,6 +1592,11 @@ class ChangeDetectionOutputs {
          * @type {string}
          */
         this.exportedLocations3DSHP = "";
+        /**
+         * GeoJSON file export with locations of regions with changes.
+         * @type {string}
+         */
+        this.exportedLocations3DGeoJSON = "";
     }
 }
 
@@ -1597,6 +1724,9 @@ export class ChangeDetectionJobSettings {
         if (this.outputs.exportedLocations3DSHP)
             json["outputs"].push("exportedLocations3DSHP");
 
+        if (this.outputs.exportedLocations3DGeoJSON)
+            json["outputs"].push("exportedLocations3DGeoJSON");
+
         json["options"] = {};
         if (this.options.colorThresholdLow)
             json["options"]["colorThresholdLow"] = this.options.colorThresholdLow.toString();
@@ -1648,6 +1778,8 @@ export class ChangeDetectionJobSettings {
                 newJobSettings.outputs.objects3D = output["id"];
             else if (output["type"] === "exportedLocations3DSHP")
                 newJobSettings.outputs.exportedLocations3DSHP = output["id"];
+            else if (output["type"] === "exportedLocations3DGeoJSON")
+                newJobSettings.outputs.exportedLocations3DGeoJSON = output["id"];
             else
                 return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
