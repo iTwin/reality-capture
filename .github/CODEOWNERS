@@ -4,13 +4,13 @@
  
 python/ @arianacarnielli @dbiguenet @RenaudKeriven
  
-typescript/packages/reality-capture-analysis/ @dbiguenet @RenaudKeriven
-typescript/packages/reality-capture-common/ @dbiguenet @RenaudKeriven
-typescript/packages/reality-capture-conversion/ @dbiguenet @RenaudKeriven
-typescript/packages/reality-capture-modeling/ @dbiguenet @RenaudKeriven
+typescript/packages/reality-capture-analysis/ @dbiguenet @RenaudKeriven @arianacarnielli
+typescript/packages/reality-capture-common/ @dbiguenet @RenaudKeriven @arianacarnielli
+typescript/packages/reality-capture-conversion/ @dbiguenet @RenaudKeriven @arianacarnielli
+typescript/packages/reality-capture-modeling/ @dbiguenet @RenaudKeriven @arianacarnielli
  
 # https://developer.bentley.com/apis/reality-management/overview/
 typescript/packages/reality-data-client/ @mcote01 @MarcBedard8
  
 # not an actual reality capture api
-typescript/packages/reality-data-transfer/ @dbiguenet @RenaudKeriven
+typescript/packages/reality-data-transfer/ @dbiguenet @RenaudKeriven @arianacarnielli
