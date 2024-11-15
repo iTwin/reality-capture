@@ -2,6 +2,21 @@
   "name": "@itwin/reality-capture-analysis",
   "entries": [
     {
+      "date": "Thu, 07 Nov 2024 14:16:10 GMT",
+      "version": "1.1.0",
+      "tag": "@itwin/reality-capture-analysis_v1.1.0",
+      "comments": {
+        "none": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-capture-analysis",
+            "commit": "5396b814e5640bf45929cf9bf6e99a1961eb7752",
+            "comment": "Fix contributing.md, readme.md and typescript dep version"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 04 Apr 2024 07:42:20 GMT",
       "version": "1.1.0",
       "tag": "@itwin/reality-capture-analysis_v1.1.0",

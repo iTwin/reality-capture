@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Update typescript version from v4 to v5",
-  "packageName": "@itwin/reality-data-client",
-  "email": "110406974+dbiguenet@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

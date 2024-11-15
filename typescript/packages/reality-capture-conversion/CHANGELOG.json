@@ -2,6 +2,21 @@
   "name": "@itwin/reality-capture-conversion",
   "entries": [
     {
+      "date": "Thu, 07 Nov 2024 14:16:10 GMT",
+      "version": "1.0.1",
+      "tag": "@itwin/reality-capture-conversion_v1.0.1",
+      "comments": {
+        "none": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-capture-conversion",
+            "commit": "5396b814e5640bf45929cf9bf6e99a1961eb7752",
+            "comment": "Fix contributing.md, readme.md and typescript dep version"
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 27 Feb 2024 10:50:42 GMT",
       "version": "1.0.1",
       "tag": "@itwin/reality-capture-conversion_v1.0.1",
