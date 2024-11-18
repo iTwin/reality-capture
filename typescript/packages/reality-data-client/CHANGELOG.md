@@ -1,8 +1,16 @@
 # Change Log - @itwin/reality-data-client
 
-This log was last generated on Wed, 28 Feb 2024 14:48:34 GMT and should not be manually modified.
+<!-- This log was last generated on Thu, 07 Nov 2024 14:16:10 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 1.2.2
+
+Thu, 07 Nov 2024 14:16:10 GMT
+
+### Patches
+
+- Update typescript version from v4 to v5 (110406974+dbiguenet@users.noreply.github.com)
 
 ## 1.2.1
 
