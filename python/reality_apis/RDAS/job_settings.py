@@ -1157,6 +1157,8 @@ class S3DJobSettings:
             json_dict["options"]["removeSmallComponents"] = str(self.options.remove_small_components)
         if self.options.save_confidence:
             json_dict["options"]["saveConfidence"] = "true"
+        if self.options.keep_input_resolution:
+            json_dict["options"]["keepInputResolution"] = "true"
         if self.options.export_srs:
             json_dict["options"]["exportSrs"] = self.options.export_srs
 
@@ -1261,6 +1263,8 @@ class S3DJobSettings:
                 options = settings_json["options"]
                 if "saveConfidence" in options:
                     new_job_settings.options.save_confidence = bool(options["saveConfidence"])
+                if "keepInputResolution" in options:
+                    new_job_settings.options.keep_input_resolution = bool(options["keepInputResolution"])
                 if "computeLineWidth" in options:
                     new_job_settings.options.compute_line_width = bool(
                         options["computeLineWidth"]
@@ -1341,6 +1345,7 @@ class S3DJobSettings:
 
         Attributes:
             save_confidence: If confidence is saved in 3D segmentation files or not.
+            keep_input_resolution: To have the exact same points in segmentation result.
             compute_line_width: Estimation 3D line width at each vertex.
             remove_small_components: Remove 3D lines with total length smaller than this value.
             export_srs: SRS used by exports.
@@ -1348,6 +1353,7 @@ class S3DJobSettings:
 
         def __init__(self) -> None:
             self.save_confidence: bool = False
+            self.keep_input_resolution: bool = False
             self.compute_line_width: bool = False
             self.remove_small_components: float = 0.0
             self.export_srs: str = ""
