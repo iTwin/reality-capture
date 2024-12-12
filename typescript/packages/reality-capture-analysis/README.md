@@ -55,4 +55,4 @@ Contains all the provided job properties, such as name, id, settings...
 
 ## Usage example
 
-An example is available to show how to create jobs and get its results. See [Reality Analysis O2D example](./../../examples/code-samples/src/Objects2D.ts) and [Reality Analysis L3D example](./../../examples/code-samples/src/Lines3D.ts)
+An example is available to show how to create jobs and get its results. See [Reality Analysis O2D example](./../../examples/code-samples/src/Objects2D.ts) and [Reality Analysis S2D example](./../../examples/code-samples/src/Segmentation2D.ts)

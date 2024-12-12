@@ -5,9 +5,10 @@
 
 import React, { useCallback, useEffect, useMemo } from "react";
 import "./App.css";
-import { ProgressLinear } from "@itwin/itwinui-react";
+import { ProgressLinear, ThemeProvider } from "@itwin/itwinui-react";
 import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 import { RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
+import { access } from "fs";
 import { TabMenu } from "./TabMenu";
 
 export function App() {
@@ -16,18 +17,18 @@ export function App() {
     const authClient = useMemo(
         () =>
             new BrowserAuthorizationClient({
-                scope: process.env.IMJS_AUTHORIZATION_SCOPES ?? "",
-                clientId: process.env.IMJS_AUTHORIZATION_CLIENT_ID ?? "",
-                redirectUri: process.env.IMJS_AUTHORIZATION_REDIRECT_URI ?? "",
+                scope: import.meta.env.IMJS_AUTHORIZATION_SCOPES ?? "",
+                clientId: import.meta.env.IMJS_AUTHORIZATION_CLIENT_ID ?? "",
+                redirectUri: import.meta.env.IMJS_AUTHORIZATION_REDIRECT_URI ?? "",
                 responseType: "code",
-                authority: process.env.IMJS_AUTHORIZATION_ISSUER_URL,
+                authority: import.meta.env.IMJS_AUTHORIZATION_ISSUER_URL,
             }),
         []
     );
 
     const realityDataAccessClient = useMemo(
         (): RealityDataAccessClient => {
-            let prefix = process.env.IMJS_URL_PREFIX ?? "";
+            let prefix = import.meta.env.IMJS_URL_PREFIX ?? "";
             if(prefix === "dev-")
                 prefix = "qa-";
 
@@ -41,27 +42,14 @@ export function App() {
     
     const login = useCallback(async () => {
         try {
-            await authClient.signInSilent();            
+            await authClient.signInSilent();
         } catch {
-            await authClient.signIn();           
+            await authClient.signIn();
         }
         setAccessToken(await authClient.getAccessToken());
     }, [authClient]);
     
     useEffect(() => {
-        // Temporary fix (ResizeObserver - loop limit exceeded)
-        class CalmResizeObserver extends ResizeObserver {
-            constructor(callback: ResizeObserverCallback) {
-                super((entries, observer) => {
-                    requestAnimationFrame(() => {
-                        callback(entries, observer);
-                    });
-                });
-            }
-        }
-          
-        window.ResizeObserver = CalmResizeObserver;
-
         void login();
     }, [login]);
 
@@ -69,11 +57,15 @@ export function App() {
         <div className="App">
             {!accessToken && (
                 <div className="signin-content">
-                    <ProgressLinear indeterminate={true} labels={["Signing in..."]} />
+                    <ThemeProvider theme="light">
+                        <ProgressLinear indeterminate={true} labels={["Signing in..."]} />
+                    </ThemeProvider>
                 </div>
             )}
             {accessToken && (
-                <TabMenu realityDataAccessClient={realityDataAccessClient} authorizationClient={authClient}/>
+                <ThemeProvider theme="light">
+                    <TabMenu realityDataAccessClient={realityDataAccessClient} authorizationClient={authClient}/>
+                </ThemeProvider>
             )}
         </div>
     );

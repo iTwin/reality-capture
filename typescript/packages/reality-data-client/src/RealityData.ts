@@ -111,6 +111,7 @@ export class ITwinRealityData implements RealityData {
    * Creates an instance of RealityData.
    * @beta
    */
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   public constructor(client: RealityDataAccessClient, realityData?: any | undefined, iTwinId?: any | undefined) {
 
     this.client = client!;

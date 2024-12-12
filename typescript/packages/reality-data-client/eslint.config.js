@@ -11,7 +11,7 @@ module.exports = [
     },
     {
       rules: {
-          "@typescript-eslint/no-duplicate-imports": "error",
+          "no-duplicate-imports": "error",
           "@typescript-eslint/consistent-type-imports": "error"
         }
     }

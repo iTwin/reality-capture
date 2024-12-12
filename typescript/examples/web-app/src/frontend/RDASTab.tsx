@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { Button, Input, LabeledInput, ProgressLinear, Select, SelectOption, ToggleSwitch } from "@itwin/itwinui-react";
+import { Button, Input, LabeledInput, ProgressLinear, Select, SelectOption, ThemeProvider, ToggleSwitch } from "@itwin/itwinui-react";
 import React, { ChangeEvent, MutableRefObject, useCallback, useEffect } from "react";
 import "./RDASTab.css";
 import { SelectRealityData } from "./SelectRealityData";
@@ -45,7 +45,7 @@ export function Rdas(props: RdasProps) {
     ];
 
     const initRdas = useCallback(async () => {
-        const prefix = process.env.IMJS_URL_PREFIX ?? "";
+        const prefix = import.meta.env.IMJS_URL_PREFIX ?? "";
         realityDataAnalysisService.current = new RealityDataAnalysisService(props.authorizationClient.getAccessToken.bind(props.authorizationClient), prefix);
     }, []);
     
@@ -87,7 +87,7 @@ export function Rdas(props: RdasProps) {
     const onJobRun = async (): Promise<void> => {
         setPercentage(0);
         setStep("Prepare step");
-        const id = await realityDataAnalysisService.current.createJob(jobSettings, rdasJobName, process.env.IMJS_PROJECT_ID!);
+        const id = await realityDataAnalysisService.current.createJob(jobSettings, rdasJobName, import.meta.env.IMJS_PROJECT_ID!);
         await realityDataAnalysisService.current.submitJob(id);
         setJobId(id);
         let currentStep = JobState.ACTIVE;
@@ -414,7 +414,7 @@ export function Rdas(props: RdasProps) {
     };
 
     return(
-        <div>
+        <>
             <div className="rdas-controls-group">
                 <h2 className="rdas-control">Run RDAS job</h2>
             </div>
@@ -472,6 +472,6 @@ export function Rdas(props: RdasProps) {
                     </div>     
                 </div>
             )}     
-        </div>
+        </>
     );
 }

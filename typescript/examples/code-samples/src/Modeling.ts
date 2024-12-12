@@ -13,8 +13,11 @@ import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-async function main() {
-    const ccImageCollection = "path to your image folder";
+async function runModelingExample() {
+    /**
+     * This example submits a Full Modeling job (Calibration + Reconstruction), and will download the reconstruction output as a 3mx file.
+     */
+    const images = "path to your image folder";
     const ccOrientations = "path to the folder where your ccorientation file is";
     const outputPath = "path to the folder where you want to save outputs";
 
@@ -22,10 +25,10 @@ async function main() {
 
     const jobName = "Reality Modeling job SDK sample";
     const workspaceName = "Reality Modeling test workspace";
-    const ccImageCollectionName = "Reality Modeling test photos";
+    const imagesName = "Reality Modeling test photos";
     const ccOrientationsName = "Reality Modeling test ccorientations";
 
-    const projectId = process.env.IMJS_PROJECT_ID ?? "";
+    const iTwindId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const redirectUrl = process.env.IMJS_REDIRECT_URL ?? "";
     const env = process.env.IMJS_ENV ?? "";
@@ -60,7 +63,7 @@ async function main() {
     console.log("Service initialized");
 
     try {
-        // Creating reference table and uploading ccimageCollection, ccOrientations if necessary (not yet on the cloud)
+        // Creating reference table and uploading images, ccOrientations if necessary (not yet on the cloud)
         const references = new ReferenceTableNode();
         const referencesPath = path.join(outputPath, "test_references_typescript.txt");
         if(fs.existsSync(referencesPath) && fs.lstatSync(referencesPath).isFile()) {
@@ -68,18 +71,18 @@ async function main() {
             await references.load(referencesPath);
         }
 
-        // Upload CCImageCollection
-        if(!references.hasLocalPath(ccImageCollection)) {
-            console.log("No reference to CCimage Collections found, uploading local files to cloud");
-            const id = await realityDataService.uploadRealityData(ccImageCollection, ccImageCollectionName, 
-                RealityDataType.CC_IMAGE_COLLECTION, projectId);
-            references.addReference(ccImageCollection, id);
+        // Upload images
+        if(!references.hasLocalPath(images)) {
+            console.log("No reference to images found, uploading local files to cloud");
+            const id = await realityDataService.uploadRealityData(images, imagesName, 
+                RealityDataType.CC_IMAGE_COLLECTION, iTwindId);
+            references.addReference(images, id);
         }
 
-        // Upload Oriented photos (ccOrientations)
+        // Upload ccOrientations
         if(!references.hasLocalPath(ccOrientations)) {
             console.log("No reference to cc orientations found, uploading local files to cloud");
-            const id = await realityDataService.uploadCCOrientations(ccOrientations, ccOrientationsName, projectId, references);
+            const id = await realityDataService.uploadCCOrientations(ccOrientations, ccOrientationsName, iTwindId, references);
             references.addReference(ccOrientations, id);
         }
 
@@ -87,13 +90,12 @@ async function main() {
         console.log("Checked data upload");
 
         // Create workspace
-        const workspaceId = await contextCaptureService.createWorkspace(workspaceName, projectId);
+        const workspaceId = await contextCaptureService.createWorkspace(workspaceName, iTwindId);
 
         const settings = new CCJobSettings();
-        settings.inputs = [references.getCloudIdFromLocalPath(ccImageCollection), references.getCloudIdFromLocalPath(ccOrientations)];
+        settings.inputs = [references.getCloudIdFromLocalPath(images), references.getCloudIdFromLocalPath(ccOrientations)];
         settings.outputs.threeMX = "threeMX";
-        settings.meshQuality = CCJobQuality.MEDIUM;
-
+        settings.meshQuality = CCJobQuality.DRAFT;
         console.log("Settings created");
 
         const jobId = await contextCaptureService.createJob(CCJobType.FULL, settings, jobName, workspaceId);
@@ -129,7 +131,7 @@ async function main() {
         const properties = await contextCaptureService.getJobProperties(jobId);
         console.log("Downloading outputs");
         const threeMXId = (properties.settings as CCJobSettings).outputs.threeMX;
-        realityDataService.downloadRealityData(threeMXId, outputPath, projectId);
+        realityDataService.downloadRealityData(threeMXId, outputPath, iTwindId);
         console.log("Successfully downloaded output");
     }
     catch(error: any) {
@@ -137,4 +139,4 @@ async function main() {
     }
 }
 
-main();
+runModelingExample();

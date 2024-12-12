@@ -2,6 +2,21 @@
   "name": "@itwin/reality-capture-common",
   "entries": [
     {
+      "date": "Thu, 07 Nov 2024 14:16:10 GMT",
+      "version": "1.0.0",
+      "tag": "@itwin/reality-capture-common_v1.0.0",
+      "comments": {
+        "none": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-capture-common",
+            "commit": "5396b814e5640bf45929cf9bf6e99a1961eb7752",
+            "comment": "Fix contributing.md, readme.md and typescript dep version"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 12 Feb 2024 17:17:32 GMT",
       "version": "1.0.0",
       "tag": "@itwin/reality-capture-common_v1.0.0",

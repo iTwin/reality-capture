@@ -2,6 +2,36 @@
   "name": "@itwin/reality-capture-analysis",
   "entries": [
     {
+      "date": "Fri, 15 Nov 2024 15:16:01 GMT",
+      "version": "1.2.0",
+      "tag": "@itwin/reality-capture-analysis_v1.2.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-capture-analysis",
+            "commit": "bf454eaa0bd4440a1f3f1e6d3681f2ab41082f86",
+            "comment": "Add Geojson exports (#102)"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Thu, 07 Nov 2024 14:16:10 GMT",
+      "version": "1.1.0",
+      "tag": "@itwin/reality-capture-analysis_v1.1.0",
+      "comments": {
+        "none": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-capture-analysis",
+            "commit": "5396b814e5640bf45929cf9bf6e99a1961eb7752",
+            "comment": "Fix contributing.md, readme.md and typescript dep version"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 04 Apr 2024 07:42:20 GMT",
       "version": "1.1.0",
       "tag": "@itwin/reality-capture-analysis_v1.1.0",
