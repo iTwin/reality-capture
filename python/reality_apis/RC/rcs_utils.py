@@ -2,148 +2,11 @@
 # See LICENSE.md in the project root for license terms and full copyright notice.
 
 from __future__ import annotations
-from enum import Enum
-from typing import List, Union, NamedTuple
 
+from typing import NamedTuple
+from reality_apis.RC.rcs_settings import JobSettings, ConversionSettings
+from reality_apis.RC.rcs_enums import RCJobType
 from reality_apis.utils import ReturnValue, JobState, JobDateTime
-
-
-class RCJobType(Enum):
-    """
-    Possible types of Reality Conversion job.
-    """
-    CONVERSION = "Conversion"
-    NONE = "not recognized"
-
-
-class RCJobSettings:
-    """
-    Settings for Reality Conversion jobs.
-
-    Attributes:
-        inputs: Possible inputs for this job. Lists of inputs ids in the cloud, divided by type of data.
-        outputs: Possible outputs for this job. Fill the types of outputs you want for the job with True before passing
-            the settings to create_job.
-        engines: Quantity of engines to be used by the job.
-        merge: If true, all the input files from multiple containers will be merged into one output file. Else output
-            file will be created per input file.
-    """
-
-    def __init__(self) -> None:
-        self.inputs: RCJobSettings.Inputs = self.Inputs()
-        self.outputs: RCJobSettings.Outputs = self.Outputs()
-        self.engines: int = 0
-        self.merge: bool = False
-
-    def to_json(self) -> tuple[dict, dict, dict]:
-        """
-        Transform settings into a tuple of dictionaries compatible with json.
-
-        Returns:
-            Tuple of dictionaries with settings values. First dictionary has inputs, second has outputs and third holds
-            options.
-        """
-
-        inputs_dict = {"inputs": list()}
-
-        for rd_id in self.inputs.LAS:
-            inputs_dict["inputs"].append({"id": rd_id})
-        for rd_id in self.inputs.LAZ:
-            inputs_dict["inputs"].append({"id": rd_id})
-        for rd_id in self.inputs.PLY:
-            inputs_dict["inputs"].append({"id": rd_id})
-        for rd_id in self.inputs.E57:
-            inputs_dict["inputs"].append({"id": rd_id})
-
-        outputs_dict = {"outputs": list()}
-
-        if self.outputs.OPC:
-            outputs_dict["outputs"].append("OPC")
-        if self.outputs.PNTS:
-            outputs_dict["outputs"].append("PNTS")
-
-        options_dict = {"options": {"processingEngines": self.engines, "merge": str(self.merge)}}
-
-        return inputs_dict, outputs_dict, options_dict
-
-    @classmethod
-    def from_json(cls, settings_json: dict) -> ReturnValue[RCJobSettings]:
-        """
-        Transform json received from cloud service into settings.
-
-        Args:
-            settings_json: Dictionary with settings received from cloud service.
-        Returns:
-            New settings.
-        """
-        new_job_settings = cls()
-        try:
-            inputs_json = settings_json.get("inputs", [])
-            for input_dict in inputs_json:
-                if input_dict["type"] == "LAS":
-                    new_job_settings.inputs.LAS.append(input_dict["id"])
-                elif input_dict["type"] == "LAZ":
-                    new_job_settings.inputs.LAZ.append(input_dict["id"])
-                elif input_dict["type"] == "PLY":
-                    new_job_settings.inputs.PLY.append(input_dict["id"])
-                elif input_dict["type"] == "E57":
-                    new_job_settings.inputs.E57.append(input_dict["id"])
-                else:
-                    raise TypeError(
-                        "found non expected input type:" + input_dict["type"]
-                    )
-
-            outputs_json = settings_json.get("outputs", [])
-
-            for output_dict in outputs_json:
-                if output_dict["type"] == "OPC":
-                    new_job_settings.outputs.OPC = []
-                    new_job_settings.outputs.OPC.append(output_dict["id"])
-                elif output_dict["type"] == "PNTS":
-                    new_job_settings.outputs.PNTS = []
-                    new_job_settings.outputs.PNTS.append(output_dict["id"])
-                else:
-                    raise TypeError(
-                        "found non expected output type" + output_dict["type"]
-                    )
-
-            options_json = settings_json.get("options", {})
-            new_job_settings.engines = int(options_json.get("processingEngines", 0))
-            new_job_settings.merge = bool(options_json.get("merge", True))
-
-        except (KeyError, TypeError) as e:
-            return ReturnValue(value=cls(), error=str(e))
-        return ReturnValue(value=new_job_settings, error="")
-
-    class Inputs:
-        """
-        Inputs for a Reality Conversion job.
-
-        Attributes:
-            LAS: A list of paths to LAS files.
-            LAZ: A list of paths to LAZ files.
-            PLY: A list of paths to PLY files.
-            E57: A list of paths to E57 files.
-        """
-
-        def __init__(self) -> None:
-            self.LAS: List[str] = []
-            self.LAZ: List[str] = []
-            self.PLY: List[str] = []
-            self.E57: List[str] = []
-
-    class Outputs:
-        """
-        Outputs for a Reality Conversion job.
-
-        Attributes:
-            OPC: Either a boolean to indicate conversion type or a list of created OPC files ids.
-            PNTS: Either a boolean to indicate conversion type or a list of created PNTS files ids.
-        """
-
-        def __init__(self) -> None:
-            self.OPC: Union[bool, List[str]] = False
-            self.PNTS: Union[bool, List[str]] = False
 
 
 class RCJobCostParameters:
@@ -225,5 +88,5 @@ class RCJobProperties(NamedTuple):
     data_center: str = ""
     iTwin_id: str = ""
     email: str = ""
-    job_settings: RCJobSettings = RCJobSettings()
+    job_settings: JobSettings = ConversionSettings()
     cost_estimation_parameters: RCJobCostParameters = RCJobCostParameters()

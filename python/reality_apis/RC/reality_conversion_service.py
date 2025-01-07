@@ -4,7 +4,9 @@
 import requests
 import json
 
-from reality_apis.RC.rcs_utils import RCJobProperties, RCJobType, RCJobSettings, RCJobCostParameters
+from reality_apis.RC.rcs_utils import RCJobProperties, RCJobType
+from reality_apis.RC.rcs_settings import ConversionSettings, ImportFeaturesSettings
+from reality_apis.RC.rcs_utils import RCJobCostParameters
 from reality_apis.utils import ReturnValue, __version__, JobState, JobDateTime, JobProgress
 
 
@@ -40,7 +42,7 @@ class RealityConversionService:
         message = error.get("message", "")
         return f"code {status_code}: {code}, {message}"
 
-    def create_job(self, settings, job_name, iTwin_id, job_type = RCJobType.CONVERSION) -> ReturnValue[str]:
+    def create_job(self, settings, job_name, iTwin_id) -> ReturnValue[str]:
         """
         Creates a job corresponding to the given settings.
 
@@ -48,21 +50,19 @@ class RealityConversionService:
             settings: Settings for the job.
             job_name: Name of the job.
             iTwin_id: ID of the project.
-            job_type: Type of the job (by default, Conversion)
 
         Returns:
             The ID of the job, and a potential error message.
         """
         # take job_settings and create the json settings we need to send
-        inputs_dict, outputs_dict, options_dict = settings.to_json()
-
+        settings_dict = settings.to_json()
         jc_dict = {
-            "type": job_type.value,
+            "type": settings_dict["type"],
             "name": job_name,
             "iTwinId": iTwin_id,
-            "inputs": inputs_dict["inputs"],
-            "outputs": outputs_dict["outputs"],
-            "options": options_dict["options"]
+            "inputs": settings_dict["inputs"],
+            "outputs": settings_dict["outputs"],
+            "options": settings_dict["options"]
         }
         job_json = json.dumps(jc_dict)
         # send the json settings
@@ -106,7 +106,7 @@ class RealityConversionService:
     def get_job_properties(self, job_id: str) -> ReturnValue[RCJobProperties]:
         """
         Get all properties of a given job.
-        By default this function returns a placeholder empty RCJobProperties if it hasn't succeeded in retrieving job
+        By default, this function returns a placeholder empty RCJobProperties if it hasn't succeeded in retrieving job
         settings. Use is_error() to be sure the return value is valid.
 
         Args:
@@ -144,7 +144,17 @@ class RealityConversionService:
             data_center = data_json["job"].get("dataCenter", "")
             email = data_json["job"].get("email", "")
 
-            job_settings = RCJobSettings.from_json(data_json["job"])
+            job_type_str = data_json["job"].get("type", None)
+            if job_type_str is None:
+                return ReturnValue(value=RCJobProperties(), error="no Job type")
+            if job_type_str == RCJobType.CONVERSION.value:
+                job_settings = ConversionSettings.from_json(data_json["job"])
+            elif job_type_str == RCJobType.IMPORT_FEATURES.value:
+                job_settings = ImportFeaturesSettings.from_json(data_json["job"])
+            else:
+                return ReturnValue(
+                    value=RCJobProperties(), error="Job Type not recognized"
+                )
             if job_settings.is_error():
                 return ReturnValue(value=RCJobProperties(), error=job_settings.error)
 

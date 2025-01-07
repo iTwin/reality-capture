@@ -78,7 +78,6 @@ class RealityDataAnalysisService:
         if "options" in settings_json:
             jc_dict["options"] = settings_json["options"]
         job_json = json.dumps(jc_dict)
-        print(job_json)
         # send the json settings
         response = self._session.post("https://" + self._service_url + "/realitydataanalysis/jobs", job_json,
                                       headers=self._get_header())
