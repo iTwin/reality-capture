@@ -3,8 +3,8 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "reality_apis"
-version = "1.3.0"
+name = "reality_capture"
+version = "2.0.0"
 authors = [
   { name="Bentley Systems" },
 ]
@@ -22,11 +22,18 @@ dependencies = [
     "oauthlib >= 3.2",
     "requests-oauthlib >= 1.3.1",
     "azure-storage-blob >= 12.9",
+    "pydantic >= 2.10.4"
+]
+
+[project.optional-dependencies]
+dev = [
+    "Sphinx >= 8.1.3",
+    "sphinx-rtd-theme >= 3.0.2",
+    "myst-parser >= 4.0.0"
 ]
 
 [tool.setuptools.packages.find]
-exclude = ["reality_apis*docs*"]
-include = ["reality_apis*", "token_factory","contextscene"]
+include = ["src"]
 
 [project.urls]
 "Homepage" = "https://https://github.com/iTwin/reality-apis-samples/tree/main/python"
