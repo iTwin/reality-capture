@@ -37,9 +37,9 @@ class FillImagePropertiesOptions(BaseModel):
 
 
 class FillImagePropertiesSpecifications(BaseModel):
-    inputs: FillImagePropertiesInputs
-    outputs: FillImagePropertiesOutputs
-    options: FillImagePropertiesOptions
+    inputs: FillImagePropertiesInputs = Field(description="Inputs for Fill Image Properties job")
+    outputs: FillImagePropertiesOutputs = Field(description="Outputs for Fill Image Properties job")
+    options: FillImagePropertiesOptions = Field(description="Options for Fill Image Properties job")
 
 
 class FillImagePropertiesOutputsCreate(Enum):
