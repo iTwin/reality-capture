@@ -32,9 +32,6 @@ dev = [
     "myst-parser >= 4.0.0"
 ]
 
-[tool.setuptools.packages.find]
-include = ["src"]
-
 [project.urls]
 "Homepage" = "https://https://github.com/iTwin/reality-apis-samples/tree/main/python"
 "Reality Analysis Api reference" = "https://developer.bentley.com/apis/realitydataanalysis/"
