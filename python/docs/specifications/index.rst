@@ -10,5 +10,6 @@ Specifications regroup all the classes used to interact with our APIs.
 
     fill_image_properties
     import_pc
+    geometry
 
 

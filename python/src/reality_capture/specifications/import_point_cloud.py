@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
-from geometry import BoundingBox, Point3d
+from reality_capture.specifications.geometry import BoundingBox, Point3d
 
 
 class ImportPCInputs(BaseModel):
