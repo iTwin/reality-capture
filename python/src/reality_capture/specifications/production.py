@@ -12,7 +12,7 @@ class ProductionInputs(BaseModel):
 class Format(Enum):
     THREEMX = "ThreeMX"
     THREESM = "ThreeSM"
-    CESIUM_3D_TILES = "Cesium3DTiles"
+    THREED_TILES = "3DTiles"
     OSGB = "OSGB"
     SPACEYES = "SpacEyes"
     OBJ = "OBJ"
@@ -61,9 +61,11 @@ class Options3MX(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color "
                                                                                  "source")
@@ -84,9 +86,11 @@ class Options3SM(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
@@ -102,13 +106,15 @@ class CesiumCompression(Enum):
     DRACO = "Draco"
 
 
-class OptionsCesium(BaseModel):
+class Options3DTiles(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
@@ -124,9 +130,11 @@ class OptionsOSGB(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
@@ -143,9 +151,11 @@ class OptionsSpacEyes(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
@@ -158,13 +168,15 @@ class OptionsSpacEyes(BaseModel):
     disable_lighting: Optional[bool] = Field(None, alias="disableLighting", description="Flag to disable lighting")
 
 
-class OptionsObj(BaseModel):
+class OptionsOBJ(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
@@ -183,9 +195,11 @@ class OptionsS3C(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
@@ -206,9 +220,11 @@ class OptionsI3S(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
@@ -224,9 +240,11 @@ class OptionsLodTreeExport(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
@@ -242,9 +260,11 @@ class OptionsCollada(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
@@ -261,9 +281,11 @@ class OptionsOCP(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
@@ -278,9 +300,11 @@ class OptionsKML(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
@@ -297,9 +321,11 @@ class OptionsDGN(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
@@ -316,9 +342,11 @@ class OptionsSuperMap(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source")
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source")
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="Thermal unit for the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
@@ -339,7 +367,7 @@ class LasCompression(Enum):
     LAZ = "LAZ"
 
 
-class OptionsLas(BaseModel):
+class OptionsLAS(BaseModel):
     srs: Optional[str] = Field(None, description="Spatial reference system")
     sampling_strategy: Optional[SamplingStrategy] = Field(None, alias="samplingStrategy",
                                                           description="Sampling strategy")
@@ -350,7 +378,7 @@ class OptionsLas(BaseModel):
                                                         description="Source of the texture color")
 
 
-class OptionsPod(BaseModel):
+class OptionsPOD(BaseModel):
     srs: Optional[str] = Field(None, description="Spatial reference system")
     sampling_strategy: Optional[SamplingStrategy] = Field(None, alias="samplingStrategy",
                                                           description="Sampling strategy")
@@ -359,7 +387,7 @@ class OptionsPod(BaseModel):
                                                         description="Source of the texture color")
 
 
-class OptionsPly(BaseModel):
+class OptionsPLY(BaseModel):
     srs: Optional[str] = Field(None, description="Spatial reference system")
     sampling_strategy: Optional[SamplingStrategy] = Field(None, alias="samplingStrategy",
                                                           description="Sampling strategy")
@@ -370,7 +398,7 @@ class OptionsPly(BaseModel):
                                                         description="Source of the texture color")
 
 
-class OptionsOpc(BaseModel):
+class OptionsOPC(BaseModel):
     srs: Optional[str] = Field(None, description="Spatial reference system")
     sampling_strategy: Optional[SamplingStrategy] = Field(None, alias="samplingStrategy",
                                                           description="Sampling strategy")
@@ -421,9 +449,9 @@ class OptionsOrthoDSM(BaseModel):
 
 class ExportCreate(BaseModel):
     format: Format = Field(description="Export format")
-    options: Optional[Union[Options3MX, Options3SM, OptionsCesium, OptionsOSGB, OptionsSpacEyes, OptionsObj, OptionsS3C,
+    options: Optional[Union[Options3MX, Options3SM, Options3DTiles, OptionsOSGB, OptionsSpacEyes, OptionsOBJ, OptionsS3C,
                             OptionsI3S, OptionsLodTreeExport, OptionsCollada, OptionsOCP, OptionsKML, OptionsDGN,
-                            OptionsSuperMap, OptionsLas, OptionsPod, OptionsPly, OptionsOpc, OptionsOrthoDSM]] = Field(
+                            OptionsSuperMap, OptionsLAS, OptionsPOD, OptionsPLY, OptionsOPC, OptionsOrthoDSM]] = Field(
         description="Options associated to format")
 
 
@@ -439,11 +467,17 @@ class ProductionOutputsCreate(BaseModel):
     exports: list[ExportCreate] = Field(description="List of exports")
 
 
+class ProductionOptions(BaseModel):
+    extent: Optional[str] = Field(None, description="Path to Region of Interest.")
+
+
 class ProductionSpecifications(BaseModel):
     inputs: ProductionInputs = Field(description="Inputs")
     outputs: ProductionOutputs = Field(description="Outputs")
+    options: ProductionOptions = Field(description="Options")
 
 
 class ProductionSpecificationsCreate(BaseModel):
     inputs: ProductionInputs = Field(description="Inputs")
     outputs: ProductionOutputsCreate = Field(description="Outputs")
+    options: ProductionOptions = Field(description="Options")

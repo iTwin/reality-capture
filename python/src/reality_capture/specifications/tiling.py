@@ -80,7 +80,7 @@ class TextureSource(Enum):
     SMART = "Smart"
 
 
-class ReferenceModelOptions(BaseModel):
+class TilingOptions(BaseModel):
     ref_model_type: Optional[ReferenceModelType] = Field(description="Reference Model Type", alias="referenceModelType",
                                                          default=None)
     tiling_mode: Optional[TilingMode] = Field(description="Tiling Mode", alias="tilingMode", default=None)
@@ -131,13 +131,13 @@ class TilingOutputsCreate(BaseModel):
 class TilingSpecifications(BaseModel):
     inputs: TilingInputs = Field(description="Inputs")
     outputs: TilingOutputs = Field(description="Outputs")
-    options: ReferenceModelOptions = Field(description="Options")
+    options: TilingOptions = Field(description="Options")
 
 
 class TilingSpecificationsCreate(BaseModel):
     inputs: TilingInputs = Field(description="Inputs")
     outputs: list[TilingOutputsCreate] = Field(description="Outputs")
-    options: ReferenceModelOptions = Field(description="Options")
+    options: TilingOptions = Field(description="Options")
 
 
 class Coords2d(BaseModel):

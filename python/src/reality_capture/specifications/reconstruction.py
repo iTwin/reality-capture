@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, Union
-from tiling import ReferenceModel, ReferenceModelOptions, TilingOutputsCreate
-from production import Export, ExportCreate
+from tiling import ReferenceModel, TilingOptions, TilingOutputsCreate
+from production import Export, ExportCreate, ProductionOptions
 
 
 class ReconstructionInputs(BaseModel):
@@ -18,13 +18,17 @@ class ReconstructionOutputs(BaseModel):
     exports: Optional[list[Export]] = Field(description="List of exports")
 
 
+class ReconstructionOptions(TilingOptions, ProductionOptions):
+    pass
+
+
 class ReconstructionSpecificationsCreate(BaseModel):
     inputs: ReconstructionInputs = Field(description="Inputs")
     outputs: list[Union[TilingOutputsCreate, ExportCreate]] = Field(description="Outputs")
-    options: ReferenceModelOptions = Field(description="Options")
+    options: ReconstructionOptions = Field(description="Options")
 
 
 class ReconstructionSpecifications(BaseModel):
     inputs: ReconstructionInputs = Field(description="Inputs")
     outputs: ReconstructionOutputs = Field(description="Outputs")
-    options: ReferenceModelOptions = Field(description="Options")
+    options: ReconstructionOptions = Field(description="Options")
