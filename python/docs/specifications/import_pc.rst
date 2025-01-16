@@ -2,6 +2,8 @@
 Import Point Cloud
 ==================
 
+.. image:: ipc_header.png
+
 The *Import Point Cloud* job allows you to transform a regular point cloud (E57, LAS, ...) into a ScanCollection that can be leveraged by other jobs (such as Calibration, Tiling or Production).
 
 .. attention::

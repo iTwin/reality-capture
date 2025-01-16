@@ -2,6 +2,8 @@
 Fill Image Properties
 =====================
 
+.. image:: fip_header.png
+
 The *Fill Image Properties* job allows you to transform a list of images into a scene with known metadata, such as GPS information.
 
 .. contents:: Quick access

@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, constr
 from typing import Optional
 from enum import Enum
-from geometry import BoundingBox, Point3d
+from reality_capture.specifications.geometry import BoundingBox, Point3d, RegionOfInterest
 
 
 class TilingInputs(BaseModel):
@@ -124,7 +124,7 @@ class TilingOutputs(BaseModel):
     reference_model: ReferenceModel = Field(description="Reference model", alias="referenceModel")
 
 
-class TilingOutputsCreate(BaseModel):
+class TilingOutputsCreate(Enum):
     REFERENCE_MODEL = "referenceModel"
 
 
@@ -138,23 +138,6 @@ class TilingSpecificationsCreate(BaseModel):
     inputs: TilingInputs = Field(description="Inputs")
     outputs: list[TilingOutputsCreate] = Field(description="Outputs")
     options: TilingOptions = Field(description="Options")
-
-
-class Coords2d(BaseModel):
-    x: float = Field(description="X coordinate")
-    y: float = Field(description="Y coordinate")
-
-
-class Polygon2DWithHoles(BaseModel):
-    outsideBounds: list[Coords2d] = Field(description="Outside bounds of the polygon")
-    holes: Optional[list[list[Coords2d]]] = Field(default=None, description="List of holes boundaries if any")
-
-
-class RegionOfInterest(BaseModel):
-    srs: str = Field(description="Definition of the Region of Interest Coordinate System")
-    polygons: list[Polygon2DWithHoles] = Field(description="List of polygons")
-    altitude_min: float = Field(description="Minimum altitude", alias="altitudeMin")
-    altitude_max: float = Field(description="Maximum altitude", alias="altitudeMax")
 
 
 class LayoutTile(BaseModel):

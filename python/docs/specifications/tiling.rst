@@ -1,0 +1,112 @@
+======
+Tiling
+======
+
+The *Tiling* job allows you to initialize a reference model with a specific layout and settings.
+This is the ground work before submitting productions.
+
+.. contents:: Quick access
+   :local:
+   :depth: 2
+
+Examples
+========
+In this example, we will create a specification for submitting a tiling job with default options.
+
+.. literalinclude:: tiling_specs_default.py
+  :language: Python
+
+In this example, we will add options to our specification.
+
+.. literalinclude:: tiling_specs_options.py
+  :language: Python
+
+Reference Model
+===============
+
+The Tiling job creates and initializes a Reference Model. Among other files, the Reference Model contains a ``layout.json`` file that describes the tiling layout.
+This information can be useful in subsequent jobs such as Touchup jobs.
+The schema for that file is documented in :class:`reality_capture.specifications.tiling.Layout`.
+
+Classes
+=======
+
+.. currentmodule:: reality_capture.specifications.tiling
+
+.. autopydantic_model:: TilingSpecificationsCreate
+
+.. autoclass:: TilingOutputsCreate
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autopydantic_model:: TilingSpecifications
+
+.. autopydantic_model:: TilingInputs
+    :model-show-json: False
+
+.. autopydantic_model:: TilingOutputs
+    :model-show-json: False
+
+.. autopydantic_model:: TilingOptions
+    :model-show-json: False
+
+.. autoclass:: ReferenceModelType
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autoclass:: TilingMode
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autoclass:: GeometricPrecision
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autoclass:: TilingPairSelection
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autoclass:: PhotoUsedForGeometry
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autoclass:: HoleFilling
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autoclass:: Simplification
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autoclass:: ColorCorrection
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autoclass:: UntexturedRepresentation
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autoclass:: PointCloudColorSource
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autoclass:: TextureSource
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autopydantic_model:: Layout
+
+.. autopydantic_model:: LayoutTile
+    :model-show-json: False
