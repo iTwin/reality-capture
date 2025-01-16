@@ -5,6 +5,8 @@ Reconstruction
 The *Reconstruction* job combines the :doc:`/specifications/tiling` and :doc:`/specifications/production` jobs into a single one.
 Please check these jobs in case you need more information about inputs or outputs.
 
+If the Reference Model is specified as an input, it can not be specified as an output and the TilingOptions are to be left empty.
+
 .. contents:: Quick access
    :local:
    :depth: 2
