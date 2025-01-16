@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional, Union
-from tiling import ReferenceModel, TilingOptions, TilingOutputsCreate
+from reality_capture.specifications.tiling import ReferenceModel, TilingOptions, TilingOutputsCreate
 from reality_capture.specifications.production import Export, ExportCreate
 
 
@@ -9,7 +9,7 @@ class ReconstructionInputs(BaseModel):
     region_of_interest: Optional[str] = Field(description="Path to region of interest file prefix by reality data id, "
                                                           "used for tiling region of interest",
                                               alias="regionOfInterest", default=None)
-    extent: Optional[str] = Field(None, description="Path to region of interest file prefix by reality data id,"
+    extent: Optional[str] = Field(None, description="Path to region of interest file prefix by reality data id, "
                                                     "used for export extent")
     reference_model: Optional[str] = Field(None, description="Reality data id of reference model to process",
                                            alias="referenceModel")
