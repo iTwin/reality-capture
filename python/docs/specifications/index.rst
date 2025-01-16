@@ -13,4 +13,5 @@ Specifications regroup all the classes used to interact with our APIs.
     tiling
     production
     reconstruction
+    constraints
     geometry

@@ -27,7 +27,7 @@ class ConstraintInfo(ConstraintToAdd):
 
 
 class ConstraintsInfo(BaseModel):
-    constraints = list[ConstraintInfo] = Field(description="Constraints information")
+    constraints: list[ConstraintInfo] = Field(description="Constraints information")
 
 
 class ConstraintsInputs(BaseModel):
