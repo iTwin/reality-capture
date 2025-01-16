@@ -16,10 +16,17 @@ In this example, we will create a specification for submitting a tiling job with
 .. literalinclude:: tiling_specs_default.py
   :language: Python
 
-In this example, we will add options to our specification.
+In this example, we will add options to our specification and specify the path to a region of interest.
 
 .. literalinclude:: tiling_specs_options.py
   :language: Python
+
+Region of Interest
+==================
+
+As an input for a Tiling job, you can specify a Region of Interest.
+It is a ``JSON`` file documented in :class:`reality_capture.specifications.geometry.RegionOfInterest`.
+It is used to define the area of work for the tiling job.
 
 Reference Model
 ===============
