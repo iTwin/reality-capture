@@ -15,4 +15,5 @@ Specifications regroup all the classes used to interact with our APIs.
     reconstruction
     constraints
     touchup
+    water_constraints
     geometry
