@@ -25,8 +25,8 @@ Region of Interest
 ==================
 
 As an input for a Tiling job, you can specify a Region of Interest.
+It will define the region for the tiling, and will be the default extent for subsequent exports.
 It is a ``JSON`` file documented in :class:`reality_capture.specifications.geometry.RegionOfInterest`.
-It is used to define the area of work for the tiling job.
 
 Reference Model
 ===============

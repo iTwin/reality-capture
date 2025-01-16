@@ -11,6 +11,7 @@ Specifications regroup all the classes used to interact with our APIs.
     import_pc
     calibration
     tiling
+    production
     geometry
 
 

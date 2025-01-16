@@ -6,6 +6,8 @@ from enum import Enum
 class ProductionInputs(BaseModel):
     scene: str = Field(description="Reality data id of ContextScene to process")
     reference_model: str = Field(description="Reality data id of reference model to process", alias="referenceModel")
+    extent: Optional[str] = Field(None, description="Path to region of interest file prefix by reality data id, "
+                                                    "used for export extent")
     preset: Optional[str] = Field(default=None, description="Path to preset")
 
 
@@ -452,7 +454,7 @@ class ExportCreate(BaseModel):
     options: Optional[Union[Options3MX, Options3SM, Options3DTiles, OptionsOSGB, OptionsSpacEyes, OptionsOBJ, OptionsS3C,
                             OptionsI3S, OptionsLodTreeExport, OptionsCollada, OptionsOCP, OptionsKML, OptionsDGN,
                             OptionsSuperMap, OptionsLAS, OptionsPOD, OptionsPLY, OptionsOPC, OptionsOrthoDSM]] = Field(
-        description="Options associated to format")
+        None, description="Options associated to format")
 
 
 class Export(ExportCreate):
