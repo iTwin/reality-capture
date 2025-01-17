@@ -2,12 +2,14 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
 
+
 class Segmentation3DInputs(BaseModel):
     point_clouds: Optional[str] = Field(None, alias="pointClouds", description="TODO")
     meshes: Optional[str] = Field(None, description="TODO")
     point_cloud_segmentation_detector: Optional[str] = Field(None, alias="pointCloudSegmentationDetector", description="TODO")
     segmentation3d: Optional[str] = Field(None, alias="segmentation3D", description="TODO")
     clip_polygon: Optional[str] = Field(None, alias="clipPolygon", description="TODO")
+
 
 class Segmentation3DOutputs(BaseModel):
     segmentation3d: Optional[str] = Field(None, alias="segmentation3D", description="TODO")
@@ -31,6 +33,7 @@ class Segmentation3DOutputs(BaseModel):
     polygons3d_as_3d_tiles: Optional[str] = Field(None, alias="polygons3DAs3DTiles", description="TODO")
     polygons3d_as_geojson: Optional[str] = Field(None, alias="polygons3DAsGeoJSON", description="TODO")
 
+
 class Segmentation3DOutputsCreate(Enum):
     SEGMENTATION3D = "segmentation3D"
     SEGMENTED_POINT_CLOUD = "segmentedPointCloud"
@@ -53,23 +56,21 @@ class Segmentation3DOutputsCreate(Enum):
     POLYGONS3D_AS_3DTiles = "polygons3DAs3DTiles"
     POLYGONS3D_AS_GeoJSON = "polygons3DAsGeoJSON"
 
+
 class Segmentation3DOptions(BaseModel):
     srs: Optional[str] = Field(None, description="TODO")
     save_confidence: Optional[bool] = Field(None, alias="saveConfidence", description="TODO")
     compute_line_width: Optional[bool] = Field(None, alias="computeLineWidth", description="TODO")
     remove_small_components: Optional[float] = Field(None, alias="removeSmallComponents", description="TODO")
 
+
 class Segmentation3DSpecificationsCreate(BaseModel):
     inputs: Segmentation3DInputs = Field(description="TODO")
     outputs: list[Segmentation3DOutputsCreate] = Field(description="TODO")
     options: Segmentation3DOptions = Field(description="TODO")
 
+
 class Segmentation3DSpecifications(BaseModel):
     inputs: Segmentation3DInputs = Field(description="TODO")
     outputs: Segmentation3DOutputs = Field(description="TODO")
     options: Segmentation3DOptions = Field(description="TODO")
-
-
-
-
-
