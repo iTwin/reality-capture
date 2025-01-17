@@ -511,7 +511,7 @@ class EvalS2DSpecifications:
         )
         json_dict["outputs"].append(
             {
-                "segmentation2D": self.outputs.segmentation_2d
+                "segmentation2D": self.outputs.segmentation2d
             }
         )
         return json_dict
@@ -532,7 +532,7 @@ class EvalS2DSpecifications:
             new_job_specifications.inputs.prediction = specifications_json["inputs"]["prediction"]
             new_job_specifications.outputs.report = specifications_json["outputs"]["report"]
             new_job_specifications.outputs.segmented_photos = specifications_json["outputs"]["segmentedPhotos"]
-            new_job_specifications.outputs.segmentation_2d = specifications_json["outputs"]["segmentation2D"]
+            new_job_specifications.outputs.segmentation2d = specifications_json["outputs"]["segmentation2D"]
         except (TypeError, KeyError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_specifications, error="")
@@ -558,14 +558,14 @@ class EvalS2DSpecifications:
         Attributes:
             report: a json report file with Eval Segmentation 2D results.
             segmented_photos: Eval segmented photos annotated with confusion matrix index.
-            segmentation_2d: ContextScene pointing to the segmented photos.
+            segmentation2d: ContextScene pointing to the segmented photos.
 
         """
 
         def __init__(self) -> None:
             self.report: str = ""
             self.segmented_photos: str = ""
-            self.segmentation_2d: str = ""
+            self.segmentation2d: str = ""
 
     class Options:
         """
@@ -622,7 +622,7 @@ class EvalSOrthoSpecifications:
         )
         json_dict["outputs"].append(
             {
-                "segmentation2D": self.outputs.segmentation_2d
+                "segmentation2D": self.outputs.segmentation2d
             }
         )
         return json_dict
@@ -643,7 +643,7 @@ class EvalSOrthoSpecifications:
             new_job_specifications.inputs.prediction = specifications_json["inputs"]["prediction"]
             new_job_specifications.outputs.report = specifications_json["outputs"]["report"]
             new_job_specifications.outputs.segmented_photos = specifications_json["outputs"]["segmentedPhotos"]
-            new_job_specifications.outputs.segmentation_2d = specifications_json["outputs"]["segmentation2D"]
+            new_job_specifications.outputs.segmentation2d = specifications_json["outputs"]["segmentation2D"]
         except (TypeError, KeyError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_specifications, error="")
@@ -669,14 +669,14 @@ class EvalSOrthoSpecifications:
         Attributes:
             report: a json report file with Eval Segmentation 2D results.
             segmented_photos: Eval segmented photos annotated with confusion matrix index.
-            segmentation_2d: ContextScene pointing to the segmented photos.
+            segmentation2d: ContextScene pointing to the segmented photos.
 
         """
 
         def __init__(self) -> None:
             self.report: str = ""
             self.segmented_photos: str = ""
-            self.segmentation_2d: str = ""
+            self.segmentation2d: str = ""
 
     class Options:
         """
