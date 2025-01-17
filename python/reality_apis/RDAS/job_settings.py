@@ -729,7 +729,7 @@ class EvalO2DSpecifications:
         )
         json_dict["outputs"].append(
             {
-                "objects2D": self.outputs.objects_2d
+                "objects2D": self.outputs.objects2d
             }
         )
         return json_dict
@@ -749,7 +749,7 @@ class EvalO2DSpecifications:
             new_job_specifications.inputs.reference = specifications_json["inputs"]["reference"]
             new_job_specifications.inputs.prediction = specifications_json["inputs"]["prediction"]
             new_job_specifications.outputs.report = specifications_json["outputs"]["report"]
-            new_job_specifications.outputs.objects_2d = specifications_json["outputs"]["objects2D"]
+            new_job_specifications.outputs.objects2d = specifications_json["outputs"]["objects2D"]
         except (TypeError, KeyError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_specifications, error="")
@@ -774,13 +774,13 @@ class EvalO2DSpecifications:
 
         Attributes:
             report: json file with eval metrix.
-            objects_2d: ContextScene with the eval objects.
+            objects2d: ContextScene with the eval objects.
 
         """
 
         def __init__(self) -> None:
             self.report: str = ""
-            self.objects_2d: str = ""
+            self.objects2d: str = ""
 
     class Options:
         """
@@ -837,7 +837,7 @@ class EvalO3DSpecifications:
         )
         json_dict["outputs"].append(
             {
-                "objects3D": self.outputs.objects_3d
+                "objects3D": self.outputs.objects3d
             }
         )
         return json_dict
@@ -857,7 +857,7 @@ class EvalO3DSpecifications:
             new_job_specifications.inputs.reference = specifications_json["inputs"]["reference"]
             new_job_specifications.inputs.prediction = specifications_json["inputs"]["prediction"]
             new_job_specifications.outputs.report = specifications_json["outputs"]["report"]
-            new_job_specifications.outputs.objects_3d = specifications_json["outputs"]["objects3D"]
+            new_job_specifications.outputs.objects3d = specifications_json["outputs"]["objects3D"]
         except (TypeError, KeyError) as e:
             return ReturnValue(value=cls(), error=str(e))
         return ReturnValue(value=new_job_specifications, error="")
@@ -882,13 +882,13 @@ class EvalO3DSpecifications:
 
         Attributes:
             report: json file with eval metrix.
-            objects_3d: ContextScene with the eval objects.
+            objects3d: ContextScene with the eval objects.
 
         """
 
         def __init__(self) -> None:
             self.report: str = ""
-            self.objects_3d: str = ""
+            self.objects3d: str = ""
 
     class Options:
         """
