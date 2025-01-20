@@ -17,3 +17,5 @@ Specifications regroup all the classes used to interact with our APIs.
     touchup
     water_constraints
     geometry
+    objects2d
+
