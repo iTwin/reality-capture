@@ -22,79 +22,79 @@ This job has four different purposes :
      - Possible outputs
      - Useful options
    * - Segment a collection of point clouds
-     - | *pointClouds*,
-       | *pointCloudSegmentationDetector*,
-       | *clipPolygon* (optional)
-     - | *segmentation3D*,
-       | *segmentedPointCloud*,
-       | *exportedSegmentation3DLAS* (optional),
-       | *exportedSegmentation3DLAZ* (optional),
-       | *exportedSegmentation3DPOD* (optional),
-       | *exportedSegmentation3DPLY* (optional)
-     - | *saveConfidence*,
-       | *exportSrs*
+     - | *point_clouds*,
+       | *point_cloud_segmentation_detector*,
+       | *clip_polygon* (optional)
+     - | *segmentation3d*,
+       | *segmented_point_cloud*,
+       | *segmentation3d_as_las* (optional),
+       | *segmentation3d_as_laz* (optional),
+       | *segmentation3d_as_pod* (optional),
+       | *segmentation3d_as_ply* (optional)
+     - | *save_confidence*,
+       | *srs*
    * - | Segment a collection of meshes
      - | *meshes*,
-       | *pointCloudSegmentationDetector*,
-       | *clipPolygon* (optional)
-     - | *segmentation3D*,
-       | *segmentedPointCloud*,
-       | *exportedSegmentation3DLAS* (optional),
-       | *exportedSegmentation3DLAZ* (optional),
-       | *exportedSegmentation3DPOD* (optional),
-       | *exportedSegmentation3DPLY* (optional)
-     - | *saveConfidence*,
-       | *exportSrs*
+       | *point_cloud_segmentation_detector*,
+       | *clip_polygon* (optional)
+     - | *segmentation3d*,
+       | *segmented_point_cloud*,
+       | *segmentation3d_as_las* (optional),
+       | *segmentation3d_as_laz* (optional),
+       | *segmentation3d_as_pod* (optional),
+       | *segmentation3d_as_ply* (optional)
+     - | *save_confidence*,
+       | *srs*
    * - | Segment a collection of point clouds or meshes
        | and infer 3D objects, 3D lines and 3D polygons
-     - | *pointClouds/meshes*,
-       | *pointCloudSegmentationDetector*,
-       | *clipPolygon* (optional)
-     - | *segmentation3D*,
-       | *segmentedPointCloud*,
-       | *exportedSegmentation3DLAS* (optional),
-       | *exportedSegmentation3DLAZ* (optional),
-       | *exportedSegmentation3DPOD* (optional),
-       | *exportedSegmentation3DPLY* (optional),
-       | *objects3D* (optional),
-       | *exportedObjects3DDGN* (optional),
-       | *exportedObjects3DCesium* (optional),
-       | *exportedObjects3DGeoJSON* (optional),
-       | *exportedLocations3DSHP* (optional),
-       | *exportedLocations3DGeoJSON* (optional),
-       | *lines3D* (optional),
-       | *exportedLines3DDGN* (optional),
-       | *exportedLines3DCesium* (optional),
-       | *exportedLines3DGeoJSON* (optional),
-       | *polygons3D* (optional),
-       | *exportedPolygons3DDGN* (optional),
-       | *exportedPolygons3DCesium* (optional),
-       | *exportedPolygons3DGeoJSON* (optional)
-     - | *removeSmallComponents*,
-       | *computeLineWidth*,
-       | *saveConfidence*,
-       | *exportSrs*
+     - | *point_clouds/meshes*,
+       | *point_cloud_segmentation_detector*,
+       | *clip_polygon* (optional)
+     - | *segmentation3d*,
+       | *segmented_point_cloud*,
+       | *segmentation3d_as_las* (optional),
+       | *segmentation3d_as_laz* (optional),
+       | *segmentation3d_as_pod* (optional),
+       | *segmentation3d_as_ply* (optional),
+       | *objects3d* (optional),
+       | *objects3d_as_dgn* (optional),
+       | *objects3d_as_3d_tiles* (optional),
+       | *objects3d_as_geojson* (optional),
+       | *locations3d_as_shp* (optional),
+       | *locations3d_as_geojson* (optional),
+       | *lines3d* (optional),
+       | *lines3d_as_dgn* (optional),
+       | *lines3d_as_3d_tiles* (optional),
+       | *lines3d_as_geojson* (optional),
+       | *polygons3d* (optional),
+       | *polygons3d_as_dgn* (optional),
+       | *polygons3d_as_3d_tiles* (optional),
+       | *polygons3d_as_geojson* (optional)
+     - | *remove_small_components*,
+       | *compute_line_width*,
+       | *save_confidence*,
+       | *srs*
    * - | Given a 3D segmentation, infer 3D objects, 3D lines and 3D polygons
-     - | *segmentation3D*,
-       | *clipPolygon* (optional)
-     - | *objects3D* (optional),
-       | *exportedObjects3DDGN* (optional),
-       | *exportedObjects3DCesium* (optional),
-       | *exportedObjects3DGeoJSON* (optional),
-       | *exportedLocations3DSHP* (optional),
-       | *exportedLocations3DGeoJSON* (optional),
-       | *lines3D* (optional),
-       | *exportedLines3DDGN* (optional),
-       | *exportedLines3DCesium* (optional),
-       | *exportedLines3DGeoJSON* (optional),
-       | *polygons3D* (optional),
-       | *exportedPolygons3DDGN* (optional),
-       | *exportedPolygons3DCesium* (optional),
-       | *exportedPolygons3DGeoJSON* (optional)
-     - | *removeSmallComponents*,
-       | *computeLineWidth*,
-       | *saveConfidence*,
-       | *exportSrs*
+     - | *segmentation3d*,
+       | *clip_polygon* (optional)
+     - | *objects3d* (optional),
+       | *objects3d_as_dgn* (optional),
+       | *objects3d_as_3d_tiles* (optional),
+       | *objects3d_as_geojson* (optional),
+       | *locations3d_as_shp* (optional),
+       | *locations3d_as_geojson* (optional),
+       | *lines3d* (optional),
+       | *lines3d_as_dgn* (optional),
+       | *lines3d_as_3d_tiles* (optional),
+       | *lines3d_as_geojson* (optional),
+       | *polygons3d* (optional),
+       | *polygons3d_as_dgn* (optional),
+       | *polygons3d_as_3d_tiles* (optional),
+       | *polygons3d_as_geojson* (optional)
+     - | *remove_small_components*,
+       | *compute_line_width*,
+       | *save_confidence*,
+       | *srs*
 
 Examples
 ========

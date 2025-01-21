@@ -25,40 +25,40 @@ This job has three different purposes :
      - Useful options
    * - Detect object in photos
      - | *photos*,
-       | *photoObjectDetector*
-     - | *objects2D*
+       | *photo_object_detector*
+     - | *objects2d*
      - |
    * - Detect objects in oriented photos and infer 3D objects
      - | *photos*,
-       | *photoObjectDetector*,
-       | *pointClouds* (optional),
+       | *photo_object_detector*,
+       | *point_clouds* (optional),
        | *meshes* (optional)
-     - | *objects2D*,
-       | *objects3D*,
-       | *exportedObjects3DDGN* (optional),
-       | *exportedObjects3DCesium* (optional),
-       | *exportedObjects3DGeoJSON* (optional),
-       | *exportedLocations3DSHP* (optional),
-       | *exportedLocations3DGeoJSON* (optional)
-     - | *exportSrs*,
-       | *minPhotos*,
-       | *maxDist*,
-       | *useTiePoints*
+     - | *objects2d*,
+       | *objects3d*,
+       | *objects3d_as_dgn* (optional),
+       | *objects3d_as_3d_tiles* (optional),
+       | *objects3d_as_geojson* (optional),
+       | *locations3d_as_shp* (optional),
+       | *locations3d_as_geojson* (optional)
+     - | *srs*,
+       | *min_photos*,
+       | *max_dist*,
+       | *use_tie_points*
    * - Given 2D objects in oriented photos, infer 3D objects
      - | *photos*,
-       | *objects2D*,
-       | *pointClouds* (optional),
+       | *objects2d*,
+       | *point_clouds* (optional),
        | *meshes* (optional)
-     - | *objects3D*,
-       | *exportedObjects3DDGN* (optional),
-       | *exportedObjects3DCesium* (optional),
-       | *exportedObjects3DGeoJSON* (optional),
-       | *exportedLocations3DSHP* (optional),
-       | *exportedLocations3DGeoJSON* (optional)
-     - | *exportSrs*,
-       | *minPhotos*,
-       | *maxDist*,
-       | *useTiePoints*
+     - | *objects3d*,
+       | *objects3d_as_dgn* (optional),
+       | *objects3d_as_3d_tiles* (optional),
+       | *objects3d_as_geojson* (optional),
+       | *locations3d_as_shp* (optional),
+       | *locations3d_as_geojson* (optional)
+     - | *srs*,
+       | *min_photos*,
+       | *max_dist*,
+       | *use_tie_points*
 
 Examples
 ========

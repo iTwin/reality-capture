@@ -22,30 +22,30 @@ This job has two different purposes :
      - Possible outputs
      - Useful options
    * - Detect changes between two collections of point clouds
-     - | *pointClouds1*,
-       | *pointClouds2*
-     - | *objects3D*
-       | *exportedLocations3DSHP* (optional),
-       | *exportedLocations3DGeoJSON* (optional)
-     - | *exportSrs*,
-       | *colorThresholdLow*,
-       | *colorThresholdHigh*,
-       | *distThresholdLow*,
-       | *distThresholdHigh*,
-       | *minPoints*
+     - | *point_clouds1*,
+       | *point_clouds2*
+     - | *objects3d*
+       | *locations3d_as_shp* (optional),
+       | *locations3d_as_geojson* (optional)
+     - | *srs*,
+       | *color_threshold_low*,
+       | *color_threshold_high*,
+       | *dist_threshold_low*,
+       | *dist_threshold_high*,
+       | *min_points*
    * - Detect changes between two collections of meshes
      - | *meshes1*,
        | *meshes2*
-     - | *objects3D*,
-       | *exportedLocations3DSHP* (optional),
-       | *exportedLocations3DGeoJSON* (optional)
+     - | *objects3d*,
+       | *locations3d_as_shp* (optional),
+       | *locations3d_as_geojson* (optional)
      - | *resolution*,
-       | *exportSrs*,
-       | *colorThresholdLow*,
-       | *colorThresholdHigh*
-       | *distThresholdLow*
-       | *distThresholdHigh*
-       | *minPoints*
+       | *srs*,
+       | *color_threshold_low*,
+       | *color_threshold_high*
+       | *dist_threshold_low*
+       | *dist_threshold_high*
+       | *min_points*
 
 Examples
 ========

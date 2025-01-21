@@ -21,16 +21,16 @@ Purposes
      - Useful options
    * - Segmentation of orthophoto
      - | *orthophoto*,
-       | *orthophotoSegmentationDetector*
-     - | *segmentation2D*,
-       | *segmentedPhotos*,
-       | *polygons2D* (optional),
-       | *exportedPolygons2DSHP* (optional),
-       | *exportedPolygons2DGeoJSON* (optional),
-       | *lines2D* (optional),
-       | *exportedLines2DDGN* (optional),
-       | *exportedLines2DSHP* (optional),
-       | *exportedLines2DGeoJSON* (optional)
+       | *orthophoto_segmentation_detector*
+     - | *segmentation2d*,
+       | *segmented_photos*,
+       | *polygons2d* (optional),
+       | *polygons2d_as_shp* (optional),
+       | *polygons2d_as_geojson* (optional),
+       | *lines2d* (optional),
+       | *lines2d_as_dgn* (optional),
+       | *lines2d_as_shp* (optional),
+       | *lines2d_as_geojson* (optional)
      - |
 
 Examples

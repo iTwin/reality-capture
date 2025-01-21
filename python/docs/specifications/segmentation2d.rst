@@ -23,46 +23,46 @@ This job has three different purposes :
      - Useful options
    * - Segmentation of photos
      - | *photos*,
-       | *photoSegmentationDetector*
-     - | *segmentation2D*,
-       | *segmentedPhotos*
+       | *photo_segmentation_detector*
+     - | *segmentation2d*,
+       | *segmented_photos*
      - |
    * - | Segment oriented photos and project segmentation on a collection of meshes
        | or point clouds and detect 3D lines and 3D polygons
      - | *photos*,
-       | *photoSegmentationDetector*,
-       | *pointClouds*/*meshes*
-     - | *segmentation2D*,
-       | *segmentedPhotos*,
-       | *lines3D* (optional),
-       | *exportedLines3DDGN* (optional),
-       | *exportedLines3DCesium* (optional),
-       | *exportedLines3DGeoJSON* (optional),
-       | *polygons3D* (optional),
-       | *exportedPolygons3DDGN* (optional),
-       | *exportedPolygons3DCesium* (optional),
-       | *exportedPolygons3DGeoJSON* (optional)
-     - | *minPhotos*,
-       | *exportSrs*,
-       | *removeSmallComponents*,
-       | *computeLineWidth*
+       | *photo_segmentation_detector*,
+       | *point_clouds*/*meshes*
+     - | *segmentation2d*,
+       | *segmented_photos*,
+       | *lines3d* (optional),
+       | *lines3d_as_dgn* (optional),
+       | *lines3d_as_3d_tiles* (optional),
+       | *lines3d_as_geojson* (optional),
+       | *polygons3d* (optional),
+       | *polygons3d_as_dgn* (optional),
+       | *polygons3d_as_3d_tiles* (optional),
+       | *polygons3d_as_geojson* (optional)
+     - | *min_photos*,
+       | *srs*,
+       | *remove_small_components*,
+       | *compute_line_width*
    * - | Given a 2D segmentation of oriented photos, project segmentation on a collection of meshes
        | or point clouds and detect 3D lines and 3D polygons
      - | *photos*,
-       | *segmentation2D*,
-       | *pointClouds*/*meshes*
-     - | *lines3D* (optional),
-       | *exportedLines3DDGN* (optional),
-       | *exportedLines3DCesium* (optional),
-       | *exportedLines3DGeoJSON* (optional),
-       | *polygons3D* (optional),
-       | *exportedPolygons3DDGN* (optional),
-       | *exportedPolygons3DCesium* (optional),
-       | *exportedPolygons3DGeoJSON* (optional)
-     - | *minPhotos*,
-       | *exportSrs*,
-       | *removeSmallComponents*,
-       | *computeLineWidth*
+       | *segmentation2d*,
+       | *point_clouds*/*meshes*
+     - | *lines3d* (optional),
+       | *lines3d_as_dgn* (optional),
+       | *lines3d_as_3d_tiles* (optional),
+       | *lines3d_as_geojson* (optional),
+       | *polygons3d* (optional),
+       | *polygons3d_as_dgn* (optional),
+       | *polygons3d_as_3d_tiles* (optional),
+       | *polygons3d_as_geojson* (optional)
+     - | *min_photos*,
+       | *srs*,
+       | *remove_small_components*,
+       | *compute_line_width*
 
 Examples
 ========
