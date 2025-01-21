@@ -19,12 +19,12 @@ Examples
 
 In this example, we will create a specification for submitting an export touch up job for one tile of a reference model.
 
-.. literalinclude:: touchup_export.py
+.. literalinclude:: examples/touchup_export.py
   :language: Python
 
 In this example, we will create a specification for submitting an import touch up job.
 
-.. literalinclude:: touchup_import.py
+.. literalinclude:: examples/touchup_import.py
   :language: Python
 
 Classes

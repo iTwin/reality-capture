@@ -16,7 +16,7 @@ Examples
 
 In this example, we will create a specification for submitting a water constraints job.
 
-.. literalinclude:: water_constraints_specs.py
+.. literalinclude:: examples/water_constraints_specs.py
   :language: Python
 
 Classes

@@ -65,17 +65,17 @@ Examples
 
 In this example, we will create a specification for submitting an Objects 2D job to detect object in photos using a detector.
 
-.. literalinclude:: o2d_specs_detect_o2d_objects.py
+.. literalinclude:: examples/o2d_specs_detect_o2d_objects.py
   :language: Python
 
 In this example, we will create a specification for submitting an Objects 2D job to detect objects in oriented photos and infer 3D objects.
 
-.. literalinclude:: o2d_specs_detect_o2d_and_o3d_objects.py
+.. literalinclude:: examples/o2d_specs_detect_o2d_and_o3d_objects.py
   :language: Python
 
 In this example, we will create a specification for submitting an Objects 2D job to infer 3D objects given 2D objects in oriented photos.
 
-.. literalinclude:: o2d_specs_detect_o3d_objects_given_o2d_objects.py
+.. literalinclude:: examples/o2d_specs_detect_o3d_objects_given_o2d_objects.py
   :language: Python
 
 Classes

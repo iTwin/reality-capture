@@ -52,12 +52,12 @@ Examples
 
 In this example, we will create a specification for submitting a Change Detection job to detect changes (3d objects) between two point clouds.
 
-.. literalinclude:: cd_specs_detect_changes_pc.py
+.. literalinclude:: examples/cd_specs_detect_changes_pc.py
   :language: Python
 
 In this example, we will create a specification for submitting a Change Detection job to detect changes (3d objects) between two meshes.
 
-.. literalinclude:: cd_specs_detect_changes_meshes.py
+.. literalinclude:: examples/cd_specs_detect_changes_meshes.py
   :language: Python
 
 Classes

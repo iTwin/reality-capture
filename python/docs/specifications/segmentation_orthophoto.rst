@@ -38,7 +38,7 @@ Examples
 
 In this example, we will create a specification for submitting a Segmentation Orthophoto job to classify pixels in orthophotos.
 
-.. literalinclude:: sortho_specs_classify_pixels.py
+.. literalinclude:: examples/sortho_specs_classify_pixels.py
   :language: Python
 
 Classes

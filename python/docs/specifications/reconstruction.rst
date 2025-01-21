@@ -15,7 +15,7 @@ Examples
 ========
 In this example, we will we will create a specification for submitting a job reconstructing a reference model and a 3D tiles export.
 
-.. literalinclude:: reconstruction_specs.py
+.. literalinclude:: examples/reconstruction_specs.py
   :language: Python
 
 Classes

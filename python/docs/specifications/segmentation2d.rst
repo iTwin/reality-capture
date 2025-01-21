@@ -69,17 +69,17 @@ Examples
 
 In this example, we will create a specification for submitting a Segmentation 2D job to segment photos.
 
-.. literalinclude:: s2d_specs_segment_photos.py
+.. literalinclude:: examples/s2d_specs_segment_photos.py
   :language: Python
 
 In this example, we will create a specification for submitting a Segmentation 2D job to segment oriented photos and project segmentation on a collection of meshes or point clouds
 
-.. literalinclude:: s2d_specs_segment_photos_and_project_on_mesh.py
+.. literalinclude:: examples/s2d_specs_segment_photos_and_project_on_mesh.py
   :language: Python
 
 In this example, we will create a specification for submitting a Segmentation 2D job to project segmentation on a collection of meshes or point clouds, given a 2D segmentation of oriented photos.
 
-.. literalinclude:: s2d_specs_project_on_mesh_given_2d_segmentation.py
+.. literalinclude:: examples/s2d_specs_project_on_mesh_given_2d_segmentation.py
   :language: Python
 
 Classes

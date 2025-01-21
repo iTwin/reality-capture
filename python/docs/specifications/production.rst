@@ -14,7 +14,7 @@ Examples
 
 In this example, we will create a specification for submitting a job producing a 3D tiles export and a raster in GeoTiff.
 
-.. literalinclude:: production_specs_3d_tiles.py
+.. literalinclude:: examples/production_specs_3d_tiles.py
   :language: Python
 
 Extent

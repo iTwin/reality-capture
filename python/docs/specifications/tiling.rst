@@ -13,12 +13,12 @@ Examples
 ========
 In this example, we will create a specification for submitting a tiling job with default options.
 
-.. literalinclude:: tiling_specs_default.py
+.. literalinclude:: examples/tiling_specs_default.py
   :language: Python
 
 In this example, we will add options to our specification and specify the path to a region of interest.
 
-.. literalinclude:: tiling_specs_options.py
+.. literalinclude:: examples/tiling_specs_options.py
   :language: Python
 
 Region of Interest

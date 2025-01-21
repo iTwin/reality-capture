@@ -13,12 +13,12 @@ Examples
 
 In this example, we create a specification for submitting a calibration job with default options:
 
-.. literalinclude:: calib_specs_default.py
+.. literalinclude:: examples/calib_specs_default.py
   :language: Python
 
 In this example, we create a specification for submitting a calibration job where positions and rotation are adjusted:
 
-.. literalinclude:: calib_specs_adjust.py
+.. literalinclude:: examples/calib_specs_adjust.py
   :language: Python
 
 

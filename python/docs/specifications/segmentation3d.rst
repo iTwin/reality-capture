@@ -101,22 +101,22 @@ Examples
 
 In this example, we will create a specification for submitting a Segmentation 3D job to segment meshes.
 
-.. literalinclude:: s3d_specs_segment_meshes.py
+.. literalinclude:: examples/s3d_specs_segment_meshes.py
   :language: Python
 
 In this example, we will create a specification for submitting a Segmentation 3D job to segment point clouds.
 
-.. literalinclude:: s3d_specs_segment_pc.py
+.. literalinclude:: examples/s3d_specs_segment_pc.py
   :language: Python
 
 In this example, we will create a specification for submitting a Segmentation 3D job to segment point clouds and infer 3D lines.
 
-.. literalinclude:: s3d_specs_segment_pc_and_infer_3d_lines.py
+.. literalinclude:: examples/s3d_specs_segment_pc_and_infer_3d_lines.py
   :language: Python
 
 In this example, we will create a specification for submitting a Segmentation 3D job to infer 3D lines given a 3D segmentation.
 
-.. literalinclude:: s3d_specs_infer_3d_lines_given_3d_segmentation.py
+.. literalinclude:: examples/s3d_specs_infer_3d_lines_given_3d_segmentation.py
   :language: Python
 
 

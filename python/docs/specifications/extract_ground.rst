@@ -19,12 +19,12 @@ Examples
 
 In this example, we will create a specification for submitting an Extract Ground job to detect ground in point clouds.
 
-.. literalinclude:: eg_specs_detect_ground_pc.py
+.. literalinclude:: examples/eg_specs_detect_ground_pc.py
   :language: Python
 
 In this example, we will create a specification for submitting an Extract Ground job to detect ground in meshes.
 
-.. literalinclude:: eg_specs_detect_ground_meshes.py
+.. literalinclude:: examples/eg_specs_detect_ground_meshes.py
   :language: Python
 
 Classes
