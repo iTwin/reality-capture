@@ -4,18 +4,32 @@ from enum import Enum
 
 
 class ExtractGroundInputs(BaseModel):
-    point_clouds: Optional[str] = Field(None, alias="pointClouds", description="TODO")
-    meshes: Optional[str] = Field(None, description="TODO")
-    point_cloud_segmentation_detector: str = Field(alias="pointCloudSegmentationDetector", description="TODO")
-    clip_polygon: Optional[str] = Field(None, alias="clipPolygon", description="TODO")
+    point_clouds: Optional[str] = Field(None, alias="pointClouds", 
+                                        description="Reality data id of ContextScene, "
+                                                    "pointing to a collection of point clouds to process")
+    meshes: Optional[str] = Field(None, description="Reality data id of ContextScene, "
+                                                    "pointing to the collection of meshes to process")
+    point_cloud_segmentation_detector: str = Field(alias="pointCloudSegmentationDetector", 
+                                                   description="Either reality data id of "
+                                                               "point cloud segmentation detector "
+                                                               "or point cloud segmentation detector identifier "
+                                                               "from the AI Detectors library")
+    clip_polygon: Optional[str] = Field(None, alias="clipPolygon", 
+                                        description="Reality data id of the clipping polygon to apply")
 
 
 class ExtractGroundOutputs(BaseModel):
-    segmentation3d: str = Field(alias="segmentation3D", description="TODO")
-    segmented_point_cloud: Optional[str] = Field(None, alias="segmentedPointCloud", description="TODO")
-    segmentation3d_as_pod: Optional[str] = Field(None, alias="segmentation3DAsPOD", description="TODO")
-    segmentation3d_as_las: Optional[str] = Field(None, alias="segmentation3DAsLAS", description="TODO")
-    segmentation3d_as_laz: Optional[str] = Field(None, alias="segmentation3DAsLAZ", description="TODO")
+    segmentation3d: str = Field(alias="segmentation3D", 
+                                description="Reality data id of ContextScene, "
+                                            "pointing to the segmented point cloud")
+    segmented_point_cloud: str = Field(alias="segmentedPointCloud", 
+                                       description="Reality data id of the ground segmentation as OPC file")
+    segmentation3d_as_pod: Optional[str] = Field(None, alias="segmentation3DAsPOD", 
+                                                 description="Reality data id of the ground segmentation as POD file")
+    segmentation3d_as_las: Optional[str] = Field(None, alias="segmentation3DAsLAS", 
+                                                 description="Reality data id of the ground segmentation as LAS file")
+    segmentation3d_as_laz: Optional[str] = Field(None, alias="segmentation3DAsLAZ", 
+                                                 description="Reality data id of the ground segmentation as LAZ file")
 
 
 class ExtractGroundOutputsCreate(Enum):
@@ -27,16 +41,17 @@ class ExtractGroundOutputsCreate(Enum):
 
 
 class ExtractGroundOptions(BaseModel):
-    srs: Optional[str] = Field(None, description="TODO")
+    srs: Optional[str] = Field(None, description="SRS used by segmentation3DAsLAS, "
+                                                 "segmentation3DAsPOD and segmentation3DAsLAZ outputs")
 
 
 class ExtractGroundSpecificationsCreate(BaseModel):
-    inputs: ExtractGroundInputs = Field(description="TODO")
-    outputs: list[ExtractGroundOutputsCreate] = Field(description="TODO")
-    options: ExtractGroundOptions = Field(description="TODO")
+    inputs: ExtractGroundInputs = Field(description="Inputs")
+    outputs: list[ExtractGroundOutputsCreate] = Field(description="Outputs")
+    options: ExtractGroundOptions = Field(description="Options")
 
 
 class ExtractGroundSpecifications(BaseModel):
-    inputs: ExtractGroundInputs = Field(description="TODO")
-    outputs: ExtractGroundOutputs = Field(description="TODO")
-    options: ExtractGroundOptions = Field(description="TODO")
+    inputs: ExtractGroundInputs = Field(description="Inputs")
+    outputs: ExtractGroundOutputs = Field(description="Outputs")
+    options: ExtractGroundOptions = Field(description="Options")

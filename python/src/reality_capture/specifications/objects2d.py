@@ -4,10 +4,11 @@ from enum import Enum
 
 
 class Objects2DInputs(BaseModel):
-    photos: str = Field(description="Reality data id of ContextScene, pointing to photos to process.")
+    photos: str = Field(description="Reality data id of ContextScene, pointing to photos to process")
     photo_object_detector: Optional[str] = Field(None, alias="photoObjectDetector",
-                                                 description="Reality data id of photo object detector, "
-                                                             "or detector identifier from the AI Detectors library")
+                                                 description="Either reality data id of photo object detector "
+                                                             "or photo object detector identifier "
+                                                             "from the AI Detectors library")
     point_clouds: Optional[str] = Field(None, alias="pointClouds",
                                         description="Reality data id of ContextScene, "
                                                     "pointing to a collection of point clouds to process")
@@ -15,7 +16,8 @@ class Objects2DInputs(BaseModel):
                                   description="Reality data id of ContextScene, "
                                               "pointing to a collection of meshes to process")
     objects2d: Optional[str] = Field(None, alias="objects2D",
-                                     description="Reality data id of ContextScene, annotated with embedded 2D objects")
+                                     description="Reality data id of ContextScene, annotated with embedded 2D objects, "
+                                                 "this input replaces photo_object_detector input")
 
 
 class Objects2DOutputs(BaseModel):
@@ -24,22 +26,19 @@ class Objects2DOutputs(BaseModel):
     objects3d: Optional[str] = Field(None, alias="objects3D",
                                      description="Reality data id of ContextScene, annotated with embedded 3D objects")
     objects3d_as_dgn: Optional[str] = Field(None, alias="objects3DAsDGN",
-                                            description="Reality data id that will contain 3D objects as DGN file, "
+                                            description="Reality data id of 3D objects as DGN file, "
                                                         "objects3d output must be defined")
     objects3d_as_3d_tiles: Optional[str] = Field(None, alias="objects3DAs3DTiles",
-                                                 description="Reality data id that will contain 3D objects as 3D "
-                                                             "Tiles file, "
+                                                 description="Reality data id of 3D objects as 3D Tiles file, "
                                                              "objects3d output must be defined")
     objects3d_as_geojson: Optional[str] = Field(None, alias="objects3DAsGeoJSON",
-                                                description="Reality data id that will contain 3D objects as "
-                                                            "GeoJSON file, "
+                                                description="Reality data id of 3D objects as GeoJSON file, "
                                                             "objects3d output must be defined")
     locations3d_as_shp: Optional[str] = Field(None, alias="locations3DAsSHP",
-                                              description="Reality data id that will contain 3D objects locations "
-                                                          "as SHP file, "
+                                              description="Reality data id of 3D objects locations as SHP file, "
                                                           "objects3d output must be defined")
     locations3d_as_geojson: Optional[str] = Field(None, alias="locations3DAsGeoJSON",
-                                                  description="Reality data id that will contain 3D objects locations "
+                                                  description="Reality data id of 3D objects locations "
                                                               "as GeoJSON file, "
                                                               "objects3d output must be defined")
 

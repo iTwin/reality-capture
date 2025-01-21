@@ -18,4 +18,9 @@ Specifications regroup all the classes used to interact with our APIs.
     water_constraints
     geometry
     objects2d
+    segmentation2d
+    segmentation_orthophoto
+    segmentation3d
+    change_detection
+    extract_ground
 
