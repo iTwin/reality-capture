@@ -41,9 +41,6 @@ Classes
 .. autopydantic_model:: ProductionInputs
     :model-show-json: False
 
-.. autopydantic_model:: ProductionOptions
-    :model-show-json: False
-
 .. autopydantic_model:: ProductionOutputs
     :model-show-json: False
 

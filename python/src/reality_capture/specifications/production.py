@@ -469,17 +469,11 @@ class ProductionOutputsCreate(BaseModel):
     exports: list[ExportCreate] = Field(description="List of exports")
 
 
-class ProductionOptions(BaseModel):
-    extent: Optional[str] = Field(None, description="Path to Region of Interest.")
-
-
 class ProductionSpecifications(BaseModel):
     inputs: ProductionInputs = Field(description="Inputs")
     outputs: ProductionOutputs = Field(description="Outputs")
-    options: ProductionOptions = Field(description="Options")
 
 
 class ProductionSpecificationsCreate(BaseModel):
     inputs: ProductionInputs = Field(description="Inputs")
     outputs: ProductionOutputsCreate = Field(description="Outputs")
-    options: ProductionOptions = Field(description="Options")
