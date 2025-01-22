@@ -1,8 +1,8 @@
 import reality_capture.specifications.touchup as touchup
 
-tues = touchup.TouchUpExportSpecificationsCreate()
-tues.inputs.reference_model = "18eaa53c-0f8c-45bd-9040-f2e8339b30d4"
-tues.inputs.tiles_to_touch_up = ["Tile_1"]
-tues.outputs = [touchup.TouchUpExportOutputsCreate.TOUCH_UP_DATA]
-tues.options.format = touchup.TouchFormat.OBJ
-tues.options.level = touchup.TouchLevel.GEOMETRY
+tue_inputs = touchup.TouchUpExportInputs(referenceModel="18eaa53c-0f8c-45bd-9040-f2e8339b30d4",
+                                         tilesToTouchUp=["Tile_1"])
+tue_outputs = [touchup.TouchUpExportOutputsCreate.TOUCH_UP_DATA]
+tue_options = touchup.TouchUpExportOptions(format=touchup.TouchFormat.OBJ, level=touchup.TouchLevel.GEOMETRY)
+tues = touchup.TouchUpExportSpecificationsCreate(inputs=tue_inputs, outputs=tue_outputs, options=tue_options)
+

@@ -25,13 +25,8 @@ Examples
 
 In this example, we create a specification for submitting a Import Point Cloud job. It will create a scan collection and a ContextScene pointing to that scan collection.
 
-.. code-block:: python
-
-  import reality_capture.specifications.import_point_cloud as ipc
-
-  ipcs = ipc.ImportPCSpecificationsCreate()
-  ipcs.inputs.scene = "366982d8-043a-4517-91e8-37ca72662b3a"
-  ipcs.outputs = [ipc.SCAN_COLLECTION, ipc.SCENE]
+.. literalinclude:: examples/import_pc_specs.py
+  :language: Python
 
 
 ScanCollection
