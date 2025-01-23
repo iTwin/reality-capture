@@ -9,11 +9,12 @@ class ExtractGroundInputs(BaseModel):
                                                     "pointing to a collection of point clouds to process")
     meshes: Optional[str] = Field(None, description="Reality data id of ContextScene, "
                                                     "pointing to the collection of meshes to process")
-    point_cloud_segmentation_detector: str = Field(alias="pointCloudSegmentationDetector", 
-                                                   description="Either reality data id of "
-                                                               "point cloud segmentation detector "
-                                                               "or point cloud segmentation detector identifier "
-                                                               "from the AI Detectors library")
+    point_cloud_segmentation_detector: Optional[str] = Field(None, alias="pointCloudSegmentationDetector",
+                                                             description="Either reality data id of "
+                                                                         "point cloud segmentation detector "
+                                                                         "or point cloud segmentation "
+                                                                         "detector identifier "
+                                                                         "from the AI Detectors library")
     clip_polygon: Optional[str] = Field(None, alias="clipPolygon", 
                                         description="Reality data id of the clipping polygon to apply")
 

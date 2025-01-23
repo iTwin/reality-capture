@@ -83,7 +83,11 @@ This job has four different purposes :
        | lines and 3D polygons
      - | *segmentation3d*,
        | *clip_polygon* (optional)
-     - | *objects3d* (optional),
+     - | *segmentation3d_as_las* (optional),
+       | *segmentation3d_as_laz* (optional),
+       | *segmentation3d_as_pod* (optional),
+       | *segmentation3d_as_ply* (optional),
+       | *objects3d* (optional),
        | *objects3d_as_dgn* (optional),
        | *objects3d_as_3d_tiles* (optional),
        | *objects3d_as_geojson* (optional),
