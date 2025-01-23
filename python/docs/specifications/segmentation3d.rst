@@ -125,6 +125,10 @@ In this example, we will create a specification for submitting a Segmentation 3D
 .. literalinclude:: examples/s3d_specs_infer_3d_lines_given_3d_segmentation.py
   :language: Python
 
+.. attention::
+
+   Some outputs requires other outputs to be specified in order to be produced. For example, ``SEGMENTATION3D_AS_POD`` requires ``SEGMENTATION3D`` to be produced as well.
+
 
 Classes
 =======

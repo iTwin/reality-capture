@@ -80,6 +80,11 @@ In this example, we will create a specification for submitting an Objects 2D job
 .. literalinclude:: examples/o2d_specs_detect_o3d_objects_given_o2d_objects.py
   :language: Python
 
+
+.. attention::
+
+   Some outputs requires other outputs to be specified in order to be produced. For example, ``LOCATIONS3D_AS_SHP`` requires ``OBJECTS3D`` to be produced as well.
+
 Classes
 =======
 

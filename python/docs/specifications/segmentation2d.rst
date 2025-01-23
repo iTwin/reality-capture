@@ -88,6 +88,11 @@ In this example, we will create a specification for submitting a Segmentation 2D
 .. literalinclude:: examples/s2d_specs_project_on_mesh_given_2d_segmentation.py
   :language: Python
 
+.. attention::
+
+   Some outputs requires other outputs to be specified in order to be produced. For example, ``LINES3D_AS_GEOJSON`` requires ``LINES3D`` to be produced as well.
+
+
 Classes
 =======
 

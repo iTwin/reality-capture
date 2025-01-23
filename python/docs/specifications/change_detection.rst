@@ -64,6 +64,11 @@ In this example, we will create a specification for submitting a Change Detectio
 .. literalinclude:: examples/cd_specs_detect_changes_meshes.py
   :language: Python
 
+.. attention::
+
+   Some outputs requires other outputs to be specified in order to be produced. For example, ``LOCATIONS3D_AS_GEOJSON`` requires ``OBJECTS3D`` to be produced as well.
+
+
 Classes
 =======
 

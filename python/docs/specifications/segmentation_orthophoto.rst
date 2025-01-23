@@ -41,6 +41,11 @@ In this example, we will create a specification for submitting a Segmentation Or
 .. literalinclude:: examples/sortho_specs_classify_pixels.py
   :language: Python
 
+.. attention::
+
+   Some outputs requires other outputs to be specified in order to be produced. For example, ``LINES2D_AS_GEOJSON`` requires ``LINES2D`` to be produced as well.
+
+
 Classes
 =======
 
