@@ -34,6 +34,7 @@ class Format(Enum):
 
 
 class ColorSource(Enum):
+    NO = "None"
     VISIBLE = "Visible"
     THERMAL = "Thermal"
     RESOLUTION = "Resolution"
