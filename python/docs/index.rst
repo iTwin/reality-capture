@@ -15,9 +15,10 @@ It's divided into multiple parts:
 Specifications
 ==============
 
-The :doc:`specifications/index` section contains all the necessary information about payloads and schemas for interacting with the APIs.
+The :doc:`specifications/index` section contains all the necessary information about payloads and schemas for specifying job settings with the APIs.
 
 .. toctree::
     :titlesonly:
+    :includehidden:
 
     specifications/index

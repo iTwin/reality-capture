@@ -13,7 +13,7 @@ Purposes
 
 This job has four different purposes :
 
-.. list-table:: Purposes
+.. list-table::
    :widths: 25 25 25 25
    :header-rows: 1
 
@@ -21,7 +21,8 @@ This job has four different purposes :
      - Inputs
      - Possible outputs
      - Useful options
-   * - Segment a collection of point clouds
+   * - | Segment a collection
+       | of point clouds
      - | *point_clouds*,
        | *point_cloud_segmentation_detector*,
        | *clip_polygon* (optional)
@@ -33,7 +34,8 @@ This job has four different purposes :
        | *segmentation3d_as_ply* (optional)
      - | *save_confidence*,
        | *srs*
-   * - | Segment a collection of meshes
+   * - | Segment a collection
+       | of meshes
      - | *meshes*,
        | *point_cloud_segmentation_detector*,
        | *clip_polygon* (optional)
@@ -45,8 +47,10 @@ This job has four different purposes :
        | *segmentation3d_as_ply* (optional)
      - | *save_confidence*,
        | *srs*
-   * - | Segment a collection of point clouds or meshes
-       | and infer 3D objects, 3D lines and 3D polygons
+   * - | Segment a collection
+       | of point clouds or meshes
+       | and infer 3D objects,
+       | 3D lines and 3D polygons
      - | *point_clouds/meshes*,
        | *point_cloud_segmentation_detector*,
        | *clip_polygon* (optional)
@@ -74,7 +78,9 @@ This job has four different purposes :
        | *compute_line_width*,
        | *save_confidence*,
        | *srs*
-   * - | Given a 3D segmentation, infer 3D objects, 3D lines and 3D polygons
+   * - | Given a 3D segmentation,
+       | infer 3D objects, 3D
+       | lines and 3D polygons
      - | *segmentation3d*,
        | *clip_polygon* (optional)
      - | *objects3d* (optional),

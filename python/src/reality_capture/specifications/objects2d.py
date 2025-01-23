@@ -47,19 +47,33 @@ class Objects2DOutputsCreate(Enum):
     OBJECTS2D = "objects2D"
     OBJECTS3D = "objects3D"
     OBJECTS3D_AS_DGN = "objects3DAsDGN"
+    """
+    Requires OBJECTS3D in order to be produced.
+    """
     OBJECTS3D_AS_3DTILES = "objects3DAs3DTiles"
+    """
+    Requires OBJECTS3D in order to be produced.
+    """
     OBJECTS3D_AS_GEOJSON = "objects3DAsGeoJSON"
+    """
+    Requires OBJECTS3D in order to be produced.
+    """
     LOCATIONS3D_AS_SHP = "locations3DAsSHP"
+    """
+    Requires OBJECTS3D in order to be produced.
+    """
     LOCATIONS3D_AS_GEOJSON = "locations3DAsGeoJSON"
+    """
+    Requires OBJECTS3D in order to be produced.
+    """
 
 
 class Objects2DOptions(BaseModel):
     use_tie_points: Optional[bool] = Field(None, alias="useTiePoints",
-                                           description="Improve detection using tie points in "
-                                                       "oriented photos (advanced)")
+                                           description="Improve detection using tie points in oriented photos.")
     max_dist: Optional[float] = Field(None, alias="maxDist",
                                       description="Maximum distance between photos and 3D objects")
-    srs: Optional[str] = Field(None, description="SRS used by objects3d_as_dgn and locations3d_as_shp outputs")
+    srs: Optional[str] = Field(None, description="SRS used by ``objects3d_as_dgn`` and ``locations3d_as_shp`` outputs")
     min_photos: Optional[int] = Field(None, alias="minPhotos",
                                       description="Minimum number of 2D objects to generate a 3D object")
 

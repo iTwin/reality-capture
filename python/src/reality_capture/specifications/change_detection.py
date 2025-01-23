@@ -30,7 +30,13 @@ class ChangeDetectionOutputs(BaseModel):
 class ChangeDetectionOutputsCreate(Enum):
     OBJECTS3D = "objects3D"
     LOCATIONS3D_AS_SHP = "locations3DAsSHP"
+    """
+    Requires OBJECTS3D in order to be produced.
+    """
     LOCATIONS3D_AS_GEOJSON = "locations3DAsGeoJSON"
+    """
+    Requires OBJECTS3D in order to be produced.
+    """
 
 
 class ChangeDetectionOptions(BaseModel):

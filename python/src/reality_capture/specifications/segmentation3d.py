@@ -96,23 +96,68 @@ class Segmentation3DOutputsCreate(Enum):
     SEGMENTATION3D = "segmentation3D"
     SEGMENTED_POINT_CLOUD = "segmentedPointCloud"
     SEGMENTATION3D_AS_POD = "segmentation3DAsPOD"
+    """
+    Requires SEGMENTATION3D in order to be produced.
+    """
     SEGMENTATION3D_AS_LAS = "segmentation3DAsLAS"
+    """
+    Requires SEGMENTATION3D in order to be produced.
+    """
     SEGMENTATION3D_AS_LAZ = "segmentation3DAsLAZ"
+    """
+    Requires SEGMENTATION3D in order to be produced.
+    """
     SEGMENTATION3D_AS_PLY = "segmentation3DAsPLY"
+    """
+    Requires SEGMENTATION3D in order to be produced.
+    """
     OBJECTS3D = "objects3D"
     OBJECTS3D_AS_DGN = "objects3DAsDGN"
+    """
+    Requires OBJECTS3D in order to be produced.
+    """
     OBJECTS3D_AS_3DTILES = "objects3DAs3DTiles"
+    """
+    Requires OBJECTS3D in order to be produced.
+    """
     OBJECTS3D_AS_GEOJSON = "objects3DAsGeoJSON"
+    """
+    Requires OBJECTS3D in order to be produced.
+    """
     LOCATIONS3D_AS_SHP = "locations3DAsSHP"
+    """
+    Requires OBJECTS3D in order to be produced.
+    """
     LOCATIONS3D_AS_GEOJSON = "locations3DAsGeoJSON"
+    """
+    Requires OBJECTS3D in order to be produced.
+    """
     LINES3D = "lines3D"
     LINES3D_AS_DGN = "lines3DAsDGN"
+    """
+    Requires LINES3D in order to be produced.
+    """
     LINES3D_AS_3DTILES = "lines3DAs3DTiles"
+    """
+    Requires LINES3D in order to be produced.
+    """
     LINES3D_AS_GEOJSON = "lines3DAsGeoJSON"
+    """
+    Requires LINES3D in order to be produced.
+    """
     POLYGONS3D = "polygons3D"
     POLYGONS3D_AS_DGN = "polygons3DAsDGN"
+    """
+    Requires POLYGONS3D in order to be produced.
+    """
     POLYGONS3D_AS_3DTiles = "polygons3DAs3DTiles"
+    """
+    Requires POLYGONS3D in order to be produced.
+    """
     POLYGONS3D_AS_GeoJSON = "polygons3DAsGeoJSON"
+    """
+    Requires POLYGONS3D in order to be produced.
+    """
 
 
 class Segmentation3DOptions(BaseModel):

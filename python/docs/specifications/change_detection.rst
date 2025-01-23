@@ -13,7 +13,7 @@ Purposes
 
 This job has two different purposes :
 
-.. list-table:: Purposes
+.. list-table::
    :widths: 25 25 25 25
    :header-rows: 1
 
@@ -21,7 +21,9 @@ This job has two different purposes :
      - Inputs
      - Possible outputs
      - Useful options
-   * - Detect changes between two collections of point clouds
+   * - | Detect changes between
+       | two collections of
+       | point clouds
      - | *point_clouds1*,
        | *point_clouds2*
      - | *objects3d*
@@ -33,7 +35,9 @@ This job has two different purposes :
        | *dist_threshold_low*,
        | *dist_threshold_high*,
        | *min_points*
-   * - Detect changes between two collections of meshes
+   * - | Detect changes between
+       | two collections of
+       | meshes
      - | *meshes1*,
        | *meshes2*
      - | *objects3d*,

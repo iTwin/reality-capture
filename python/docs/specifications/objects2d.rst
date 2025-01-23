@@ -15,8 +15,8 @@ Purposes
 
 This job has three different purposes :
 
-.. list-table:: Purposes
-   :widths: 25 25 25 25
+.. list-table::
+   :widths: auto
    :header-rows: 1
 
    * - Purpose
@@ -28,7 +28,8 @@ This job has three different purposes :
        | *photo_object_detector*
      - | *objects2d*
      - |
-   * - Detect objects in oriented photos and infer 3D objects
+   * - | Detect objects in oriented
+       | photos and infer 3D objects
      - | *photos*,
        | *photo_object_detector*,
        | *point_clouds* (optional),
@@ -44,7 +45,8 @@ This job has three different purposes :
        | *min_photos*,
        | *max_dist*,
        | *use_tie_points*
-   * - Given 2D objects in oriented photos, infer 3D objects
+   * - | Given 2D objects in oriented
+       | photos, infer 3D objects
      - | *photos*,
        | *objects2d*,
        | *point_clouds* (optional),

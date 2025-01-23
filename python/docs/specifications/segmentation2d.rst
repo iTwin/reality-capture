@@ -13,7 +13,7 @@ Purposes
 
 This job has three different purposes :
 
-.. list-table:: Purposes
+.. list-table::
    :widths: 25 25 25 25
    :header-rows: 1
 
@@ -27,8 +27,11 @@ This job has three different purposes :
      - | *segmentation2d*,
        | *segmented_photos*
      - |
-   * - | Segment oriented photos and project segmentation on a collection of meshes
-       | or point clouds and detect 3D lines and 3D polygons
+   * - | Segment oriented photos
+       | and project segmentation
+       | on a collection of meshes
+       | or point clouds and detect
+       | 3D lines and 3D polygons
      - | *photos*,
        | *photo_segmentation_detector*,
        | *point_clouds*/*meshes*
@@ -46,8 +49,11 @@ This job has three different purposes :
        | *srs*,
        | *remove_small_components*,
        | *compute_line_width*
-   * - | Given a 2D segmentation of oriented photos, project segmentation on a collection of meshes
-       | or point clouds and detect 3D lines and 3D polygons
+   * - | Given a 2D segmentation of
+       | oriented photos, project
+       | segmentation on a collection
+       | of meshes or point clouds
+       | and detect 3D lines and 3D polygons
      - | *photos*,
        | *segmentation2d*,
        | *point_clouds*/*meshes*

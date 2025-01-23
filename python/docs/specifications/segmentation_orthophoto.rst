@@ -11,7 +11,7 @@ The Segmentation Orthophoto job uses an orthophoto segmentation detector to clas
 Purposes
 ========
 
-.. list-table:: Purposes
+.. list-table::
    :widths: 25 25 25 25
    :header-rows: 1
 

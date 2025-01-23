@@ -30,4 +30,15 @@ autodoc_pydantic_settings_show_json = True
 autodoc_pydantic_field_show_alias = False
 autodoc_pydantic_model_show_field_summary = False
 
+# Autodoc
 autodoc_class_signature = 'separated'
+autodoc_member_order = 'bysource'
+
+# ReadTheDocsLink
+html_context = {
+    "display_github": True,  # Integrate GitHub
+    "github_user": "iTwin",  # Username
+    "github_repo": "reality-capture",  # Repo name
+    "github_version": "feature/2.0.0",  # Version
+    "conf_py_path": "/python/docs/",  # Path in the checkout to the docs root
+}

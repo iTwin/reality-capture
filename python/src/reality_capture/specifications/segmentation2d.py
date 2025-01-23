@@ -56,12 +56,30 @@ class Segmentation2DOutputsCreate(Enum):
     SEGMENTED_PHOTOS = "segmentedPhotos"
     LINES3D = "lines3D"
     LINES3D_AS_DGN = "lines3DAsDGN"
+    """
+    Requires LINES3D in order to be produced.
+    """
     LINES3D_AS_3DTILES = "lines3DAs3DTiles"
+    """
+    Requires LINES3D in order to be produced.
+    """
     LINES3D_AS_GEOJSON = "lines3DAsGeoJSON"
+    """
+    Requires LINES3D in order to be produced.
+    """
     POLYGONS3D = "polygons3D"
     POLYGONS3D_AS_DGN = "polygons3DAsDGN"
+    """
+    Requires POLYGONS3D in order to be produced.
+    """
     POLYGONS3D_AS_3DTILES = "polygons3DAs3DTiles"
+    """
+    Requires POLYGONS3D in order to be produced.
+    """
     POLYGONS3D_AS_GEOJSON = "polygons3DAsGeoJSON"
+    """
+    Requires POLYGONS3D in order to be produced.
+    """
 
 
 class Segmentation2DOptions(BaseModel):
@@ -70,7 +88,7 @@ class Segmentation2DOptions(BaseModel):
     remove_small_component: Optional[float] = Field(None, alias="removeSmallComponents",
                                                     description="Remove 3D lines with total length "
                                                                 "smaller than this value")
-    srs: Optional[str] = Field(None, description="SRS used by lines3DAsDGN and polygons3DAsDGN outputs")
+    srs: Optional[str] = Field(None, description="SRS used by ``lines3D_as_dgn`` and ``polygons3D_as_dgn`` outputs")
     min_photos: Optional[int] = Field(None, alias="minPhotos",
                                       description="Minimum number of 2D detection to generate a 3D detection")
 
