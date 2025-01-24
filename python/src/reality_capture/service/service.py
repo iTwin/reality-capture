@@ -65,7 +65,7 @@ class RealityCaptureService:
     def get_reality_data(self, reality_data_id: str, itwin_id: Optional[str] = None) -> Response[RealityData]:
         url = self._service_url + "/reality-data/" + reality_data_id
         if itwin_id is not None:
-            url += "?" + itwin_id
+            url += "?iTwinId=" + itwin_id
         response = self._session.get(url, headers=self._get_header())
         pass
 
@@ -73,7 +73,7 @@ class RealityCaptureService:
                             reality_data_id: str, itwin_id: Optional[str] = None) -> Response[RealityData]:
         url = self._service_url + "/reality-data/" + reality_data_id
         if itwin_id is not None:
-            url += "?" + itwin_id
+            url += "?iTwinId=" + itwin_id
         response = self._session.post(url, reality_data_update.model_dump_json(by_alias=True),
                                       headers=self._get_header())
         pass
