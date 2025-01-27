@@ -572,6 +572,122 @@ class EvalS2DSpecifications:
         Possible options for an Eval Segmentation 2D job.
 
         """
+
+
+class EvalS3DSpecifications:
+    """
+    Specifications for Eval Segmentation 3D jobs.
+
+    Attributes:
+        type: Type of job specifications.
+        inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing the specifications to create_job.
+        options: Possible options for this job.
+    """
+
+    def __init__(self) -> None:
+        self.type = RDAJobType.EvalS3D
+        self.inputs = self.Inputs()
+        self.outputs = self.Outputs()
+        self.options = self.Options()
+
+    def to_json(self) -> dict:
+        """
+        Transform specifications into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with specifications values.
+        """
+        json_dict = dict()
+        json_dict["inputs"] = list()
+        json_dict["outputs"] = list()
+        json_dict["inputs"].append(
+            {
+                "prediction": self.inputs.prediction
+            },
+        )
+        json_dict["inputs"].append(
+            {
+                "reference": self.inputs.reference
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "report": self.outputs.report
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "segmentedPointCloud": self.outputs.segmented_point_cloud
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "segmentation3D": self.outputs.segmentation3d
+            }
+        )
+        return json_dict
+
+    @classmethod
+    def from_json(cls, specifications_json: dict) -> ReturnValue[EvalS3DSpecifications]:
+        """
+        Transform json received from cloud service into specifications.
+
+        Args:
+            specifications: Dictionary with specifications received from cloud service.
+        Returns:
+            New specifications.
+        """
+        new_job_specifications = cls()
+        try:
+            new_job_specifications.inputs.reference = specifications_json["inputs"]["reference"]
+            new_job_specifications.inputs.prediction = specifications_json["inputs"]["prediction"]
+            new_job_specifications.outputs.report = specifications_json["outputs"]["report"]
+            new_job_specifications.outputs.segmented_point_cloud = specifications_json["outputs"]["segmentedPointCloud"]
+            new_job_specifications.outputs.segmentation3D = specifications_json["outputs"]["segmentation3D"]
+        except (TypeError, KeyError) as e:
+            return ReturnValue(value=cls(), error=str(e))
+        return ReturnValue(value=new_job_specifications, error="")
+
+    class Inputs:
+        """
+        Possible inputs for an Eval Segmentation 3D job.
+
+        Attributes:
+            prediction: ContextScene pointing to prediction segmented photos.
+            reference: ContextScene point to reference segmented photos.
+
+        """
+
+        def __init__(self) -> None:
+            self.prediction: str = ""
+            self.reference: str = ""
+
+    class Outputs:
+        """
+        Possible outputs for an Eval Segmentation 3D job.
+
+        Attributes:
+            report: a json report file with Eval Segmentation 3D results.
+            segmented_point_cloud: Eval segmented photos annotated with confusion matrix index.
+            segmentation3D: ContextScene pointing to the segmented photos.
+
+        """
+
+        def __init__(self) -> None:
+            self.report: str = ""
+            self.segmented_point_cloud: str = ""
+            self.segmentation3D: str = ""
+
+    class Options:
+        """
+        Possible options for an Eval Segmentation 3D job.
+
+        """
+
+
+
 class EvalSOrthoSpecifications:
     """
     Specifications for an Eval Segmentation Ortho jobs.
