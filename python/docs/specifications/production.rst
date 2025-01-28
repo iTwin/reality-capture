@@ -95,6 +95,9 @@ Classes
 .. autopydantic_model:: OptionsSuperMap
     :model-show-json: False
 
+.. autopydantic_model:: OptionsFBX
+    :model-show-json: False
+
 .. autopydantic_model:: OptionsLAS
     :model-show-json: False
 
