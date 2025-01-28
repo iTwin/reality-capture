@@ -55,6 +55,9 @@ Classes
 .. autopydantic_model:: TilingOutputs
     :model-show-json: False
 
+.. autopydantic_model:: ReferenceModel
+    :model-show-json: False
+
 .. autopydantic_model:: TilingOptions
     :model-show-json: False
 
