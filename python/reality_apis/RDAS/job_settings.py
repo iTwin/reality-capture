@@ -619,12 +619,12 @@ class EvalS3DSpecifications:
         )
         json_dict["outputs"].append(
             {
-                "segmentedPointCloud": self.outputs.segmented_point_cloud
+                "segmentedPointCloud": self.outputs.segmentedPointCloud
             }
         )
         json_dict["outputs"].append(
             {
-                "segmentation3D": self.outputs.segmentation3d
+                "segmentation3D": self.outputs.segmentation3D
             }
         )
         return json_dict
@@ -644,7 +644,7 @@ class EvalS3DSpecifications:
             new_job_specifications.inputs.reference = specifications_json["inputs"]["reference"]
             new_job_specifications.inputs.prediction = specifications_json["inputs"]["prediction"]
             new_job_specifications.outputs.report = specifications_json["outputs"]["report"]
-            new_job_specifications.outputs.segmented_point_cloud = specifications_json["outputs"]["segmentedPointCloud"]
+            new_job_specifications.outputs.segmentedPointCloud = specifications_json["outputs"]["segmentedPointCloud"]
             new_job_specifications.outputs.segmentation3D = specifications_json["outputs"]["segmentation3D"]
         except (TypeError, KeyError) as e:
             return ReturnValue(value=cls(), error=str(e))
@@ -670,14 +670,14 @@ class EvalS3DSpecifications:
 
         Attributes:
             report: a json report file with Eval Segmentation 3D results.
-            segmented_point_cloud: Eval segmented photos annotated with confusion matrix index.
+            segmentedPointCloud: Eval segmented photos annotated with confusion matrix index.
             segmentation3D: ContextScene pointing to the segmented photos.
 
         """
 
         def __init__(self) -> None:
             self.report: str = ""
-            self.segmented_point_cloud: str = ""
+            self.segmentedPointCloud: str = ""
             self.segmentation3D: str = ""
 
     class Options:

@@ -17,6 +17,7 @@ class RDAJobType(Enum):
     ChangeDetection = "changeDetection"
     ExtractGround = "extractGround"
     EvalS2D = "evalS2D"
+    EvalS3D = "evalS3D"
     EvalSOrtho = "evalSOrtho"
     EvalO2D = "evalO2d"
     EvalO3D = "evalO3d"
