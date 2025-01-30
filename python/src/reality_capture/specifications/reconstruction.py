@@ -21,9 +21,14 @@ class ReconstructionOutputs(BaseModel):
     exports: Optional[list[Export]] = Field(description="List of exports")
 
 
+class ReconstructionOutputsCreate(BaseModel):
+    reference_model: Optional[bool] = Field(None, description="Reference Model", alias="referenceModel")
+    exports: Optional[list[ExportCreate]] = Field(None, description="Exports")
+
+
 class ReconstructionSpecificationsCreate(BaseModel):
     inputs: ReconstructionInputs = Field(description="Inputs")
-    outputs: list[Union[TilingOutputsCreate, ExportCreate]] = Field(description="Outputs")
+    outputs: ReconstructionOutputsCreate = Field(description="Outputs")
     options: TilingOptions = Field(description="Options")
 
 

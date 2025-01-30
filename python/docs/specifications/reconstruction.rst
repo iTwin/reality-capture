@@ -25,6 +25,9 @@ Classes
 
 .. autopydantic_model:: ReconstructionSpecificationsCreate
 
+.. autopydantic_model:: ReconstructionOutputsCreate
+    :model-show-json: False
+
 .. autopydantic_model:: ReconstructionSpecifications
 
 .. autopydantic_model:: ReconstructionInputs
