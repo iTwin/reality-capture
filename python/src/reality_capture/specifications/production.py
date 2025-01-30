@@ -12,8 +12,8 @@ class ProductionInputs(BaseModel):
 
 
 class Format(Enum):
-    THREEMX = "ThreeMX"
-    THREESM = "ThreeSM"
+    THREEMX = "3MX"
+    THREESM = "3SM"
     THREED_TILES = "3DTiles"
     OSGB = "OSGB"
     SPACEYES = "SpacEyes"
@@ -26,9 +26,9 @@ class Format(Enum):
     KML = "KML"
     DGN = "DGN"
     SUPER_MAP = "SuperMap"
-    LAS = "Las"
+    LAS = "LAS"
     POD = "POD"
-    PLY = "Ply"
+    PLY = "PLY"
     OPC = "OPC"
     ORTHOPHOTO_DSM = "OrthophotoDSM"
     FBX = "FBX"
