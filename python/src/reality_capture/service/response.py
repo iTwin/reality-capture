@@ -1,5 +1,5 @@
 from typing import TypeVar, Generic, Optional
-from error import DetailedErrorResponse
+from reality_capture.service.error import DetailedErrorResponse
 
 
 T = TypeVar("T")
