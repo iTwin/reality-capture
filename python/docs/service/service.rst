@@ -2,7 +2,7 @@
 Service
 =======
 
-Service handling communication with Reality Capture API
+Service handling communication with Reality Capture API.
 
 .. contents:: Quick access
    :local:

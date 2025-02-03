@@ -33,6 +33,7 @@ class Response(tuple, Generic[T]):
     def is_error(self) -> bool:
         """
         Checks whether the response is an error response.
+
         Returns:
             True if the response contains a valid error.
         """
