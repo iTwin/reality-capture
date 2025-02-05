@@ -24,7 +24,6 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: JobCreate
-    :model-show-json: False
 
 .. autopydantic_model:: Execution
     :model-show-json: False
@@ -33,10 +32,8 @@ Classes
     :model-show-json: False
 
 .. autopydantic_model:: JobResponse
-    :model-show-json: False
 
 .. autopydantic_model:: Progress
     :model-show-json: False
 
 .. autopydantic_model:: ProgressResponse
-    :model-show-json: False
