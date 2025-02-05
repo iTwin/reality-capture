@@ -2,11 +2,8 @@
 Job
 ===
 
-Provides classes and enums to describe a job.
-
-.. contents:: Quick access
-   :local:
-   :depth: 2
+This section describes extensively the Job object.
+The Job object and its associated objects are the main payload information concerning jobs.
 
 Classes
 =======

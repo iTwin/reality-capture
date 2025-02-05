@@ -29,6 +29,7 @@ html_static_path = ['_static']
 autodoc_pydantic_settings_show_json = True
 autodoc_pydantic_field_show_alias = False
 autodoc_pydantic_model_show_field_summary = False
+autodoc_pydantic_model_summary_list_order = 'bysource'
 
 # Autodoc
 autodoc_class_signature = 'separated'

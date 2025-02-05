@@ -99,7 +99,7 @@ class Access(Enum):
 
 
 class URL(BaseModel):
-    href: str = Field("URL.")
+    href: str = Field(description="URL.")
 
 
 class ContainerLinks(BaseModel):

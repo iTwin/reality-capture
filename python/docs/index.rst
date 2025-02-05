@@ -10,17 +10,27 @@ Reality Capture documentation
 The ``reality_capture`` package enables you to interact easily with Bentley Reality Capture APIs.
 It's divided into multiple parts:
 
-* Specifications for all the schemas needed ;
+* Specifications gives in-depth details about existing job specifications, their usage and their options ;
+* Service describes the general endpoints and responses of the Reality Capture APIs ;
 
 Specifications
 ==============
 
 The :doc:`specifications/index` section contains all the necessary information about payloads and schemas for specifying job settings with the APIs.
-The :doc:`service/index` section contains all the necessary information about reality-capture service for sending requests to the API.
 
 .. toctree::
     :titlesonly:
     :includehidden:
 
     specifications/index
+
+Services
+========
+
+The :doc:`service/index` section contains all the necessary information about the send payload and responses from the Reality Capture APIs ;
+
+.. toctree::
+    :titlesonly:
+    :includehidden:
+
     service/index

@@ -2,11 +2,7 @@
 Reality Data
 ============
 
-Provides classes and enums to describe a reality data.
-
-.. contents:: Quick access
-   :local:
-   :depth: 2
+This section describes extensively the Reality Data information and all the necessary structures for interacting with a Reality Data.
 
 Classes
 =======
@@ -32,17 +28,17 @@ Classes
 .. autopydantic_model:: Extent
     :model-show-json: False
 
-.. autopydantic_model:: RealityDataBase
-    :model-show-json: False
-
 .. autopydantic_model:: RealityData
     :model-show-json: False
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: RealityDataCreate
     :model-show-json: False
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: RealityDataUpdate
     :model-show-json: False
+    :inherited-members: BaseModel
 
 .. autoclass:: ContainerType
     :show-inheritance:

@@ -57,8 +57,8 @@ class JobState(Enum):
 
 
 class JobCreate(BaseModel):
-    name: Optional[str] = Field(None, description="Job name.", min_length=2)
-    type: JobType = Field(description="Job type.")
+    name: Optional[str] = Field(None, description="Displayable job name.", min_length=2)
+    type: JobType = Field(description="Type of job.")
     specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
                           ConstraintsSpecificationsCreate, ExtractGroundSpecificationsCreate,
                           FillImagePropertiesSpecificationsCreate, ImportPCSpecificationsCreate,
@@ -68,24 +68,27 @@ class JobCreate(BaseModel):
                           TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
                           TouchUpImportSpecifications, WaterConstraintsSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
-    itwin: str = Field(description="iTwin ID.")
+    itwin: str = Field(description="iTwin ID, used by the service for finding "
+                                   "input reality data and uploading output data.")
 
 
 class Execution(BaseModel):
-    creation_date_time: datetime = Field(description="Creation date time for the job", alias="creationDateTime")
-    start_date_time: Optional[datetime] = Field(description="Start date time for the job", alias="startDateTime")
-    end_date_time: Optional[datetime] = Field(description="End date time for the job", alias="endDateTime")
-    estimated_units: Optional[float] = Field(description="Estimated number of units consumed by the job",
+    creation_date_time: datetime = Field(description="Creation date time for the job.", alias="creationDateTime")
+    start_date_time: Optional[datetime] = Field(description="Start date time for the job.", alias="startDateTime")
+    end_date_time: Optional[datetime] = Field(description="End date time for the job.", alias="endDateTime")
+    estimated_units: Optional[float] = Field(description="Estimated number of units consumed by the job.",
                                              alias="estimatedUnits")
 
 
 class Job(BaseModel):
-    name: Optional[str] = Field(None, description="Job name.", min_length=2)
-    type: JobType = Field(description="Job type.")
-    itwin: str = Field(description="iTwin ID.")
-    state: JobState = Field(description="Job state.")
-    execution: Execution = Field(description="Execution information.")
-    user: str = Field(description="User identifier.")
+    id: str = Field(description="Job unique identifier.")
+    name: Optional[str] = Field(None, description="Displayable job name.", min_length=2)
+    type: JobType = Field(description="Type of job.")
+    itwin: str = Field(description="iTwin ID, used by the service for finding "
+                                   "input reality data and uploading output data.")
+    state: JobState = Field(description="State of the job.")
+    execution: Execution = Field(description="Known execution information for the job.")
+    user: str = Field(description="Identifier of the user that created the job.")
     specifications: Union[CalibrationSpecifications, ChangeDetectionSpecifications,
                           ConstraintsSpecifications, ExtractGroundSpecifications,
                           FillImagePropertiesSpecifications, ImportPCSpecifications,
@@ -98,7 +101,7 @@ class Job(BaseModel):
 
 
 class JobResponse(BaseModel):
-    job: Job = Field(description="Job.")
+    job: Job = Field(description="Complete job information.")
 
 
 class Progress(BaseModel):
@@ -107,4 +110,4 @@ class Progress(BaseModel):
 
 
 class ProgressResponse(BaseModel):
-    progress: Progress = Field(description="Progress")
+    progress: Progress = Field(description="Progress information.")

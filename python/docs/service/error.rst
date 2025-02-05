@@ -2,22 +2,17 @@
 Error
 =====
 
-Describes error from Reality capture API.
-
-.. contents:: Quick access
-   :local:
-   :depth: 2
+This section describes the error response that can be sent by the service.
 
 Classes
 =======
 
 .. currentmodule:: reality_capture.service.error
 
-.. autopydantic_model:: Error
-    :model-show-json: False
+.. autopydantic_model:: DetailedErrorResponse
 
 .. autopydantic_model:: DetailedError
     :model-show-json: False
 
-.. autopydantic_model:: DetailedErrorResponse
+.. autopydantic_model:: Error
     :model-show-json: False

@@ -11,8 +11,11 @@ class Response(tuple, Generic[T]):
     """
 
     status_code: int
+    "HTTP Status Code returned by the service."
     error: Optional[DetailedErrorResponse]
+    "Optional error if the request failed."
     value: Optional[T]
+    "Optional object if the request succeed."
 
     def __new__(cls, status_code: int, error: Optional[DetailedErrorResponse], value: Optional[T]):
         self = tuple.__new__(cls, (status_code, error, value))

@@ -1,8 +1,8 @@
-=======
-Service
-=======
+=======================
+Reality Capture Service
+=======================
 
-Service handling communication with Reality Capture API.
+Reality Capture Service is the class handling the communication with the Reality Capture APIs.
 
 .. contents:: Quick access
    :local:
@@ -11,61 +11,44 @@ Service handling communication with Reality Capture API.
 Examples
 ========
 
-These examples show how to perform requests to reality Capture API:
+This section showcases multiple examples for interacting with jobs and reality data.
 
-Submit job :
+Interact with jobs
+------------------
+
+In this example, we will create and submit a job.
+If submission is successful, we will obtain a ``Job`` object as a response:
 
 .. literalinclude:: examples/submit_job.py
   :language: Python
 
-Cancel job :
-
-.. literalinclude:: examples/cancel_job.py
-  :language: Python
-
-Get job :
-
-.. literalinclude:: examples/get_job.py
-  :language: Python
-
-Get job progress :
+Once submitted, we can follow the job progress like this:
 
 .. literalinclude:: examples/get_job_progress.py
   :language: Python
 
-Create reality data :
+And if needed, the job can be cancelled:
+
+.. literalinclude:: examples/cancel_job.py
+  :language: Python
+
+Interact with reality data
+--------------------------
+
+In this example, we will create a new reality data:
 
 .. literalinclude:: examples/create_reality_data.py
   :language: Python
 
-Get reality data :
-
-.. literalinclude:: examples/get_reality_data.py
-  :language: Python
-
-Update reality data :
+Then, we can update its properties:
 
 .. literalinclude:: examples/update_reality_data.py
   :language: Python
 
-Delete reality data :
-
-.. literalinclude:: examples/delete_reality_data.py
-  :language: Python
-
-Get reality data read access :
-
-.. literalinclude:: examples/get_reality_data_read_access.py
-  :language: Python
-
-Get reality data write access :
+And then you can get ``write`` access in order to upload data inside it:
 
 .. literalinclude:: examples/get_reality_data_write_access.py
   :language: Python
-
-Get reality data list from iTwin :
-
-TODO
 
 
 Classes
@@ -74,6 +57,5 @@ Classes
 .. currentmodule:: reality_capture.service.service
 
 .. autoclass:: RealityCaptureService
-    :show-inheritance:
     :members:
     :undoc-members:
