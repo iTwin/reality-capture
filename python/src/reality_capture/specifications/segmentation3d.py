@@ -176,10 +176,10 @@ class Segmentation3DOptions(BaseModel):
 class Segmentation3DSpecificationsCreate(BaseModel):
     inputs: Segmentation3DInputs = Field(description="Inputs")
     outputs: list[Segmentation3DOutputsCreate] = Field(description="Outputs")
-    options: Segmentation3DOptions = Field(description="Options")
+    options: Optional[Segmentation3DOptions] = Field(None, description="Options")
 
 
 class Segmentation3DSpecifications(BaseModel):
     inputs: Segmentation3DInputs = Field(description="Inputs")
     outputs: Segmentation3DOutputs = Field(description="Outputs")
-    options: Segmentation3DOptions = Field(description="Options")
+    options: Optional[Segmentation3DOptions] = Field(None, description="Options")

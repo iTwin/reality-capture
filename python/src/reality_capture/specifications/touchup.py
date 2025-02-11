@@ -36,13 +36,13 @@ class TouchUpExportOutputs(BaseModel):
 class TouchUpExportSpecifications(BaseModel):
     inputs: TouchUpExportInputs = Field(description="Inputs")
     outputs: TouchUpExportOutputs = Field(description="Outputs")
-    options: TouchUpExportOptions = Field(description="Options")
+    options: Optional[TouchUpExportOptions] = Field(None, description="Options")
 
 
 class TouchUpExportSpecificationsCreate(BaseModel):
     inputs: TouchUpExportInputs = Field(description="Inputs")
     outputs: list[TouchUpExportOutputsCreate] = Field(description="Outputs")
-    options: TouchUpExportOptions = Field(description="Options")
+    options: Optional[TouchUpExportOptions] = Field(None, description="Options")
 
 
 class TouchUpImportInputs(BaseModel):

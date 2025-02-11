@@ -62,10 +62,10 @@ class ChangeDetectionOptions(BaseModel):
 class ChangeDetectionSpecificationsCreate(BaseModel):
     inputs: ChangeDetectionInputs = Field(description="Inputs")
     outputs: list[ChangeDetectionOutputsCreate] = Field(description="Outputs")
-    options: ChangeDetectionOptions = Field(description="Options")
+    options: Optional[ChangeDetectionOptions] = Field(None, description="Options")
 
 
 class ChangeDetectionSpecifications(BaseModel):
     inputs: ChangeDetectionInputs = Field(description="Inputs")
     outputs: ChangeDetectionOutputs = Field(description="Outputs")
-    options: ChangeDetectionOptions = Field(description="Options")
+    options: Optional[ChangeDetectionOptions] = Field(None, description="Options")

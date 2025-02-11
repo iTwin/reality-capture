@@ -81,10 +81,10 @@ class Objects2DOptions(BaseModel):
 class Objects2DSpecificationsCreate(BaseModel):
     inputs: Objects2DInputs = Field(description="Inputs")
     outputs: list[Objects2DOutputsCreate] = Field(description="Outputs")
-    options: Objects2DOptions = Field(description="Options")
+    options: Optional[Objects2DOptions] = Field(None, description="Options")
 
 
 class Objects2DSpecifications(BaseModel):
     inputs: Objects2DInputs = Field(description="Inputs")
     outputs: Objects2DOutputs = Field(description="Outputs")
-    options: Objects2DOptions = Field(description="Options")
+    options: Optional[Objects2DOptions] = Field(None, description="Options")

@@ -65,6 +65,3 @@ Classes
 
 .. autopydantic_model:: SegmentationOrthophotoOutputs
     :model-show-json: False
-
-.. autopydantic_model:: SegmentationOrthophotoOptions
-    :model-show-json: False

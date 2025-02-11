@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, Union
 from enum import Enum
-
+from reality_capture.specifications.geometry import Point3d
 
 class ProductionInputs(BaseModel):
     scene: str = Field(description="Reality data id of ContextScene to process")
@@ -80,7 +80,7 @@ class Options3MX(BaseModel):
                                                               description="Maximum thermal value for the texture color "
                                                                           "source")
     srs: Optional[str] = Field(None, description="Spatial reference system")
-    srs_origin: Optional[str] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
+    srs_origin: Optional[Point3d] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
     lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
     generate_web_app: Optional[bool] = Field(None, alias="generateWebApp",
                                              description="Flag to generate a web application")
@@ -153,7 +153,7 @@ class OptionsOSGB(BaseModel):
     lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
     lod_type: Optional[LODType] = Field(None, alias="lodType", description="Level of detail type")
     srs: Optional[str] = Field(None, description="Spatial reference system")
-    srs_origin: Optional[str] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
+    srs_origin: Optional[Point3d] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
 
 
 class OptionsSpacEyes(BaseModel):
@@ -205,7 +205,7 @@ class OptionsOBJ(BaseModel):
     lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
     lod_type: Optional[LODType] = Field(None, alias="lodType", description="Level of detail type")
     srs: Optional[str] = Field(None, description="Spatial reference system")
-    srs_origin: Optional[str] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
+    srs_origin: Optional[Point3d] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
     double_precision: Optional[bool] = Field(None, alias="doublePrecision", description="Flag for double precision")
 
 
@@ -231,7 +231,7 @@ class OptionsS3C(BaseModel):
                                                description="JPG compression of texture file")
     lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
     srs: Optional[str] = Field(None, description="Spatial reference system")
-    srs_origin: Optional[str] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
+    srs_origin: Optional[Point3d] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
 
 
 class I3SVersion(Enum):
@@ -307,7 +307,7 @@ class OptionsCollada(BaseModel):
     lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
     lod_type: Optional[LODType] = Field(None, alias="lodType", description="Level of detail type")
     srs: Optional[str] = Field(None, description="Spatial reference system")
-    srs_origin: Optional[str] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
+    srs_origin: Optional[Point3d] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
 
 
 class OptionsOCP(BaseModel):
@@ -373,7 +373,7 @@ class OptionsDGN(BaseModel):
     lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
     lod_type: Optional[LODType] = Field(None, alias="lodType", description="Level of detail type")
     srs: Optional[str] = Field(None, description="Spatial reference system")
-    srs_origin: Optional[str] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
+    srs_origin: Optional[Point3d] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
 
 
 class OptionsSuperMap(BaseModel):
@@ -418,7 +418,7 @@ class OptionsFBX(BaseModel):
     lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
     lod_type: Optional[LODType] = Field(None, alias="lodType", description="Level of detail type")
     srs: Optional[str] = Field(None, description="Spatial reference system")
-    srs_origin: Optional[str] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
+    srs_origin: Optional[Point3d] = Field(None, alias="srsOrigin", description="Origin of the spatial reference system")
 
 
 class SamplingStrategy(Enum):
@@ -500,7 +500,6 @@ class OrthoColorSource(Enum):
 class OptionsOrthoDSM(BaseModel):
     srs: Optional[str] = Field(None, description="Spatial reference system")
     sampling_distance: Optional[float] = Field(None, alias="samplingDistance", description="Sampling distance")
-    extent_file: Optional[str] = Field(None, alias="extentFile", description="Extent file")
     projection_mode: Optional[ProjectionMode] = Field(None, alias="projectionMode", description="Projection mode")
     merge_parts: Optional[bool] = Field(None, alias="mergeParts", description="Flag to merge parts")
     ortho_format: Optional[OrthoFormat] = Field(None, alias="orthoFormat", description="Ortho format")

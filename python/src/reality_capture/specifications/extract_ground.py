@@ -49,10 +49,10 @@ class ExtractGroundOptions(BaseModel):
 class ExtractGroundSpecificationsCreate(BaseModel):
     inputs: ExtractGroundInputs = Field(description="Inputs")
     outputs: list[ExtractGroundOutputsCreate] = Field(description="Outputs")
-    options: ExtractGroundOptions = Field(description="Options")
+    options: Optional[ExtractGroundOptions] = Field(None, description="Options")
 
 
 class ExtractGroundSpecifications(BaseModel):
     inputs: ExtractGroundInputs = Field(description="Inputs")
     outputs: ExtractGroundOutputs = Field(description="Outputs")
-    options: ExtractGroundOptions = Field(description="Options")
+    options: Optional[ExtractGroundOptions] = Field(None, description="Options")

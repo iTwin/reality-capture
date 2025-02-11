@@ -131,13 +131,13 @@ class TilingOutputsCreate(Enum):
 class TilingSpecifications(BaseModel):
     inputs: TilingInputs = Field(description="Inputs")
     outputs: TilingOutputs = Field(description="Outputs")
-    options: TilingOptions = Field(description="Options")
+    options: Optional[TilingOptions] = Field(None, description="Options")
 
 
 class TilingSpecificationsCreate(BaseModel):
     inputs: TilingInputs = Field(description="Inputs")
     outputs: list[TilingOutputsCreate] = Field(description="Outputs")
-    options: TilingOptions = Field(description="Options")
+    options: Optional[TilingOptions] = Field(None, description="Options")
 
 
 class LayoutTile(BaseModel):

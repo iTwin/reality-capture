@@ -29,10 +29,10 @@ class ReconstructionOutputsCreate(BaseModel):
 class ReconstructionSpecificationsCreate(BaseModel):
     inputs: ReconstructionInputs = Field(description="Inputs")
     outputs: ReconstructionOutputsCreate = Field(description="Outputs")
-    options: TilingOptions = Field(description="Options")
+    options: Optional[TilingOptions] = Field(None, description="Options")
 
 
 class ReconstructionSpecifications(BaseModel):
     inputs: ReconstructionInputs = Field(description="Inputs")
     outputs: ReconstructionOutputs = Field(description="Outputs")
-    options: TilingOptions = Field(description="Options")
+    options: Optional[TilingOptions] = Field(None, description="Options")

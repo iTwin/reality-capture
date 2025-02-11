@@ -96,10 +96,10 @@ class Segmentation2DOptions(BaseModel):
 class Segmentation2DSpecificationsCreate(BaseModel):
     inputs: Segmentation2DInputs = Field(description="Inputs")
     outputs: list[Segmentation2DOutputsCreate] = Field(description="Outputs")
-    options: Segmentation2DOptions = Field(description="Options")
+    options: Optional[Segmentation2DOptions] = Field(None, description="Options")
 
 
 class Segmentation2DSpecifications(BaseModel):
     inputs: Segmentation2DInputs = Field(description="Inputs")
     outputs: Segmentation2DOutputs = Field(description="Outputs")
-    options: Segmentation2DOptions = Field(description="Options")
+    options: Optional[Segmentation2DOptions] = Field(None, description="Options")

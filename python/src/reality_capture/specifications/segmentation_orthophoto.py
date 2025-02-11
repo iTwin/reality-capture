@@ -69,17 +69,11 @@ class SegmentationOrthophotoOutputsCreate(Enum):
     """
 
 
-class SegmentationOrthophotoOptions(BaseModel):
-    pass
-
-
 class SegmentationOrthophotoSpecificationsCreate(BaseModel):
     inputs: SegmentationOrthophotoInputs = Field(description="Inputs")
     outputs: list[SegmentationOrthophotoOutputsCreate] = Field(description="Outputs")
-    options: SegmentationOrthophotoOptions = Field(description="Options")
 
 
 class SegmentationOrthophotoSpecifications(BaseModel):
     inputs: SegmentationOrthophotoInputs = Field(description="Inputs")
     outputs: SegmentationOrthophotoOutputs = Field(description="Outputs")
-    options: SegmentationOrthophotoOptions = Field(description="Options")

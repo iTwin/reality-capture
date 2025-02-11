@@ -203,10 +203,10 @@ class CalibrationOptions(BaseModel):
 class CalibrationSpecifications(BaseModel):
     inputs: CalibrationInputs = Field(description="Inputs for calibration")
     outputs: CalibrationOutputs = Field(description="Outputs for calibration")
-    options: CalibrationOptions = Field(description="Options for calibration")
+    options: Optional[CalibrationOptions] = Field(None, description="Options for calibration")
 
 
 class CalibrationSpecificationsCreate(BaseModel):
     inputs: CalibrationInputs = Field(description="Inputs for calibration")
     outputs: list[CalibrationOutputsCreate] = Field(description="List of outputs for calibration")
-    options: CalibrationOptions = Field(description="Options for calibration")
+    options: Optional[CalibrationOptions] = Field(None, description="Options for calibration")
