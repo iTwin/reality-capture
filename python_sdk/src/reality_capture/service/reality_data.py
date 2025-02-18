@@ -65,7 +65,7 @@ class RealityDataBase(BaseModel):
 
 
 class RealityDataCreate(RealityDataBase):
-    itwin_id: str = Field(description="Id of associated iTwin.")
+    itwin_id: str = Field(description="Id of associated iTwin.", alias="iTwinId")
     display_name: str = Field(description="Name of the reality data.", alias="displayName")
 
 
@@ -85,8 +85,8 @@ class RealityData(RealityDataBase):
 
 
 class RealityDataUpdate(RealityDataBase):
-    itwin_id: Optional[str] = Field(description="Id of associated iTwin.")
-    display_name: Optional[str] = Field(description="Name of the reality data.", alias="displayName")
+    itwin_id: Optional[str] = Field(None, description="Id of associated iTwin.")
+    display_name: Optional[str] = Field(None, description="Name of the reality data.", alias="displayName")
 
 
 class ContainerType(Enum):
@@ -103,7 +103,7 @@ class URL(BaseModel):
 
 
 class ContainerLinks(BaseModel):
-    container_url: URL = Field(description="The URL of the container")
+    container_url: URL = Field(description="The URL of the container", alias="containerUrl")
 
 
 class ContainerDetails(BaseModel):

@@ -37,15 +37,18 @@ class RealityCaptureService:
         if "env" in kwargs.keys():
             env = kwargs["env"]
         if env == "qa":
-            self._service_url = "https://qa-api.bentley.com/realitycapture"
+            self._service_url = "https://qa-api.bentley.com/"
         elif env == "dev":
-            self._service_url = "https://dev-api.bentley.com/realitycapture"
+            self._service_url = "https://dev-api.bentley.com/"
         else:
-            self._service_url = "https://api.bentley.com/realitycapture"
+            self._service_url = "https://api.bentley.com/"
 
     def _get_header(self) -> dict:
         self._header["Authorization"] = self._token_factory.get_token()
         return self._header
+
+    def _get_reality_management_rd_url(self) -> str:
+        return self._service_url + "reality-management/reality-data/"
 
     @staticmethod
     def _get_ill_formed_message(response) -> str:
@@ -140,7 +143,8 @@ class RealityCaptureService:
         :param reality_data: Reality Data information to use.
         :return: A Response[RealityData] containing either the reality data information or the error from the service.
         """
-        response = self._session.post(self._service_url + "/reality-data", reality_data.model_dump_json(by_alias=True),
+        response = self._session.post(self._get_reality_management_rd_url(),
+                                      reality_data.model_dump_json(by_alias=True),
                                       headers=self._get_header())
         try:
             if response.ok:
@@ -161,7 +165,7 @@ class RealityCaptureService:
         :param itwin_id: Optional iTwin id for finding the reality data.
         :return: A Response[RealityData] containing either the reality data information or the error from the service.
         """
-        url = self._service_url + "/reality-data/" + reality_data_id
+        url = self._get_reality_management_rd_url() + reality_data_id
         if itwin_id is not None:
             url += "?iTwinId=" + itwin_id
         response = self._session.get(url, headers=self._get_header())
@@ -186,11 +190,11 @@ class RealityCaptureService:
         :param itwin_id: Optional iTwin id for finding the reality data.
         :return: A Response[RealityData] containing either the reality data information or the error from the service.
         """
-        url = self._service_url + "/reality-data/" + reality_data_id
+        url = self._get_reality_management_rd_url() + reality_data_id
         if itwin_id is not None:
             url += "?iTwinId=" + itwin_id
-        response = self._session.post(url, reality_data_update.model_dump_json(by_alias=True),
-                                      headers=self._get_header())
+        response = self._session.patch(url, reality_data_update.model_dump_json(by_alias=True),
+                                       headers=self._get_header())
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
@@ -209,7 +213,8 @@ class RealityCaptureService:
         :param reality_data_id: Id of the existing reality data.
         :return: A Response[RealityData] containing either nothing if successful or the error from the service.
         """
-        response = self._session.delete(self._service_url + "/reality-data/" + reality_data_id,
+        url = self._get_reality_management_rd_url() + reality_data_id
+        response = self._session.delete(url,
                                         headers=self._get_header())
         try:
             if response.ok:
@@ -231,7 +236,7 @@ class RealityCaptureService:
         :param itwin_id: Optional iTwin id for finding the reality data.
         :return: A Response[ContainerDetails] containing either the container details or the error from the service.
         """
-        url = self._service_url + "/reality-data/" + reality_data_id + "/writeaccess"
+        url = self._get_reality_management_rd_url() + reality_data_id + "/writeaccess"
         if itwin_id is not None:
             url += "?iTwinId=" + itwin_id
         response = self._session.get(url, headers=self._get_header())
@@ -255,7 +260,7 @@ class RealityCaptureService:
         :param itwin_id: Optional iTwin id for finding the reality data.
         :return: A Response[ContainerDetails] containing either the container details or the error from the service.
         """
-        url = self._service_url + "/reality-data/" + reality_data_id + "/readaccess"
+        url = self._get_reality_management_rd_url() + reality_data_id + "/readaccess"
         if itwin_id is not None:
             url += "?iTwinId=" + itwin_id
         response = self._session.get(url, headers=self._get_header())
