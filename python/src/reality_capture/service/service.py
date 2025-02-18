@@ -33,7 +33,9 @@ class RealityCaptureService:
             "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }
 
-        env = kwargs["env"]
+        env = None
+        if "env" in kwargs.keys():
+            env = kwargs["env"]
         if env == "qa":
             self._service_url = "https://qa-api.bentley.com/realitycapture"
         elif env == "dev":
@@ -44,6 +46,11 @@ class RealityCaptureService:
     def _get_header(self) -> dict:
         self._header["Authorization"] = self._token_factory.get_token()
         return self._header
+
+    @staticmethod
+    def _get_ill_formed_message(response) -> str:
+        r = response.json()
+        return f"Service response is ill-formed: {r}"
 
     def submit_job(self, job: JobCreate) -> Response[Job]:
         """
@@ -61,7 +68,7 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message="Service response is ill-formed : " + response.json())
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -80,7 +87,7 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message="Service response is ill-formed : " + response.json())
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -99,7 +106,7 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message="Service response is ill-formed : " + response.json())
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -122,7 +129,7 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message="Service response is ill-formed : " + response.json())
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -142,7 +149,7 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message="Service response is ill-formed : " + response.json())
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -165,7 +172,7 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message="Service response is ill-formed : " + response.json())
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -191,7 +198,7 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message="Service response is ill-formed : " + response.json())
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -211,7 +218,7 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except ValidationError:
-            error = DetailedError(code="UnknownError", message="Service response is ill-formed : " + response.json())
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -235,7 +242,7 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except ValidationError:
-            error = DetailedError(code="UnknownError", message="Service response is ill-formed : " + response.json())
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -259,7 +266,7 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except ValidationError:
-            error = DetailedError(code="UnknownError", message="Service response is ill-formed : " + response.json())
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
