@@ -1,0 +1,35 @@
+{
+    "realityData": {
+        "id": "95d8dccd-d89e-4287-bb5f-3219acbc71ae",
+        "displayName": "Name of reality data",
+        "dataset": "Dataset",
+        "group": "73d09423-28c3-4fdb-ab4a-03a47a5b04f8",
+        "description": "Description of reality data",
+        "rootDocument": "Directory/SubDirectory/realityData.3mx",
+        "size": 6521212,
+        "classification": "Model",
+        "type": "OPC",
+        "tags": ["tag1", "tag2"],
+        "acquisition": {
+            "startDateTime": "2021-05-12T20:03:12Z",
+            "endDateTime": "2021-05-15T22:07:18Z",
+            "acquirer": "Data Acquisition Inc."
+        },
+        "extent": {
+            "southWest": {
+                "latitude": 38.0206,
+                "longitude": -75.6355
+            },
+            "northEast": {
+                "latitude": 38.0356,
+                "longitude": -75.6059
+            }
+        },
+        "authoring": false,
+        "dataCenterLocation": "North Europe",
+        "modifiedDateTime": "2021-04-09T19:03:12Z",
+        "lastAccessedDateTime": "2021-04-09T00:00:00Z",
+        "createdDateTime": "2021-02-22T20:03:40Z",
+        "ownerId": "f1d49cc7-f9b3-494f-9c67-563ea5597063"
+    }
+}
