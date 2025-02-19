@@ -72,24 +72,12 @@ class JobCreate(BaseModel):
                                    "input reality data and uploading output data.")
 
 
-class Message(BaseModel):
-    code: str = Field(description="Unique identifier for an error.")
-    title: str = Field(description="Title of the error.")
-    message: str = Field(description="Message of the error.")
-    params: list[str] = Field(description="Parameters to be placed in the message. "
-                                          "Can be used for localization effort.")
-
-
 class Execution(BaseModel):
     creation_date_time: datetime = Field(description="Creation date time for the job.", alias="creationDateTime")
     start_date_time: Optional[datetime] = Field(description="Start date time for the job.", alias="startDateTime")
     end_date_time: Optional[datetime] = Field(description="End date time for the job.", alias="endDateTime")
     estimated_units: Optional[float] = Field(description="Estimated number of units consumed by the job.",
                                              alias="estimatedUnits")
-    errors: Optional[list[Message]] = Field(None, description="List of errors that happened "
-                                                              "during the job processing if any.")
-    warnings: Optional[list[Message]] = Field(None, description="List of warnings that happened "
-                                                                "during the job processing if any.")
 
 
 class Job(BaseModel):
@@ -123,3 +111,20 @@ class Progress(BaseModel):
 
 class ProgressResponse(BaseModel):
     progress: Progress = Field(description="Progress information.")
+
+
+class Message(BaseModel):
+    code: str = Field(description="Unique identifier for an error.")
+    title: str = Field(description="Title of the error.")
+    message: str = Field(description="Message of the error.")
+    params: list[str] = Field(description="Parameters to be placed in the message. "
+                                          "Can be used for localization effort.")
+
+
+class Messages(BaseModel):
+    errors: list[Message] = Field(description="List of potential errors from the job execution.")
+    warnings: list[Message] = Field(description="List of potential warnings from the job execution.")
+
+
+class MessagesResponse(BaseModel):
+    messages: Messages = Field(description="Messages.")

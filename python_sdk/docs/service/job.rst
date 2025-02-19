@@ -22,9 +22,6 @@ Classes
 
 .. autopydantic_model:: JobCreate
 
-.. autopydantic_model:: Message
-    :model-show-json: False
-
 .. autopydantic_model:: Execution
     :model-show-json: False
 
@@ -37,3 +34,11 @@ Classes
     :model-show-json: False
 
 .. autopydantic_model:: ProgressResponse
+
+.. autopydantic_model:: Message
+    :model-show-json: False
+
+.. autopydantic_model:: Messages
+    :model-show-json: False
+
+.. autopydantic_model:: MessagesResponse

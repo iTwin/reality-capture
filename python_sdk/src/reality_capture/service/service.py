@@ -1,7 +1,7 @@
 import requests
 import json
 from reality_capture.service.response import Response
-from reality_capture.service.job import JobCreate, Job, Progress
+from reality_capture.service.job import JobCreate, Job, Progress, Messages
 from reality_capture.service.reality_data import (RealityDataCreate, RealityData, RealityDataUpdate, ContainerDetails,
                                                   RealityDataFilter, Prefer, RealityDatas)
 from reality_capture.service.error import DetailedErrorResponse, DetailedError
@@ -87,6 +87,26 @@ class RealityCaptureService:
         try:
             if response.ok:
                 return Response(status_code=response.status_code, value=Job.model_validate(response.json()["job"]),
+                                error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError):
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def get_job_messages(self, job_id: str) -> Response[Messages]:
+        """
+        Retrieve the complete Job details from the service using the job id.
+
+        :param job_id: Id of the job related to the messages to retrieve.
+        :return: A Response[Messages] containing either the messages for the job or the error from the service.
+        """
+        response = self._session.get(self._service_url + "/jobs/" + job_id + "/messages", headers=self._get_header())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code,
+                                value=Messages.model_validate(response.json()["messages"]),
                                 error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
