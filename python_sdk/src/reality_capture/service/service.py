@@ -8,6 +8,7 @@ from reality_capture.service.error import DetailedErrorResponse, DetailedError
 from reality_capture import __version__
 from typing import Optional
 from pydantic import ValidationError
+from urllib.parse import urlencode
 
 
 class RealityCaptureService:
@@ -284,5 +285,26 @@ class RealityCaptureService:
         :param prefer: Preferred representation of Reality Data in the response.
         :return: A Response[ContainerDetails] containing either a list of reality data or the error from the service.
         """
-        # TODO
-        pass
+        url = self._get_reality_management_rd_url()
+        if reality_data_filter is not None:
+            params = reality_data_filter.as_dict_for_service_call()
+            encoded_params = urlencode(params)
+            url = f"{url}?{encoded_params}"
+        header = self._get_header()
+        header["Prefer"] = "return=minimal"
+        if prefer == Prefer.REPRESENTATION:
+            header["Prefer"] = "return=representation"
+
+        response = self._session.get(url, headers=header)
+
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code,
+                                value=RealityDatas.model_validate(response.json()), error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except ValidationError:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+

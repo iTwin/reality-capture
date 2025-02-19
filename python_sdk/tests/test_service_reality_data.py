@@ -1,8 +1,11 @@
 from reality_capture.service.service import RealityCaptureService
-from reality_capture.service.reality_data import RealityDataCreate, RealityDataUpdate, Access
+from reality_capture.service.reality_data import (RealityDataCreate, RealityDataUpdate, Access,
+                                                  RealityDataFilter, get_continuation_token, Prefer,
+                                                  RealityDataMinimal, RealityData)
 import responses
 import json
 import os
+from datetime import datetime
 
 
 class FakeTokenFactory:
@@ -234,6 +237,7 @@ class TestRealityData:
                       status=401)
         response = self.rcs.get_reality_data_write_access(rd_id)
         assert response.is_error()
+        assert response.get_response_status_code() == 401
         assert response.error.error.code == "HeaderNotFound"
 
     @responses.activate
@@ -247,3 +251,66 @@ class TestRealityData:
         response = self.rcs.get_reality_data_write_access(rd_id)
         assert not response.is_error()
         assert response.value.access == Access.WRITE
+
+    # List data
+    @responses.activate
+    def test_list_data_ill_formed(self):
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-management/reality-data/'
+                      f'?createdDateTime=2021-05-12T20%3A03%3A12Z%2F2022-05-12T20%3A03%3A12Z&dataCenter=East+US',
+                      json={'bad': 'response'}, status=400)
+        dt_s = datetime.strptime("2021-05-12T20:03:12Z", "%Y-%m-%dT%H:%M:%SZ")
+        dt_e = datetime.strptime("2022-05-12T20:03:12Z", "%Y-%m-%dT%H:%M:%SZ")
+        rdf = RealityDataFilter(dataCenter="East US", createdDateTime=(dt_s, dt_e))
+        response = self.rcs.list_reality_data(rdf)
+        assert response.is_error()
+        assert response.error.error.code == "UnknownError"
+
+    @responses.activate
+    def test_list_data_422(self):
+        with open(f"{self.data_folder}/reality_data_list_422.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-management/reality-data/'
+                      f'?createdDateTime=2021-05-12T20%3A03%3A12Z%2F2022-05-12T20%3A03%3A12Z&dataCenter=East+US',
+                      json=payload, status=422)
+        dt_s = datetime.strptime("2021-05-12T20:03:12Z", "%Y-%m-%dT%H:%M:%SZ")
+        dt_e = datetime.strptime("2022-05-12T20:03:12Z", "%Y-%m-%dT%H:%M:%SZ")
+        rdf = RealityDataFilter(dataCenter="East US", createdDateTime=(dt_s, dt_e))
+        response = self.rcs.list_reality_data(rdf)
+        assert response.is_error()
+        assert response.error.error.code == "InvalidRealityDataRequest"
+
+    @responses.activate
+    def test_list_data_minimal_200(self):
+        with open(f"{self.data_folder}/reality_data_list_minimal_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-management/reality-data/'
+                      f'?createdDateTime=2021-05-12T20%3A03%3A12Z%2F2022-05-12T20%3A03%3A12Z&dataCenter=East+US',
+                      json=payload, status=200)
+        dt_s = datetime.strptime("2021-05-12T20:03:12Z", "%Y-%m-%dT%H:%M:%SZ")
+        dt_e = datetime.strptime("2022-05-12T20:03:12Z", "%Y-%m-%dT%H:%M:%SZ")
+        rdf = RealityDataFilter(dataCenter="East US", createdDateTime=(dt_s, dt_e))
+        response = self.rcs.list_reality_data(rdf)
+        assert not response.is_error()
+        assert len(response.value.reality_data) == 1
+        assert isinstance(response.value.reality_data[0], RealityDataMinimal)
+        assert get_continuation_token(response.value) == "eyJ0b3AiOjEwMCwic2tpcCI6MTAwfQ"
+
+    @responses.activate
+    def test_list_data_representation_200(self):
+        with open(f"{self.data_folder}/reality_data_list_representation_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-management/reality-data/'
+                      f'?createdDateTime=2021-05-12T20%3A03%3A12Z%2F2022-05-12T20%3A03%3A12Z&dataCenter=East+US',
+                      json=payload, status=200)
+        dt_s = datetime.strptime("2021-05-12T20:03:12Z", "%Y-%m-%dT%H:%M:%SZ")
+        dt_e = datetime.strptime("2022-05-12T20:03:12Z", "%Y-%m-%dT%H:%M:%SZ")
+        rdf = RealityDataFilter(dataCenter="East US", createdDateTime=(dt_s, dt_e))
+        response = self.rcs.list_reality_data(rdf, prefer=Prefer.REPRESENTATION)
+        assert not response.is_error()
+        assert len(response.value.reality_data) == 2
+        assert isinstance(response.value.reality_data[0], RealityData)
+        assert get_continuation_token(response.value) is None
