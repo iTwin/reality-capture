@@ -117,7 +117,7 @@ class TilingOptions(BaseModel):
 
 
 class ReferenceModel(BaseModel):
-    reference_model_path: str = Field(description="Reality data id of reference model", alias="referenceModelPath")
+    reference_model_path: str = Field(description="Reality data id of reference model", alias="path")
 
 
 class TilingOutputs(BaseModel):
