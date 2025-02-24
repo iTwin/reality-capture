@@ -34,3 +34,11 @@ Classes
     :model-show-json: False
 
 .. autopydantic_model:: ProgressResponse
+
+.. autopydantic_model:: Message
+    :model-show-json: False
+
+.. autopydantic_model:: Messages
+    :model-show-json: False
+
+.. autopydantic_model:: MessagesResponse

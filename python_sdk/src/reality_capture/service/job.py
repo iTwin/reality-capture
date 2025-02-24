@@ -111,3 +111,20 @@ class Progress(BaseModel):
 
 class ProgressResponse(BaseModel):
     progress: Progress = Field(description="Progress information.")
+
+
+class Message(BaseModel):
+    code: str = Field(description="Unique identifier for an error.")
+    title: str = Field(description="Title of the error.")
+    message: str = Field(description="Message of the error.")
+    params: list[str] = Field(description="Parameters to be placed in the message. "
+                                          "Can be used for localization effort.")
+
+
+class Messages(BaseModel):
+    errors: list[Message] = Field(description="List of potential errors from the job execution.")
+    warnings: list[Message] = Field(description="List of potential warnings from the job execution.")
+
+
+class MessagesResponse(BaseModel):
+    messages: Messages = Field(description="Messages.")

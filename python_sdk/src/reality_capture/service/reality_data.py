@@ -65,7 +65,7 @@ class RealityDataBase(BaseModel):
 
 
 class RealityDataCreate(RealityDataBase):
-    itwin_id: str = Field(description="Id of associated iTwin.")
+    itwin_id: str = Field(description="Id of associated iTwin.", alias="iTwinId")
     display_name: str = Field(description="Name of the reality data.", alias="displayName")
 
 
@@ -85,8 +85,8 @@ class RealityData(RealityDataBase):
 
 
 class RealityDataUpdate(RealityDataBase):
-    itwin_id: Optional[str] = Field(description="Id of associated iTwin.")
-    display_name: Optional[str] = Field(description="Name of the reality data.", alias="displayName")
+    itwin_id: Optional[str] = Field(None, description="Id of associated iTwin.")
+    display_name: Optional[str] = Field(None, description="Name of the reality data.", alias="displayName")
 
 
 class ContainerType(Enum):
@@ -103,7 +103,7 @@ class URL(BaseModel):
 
 
 class ContainerLinks(BaseModel):
-    container_url: URL = Field(description="The URL of the container")
+    container_url: URL = Field(description="The URL of the container", alias="containerUrl")
 
 
 class ContainerDetails(BaseModel):
@@ -152,8 +152,16 @@ class RealityDataFilter(BaseModel):
                                                                                        "end) in ISO-8601 "
                                                                                        "compliant time (UTC).")
     owner_id: Optional[str] = Field(None, description="Guid identifier of the owner.", alias="ownerId")
-    data_center: Optional[str] = Field(None, description="Data center location.")
+    data_center: Optional[str] = Field(None, description="Data center location.", alias="dataCenter")
     tag: Optional[str] = Field(None, description="Parameter to get reality data with exact matching tags.")
+
+    def as_dict_for_service_call(self) -> dict:
+        params = {k: v for k, v in self.model_dump(by_alias=True).items() if v is not None}
+
+        for k in [key for key in params.keys() if key.endswith("DateTime")]:
+            params[k] = f"{params[k][0].strftime("%Y-%m-%dT%H:%M:%SZ")}/{params[k][1].strftime("%Y-%m-%dT%H:%M:%SZ")}"
+
+        return params
 
 
 class RealityDataMinimal(BaseModel):
@@ -171,7 +179,7 @@ class NextPageLink(BaseModel):
 class RealityDatas(BaseModel):
     reality_data: list[Union[RealityData, RealityDataMinimal]] = Field(description="List of reality data",
                                                                        alias="realityData")
-    links: Optional[NextPageLink] = Field(None, description="Next page link.")
+    links: Optional[NextPageLink] = Field(None, description="Next page link.", alias="_links")
 
 
 def get_continuation_token(rd: RealityDatas) -> Optional[str]:
