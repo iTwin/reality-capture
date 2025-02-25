@@ -26,7 +26,7 @@ class TouchUpExportOptions(BaseModel):
 
 
 class TouchUpExportOutputsCreate(Enum):
-    TOUCH_UP_DATA = "TouchUpData"
+    TOUCH_UP_DATA = "touchUpData"
 
 
 class TouchUpExportOutputs(BaseModel):

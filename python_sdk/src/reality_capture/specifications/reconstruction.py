@@ -18,7 +18,7 @@ class ReconstructionInputs(BaseModel):
 
 class ReconstructionOutputs(BaseModel):
     reference_model: Optional[ReferenceModel] = Field(None, description="Reference Model", alias="referenceModel")
-    exports: Optional[list[Export]] = Field(description="List of exports")
+    exports: Optional[list[Export]] = Field(None, description="List of exports")
 
 
 class ReconstructionOutputsCreate(BaseModel):

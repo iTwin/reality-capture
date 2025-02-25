@@ -521,7 +521,7 @@ class ExportCreate(BaseModel):
 
 
 class Export(ExportCreate):
-    location: str = Field(alias="exportPath", description="Reality data id of the export")
+    location: str = Field(description="Reality data id of the export")
 
 
 class ProductionOutputs(BaseModel):

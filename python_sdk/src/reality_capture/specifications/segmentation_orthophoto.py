@@ -17,7 +17,7 @@ class SegmentationOrthophotoOutputs(BaseModel):
     segmentation2d: str = Field(alias="segmentation2D",
                                 description="Reality data id of ContextScene, "
                                             "pointing to segmented orthophotos")
-    segmented_photos: str = Field(alias="segmented_photos",
+    segmented_photos: str = Field(alias="segmentedPhotos",
                                   description="Reality data id of segmented orthophotos")
     polygons2d: Optional[str] = Field(None, alias="polygons2D",
                                       description="Reality data id of ContextScene, "
@@ -50,7 +50,7 @@ class SegmentationOrthophotoOutputsCreate(Enum):
     """
     Requires POLYGONS2D in order to be produced.
     """
-    POLYGONS2D_AS_geojson = "polygons2DAsGeoJSON"
+    POLYGONS2D_AS_GEOJSON = "polygons2DAsGeoJSON"
     """
     Requires POLYGONS2D in order to be produced.
     """
