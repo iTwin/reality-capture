@@ -27,6 +27,8 @@ Specifications regroup all the settings used to create jobs with our APIs.
     segmentation3d
     change_detection
     extract_ground
+    conversion
+    import_features
     geometry
 
 Modeling
@@ -51,6 +53,13 @@ Analysis
 * :doc:`/specifications/segmentation3d` uses a point cloud segmentation detector to classify each point of a point cloud and create 3D features.
 * :doc:`/specifications/change_detection` will take two point clouds or two meshes to to get 3D regions that capture the changes.
 * :doc:`/specifications/extract_ground` will take point clouds and a detector to extract ground.
+
+Conversion
+==========
+
+* :doc:`/specifications/conversion` to convert point clouds in web ready formats.
+* :doc:`/specifications/import_features` to import vector data in Feature class (FDB).
+
 
 Utilities
 =========
