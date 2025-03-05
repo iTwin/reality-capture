@@ -54,7 +54,6 @@ class ConversionSettings:
         if self.outputs.pnts:
             settings_dict["outputs"].append("PNTS")
 
-
         if self.options.engines > 0:
             settings_dict["options"]["processingEngines"] = self.options.engines
         if not self.options.merge:
