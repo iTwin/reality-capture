@@ -44,11 +44,16 @@ class ConversionSettings:
             settings_dict["inputs"].append({"id": rd_id})
         for rd_id in self.inputs.e57:
             settings_dict["inputs"].append({"id": rd_id})
+        for rd_id in self.inputs.opc:
+            settings_dict["inputs"].append({"id": rd_id})
+        for rd_id in self.inputs.pointcloud:
+            settings_dict["inputs"].append({"id": rd_id})
 
         if self.outputs.opc:
             settings_dict["outputs"].append("OPC")
         if self.outputs.pnts:
             settings_dict["outputs"].append("PNTS")
+
 
         if self.options.engines > 0:
             settings_dict["options"]["processingEngines"] = self.options.engines
@@ -79,6 +84,10 @@ class ConversionSettings:
                     new_job_settings.inputs.ply.append(input_dict["id"])
                 elif input_dict["type"] == "E57":
                     new_job_settings.inputs.e57.append(input_dict["id"])
+                elif input_dict["type"] == "OPC":
+                    new_job_settings.inputs.opc.append(input_dict["id"])
+                elif input_dict["type"] == "PointCloud":
+                    new_job_settings.inputs.pointcloud.append(input_dict["id"])
                 else:
                     raise TypeError(
                         "found non expected input type:" + input_dict["type"]
@@ -115,6 +124,8 @@ class ConversionSettings:
             laz: A list of paths to LAZ files.
             ply: A list of paths to PLY files.
             e57: A list of paths to E57 files.
+            opc: A list of paths to OPC files.
+            pointcloud: A list of paths to PointCloud files.
         """
 
         def __init__(self) -> None:
@@ -122,6 +133,8 @@ class ConversionSettings:
             self.laz: List[str] = []
             self.ply: List[str] = []
             self.e57: List[str] = []
+            self.opc: List[str] = []
+            self.pointcloud: List[str] = []
 
     class Outputs:
         """
