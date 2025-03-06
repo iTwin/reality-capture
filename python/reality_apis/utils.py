@@ -36,6 +36,7 @@ class RealityDataType(Enum):
     GeoJSON = "GeoJSON"
     OVT = "OVT"
     OVF = "OVF"
+    PointCloud = "PointCloud"
     Unstructured = "Unstructured"
 
 
