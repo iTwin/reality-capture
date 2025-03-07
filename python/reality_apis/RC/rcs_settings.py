@@ -53,6 +53,10 @@ class ConversionSettings:
             settings_dict["outputs"].append("OPC")
         if self.outputs.pnts:
             settings_dict["outputs"].append("PNTS")
+        if self.outputs.glb:
+            settings_dict["outputs"].append("GLB")
+        if self.outputs.glbc:
+            settings_dict["outputs"].append("GLBC")
 
         if self.options.engines > 0:
             settings_dict["options"]["processingEngines"] = self.options.engines
@@ -101,6 +105,12 @@ class ConversionSettings:
                 elif output_dict["type"] == "PNTS":
                     new_job_settings.outputs.pnts = []
                     new_job_settings.outputs.pnts.append(output_dict["id"])
+                elif output_dict["type"] == "GLB":
+                    new_job_settings.outputs.glb = []
+                    new_job_settings.outputs.glb.append(output_dict["id"])
+                elif output_dict["type"] == "GLBC":
+                    new_job_settings.outputs.glbc = []
+                    new_job_settings.outputs.glbc.append(output_dict["id"])
                 else:
                     raise TypeError(
                         "found non expected output type" + output_dict["type"]
@@ -142,11 +152,15 @@ class ConversionSettings:
         Attributes:
             opc: Either a boolean to indicate conversion type or a list of created OPC files ids.
             pnts: Either a boolean to indicate conversion type or a list of created PNTS files ids.
+            glb: Either a boolean to indicate conversion type or a list of created PNTS files ids.
+            glbc: Either a boolean to indicate conversion type or a list of created PNTS files ids.
         """
 
         def __init__(self) -> None:
             self.opc: Union[bool, List[str]] = False
             self.pnts: Union[bool, List[str]] = False
+            self.glb: Union[bool, List[str]] = False
+            self.glbc: Union[bool, List[str]] = False
 
     class Options:
         """
