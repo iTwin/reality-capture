@@ -13,7 +13,7 @@ class ReconstructionInputs(BaseModel):
                                                     "used for export extent")
     reference_model: Optional[str] = Field(None, description="Reality data id of reference model to process",
                                            alias="referenceModel")
-    preset: Optional[str] = Field(default=None, description="Path to preset")
+    presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
 
 
 class ReconstructionOutputs(BaseModel):

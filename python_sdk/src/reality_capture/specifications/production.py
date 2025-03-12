@@ -3,12 +3,13 @@ from typing import Optional, Union
 from enum import Enum
 from reality_capture.specifications.geometry import Point3d
 
+
 class ProductionInputs(BaseModel):
     scene: str = Field(description="Reality data id of ContextScene to process")
     reference_model: str = Field(description="Reality data id of reference model to process", alias="referenceModel")
     extent: Optional[str] = Field(None, description="Path to region of interest file prefix by reality data id, "
                                                     "used for export extent")
-    preset: Optional[str] = Field(default=None, description="Path to preset")
+    presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
 
 
 class Format(Enum):

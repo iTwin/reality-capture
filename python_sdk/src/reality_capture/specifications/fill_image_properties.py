@@ -16,8 +16,7 @@ class FillImagePropertiesInputs(BaseModel):
     scene_to_complete: Optional[str] = Field(default=None,
                                              description="Reality data id of ContextScene to complete.",
                                              alias="sceneToComplete")
-    preset: Optional[str] = Field(default=None,
-                                  description="Path to preset prefixed with reality data id.")
+    presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
 
 
 class FillImagePropertiesOutputs(BaseModel):

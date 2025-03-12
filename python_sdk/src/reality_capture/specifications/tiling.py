@@ -9,7 +9,7 @@ class TilingInputs(BaseModel):
     region_of_interest: Optional[str] = Field(description="Path to region of interest file prefix by reality data id",
                                               alias="regionOfInterest",
                                               default=None)
-    preset: Optional[str] = Field(default=None, description="Path to preset")
+    presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
 
 
 class ReferenceModelType(Enum):
@@ -117,7 +117,7 @@ class TilingOptions(BaseModel):
 
 
 class ReferenceModel(BaseModel):
-    reference_model_path: str = Field(description="Reality data id of reference model", alias="path")
+    location: str = Field(description="Reality data id of reference model")
 
 
 class TilingOutputs(BaseModel):

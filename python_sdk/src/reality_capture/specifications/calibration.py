@@ -5,7 +5,7 @@ from enum import Enum
 
 class CalibrationInputs(BaseModel):
     scene: str = Field(description="Reality data ID of ContextScene to process")
-    preset: Optional[str] = Field(default=None, description="Path to preset")
+    presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
 
 
 class CalibrationOutputs(BaseModel):
