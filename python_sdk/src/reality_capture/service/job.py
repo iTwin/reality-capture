@@ -46,6 +46,7 @@ class JobType(Enum):
     TOUCH_UP_IMPORT = "TouchUpImport"
     TOUCH_UP_EXPORT = "TouchUpExport"
     WATER_CONSTRAINTS = "WaterConstraints"
+    TRAINING_O2D = "TrainingO2D"
 
 
 class JobState(Enum):
