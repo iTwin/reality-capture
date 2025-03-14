@@ -4,22 +4,24 @@ from enum import Enum
 
 
 class TrainingO2DInputs(BaseModel):
-    dataset: str = Field(
-        description="Reality data id of a ContextScene pointing to photos with annotations."
+    scene: str = Field(
+        description="Reality data id of a ContextScene pointing to photos with annotations (in the contextscene file)."
     )
 
 
 class TrainingO2DOutputs(BaseModel):
-    datector: str = Field(description="Reality data id of the detector.")
-    metrics: int = Field(description="Reality data id of the metrics")
+    detector: str = Field(description="Reality data id of the detector.")
+    metrics: str = Field(description="Reality data id of the metrics")
 
 
 class TrainingO2DOptions(BaseModel):
     epochs: Optional[int] = Field(
-        description="Number of time to iterate over the entire dataset"
+        None, description="Number of time to iterate over the entire dataset"
     )
     max_train_split: Optional[float] = Field(
-        description="Ratio of training data used to train the dataset, the rest will be used to evaluate the model"
+        None,
+        alias="maxTrainingSplit",
+        description="Ratio (between 0.0 excluded and 1.0 included) of training data used to train the detector, the rest will be used to evaluate the model after each epoch and compute extra evaluation metrics. Set it to 1.0 for no evaluation and use everything for training.",
     )
 
 
