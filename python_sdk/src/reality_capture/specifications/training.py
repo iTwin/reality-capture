@@ -22,6 +22,8 @@ class TrainingO2DOptions(BaseModel):
         None,
         alias="maxTrainingSplit",
         description="Ratio (between 0.0 excluded and 1.0 included) of training data used to train the detector, the rest will be used to evaluate the model after each epoch and compute extra evaluation metrics. Set it to 1.0 for no evaluation and use everything for training.",
+        gt=0.0,
+        le=1.0,
     )
 
 
