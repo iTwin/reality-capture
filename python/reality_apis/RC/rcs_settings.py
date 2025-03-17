@@ -44,11 +44,19 @@ class ConversionSettings:
             settings_dict["inputs"].append({"id": rd_id})
         for rd_id in self.inputs.e57:
             settings_dict["inputs"].append({"id": rd_id})
+        for rd_id in self.inputs.opc:
+            settings_dict["inputs"].append({"id": rd_id})
+        for rd_id in self.inputs.pointcloud:
+            settings_dict["inputs"].append({"id": rd_id})
 
         if self.outputs.opc:
             settings_dict["outputs"].append("OPC")
         if self.outputs.pnts:
             settings_dict["outputs"].append("PNTS")
+        if self.outputs.glb:
+            settings_dict["outputs"].append("GLB")
+        if self.outputs.glbc:
+            settings_dict["outputs"].append("GLBC")
 
         if self.options.engines > 0:
             settings_dict["options"]["processingEngines"] = self.options.engines
@@ -79,6 +87,10 @@ class ConversionSettings:
                     new_job_settings.inputs.ply.append(input_dict["id"])
                 elif input_dict["type"] == "E57":
                     new_job_settings.inputs.e57.append(input_dict["id"])
+                elif input_dict["type"] == "OPC":
+                    new_job_settings.inputs.opc.append(input_dict["id"])
+                elif input_dict["type"] == "PointCloud":
+                    new_job_settings.inputs.pointcloud.append(input_dict["id"])
                 else:
                     raise TypeError(
                         "found non expected input type:" + input_dict["type"]
@@ -93,6 +105,12 @@ class ConversionSettings:
                 elif output_dict["type"] == "PNTS":
                     new_job_settings.outputs.pnts = []
                     new_job_settings.outputs.pnts.append(output_dict["id"])
+                elif output_dict["type"] == "GLB":
+                    new_job_settings.outputs.glb = []
+                    new_job_settings.outputs.glb.append(output_dict["id"])
+                elif output_dict["type"] == "GLBC":
+                    new_job_settings.outputs.glbc = []
+                    new_job_settings.outputs.glbc.append(output_dict["id"])
                 else:
                     raise TypeError(
                         "found non expected output type" + output_dict["type"]
@@ -115,6 +133,8 @@ class ConversionSettings:
             laz: A list of paths to LAZ files.
             ply: A list of paths to PLY files.
             e57: A list of paths to E57 files.
+            opc: A list of paths to OPC files.
+            pointcloud: A list of paths to PointCloud files.
         """
 
         def __init__(self) -> None:
@@ -122,6 +142,8 @@ class ConversionSettings:
             self.laz: List[str] = []
             self.ply: List[str] = []
             self.e57: List[str] = []
+            self.opc: List[str] = []
+            self.pointcloud: List[str] = []
 
     class Outputs:
         """
@@ -130,11 +152,15 @@ class ConversionSettings:
         Attributes:
             opc: Either a boolean to indicate conversion type or a list of created OPC files ids.
             pnts: Either a boolean to indicate conversion type or a list of created PNTS files ids.
+            glb: Either a boolean to indicate conversion type or a list of created PNTS files ids.
+            glbc: Either a boolean to indicate conversion type or a list of created PNTS files ids.
         """
 
         def __init__(self) -> None:
             self.opc: Union[bool, List[str]] = False
             self.pnts: Union[bool, List[str]] = False
+            self.glb: Union[bool, List[str]] = False
+            self.glbc: Union[bool, List[str]] = False
 
     class Options:
         """
