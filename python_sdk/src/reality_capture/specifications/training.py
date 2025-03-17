@@ -11,7 +11,7 @@ class TrainingO2DInputs(BaseModel):
 
 class TrainingO2DOutputs(BaseModel):
     detector: str = Field(description="Reality data id of the detector.")
-    metrics: str = Field(description="Reality data id of the metrics")
+    metrics: Optional[str] = Field(None, description="Reality data id of the metrics")
 
 
 class TrainingO2DOptions(BaseModel):
