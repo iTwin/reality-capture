@@ -61,7 +61,8 @@ class JobType(Enum):
     TOUCH_UP_IMPORT = "TouchUpImport"
     TOUCH_UP_EXPORT = "TouchUpExport"
     WATER_CONSTRAINTS = "WaterConstraints"
-    # POINT_CLOUD_CONVERSION = "PointCloudConversion"
+	# POINT_CLOUD_CONVERSION = "PointCloudConversion"
+    TRAINING_O2D = "TrainingO2D"
 
 class Service(Enum):
     MODELING = "Modeling"
@@ -97,17 +98,17 @@ class JobCreate(BaseModel):
     type: JobType = Field(description="Type of job.")
     # TODO : PointCloudConversionSpecificationsCreate,
     specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
-                        ConstraintsSpecificationsCreate,
+    					ConstraintsSpecificationsCreate,
                         EvalO2DSpecificationsCreate, EvalO3DSpecificationsCreate,
                         EvalS2DSpecificationsCreate, EvalS3DSpecificationsCreate,
                         EvalSOrthoSpecificationsCreate, FillImagePropertiesSpecificationsCreate,
-                        GaussianSplatsSpecificationsCreate, ImportPCSpecificationsCreate,
+    					GaussianSplatsSpecificationsCreate, ImportPCSpecificationsCreate,
                         Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
                         ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
                         Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                         TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
-                        TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate] = (
-        Field(description="Specifications aligned with the job type."))
+                        TouchUpImportSpecifications, WaterConstraintsSpecificationsCreate,
+                        TrainingO2DOutputsCreate] = Field(description="Specifications aligned with the job type.")
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
                           alias="iTwinId")
@@ -150,8 +151,8 @@ class Job(BaseModel):
                         ReconstructionSpecifications, Segmentation2DSpecifications,
                         Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                         TilingSpecifications, TouchUpExportSpecifications,
-                        TouchUpImportSpecifications, WaterConstraintsSpecifications] = (
-        Field(description="Specifications aligned with the job type."))
+                        TouchUpImportSpecifications, WaterConstraintsSpecifications,
+                        TrainingO2DSpecifications] = Field(description="Specifications aligned with the job type.")
 
     @field_validator("specifications", mode="plain")
     @classmethod
