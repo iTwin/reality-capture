@@ -27,6 +27,7 @@ from reality_capture.specifications.touchup import (TouchUpImportSpecifications,
                                                     TouchUpExportSpecificationsCreate)
 from reality_capture.specifications.water_constraints import (WaterConstraintsSpecifications,
                                                               WaterConstraintsSpecificationsCreate)
+from reality_capture.specifications.training import TrainingO2DInputs, TrainingO2DSpecifications, TrainingO2DOutputsCreate
 
 
 class JobType(Enum):
@@ -46,6 +47,7 @@ class JobType(Enum):
     TOUCH_UP_IMPORT = "TouchUpImport"
     TOUCH_UP_EXPORT = "TouchUpExport"
     WATER_CONSTRAINTS = "WaterConstraints"
+    TRAINING_O2D = "TrainingO2D"
 
 
 class JobState(Enum):
@@ -66,7 +68,8 @@ class JobCreate(BaseModel):
                           ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
                           Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                           TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
-                          TouchUpImportSpecifications, WaterConstraintsSpecificationsCreate] = (
+                          TouchUpImportSpecifications, WaterConstraintsSpecificationsCreate, 
+                          TrainingO2DOutputsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin: str = Field(description="iTwin ID, used by the service for finding "
                                    "input reality data and uploading output data.")
@@ -96,7 +99,8 @@ class Job(BaseModel):
                           ReconstructionSpecifications, Segmentation2DSpecifications,
                           Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                           TilingSpecifications, TouchUpExportSpecifications,
-                          TouchUpImportSpecifications, WaterConstraintsSpecifications] = (
+                          TouchUpImportSpecifications, WaterConstraintsSpecifications, 
+                          TrainingO2DSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
 
