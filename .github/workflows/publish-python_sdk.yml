@@ -33,9 +33,9 @@ jobs:
         pip install .[dev]
         cd dist
         python -m pip install *.whl
+        deactivate
         cd ../docs
         make.bat html
-        deactivate
 
     - name: Find Wheel File
       id: find_wheel
