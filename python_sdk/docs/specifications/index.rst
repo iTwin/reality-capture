@@ -27,8 +27,9 @@ Specifications regroup all the settings used to create jobs with our APIs.
     segmentation3d
     change_detection
     extract_ground
-    geometry
     training_o2d
+    point_cloud_conversion
+    geometry
 
 Modeling
 ========
@@ -53,6 +54,11 @@ Analysis
 * :doc:`/specifications/change_detection` will take two point clouds or two meshes to to get 3D regions that capture the changes.
 * :doc:`/specifications/extract_ground` will take point clouds and a detector to extract ground.
 * :doc:`/specifications/training_o2d` will train an o2d detector from a ContextScene
+
+Conversion
+==========
+
+* :doc:`/specifications/point_cloud_conversion` will convert point clouds from one format to another.
 
 Utilities
 =========
