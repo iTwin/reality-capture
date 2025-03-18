@@ -27,7 +27,9 @@ from reality_capture.specifications.touchup import (TouchUpImportSpecifications,
                                                     TouchUpExportSpecificationsCreate)
 from reality_capture.specifications.water_constraints import (WaterConstraintsSpecifications,
                                                               WaterConstraintsSpecificationsCreate)
-from reality_capture.specifications.training import TrainingO2DInputs, TrainingO2DSpecifications, TrainingO2DOutputsCreate
+from reality_capture.specifications.training import TrainingO2DSpecifications, TrainingO2DSpecificationsCreate
+from reality_capture.specifications.point_cloud_conversion import (PointCloudConversionSpecificationsCreate,
+                                                                   PointCloudConversionSpecifications)
 
 
 class JobType(Enum):
@@ -48,6 +50,7 @@ class JobType(Enum):
     TOUCH_UP_EXPORT = "TouchUpExport"
     WATER_CONSTRAINTS = "WaterConstraints"
     TRAINING_O2D = "TrainingO2D"
+    POINT_CLOUD_CONVERSION = "PointCloudConversion"
 
 
 class JobState(Enum):
@@ -69,7 +72,7 @@ class JobCreate(BaseModel):
                           Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                           TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
                           TouchUpImportSpecifications, WaterConstraintsSpecificationsCreate, 
-                          TrainingO2DOutputsCreate] = (
+                          TrainingO2DSpecificationsCreate, PointCloudConversionSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin: str = Field(description="iTwin ID, used by the service for finding "
                                    "input reality data and uploading output data.")
@@ -100,7 +103,7 @@ class Job(BaseModel):
                           Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                           TilingSpecifications, TouchUpExportSpecifications,
                           TouchUpImportSpecifications, WaterConstraintsSpecifications, 
-                          TrainingO2DSpecifications] = (
+                          TrainingO2DSpecifications, PointCloudConversionSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
 
