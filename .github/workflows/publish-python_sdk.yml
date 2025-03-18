@@ -25,22 +25,23 @@ jobs:
         python -m pip install build
         python -m build
 
-    - name: Build documentation
-      working-directory: .\python_sdk
-      run: |
-        ..\venv\Scripts\activate
-        pip install .[dev]
-        cd dist
-        python -m pip install *.whl
-        cd ..\docs
-        make.bat html
-
     - name: Find Wheel File
       id: find_wheel
       run: |
         $wheel = Get-ChildItem dist\*.whl | Select-Object -First 1
         echo "::set-output name=wheel::$($wheel.FullName)"
       shell: pwsh
+
+    - name: Build documentation
+      working-directory: .\python_sdk
+      run: |
+        ..\venv\Scripts\activate
+        pip install .[dev]
+        cd dist
+        python -m pip install ${{ steps.find_wheel.outputs.wheel }}
+        deactivate
+        cd ..\docs
+        make.bat html
 
     - name: Create Pre-Release
       uses: actions/create-release@v1
