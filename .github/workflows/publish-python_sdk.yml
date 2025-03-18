@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 jobs:
   build_and_publish_sdk:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -19,29 +19,28 @@ jobs:
         python -m venv venv 
 
     - name: Build wheel
-      working-directory: ./python_sdk
+      working-directory: .\python_sdk
       run: |
-        source ../venv/bin/activate
+        ..\venv\Scripts\activate
         python -m pip install build
         python -m build
-        deactivate
 
     - name: Build documentation
-      working-directory: ./python_sdk
+      working-directory: .\python_sdk
       run: |
-        source ../venv/bin/activate
+        ..\venv\Scripts\activate
         pip install .[dev]
         cd dist
         python -m pip install *.whl
-        deactivate
-        cd ../docs
+        cd ..\docs
         make.bat html
 
     - name: Find Wheel File
       id: find_wheel
       run: |
-        WHEEL=$(ls dist/*.whl | head -n 1)
-        echo "::set-output name=wheel::$WHEEL"
+        $wheel = Get-ChildItem dist\*.whl | Select-Object -First 1
+        echo "::set-output name=wheel::$($wheel.FullName)"
+      shell: pwsh
 
     - name: Create Pre-Release
       uses: actions/create-release@v1
