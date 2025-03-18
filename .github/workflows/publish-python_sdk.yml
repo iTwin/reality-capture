@@ -45,6 +45,7 @@ jobs:
       working-directory: .\python_sdk\docs
       shell: cmd
       run: |
+        ..\venv\Scripts\activate
         make.bat html
 
     - name: Create Pre-Release
