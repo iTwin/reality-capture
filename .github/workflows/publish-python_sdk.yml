@@ -33,15 +33,18 @@ jobs:
         echo "::set-output name=wheel::$($wheel.FullName)"
       shell: pwsh
 
-    - name: Build documentation
+    - name: Install documentation dependencies
       working-directory: .\python_sdk
       run: |
         ..\venv\Scripts\activate
         pip install .[dev]
         cd dist
         python -m pip install ${{ steps.find_wheel.outputs.wheel }}
-        deactivate
-        cd ..\docs
+
+    - name: Build documentation
+      working-directory: .\python_sdk\docs
+      shell: cmd
+      run: |
         make.bat html
 
     - name: Create Pre-Release
