@@ -21,7 +21,7 @@ jobs:
     - name: Build wheel
       working-directory: ./python_sdk
       run: |
-        source venv/bin/activate
+        source ../venv/bin/activate
         python -m pip install build
         python -m build
         deactivate
@@ -29,7 +29,7 @@ jobs:
     - name: Build documentation
       working-directory: ./python_sdk
       run: |
-        source venv/bin/activate
+        source ../venv/bin/activate
         pip install .[dev]
         cd dist
         python -m pip install *.whl
