@@ -27,6 +27,7 @@ jobs:
 
     - name: Find Wheel File
       id: find_wheel
+      working-directory: .\python_sdk
       run: |
         $wheel = Get-ChildItem dist\*.whl | Select-Object -First 1
         echo "::set-output name=wheel::$($wheel.FullName)"
