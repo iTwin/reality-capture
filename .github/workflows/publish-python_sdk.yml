@@ -8,23 +8,34 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
         python-version: "3.10"
+
+    - name: Create virtual env
+      run: |
+        python -m venv venv 
+
     - name: Build wheel
       working-directory: ./python_sdk
       run: |
+        source venv/bin/activate
         python -m pip install build
         python -m build
+        deactivate
+
     - name: Build documentation
       working-directory: ./python_sdk
       run: |
+        source venv/bin/activate
         pip install .[dev]
         cd dist
         python -m pip install *.whl
         cd ../docs
         make.bat html
+        deactivate
 
     - name: Find Wheel File
       id: find_wheel
