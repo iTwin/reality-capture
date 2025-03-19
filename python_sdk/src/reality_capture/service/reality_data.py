@@ -159,7 +159,7 @@ class RealityDataFilter(BaseModel):
         params = {k: v for k, v in self.model_dump(by_alias=True).items() if v is not None}
 
         for k in [key for key in params.keys() if key.endswith("DateTime")]:
-            params[k] = f"{params[k][0].strftime("%Y-%m-%dT%H:%M:%SZ")}/{params[k][1].strftime("%Y-%m-%dT%H:%M:%SZ")}"
+            params[k] = f'{params[k][0].strftime("%Y-%m-%dT%H:%M:%SZ")}/{params[k][1].strftime("%Y-%m-%dT%H:%M:%SZ")}'
 
         return params
 
