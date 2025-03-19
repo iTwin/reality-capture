@@ -43,10 +43,8 @@ jobs:
         .\venv\Scripts\Activate.ps1
         Write-Host "Wheel location: ${{ steps.find_wheel.outputs.wheel_full_name }}"
         python -m pip install ${{ steps.find_wheel.outputs.wheel_full_name }}
-        python -m pip freeze
         Write-Host "Installing dev dependencies..."
         python -m pip install .[dev]
-        python -m pip freeze
       shell: pwsh
 
     - name: Build documentation
@@ -54,7 +52,6 @@ jobs:
       shell: pwsh
       run: |
         ..\venv\Scripts\Activate.ps1
-        python -m pip freeze
         & .\make.bat html
 
     - name: Create Pre-Release
