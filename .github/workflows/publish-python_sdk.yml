@@ -32,6 +32,8 @@ jobs:
       run: |
         $wheel = Get-ChildItem dist\*.whl | Select-Object -First 1
         $wheel_relative_path = $wheel.FullName | Resolve-Path -Relative
+        Write-Host "Wheel Relative path: $wheel_relative_path"
+        Write-Host "Wheel Name: $($wheel.Name)"
         echo "::set-output name=wheel_relative_path::$wheel_relative_path"
         echo "::set-output name=wheel_name::$($wheel.Name)"
       shell: pwsh
@@ -41,6 +43,7 @@ jobs:
       run: |
         .\venv\Scripts\activate
         pip install .[dev]
+        echo "Wheel path: ${{ steps.find_wheel.outputs.wheel_relative_path }}"
         python -m pip install ${{ steps.find_wheel.outputs.wheel_relative_path }}
 
     - name: Build documentation
