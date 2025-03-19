@@ -15,15 +15,16 @@ jobs:
         python-version: "3.10"
 
     - name: Create virtual env
-      working-directory: .\python_sdk
+      working-directory: .
       run: |
         python -m venv venv 
 
     - name: Build wheel
-      working-directory: .\python_sdk
+      working-directory: .
       run: |
         .\venv\Scripts\activate
         python -m pip install build
+        cd python_sdk
         python -m build
 
     - name: Find Wheel File
@@ -39,19 +40,21 @@ jobs:
       shell: pwsh
 
     - name: Install documentation dependencies
-      working-directory: .\python_sdk
+      working-directory: .
       run: |
         .\venv\Scripts\activate
+        cd python_sdk
         pip install .[dev]
         echo "Wheel path: ${{ steps.find_wheel.outputs.wheel_relative_path }}"
         python -m pip install ${{ steps.find_wheel.outputs.wheel_relative_path }}
 
     - name: Build documentation
-      working-directory: .\python_sdk\docs
+      working-directory: .
       shell: pwsh
       run: |
-        ..\venv\Scripts\Activate.ps1
+        .\venv\Scripts\Activate.ps1
         python -m pip freeze
+        cd python_sdk\docs
         & .\make.bat html
 
     - name: Create Pre-Release
