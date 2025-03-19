@@ -57,7 +57,7 @@ jobs:
         draft: false
         prerelease: true
       env:
-        GITHUB_TOKEN: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload wheel
       uses: actions/upload-release-asset@v1
@@ -67,7 +67,7 @@ jobs:
         asset_name: ${{ steps.find_wheel.outputs.wheel }}
         asset_content_type: application/octet-stream
       env:
-        GITHUB_TOKEN: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     
     
