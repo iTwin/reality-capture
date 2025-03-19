@@ -60,7 +60,7 @@ jobs:
       shell: pwsh
       run: |
         ..\venv\Scripts\Activate.ps1
-        Invoke-Expression -Command "make.bat html"
+        & .\make.bat html
 
     - name: Create Pre-Release
       uses: actions/create-release@v1
