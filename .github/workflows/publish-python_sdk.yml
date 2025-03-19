@@ -31,6 +31,7 @@ jobs:
       run: |
         $wheel = Get-ChildItem dist\*.whl | Select-Object -First 1
         echo "::set-output name=wheel::$($wheel.FullName)"
+        echo "::set-output name=wheel_name::$($wheel.Name)"
       shell: pwsh
 
     - name: Install documentation dependencies
@@ -64,7 +65,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_pre_release.outputs.upload_url }}
         asset_path: ${{ steps.find_wheel.outputs.wheel }}
-        asset_name: ${{ steps.find_wheel.outputs.wheel }}
+        asset_name: ${{ steps.find_wheel.outputs.wheel_name }}
         asset_content_type: application/octet-stream
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
