@@ -40,20 +40,7 @@ jobs:
       run: |
         .\venv\Scripts\activate
         pip install .[dev]
-        cd dist
         python -m pip install ${{ steps.find_wheel.outputs.wheel }}
-
-    - name: Build documentation
-      working-directory: .\python_sdk\docs
-      shell: cmd
-      run: |
-        ..\venv\Scripts\activate.bat
-        where python
-        pip freeze
-        dir /b /a-d
-        call make.bat html
-        call make.bat html > a.txt 2>&1
-        type a.txt
 
     - name: Build documentation
       working-directory: .\python_sdk\docs
@@ -84,11 +71,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Reformat doc
-      id: reformat_doc
       working-directory: .\python_sdk\docs
       run: |
-        Get-ChildItem -Path . -Recurse -File
-
         New-Item -Path .\ReadMe\en -ItemType Directory -Force
         Copy-Item -Path .\_build\html -Destination .\ReadMe\en\html5 -Recurse
         Compress-Archive -Path .\ReadMe -DestinationPath .\Documentation.zip
