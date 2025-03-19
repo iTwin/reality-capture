@@ -70,6 +70,26 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Reformat doc
+      id: reformat_doc
+      working-directory: .\python_sdk\docs
+      run: |
+        New-Item -Path .\ReadMe\en -ItemType Directory -Force
+        Copy-Item -Path .\_build\html -Destination .\ReadMe\en\html5 -Recurse
+        Compress-Archive -Path .\ReadMe -DestinationPath .\Documentation.zip
+
+      shell: pwsh
+
+    - name: Upload doc
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_pre_release.outputs.upload_url }}
+        asset_path: .\python_sdk\docs\Documentation.zip
+        asset_name: Documentation.zip
+        asset_content_type: application/zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     
     
 
