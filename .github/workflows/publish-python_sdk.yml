@@ -32,7 +32,7 @@ jobs:
       run: |
         $wheel = Get-ChildItem dist\*.whl | Select-Object -First 1
         $wheel_relative_path = $wheel.FullName | Resolve-Path -Relative
-        echo "::set-output name=wheel::$wheel_relative_path"
+        echo "::set-output name=wheel_relative_path::$wheel_relative_path"
         echo "::set-output name=wheel_name::$($wheel.Name)"
       shell: pwsh
 
