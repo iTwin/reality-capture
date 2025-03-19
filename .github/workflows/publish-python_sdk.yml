@@ -55,6 +55,13 @@ jobs:
         call make.bat html > a.txt 2>&1
         type a.txt
 
+    - name: Build documentation
+      working-directory: .\python_sdk\docs
+      shell: pwsh
+      run: |
+        ..\venv\Scripts\Activate.ps1
+        Invoke-Expression -Command "make.bat html"
+
     - name: Create Pre-Release
       uses: actions/create-release@v1
       id: create_pre_release
