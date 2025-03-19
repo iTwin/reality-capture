@@ -31,10 +31,9 @@ jobs:
       working-directory: .\python_sdk
       run: |
         $wheel = Get-ChildItem dist\*.whl | Select-Object -First 1
-        $wheel_relative_path = $wheel.FullName | Resolve-Path -Relative
-        Write-Host "Wheel Relative path: $wheel_relative_path"
+        Write-Host "Wheel Full Name: $($wheel.FullName)"
         Write-Host "Wheel Name: $($wheel.Name)"
-        echo "::set-output name=wheel_relative_path::$wheel_relative_path"
+        echo "::set-output name=wheel_full_name::$($wheel.FullName)"
         echo "::set-output name=wheel_name::$($wheel.Name)"
       shell: pwsh
 
@@ -42,9 +41,9 @@ jobs:
       working-directory: .\python_sdk
       run: |
         .\venv\Scripts\activate
-        pip install .[dev]
-        echo "Wheel path: ${{ steps.find_wheel.outputs.wheel_relative_path }}"
-        python -m pip install ${{ steps.find_wheel.outputs.wheel_relative_path }}
+        python -m pip install ${{ steps.find_wheel.outputs.wheel_full_name }}
+        python -m pip install .[dev]
+        python -m pip freeze
 
     - name: Build documentation
       working-directory: .\python_sdk\docs
@@ -69,7 +68,7 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_pre_release.outputs.upload_url }}
-        asset_path: ${{ steps.find_wheel.outputs.wheel_relative_path }}
+        asset_path: ${{ steps.find_wheel.outputs.wheel_full_name }}
         asset_name: ${{ steps.find_wheel.outputs.wheel_name }}
         asset_content_type: application/octet-stream
       env:
