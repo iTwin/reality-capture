@@ -33,15 +33,15 @@ jobs:
         $wheel = Get-ChildItem dist\*.whl | Select-Object -First 1
         Write-Host "Wheel Full Name: $($wheel.FullName)"
         Write-Host "Wheel Name: $($wheel.Name)"
-        echo "wheel_full_name=$($wheel.FullName)" >> $GITHUB_ENV
-        echo "wheel_name=$($wheel.Name)" >> $GITHUB_ENV
+        echo "wheel_full_name=$($wheel.FullName)" >> $GITHUB_OUTPUT
+        echo "wheel_name=$($wheel.Name)" >> $GITHUB_OUTPUT
       shell: pwsh
 
     - name: Install documentation dependencies
       working-directory: .\python_sdk
       run: |
         .\venv\Scripts\activate
-        python -m pip install ${{ env.wheel_full_name }}
+        python -m pip install ${{ steps.find_wheel.outputs.wheel_full_name }}
         python -m pip install .[dev]
         python -m pip freeze
 
@@ -68,8 +68,8 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_pre_release.outputs.upload_url }}
-        asset_path: ${{ env.wheel_full_name }}
-        asset_name: ${{ env.wheel_name }}
+        asset_path: ${{ steps.find_wheel.outputs.wheel_full_name }}
+        asset_name: ${{ steps.find_wheel.outputs.wheel_name }}
         asset_content_type: application/octet-stream
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
