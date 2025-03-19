@@ -43,10 +43,10 @@ jobs:
       working-directory: .
       run: |
         .\venv\Scripts\activate
-        cd python_sdk
-        pip install .[dev]
         echo "Wheel path: ${{ steps.find_wheel.outputs.wheel_relative_path }}"
         python -m pip install ${{ steps.find_wheel.outputs.wheel_relative_path }}
+        cd python_sdk
+        pip install .[dev]
 
     - name: Build documentation
       working-directory: .
