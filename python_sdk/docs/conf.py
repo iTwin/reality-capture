@@ -6,10 +6,12 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+import reality_capture
+
 project = 'Reality Capture'
 copyright = '2025, Bentley Systems'
 author = 'Bentley Systems'
-release = '2.0.0'
+release = reality_capture.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -42,4 +44,6 @@ html_context = {
     "github_repo": "reality-capture",  # Repo name
     "github_version": "feature/2.0.0",  # Version
     "conf_py_path": "/python_sdk/docs/",  # Path in the checkout to the docs root
+    "current_version": release,
+    "versions": ["latest", "2.0.0"],
 }
