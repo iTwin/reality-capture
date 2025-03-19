@@ -48,7 +48,7 @@ jobs:
       shell: cmd
       run: |
         ..\venv\Scripts\activate.bat
-        make.bat html
+        make.bat html VERBOSE=1
 
     - name: Create Pre-Release
       uses: actions/create-release@v1
