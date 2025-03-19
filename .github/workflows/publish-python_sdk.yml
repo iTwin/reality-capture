@@ -30,7 +30,7 @@ jobs:
       id: find_wheel
       working-directory: .\python_sdk
       run: |
-        $wheel = Get-ChildItem .\dist\*.whl | Select-Object -First 1
+        $wheel = Get-ChildItem (Resolve-Path .\dist\*.whl) | Select-Object -First 1
         Write-Host "Wheel Full Name: $($wheel.FullName)"
         Write-Host "Wheel Full Name: $($wheel.Name)"
         echo "::set-output name=wheel::$($wheel.FullName)"
