@@ -47,6 +47,7 @@ jobs:
       shell: pwsh
       run: |
         ..\venv\Scripts\Activate.ps1
+        python -m pip freeze
         & .\make.bat html
 
     - name: Create Pre-Release
