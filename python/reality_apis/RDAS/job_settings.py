@@ -461,6 +461,564 @@ class S2DJobSettings:
             self.min_photos: int = 0
 
 
+class EvalS2DSpecifications:
+    """
+    Specifications for Eval Segmentation 2D jobs.
+
+    Attributes:
+        type: Type of job specifications.
+        inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing the specifications to create_job.
+        options: Possible options for this job.
+    """
+
+    def __init__(self) -> None:
+        self.type = RDAJobType.EvalS2D
+        self.inputs = self.Inputs()
+        self.outputs = self.Outputs()
+        self.options = self.Options()
+
+    def to_json(self) -> dict:
+        """
+        Transform specifications into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with specifications values.
+        """
+        json_dict = dict()
+        json_dict["inputs"] = list()
+        json_dict["outputs"] = list()
+        json_dict["inputs"].append(
+            {
+                "prediction": self.inputs.prediction
+            },
+        )
+        json_dict["inputs"].append(
+            {
+                "reference": self.inputs.reference
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "report": self.outputs.report
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "segmentedPhotos": self.outputs.segmented_photos
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "segmentation2D": self.outputs.segmentation2d
+            }
+        )
+        return json_dict
+
+    @classmethod
+    def from_json(cls, specifications_json: dict) -> ReturnValue[EvalS2DSpecifications]:
+        """
+        Transform json received from cloud service into specifications.
+
+        Args:
+            specifications: Dictionary with specifications received from cloud service.
+        Returns:
+            New specifications.
+        """
+        new_job_specifications = cls()
+        try:
+            new_job_specifications.inputs.reference = specifications_json["inputs"]["reference"]
+            new_job_specifications.inputs.prediction = specifications_json["inputs"]["prediction"]
+            new_job_specifications.outputs.report = specifications_json["outputs"]["report"]
+            new_job_specifications.outputs.segmented_photos = specifications_json["outputs"]["segmentedPhotos"]
+            new_job_specifications.outputs.segmentation2d = specifications_json["outputs"]["segmentation2D"]
+        except (TypeError, KeyError) as e:
+            return ReturnValue(value=cls(), error=str(e))
+        return ReturnValue(value=new_job_specifications, error="")
+
+    class Inputs:
+        """
+        Possible inputs for an Eval Segmentation 2D job.
+
+        Attributes:
+            prediction: ContextScene pointing to prediction segmented photos.
+            reference: ContextScene point to reference segmented photos.
+
+        """
+
+        def __init__(self) -> None:
+            self.prediction: str = ""
+            self.reference: str = ""
+
+    class Outputs:
+        """
+        Possible outputs for an Eval Segmentation 2D job.
+
+        Attributes:
+            report: a json report file with Eval Segmentation 2D results.
+            segmented_photos: Eval segmented photos annotated with confusion matrix index.
+            segmentation2d: ContextScene pointing to the segmented photos.
+
+        """
+
+        def __init__(self) -> None:
+            self.report: str = ""
+            self.segmented_photos: str = ""
+            self.segmentation2d: str = ""
+
+    class Options:
+        """
+        Possible options for an Eval Segmentation 2D job.
+
+        """
+
+
+class EvalS3DSpecifications:
+    """
+    Specifications for Eval Segmentation 3D jobs.
+
+    Attributes:
+        type: Type of job specifications.
+        inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing the specifications to create_job.
+        options: Possible options for this job.
+    """
+
+    def __init__(self) -> None:
+        self.type = RDAJobType.EvalS3D
+        self.inputs = self.Inputs()
+        self.outputs = self.Outputs()
+        self.options = self.Options()
+
+    def to_json(self) -> dict:
+        """
+        Transform specifications into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with specifications values.
+        """
+        json_dict = dict()
+        json_dict["inputs"] = list()
+        json_dict["outputs"] = list()
+        json_dict["inputs"].append(
+            {
+                "prediction": self.inputs.prediction
+            },
+        )
+        json_dict["inputs"].append(
+            {
+                "reference": self.inputs.reference
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "report": self.outputs.report
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "segmentedPointCloud": self.outputs.segmentedPointCloud
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "segmentation3D": self.outputs.segmentation3D
+            }
+        )
+        return json_dict
+
+    @classmethod
+    def from_json(cls, specifications_json: dict) -> ReturnValue[EvalS3DSpecifications]:
+        """
+        Transform json received from cloud service into specifications.
+
+        Args:
+            specifications: Dictionary with specifications received from cloud service.
+        Returns:
+            New specifications.
+        """
+        new_job_specifications = cls()
+        try:
+            new_job_specifications.inputs.reference = specifications_json["inputs"]["reference"]
+            new_job_specifications.inputs.prediction = specifications_json["inputs"]["prediction"]
+            new_job_specifications.outputs.report = specifications_json["outputs"]["report"]
+            new_job_specifications.outputs.segmentedPointCloud = specifications_json["outputs"]["segmentedPointCloud"]
+            new_job_specifications.outputs.segmentation3D = specifications_json["outputs"]["segmentation3D"]
+        except (TypeError, KeyError) as e:
+            return ReturnValue(value=cls(), error=str(e))
+        return ReturnValue(value=new_job_specifications, error="")
+
+    class Inputs:
+        """
+        Possible inputs for an Eval Segmentation 3D job.
+
+        Attributes:
+            prediction: ContextScene pointing to prediction segmented photos.
+            reference: ContextScene point to reference segmented photos.
+
+        """
+
+        def __init__(self) -> None:
+            self.prediction: str = ""
+            self.reference: str = ""
+
+    class Outputs:
+        """
+        Possible outputs for an Eval Segmentation 3D job.
+
+        Attributes:
+            report: a json report file with Eval Segmentation 3D results.
+            segmentedPointCloud: Eval segmented photos annotated with confusion matrix index.
+            segmentation3D: ContextScene pointing to the segmented photos.
+
+        """
+
+        def __init__(self) -> None:
+            self.report: str = ""
+            self.segmentedPointCloud: str = ""
+            self.segmentation3D: str = ""
+
+    class Options:
+        """
+        Possible options for an Eval Segmentation 3D job.
+
+        """
+
+
+
+class EvalSOrthoSpecifications:
+    """
+    Specifications for an Eval Segmentation Ortho jobs.
+
+    Attributes:
+        type: Type of job specifications.
+        inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing the specifications to create_job.
+        options: Possible options for this job.
+    """
+
+    def __init__(self) -> None:
+        self.type = RDAJobType.EvalSOrtho
+        self.inputs = self.Inputs()
+        self.outputs = self.Outputs()
+        self.options = self.Options()
+
+    def to_json(self) -> dict:
+        """
+        Transform specifications into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with specifications values.
+        """
+        json_dict = dict()
+        json_dict["inputs"] = list()
+        json_dict["outputs"] = list()
+        json_dict["inputs"].append(
+            {
+                "prediction": self.inputs.prediction
+            },
+        )
+        json_dict["inputs"].append(
+            {
+                "reference": self.inputs.reference
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "report": self.outputs.report
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "segmentedPhotos": self.outputs.segmented_photos
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "segmentation2D": self.outputs.segmentation2d
+            }
+        )
+        return json_dict
+
+    @classmethod
+    def from_json(cls, specifications_json: dict) -> ReturnValue[EvalSOrthoSpecifications]:
+        """
+        Transform json received from cloud service into specifications.
+
+        Args:
+            specifications_json: Dictionary with specifications received from cloud service.
+        Returns:
+            New specifications.
+        """
+        new_job_specifications = cls()
+        try:
+            new_job_specifications.inputs.reference = specifications_json["inputs"]["reference"]
+            new_job_specifications.inputs.prediction = specifications_json["inputs"]["prediction"]
+            new_job_specifications.outputs.report = specifications_json["outputs"]["report"]
+            new_job_specifications.outputs.segmented_photos = specifications_json["outputs"]["segmentedPhotos"]
+            new_job_specifications.outputs.segmentation2d = specifications_json["outputs"]["segmentation2D"]
+        except (TypeError, KeyError) as e:
+            return ReturnValue(value=cls(), error=str(e))
+        return ReturnValue(value=new_job_specifications, error="")
+
+    class Inputs:
+        """
+        Possible inputs for an Eval Segmentation Ortho job.
+
+        Attributes:
+            prediction: ContextScene pointing to prediction segmented photos.
+            reference: ContextScene point to reference segmented photos.
+
+        """
+
+        def __init__(self) -> None:
+            self.prediction: str = ""
+            self.reference: str = ""
+
+    class Outputs:
+        """
+        Possible outputs for an Eval Segmentation Ortho job.
+
+        Attributes:
+            report: a json report file with Eval Segmentation 2D results.
+            segmented_photos: Eval segmented photos annotated with confusion matrix index.
+            segmentation2d: ContextScene pointing to the segmented photos.
+
+        """
+
+        def __init__(self) -> None:
+            self.report: str = ""
+            self.segmented_photos: str = ""
+            self.segmentation2d: str = ""
+
+    class Options:
+        """
+        Possible options for an Eval Segmentation Ortho job.
+        """
+
+
+class EvalO2DSpecifications:
+    """
+    Specifications for Segmentation 2D jobs.
+
+    Attributes:
+        type: Type of job specifications.
+        inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing the specifications to create_job.
+        options: Possible options for this job.
+    """
+
+    def __init__(self) -> None:
+        self.type = RDAJobType.EvalO2D
+        self.inputs = self.Inputs()
+        self.outputs = self.Outputs()
+        self.options = self.Options()
+
+    def to_json(self) -> dict:
+        """
+        Transform specifications into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with specifications values.
+        """
+        json_dict = dict()
+        json_dict["inputs"] = list()
+        json_dict["outputs"] = list()
+        json_dict["inputs"].append(
+            {
+                "prediction": self.inputs.prediction
+            },
+        )
+        json_dict["inputs"].append(
+            {
+                "reference": self.inputs.reference
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "report": self.outputs.report
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "objects2D": self.outputs.objects2d
+            }
+        )
+        return json_dict
+
+    @classmethod
+    def from_json(cls, specifications_json: dict) -> ReturnValue[EvalO2DSpecifications]:
+        """
+        Transform json received from cloud service into specifications.
+
+        Args:
+            specifications_json: Dictionary with specifications received from cloud service.
+        Returns:
+            New specifications.
+        """
+        new_job_specifications = cls()
+        try:
+            new_job_specifications.inputs.reference = specifications_json["inputs"]["reference"]
+            new_job_specifications.inputs.prediction = specifications_json["inputs"]["prediction"]
+            new_job_specifications.outputs.report = specifications_json["outputs"]["report"]
+            new_job_specifications.outputs.objects2d = specifications_json["outputs"]["objects2D"]
+        except (TypeError, KeyError) as e:
+            return ReturnValue(value=cls(), error=str(e))
+        return ReturnValue(value=new_job_specifications, error="")
+
+    class Inputs:
+        """
+        Possible inputs for an Eval Object 2D job.
+
+        Attributes:
+            reference: Path to ContextScene with O2D objects.
+            prediction: Path to ContextScene with O2D objects.
+
+        """
+
+        def __init__(self) -> None:
+            self.prediction: str = ""
+            self.reference: str = ""
+
+    class Outputs:
+        """
+        Possible outputs for an Eval Object 2D job.
+
+        Attributes:
+            report: json file with eval metrix.
+            objects2d: ContextScene with the eval objects.
+
+        """
+
+        def __init__(self) -> None:
+            self.report: str = ""
+            self.objects2d: str = ""
+
+    class Options:
+        """
+        Possible options for an Eval Object 2D job.
+
+        Attributes:
+            threshold_iou: IOU between objects.
+        """
+        def __init__(self) -> None :
+            self.threshold_iou : int = 0
+
+class EvalO3DSpecifications:
+    """
+    Specifications for an Eval Object 3D jobs.
+
+    Attributes:
+        type: Type of job specifications.
+        inputs: Possible inputs for this job. Should be the ids of the inputs in the cloud.
+        outputs: Possible outputs for this job. Fill the outputs you want for the job with a string (normally the name
+            of the output) before passing the specifications to create_job.
+        options: Possible options for this job.
+    """
+
+    def __init__(self) -> None:
+        self.type = RDAJobType.EvalO3D
+        self.inputs = self.Inputs()
+        self.outputs = self.Outputs()
+        self.options = self.Options()
+
+    def to_json(self) -> dict:
+        """
+        Transform specifications into a dictionary compatible with json.
+
+        Returns:
+            Dictionary with specifications values.
+        """
+        json_dict = dict()
+        json_dict["inputs"] = list()
+        json_dict["outputs"] = list()
+        json_dict["inputs"].append(
+            {
+                "prediction": self.inputs.prediction
+            },
+        )
+        json_dict["inputs"].append(
+            {
+                "reference": self.inputs.reference
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "report": self.outputs.report
+            }
+        )
+        json_dict["outputs"].append(
+            {
+                "objects3D": self.outputs.objects3d
+            }
+        )
+        return json_dict
+
+    @classmethod
+    def from_json(cls, specifications_json: dict) -> ReturnValue[EvalO2DSpecifications]:
+        """
+        Transform json received from cloud service into specifications.
+
+        Args:
+            specifications_json: Dictionary with specifications received from cloud service.
+        Returns:
+            New specifications.
+        """
+        new_job_specifications = cls()
+        try:
+            new_job_specifications.inputs.reference = specifications_json["inputs"]["reference"]
+            new_job_specifications.inputs.prediction = specifications_json["inputs"]["prediction"]
+            new_job_specifications.outputs.report = specifications_json["outputs"]["report"]
+            new_job_specifications.outputs.objects3d = specifications_json["outputs"]["objects3D"]
+        except (TypeError, KeyError) as e:
+            return ReturnValue(value=cls(), error=str(e))
+        return ReturnValue(value=new_job_specifications, error="")
+
+    class Inputs:
+        """
+        Possible inputs for an Eval Object 3D job.
+
+        Attributes:
+            reference: Path to ContextScene with O3D objects.
+            prediction: Path to ContextScene with O3D objects.
+
+        """
+
+        def __init__(self) -> None:
+            self.prediction: str = ""
+            self.reference: str = ""
+
+    class Outputs:
+        """
+        Possible outputs for an Eval Object 3D job.
+
+        Attributes:
+            report: json file with eval metrix.
+            objects3d: ContextScene with the eval objects.
+
+        """
+
+        def __init__(self) -> None:
+            self.report: str = ""
+            self.objects3d: str = ""
+
+    class Options:
+        """
+        Possible options for an Eval Object 3D job.
+
+        Attributes:
+            threshold_iou: IOU between objects.
+        """
+        def __init__(self) -> None :
+            self.threshold_iou : int = 0
+
+
+
+
 class SOrthoJobSettings:
     """
     Settings for Segmentation Ortho jobs.
@@ -716,6 +1274,8 @@ class S3DJobSettings:
             json_dict["options"]["removeSmallComponents"] = str(self.options.remove_small_components)
         if self.options.save_confidence:
             json_dict["options"]["saveConfidence"] = "true"
+        if self.options.keep_input_resolution:
+            json_dict["options"]["keepInputResolution"] = "true"
         if self.options.export_srs:
             json_dict["options"]["exportSrs"] = self.options.export_srs
 
@@ -836,6 +1396,8 @@ class S3DJobSettings:
                 options = settings_json["options"]
                 if "saveConfidence" in options:
                     new_job_settings.options.save_confidence = bool(options["saveConfidence"])
+                if "keepInputResolution" in options:
+                    new_job_settings.options.keep_input_resolution = bool(options["keepInputResolution"])
                 if "computeLineWidth" in options:
                     new_job_settings.options.compute_line_width = bool(
                         options["computeLineWidth"]
@@ -924,6 +1486,7 @@ class S3DJobSettings:
 
         Attributes:
             save_confidence: If confidence is saved in 3D segmentation files or not.
+            keep_input_resolution: To have the exact same points in segmentation result.
             compute_line_width: Estimation 3D line width at each vertex.
             remove_small_components: Remove 3D lines with total length smaller than this value.
             export_srs: SRS used by exports.
@@ -931,6 +1494,7 @@ class S3DJobSettings:
 
         def __init__(self) -> None:
             self.save_confidence: bool = False
+            self.keep_input_resolution: bool = False
             self.compute_line_width: bool = False
             self.remove_small_components: float = 0.0
             self.export_srs: str = ""
