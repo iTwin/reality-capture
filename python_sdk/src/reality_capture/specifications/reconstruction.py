@@ -36,3 +36,8 @@ class ReconstructionSpecifications(BaseModel):
     inputs: ReconstructionInputs = Field(description="Inputs")
     outputs: ReconstructionOutputs = Field(description="Outputs")
     options: Optional[TilingOptions] = Field(None, description="Options")
+
+
+class ReconstructionCost(BaseModel):
+    gpix: float = Field(description="Number of GigaPixels in the overall inputs.", ge=0)
+    mpoints: float = Field(description="Number of MegaPoints in the overall inputs.", ge=0)

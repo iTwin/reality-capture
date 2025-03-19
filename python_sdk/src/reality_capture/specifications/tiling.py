@@ -140,6 +140,11 @@ class TilingSpecificationsCreate(BaseModel):
     options: Optional[TilingOptions] = Field(None, description="Options")
 
 
+class TilingCost:
+    gpix: float = Field(description="Number of GigaPixels in the overall inputs, after applying downsampling.", ge=0)
+    mpoints: float = Field(description="Number of MegaPoints in the overall inputs.", ge=0)
+
+
 class LayoutTile(BaseModel):
     name: str = Field(description="Tile name")
     box_tight: BoundingBox = Field(description="Tight box encompassing the tile", alias="boxTight")

@@ -55,3 +55,7 @@ class ConstraintsSpecifications(BaseModel):
 class ConstraintsSpecificationsCreate(BaseModel):
     inputs: ConstraintsInputs = Field(description="Inputs")
     outputs: list[ConstraintsOutputsCreate] = Field(description="Outputs")
+
+
+class ConstraintsCost(BaseModel):
+    surface: float = Field(description="Surface in squared meters of the constraints to add", ge=0)
