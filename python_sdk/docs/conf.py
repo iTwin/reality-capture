@@ -41,5 +41,5 @@ html_context = {
     "github_user": "iTwin",  # Username
     "github_repo": "reality-capture",  # Repo name
     "github_version": "feature/2.0.0",  # Version
-    "conf_py_path": "/python/docs/",  # Path in the checkout to the docs root
+    "conf_py_path": "/python_sdk/docs/",  # Path in the checkout to the docs root
 }
