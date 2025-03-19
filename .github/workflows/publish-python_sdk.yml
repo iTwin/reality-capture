@@ -33,8 +33,8 @@ jobs:
         $wheel = Get-ChildItem dist\*.whl | Select-Object -First 1
         Write-Host "Wheel Full Name: $($wheel.FullName)"
         Write-Host "Wheel Name: $($wheel.Name)"
-        echo "wheel_full_name=$($wheel.FullName)" >> "$GITHUB_OUTPUT"
-        echo "wheel_name=$($wheel.Name)" >> "$GITHUB_OUTPUT"
+        "wheel_full_name=$($wheel.FullName)" >> $env:GITHUB_OUTPUT
+        "wheel_name=$($wheel.Name)" >> $env:GITHUB_OUTPUT
       shell: pwsh
 
     - name: Install documentation dependencies
