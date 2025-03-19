@@ -48,7 +48,12 @@ jobs:
       shell: cmd
       run: |
         ..\venv\Scripts\activate.bat
-        make.bat .\html
+        where python
+        pip freeze
+        dir /b /a-d
+        call make.bat html
+        call make.bat html > a.txt 2>&1
+        type a.txt
 
     - name: Create Pre-Release
       uses: actions/create-release@v1
@@ -56,7 +61,7 @@ jobs:
       with:
         tag_name: 2.0.0-alpha.1
         release_name: "Version 2.0.0-alpha.1"
-        draft: false
+        draft: true
         prerelease: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
