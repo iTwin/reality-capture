@@ -15,13 +15,14 @@ jobs:
         python-version: "3.10"
 
     - name: Create virtual env
+      working-directory: .\python_sdk
       run: |
         python -m venv venv 
 
     - name: Build wheel
       working-directory: .\python_sdk
       run: |
-        ..\venv\Scripts\activate
+        .\venv\Scripts\activate
         python -m pip install build
         python -m build
 
@@ -37,7 +38,7 @@ jobs:
     - name: Install documentation dependencies
       working-directory: .\python_sdk
       run: |
-        ..\venv\Scripts\activate
+        .\venv\Scripts\activate
         pip install .[dev]
         cd dist
         python -m pip install ${{ steps.find_wheel.outputs.wheel }}
@@ -46,7 +47,7 @@ jobs:
       working-directory: .\python_sdk\docs
       shell: cmd
       run: |
-        ..\..\venv\Scripts\activate.bat
+        ..\venv\Scripts\activate.bat
         make.bat html
 
     - name: Create Pre-Release
@@ -74,10 +75,11 @@ jobs:
       id: reformat_doc
       working-directory: .\python_sdk\docs
       run: |
+        Get-ChildItem -Path . -Recurse -File
+
         New-Item -Path .\ReadMe\en -ItemType Directory -Force
         Copy-Item -Path .\_build\html -Destination .\ReadMe\en\html5 -Recurse
         Compress-Archive -Path .\ReadMe -DestinationPath .\Documentation.zip
-
       shell: pwsh
 
     - name: Upload doc
