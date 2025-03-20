@@ -61,8 +61,12 @@ jobs:
         Copy-Item -Path .\_build\html -Destination ".\User Guide\en\html5" -Recurse
         Compress-Archive -Path ".\User Guide" -DestinationPath .\Documentation.zip
         $zip_abs_path = (Get-Item ".\Documentation.zip").FullName
+        Write-Host "zip_abs_path: $zip_abs_path"
         "doc_zip_path=$zip_abs_path" >> $env:GITHUB_OUTPUT
       shell: pwsh
+
+    - name: Debug doc_zip_path
+      run: echo "${{ steps.find_wheel.outputs.doc_zip_path }}"
 
     - name: Create Pre-Release
       uses: softprops/action-gh-release@v2
