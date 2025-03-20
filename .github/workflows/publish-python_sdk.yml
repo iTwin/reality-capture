@@ -34,6 +34,7 @@ jobs:
         Write-Host "Wheel Full Name: $($wheel.FullName)"
         Write-Host "Wheel Name: $($wheel.Name)"
         "wheel_full_name=$($wheel.FullName)" >> $env:GITHUB_OUTPUT
+        "wheel_name=$($wheel.Name)" >> $env:GITHUB_OUTPUT
       shell: pwsh
 
     - name: Install documentation dependencies
@@ -53,26 +54,41 @@ jobs:
         ..\venv\Scripts\Activate.ps1
         & .\make.bat html
 
+    - name: Create Pre-Release
+      uses: actions/create-release@v1
+      id: create_pre_release
+      with:
+        tag_name: 2.0.0-alpha.1
+        release_name: "Version 2.0.0-alpha.1"
+        draft: true
+        prerelease: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload wheel
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_pre_release.outputs.upload_url }}
+        asset_path: ${{ steps.find_wheel.outputs.wheel_full_name }}
+        asset_name: ${{ steps.find_wheel.outputs.wheel_name }}
+        asset_content_type: application/octet-stream
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Reformat doc
       working-directory: .\python_sdk\docs
       run: |
         New-Item -Path ".\User Guide\en" -ItemType Directory -Force
         Copy-Item -Path .\_build\html -Destination ".\User Guide\en\html5" -Recurse
         Compress-Archive -Path ".\User Guide" -DestinationPath .\Documentation.zip
-        $zip_abs_path = (Get-Item ".\Documentation.zip").FullName
-        "doc_zip_path=$zip_abs_path" >> $env:GITHUB_OUTPUT
       shell: pwsh
 
-    - name: Create Pre-Release
-      uses: softprops/action-gh-release@v2
-      id: create_pre_release
+    - name: Upload doc
+      uses: actions/upload-release-asset@v1
       with:
-        tag_name: 2.0.0-alpha.1
-        name: "Version 2.0.0-alpha.1"
-        draft: true
-        prerelease: true
-        files: | 
-          ${{ steps.find_wheel.outputs.wheel_full_name }}
-          ${{ steps.find_wheel.outputs.doc_zip_path }}
+        upload_url: ${{ steps.create_pre_release.outputs.upload_url }}
+        asset_path: .\python_sdk\docs\Documentation.zip
+        asset_name: Documentation.zip
+        asset_content_type: application/zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
