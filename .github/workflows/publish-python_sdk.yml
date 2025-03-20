@@ -47,6 +47,13 @@ jobs:
         python -m pip install .[dev]
       shell: pwsh
 
+    - name: Build documentation
+      working-directory: .\python_sdk\docs
+      shell: pwsh
+      run: |
+        ..\venv\Scripts\Activate.ps1
+        & .\make.bat html
+
     - name: Reformat doc
       working-directory: .\python_sdk\docs
       run: |
