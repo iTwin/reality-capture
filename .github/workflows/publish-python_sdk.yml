@@ -55,18 +55,15 @@ jobs:
         & .\make.bat html
 
     - name: Reformat doc
+      id: reformat_doc
       working-directory: .\python_sdk\docs
       run: |
         New-Item -Path ".\User Guide\en" -ItemType Directory -Force
         Copy-Item -Path .\_build\html -Destination ".\User Guide\en\html5" -Recurse
         Compress-Archive -Path ".\User Guide" -DestinationPath .\Documentation.zip
         $zip_abs_path = (Get-Item ".\Documentation.zip").FullName
-        Write-Host "zip_abs_path: $zip_abs_path"
         "doc_zip_path=$zip_abs_path" >> $env:GITHUB_OUTPUT
       shell: pwsh
-
-    - name: Debug doc_zip_path
-      run: echo "${{ steps.find_wheel.outputs.doc_zip_path }}"
 
     - name: Create Pre-Release
       uses: softprops/action-gh-release@v2
@@ -78,6 +75,6 @@ jobs:
         prerelease: true
         files: | 
           ${{ steps.find_wheel.outputs.wheel_full_name }}
-          ${{ steps.find_wheel.outputs.doc_zip_path }}
+          ${{ steps.reformat_doc.outputs.doc_zip_path }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
