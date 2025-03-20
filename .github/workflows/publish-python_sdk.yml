@@ -34,7 +34,6 @@ jobs:
         Write-Host "Wheel Full Name: $($wheel.FullName)"
         Write-Host "Wheel Name: $($wheel.Name)"
         "wheel_full_name=$($wheel.FullName)" >> $env:GITHUB_OUTPUT
-        "wheel_name=$($wheel.Name)" >> $env:GITHUB_OUTPUT
       shell: pwsh
 
     - name: Install documentation dependencies
@@ -60,6 +59,8 @@ jobs:
         New-Item -Path ".\User Guide\en" -ItemType Directory -Force
         Copy-Item -Path .\_build\html -Destination ".\User Guide\en\html5" -Recurse
         Compress-Archive -Path ".\User Guide" -DestinationPath .\Documentation.zip
+        $zip_abs_path = (Get-Item ".\Documentation.zip").FullName
+        "doc_zip_path=$zip_abs_path" >> $env:GITHUB_OUTPUT
       shell: pwsh
 
     - name: Create Pre-Release
@@ -67,11 +68,11 @@ jobs:
       id: create_pre_release
       with:
         tag_name: 2.0.0-alpha.1
-        release_name: "Version 2.0.0-alpha.1"
+        name: "Version 2.0.0-alpha.1"
         draft: true
         prerelease: true
         files: | 
           ${{ steps.find_wheel.outputs.wheel_full_name }}
-          .\python_sdk\docs\Documentation.zip
+          ${{ steps.find_wheel.outputs.doc_zip_path }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
