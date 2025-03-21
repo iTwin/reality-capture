@@ -39,7 +39,7 @@ This table below lists all the formats accepted either as input or output.
 +--------------------------------------+-----------+-------------------+-------+--------+
 | Graphics Language Binary             | .glb      | GLB               |       | ✅     |
 +--------------------------------------+-----------+-------------------+-------+--------+
-| Compressed Graphics Language Library | .glbc     | GLBC              |       | ✅     |
+| Compressed Graphics Language Library | .glbc     | GLB               |       | ✅     |
 +--------------------------------------+-----------+-------------------+-------+--------+
 
 Classes
