@@ -88,6 +88,7 @@ jobs:
         .\venv_tests\Scripts\activate
         version=$(python -c "import importlib.metadata; print(importlib.metadata.version('reality-capture'))")
         echo "::set-output name=version::$version"
+      shell: bash
 
     - name: Create Pre-Release
       uses: softprops/action-gh-release@v2
