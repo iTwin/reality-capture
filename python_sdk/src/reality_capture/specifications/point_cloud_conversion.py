@@ -10,6 +10,8 @@ class PCConversionInputs(BaseModel):
 class PCConversionOutputsCreate(Enum):
     OPC = "opc"
     PNTS = "pnts"
+    GLB = "glb"
+    GLBC = "glbc"
 
 
 class PCConversionOutputs(BaseModel):
