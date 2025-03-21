@@ -84,11 +84,12 @@ jobs:
     - name: Get version from pyproject
       working-directory: .\python_sdk
       id: extract_version
+      shell: pwsh
       run: |
-        source ./venv_tests/bin/activate
-        version=$(python -c "import importlib.metadata; print(importlib.metadata.version('reality-capture'))")
-        echo "::set-output name=version::$version"
-      shell: cmd
+        .\venv\Scripts\Activate.ps1
+        python -m pip install toml
+        $version = .\venv\Scripts\python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
+        echo "##[set-output name=version]::$version"
 
     - name: Create Pre-Release
       uses: softprops/action-gh-release@v2
