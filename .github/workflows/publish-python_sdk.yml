@@ -89,7 +89,7 @@ jobs:
         .\venv\Scripts\Activate.ps1
         python -m pip install toml
         $version = .\venv\Scripts\python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
-        echo "##[set-output name=version]::$version"
+        "version=$version" >> $env:GITHUB_OUTPUT
 
     - name: Create Pre-Release
       uses: softprops/action-gh-release@v2
