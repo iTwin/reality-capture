@@ -81,11 +81,11 @@ jobs:
         .\venv_tests\Scripts\activate
         pytest --cov=reality_capture --cov-report html:cov_html .\tests\
 
-    - name: get version from pyproject
+    - name: Get version from pyproject
       working-directory: .\python_sdk
       id: extract_version
       run: |
-        .\venv_tests\Scripts\activate
+        .\venv_tests\Scripts\activate.bat
         version=$(python -c "import importlib.metadata; print(importlib.metadata.version('reality-capture'))")
         echo "::set-output name=version::$version"
       shell: bash
