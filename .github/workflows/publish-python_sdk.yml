@@ -83,15 +83,17 @@ jobs:
 
     - name: get version from pyproject
       working-directory: .\python_sdk
+      id: extract_version
       run: |
         .\venv_tests\Scripts\activate
-        echo "VERSION=$(python -c \"import importlib.metadata; print(importlib.metadata.version('reality-capture'))\")" >> $GITHUB_ENV
+        version=$(python -c "import importlib.metadata; print(importlib.metadata.version('reality-capture'))")
+        echo "::set-output name=version::$version"
 
     - name: Create Pre-Release
       uses: softprops/action-gh-release@v2
       id: create_pre_release
       with:
-        tag_name: ${{ env.VERSION }}
+        tag_name: ${{ steps.extract_version.outputs.version }}
         name: "Version ${{ env.VERSION }}"
         draft: true
         prerelease: true
