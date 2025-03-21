@@ -96,7 +96,7 @@ jobs:
       id: create_pre_release
       with:
         tag_name: ${{ steps.extract_version.outputs.version }}
-        name: "Version ${{ env.VERSION }}"
+        name: "Version ${{ steps.extract_version.outputs.version }}"
         draft: true
         prerelease: true
         files: | 
