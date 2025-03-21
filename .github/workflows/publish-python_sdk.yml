@@ -81,12 +81,18 @@ jobs:
         .\venv_tests\Scripts\activate
         pytest --cov=reality_capture --cov-report html:cov_html .\tests\
 
+    - name: get version from pyproject
+      working-directory: .\python_sdk
+      run: |
+        .\venv_tests\Scripts\activate
+        echo "VERSION=$(python -c \"import importlib.metadata; print(importlib.metadata.version('reality-capture'))\")" >> $GITHUB_ENV
+
     - name: Create Pre-Release
       uses: softprops/action-gh-release@v2
       id: create_pre_release
       with:
-        tag_name: 2.0.0-alpha.2
-        name: "Version 2.0.0-alpha.2"
+        tag_name: ${{VERSION}}
+        name: "Version ${{VERSION}}"
         draft: true
         prerelease: true
         files: | 

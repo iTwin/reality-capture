@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reality_capture"
-version = "2.0.0"
+version = "2.0.0-alpha.2"
 authors = [
   { name="Bentley Systems" },
 ]
