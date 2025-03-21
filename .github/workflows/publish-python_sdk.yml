@@ -65,6 +65,21 @@ jobs:
         "doc_zip_path=$zip_abs_path" >> $env:GITHUB_OUTPUT
       shell: pwsh
 
+    - name: Create virtual env for tests
+      working-directory: .\python_sdk
+      run: |
+        python -m venv venv_tests
+        .\venv_tests\Scripts\activate
+        python -m pip install pytest
+        python -m pip install pytest-cov
+        python -m pip install responses
+
+    - name: Run tests
+      working-directory: .\python_sdk
+      run: |
+        .\venv_tests\Scripts\activate
+        pytest --cov=reality_capture --cov-report html:cov_html .\tests\
+
     - name: Create Pre-Release
       uses: softprops/action-gh-release@v2
       id: create_pre_release
