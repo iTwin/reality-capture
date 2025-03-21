@@ -70,6 +70,7 @@ jobs:
       run: |
         python -m venv venv_tests
         .\venv_tests\Scripts\activate
+        python -m pip install ${{ steps.find_wheel.outputs.wheel_full_name }}
         python -m pip install pytest
         python -m pip install pytest-cov
         python -m pip install responses
