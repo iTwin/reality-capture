@@ -108,9 +108,9 @@ jobs:
       id: extract_version
       run: |
         if ($env:RUNNER_OS -eq "Windows") {
-          ../venv/Scripts/Activate.ps1
+          ./venv/Scripts/Activate.ps1
         } else {
-          . ../venv/bin/Activate.ps1
+          . ./venv/bin/Activate.ps1
         }
         python -m pip install toml
         $version = ./venv/Scripts/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
