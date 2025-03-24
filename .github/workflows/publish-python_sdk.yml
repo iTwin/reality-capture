@@ -26,7 +26,7 @@ jobs:
         if [[ "${{ runner.os }}" == "Linux" ]] || [[ "${{ runner.os }}" == "macOS" ]]; then
           source venv/bin/activate
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
-          .\venv\Scripts\activate
+          ./venv/Scripts/activate
         fi
         python -m pip install build
         python -m build
@@ -47,7 +47,7 @@ jobs:
         if [[ "${{ runner.os }}" == "Linux" ]] || [[ "${{ runner.os }}" == "macOS" ]]; then
           source venv/bin/activate
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
-          .\venv\Scripts\activate
+          ./venv/Scripts/activate
         fi
         python -m pip install ${{ steps.find_wheel.outputs.wheel_full_name }}
         python -m pip install .[dev]
@@ -83,7 +83,7 @@ jobs:
         if [[ "${{ runner.os }}" == "Linux" ]] || [[ "${{ runner.os }}" == "macOS" ]]; then
           source venv_tests/bin/activate
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
-          .\venv_tests\Scripts\activate
+          ./venv_tests/Scripts/activate
         fi
         python -m pip install ${{ steps.find_wheel.outputs.wheel_full_name }}
         python -m pip install pytest
@@ -97,7 +97,7 @@ jobs:
         if [[ "${{ runner.os }}" == "Linux" ]] || [[ "${{ runner.os }}" == "macOS" ]]; then
           source venv_tests/bin/activate
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
-          .\venv_tests\Scripts\activate
+          ./venv_tests/Scripts/activate
         fi
         pytest --cov=reality_capture --cov-report html:cov_html ./tests/
       shell: bash
