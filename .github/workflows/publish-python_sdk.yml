@@ -37,8 +37,9 @@ jobs:
       working-directory: ./python_sdk/dist
       run: |
         wheel=$(find . -type f -name "*.whl" | head -n 1)
-        echo "Wheel found: $wheel"
-        echo "wheel_full_name=dist/$wheel" >> $GITHUB_ENV
+        wheel_basename=$(basename "$wheel")
+        echo "Wheel found: $wheel_basename"
+        echo "wheel_full_name=dist/$wheel_basename" >> $GITHUB_ENV
       shell: bash
 
     - name: Install documentation dependencies
