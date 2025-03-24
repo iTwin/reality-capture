@@ -34,13 +34,14 @@ jobs:
       shell: bash
 
     - name: Find Wheel File
+      id: find_wheel
       working-directory: ./python_sdk/dist
       run: |
-        wheel=$(find . -type f -name "*.whl" | head -n 1)
-        wheel_abs_path=$(realpath "$wheel")
-        echo "Wheel found: $wheel_abs_path"
-        echo "wheel_abs_path=$wheel_abs_path" >> $GITHUB_ENV
-      shell: bash
+        $wheel = Get-ChildItem -Filter "*.whl" | Select-Object -First 1
+        $wheel_abs_path = $wheel.FullName
+        Write-Output "Wheel found: $wheel_abs_path"
+        "wheel_abs_path=$wheel_abs_path" >> $env:GITHUB_OUTPUT
+      shell: pwsh
 
     - name: Install documentation dependencies
       working-directory: ./python_sdk
@@ -50,7 +51,7 @@ jobs:
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
           ./venv/Scripts/activate
         fi
-        python -m pip install ${{ env.wheel_abs_path }}
+        python -m pip install ${{ steps.find_wheel.outputs.wheel_abs_path }}
         python -m pip install .[dev]
       shell: bash
 
@@ -87,7 +88,7 @@ jobs:
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
           ./venv_tests/Scripts/activate
         fi
-        python -m pip install ${{ env.wheel_abs_path }}
+        python -m pip install ${{ steps.find_wheel.outputs.wheel_abs_path }}
         python -m pip install pytest
         python -m pip install pytest-cov
         python -m pip install responses
@@ -131,7 +132,7 @@ jobs:
         draft: true
         prerelease: true
         files: | 
-          ${{ env.wheel_abs_path }}
+          ${{ steps.find_wheel.outputs.wheel_abs_path }}
           ${{ steps.reformat_doc.outputs.doc_zip_path }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
