@@ -73,6 +73,7 @@ jobs:
         Copy-Item -Path ./_build/html -Destination "./User Guide/en/html5" -Recurse
         Compress-Archive -Path "./User Guide" -DestinationPath ./Documentation.zip
         $zip_abs_path = (Get-Item "./Documentation.zip").FullName
+        Write-Host "Zip path : $zip_abs_path"
         "doc_zip_path=$zip_abs_path" >> $env:GITHUB_OUTPUT
       shell: pwsh
 
@@ -85,7 +86,7 @@ jobs:
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
           ./venv_tests/Scripts/activate
         fi
-        python -m pip install ${{ steps.find_wheel.outputs.wheel_full_name }}
+        python -m pip install ${{ env.wheel_full_name }}
         python -m pip install pytest
         python -m pip install pytest-cov
         python -m pip install responses
@@ -109,6 +110,7 @@ jobs:
         ./venv/Scripts/Activate.ps1
         python -m pip install toml
         $version = ./venv/Scripts/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
+        Write-Host "Version : $version"
         "version=$version" >> $env:GITHUB_OUTPUT
       shell: pwsh
 
@@ -121,7 +123,7 @@ jobs:
         draft: true
         prerelease: true
         files: | 
-          ${{ steps.find_wheel.outputs.wheel_full_name }}
+          ${{ env.wheel_full_name }}
           ${{ steps.reformat_doc.outputs.doc_zip_path }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
