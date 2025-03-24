@@ -38,7 +38,7 @@ jobs:
       working-directory: ./python_sdk/dist
       run: |
         $wheel = Get-ChildItem -Filter "*.whl" | Select-Object -First 1
-        $wheel_abs_path = $wheel.FullName
+        $wheel_abs_path = $wheel.FullName.Replace('\', '/')
         Write-Output "Wheel found: $wheel_abs_path"
         "wheel_abs_path=$wheel_abs_path" >> $env:GITHUB_OUTPUT
       shell: pwsh
