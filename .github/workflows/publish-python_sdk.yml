@@ -33,10 +33,10 @@ jobs:
       shell: bash
 
     - name: Find Wheel File
-      id: find_wheel
       working-directory: ./python_sdk/dist
       run: |
         wheel=$(find . -type f -name "*.whl" | head -n 1)
+        echo "Wheel found: $wheel"
         echo "wheel_full_name=$wheel" >> $GITHUB_ENV
       shell: bash
 
@@ -48,7 +48,7 @@ jobs:
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
           ./venv/Scripts/activate
         fi
-        python -m pip install ${{ steps.find_wheel.outputs.wheel_full_name }}
+        python -m pip install ${{ env.wheel_full_name }}
         python -m pip install .[dev]
       shell: bash
 
