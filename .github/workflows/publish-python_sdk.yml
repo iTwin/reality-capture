@@ -30,6 +30,7 @@ jobs:
         fi
         python -m pip install build
         python -m build
+      shell: bash
 
     - name: Find Wheel File
       id: find_wheel
@@ -50,10 +51,10 @@ jobs:
         fi
         python -m pip install ${{ steps.find_wheel.outputs.wheel_full_name }}
         python -m pip install .[dev]
+      shell: bash
 
     - name: Build documentation
       working-directory: ./python_sdk/docs
-      shell: pwsh
       run: |
         if ($env:RUNNER_OS -eq "Windows") {
           ../venv/Scripts/Activate.ps1
@@ -62,6 +63,7 @@ jobs:
           . ../venv/bin/activate
           make html
         }
+      shell: pwsh
 
     - name: Reformat doc
       id: reformat_doc
@@ -78,27 +80,37 @@ jobs:
       working-directory: ./python_sdk
       run: |
         python -m venv venv_tests
-        ./venv_tests/Scripts/activate
+        if [[ "${{ runner.os }}" == "Linux" ]] || [[ "${{ runner.os }}" == "macOS" ]]; then
+          source venv_tests/bin/activate
+        elif [[ "${{ runner.os }}" == "Windows" ]]; then
+          .\venv_tests\Scripts\activate
+        fi
         python -m pip install ${{ steps.find_wheel.outputs.wheel_full_name }}
         python -m pip install pytest
         python -m pip install pytest-cov
         python -m pip install responses
+      shell: bash
 
     - name: Run tests
       working-directory: ./python_sdk
       run: |
-        ./venv_tests/Scripts/activate
+        if [[ "${{ runner.os }}" == "Linux" ]] || [[ "${{ runner.os }}" == "macOS" ]]; then
+          source venv_tests/bin/activate
+        elif [[ "${{ runner.os }}" == "Windows" ]]; then
+          .\venv_tests\Scripts\activate
+        fi
         pytest --cov=reality_capture --cov-report html:cov_html ./tests/
+      shell: bash
 
     - name: Get version from pyproject
       working-directory: ./python_sdk
       id: extract_version
-      shell: pwsh
       run: |
         ./venv/Scripts/Activate.ps1
         python -m pip install toml
         $version = ./venv/Scripts/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
         "version=$version" >> $env:GITHUB_OUTPUT
+      shell: pwsh
 
     - name: Create Pre-Release
       uses: softprops/action-gh-release@v2
