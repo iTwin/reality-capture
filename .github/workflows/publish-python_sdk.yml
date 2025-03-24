@@ -4,11 +4,12 @@ on: workflow_dispatch
 
 jobs:
   build_and_publish_sdk:
-    runs-on: windows-latest
-
     strategy:
       matrix:
         python-version: ['3.10', '3.11', '3.12', '3.13']
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v3
