@@ -82,10 +82,11 @@ jobs:
     - name: Create virtual env for tests
       working-directory: ./python_sdk
       run: |
+        python -m venv venv_tests
         if ($env:RUNNER_OS -eq "Windows") {
-          ./venv/Scripts/Activate.ps1
+          ./venv_tests/Scripts/Activate.ps1
         } else {
-          . ./venv/bin/Activate.ps1
+          . ./venv_tests/bin/Activate.ps1
         }
         python -m pip install ${{ steps.find_wheel.outputs.wheel_abs_path }}
         python -m pip install pytest
@@ -97,9 +98,9 @@ jobs:
       working-directory: ./python_sdk
       run: |
         if ($env:RUNNER_OS -eq "Windows") {
-          ./venv/Scripts/Activate.ps1
+          ./venv_tests/Scripts/Activate.ps1
         } else {
-          . ./venv/bin/Activate.ps1
+          . ./venv_tests/bin/Activate.ps1
         }
         pytest --cov=reality_capture --cov-report html:cov_html ./tests/
       shell: pwsh
