@@ -38,10 +38,8 @@ jobs:
       run: |
         wheel=$(find . -type f -name "*.whl" | head -n 1)
         wheel_abs_path=$(realpath "$wheel")
-        wheel_path=$(basename "$wheel")
         echo "Wheel found: $wheel_abs_path"
-        echo "wheel_abs_path=./dist/$wheel_abs_path" >> $GITHUB_ENV
-        echo "wheel_path=./dist/$wheel_path" >> $GITHUB_ENV
+        echo "wheel_abs_path=$wheel_abs_path" >> $GITHUB_ENV
       shell: bash
 
     - name: Install documentation dependencies
@@ -52,7 +50,7 @@ jobs:
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
           ./venv/Scripts/activate
         fi
-        python -m pip install ${{ env.wheel_path }}
+        python -m pip install ${{ env.wheel_abs_path }}
         python -m pip install .[dev]
       shell: bash
 
@@ -89,7 +87,7 @@ jobs:
         elif [[ "${{ runner.os }}" == "Windows" ]]; then
           ./venv_tests/Scripts/activate
         fi
-        python -m pip install ${{ env.wheel_path }}
+        python -m pip install ${{ env.wheel_abs_path }}
         python -m pip install pytest
         python -m pip install pytest-cov
         python -m pip install responses
