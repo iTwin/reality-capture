@@ -37,7 +37,7 @@ jobs:
       run: |
         wheel=$(find . -type f -name "*.whl" | head -n 1)
         echo "Wheel found: $wheel"
-        echo "wheel_full_name=$wheel" >> $GITHUB_ENV
+        echo "wheel_full_name=dist/$wheel" >> $GITHUB_ENV
       shell: bash
 
     - name: Install documentation dependencies
