@@ -34,12 +34,11 @@ jobs:
 
     - name: Find Wheel File
       id: find_wheel
-      working-directory: ./python_sdk
+      working-directory: ./python_sdk/dist
       run: |
-        $wheel = Get-ChildItem dist/*.whl | Select-Object -First 1
-        echo "wheel_full_name=$($wheel.FullName)" >> $env:GITHUB_OUTPUT
-        echo "wheel_name=$($wheel.Name)" >> $env:GITHUB_OUTPUT
-      shell: pwsh
+        wheel=$(find . -type f -name "*.whl" | head -n 1)
+        echo "wheel_full_name=$wheel" >> $GITHUB_ENV
+      shell: bash
 
     - name: Install documentation dependencies
       working-directory: ./python_sdk
