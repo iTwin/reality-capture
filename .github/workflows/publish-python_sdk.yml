@@ -60,7 +60,7 @@ jobs:
           ../venv/Scripts/Activate.ps1
           & ./make.bat html
         } else {
-          . ../venv/bin/activate
+          . ../venv/bin/Activate.ps1
           make html
         }
       shell: pwsh
