@@ -24,14 +24,14 @@ jobs:
       working-directory: ./python_sdk
       run: |
         python -m venv venv
-        if [[ "${{ runner.os }}" == "Linux" ]] || [[ "${{ runner.os }}" == "macOS" ]]; then
-          source venv/bin/activate
-        elif [[ "${{ runner.os }}" == "Windows" ]]; then
-          ./venv/Scripts/activate
-        fi
+        if ($env:RUNNER_OS -eq "Windows") {
+          ./venv/Scripts/Activate.ps1
+        } else {
+          . ./venv/bin/Activate.ps1
+        }
         python -m pip install build
         python -m build
-      shell: bash
+      shell: pwsh
 
     - name: Find Wheel File
       id: find_wheel
