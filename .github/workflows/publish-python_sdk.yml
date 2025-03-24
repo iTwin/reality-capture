@@ -109,11 +109,13 @@ jobs:
       run: |
         if ($env:RUNNER_OS -eq "Windows") {
           ./venv/Scripts/Activate.ps1
+          python -m pip install toml
+          $version = ./venv/Scripts/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
         } else {
           . ./venv/bin/Activate.ps1
+          python -m pip install toml
+          $version = ./venv/bin/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
         }
-        python -m pip install toml
-        $version = ./venv/Scripts/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
         Write-Host "Version : $version"
         "version=$version" >> $env:GITHUB_OUTPUT
       shell: pwsh
