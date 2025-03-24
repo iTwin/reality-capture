@@ -107,7 +107,11 @@ jobs:
       working-directory: ./python_sdk
       id: extract_version
       run: |
-        ./venv/Scripts/Activate.ps1
+        if ($env:RUNNER_OS -eq "Windows") {
+          ../venv/Scripts/Activate.ps1
+        } else {
+          . ../venv/bin/Activate.ps1
+        }
         python -m pip install toml
         $version = ./venv/Scripts/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
         Write-Host "Version : $version"
