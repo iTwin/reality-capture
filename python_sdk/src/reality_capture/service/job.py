@@ -53,6 +53,23 @@ class JobType(Enum):
     POINT_CLOUD_CONVERSION = "PointCloudConversion"
 
 
+class Service(Enum):
+    MODELING = "Modeling"
+    ANALYSIS = "Analysis"
+    CONVERSION = "Conversion"
+
+
+def _get_appropriate_service(jt: JobType):
+    if jt in [JobType.FILL_IMAGE_PROPERTIES, JobType.IMPORT_POINT_CLOUD, JobType.CALIBRATION, JobType.TILING,
+              JobType.PRODUCTION, JobType.RECONSTRUCTION, JobType.CONSTRAINTS, JobType.TOUCH_UP_EXPORT,
+              JobType.TOUCH_UP_IMPORT, JobType.WATER_CONSTRAINTS]:
+        return Service.MODELING
+    if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
+              JobType.CHANGE_DETECTION, JobType.EXTRACT_GROUND, JobType.TRAINING_O2D]:
+        return Service.ANALYSIS
+    return Service.CONVERSION
+
+
 class JobState(Enum):
     QUEUED = "Queued"
     ACTIVE = "Active"
@@ -76,6 +93,14 @@ class JobCreate(BaseModel):
         Field(description="Specifications aligned with the job type."))
     itwin: str = Field(description="iTwin ID, used by the service for finding "
                                    "input reality data and uploading output data.")
+
+    def get_appropriate_service(self) -> Service:
+        """
+        Return the appropriate service for such a job.
+
+        :return: Service enum.
+        """
+        return _get_appropriate_service(self.type)
 
 
 class Execution(BaseModel):
@@ -105,6 +130,14 @@ class Job(BaseModel):
                           TouchUpImportSpecifications, WaterConstraintsSpecifications, 
                           TrainingO2DSpecifications, PointCloudConversionSpecifications] = (
         Field(description="Specifications aligned with the job type."))
+
+    def get_appropriate_service(self) -> Service:
+        """
+        Return the appropriate service for such a job.
+
+        :return: Service enum.
+        """
+        return _get_appropriate_service(self.type)
 
 
 class JobResponse(BaseModel):

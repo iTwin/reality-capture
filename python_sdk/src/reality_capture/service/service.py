@@ -1,7 +1,7 @@
 import requests
 import json
 from reality_capture.service.response import Response
-from reality_capture.service.job import JobCreate, Job, Progress, Messages
+from reality_capture.service.job import JobCreate, Job, Progress, Messages, JobType, Service
 from reality_capture.service.reality_data import (RealityDataCreate, RealityData, RealityDataUpdate, ContainerDetails,
                                                   RealityDataFilter, Prefer, RealityDatas)
 from reality_capture.service.error import DetailedErrorResponse, DetailedError
@@ -44,12 +44,27 @@ class RealityCaptureService:
         else:
             self._service_url = "https://api.bentley.com/"
 
-    def _get_header(self) -> dict:
+    def _get_header(self, version) -> dict:
         self._header["Authorization"] = self._token_factory.get_token()
+        self._header["Accept"] = f"application/vnd.bentley.itwin-platform.{version}+json"
         return self._header
+
+    def _get_header_v1(self) -> dict:
+        return self._get_header("v1")
+
+    def _get_header_v2(self) -> dict:
+        return self._get_header("v2")
 
     def _get_reality_management_rd_url(self) -> str:
         return self._service_url + "reality-management/reality-data/"
+
+    def _get_modeling_url(self) -> str:
+        return self._service_url + "reality-modeling/"
+
+    def _get_correct_url(self, service: Service) -> str:
+        if service == Service.MODELING:
+            return self._get_modeling_url()
+        raise NotImplemented("Other services not yet implemented")
 
     @staticmethod
     def _get_ill_formed_message(response) -> str:
@@ -63,8 +78,8 @@ class RealityCaptureService:
         :param job: JobCreate information to use for the job.
         :return: A Response[Job] containing either the Job created or the error from the service.
         """
-        response = self._session.patch(self._service_url + "/jobs", job.model_dump_json(by_alias=True),
-                                       headers=self._get_header())
+        url = self._get_correct_url(job.get_appropriate_service())
+        response = self._session.post(url + "/jobs", job.model_dump_json(by_alias=True), headers=self._get_header_v2())
         try:
             if response.ok:
                 return Response(status_code=response.status_code, value=Job.model_validate(response.json()["job"]),
@@ -76,14 +91,16 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
-    def get_job(self, job_id: str) -> Response[Job]:
+    def get_job(self, job_id: str, service: Service) -> Response[Job]:
         """
         Retrieve the complete Job details from the service using the job id.
 
         :param job_id: Id of the job to retrieve.
+        :param service: Service to target.
         :return: A Response[Job] containing either the Job information or the error from the service.
         """
-        response = self._session.get(self._service_url + "/jobs/" + job_id, headers=self._get_header())
+        url = self._get_correct_url(service)
+        response = self._session.get(url + "/jobs/" + job_id, headers=self._get_header_v2())
         try:
             if response.ok:
                 return Response(status_code=response.status_code, value=Job.model_validate(response.json()["job"]),
@@ -95,14 +112,16 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
-    def get_job_messages(self, job_id: str) -> Response[Messages]:
+    def get_job_messages(self, job_id: str, service: Service) -> Response[Messages]:
         """
         Retrieve the complete Job details from the service using the job id.
 
         :param job_id: Id of the job related to the messages to retrieve.
+        :param service: Service to target.
         :return: A Response[Messages] containing either the messages for the job or the error from the service.
         """
-        response = self._session.get(self._service_url + "/jobs/" + job_id + "/messages", headers=self._get_header())
+        url = self._get_correct_url(service)
+        response = self._session.get(url + "/jobs/" + job_id + "/messages", headers=self._get_header_v2())
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
@@ -115,14 +134,16 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
-    def get_job_progress(self, job_id: str) -> Response[Progress]:
+    def get_job_progress(self, job_id: str, service: Service) -> Response[Progress]:
         """
         Retrieve progress information from the service using the job id.
 
         :param job_id: Id of the job to monitor.
+        :param service: Service to target.
         :return: A Response[Progress] containing either the job progress or the error from the service.
         """
-        response = self._session.get(self._service_url + "/jobs/" + job_id + "/progress", headers=self._get_header())
+        url = self._get_correct_url(service)
+        response = self._session.get(url + "/jobs/" + job_id + "/progress", headers=self._get_header_v2())
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
@@ -134,18 +155,16 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
-    def cancel_job(self, job_id: str) -> Response[Job]:
+    def cancel_job(self, job_id: str, service: Service) -> Response[Job]:
         """
         Cancel the job using the job id. Calling this method on a non-running job will yield an error.
 
         :param job_id: Id of the job to cancel.
+        :param service: Service to target.
         :return: A Response[Job] containing either the job information or the error from the service.
         """
-        payload = {
-            "state": "cancelled",
-        }
-        payload_json = json.dumps(payload)
-        response = self._session.patch(self._service_url + "/jobs/" + job_id, payload_json, headers=self._get_header())
+        url = self._get_correct_url(service)
+        response = self._session.delete(url + "/jobs/" + job_id, headers=self._get_header_v2())
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
@@ -166,7 +185,7 @@ class RealityCaptureService:
         """
         response = self._session.post(self._get_reality_management_rd_url(),
                                       reality_data.model_dump_json(by_alias=True),
-                                      headers=self._get_header())
+                                      headers=self._get_header_v1())
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
@@ -189,7 +208,7 @@ class RealityCaptureService:
         url = self._get_reality_management_rd_url() + reality_data_id
         if itwin_id is not None:
             url += "?iTwinId=" + itwin_id
-        response = self._session.get(url, headers=self._get_header())
+        response = self._session.get(url, headers=self._get_header_v1())
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
@@ -215,7 +234,7 @@ class RealityCaptureService:
         if itwin_id is not None:
             url += "?iTwinId=" + itwin_id
         response = self._session.patch(url, reality_data_update.model_dump_json(by_alias=True),
-                                       headers=self._get_header())
+                                       headers=self._get_header_v1())
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
@@ -235,8 +254,7 @@ class RealityCaptureService:
         :return: A Response[RealityData] containing either nothing if successful or the error from the service.
         """
         url = self._get_reality_management_rd_url() + reality_data_id
-        response = self._session.delete(url,
-                                        headers=self._get_header())
+        response = self._session.delete(url, headers=self._get_header_v1())
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
@@ -260,7 +278,7 @@ class RealityCaptureService:
         url = self._get_reality_management_rd_url() + reality_data_id + "/writeaccess"
         if itwin_id is not None:
             url += "?iTwinId=" + itwin_id
-        response = self._session.get(url, headers=self._get_header())
+        response = self._session.get(url, headers=self._get_header_v1())
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
@@ -284,7 +302,7 @@ class RealityCaptureService:
         url = self._get_reality_management_rd_url() + reality_data_id + "/readaccess"
         if itwin_id is not None:
             url += "?iTwinId=" + itwin_id
-        response = self._session.get(url, headers=self._get_header())
+        response = self._session.get(url, headers=self._get_header_v1())
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
@@ -310,7 +328,7 @@ class RealityCaptureService:
             params = reality_data_filter.as_dict_for_service_call()
             encoded_params = urlencode(params)
             url = f"{url}?{encoded_params}"
-        header = self._get_header()
+        header = self._get_header_v1()
         header["Prefer"] = "return=minimal"
         if prefer == Prefer.REPRESENTATION:
             header["Prefer"] = "return=representation"
