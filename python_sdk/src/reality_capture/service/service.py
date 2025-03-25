@@ -1,7 +1,8 @@
 import requests
-import json
+
+from reality_capture.service.estimation import CostEstimationCreate, CostEstimation
 from reality_capture.service.response import Response
-from reality_capture.service.job import JobCreate, Job, Progress, Messages, JobType, Service
+from reality_capture.service.job import JobCreate, Job, Progress, Messages, Service
 from reality_capture.service.reality_data import (RealityDataCreate, RealityData, RealityDataUpdate, ContainerDetails,
                                                   RealityDataFilter, Prefer, RealityDatas)
 from reality_capture.service.error import DetailedErrorResponse, DetailedError
@@ -169,6 +170,27 @@ class RealityCaptureService:
             if response.ok:
                 return Response(status_code=response.status_code,
                                 value=Job.model_validate(response.json()["job"]), error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError):
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def estimate_cost(self, estimation_create: CostEstimationCreate) -> Response[CostEstimation]:
+        """
+        Estimate the processing cost of a job.
+
+        :param estimation_create: Estimation parameters
+        :return: A Response[Estimation] containing either the cost estimation or the error from the service.
+        """
+        url = self._get_correct_url(estimation_create.get_appropriate_service())
+        response = self._session.post(url + "/costs", estimation_create.model_dump_json(by_alias=True),
+                                      headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code,
+                                value=CostEstimation.model_validate(response.json()["costEstimation"]), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError):

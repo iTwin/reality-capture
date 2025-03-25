@@ -20,6 +20,11 @@ Classes
     :members:
     :undoc-members:
 
+.. autoclass:: Service
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
 .. autopydantic_model:: JobCreate
 
 .. autopydantic_model:: Execution

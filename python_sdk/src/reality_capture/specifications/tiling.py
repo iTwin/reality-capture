@@ -140,7 +140,7 @@ class TilingSpecificationsCreate(BaseModel):
     options: Optional[TilingOptions] = Field(None, description="Options")
 
 
-class TilingCost:
+class TilingCost(BaseModel):
     gpix: float = Field(description="Number of GigaPixels in the overall inputs, after applying downsampling.", ge=0)
     mpoints: float = Field(description="Number of MegaPoints in the overall inputs.", ge=0)
 

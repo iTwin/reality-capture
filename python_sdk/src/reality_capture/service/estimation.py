@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from reality_capture.service.job import JobType
+from reality_capture.service.job import JobType, _get_appropriate_service, Service
 from typing import Union
 from enum import Enum
 from reality_capture.specifications.calibration import CalibrationSpecificationsCreate, CalibrationCost
@@ -21,8 +21,8 @@ from reality_capture.specifications.touchup import (TouchUpImportSpecifications,
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecificationsCreate, WaterConstraintsCost
 
 
-class EstimationCreate(BaseModel):
-    job_type: JobType = Field(description="Type of job.")
+class CostEstimationCreate(BaseModel):
+    type: JobType = Field(description="Type of job.")
     specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
                           ConstraintsSpecificationsCreate, ExtractGroundSpecificationsCreate,
                           FillImagePropertiesSpecificationsCreate, ImportPCSpecificationsCreate,
@@ -35,7 +35,15 @@ class EstimationCreate(BaseModel):
     cost_parameters: Union[CalibrationCost, ConstraintsCost, FillImagePropertiesCost,
                            ImportPCCost, ProductionCost, ReconstructionCost, TilingCost,
                            TouchUpExportCost, TouchUpImportCost, WaterConstraintsCost] = (
-        Field(description="Size format aligned with the job type."))
+        Field(description="Cost format aligned with the job type.", alias="costParameters"))
+
+    def get_appropriate_service(self) -> Service:
+        """
+        Return the appropriate service for such a job.
+
+        :return: Service enum.
+        """
+        return _get_appropriate_service(self.type)
 
 
 class UnitType(Enum):
@@ -44,7 +52,7 @@ class UnitType(Enum):
     CONVERSION = "Conversion"
 
 
-class Estimation(EstimationCreate):
+class CostEstimation(CostEstimationCreate):
     unique_id: str = Field(description="Estimation id", alias="id")
     estimated_units: float = Field(description="Estimated number of units that the job will cost.",
                                    alias="estimatedUnits")
