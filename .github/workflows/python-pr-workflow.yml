@@ -1,0 +1,96 @@
+name: Python SDK PR Workflow
+
+on:
+  pull_request:
+    branches: [ "feature/2.0.0" ]
+
+jobs:
+  build_and_publish_sdk:
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13']
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+      
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Create venv and build wheel
+      working-directory: ./python_sdk
+      run: |
+        python -m venv venv
+        if ($env:RUNNER_OS -eq "Windows") {
+          ./venv/Scripts/Activate.ps1
+        } else {
+          . ./venv/bin/Activate.ps1
+        }
+        python -m pip install build
+        python -m build
+      shell: pwsh
+
+    - name: Find Wheel File
+      id: find_wheel
+      working-directory: ./python_sdk/dist
+      run: |
+        $wheel = Get-ChildItem -Filter "*.whl" | Select-Object -First 1
+        $wheel_abs_path = $wheel.FullName
+        Write-Output "Wheel found: $wheel_abs_path"
+        "wheel_abs_path=$wheel_abs_path" >> $env:GITHUB_OUTPUT
+      shell: pwsh
+
+    - name: Install documentation dependencies
+      working-directory: ./python_sdk
+      run: |
+        if ($env:RUNNER_OS -eq "Windows") {
+          ./venv/Scripts/Activate.ps1
+        } else {
+          . ./venv/bin/Activate.ps1
+        }
+        python -m pip install ${{ steps.find_wheel.outputs.wheel_abs_path }}
+        python -m pip install .[dev]
+      shell: pwsh
+
+    - name: Build documentation
+      working-directory: ./python_sdk/docs
+      run: |
+        if ($env:RUNNER_OS -eq "Windows") {
+          ../venv/Scripts/Activate.ps1
+          & ./make.bat html
+        } else {
+          . ../venv/bin/Activate.ps1
+          make html
+        }
+      shell: pwsh
+
+    - name: Create virtual env for tests
+      working-directory: ./python_sdk
+      run: |
+        python -m venv venv_tests
+        if ($env:RUNNER_OS -eq "Windows") {
+          ./venv_tests/Scripts/Activate.ps1
+        } else {
+          . ./venv_tests/bin/Activate.ps1
+        }
+        python -m pip install ${{ steps.find_wheel.outputs.wheel_abs_path }}
+        python -m pip install pytest
+        python -m pip install pytest-cov
+        python -m pip install responses
+      shell: pwsh
+
+    - name: Run tests
+      working-directory: ./python_sdk
+      run: |
+        if ($env:RUNNER_OS -eq "Windows") {
+          ./venv_tests/Scripts/Activate.ps1
+        } else {
+          . ./venv_tests/bin/Activate.ps1
+        }
+        pytest --cov=reality_capture --cov-report html:cov_html ./tests/
+      shell: pwsh
