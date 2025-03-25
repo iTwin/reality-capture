@@ -85,6 +85,7 @@ class SkewPolicy(Enum):
 
 
 class TiepointsPolicy(Enum):
+    COMPUTE = "Compute"
     ADJUST = "Adjust"
     KEEP = "Keep"
 

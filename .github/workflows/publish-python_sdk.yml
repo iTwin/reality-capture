@@ -1,0 +1,138 @@
+name: Publish Python SDK
+
+on: workflow_dispatch
+
+jobs:
+  build_and_publish_sdk:
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13']
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+      
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Create venv and build wheel
+      working-directory: ./python_sdk
+      run: |
+        python -m venv venv
+        if ($env:RUNNER_OS -eq "Windows") {
+          ./venv/Scripts/Activate.ps1
+        } else {
+          . ./venv/bin/Activate.ps1
+        }
+        python -m pip install build
+        python -m build
+      shell: pwsh
+
+    - name: Find Wheel File
+      id: find_wheel
+      working-directory: ./python_sdk/dist
+      run: |
+        $wheel = Get-ChildItem -Filter "*.whl" | Select-Object -First 1
+        $wheel_abs_path = $wheel.FullName
+        Write-Output "Wheel found: $wheel_abs_path"
+        "wheel_abs_path=$wheel_abs_path" >> $env:GITHUB_OUTPUT
+      shell: pwsh
+
+    - name: Install documentation dependencies
+      working-directory: ./python_sdk
+      run: |
+        if ($env:RUNNER_OS -eq "Windows") {
+          ./venv/Scripts/Activate.ps1
+        } else {
+          . ./venv/bin/Activate.ps1
+        }
+        python -m pip install ${{ steps.find_wheel.outputs.wheel_abs_path }}
+        python -m pip install .[dev]
+      shell: pwsh
+
+    - name: Build documentation
+      working-directory: ./python_sdk/docs
+      run: |
+        if ($env:RUNNER_OS -eq "Windows") {
+          ../venv/Scripts/Activate.ps1
+          & ./make.bat html
+        } else {
+          . ../venv/bin/Activate.ps1
+          make html
+        }
+      shell: pwsh
+
+    - name: Reformat doc
+      id: reformat_doc
+      working-directory: ./python_sdk/docs
+      run: |
+        New-Item -Path "./User Guide/en" -ItemType Directory -Force
+        Copy-Item -Path ./_build/html -Destination "./User Guide/en/html5" -Recurse
+        Compress-Archive -Path "./User Guide" -DestinationPath ./Documentation.zip
+        $zip_abs_path = (Get-Item "./Documentation.zip").FullName
+        Write-Host "Zip path : $zip_abs_path"
+        "doc_zip_path=$zip_abs_path" >> $env:GITHUB_OUTPUT
+      shell: pwsh
+
+    - name: Create virtual env for tests
+      working-directory: ./python_sdk
+      run: |
+        python -m venv venv_tests
+        if ($env:RUNNER_OS -eq "Windows") {
+          ./venv_tests/Scripts/Activate.ps1
+        } else {
+          . ./venv_tests/bin/Activate.ps1
+        }
+        python -m pip install ${{ steps.find_wheel.outputs.wheel_abs_path }}
+        python -m pip install pytest
+        python -m pip install pytest-cov
+        python -m pip install responses
+      shell: pwsh
+
+    - name: Run tests
+      working-directory: ./python_sdk
+      run: |
+        if ($env:RUNNER_OS -eq "Windows") {
+          ./venv_tests/Scripts/Activate.ps1
+        } else {
+          . ./venv_tests/bin/Activate.ps1
+        }
+        pytest --cov=reality_capture --cov-report html:cov_html ./tests/
+      shell: pwsh
+
+    - name: Get version from pyproject
+      working-directory: ./python_sdk
+      id: extract_version
+      run: |
+        if ($env:RUNNER_OS -eq "Windows") {
+          ./venv/Scripts/Activate.ps1
+          python -m pip install toml
+          $version = ./venv/Scripts/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
+        } else {
+          . ./venv/bin/Activate.ps1
+          python -m pip install toml
+          $version = ./venv/bin/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
+        }
+        Write-Host "Version : $version"
+        "version=$version" >> $env:GITHUB_OUTPUT
+      shell: pwsh
+
+    - name: Create Pre-Release
+      if: ${{ matrix.os == 'windows-latest' && matrix.python-version == '3.10'}}
+      uses: softprops/action-gh-release@v2
+      id: create_pre_release
+      with:
+        tag_name: ${{ steps.extract_version.outputs.version }}
+        name: "Version ${{ steps.extract_version.outputs.version }}"
+        draft: true
+        prerelease: true
+        files: | 
+          ${{ steps.find_wheel.outputs.wheel_abs_path }}
+          ${{ steps.reformat_doc.outputs.doc_zip_path }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
