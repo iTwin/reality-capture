@@ -18,6 +18,7 @@ Classes
 .. autopydantic_model:: CostEstimationCreate
 
 .. autopydantic_model:: CostEstimation
+    :inherited-members: BaseModel
 
 .. currentmodule:: reality_capture.specifications.calibration
 

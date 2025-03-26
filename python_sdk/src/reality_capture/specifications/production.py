@@ -546,4 +546,5 @@ class ProductionSpecificationsCreate(BaseModel):
 class ProductionCost(BaseModel):
     gpix: float = Field(description="Number of GigaPixels in the overall inputs, after applying downsampling.", ge=0)
     mpoints: float = Field(description="Number of MegaPoints in the overall inputs.", ge=0)
-    geometric_precision: Optional[GeometricPrecision] = Field(None, description="Geometric precision used in Tiling")
+    geometric_precision: Optional[GeometricPrecision] = Field(None, description="Geometric precision used in Tiling",
+                                                              alias="geometricPrecision")
