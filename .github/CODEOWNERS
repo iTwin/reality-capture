@@ -2,7 +2,8 @@
  
 .github/workflows/publish.yml @aruniverse @itwin/oss-admins
  
-python/ @arianacarnielli @dbiguenet @RenaudKeriven
+python/ @arianacarnielli @dbiguenet @RenaudKeriven @cnovel
+python_sdk/ @arianacarnielli @dbiguenet @RenaudKeriven @cnovel
  
 typescript/packages/reality-capture-analysis/ @dbiguenet @RenaudKeriven @arianacarnielli
 typescript/packages/reality-capture-common/ @dbiguenet @RenaudKeriven @arianacarnielli
