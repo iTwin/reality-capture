@@ -74,4 +74,4 @@ class FillImagePropertiesSpecificationsCreate(BaseModel):
 
 
 class FillImagePropertiesCost(BaseModel):
-    nb_images: int = Field(description="Number of images to import.", alias="nbImages")
+    image_count: int = Field(description="Number of images to import.", alias="imageCount")

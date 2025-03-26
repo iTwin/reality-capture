@@ -46,7 +46,7 @@ class TouchUpExportSpecificationsCreate(BaseModel):
 
 
 class TouchUpExportCost(BaseModel):
-    nb_tiles: int = Field(description="Number of tiles to export", alias="nbTiles", ge=0)
+    tile_count: int = Field(description="Number of tiles to export", alias="tileCount", ge=0)
 
 
 class TouchUpImportInputs(BaseModel):
@@ -59,4 +59,4 @@ class TouchUpImportSpecifications(BaseModel):
 
 
 class TouchUpImportCost(BaseModel):
-    nb_tiles: int = Field(description="Number of tiles to export", alias="nbTiles")
+    tile_count: int = Field(description="Number of tiles to import", alias="tileCount", ge=0)
