@@ -29,6 +29,10 @@ class ImportPCSpecificationsCreate(BaseModel):
     outputs: list[ImportPCOutputsCreate] = Field(description="List of outputs for point cloud import")
 
 
+class ImportPCCost(BaseModel):
+    mpoints: float = Field(description="Number of megapoints inside the point clouds", ge=0)
+
+
 class Point3dTime(Point3d):
     t: float = Field(description="Timestamp of point")
 

@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Optional, Union
 from enum import Enum
 from reality_capture.specifications.geometry import Point3d
-
+from reality_capture.specifications.tiling import GeometricPrecision
 
 class ProductionInputs(BaseModel):
     scene: str = Field(description="Reality data id of ContextScene to process")
@@ -541,3 +541,9 @@ class ProductionSpecifications(BaseModel):
 class ProductionSpecificationsCreate(BaseModel):
     inputs: ProductionInputs = Field(description="Inputs")
     outputs: ProductionOutputsCreate = Field(description="Outputs")
+
+
+class ProductionCost(BaseModel):
+    gpix: float = Field(description="Number of GigaPixels in the overall inputs, after applying downsampling.", ge=0)
+    mpoints: float = Field(description="Number of MegaPoints in the overall inputs.", ge=0)
+    geometric_precision: Optional[GeometricPrecision] = Field(None, description="Geometric precision used in Tiling")

@@ -32,3 +32,7 @@ class WaterConstraintsSpecifications(BaseModel):
     inputs: WaterConstraintsInputs = Field(description="Inputs")
     outputs: WaterConstraintsOutputs = Field(description="Outputs")
     options: WaterConstraintsOptions = Field(description="Options")
+
+
+class WaterConstraintsCost(BaseModel):
+    gpix: float = Field(description="Number of GigaPixels in the overall inputs.", ge=0)

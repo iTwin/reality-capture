@@ -73,3 +73,5 @@ class FillImagePropertiesSpecificationsCreate(BaseModel):
     options: Optional[FillImagePropertiesOptions] = Field(None, description="Outputs for Fill Image Properties job")
 
 
+class FillImagePropertiesCost(BaseModel):
+    nb_images: int = Field(description="Number of images to import.", alias="nbImages")

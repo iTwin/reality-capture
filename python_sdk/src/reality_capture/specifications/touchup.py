@@ -45,6 +45,10 @@ class TouchUpExportSpecificationsCreate(BaseModel):
     options: Optional[TouchUpExportOptions] = Field(None, description="Options")
 
 
+class TouchUpExportCost(BaseModel):
+    nb_tiles: int = Field(description="Number of tiles to export", alias="nbTiles", ge=0)
+
+
 class TouchUpImportInputs(BaseModel):
     reference_model: str = Field(alias="referenceModel", description="Reality data id of Reference Model")
     touch_up_data: str = Field(alias="touchUpData", description="Reality Data id for touch up data")
@@ -52,3 +56,7 @@ class TouchUpImportInputs(BaseModel):
 
 class TouchUpImportSpecifications(BaseModel):
     inputs: TouchUpImportInputs = Field(description="Inputs")
+
+
+class TouchUpImportCost(BaseModel):
+    nb_tiles: int = Field(description="Number of tiles to export", alias="nbTiles")
