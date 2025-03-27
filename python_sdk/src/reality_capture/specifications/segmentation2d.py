@@ -88,7 +88,7 @@ class Segmentation2DOptions(BaseModel):
     remove_small_component: Optional[float] = Field(None, alias="removeSmallComponents",
                                                     description="Remove 3D lines with total length "
                                                                 "smaller than this value")
-    srs: Optional[str] = Field(None, description="SRS used by ``lines3D_as_dgn`` and ``polygons3D_as_dgn`` outputs")
+    crs: Optional[str] = Field(None, description="CRS used by ``lines3D_as_dgn`` and ``polygons3D_as_dgn`` outputs")
     min_photos: Optional[int] = Field(None, alias="minPhotos",
                                       description="Minimum number of 2D detection to generate a 3D detection")
 

@@ -10,7 +10,7 @@ class ConstraintType(Enum):
 
 class ConstraintToAdd(BaseModel):
     constraint_path: str = Field(alias="constraintPath", description="Path to the constraint file")
-    srs: str = Field(description="Spatial reference system")
+    crs: str = Field(description="Coordinate reference system")
     type: Optional[ConstraintType] = Field(None, description="Type of the constraint")
     resolution: Optional[float] = Field(None, description="Resolution of the constraint")
     texture_path: Optional[str] = Field(None, alias="texturePath", description="Path to the texture file")
@@ -23,7 +23,7 @@ class ConstraintToAdd(BaseModel):
 class ConstraintInfo(ConstraintToAdd):
     id: UUID4 = Field(description="Constraint unique id")
     surfaces: list[str] = Field(description="List of meshes")
-    srs_surfaces: str = Field(alias="srsSurfaces", description="Reference System of surfaces")
+    crs_surfaces: str = Field(alias="crsSurfaces", description="Coordinate Reference System of surfaces")
 
 
 class ConstraintsInfo(BaseModel):

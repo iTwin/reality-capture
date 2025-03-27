@@ -28,7 +28,7 @@ class Polygon2DWithHoles(BaseModel):
 
 
 class RegionOfInterest(BaseModel):
-    srs: str = Field(description="Definition of the Region of Interest Coordinate System")
+    crs: str = Field(description="Definition of the Region of Interest Coordinate System")
     polygons: list[Polygon2DWithHoles] = Field(description="List of polygons")
     altitude_min: float = Field(description="Minimum altitude", alias="altitudeMin")
     altitude_max: float = Field(description="Maximum altitude", alias="altitudeMax")

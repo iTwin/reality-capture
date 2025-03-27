@@ -73,7 +73,7 @@ class Objects2DOptions(BaseModel):
                                            description="Improve detection using tie points in oriented photos.")
     max_dist: Optional[float] = Field(None, alias="maxDist",
                                       description="Maximum distance between photos and 3D objects")
-    srs: Optional[str] = Field(None, description="SRS used by ``objects3d_as_dgn`` and ``locations3d_as_shp`` outputs")
+    crs: Optional[str] = Field(None, description="CRS used by ``objects3d_as_dgn`` and ``locations3d_as_shp`` outputs")
     min_photos: Optional[int] = Field(None, alias="minPhotos",
                                       description="Minimum number of 2D objects to generate a 3D object")
 

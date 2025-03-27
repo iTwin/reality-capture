@@ -161,7 +161,7 @@ class Segmentation3DOutputsCreate(Enum):
 
 
 class Segmentation3DOptions(BaseModel):
-    srs: Optional[str] = Field(None, description="SRS used by POD, LAS, LAZ, PLY, DGN and SHP outputs")
+    crs: Optional[str] = Field(None, description="CRS used by POD, LAS, LAZ, PLY, DGN and SHP outputs")
     save_confidence: Optional[bool] = Field(None, alias="saveConfidence",
                                             description="Save confidence in 3D segmentation")
     compute_line_width: Optional[bool] = Field(None, alias="computeLineWidth",

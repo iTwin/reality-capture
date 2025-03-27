@@ -56,6 +56,6 @@ class PodMetadata(BaseModel):
     med_res: float = Field(description="Median resolution of the point cloud")
     min_intensity: int = Field(description="Minimum intensity", ge=-32768, le=32767)
     max_intensity: int = Field(description="Maximum intensity", ge=-32768, le=32767)
-    srs: str = Field(description="Spatial Reference System definition")
+    crs: str = Field(description="Coordinate Reference System definition")
     bounding: BoundingBox = Field(description="Bounding box of the PointCloud")
     scans: list[Scan] = Field(description="List of scans")
