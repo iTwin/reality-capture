@@ -11,14 +11,12 @@ class CalibrationInputs(BaseModel):
 class CalibrationOutputs(BaseModel):
     scene: str = Field(description="Reality data ID of calibrated ContextScene")
     report: Optional[str] = Field(default=None, description="Reality data ID of Calibration report")
-    orientations: Optional[str] = Field(default=None, description="Reality data ID of calibrated CCOrientations")
     splats: Optional[str] = Field(default=None, description="Reality data ID of Calibration Splats")
 
 
 class CalibrationOutputsCreate(Enum):
     SCENE = "scene"
     REPORT = "report"
-    ORIENTATIONS = "orientations"
     SPLATS = "splats"
 
 
