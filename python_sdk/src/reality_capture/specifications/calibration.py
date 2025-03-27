@@ -17,7 +17,6 @@ class CalibrationOutputs(BaseModel):
 class CalibrationOutputsCreate(Enum):
     SCENE = "scene"
     REPORT = "report"
-    ORIENTATIONS = "orientations"
     SPLATS = "splats"
 
 
