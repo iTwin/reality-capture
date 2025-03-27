@@ -41,7 +41,7 @@ This job has three different purposes :
        | *objects3d_as_geojson* (optional),
        | *locations3d_as_shp* (optional),
        | *locations3d_as_geojson* (optional)
-     - | *srs*,
+     - | *crs*,
        | *min_photos*,
        | *max_dist*,
        | *use_tie_points*
@@ -57,7 +57,7 @@ This job has three different purposes :
        | *objects3d_as_geojson* (optional),
        | *locations3d_as_shp* (optional),
        | *locations3d_as_geojson* (optional)
-     - | *srs*,
+     - | *crs*,
        | *min_photos*,
        | *max_dist*,
        | *use_tie_points*

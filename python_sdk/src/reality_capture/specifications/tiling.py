@@ -88,7 +88,7 @@ class TilingOptions(BaseModel):
     tiling_origin: Optional[Point3d] = Field(description="Tiling origin", alias="tilingOrigin", default=None)
     discard_empty_tiles: Optional[bool] = Field(description="Discard emtpy tiles", alias="discardEmptyTiles",
                                                 default=None)
-    srs: Optional[str] = Field(description="Spatial Reference System", default=None)
+    crs: Optional[str] = Field(description="Coordinate Reference System", default=None)
     geometric_precision: Optional[GeometricPrecision] = Field(description="Geometric precision",
                                                               alias="geometricPrecision", default=None)
     pair_selection: Optional[TilingPairSelection] = Field(description="Pair selection", alias="pairSelection",
@@ -156,5 +156,5 @@ class LayoutTile(BaseModel):
 class Layout(BaseModel):
     tiles: list[LayoutTile] = Field(description="List of tiles in the layout")
     enu_definition: str = Field(description="Definition of the Internal Coordinate System", alias="enuDefinition")
-    srs_definition: str = Field(description="Definition of the Layout Coordinate System", alias="srsDefinition")
+    crs_definition: str = Field(description="Definition of the Layout Coordinate System", alias="crsDefinition")
     roi: RegionOfInterest = Field(description="Region of interest of the layout")

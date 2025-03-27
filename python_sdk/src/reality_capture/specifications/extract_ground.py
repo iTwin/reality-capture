@@ -42,7 +42,7 @@ class ExtractGroundOutputsCreate(Enum):
 
 
 class ExtractGroundOptions(BaseModel):
-    srs: Optional[str] = Field(None, description="SRS used by segmentation3DAsLAS, "
+    crs: Optional[str] = Field(None, description="CRS used by segmentation3DAsLAS, "
                                                  "segmentation3DAsPOD and segmentation3DAsLAZ outputs")
 
 

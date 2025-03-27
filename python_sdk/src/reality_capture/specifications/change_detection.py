@@ -40,7 +40,7 @@ class ChangeDetectionOutputsCreate(Enum):
 
 
 class ChangeDetectionOptions(BaseModel):
-    srs: Optional[str] = Field(None, description="SRS used by locations3DAsSHP output")
+    crs: Optional[str] = Field(None, description="CRS used by locations3DAsSHP output")
     min_points: Optional[int] = Field(None, alias="minPoints",
                                       description="Minimum number of points in a region to be considered as a change")
     resolution: Optional[float] = Field(None,

@@ -33,7 +33,7 @@ This job has four different purposes :
        | *segmentation3d_as_pod* (optional),
        | *segmentation3d_as_ply* (optional)
      - | *save_confidence*,
-       | *srs*
+       | *crs*
    * - | Segment a collection
        | of meshes
      - | *meshes*,
@@ -46,7 +46,7 @@ This job has four different purposes :
        | *segmentation3d_as_pod* (optional),
        | *segmentation3d_as_ply* (optional)
      - | *save_confidence*,
-       | *srs*
+       | *crs*
    * - | Segment a collection
        | of point clouds or meshes
        | and infer 3D objects,
@@ -77,7 +77,7 @@ This job has four different purposes :
      - | *remove_small_components*,
        | *compute_line_width*,
        | *save_confidence*,
-       | *srs*
+       | *crs*
    * - | Given a 3D segmentation,
        | infer 3D objects, 3D
        | lines and 3D polygons
@@ -104,7 +104,7 @@ This job has four different purposes :
      - | *remove_small_components*,
        | *compute_line_width*,
        | *save_confidence*,
-       | *srs*
+       | *crs*
 
 Examples
 ========

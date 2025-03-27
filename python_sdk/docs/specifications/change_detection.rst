@@ -29,7 +29,7 @@ This job has two different purposes :
      - | *objects3d*
        | *locations3d_as_shp* (optional),
        | *locations3d_as_geojson* (optional)
-     - | *srs*,
+     - | *crs*,
        | *color_threshold_low*,
        | *color_threshold_high*,
        | *dist_threshold_low*,
@@ -44,7 +44,7 @@ This job has two different purposes :
        | *locations3d_as_shp* (optional),
        | *locations3d_as_geojson* (optional)
      - | *resolution*,
-       | *srs*,
+       | *crs*,
        | *color_threshold_low*,
        | *color_threshold_high*
        | *dist_threshold_low*

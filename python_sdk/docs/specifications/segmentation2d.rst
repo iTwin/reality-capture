@@ -46,7 +46,7 @@ This job has three different purposes :
        | *polygons3d_as_3d_tiles* (optional),
        | *polygons3d_as_geojson* (optional)
      - | *min_photos*,
-       | *srs*,
+       | *crs*,
        | *remove_small_components*,
        | *compute_line_width*
    * - | Given a 2D segmentation of
@@ -66,7 +66,7 @@ This job has three different purposes :
        | *polygons3d_as_3d_tiles* (optional),
        | *polygons3d_as_geojson* (optional)
      - | *min_photos*,
-       | *srs*,
+       | *crs*,
        | *remove_small_components*,
        | *compute_line_width*
 

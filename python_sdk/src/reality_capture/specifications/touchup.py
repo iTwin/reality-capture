@@ -22,7 +22,7 @@ class TouchLevel(Enum):
 class TouchUpExportOptions(BaseModel):
     format: Optional[TouchFormat] = Field(None, description="Touch Up format")
     level: Optional[TouchLevel] = Field(None, description="Touch Up level")
-    srs: Optional[str] = Field(None, description="Export SRS")
+    crs: Optional[str] = Field(None, description="Export CRS")
 
 
 class TouchUpExportOutputsCreate(Enum):
