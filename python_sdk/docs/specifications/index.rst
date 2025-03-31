@@ -27,6 +27,11 @@ Specifications regroup all the settings used to create jobs with our APIs.
     segmentation3d
     change_detection
     extract_ground
+    eval_o2d
+    eval_o3d
+    eval_s2d
+    eval_s3d
+    eval_sortho
     training_o2d
     point_cloud_conversion
     geometry
