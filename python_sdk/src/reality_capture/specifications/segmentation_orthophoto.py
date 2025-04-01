@@ -34,7 +34,7 @@ class SegmentationOrthophotoOutputs(BaseModel):
     lines2d_as_shp: Optional[str] = Field(None, alias="lines2DAsSHP",
                                           description="Reality data id of 2D lines as SHP file, "
                                                       "lines2d output must be defined")
-    lines2d_as_dgn: Optional[str] = Field(None, alias="lines2DAsSHP",
+    lines2d_as_dgn: Optional[str] = Field(None, alias="lines2DAsDGN",
                                           description="Reality data id of 2D lines as DGN file, "
                                                       "lines2d output must be defined")
     lines2d_as_geojson: Optional[str] = Field(None, alias="lines2DAsGeoJSON",
