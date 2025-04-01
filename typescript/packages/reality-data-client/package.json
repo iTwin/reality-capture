@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@itwin/core-geometry": "^4.0.0",
-    "axios": "^1.7.4"
+    "axios": "^1.8.2"
   },
   "devDependencies": {
     "@itwin/build-tools": "^4.0.0",
