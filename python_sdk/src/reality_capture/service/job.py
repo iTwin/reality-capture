@@ -75,6 +75,7 @@ class JobState(Enum):
     ACTIVE = "Active"
     SUCCESS = "Success"
     FAILED = "Failed"
+    TERMINATING = "Terminating"
     CANCELLED = "Cancelled"
 
 
