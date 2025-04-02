@@ -129,6 +129,7 @@ jobs:
       with:
         tag_name: ${{ steps.extract_version.outputs.version }}
         name: "Version ${{ steps.extract_version.outputs.version }}"
+        commitish:: "${{ github.ref_name }}""
         draft: true
         prerelease: true
         files: | 
