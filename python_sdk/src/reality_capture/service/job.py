@@ -92,8 +92,9 @@ class JobCreate(BaseModel):
                           TouchUpImportSpecifications, WaterConstraintsSpecificationsCreate, 
                           TrainingO2DSpecificationsCreate, PointCloudConversionSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
-    itwin: str = Field(description="iTwin ID, used by the service for finding "
-                                   "input reality data and uploading output data.")
+    itwin_id: str = Field(description="iTwin ID, used by the service for finding "
+                                      "input reality data and uploading output data.",
+                          alias="iTwinId")
 
     def get_appropriate_service(self) -> Service:
         """
@@ -116,8 +117,9 @@ class Job(BaseModel):
     id: str = Field(description="Job unique identifier.")
     name: Optional[str] = Field(None, description="Displayable job name.", min_length=2)
     type: JobType = Field(description="Type of job.")
-    itwin: str = Field(description="iTwin ID, used by the service for finding "
-                                   "input reality data and uploading output data.")
+    itwin_id: str = Field(description="iTwin ID, used by the service for finding "
+                                      "input reality data and uploading output data.",
+                          alias="iTwinId")
     state: JobState = Field(description="State of the job.")
     execution: Execution = Field(description="Known execution information for the job.")
     user: str = Field(description="Identifier of the user that created the job.")
