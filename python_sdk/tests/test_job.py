@@ -5,16 +5,16 @@ from reality_capture.service.job import Service, JobCreate, Job, JobType, JobSta
 class TestJob:
     def test_appropriate_service_job(self):
         cdt = datetime.datetime(1974, 9, 1, 0, 0, 0)
-        cdt = {"creationDateTime": cdt, "startDateTime": None, "endDateTime": None, "estimatedUnits": None}
+        cdt = {"createdDateTime": cdt, "startedDateTime": None, "endedDateTime": None, "estimatedUnits": None}
         ts = {"inputs": {"scene": "scene"}, "outputs": {"reference_model": {"location": "location"}}}
-        j = Job(id="id", type=JobType.TILING, iTwinId="itwin", state=JobState.SUCCESS, execution=cdt,
-                user="claude@example.org", specifications=ts)
+        j = Job(id="id", type=JobType.TILING, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
+                userId="claude@example.org", specifications=ts)
         assert j.get_appropriate_service() == Service.MODELING
-        j = Job(id="id", type=JobType.TRAINING_O2D, iTwinId="itwin", state=JobState.SUCCESS, execution=cdt,
-                user="claude@example.org", specifications=ts)
+        j = Job(id="id", type=JobType.TRAINING_O2D, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
+                userId="claude@example.org", specifications=ts)
         assert j.get_appropriate_service() == Service.ANALYSIS
-        j = Job(id="id", type=JobType.POINT_CLOUD_CONVERSION, iTwinId="itwin", state=JobState.SUCCESS, execution=cdt,
-                user="claude@example.org", specifications=ts)
+        j = Job(id="id", type=JobType.POINT_CLOUD_CONVERSION, iTwinId="itwin", state=JobState.SUCCESS,
+                executionInfo=cdt, userId="claude@example.org", specifications=ts)
         assert j.get_appropriate_service() == Service.CONVERSION
 
     def test_appropriate_service_job_create(self):
