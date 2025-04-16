@@ -19,6 +19,22 @@ class Type(Enum):
     OPC = "OPC"
     REALITY_MESH_3D_Tiles = "RealityMesh3DTiles"
     TERRAIN_3D_TILES = "Terrain3DTiles"
+    THREEMX = "3MX"
+    THREESM = "3SM"
+    CC_IMAGE_COLLECTION = "CCImageCollection"
+    CONTEXT_DETECTOR = "ContextDetector"
+    COLLADA = "DAE"
+    DGN = "DGN"
+    FBX = "FBX"
+    KML = "KML"
+    LAS = "LAS"
+    LAZ = "LAZ"
+    LOD = "LOD"
+    LOD_TREE = "LodTree"
+    OBJ = "OBJ"
+    OSGB = "OSGB"
+    PLY = "PLY"
+    S3C = "S3C"
 
 
 class Acquisition(BaseModel):
@@ -44,7 +60,6 @@ class Extent(BaseModel):
 class RealityDataBase(BaseModel):
     classification: Optional[Classification] = Field(None, description="Specific value constrained field that "
                                                                        "indicates the nature of the reality data.")
-    type: Optional[Type] = Field(None, description="A key indicating the format of the data.")
     description: Optional[str] = Field(None, description="Description of the reality data.")
     tags: Optional[list[str]] = Field(None, description="Any strings identifier which you can assign to reality data"
                                                         " to identify it.")
@@ -67,6 +82,7 @@ class RealityDataBase(BaseModel):
 class RealityDataCreate(RealityDataBase):
     itwin_id: str = Field(description="Id of associated iTwin.", alias="iTwinId")
     display_name: str = Field(description="Name of the reality data.", alias="displayName")
+    type: Type = Field(description="A key indicating the format of the data.")
 
 
 class RealityData(RealityDataBase):
@@ -82,11 +98,13 @@ class RealityData(RealityDataBase):
     data_center_location: str = Field(description="Identifies the data center location used to store the reality data.",
                                       alias="dataCenterLocation")
     size: int = Field(description="The size of the reality data in Kilobytes.", ge=0)
+    type: Type = Field(description="A key indicating the format of the data.")
 
 
 class RealityDataUpdate(RealityDataBase):
     itwin_id: Optional[str] = Field(None, description="Id of associated iTwin.")
     display_name: Optional[str] = Field(None, description="Name of the reality data.", alias="displayName")
+    type: Optional[Type] = Field(None, description="A key indicating the format of the data.")
 
 
 class ContainerType(Enum):
