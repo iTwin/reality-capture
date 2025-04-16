@@ -521,7 +521,7 @@ class ExportCreate(BaseModel):
                             OptionsSuperMap, OptionsLAS, OptionsPOD, OptionsPLY, OptionsOPC, OptionsOrthoDSM,
                             OptionsFBX]] = Field(
         None, description="Options associated to format")
-    name: Optional[str] = Field(None, description="Name used for the reality data.")
+    name: Optional[str] = Field(None, description="Name used for the reality data.", min_length=3)
 
 
 class Export(ExportCreate):
