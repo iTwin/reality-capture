@@ -106,9 +106,9 @@ class JobCreate(BaseModel):
 
 
 class Execution(BaseModel):
-    creation_date_time: datetime = Field(description="Creation date time for the job.", alias="creationDateTime")
-    start_date_time: Optional[datetime] = Field(description="Start date time for the job.", alias="startDateTime")
-    end_date_time: Optional[datetime] = Field(description="End date time for the job.", alias="endDateTime")
+    created_date_time: datetime = Field(description="Creation date time for the job.", alias="createdDateTime")
+    started_date_time: Optional[datetime] = Field(description="Start date time for the job.", alias="startedDateTime")
+    ended_date_time: Optional[datetime] = Field(description="End date time for the job.", alias="endedDateTime")
     estimated_units: Optional[float] = Field(description="Estimated number of units consumed by the job.",
                                              alias="estimatedUnits")
 
@@ -121,8 +121,8 @@ class Job(BaseModel):
                                       "input reality data and uploading output data.",
                           alias="iTwinId")
     state: JobState = Field(description="State of the job.")
-    execution: Execution = Field(description="Known execution information for the job.")
-    user: str = Field(description="Identifier of the user that created the job.")
+    execution_info: Execution = Field(description="Known execution information for the job.", alias="executionInfo")
+    user_id: str = Field(description="Identifier of the user that created the job.", alias="userId")
     specifications: Union[CalibrationSpecifications, ChangeDetectionSpecifications,
                           ConstraintsSpecifications, ExtractGroundSpecifications,
                           FillImagePropertiesSpecifications, ImportPCSpecifications,
