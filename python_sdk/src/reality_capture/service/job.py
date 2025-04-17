@@ -80,7 +80,7 @@ class JobState(Enum):
 
 
 class JobCreate(BaseModel):
-    name: Optional[str] = Field(None, description="Displayable job name.", min_length=2)
+    name: Optional[str] = Field(None, description="Displayable job name.", min_length=3)
     type: JobType = Field(description="Type of job.")
     specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
                           ConstraintsSpecificationsCreate, ExtractGroundSpecificationsCreate,
@@ -115,7 +115,7 @@ class Execution(BaseModel):
 
 class Job(BaseModel):
     id: str = Field(description="Job unique identifier.")
-    name: Optional[str] = Field(None, description="Displayable job name.", min_length=2)
+    name: Optional[str] = Field(None, description="Displayable job name.", min_length=3)
     type: JobType = Field(description="Type of job.")
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
