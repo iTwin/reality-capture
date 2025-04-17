@@ -206,7 +206,7 @@ class RealityCaptureService:
         :return: A Response[RealityData] containing either the reality data information or the error from the service.
         """
         response = self._session.post(self._get_reality_management_rd_url(),
-                                      reality_data.model_dump_json(by_alias=True),
+                                      reality_data.model_dump_json(by_alias=True, exclude_none=True),
                                       headers=self._get_header_v1())
         try:
             if response.ok:
@@ -253,9 +253,7 @@ class RealityCaptureService:
         :return: A Response[RealityData] containing either the reality data information or the error from the service.
         """
         url = self._get_reality_management_rd_url() + reality_data_id
-        if itwin_id is not None:
-            url += "?iTwinId=" + itwin_id
-        response = self._session.patch(url, reality_data_update.model_dump_json(by_alias=True),
+        response = self._session.patch(url, reality_data_update.model_dump_json(by_alias=True, exclude_none=True),
                                        headers=self._get_header_v1())
         try:
             if response.ok:
