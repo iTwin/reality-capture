@@ -68,9 +68,9 @@ class RealityCaptureService:
         raise NotImplemented("Other services not yet implemented")
 
     @staticmethod
-    def _get_ill_formed_message(response) -> str:
+    def _get_ill_formed_message(response, exception) -> str:
         r = response.json()
-        return f"Service response is ill-formed: {r}"
+        return f"Service response is ill-formed: {r}. Exception : {exception}"
 
     def submit_job(self, job: JobCreate) -> Response[Job]:
         """
@@ -87,8 +87,8 @@ class RealityCaptureService:
                                 error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -108,8 +108,8 @@ class RealityCaptureService:
                                 error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -130,8 +130,8 @@ class RealityCaptureService:
                                 error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -151,8 +151,8 @@ class RealityCaptureService:
                                 value=Progress.model_validate(response.json()["jobProgress"]), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -172,8 +172,8 @@ class RealityCaptureService:
                                 value=Job.model_validate(response.json()["job"]), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -193,8 +193,8 @@ class RealityCaptureService:
                                 value=CostEstimation.model_validate(response.json()["costEstimation"]), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -214,8 +214,8 @@ class RealityCaptureService:
                                 value=RealityData.model_validate(response.json()["realityData"]), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -237,8 +237,8 @@ class RealityCaptureService:
                                 value=RealityData.model_validate(response.json()["realityData"]), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -261,8 +261,8 @@ class RealityCaptureService:
                                 value=RealityData.model_validate(response.json()["realityData"]), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError):
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -281,8 +281,8 @@ class RealityCaptureService:
                                 value=None, error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except ValidationError:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+        except ValidationError as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -305,8 +305,8 @@ class RealityCaptureService:
                                 value=ContainerDetails.model_validate(response.json()), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except ValidationError:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+        except ValidationError as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -329,8 +329,8 @@ class RealityCaptureService:
                                 value=ContainerDetails.model_validate(response.json()), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except ValidationError:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+        except ValidationError as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
@@ -361,8 +361,8 @@ class RealityCaptureService:
                                 value=RealityDatas.model_validate(response.json()), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except ValidationError:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response))
+        except ValidationError as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
