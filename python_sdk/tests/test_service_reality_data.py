@@ -111,7 +111,7 @@ class TestRealityData:
         rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
         itwin_id = "f073e3f3-c91d-439e-ac46-3c8d98dc7097"
         responses.add(responses.PATCH,
-                      f'https://api.bentley.com/reality-management/reality-data/{rd_id}?iTwinId={itwin_id}',
+                      f'https://api.bentley.com/reality-management/reality-data/{rd_id}',
                       json={'bad': 'response'}, status=400)
         rdu = RealityDataUpdate(description="New description")
         response = self.rcs.update_reality_data(rdu, rd_id, itwin_id)
