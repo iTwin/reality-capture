@@ -148,7 +148,7 @@ class RealityCaptureService:
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
-                                value=Progress.model_validate(response.json()["jobProgress"]), error=None)
+                                value=Progress.model_validate(response.json()["progress"]), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError) as exception:

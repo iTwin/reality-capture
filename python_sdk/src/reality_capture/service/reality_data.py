@@ -45,6 +45,7 @@ class Type(Enum):
     THREESM = "3SM"
     THREEMX = "3MX"
     TOUCHUP = "TouchUpData"
+    UNSTRUCTURED_DATA = "Unstructured"
 
 
 class Acquisition(BaseModel):
