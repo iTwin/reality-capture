@@ -243,13 +243,12 @@ class RealityCaptureService:
                             error=DetailedErrorResponse(error=error), value=None)
 
     def update_reality_data(self, reality_data_update: RealityDataUpdate,
-                            reality_data_id: str, itwin_id: Optional[str] = None) -> Response[RealityData]:
+                            reality_data_id: str) -> Response[RealityData]:
         """
-        Update Reality Data information with new information based on its id and possible iTwin id.
+        Update Reality Data information with new information based on its.
 
         :param reality_data_update: Reality Data information to overwrite.
         :param reality_data_id: Id of the existing reality data.
-        :param itwin_id: Optional iTwin id for finding the reality data.
         :return: A Response[RealityData] containing either the reality data information or the error from the service.
         """
         url = self._get_reality_management_rd_url() + reality_data_id
