@@ -1,7 +1,7 @@
 from reality_capture.service.service import RealityCaptureService
 from reality_capture.service.reality_data import (RealityDataCreate, RealityDataUpdate, Access,
                                                   RealityDataFilter, get_continuation_token, Prefer,
-                                                  RealityDataMinimal, RealityData)
+                                                  RealityDataMinimal, RealityData, Type)
 import responses
 import json
 import os
@@ -28,7 +28,7 @@ class TestRealityData:
     # Create Data
     @responses.activate
     def test_create_data_ill_formed(self):
-        rdc = RealityDataCreate(iTwinId="1b21484b-8d97-4610-9001-b0b67cd83fbd", displayName="My Data")
+        rdc = RealityDataCreate(iTwinId="1b21484b-8d97-4610-9001-b0b67cd83fbd", displayName="My Data", type=Type.OPC)
         responses.add(responses.POST, f'https://api.bentley.com/reality-management/reality-data/',
                       json={'bad': 'response'}, status=400)
         response = self.rcs.create_reality_data(rdc)
@@ -37,7 +37,7 @@ class TestRealityData:
 
     @responses.activate
     def test_create_data_401(self):
-        rdc = RealityDataCreate(iTwinId="1b21484b-8d97-4610-9001-b0b67cd83fbd", displayName="My Data")
+        rdc = RealityDataCreate(iTwinId="1b21484b-8d97-4610-9001-b0b67cd83fbd", displayName="My Data", type=Type.OPC)
         responses.add(responses.POST, f'https://api.bentley.com/reality-management/reality-data/',
                       json={"error": {"code": "HeaderNotFound",
                                       "message": "Header Authorization was not found in the request. Access denied."}},
@@ -48,7 +48,7 @@ class TestRealityData:
 
     @responses.activate
     def test_create_data_201(self):
-        rdc = RealityDataCreate(iTwinId="1b21484b-8d97-4610-9001-b0b67cd83fbd", displayName="My Data")
+        rdc = RealityDataCreate(iTwinId="1b21484b-8d97-4610-9001-b0b67cd83fbd", displayName="My Data", type=Type.OPC)
         with open(f"{self.data_folder}/reality_data_create_201.json", 'r') as payload_data:
             payload = json.load(payload_data)
         responses.add(responses.POST, f'https://api.bentley.com/reality-management/reality-data/',
@@ -111,7 +111,7 @@ class TestRealityData:
         rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
         itwin_id = "f073e3f3-c91d-439e-ac46-3c8d98dc7097"
         responses.add(responses.PATCH,
-                      f'https://api.bentley.com/reality-management/reality-data/{rd_id}?iTwinId={itwin_id}',
+                      f'https://api.bentley.com/reality-management/reality-data/{rd_id}',
                       json={'bad': 'response'}, status=400)
         rdu = RealityDataUpdate(description="New description")
         response = self.rcs.update_reality_data(rdu, rd_id, itwin_id)

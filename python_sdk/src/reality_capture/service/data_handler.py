@@ -29,9 +29,9 @@ class RealityDataHandler:
             return self._service.get_reality_data_write_access(rd_id, itwin_id)
         return self._service.get_reality_data_read_access(rd_id, itwin_id)
 
-    def _set_authoring(self, rd_id: str, itwin_id: Optional[str], authoring: bool) -> Response[RealityData]:
+    def _set_authoring(self, rd_id: str, authoring: bool) -> Response[RealityData]:
         rdu = RealityDataUpdate(authoring=authoring)
-        return self._service.update_reality_data(rdu, rd_id, itwin_id)
+        return self._service.update_reality_data(rdu, rd_id)
 
     @staticmethod
     def _get_files_and_sizes(path: str) -> list[(str, int)]:
@@ -77,7 +77,7 @@ class RealityDataHandler:
             return Response(r.status_code, r.error, None)
         sas_uri = r.value.links.container_url.href
 
-        r = self._set_authoring(reality_data_id, itwin_id, True)
+        r = self._set_authoring(reality_data_id, True)
         if r.is_error():
             return Response(r.status_code, r.error, None)
 
@@ -120,7 +120,7 @@ class RealityDataHandler:
                                               "message": f"Upload failed: {e}."})
             return Response(500, de, None)
         finally:
-            r = self._set_authoring(reality_data_id, itwin_id, False)
+            r = self._set_authoring(reality_data_id, False)
             if r.is_error():
                 return Response(r.status_code, r.error, None)
         return Response(200, None, None)
