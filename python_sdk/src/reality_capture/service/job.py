@@ -27,7 +27,8 @@ from reality_capture.specifications.touchup import (TouchUpImportSpecifications,
                                                     TouchUpExportSpecificationsCreate)
 from reality_capture.specifications.water_constraints import (WaterConstraintsSpecifications,
                                                               WaterConstraintsSpecificationsCreate)
-from reality_capture.specifications.training import TrainingO2DSpecifications, TrainingO2DSpecificationsCreate
+from reality_capture.specifications.training import (TrainingO2DSpecifications, TrainingO2DSpecificationsCreate,
+    TrainingS3DSpecificationsCreate, TrainingS3DSpecifications)
 from reality_capture.specifications.point_cloud_conversion import (PointCloudConversionSpecificationsCreate,
                                                                    PointCloudConversionSpecifications)
 
@@ -50,6 +51,7 @@ class JobType(Enum):
     TOUCH_UP_EXPORT = "TouchUpExport"
     WATER_CONSTRAINTS = "WaterConstraints"
     TRAINING_O2D = "TrainingO2D"
+    TRAINING_S3D = "TrainingS3D"
     POINT_CLOUD_CONVERSION = "PointCloudConversion"
 
 
@@ -90,7 +92,8 @@ class JobCreate(BaseModel):
                           Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                           TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
                           TouchUpImportSpecifications, WaterConstraintsSpecificationsCreate, 
-                          TrainingO2DSpecificationsCreate, PointCloudConversionSpecificationsCreate] = (
+                          TrainingO2DSpecificationsCreate, PointCloudConversionSpecificationsCreate, 
+                          TrainingS3DSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -131,7 +134,8 @@ class Job(BaseModel):
                           Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                           TilingSpecifications, TouchUpExportSpecifications,
                           TouchUpImportSpecifications, WaterConstraintsSpecifications, 
-                          TrainingO2DSpecifications, PointCloudConversionSpecifications] = (
+                          TrainingO2DSpecifications, TrainingS3DSpecifications,
+                          PointCloudConversionSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     def get_appropriate_service(self) -> Service:
