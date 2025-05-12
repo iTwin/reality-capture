@@ -28,7 +28,8 @@ from reality_capture.specifications.water_constraints import (WaterConstraintsSp
                                                               WaterConstraintsSpecificationsCreate)
 """from reality_capture.specifications.point_cloud_conversion import (PointCloudConversionSpecificationsCreate,
                                                                    PointCloudConversionSpecifications)"""
-
+from reality_capture.specifications.training import (TrainingO2DSpecifications, TrainingO2DSpecificationsCreate,
+    TrainingS3DSpecificationsCreate, TrainingS3DSpecifications)
 from reality_capture.specifications.gaussian_splats import (GaussianSplatsSpecificationsCreate,
                                                             GaussianSplatsSpecifications)
 from reality_capture.specifications.eval_o2d import (EvalO2DSpecificationsCreate, EvalO2DSpecifications)
@@ -63,6 +64,7 @@ class JobType(Enum):
     WATER_CONSTRAINTS = "WaterConstraints"
 	# POINT_CLOUD_CONVERSION = "PointCloudConversion"
     TRAINING_O2D = "TrainingO2D"
+    TRAINING_S3D = "TrainingS3D"
 
 class Service(Enum):
     MODELING = "Modeling"
@@ -108,7 +110,8 @@ class JobCreate(BaseModel):
                         Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                         TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
                         TouchUpImportSpecifications, WaterConstraintsSpecificationsCreate,
-                        TrainingO2DOutputsCreate] = Field(description="Specifications aligned with the job type.")
+                        TrainingO2DSpecificationsCreate, PointCloudConversionSpecificationsCreate,
+                        TrainingS3DSpecificationsCreate] =  Field(description="Specifications aligned with the job type.")
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
                           alias="iTwinId")
@@ -152,7 +155,8 @@ class Job(BaseModel):
                         Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                         TilingSpecifications, TouchUpExportSpecifications,
                         TouchUpImportSpecifications, WaterConstraintsSpecifications,
-                        TrainingO2DSpecifications] = Field(description="Specifications aligned with the job type.")
+                        TrainingO2DSpecifications, TrainingS3DSpecifications,
+						PointCloudConversionSpecifications] = Field(description="Specifications aligned with the job type.")
 
     @field_validator("specifications", mode="plain")
     @classmethod
@@ -203,6 +207,10 @@ class Job(BaseModel):
             specifications = TouchUpImportSpecifications(**raw_dict)
         elif job_type == JobType.WATER_CONSTRAINTS:
             specifications = WaterConstraintsSpecifications(**raw_dict)
+		elif job_type == JobType.TrainingS3D:
+			specifications = TrainingS3DSpecifications(**raw_dict)
+		elif job_type == JobType.TrainingO2D:
+			specifications = TrainingO2DSpecifications(**raw_dict)
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 
