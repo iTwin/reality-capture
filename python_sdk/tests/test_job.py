@@ -8,13 +8,13 @@ class TestJob:
         cdt = {"createdDateTime": cdt, "startedDateTime": None, "endedDateTime": None, "estimatedUnits": None}
         ts = {"inputs": {"scene": "scene"}, "outputs": {"reference_model": {"location": "location"}}}
         j = Job(id="id", type=JobType.TILING, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
-                userId="claude@example.org", specifications=ts)
+                userId="claude@example.org", specifications=ts, bucketId="bucket")
         assert j.get_appropriate_service() == Service.MODELING
         j = Job(id="id", type=JobType.TRAINING_O2D, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
-                userId="claude@example.org", specifications=ts)
+                userId="claude@example.org", specifications=ts, bucketId="bucket")
         assert j.get_appropriate_service() == Service.ANALYSIS
         j = Job(id="id", type=JobType.POINT_CLOUD_CONVERSION, iTwinId="itwin", state=JobState.SUCCESS,
-                executionInfo=cdt, userId="claude@example.org", specifications=ts)
+                executionInfo=cdt, userId="claude@example.org", specifications=ts, bucketId="bucket")
         assert j.get_appropriate_service() == Service.CONVERSION
 
     def test_appropriate_service_job_create(self):
