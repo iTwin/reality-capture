@@ -10,7 +10,8 @@ class CalibrationInputs(BaseModel):
 
 class CalibrationOutputs(BaseModel):
     scene: str = Field(description="Reality data ID of calibrated ContextScene")
-    report: Optional[str] = Field(default=None, description="Reality data ID of Calibration report")
+    report: Optional[str] = Field(default=None, description="Path in the bucket of Calibration report",
+                                  pattern=r"^bkt:.+")
     splats: Optional[str] = Field(default=None, description="Reality data ID of Calibration Splats")
 
 

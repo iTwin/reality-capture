@@ -16,7 +16,8 @@ class ExtractGroundInputs(BaseModel):
                                                                          "detector identifier "
                                                                          "from the AI Detectors library")
     clip_polygon: Optional[str] = Field(None, alias="clipPolygon", 
-                                        description="Reality data id of the clipping polygon to apply")
+                                        description="Path in the bucket of the clipping polygon to apply",
+                                        pattern=r"^bkt:.+")
 
 
 class ExtractGroundOutputs(BaseModel):

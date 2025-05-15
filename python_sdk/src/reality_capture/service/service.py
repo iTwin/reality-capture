@@ -1,5 +1,6 @@
 import requests
 
+from reality_capture.service.bucket import BucketResponse
 from reality_capture.service.estimation import CostEstimationCreate, CostEstimation
 from reality_capture.service.response import Response
 from reality_capture.service.job import JobCreate, Job, Progress, Messages, Service
@@ -194,6 +195,70 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def create_bucket(self, itwin_id: str) -> Response[BucketResponse]:
+        """
+        Create a bucket.
+
+        :param itwin_id: iTwin id for creating the container
+        :return: A Response[BucketResponse] containing either the created bucket information or the error from the service.
+        """
+        response = self._session.post(self._get_correct_url(Service.MODELING) + f"buckets?iTwinId={itwin_id}",
+                                      headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code,
+                                value=BucketResponse.model_validate(response.json()), error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def get_bucket(self, itwin_id: str, bucket_id: str = "default") -> Response[BucketResponse]:
+        """
+        Retrieve a bucket information.
+
+        :param itwin_id: iTwin id for finding the bucket
+        :param bucket_id: bucket id to retrieve
+        :return: A Response[BucketResponse] containing either the bucket information or the error from the service.
+        """
+        response = self._session.get(self._get_correct_url(Service.MODELING) +
+                                     f"buckets/{bucket_id}?iTwinId={itwin_id}",
+                                     headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code,
+                                value=BucketResponse.model_validate(response.json()), error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def delete_bucket(self, itwin_id: str, bucket_id: str) -> Response[None]:
+        """
+        Delete a bucket.
+
+        :param itwin_id: iTwin id for finding the bucket
+        :param bucket_id: bucket id to retrieve
+        :return: A Response[None] containing no information or the error from the service.
+        """
+        response = self._session.delete(self._get_correct_url(Service.MODELING) +
+                                        f"buckets/{bucket_id}?iTwinId={itwin_id}",
+                                        headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code,
+                                value=None, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except ValidationError as exception:
             error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)

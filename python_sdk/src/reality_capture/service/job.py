@@ -98,6 +98,10 @@ class JobCreate(BaseModel):
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
                           alias="iTwinId")
+    bucket_id: Optional[str] = Field(None,
+                                     description="Bucket id, used by the service to find and upload small job data. "
+                                                 "If not specified, the service will use the default bucket.",
+                                     alias="bucketId")
 
     def get_appropriate_service(self) -> Service:
         """
@@ -123,6 +127,8 @@ class Job(BaseModel):
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
                           alias="iTwinId")
+    bucket_id: str = Field(description="Bucket id, used by the service to find and upload small job data.",
+                           alias="bucketId")
     state: JobState = Field(description="State of the job.")
     execution_info: Execution = Field(description="Known execution information for the job.", alias="executionInfo")
     user_id: str = Field(description="Identifier of the user that created the job.", alias="userId")

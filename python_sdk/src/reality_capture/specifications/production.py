@@ -4,11 +4,13 @@ from enum import Enum
 from reality_capture.specifications.geometry import Point3d
 from reality_capture.specifications.tiling import GeometricPrecision
 
+
 class ProductionInputs(BaseModel):
     scene: str = Field(description="Reality data id of ContextScene to process")
     reference_model: str = Field(description="Reality data id of reference model to process", alias="referenceModel")
-    extent: Optional[str] = Field(None, description="Path to region of interest file prefix by reality data id, "
-                                                    "used for export extent")
+    extent: Optional[str] = Field(None, description="Path in the bucket to region of interest file, "
+                                                    "used for export extent",
+                                  pattern=r"^bkt:.+")
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
 
 
