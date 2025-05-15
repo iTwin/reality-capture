@@ -211,7 +211,7 @@ class RealityCaptureService:
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
-                                value=CostEstimation.model_validate(response.json()), error=None)
+                                value=BucketResponse.model_validate(response.json()), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError) as exception:
@@ -233,7 +233,7 @@ class RealityCaptureService:
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
-                                value=CostEstimation.model_validate(response.json()), error=None)
+                                value=BucketResponse.model_validate(response.json()), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError) as exception:
