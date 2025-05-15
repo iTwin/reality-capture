@@ -19,7 +19,8 @@ class WaterConstraintsOutputsCreate(Enum):
 
 
 class WaterConstraintsOutputs(BaseModel):
-    constraints: str = Field(description="Reality data id of output constraints")
+    constraints: str = Field(description="Path in the bucket of output constraints",
+                             pattern=r"^bkt:.+")
 
 
 class WaterConstraintsSpecificationsCreate(BaseModel):

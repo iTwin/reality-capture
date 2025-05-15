@@ -22,7 +22,8 @@ class Segmentation3DInputs(BaseModel):
                                                       "this input replaces point_cloud_segmentation_detector, "
                                                       "point_clouds and meshes inputs")
     clip_polygon: Optional[str] = Field(None, alias="clipPolygon",
-                                        description="Reality data id of the clipping polygon to apply")
+                                        description="Path in the bucket of the clipping polygon to apply",
+                                        pattern=r"^bkt:.+")
 
 
 class Segmentation3DOutputs(BaseModel):

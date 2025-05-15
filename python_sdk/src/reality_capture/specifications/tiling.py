@@ -6,9 +6,10 @@ from reality_capture.specifications.geometry import BoundingBox, Point3d, Region
 
 class TilingInputs(BaseModel):
     scene: str = Field(description="Reality data id of ContextScene to process")
-    region_of_interest: Optional[str] = Field(description="Path to region of interest file prefix by reality data id",
+    region_of_interest: Optional[str] = Field(description="Path in the bucket to region of interest file",
                                               alias="regionOfInterest",
-                                              default=None)
+                                              default=None,
+                                              pattern=r"^bkt:.+")
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
 
 

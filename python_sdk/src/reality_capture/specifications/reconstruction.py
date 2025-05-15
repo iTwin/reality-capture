@@ -6,11 +6,13 @@ from reality_capture.specifications.production import Export, ExportCreate
 
 class ReconstructionInputs(BaseModel):
     scene: str = Field(description="Reality data id of ContextScene to process")
-    region_of_interest: Optional[str] = Field(description="Path to region of interest file prefix by reality data id, "
+    region_of_interest: Optional[str] = Field(description="Path in the bucket to region of interest file, "
                                                           "used for tiling region of interest",
+                                              pattern=r"^bkt:.+",
                                               alias="regionOfInterest", default=None)
-    extent: Optional[str] = Field(None, description="Path to region of interest file prefix by reality data id, "
-                                                    "used for export extent")
+    extent: Optional[str] = Field(None, description="Path in the bucket to region of interest file, "
+                                                    "used for export extent",
+                                  pattern=r"^bkt:.+")
     reference_model: Optional[str] = Field(None, description="Reality data id of reference model to process",
                                            alias="referenceModel")
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
