@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Union
-from reality_capture.specifications.tiling import ReferenceModel, TilingOptions, TilingOutputsCreate
+from typing import Optional
+from reality_capture.specifications.tiling import ReferenceModel, TilingOptions
 from reality_capture.specifications.production import Export, ExportCreate
 
 
