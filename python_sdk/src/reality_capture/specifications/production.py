@@ -241,8 +241,8 @@ class OptionsS3C(BaseModel):
 
 
 class I3SVersion(Enum):
-    V1_6 = "v1_6"
-    V1_8 = "v1_8"
+    V1_6 = "v1.6"
+    V1_8 = "v1.8"
 
 
 class OptionsI3S(BaseModel):
