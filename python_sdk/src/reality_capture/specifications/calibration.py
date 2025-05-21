@@ -85,7 +85,6 @@ class SkewPolicy(Enum):
 
 class TiepointsPolicy(Enum):
     COMPUTE = "Compute"
-    ADJUST = "Adjust"
     KEEP = "Keep"
 
 
@@ -186,8 +185,9 @@ class CalibrationOptions(BaseModel):
     tags_extraction: Optional[list[Tag]] = Field(default=None, description="Tags to extract", alias="tagsExtraction")
     color_equalization: Optional[ColorEqualization] = Field(default=None, description="Color equalization mode",
                                                             alias="colorEqualization")
-    adjustment_constraints: Optional[AdjustmentConstraints] = Field(default=None, description="Adjustment constraints",
-                                                                    alias="adjustmentConstraints")
+    adjustment_constraints: Optional[list[AdjustmentConstraints]] = Field(default=None,
+                                                                          description="Adjustment constraints",
+                                                                          alias="adjustmentConstraints")
     rigid_registration_position: Optional[RigidRegistrationPosition] = Field(default=None,
                                                                              description="Rigid registration for position",
                                                                              alias="rigidRegistrationPosition")
@@ -197,7 +197,7 @@ class CalibrationOptions(BaseModel):
               alias="rigidRegistrationRotation"))
     rigid_registration_scale: Optional[RigidRegistrationScale] = Field(default=None,
                                                                        description="Rigid registration for scale",
-                                                                       alias="RigidRegistrationScale")
+                                                                       alias="rigidRegistrationScale")
 
 
 class CalibrationSpecifications(BaseModel):
