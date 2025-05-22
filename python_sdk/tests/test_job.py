@@ -9,7 +9,7 @@ class TestJob:
     def test_appropriate_service_job(self):
         cdt = datetime.datetime(1974, 9, 1, 0, 0, 0)
         cdt = {"createdDateTime": cdt, "startedDateTime": None, "endedDateTime": None, "estimatedUnits": None}
-        tiling_specs = {"inputs": {"scene": "scene"}, "outputs": {"referenceModel": {"location": "location"}}}
+        tiling_specs = {"inputs": {"scene": "scene"}, "outputs": {"reference_model": {"location": "location"}}}
         j = Job(id="id", type=JobType.TILING, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
                 userId="claude@example.org", specifications=tiling_specs, bucketId="bucket")
         assert j.get_appropriate_service() == Service.MODELING
