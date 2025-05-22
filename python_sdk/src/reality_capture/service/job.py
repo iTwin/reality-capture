@@ -1,7 +1,7 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from datetime import datetime
 from enum import Enum
-from typing import Union, Optional
+from typing import Union, Optional, Any
 from reality_capture.specifications.calibration import CalibrationSpecifications, CalibrationSpecificationsCreate
 from reality_capture.specifications.change_detection import (ChangeDetectionSpecifications,
                                                              ChangeDetectionSpecificationsCreate)
@@ -143,6 +143,53 @@ class Job(BaseModel):
                           TrainingO2DSpecifications, TrainingS3DSpecifications,
                           PointCloudConversionSpecifications] = (
         Field(description="Specifications aligned with the job type."))
+
+    @model_validator(mode="before")
+    @classmethod
+    def validate_specifications(cls, values: Any) -> Any:
+        job_type = values.get("type")
+        specs = values.get("specifications")
+        if job_type == JobType.CALIBRATION.value:
+            values["specifications"] = CalibrationSpecifications(**specs)
+        elif job_type == JobType.CHANGE_DETECTION.value:
+            values["specifications"] = ChangeDetectionSpecifications(**specs)
+        elif job_type == JobType.CONSTRAINTS.value:
+            values["specifications"] = ConstraintsSpecifications(**specs)
+        elif job_type == JobType.EXTRACT_GROUND.value:
+            values["specifications"] = ExtractGroundSpecifications(**specs)
+        elif job_type == JobType.FILL_IMAGE_PROPERTIES.value:
+            values["specifications"] = FillImagePropertiesSpecifications(**specs)
+        elif job_type == JobType.IMPORT_POINT_CLOUD.value:
+            values["specifications"] = ImportPCSpecifications(**specs)
+        elif job_type == JobType.OBJECTS_2D.value:
+            values["specifications"] = Objects2DSpecifications(**specs)
+        elif job_type == JobType.PRODUCTION.value:
+            values["specifications"] = ProductionSpecifications(**specs)
+        elif job_type == JobType.RECONSTRUCTION.value:
+            values["specifications"] = ReconstructionSpecifications(**specs)
+        elif job_type == JobType.SEGMENTATION_2D.value:
+            values["specifications"] = Segmentation2DSpecifications(**specs)
+        elif job_type == JobType.SEGMENTATION_3D.value:
+            values["specifications"] = Segmentation3DSpecifications(**specs)
+        elif job_type == JobType.SEGMENTATION_ORTHOPHOTO.value:
+            values["specifications"] = SegmentationOrthophotoSpecifications(**specs)
+        elif job_type == JobType.TILING.value:
+            values["specifications"] = TilingSpecifications(**specs)
+        elif job_type == JobType.TOUCH_UP_EXPORT.value:
+            values["specifications"] = TouchUpExportSpecifications(**specs)
+        elif job_type == JobType.TOUCH_UP_IMPORT.value:
+            values["specifications"] = TouchUpImportSpecifications(**specs)
+        elif job_type == JobType.WATER_CONSTRAINTS.value:
+            values["specifications"] = WaterConstraintsSpecifications(**specs)
+        elif job_type == JobType.TRAINING_O2D.value:
+            values["specifications"] = TrainingO2DSpecifications(**specs)
+        elif job_type == JobType.TRAINING_S3D.value:
+            values["specifications"] = TrainingS3DSpecifications(**specs)
+        elif job_type == JobType.POINT_CLOUD_CONVERSION.value:
+            values["specifications"] = PointCloudConversionSpecifications(**specs)
+        else:
+            raise ValueError(f"Unsupported job type: {job_type}")
+        return values
 
     def get_appropriate_service(self) -> Service:
         """
