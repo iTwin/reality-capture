@@ -2,7 +2,7 @@ import datetime
 from reality_capture.service.job import Service, JobCreate, Job, JobType, JobState
 from reality_capture.specifications.tiling import TilingOutputsCreate
 from reality_capture.specifications.extract_ground import ExtractGroundOutputsCreate
-from reality_capture.specifications.point_cloud_conversion import PCConversionOutputsCreate
+from reality_capture.specifications.point_cloud_conversion import PCConversionOutputsCreate, PCConversionOutputs, PCConversionInputs, PointCloudConversionSpecificationsCreate
 
 
 class TestJob:
@@ -30,7 +30,6 @@ class TestJob:
                                                                           ExtractGroundOutputsCreate.SEGMENTED_POINT_CLOUD]}
         j = JobCreate(**{"type": JobType.EXTRACT_GROUND, "iTwinId": "itwin", "specifications": eg_specs})
         assert j.get_appropriate_service() == Service.ANALYSIS
-        pc_conversion_specs = {"inputs": {"pointClouds": ["point_cloud"]}, "outputs": [PCConversionOutputsCreate.OPC]}
-        j = JobCreate(**{"type": JobType.POINT_CLOUD_CONVERSION, "iTwinId": "itwin",
-                         "specifications": pc_conversion_specs})
+        pc_conversion_specs = {"inputs": {"pointClouds": ["point_cloud"]}, "outputs": PCConversionOutputsCreate.OPC}
+        j = JobCreate(**{"type": JobType.POINT_CLOUD_CONVERSION, "iTwinId": "itwin", "specifications": pc_conversion_specs})
         assert j.get_appropriate_service() == Service.CONVERSION
