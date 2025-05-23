@@ -1,27 +1,35 @@
 import datetime
 from reality_capture.service.job import Service, JobCreate, Job, JobType, JobState
+from reality_capture.specifications.tiling import TilingOutputsCreate
+from reality_capture.specifications.extract_ground import ExtractGroundOutputsCreate
+from reality_capture.specifications.point_cloud_conversion import PCConversionOutputsCreate
 
 
 class TestJob:
     def test_appropriate_service_job(self):
         cdt = datetime.datetime(1974, 9, 1, 0, 0, 0)
         cdt = {"createdDateTime": cdt, "startedDateTime": None, "endedDateTime": None, "estimatedUnits": None}
-        ts = {"inputs": {"scene": "scene"}, "outputs": {"reference_model": {"location": "location"}}}
+        tiling_specs = {"inputs": {"scene": "scene"}, "outputs": {"referenceModel": {"location": "location"}}}
         j = Job(id="id", type=JobType.TILING, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
-                userId="claude@example.org", specifications=ts, bucketId="bucket")
+                userId="claude@example.org", specifications=tiling_specs, bucketId="bucket")
         assert j.get_appropriate_service() == Service.MODELING
+        training_specs = {"inputs": {"scene": "scene"}, "outputs": {"detector": "detector"}}
         j = Job(id="id", type=JobType.TRAINING_O2D, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
-                userId="claude@example.org", specifications=ts, bucketId="bucket")
+                userId="claude@example.org", specifications=training_specs, bucketId="bucket")
         assert j.get_appropriate_service() == Service.ANALYSIS
+        pc_conversion_specs = {"inputs": {"pointClouds": ["point_cloud"]}, "outputs": {"opc": "opc"}}
         j = Job(id="id", type=JobType.POINT_CLOUD_CONVERSION, iTwinId="itwin", state=JobState.SUCCESS,
-                executionInfo=cdt, userId="claude@example.org", specifications=ts, bucketId="bucket")
+                executionInfo=cdt, userId="claude@example.org", specifications=pc_conversion_specs, bucketId="bucket")
         assert j.get_appropriate_service() == Service.CONVERSION
 
     def test_appropriate_service_job_create(self):
-        ts = {"inputs": {"scene": "scene"}, "outputs": {"reference_model": {"location": "location"}}}
-        j = JobCreate(**{"type": JobType.TILING, "iTwinId": "itwin", "specifications": ts})
+        tiling_specs = {"inputs": {"scene": "scene"}, "outputs": [TilingOutputsCreate.REFERENCE_MODEL]}
+        j = JobCreate(**{"type": JobType.TILING, "iTwinId": "itwin", "specifications": tiling_specs})
         assert j.get_appropriate_service() == Service.MODELING
-        j = JobCreate(**{"type": JobType.EXTRACT_GROUND, "iTwinId": "itwin", "specifications": ts})
+        eg_specs = {"inputs": {"pointClouds": "pointClouds"}, "outputs": [ExtractGroundOutputsCreate.SEGMENTATION3D,
+                                                                          ExtractGroundOutputsCreate.SEGMENTED_POINT_CLOUD]}
+        j = JobCreate(**{"type": JobType.EXTRACT_GROUND, "iTwinId": "itwin", "specifications": eg_specs})
         assert j.get_appropriate_service() == Service.ANALYSIS
-        j = JobCreate(**{"type": JobType.POINT_CLOUD_CONVERSION, "iTwinId": "itwin", "specifications": ts})
+        pc_conversion_specs = {"inputs": {"pointClouds": ["point_cloud"]}, "outputs": PCConversionOutputsCreate.OPC}
+        j = JobCreate(**{"type": JobType.POINT_CLOUD_CONVERSION, "iTwinId": "itwin", "specifications": pc_conversion_specs})
         assert j.get_appropriate_service() == Service.CONVERSION

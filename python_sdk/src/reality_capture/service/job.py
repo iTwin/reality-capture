@@ -1,7 +1,7 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from datetime import datetime
 from enum import Enum
-from typing import Union, Optional
+from typing import Union, Optional, Any
 from reality_capture.specifications.calibration import CalibrationSpecifications, CalibrationSpecificationsCreate
 from reality_capture.specifications.change_detection import (ChangeDetectionSpecifications,
                                                              ChangeDetectionSpecificationsCreate)
@@ -143,6 +143,51 @@ class Job(BaseModel):
                           TrainingO2DSpecifications, TrainingS3DSpecifications,
                           PointCloudConversionSpecifications] = (
         Field(description="Specifications aligned with the job type."))
+
+    @model_validator(mode="after")
+    @classmethod
+    def validate_specifications(cls, model):
+        if model.type == JobType.CALIBRATION:
+            model.specifications = CalibrationSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.CHANGE_DETECTION:
+            model.specifications = ChangeDetectionSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.CONSTRAINTS:
+            model.specifications = ConstraintsSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.EXTRACT_GROUND:
+            model.specifications = ExtractGroundSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.FILL_IMAGE_PROPERTIES:
+            model.specifications = FillImagePropertiesSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.IMPORT_POINT_CLOUD:
+            model.specifications = ImportPCSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.OBJECTS_2D:
+            model.specifications = Objects2DSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.PRODUCTION:
+            model.specifications = ProductionSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.RECONSTRUCTION:
+            model.specifications = ReconstructionSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.SEGMENTATION_2D:
+            model.specifications = Segmentation2DSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.SEGMENTATION_3D:
+            model.specifications = Segmentation3DSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.SEGMENTATION_ORTHOPHOTO:
+            model.specifications = SegmentationOrthophotoSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.TILING:
+            model.specifications = TilingSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.TOUCH_UP_EXPORT:
+            model.specifications = TouchUpExportSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.TOUCH_UP_IMPORT:
+            model.specifications = TouchUpImportSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.WATER_CONSTRAINTS:
+            model.specifications = WaterConstraintsSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.TRAINING_O2D:
+            model.specifications = TrainingO2DSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.TRAINING_S3D:
+            model.specifications = TrainingS3DSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.POINT_CLOUD_CONVERSION:
+            model.specifications = PointCloudConversionSpecifications(**model.specifications.model_dump(by_alias=True))
+        else:
+            raise ValueError(f"Unsupported job type: {model.type}")
+        return model
 
     def get_appropriate_service(self) -> Service:
         """
