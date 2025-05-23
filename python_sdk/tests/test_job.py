@@ -2,7 +2,7 @@ import datetime
 from reality_capture.service.job import Service, JobCreate, Job, JobType, JobState
 from reality_capture.specifications.tiling import TilingOutputsCreate
 from reality_capture.specifications.extract_ground import ExtractGroundOutputsCreate
-from reality_capture.specifications.point_cloud_conversion import PCConversionOutputsCreate, PCConversionOutputs, PCConversionInputs, PointCloudConversionSpecificationsCreate
+from reality_capture.specifications.point_cloud_conversion import PCConversionOutputsCreate
 
 
 class TestJob:
