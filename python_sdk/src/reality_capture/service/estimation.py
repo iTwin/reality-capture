@@ -16,7 +16,8 @@ from reality_capture.specifications.segmentation2d import Segmentation2DSpecific
 from reality_capture.specifications.segmentation3d import Segmentation3DSpecificationsCreate
 from reality_capture.specifications.segmentation_orthophoto import SegmentationOrthophotoSpecificationsCreate
 from reality_capture.specifications.tiling import TilingSpecificationsCreate, TilingCost
-from reality_capture.specifications.touchup import (TouchUpImportSpecifications, TouchUpExportSpecificationsCreate,
+from reality_capture.specifications.touchup import (TouchUpImportSpecificationsCreate,
+                                                    TouchUpExportSpecificationsCreate,
                                                     TouchUpExportCost, TouchUpImportCost)
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecificationsCreate, WaterConstraintsCost
 
@@ -30,7 +31,7 @@ class CostEstimationCreate(BaseModel):
                           ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
                           Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                           TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
-                          TouchUpImportSpecifications, WaterConstraintsSpecificationsCreate] = (
+                          TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     cost_parameters: Union[CalibrationCost, ConstraintsCost, FillImagePropertiesCost,
                            ImportPCCost, ProductionCost, ReconstructionCost, TilingCost,

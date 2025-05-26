@@ -23,8 +23,8 @@ from reality_capture.specifications.segmentation3d import (Segmentation3DSpecifi
 from reality_capture.specifications.segmentation_orthophoto import (SegmentationOrthophotoSpecifications,
                                                                     SegmentationOrthophotoSpecificationsCreate)
 from reality_capture.specifications.tiling import TilingSpecifications, TilingSpecificationsCreate
-from reality_capture.specifications.touchup import (TouchUpImportSpecifications, TouchUpExportSpecifications,
-                                                    TouchUpExportSpecificationsCreate)
+from reality_capture.specifications.touchup import (TouchUpImportSpecifications, TouchUpImportSpecificationsCreate,
+                                                    TouchUpExportSpecifications, TouchUpExportSpecificationsCreate)
 from reality_capture.specifications.water_constraints import (WaterConstraintsSpecifications,
                                                               WaterConstraintsSpecificationsCreate)
 from reality_capture.specifications.training import (TrainingO2DSpecifications, TrainingO2DSpecificationsCreate,
@@ -91,7 +91,7 @@ class JobCreate(BaseModel):
                           ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
                           Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                           TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
-                          TouchUpImportSpecifications, WaterConstraintsSpecificationsCreate, 
+                          TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
                           TrainingO2DSpecificationsCreate, PointCloudConversionSpecificationsCreate, 
                           TrainingS3DSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
