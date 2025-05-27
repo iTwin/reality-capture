@@ -28,7 +28,7 @@ from reality_capture.specifications.touchup import (TouchUpImportSpecifications,
 from reality_capture.specifications.water_constraints import (WaterConstraintsSpecifications,
                                                               WaterConstraintsSpecificationsCreate)
 from reality_capture.specifications.training import (TrainingO2DSpecifications, TrainingO2DSpecificationsCreate,
-    TrainingS3DSpecificationsCreate, TrainingS3DSpecifications)
+                                                     TrainingS3DSpecificationsCreate, TrainingS3DSpecifications)
 from reality_capture.specifications.point_cloud_conversion import (PointCloudConversionSpecificationsCreate,
                                                                    PointCloudConversionSpecifications)
 
