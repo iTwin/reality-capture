@@ -31,6 +31,7 @@ class RotationPolicy(Enum):
     COMPUTE = "Compute"
     ADJUST = "Adjust"
     KEEP = "Keep"
+    EXTEND = "Extend"
 
 
 class CenterPolicy(Enum):
@@ -38,6 +39,7 @@ class CenterPolicy(Enum):
     ADJUST = "Adjust"
     ADJUST_WITHIN_TOLERANCE = "AdjustWithinTolerance"
     KEEP = "Keep"
+    EXTEND = "Extend"
 
 
 class FocalPolicy(Enum):
