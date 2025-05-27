@@ -54,9 +54,33 @@ class TouchUpImportInputs(BaseModel):
     touch_up_data: str = Field(alias="touchUpData", description="Reality Data id for touch up data")
 
 
+class TouchUpImportOutputsCreate(Enum):
+    IMPORT_INFO = "importInfo"
+
+
+class TouchUpImportOutputs(BaseModel):
+    import_info: Optional[str] = Field(None, alias="importInfo", description="Folder in bucket containing the "
+                                                                             "information about what was imported")
+
+
+class TouchUpImportSpecificationsCreate(BaseModel):
+    inputs: TouchUpImportInputs = Field(description="Inputs")
+    outputs: list[TouchUpImportOutputsCreate] = Field(description="Outputs")
+
+
 class TouchUpImportSpecifications(BaseModel):
     inputs: TouchUpImportInputs = Field(description="Inputs")
+    outputs: TouchUpImportOutputs = Field(description="Outputs")
 
 
 class TouchUpImportCost(BaseModel):
     tile_count: int = Field(description="Number of tiles to import", alias="tileCount", ge=0)
+
+
+class ImportTileInfo(BaseModel):
+    tile_name: str = Field(alias="tileName", description="Name of an imported tile")
+    level: TouchLevel = Field(description="Touch up level of imported tile")
+
+
+class ImportInfo(BaseModel):
+    import_info: list[ImportTileInfo] = Field(alias="importInfo", description="List of tiles imported")

@@ -14,6 +14,11 @@ Tiles
 You can specify which tiles to touch up in this job.
 To know the tile names and their extent, you can read the ``layout.json``, as explained in the :doc:`/specifications/tiling` section.
 
+Import details
+==============
+If you asked for the ImportInfo output, a file will be created inside the bucket with the name ``touchupImport.json``.
+The schema is documented in :class:`reality_capture.specifications.touchup.ImportInfo`.
+
 Examples
 ========
 
@@ -60,7 +65,22 @@ Classes
     :members:
     :undoc-members:
 
+.. autopydantic_model:: TouchUpImportSpecificationsCreate
+
+.. autoclass:: TouchUpImportOutputsCreate
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
 .. autopydantic_model:: TouchUpImportSpecifications
 
 .. autopydantic_model:: TouchUpImportInputs
+    :model-show-json: False
+
+.. autopydantic_model:: TouchUpImportOutputs
+    :model-show-json: False
+
+.. autopydantic_model:: ImportInfo
+
+.. autopydantic_model:: ImportTileInfo
     :model-show-json: False
