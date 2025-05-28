@@ -5,7 +5,7 @@
 import time
 
 import reality_apis.RC.reality_conversion_service as RC
-from reality_apis.RC.rcs_utils import RCJobSettings
+from reality_apis.RC.rcs_utils import ConversionSettings
 from token_factory.token_factory import ClientInfo, SpaDesktopMobileTokenFactory
 from reality_apis.utils import JobState
 
@@ -34,9 +34,9 @@ def main():
     print("Service initialized")
 
     # creating job settings
-    settings = RCJobSettings()
-    settings.inputs.LAZ.append(file_to_convert)
-    settings.outputs.OPC = True
+    settings = ConversionSettings()
+    settings.inputs.laz.append(file_to_convert)
+    settings.outputs.opc = True
     print("Settings created")
 
     # creating and submitting job
