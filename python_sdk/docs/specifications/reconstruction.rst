@@ -13,7 +13,7 @@ If the Reference Model is specified as an input, it can not be specified as an o
 
 Examples
 ========
-In this example, we will we will create a specification for submitting a job reconstructing a reference model and a 3D tiles export.
+In this example, we will we will create a specification for submitting a job reconstructing a modeling reference and a 3D tiles export.
 
 .. literalinclude:: examples/reconstruction_specs.py
   :language: Python

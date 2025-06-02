@@ -18,12 +18,12 @@ The schema for that file is documented in :class:`reality_capture.specifications
 Examples
 ========
 
-In this example, we will create a specification for submitting a constraints job that adds a constraint to a reference model.
+In this example, we will create a specification for submitting a constraints job that adds a constraint to a modeling reference.
 
 .. literalinclude:: examples/constraints_specs_add.py
   :language: Python
 
-In this example, we will create a specification for submitting a constraints job that deletes a constraint from a reference model.
+In this example, we will create a specification for submitting a constraints job that deletes a constraint from a modeling reference.
 
 .. literalinclude:: examples/constraints_specs_delete.py
   :language: Python

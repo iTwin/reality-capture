@@ -9,7 +9,7 @@ class TestJob:
     def test_appropriate_service_job(self):
         cdt = datetime.datetime(1974, 9, 1, 0, 0, 0)
         cdt = {"createdDateTime": cdt, "startedDateTime": None, "endedDateTime": None, "estimatedUnits": None}
-        tiling_specs = {"inputs": {"scene": "scene"}, "outputs": {"referenceModel": {"location": "location"}}}
+        tiling_specs = {"inputs": {"scene": "scene"}, "outputs": {"modelingReference": {"location": "location"}}}
         j = Job(id="id", type=JobType.TILING, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
                 userId="claude@example.org", specifications=tiling_specs, bucketId="bucket")
         assert j.get_appropriate_service() == Service.MODELING
@@ -23,7 +23,7 @@ class TestJob:
         assert j.get_appropriate_service() == Service.CONVERSION
 
     def test_appropriate_service_job_create(self):
-        tiling_specs = {"inputs": {"scene": "scene"}, "outputs": [TilingOutputsCreate.REFERENCE_MODEL]}
+        tiling_specs = {"inputs": {"scene": "scene"}, "outputs": [TilingOutputsCreate.MODELING_REFERENCE]}
         j = JobCreate(**{"type": JobType.TILING, "iTwinId": "itwin", "specifications": tiling_specs})
         assert j.get_appropriate_service() == Service.MODELING
         eg_specs = {"inputs": {"pointClouds": "pointClouds"}, "outputs": [ExtractGroundOutputsCreate.SEGMENTATION3D,

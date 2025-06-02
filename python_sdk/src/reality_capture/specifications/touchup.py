@@ -4,7 +4,7 @@ from enum import Enum
 
 
 class TouchUpExportInputs(BaseModel):
-    reference_model: str = Field(alias="referenceModel", description="Reality data id of Reference Model")
+    modeling_reference: str = Field(alias="modelingReference", description="Reality data id of Modeling Reference")
     tiles_to_touch_up: Optional[list[str]] = Field(None, alias="tilesToTouchUp",
                                                    description="List of tiles to export for touch up")
 
@@ -50,7 +50,7 @@ class TouchUpExportCost(BaseModel):
 
 
 class TouchUpImportInputs(BaseModel):
-    reference_model: str = Field(alias="referenceModel", description="Reality data id of Reference Model")
+    modeling_reference: str = Field(alias="modelingReference", description="Reality data id of Modeling Reference")
     touch_up_data: str = Field(alias="touchUpData", description="Reality Data id for touch up data")
 
 
