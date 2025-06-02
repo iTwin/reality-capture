@@ -18,11 +18,11 @@ class TestDocExamples:
 
     @pytest.mark.parametrize("example", specs_examples, ids=lambda e: e.name)
     def test_example_runs(self, example):
-        subprocess.run(["python", str(example)], check=True, env=self.env)
+        subprocess.run(["python", str(example)], check=True, env=self.env, capture_output=True)
 
     @pytest.mark.parametrize("example", service_examples, ids=lambda e: e.name)
     def test_example_runs_alternate(self, example):
         # Another test variant using the same env
-        subprocess.run(["python", str(example)], check=True, env=self.env)
+        subprocess.run(["python", str(example)], check=True, env=self.env, capture_output=True)
 
 
