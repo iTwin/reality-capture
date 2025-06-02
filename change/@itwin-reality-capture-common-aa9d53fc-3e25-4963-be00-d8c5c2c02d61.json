@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Update SDK",
-  "packageName": "@itwin/reality-capture-common",
-  "email": "110406974+dbiguenet@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
