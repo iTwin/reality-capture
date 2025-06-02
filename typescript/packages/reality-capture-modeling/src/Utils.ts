@@ -111,8 +111,8 @@ class CCOutputs {
     opc: string;
     /** Created omr id. */
     omr: string;
-    /** Gaussian splat id */
-    gaussianSplat: string
+    /** Gaussian splats id */
+    gaussianSplats: string
 
     constructor() {
         /**
@@ -201,10 +201,10 @@ class CCOutputs {
          */
         this.omr = "";
         /** 
-         * Gaussian splat id
+         * Gaussian splats id
          * @type {string}
          */
-        this.gaussianSplat = "";
+        this.gaussianSplats = "";
     }
 }
 
@@ -318,7 +318,7 @@ export class CCJobSettings {
         if (this.outputs.contextScene)
             json["settings"]["outputs"].push("ContextScene");
 
-        if (this.outputs.gaussianSplat)
+        if (this.outputs.gaussianSplats)
             json["settings"]["outputs"].push("GaussianSplats");
 
         if (this.cacheSettings) {
@@ -387,7 +387,7 @@ export class CCJobSettings {
             else if (output["format"] === "WebReady ScalableMesh")
                 newJobSettings.outputs.webReadyScalableMesh = output["id"];
             else if (output["format"] === "GaussianSplats")
-                newJobSettings.outputs.gaussianSplat = output["id"];
+                newJobSettings.outputs.gaussianSplats = output["id"];
             else
                 return Promise.reject(new Error("Found unexpected output name : " + output["format"]));
         }
