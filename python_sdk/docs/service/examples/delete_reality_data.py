@@ -2,7 +2,7 @@ import reality_capture.service.service as service
 
 
 # You must define your own token factory : a class with a get_token method that returns an access token.
-token_factory = None
+token_factory = type('TokenProvider', (), {'get_token': lambda self: ""})()
 reality_capture_service = service.RealityCaptureService(token_factory)
 
 deleted_reality_data = reality_capture_service.delete_reality_data(
