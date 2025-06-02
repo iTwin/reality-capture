@@ -112,7 +112,7 @@ class CCOutputs {
     /** Created omr id. */
     omr: string;
     /** Gaussian splats id */
-    gaussianSplats: string
+    gaussianSplats: string;
 
     constructor() {
         /**
