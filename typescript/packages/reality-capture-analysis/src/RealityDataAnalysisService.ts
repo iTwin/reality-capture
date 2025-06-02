@@ -90,7 +90,7 @@ export class RealityDataAnalysisService {
      * @returns {Set<string>} Set of required minimal scopes.
      */
     public static getScopes(): Set<string> {
-        return new Set(["realitydataanalysis:modify", "realitydataanalysis:read"]);
+        return new Set(["itwin-platform"]);
     }
 
     /**

@@ -693,9 +693,10 @@ export class RealityDataTransferNode {
 
             for(let i = 0; i < this.dataTransferInfo.files.length; i++) {
                 const filePath = path.join(downloadPath, this.dataTransferInfo.files[i]);
-                // create sub dorectory if it doesn't exist already
-                await fs.promises.access(path.dirname(filePath), fs.constants.W_OK);
-                await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+                // create parent folder if it doesn't exist already
+                if (!fs.existsSync(path.dirname(filePath))) {
+                    await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+                }
                 // delete file if it already exists
                 if (fs.existsSync(filePath)) { 
                     await fs.promises.unlink(filePath);
@@ -739,7 +740,7 @@ export class RealityDataTransferNode {
             if(error.name === "AbortError")
                 return;
             
-            return Promise.reject(new Error("Can't upload reality data : " + realityDataId + ", error : " + error));
+            return Promise.reject(new Error("Can't download reality data : " + realityDataId + ", error : " + error));
         }
     }
 

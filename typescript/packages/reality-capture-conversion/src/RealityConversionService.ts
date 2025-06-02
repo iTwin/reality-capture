@@ -89,7 +89,7 @@ export class RealityConversionService {
      * @returns {Set<string>} Set of required minimal scopes.
      */
     public static getScopes(): Set<string> {
-        return new Set(["realityconversion:modify", "realityconversion:read"]);
+        return new Set(["itwin-platform"]);
     }
 
     /**
