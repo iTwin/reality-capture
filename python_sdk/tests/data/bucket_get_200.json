@@ -1,9 +1,7 @@
 {
     "bucket":
     {
-        "id": "uuidB",
-        "iTwinId": "uuidIT",
-        "isDefault": true
+        "iTwinId": "uuidIT"
     },
     "_links":
     {

@@ -11,5 +11,6 @@ Classes
 .. currentmodule:: reality_capture.service.bucket
 
 .. autopydantic_model:: Bucket
+    :model-show-json: False
 
 .. autopydantic_model:: BucketResponse
