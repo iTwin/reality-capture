@@ -2,6 +2,7 @@ import subprocess
 import pathlib
 import pytest
 import os
+import pkgutil
 
 PROJECT_ROOT = pathlib.Path(__file__).parent.parent.resolve()
 SPECS_DIR = PROJECT_ROOT / "docs" / "specifications" / "examples"
@@ -15,6 +16,8 @@ class TestDocExamples:
     def setup_method(self):
         self.env = os.environ.copy()
         self.env["PYTHONPATH"] = str(SRC_DIR) + os.pathsep + self.env.get("PYTHONPATH", "")
+        for module in pkgutil.iter_modules():
+            print(module.name)
 
     @pytest.mark.parametrize("example", specs_examples, ids=lambda e: e.name)
     def test_example_runs(self, example):
