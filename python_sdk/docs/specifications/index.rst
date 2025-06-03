@@ -38,8 +38,8 @@ Modeling
 * :doc:`/specifications/fill_image_properties` will turn a list of images into a ContextScene with the appropriate metadata.
 * :doc:`/specifications/import_pc` will turn a regular point cloud (E57/LAS/…) into a POD with metadata information that can be used in further jobs.
 * :doc:`/specifications/calibration` will take a scene made of images and/or point clouds and calibrate them together. Its inputs are usually the outputs of **Fill Image Properties** and **Import Point Cloud**.
-* :doc:`/specifications/tiling` will take a scene with tie points and create a tiling and a reference model. Its inputs are usually the outputs of **Calibration**.
-* :doc:`/specifications/production` will take a scene with tie points and a reference model and create a 3D export (e.g. 3D Tiles). Its inputs are usually the outputs of **Tiling**.
+* :doc:`/specifications/tiling` will take a scene with tie points and create a tiling and a modeling reference. Its inputs are usually the outputs of **Calibration**.
+* :doc:`/specifications/production` will take a scene with tie points and a modeling reference and create a 3D export (e.g. 3D Tiles). Its inputs are usually the outputs of **Tiling**.
 * :doc:`/specifications/reconstruction` is a job that combines **Tiling** and **Production** into a single job.
 * :doc:`/specifications/constraints` will import or delete surface constraints from a Reference Model.
 * :doc:`/specifications/touchup` has two jobs that will allow you to export tiles in a editable format for touch up workflows and reimport your modifications.

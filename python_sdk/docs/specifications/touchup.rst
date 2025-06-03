@@ -22,7 +22,7 @@ The schema is documented in :class:`reality_capture.specifications.touchup.Impor
 Examples
 ========
 
-In this example, we will create a specification for submitting an export touch up job for one tile of a reference model.
+In this example, we will create a specification for submitting an export touch up job for one tile of a modeling reference.
 
 .. literalinclude:: examples/touchup_export.py
   :language: Python

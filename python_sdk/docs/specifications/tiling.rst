@@ -2,7 +2,7 @@
 Tiling
 ======
 
-The *Tiling* job allows you to initialize a reference model with a specific layout and settings.
+The *Tiling* job allows you to initialize a modeling reference with a specific layout and settings.
 This is the ground work before submitting productions.
 
 .. contents:: Quick access
@@ -28,10 +28,10 @@ As an input for a Tiling job, you can specify a Region of Interest.
 It will define the region for the tiling, and will be the default extent for subsequent exports.
 It is a ``JSON`` file documented in :class:`reality_capture.specifications.geometry.RegionOfInterest`.
 
-Reference Model
-===============
+Modeling Reference
+==================
 
-The Tiling job creates and initializes a Reference Model. Among other files, the Reference Model contains a ``layout.json`` file that describes the tiling layout.
+The Tiling job creates and initializes a Modeling Reference. Among other files, the Modeling Reference contains a ``layout.json`` file that describes the tiling layout.
 This information can be useful in subsequent jobs such as Touchup jobs.
 The schema for that file is documented in :class:`reality_capture.specifications.tiling.Layout`.
 
@@ -55,13 +55,13 @@ Classes
 .. autopydantic_model:: TilingOutputs
     :model-show-json: False
 
-.. autopydantic_model:: ReferenceModel
+.. autopydantic_model:: ModelingReference
     :model-show-json: False
 
 .. autopydantic_model:: TilingOptions
     :model-show-json: False
 
-.. autoclass:: ReferenceModelType
+.. autoclass:: ModelingReferenceType
     :show-inheritance:
     :members:
     :undoc-members:

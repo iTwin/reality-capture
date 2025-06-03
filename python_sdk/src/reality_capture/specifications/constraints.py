@@ -33,7 +33,7 @@ class ConstraintsInfo(BaseModel):
 
 
 class ConstraintsInputs(BaseModel):
-    reference_model: str = Field(alias="referenceModel", description="Reference model to update.")
+    modeling_reference: str = Field(alias="modelingReference", description="Modeling reference to update.")
     constraints_to_delete: Optional[list[UUID4]] = Field(None, alias="constraintsToDelete",
                                                          description="IDs of constraints to delete")
     constraints_to_add: Optional[list[ConstraintToAdd]] = Field(None, alias="constraintsToAdd",

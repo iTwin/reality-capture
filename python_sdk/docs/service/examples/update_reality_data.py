@@ -3,7 +3,7 @@ import reality_capture.service.reality_data as reality_data
 
 
 # You must define your own token factory : a class with a get_token method that returns an access token.
-token_factory = None
+token_factory = type('TokenProvider', (), {'get_token': lambda self: ""})()
 reality_capture_service = service.RealityCaptureService(token_factory)
 
 reality_data_update = reality_data.RealityDataUpdate(displayName="New name")

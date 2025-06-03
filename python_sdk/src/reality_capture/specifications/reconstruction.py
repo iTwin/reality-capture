@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional
-from reality_capture.specifications.tiling import ReferenceModel, TilingOptions
+from reality_capture.specifications.tiling import ModelingReference, TilingOptions
 from reality_capture.specifications.production import Export, ExportCreate
 
 
@@ -13,18 +13,19 @@ class ReconstructionInputs(BaseModel):
     extent: Optional[str] = Field(None, description="Path in the bucket to region of interest file, "
                                                     "used for export extent",
                                   pattern=r"^bkt:.+")
-    reference_model: Optional[str] = Field(None, description="Reality data id of reference model to process",
-                                           alias="referenceModel")
+    modeling_reference: Optional[str] = Field(None, description="Reality data id of modeling reference to process",
+                                              alias="modelingReference")
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
 
 
 class ReconstructionOutputs(BaseModel):
-    reference_model: Optional[ReferenceModel] = Field(None, description="Reference Model", alias="referenceModel")
+    modeling_reference: Optional[ModelingReference] = Field(None, description="Modeling reference",
+                                                            alias="modelingReference")
     exports: Optional[list[Export]] = Field(None, description="List of exports")
 
 
 class ReconstructionOutputsCreate(BaseModel):
-    reference_model: Optional[bool] = Field(None, description="Reference Model", alias="referenceModel")
+    modeling_reference: Optional[bool] = Field(None, description="Modeling reference", alias="modelingReference")
     exports: Optional[list[ExportCreate]] = Field(None, description="Exports")
 
 

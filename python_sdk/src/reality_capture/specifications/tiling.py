@@ -13,7 +13,7 @@ class TilingInputs(BaseModel):
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
 
 
-class ReferenceModelType(Enum):
+class ModelingReferenceType(Enum):
     ORTHOPHOTO = "Orthophoto"
     COMPLETE = "Complete"
 
@@ -82,8 +82,9 @@ class TextureSource(Enum):
 
 
 class TilingOptions(BaseModel):
-    ref_model_type: Optional[ReferenceModelType] = Field(description="Reference Model Type", alias="referenceModelType",
-                                                         default=None)
+    modeling_ref_type: Optional[ModelingReferenceType] = Field(description="Modeling Reference Type",
+                                                               alias="modelingReferenceType",
+                                                               default=None)
     tiling_mode: Optional[TilingMode] = Field(description="Tiling Mode", alias="tilingMode", default=None)
     tiling_value: Optional[float] = Field(description="Tiling Value", alias="tilingValue", ge=0, default=None)
     tiling_origin: Optional[Point3d] = Field(description="Tiling origin", alias="tilingOrigin", default=None)
@@ -117,16 +118,16 @@ class TilingOptions(BaseModel):
                                                       alias="textureResolutionLimit", default=None)
 
 
-class ReferenceModel(BaseModel):
-    location: str = Field(description="Reality data id of reference model")
+class ModelingReference(BaseModel):
+    location: str = Field(description="Reality data id of modeling reference")
 
 
 class TilingOutputs(BaseModel):
-    reference_model: ReferenceModel = Field(description="Reference model", alias="referenceModel")
+    modeling_reference: ModelingReference = Field(description="Modeling reference", alias="modelingReference")
 
 
 class TilingOutputsCreate(Enum):
-    REFERENCE_MODEL = "referenceModel"
+    MODELING_REFERENCE = "modelingReference"
 
 
 class TilingSpecifications(BaseModel):
