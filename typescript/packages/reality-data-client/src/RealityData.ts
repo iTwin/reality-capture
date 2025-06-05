@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 /*---------------------------------------------------------------------------------------------
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
@@ -111,8 +110,7 @@ export class ITwinRealityData implements RealityData {
    * Creates an instance of RealityData.
    * @beta
    */
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-  public constructor(client: RealityDataAccessClient, realityData?: any | undefined, iTwinId?: any | undefined) {
+  public constructor(client: RealityDataAccessClient, realityData?: any, iTwinId?: GuidString) {
 
     this.client = client;
     this._containerCache = new ContainerCache();
@@ -159,12 +157,15 @@ export class ITwinRealityData implements RealityData {
   public async getBlobUrl(accessToken: AccessToken, blobPath: string, writeAccess = false): Promise<URL> {
     const accessTokenResolved = await this.resolveAccessToken(accessToken);
     const url = await this.getContainerUrl(accessTokenResolved, writeAccess);
-    if (blobPath === undefined)
-      return url;
+    if(url){
+      if (blobPath === undefined)
+        return url;
 
-    const host = `${url.origin + url.pathname}/`;
-    const query = url.search;
-    return new URL(`${host}${blobPath}${query}`);
+      const host = `${url.origin + url.pathname}/`;
+      const query = url.search;
+      return new URL(`${host}${blobPath}${query}`);
+    }
+    return new URL("");
   }
   /**
    * Try to use authorizationClient in RealityDataClientOptions to get the access token
@@ -182,7 +183,7 @@ export class ITwinRealityData implements RealityData {
      * @returns app URL object for blob url
      * @beta
      */
-  private async getContainerUrl(accessToken: AccessToken, writeAccess = false): Promise<URL> {
+  private async getContainerUrl(accessToken: AccessToken, writeAccess = false): Promise<URL | undefined> {
 
     if (!this.client)
       throw new BentleyError(422, "Invalid container request (RealityDataAccessClient is not set).");
@@ -218,8 +219,7 @@ export class ITwinRealityData implements RealityData {
 
         this._containerCache.setCache(newContainerCacheValue, access);
       }
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return this._containerCache.getCache(access)!.url;
+        return this._containerCache.getCache(access)?.url;
     } catch {
       throw new BentleyError(422, "Invalid container request.");
     }
