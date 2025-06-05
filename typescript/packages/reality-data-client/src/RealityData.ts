@@ -114,7 +114,7 @@ export class ITwinRealityData implements RealityData {
   // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   public constructor(client: RealityDataAccessClient, realityData?: any | undefined, iTwinId?: any | undefined) {
 
-    this.client = client!;
+    this.client = client;
     this._containerCache = new ContainerCache();
 
     if (realityData) {
@@ -137,7 +137,7 @@ export class ITwinRealityData implements RealityData {
       this.classification = realityData.classification;
       this.type = realityData.type;
       this.extent = realityData.extent;
-      // eslint-disable-next-line deprecation/deprecation
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
       this.accessControl = realityData.accessControl;
       this.modifiedDateTime = new Date(realityData.modifiedDateTime);
       this.lastAccessedDateTime = new Date(realityData.lastAccessedDateTime);
@@ -218,8 +218,12 @@ export class ITwinRealityData implements RealityData {
 
         this._containerCache.setCache(newContainerCacheValue, access);
       }
-      return this._containerCache.getCache(access)!.url;
-    } catch (errorResponse: any) {
+      const cachedUrl = this._containerCache.getCache(access)?.url;
+      if (!cachedUrl) {
+        throw new BentleyError(422, "Invalid container request (URL not found in cache).");
+      }
+      return cachedUrl;
+    } catch {
       throw new BentleyError(422, "Invalid container request.");
     }
   }

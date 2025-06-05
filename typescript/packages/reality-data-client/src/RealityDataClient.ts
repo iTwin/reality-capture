@@ -583,6 +583,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
     let message = "Unknown error. Please ensure that the request is valid.";
 
     if (axios.isAxiosError(error)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const axiosResponse = error.response!;
       status = axiosResponse.status;
       message = axiosResponse.data?.error?.message;

@@ -1,4 +1,4 @@
-/* eslint-disable indent */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /*---------------------------------------------------------------------------------------------
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
@@ -227,8 +227,8 @@ describe("RealityServicesClient Normal (#integration)", () => {
 
     chai.assert(realityData);
     // get all projects information
-
-    // eslint-disable-next-line deprecation/deprecation
+  
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     const projects = await realityDataAccessClient.getRealityDataProjects(accessToken, realityData.id);
     chai.assert(projects);
     chai.assert(projects.length === 2);
