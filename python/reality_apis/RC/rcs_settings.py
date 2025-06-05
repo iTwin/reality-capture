@@ -127,8 +127,8 @@ class ConversionSettings:
             options_json = settings_json.get("options", {})
             new_job_settings.options.engines = int(options_json.get("processingEngines", 0))
             new_job_settings.options.merge = bool(options_json.get("merge", True))
-            new_job_settings.options.input_srs = int(options_json.get("inputSRS", ""))
-            new_job_settings.options.output_srs = int(options_json.get("outputSRS", ""))
+            new_job_settings.options.input_srs = options_json.get("inputSRS", "")
+            new_job_settings.options.output_srs = options_json.get("outputSRS", "")
 
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
