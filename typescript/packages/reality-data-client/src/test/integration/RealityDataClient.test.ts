@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
+/* eslint-disable indent */
 /*---------------------------------------------------------------------------------------------
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
@@ -412,7 +413,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
       chai.assert(value.type);
       chai.assert(value.id);
       chai.assert(value.createdDateTime!.getTime() <= lastCreatedTime);
-      lastCreatedTime = value.createdDateTime!.getTime()!;
+      lastCreatedTime = value.createdDateTime!.getTime();
     });
   });
 

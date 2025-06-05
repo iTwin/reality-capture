@@ -218,11 +218,8 @@ export class ITwinRealityData implements RealityData {
 
         this._containerCache.setCache(newContainerCacheValue, access);
       }
-      const cachedUrl = this._containerCache.getCache(access)?.url;
-      if (!cachedUrl) {
-        throw new BentleyError(422, "Invalid container request (URL not found in cache).");
-      }
-      return cachedUrl;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return this._containerCache.getCache(access)!.url;
     } catch {
       throw new BentleyError(422, "Invalid container request.");
     }
