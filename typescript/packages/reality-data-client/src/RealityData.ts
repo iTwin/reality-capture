@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 /*---------------------------------------------------------------------------------------------
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
@@ -92,8 +91,6 @@ export class ITwinRealityData implements RealityData {
   public classification?: string;
   public type?: string;
   public extent?: Extent;
-  /** @deprecated in 1.0.1 not used in Reality Management API. Will be removed in next major update.*/
-  public accessControl?: string; // TODO remove in next major update
   public modifiedDateTime?: Date;
   public lastAccessedDateTime?: Date;
   public createdDateTime?: Date;
@@ -111,10 +108,9 @@ export class ITwinRealityData implements RealityData {
    * Creates an instance of RealityData.
    * @beta
    */
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-  public constructor(client: RealityDataAccessClient, realityData?: any | undefined, iTwinId?: any | undefined) {
+  public constructor(client: RealityDataAccessClient, realityData?: any, iTwinId?: GuidString) {
 
-    this.client = client!;
+    this.client = client;
     this._containerCache = new ContainerCache();
 
     if (realityData) {
@@ -137,8 +133,6 @@ export class ITwinRealityData implements RealityData {
       this.classification = realityData.classification;
       this.type = realityData.type;
       this.extent = realityData.extent;
-      // eslint-disable-next-line deprecation/deprecation
-      this.accessControl = realityData.accessControl;
       this.modifiedDateTime = new Date(realityData.modifiedDateTime);
       this.lastAccessedDateTime = new Date(realityData.lastAccessedDateTime);
       this.createdDateTime = new Date(realityData.createdDateTime);
@@ -159,6 +153,7 @@ export class ITwinRealityData implements RealityData {
   public async getBlobUrl(accessToken: AccessToken, blobPath: string, writeAccess = false): Promise<URL> {
     const accessTokenResolved = await this.resolveAccessToken(accessToken);
     const url = await this.getContainerUrl(accessTokenResolved, writeAccess);
+    if(!url) throw new Error("Failed to retrieve Url");
     if (blobPath === undefined)
       return url;
 
@@ -182,7 +177,7 @@ export class ITwinRealityData implements RealityData {
      * @returns app URL object for blob url
      * @beta
      */
-  private async getContainerUrl(accessToken: AccessToken, writeAccess = false): Promise<URL> {
+  private async getContainerUrl(accessToken: AccessToken, writeAccess = false): Promise<URL | undefined> {
 
     if (!this.client)
       throw new BentleyError(422, "Invalid container request (RealityDataAccessClient is not set).");
@@ -218,8 +213,8 @@ export class ITwinRealityData implements RealityData {
 
         this._containerCache.setCache(newContainerCacheValue, access);
       }
-      return this._containerCache.getCache(access)!.url;
-    } catch (errorResponse: any) {
+        return this._containerCache.getCache(access)?.url;
+    } catch {
       throw new BentleyError(422, "Invalid container request.");
     }
   }
