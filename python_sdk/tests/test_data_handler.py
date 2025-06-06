@@ -276,6 +276,52 @@ class TestRealityDataHandler:
             assert r.get_response_status_code() == 200
             assert os.path.exists(os.path.join(tmp_dir, "a.txt"))
 
+    @responses.activate
+    def test_delete_data_link_error(self):
+        rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-management/reality-data/{rd_id}/writeaccess',
+                      json={"error": {"code": "HeaderNotFound",
+                                      "message": "Header Authorization was not found in the request. Access denied."}},
+                      status=401)
+
+        r = self.rdh.delete_data(rd_id, ["a.txt"])
+        assert r.is_error()
+        assert r.get_response_status_code() == 401
+        assert r.error.error.code == "HeaderNotFound"
+
+    @responses.activate
+    def test_delete_bucket_fail(self, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        mock_client_instance.delete_blob.side_effect = mock_blob_except
+
+        rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        with open(f"{self.data_folder}/reality_data_read_access_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-management/reality-data/{rd_id}/writeaccess',
+                      json=payload, status=200)
+
+        r = self.rdh.delete_data(rd_id, ["a.txt"])
+        assert r.is_error()
+        assert r.get_response_status_code() == 400
+
+    @responses.activate
+    def test_delete_bucket_ok(self, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        mock_client_instance.delete_blob = mock_blob
+
+        rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        with open(f"{self.data_folder}/reality_data_read_access_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-management/reality-data/{rd_id}/writeaccess',
+                      json=payload, status=200)
+
+        r = self.rdh.delete_data(rd_id, ["a.txt"])
+        assert not r.is_error()
+        assert r.get_response_status_code() == 204
+
 
 class TestBucketDataHandler:
     def setup_method(self, _):
@@ -460,3 +506,49 @@ class TestBucketDataHandler:
             assert not r.is_error()
             assert r.get_response_status_code() == 200
             assert os.path.exists(os.path.join(tmp_dir, "a.txt"))
+
+    @responses.activate
+    def test_delete_bucket_link_error(self):
+        itwin_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-modeling/itwins/{itwin_id}/bucket',
+                      json={"error": {"code": "HeaderNotFound",
+                                      "message": "Header Authorization was not found in the request. Access denied."}},
+                      status=401)
+
+        r = self.bdh.delete_data(itwin_id, ["a.txt"])
+        assert r.is_error()
+        assert r.get_response_status_code() == 401
+        assert r.error.error.code == "HeaderNotFound"
+
+    @responses.activate
+    def test_delete_bucket_fail(self, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        mock_client_instance.delete_blob.side_effect = mock_blob_except
+
+        itwin_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        with open(f"{self.data_folder}/bucket_get_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-modeling/itwins/{itwin_id}/bucket',
+                      json=payload, status=200)
+
+        r = self.bdh.delete_data(itwin_id, ["a.txt"])
+        assert r.is_error()
+        assert r.get_response_status_code() == 400
+
+    @responses.activate
+    def test_delete_bucket_ok(self, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        mock_client_instance.delete_blob = mock_blob
+
+        itwin_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        with open(f"{self.data_folder}/bucket_get_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-modeling/itwins/{itwin_id}/bucket',
+                      json=payload, status=200)
+
+        r = self.bdh.delete_data(itwin_id, ["a.txt"])
+        assert not r.is_error()
+        assert r.get_response_status_code() == 204

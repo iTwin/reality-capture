@@ -1,6 +1,6 @@
 import os.path
 from typing import Optional
-from reality_capture.service.error import DetailedErrorResponse
+from reality_capture.service.error import DetailedErrorResponse, DetailedError, Error
 from reality_capture.service.response import Response
 from reality_capture.service.service import RealityCaptureService
 from reality_capture.service.reality_data import RealityDataUpdate, RealityData, ContainerDetails
@@ -139,6 +139,22 @@ class _DataHandler:
         blob_names = [name for name in client.list_blob_names()]
         return Response(200, None, blob_names)
 
+    @staticmethod
+    def delete_data(container_url: str, files_to_delete: list[str]) -> Response[None]:
+        client = ContainerClient.from_container_url(container_url)
+        failed = []
+        for file in files_to_delete:
+            try:
+                client.delete_blob(file)
+            except Exception as _:
+                failed.append(file)
+        if not failed:
+            return Response(204, None, None)
+        detailed_error = DetailedError(code="DeletionFailed", message="Failed to delete one or multiple files",
+                                       details=[Error(code="DeletionFailed", message="Failed to delete a file",
+                                                      target=fail) for fail in failed])
+        return Response(400, DetailedErrorResponse(error=detailed_error), None)
+
 
 class RealityDataHandler:
     """
@@ -219,6 +235,21 @@ class RealityDataHandler:
             return Response(r.status_code, r.error, None)
         return _DataHandler.list_data(r.value.links.container_url.href)
 
+    def delete_data(self, reality_data_id, files_to_delete: list[str],
+                    itwin_id: Optional[str] = None) -> Response[None]:
+        """
+        Delete specified files from a reality data.
+
+        :param reality_data_id: id of the Reality Data.
+        :param files_to_delete: List of files to delete.
+        :param itwin_id: iTwin id for finding the bucket.
+        :return: A Response[None] containing either the files in the bucket or the error from the service.
+        """
+        r = self._get_link(reality_data_id, itwin_id, False)
+        if r.is_error():
+            return Response(r.status_code, r.error, None)
+        return _DataHandler.delete_data(r.value.links.container_url.href, files_to_delete)
+
     def set_progress_hook(self, hook: Optional) -> None:
         """
         Set the progress hook.
@@ -289,6 +320,19 @@ class BucketDataHandler:
         if r.is_error():
             return Response(r.status_code, r.error, None)
         return _DataHandler.list_data(r.value.links.container_url.href)
+
+    def delete_data(self, itwin_id, files_to_delete: list[str]) -> Response[None]:
+        """
+        Delete specified files from a bucket.
+
+        :param itwin_id: iTwin id for finding the bucket.
+        :param files_to_delete: List of files to delete.
+        :return: A Response[None] containing either the files in the bucket or the error from the service.
+        """
+        r = self._get_bucket(itwin_id)
+        if r.is_error():
+            return Response(r.status_code, r.error, None)
+        return _DataHandler.delete_data(r.value.links.container_url.href, files_to_delete)
 
     def set_progress_hook(self, hook: Optional) -> None:
         """
