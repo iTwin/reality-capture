@@ -153,15 +153,13 @@ export class ITwinRealityData implements RealityData {
   public async getBlobUrl(accessToken: AccessToken, blobPath: string, writeAccess = false): Promise<URL> {
     const accessTokenResolved = await this.resolveAccessToken(accessToken);
     const url = await this.getContainerUrl(accessTokenResolved, writeAccess);
-    if(url){
-      if (blobPath === undefined)
-        return url;
+    if(!url) throw new Error("Failed to retrieve Url");
+    if (blobPath === undefined)
+      return url;
 
-      const host = `${url.origin + url.pathname}/`;
-      const query = url.search;
-      return new URL(`${host}${blobPath}${query}`);
-    }
-    return new URL("");
+    const host = `${url.origin + url.pathname}/`;
+    const query = url.search;
+    return new URL(`${host}${blobPath}${query}`);
   }
   /**
    * Try to use authorizationClient in RealityDataClientOptions to get the access token
