@@ -91,8 +91,6 @@ export class ITwinRealityData implements RealityData {
   public classification?: string;
   public type?: string;
   public extent?: Extent;
-  /** @deprecated in 1.0.1 not used in Reality Management API. Will be removed in next major update.*/
-  public accessControl?: string; // TODO remove in next major update
   public modifiedDateTime?: Date;
   public lastAccessedDateTime?: Date;
   public createdDateTime?: Date;
@@ -135,8 +133,6 @@ export class ITwinRealityData implements RealityData {
       this.classification = realityData.classification;
       this.type = realityData.type;
       this.extent = realityData.extent;
-      // eslint-disable-next-line @typescript-eslint/no-deprecated
-      this.accessControl = realityData.accessControl;
       this.modifiedDateTime = new Date(realityData.modifiedDateTime);
       this.lastAccessedDateTime = new Date(realityData.lastAccessedDateTime);
       this.createdDateTime = new Date(realityData.createdDateTime);
