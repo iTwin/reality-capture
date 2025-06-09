@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "reality-data-client updated to use itwinjs_5.x",
+  "packageName": "@itwin/reality-data-client",
+  "email": "bipin.pachhai@bentley.com",
+  "dependentChangeType": "patch"
+}

@@ -580,7 +580,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
 
     if (axios.isAxiosError(error)) {
       const axiosResponse = error.response;
-      assert(axiosResponse !== undefined);
+      assert(!!axiosResponse);
       status = axiosResponse.status;
       message = axiosResponse.data?.error?.message;
     } else {
