@@ -216,7 +216,7 @@ export class ITwinRealityData implements RealityData {
 
         this._containerCache.setCache(newContainerCacheValue, access);
       }
-        return this._containerCache.getCache(access)?.url;
+      return this._containerCache.getCache(access)?.url;
     } catch {
       throw new BentleyError(422, "Invalid container request.");
     }
