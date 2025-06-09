@@ -578,9 +578,8 @@ export class RealityDataAccessClient implements RealityDataAccess {
     let status = 422;
     let message = "Unknown error. Please ensure that the request is valid.";
 
-    if (axios.isAxiosError(error)) {
+    if (axios.isAxiosError(error) && error.response) {
       const axiosResponse = error.response;
-      assert(!!axiosResponse);
       status = axiosResponse.status;
       message = axiosResponse.data?.error?.message;
     } else {

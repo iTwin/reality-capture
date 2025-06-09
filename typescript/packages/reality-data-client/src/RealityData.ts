@@ -156,7 +156,7 @@ export class ITwinRealityData implements RealityData {
   public async getBlobUrl(accessToken: AccessToken, blobPath: string, writeAccess = false): Promise<URL> {
     const accessTokenResolved = await this.resolveAccessToken(accessToken);
     const url = await this.getContainerUrl(accessTokenResolved, writeAccess);
-    assert(!!url);
+    if(!url) throw new BentleyError(422, "Failed to retrieve URL for blob data.");
     if (blobPath === undefined)
       return url;
 
