@@ -156,7 +156,6 @@ export class ITwinRealityData implements RealityData {
   public async getBlobUrl(accessToken: AccessToken, blobPath: string, writeAccess = false): Promise<URL> {
     const accessTokenResolved = await this.resolveAccessToken(accessToken);
     const url = await this.getContainerUrl(accessTokenResolved, writeAccess);
-    if(!url) throw new BentleyError(422, "Failed to retrieve URL for blob data.");
     if (blobPath === undefined)
       return url;
 
@@ -180,7 +179,7 @@ export class ITwinRealityData implements RealityData {
      * @returns app URL object for blob url
      * @beta
      */
-  private async getContainerUrl(accessToken: AccessToken, writeAccess = false): Promise<URL | undefined> {
+  private async getContainerUrl(accessToken: AccessToken, writeAccess = false): Promise<URL> {
 
     if (!this.client)
       throw new BentleyError(422, "Invalid container request (RealityDataAccessClient is not set).");
@@ -216,7 +215,8 @@ export class ITwinRealityData implements RealityData {
 
         this._containerCache.setCache(newContainerCacheValue, access);
       }
-      return this._containerCache.getCache(access)?.url;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return this._containerCache.getCache(access)!.url;
     } catch {
       throw new BentleyError(422, "Invalid container request.");
     }
