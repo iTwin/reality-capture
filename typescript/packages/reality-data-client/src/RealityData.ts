@@ -2,7 +2,6 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-
 import type { RealityData } from "@itwin/core-common";
 import { type AccessToken,  BentleyError, type GuidString } from "@itwin/core-bentley";
 import type { RealityDataAccessClient } from "./RealityDataClient";
@@ -92,7 +91,7 @@ export class ITwinRealityData implements RealityData {
   public type?: string;
   public extent?: Extent;
   /** @deprecated in 1.0.1 not used in Reality Management API. Will be removed in next major update.*/
-  public accessControl?: string; // TODO remove in next major update
+  public accessControl?: string; // TODO: remove in next major update
   public modifiedDateTime?: Date;
   public lastAccessedDateTime?: Date;
   public createdDateTime?: Date;
