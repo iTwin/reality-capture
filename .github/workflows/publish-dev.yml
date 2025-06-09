@@ -1,8 +1,7 @@
 name: Publish dev pre-release NPM packages
 
-on: 
-  workflow_dispatch:
-  
+on: workflow_dispatch
+
 jobs:
   publish:
     runs-on: ${{ matrix.operating-system }}
