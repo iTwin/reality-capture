@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 import type { RealityData } from "@itwin/core-common";
-import {type AccessToken, assert,  BentleyError, type GuidString } from "@itwin/core-bentley";
+import {type AccessToken, BentleyError, type GuidString } from "@itwin/core-bentley";
 import type { RealityDataAccessClient } from "./RealityDataClient";
 
 import { getRequestConfig } from "./RequestOptions";
