@@ -38,6 +38,7 @@ class RealityDataType(Enum):
     OVF = "OVF"
     PointCloud = "PointCloud"
     Unstructured = "Unstructured"
+    PNTS = "PNTS"
 
 
 class JobState(Enum):
