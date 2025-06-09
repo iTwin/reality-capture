@@ -14,7 +14,8 @@
     "change": "beachball change",
     "check": "beachball check",
     "version-bump": "beachball bump",
-    "publish-packages": "beachball publish"
+    "publish-packages": "beachball publish",
+    "publish-packages-dev": "beachball publish --config beachball.config.dev.js --keep-change-files"
   },
   "keywords": [],
   "author": {
