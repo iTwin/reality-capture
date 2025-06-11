@@ -9,11 +9,11 @@
 
 import { type AccessToken, BentleyError} from "@itwin/core-bentley";
 import type { AuthorizationClient, CartographicRange, RealityDataAccess } from "@itwin/core-common";
-import { Angle } from "@itwin/core-geometry";
 import axios, { type AxiosResponse } from "axios";
 import { ITwinRealityData } from "./RealityData";
 import { getRequestConfig } from "./RequestOptions";
 import {Project} from "./Projects";
+import { Angle } from "./helper/Angle";
 
 /** Options for initializing Reality Data Client
  * @beta

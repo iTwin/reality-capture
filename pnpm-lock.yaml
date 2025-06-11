@@ -400,9 +400,6 @@ importers:
 
   typescript/packages/reality-data-client:
     dependencies:
-      '@itwin/core-geometry':
-        specifier: ^5.0.0-dev.116
-        version: 5.0.0-dev.116
       axios:
         specifier: ^1.8.2
         version: 1.9.0
@@ -419,6 +416,9 @@ importers:
       '@itwin/core-common':
         specifier: ^5.0.0-dev.116
         version: 5.0.0-dev.116(@itwin/core-bentley@5.0.0-dev.116)(@itwin/core-geometry@5.0.0-dev.116)
+      '@itwin/core-geometry':
+        specifier: ^5.0.0-dev.116
+        version: 5.0.0-dev.116
       '@itwin/eslint-plugin':
         specifier: ^5.2.1
         version: 5.2.1(eslint@8.57.1)(typescript@5.6.3)
@@ -1588,6 +1588,7 @@ packages:
 
   /@itwin/core-bentley@5.0.0-dev.116:
     resolution: {integrity: sha512-pyLU4c5Vg9vtapYLH4G/xc3GeCX2OiyCMunHGzQRCiYMWyneiPrsSsLpEOF9tAgR64DfXeCk/f5ZcHrlSVR19g==}
+    dev: true
 
   /@itwin/core-common@4.11.3(@itwin/core-bentley@4.11.3)(@itwin/core-geometry@4.11.3):
     resolution: {integrity: sha512-iRsdCLAQT3dXd6SXCT7P1Tk6mkIM5lVeGvyL0jUHdvpwcXNOBWyQaRjQDr4hAGH0pay3wMoGH2JUsFfhPUSoBw==}
@@ -1668,6 +1669,7 @@ packages:
     dependencies:
       '@itwin/core-bentley': 5.0.0-dev.116
       flatbuffers: 1.12.0
+    dev: true
 
   /@itwin/core-i18n@4.11.3(@itwin/core-bentley@4.11.3):
     resolution: {integrity: sha512-Fpw+KtADqXQrPgR5wLS7XD+6+aukVupMwVe2tu2VsYNjEjMET4JnUKWD6hz0KkvdJ5H2Z8wCrmFJ22a8DGji7A==}
