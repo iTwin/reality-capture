@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 /**
  * Helper class for angle conversions. 
- * @public
+ * Copied from https://github.com/iTwin/itwinjs-core/blob/39a5daf889326f1dcf9d2c3d6149b517898960e7/core/geometry/src/geometry3d/Angle.ts
  */
 export class Angle {
   /**
