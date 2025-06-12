@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "Add support for iTwin.js Core 5.x",
+  "packageName": "@itwin/reality-data-client",
+  "email": "bipin.pachhai@bentley.com",
+  "dependentChangeType": "patch"
+}
