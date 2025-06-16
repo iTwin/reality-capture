@@ -32,11 +32,11 @@ class _DataHandler:
         return min(32, 4 + nb_small_files // 100)  # control number of threads considering quantity of files
 
     @staticmethod
-    def download_data(container_url: str, dst: str, folder_src: str, progress_hook):
+    def download_data(container_url: str, dst: str, src: str, progress_hook):
         sas_uri = container_url
         client = ContainerClient.from_container_url(sas_uri)
         blobs_tuple = [(blob.name, blob.size) for blob in client.list_blobs()
-                       if blob.name.startswith(folder_src)]
+                       if blob.name.startswith(src)]
         nb_threads = _DataHandler._get_nb_threads(blobs_tuple)
 
         total_size = sum(n for _, n in blobs_tuple)
@@ -63,7 +63,8 @@ class _DataHandler:
                 progress_hook=_download_callback,
             ).readall()
 
-            download_file_path = os.path.join(dst, blob_tuple[0])
+            rel_path = os.path.relpath(src, blob_tuple[0]) if src != blob_tuple[0] else os.path.basename(src)
+            download_file_path = os.path.join(dst, rel_path)
             os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
 
             with open(download_file_path, "wb") as file:
