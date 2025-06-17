@@ -64,6 +64,7 @@ class _DataHandler:
             ).readall()
 
             rel_path = blob_tuple[0].removeprefix(src) if src != blob_tuple[0] else os.path.basename(src)
+            rel_path = rel_path.lstrip('/')
             download_file_path = os.path.join(dst, rel_path)
             os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
 
