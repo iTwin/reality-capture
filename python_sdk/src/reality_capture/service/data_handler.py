@@ -63,7 +63,7 @@ class _DataHandler:
                 progress_hook=_download_callback,
             ).readall()
 
-            rel_path = os.path.relpath(src, blob_tuple[0]) if src != blob_tuple[0] else os.path.basename(src)
+            rel_path = blob_tuple[0].removeprefix(src) if src != blob_tuple[0] else os.path.basename(src)
             download_file_path = os.path.join(dst, rel_path)
             os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
 
