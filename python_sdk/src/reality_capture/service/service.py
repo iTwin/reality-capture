@@ -2,6 +2,7 @@ import requests
 
 from reality_capture.service.bucket import BucketResponse
 from reality_capture.service.estimation import CostEstimationCreate, CostEstimation
+from reality_capture.service.files import Files
 from reality_capture.service.response import Response
 from reality_capture.service.job import JobCreate, Job, Progress, Messages, Service
 from reality_capture.service.reality_data import (RealityDataCreate, RealityData, RealityDataUpdate, ContainerDetails,
@@ -212,6 +213,24 @@ class RealityCaptureService:
             if response.ok:
                 return Response(status_code=response.status_code,
                                 value=BucketResponse.model_validate(response.json()), error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def get_service_files(self) -> Response[Files]:
+        """
+        Retrieve the list of available files from the service.
+
+        :return: A Response[Files] containing either the files information or the error from the service.
+        """
+        response = self._session.get(self._get_correct_url(Service.MODELING) + f"files", headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code,
+                                value=Files.model_validate(response.json()), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError) as exception:
