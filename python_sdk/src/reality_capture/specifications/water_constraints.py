@@ -26,13 +26,13 @@ class WaterConstraintsOutputs(BaseModel):
 class WaterConstraintsSpecificationsCreate(BaseModel):
     inputs: WaterConstraintsInputs = Field(description="Inputs")
     outputs: list[WaterConstraintsOutputsCreate] = Field(description="Outputs")
-    options: WaterConstraintsOptions = Field(description="Options")
+    options: Optional[WaterConstraintsOptions] = Field(None, description="Options")
 
 
 class WaterConstraintsSpecifications(BaseModel):
     inputs: WaterConstraintsInputs = Field(description="Inputs")
     outputs: WaterConstraintsOutputs = Field(description="Outputs")
-    options: WaterConstraintsOptions = Field(description="Options")
+    options: Optional[WaterConstraintsOptions] = Field(None, description="Options")
 
 
 class WaterConstraintsCost(BaseModel):
