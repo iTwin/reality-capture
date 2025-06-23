@@ -6,7 +6,6 @@ from enum import Enum
 class WaterConstraintsInputs(BaseModel):
     scene: str = Field(description="Reality data id of ContextScene")
     modeling_reference: str = Field(alias="modelingReference", description="Reality data id of Modeling Reference")
-    water_detector: Optional[str] = Field(alias="waterDetector", description="Path to water detector", default=None)
 
 
 class WaterConstraintsOptions(BaseModel):
