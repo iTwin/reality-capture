@@ -1527,21 +1527,21 @@ class ChangeDetectionJobSettings:
         """
         json_dict = dict()
         json_dict["inputs"] = list()
-        if self.inputs.point_clouds1:
+        if self.inputs.reference_point_cloud:
             json_dict["inputs"].append(
-                {"type": "pointClouds1", "id": self.inputs.point_clouds1}
+                {"type": "reference_point_cloud", "id": self.inputs.reference_point_cloud}
             )
-        if self.inputs.point_clouds2:
+        if self.inputs.to_compare_point_cloud:
             json_dict["inputs"].append(
-                {"type": "pointClouds2", "id": self.inputs.point_clouds2}
+                {"type": "to_compare_point_cloud", "id": self.inputs.to_compare_point_cloud}
             )
-        if self.inputs.mesh1:
+        if self.inputs.reference_mesh:
             json_dict["inputs"].append(
-                {"type": "mesh1", "id": self.inputs.mesh1}
+                {"type": "reference_mesh", "id": self.inputs.reference_mesh}
             )
-        if self.inputs.mesh2:
+        if self.inputs.to_compare_mesh:
             json_dict["inputs"].append(
-                {"type": "mesh2", "id": self.inputs.mesh2}
+                {"type": "to_compare_mesh", "id": self.inputs.to_compare_mesh}
             )
 
         json_dict["outputs"] = list()
@@ -1551,28 +1551,24 @@ class ChangeDetectionJobSettings:
             json_dict["outputs"].append("exportedLocations3DSHP")
         if self.outputs.exported_locations3D_geojson:
             json_dict["outputs"].append("exportedLocations3DGeoJSON")
-        if self.outputs.report:
-            json_dict["outputs"].append("report")
-        if self.outputs.segmentation_3d:
-            json_dict["outputs"].append("segmentation3D")
-        if self.outputs.segmented_point_cloud:
-            json_dict["outputs"].append("segmentedPointCloud")
-        if self.outputs.changes:
-            json_dict["outputs"].append("changes")
+        if self.outputs.added_segmented_point_cloud:
+            json_dict["outputs"].append("addedSegmentedPointCloud")
+        if self.outputs.removed_segmented_point_cloud:
+            json_dict["outputs"].append("removedSegmentedPointCloud")
 
         json_dict["options"] = dict()
-        if self.options.color_threshold_low:
-            json_dict["options"]["colorThresholdLow"] = str(self.options.color_threshold_low)
-        if self.options.color_threshold_high:
-            json_dict["options"]["colorThresholdHigh"] = str(self.options.color_threshold_high)
-        if self.options.distance_min_btw_changes_in_meters:
-            json_dict["options"]["distanceMinBtwChangesInMeters"] = str(self.options.distance_min_btw_changes_in_meters)
-        if self.options.distance_max_btw_changes_in_meters:
-            json_dict["options"]["distanceMaxBtwChangesInMeters"] = str(self.options.distance_max_btw_changes_in_meters)
-        if self.options.resolution:
-            json_dict["options"]["resolution"] = str(self.options.resolution)
-        if self.options.min_points:
-            json_dict["options"]["minPoints"] = str(self.options.min_points)
+        if self.options.color_distance_threshold:
+            json_dict["options"]["colorDistanceThreshold"] = str(self.options.color_distance_threshold)
+        if self.options.color_filter_threshold:
+            json_dict["options"]["colorFilterThreshold"] = str(self.options.color_filter_threshold)
+        if self.options.threshold:
+            json_dict["options"]["threshold"] = str(self.options.threshold)
+        if self.options.filter_threshold:
+            json_dict["options"]["filterThreshold"] = str(self.options.filter_threshold)
+        if self.options.mesh_sampling_resolution:
+            json_dict["options"]["meshSamplingResolution"] = str(self.options.mesh_sampling_resolution)
+        if self.options.min_points_per_changes:
+            json_dict["options"]["minPointsPerChanges"] = str(self.options.min_points_per_changes)
         if self.options.export_srs:
             json_dict["options"]["exportSrs"] = self.options.export_srs
         return json_dict
@@ -1591,14 +1587,14 @@ class ChangeDetectionJobSettings:
         try:
             inputs_json = settings_json["inputs"]
             for input_dict in inputs_json:
-                if input_dict["type"] == "pointClouds1":
-                    new_job_settings.inputs.point_clouds1 = input_dict["id"]
-                elif input_dict["type"] == "pointClouds2":
-                    new_job_settings.inputs.point_clouds2 = input_dict["id"]
-                elif input_dict["type"] == "mesh1":
-                    new_job_settings.inputs.mesh1 = input_dict["id"]
-                elif input_dict["type"] == "mesh2":
-                    new_job_settings.inputs.mesh2 = input_dict["id"]
+                if input_dict["type"] == "reference_point_cloud":
+                    new_job_settings.inputs.reference_point_cloud = input_dict["id"]
+                elif input_dict["type"] == "to_compare_point_cloud":
+                    new_job_settings.inputs.to_compare_point_cloud = input_dict["id"]
+                elif input_dict["type"] == "reference_mesh":
+                    new_job_settings.inputs.reference_mesh = input_dict["id"]
+                elif input_dict["type"] == "to_compare_mesh":
+                    new_job_settings.inputs.to_compare_mesh = input_dict["id"]
                 else:
                     raise TypeError("found non expected input type:" + input_dict["type"])
             outputs_json = settings_json["outputs"]
@@ -1609,30 +1605,26 @@ class ChangeDetectionJobSettings:
                     new_job_settings.outputs.exported_locations3D_SHP = output_dict["id"]
                 elif output_dict["type"] == "exportedLocations3DGeoJSON":
                     new_job_settings.outputs.exported_locations3D_geojson = output_dict["id"]
-                elif output_dict["type"] == "report":
-                    new_job_settings.outputs.report = output_dict["id"]
-                elif output_dict["type"] == "changes":
-                    new_job_settings.outputs.changes = output_dict["id"]
-                elif output_dict["type"] == "segmentedPointCloud":
-                    new_job_settings.outputs.segmented_point_cloud = output_dict["id"]
-                elif output_dict["type"] == "segmentation3D":
-                    new_job_settings.outputs.segmentation_3d = output_dict["id"]
+                elif output_dict["type"] == "addedSegmentedPointCloud":
+                    new_job_settings.outputs.added_segmented_point_cloud = output_dict["id"]
+                elif output_dict["type"] == "removedSegmentedPointCloud":
+                    new_job_settings.outputs.removed_segmented_point_cloud = output_dict["id"]
                 else:
                     raise TypeError("found non expected output type:" + output_dict["type"])
             if "options" in settings_json:
                 options = settings_json["options"]
-                if "colorThresholdLow" in options:
-                    new_job_settings.options.color_threshold_low = float(options["colorThresholdLow"])
-                if "colorThresholdHigh" in options:
-                    new_job_settings.options.color_threshold_high = float(options["colorThresholdHigh"])
-                if "distanceMinBtwChangesInMeters" in options:
-                    new_job_settings.options.distance_min_btw_changes_in_meters = float(options["distanceMinBtwChangesInMeters"])
-                if "distanceMaxBtwChangesInMeters" in options:
-                    new_job_settings.options.distance_max_btw_changes_in_meters = float(options["distanceMaxBtwChangesInMeters"])
-                if "resolution" in options:
-                    new_job_settings.options.resolution = float(options["resolution"])
-                if "minPoints" in options:
-                    new_job_settings.options.min_points = int(options["minPoints"])
+                if "colorDistanceThreshold" in options:
+                    new_job_settings.options.color_distance_threshold = float(options["colorDistanceThreshold"])
+                if "colorFilterThreshold" in options:
+                    new_job_settings.options.color_filter_threshold = float(options["colorFilterThreshold"])
+                if "threshold" in options:
+                    new_job_settings.options.threshold = float(options["threshold"])
+                if "filterThreshold" in options:
+                    new_job_settings.options.filter_threshold = float(options["filterThreshold"])
+                if "meshSamplingResolution" in options:
+                    new_job_settings.options.mesh_sampling_resolution = float(options["meshSamplingResolution"])
+                if "minPointsPerChanges" in options:
+                    new_job_settings.options.min_points_per_changes = int(options["minPointsPerChanges"])
                 if "exportSrs" in options:
                     new_job_settings.options.export_srs = options["exportSrs"]
         except (KeyError, TypeError) as e:
@@ -1644,17 +1636,17 @@ class ChangeDetectionJobSettings:
         Possible inputs for a  Change Detection job.
 
         Attributes:
-            point_clouds1: First collection of point clouds.
-            point_clouds2: Second collection of point clouds.
-            mesh1: First collection of meshes.
-            mesh2: Second collection of meshes.
+            reference_point_cloud: First collection of point clouds.
+            to_compare_point_cloud: Second collection of point clouds.
+            reference_mesh: First collection of meshes.
+            to_compare_mesh: Second collection of meshes.
         """
 
         def __init__(self) -> None:
-            self.point_clouds1: str = ""
-            self.point_clouds2: str = ""
-            self.mesh1: str = ""
-            self.mesh2: str = ""
+            self.reference_point_cloud: str = ""
+            self.to_compare_point_cloud: str = ""
+            self.reference_mesh: str = ""
+            self.to_compare_mesh: str = ""
 
     class Outputs:
         """
@@ -1667,12 +1659,10 @@ class ChangeDetectionJobSettings:
         """
 
         def __init__(self) -> None:
+            self.added_segmented_point_cloud: str = ""
+            self.removed_segmented_point_cloud: str = ""
             self.objects3D: str = ""
             self.exported_locations3D_SHP: str = ""
-            self.report: str = ""
-            self.changes: str = ""
-            self.segmentation_3d: str = ""
-            self.segmented_point_cloud: str = ""
             self.exported_locations3D_geojson: str = ""
 
     class Options:
@@ -1680,22 +1670,22 @@ class ChangeDetectionJobSettings:
         Possible options for a Change Detection 2D job.
 
         Attributes:
-            color_threshold_low: Low threshold to detect color changes (hysteresis detection).
-            color_threshold_high: High threshold to detect color changes (hysteresis detection).
-            distance_min_btw_changes_in_meters: Low threshold to detect spatial changes (hysteresis detection).
-            distance_max_btw_changes_in_meters: High threshold to detect spatial changes (hysteresis detection).
-            resolution: Target point cloud resolution when starting from meshes.
-            min_points: Minimum number of points in a region to be considered as a change.
+            color_distance_threshold: Low threshold to detect color changes (hysteresis detection).
+            color_filter_threshold: High threshold to detect color changes (hysteresis detection).
+            threshold: Low threshold to detect spatial changes (hysteresis detection).
+            filter_threshold: High threshold to detect spatial changes (hysteresis detection).
+            mesh_sampling_resolution: Target point cloud mesh_sampling_resolution when starting from meshes.
+            min_points_per_changes: Minimum number of points in a region to be considered as a change.
             export_srs: SRS used by exports.
         """
 
         def __init__(self) -> None:
-            self.color_threshold_low: float = 0.0
-            self.color_threshold_high: float = 0.0
-            self.distance_min_btw_changes_in_meters: float = 0.0
-            self.distance_max_btw_changes_in_meters: float = 0.0
-            self.resolution: float = 0.0
-            self.min_points: int = 0
+            self.color_distance_threshold: float = 0.0
+            self.color_filter_threshold: float = 0.0
+            self.threshold: float = 0.0
+            self.filter_threshold: float = 0.0
+            self.mesh_sampling_resolution: float = 0.0
+            self.min_points_per_changes: int = 0
             self.export_srs: str = ""
 
 
