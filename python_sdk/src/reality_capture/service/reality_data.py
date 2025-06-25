@@ -17,7 +17,6 @@ class Type(Enum):
     CC_IMAGE_COLLECTION = "CCImageCollection"
     THREED_TILES = "Cesium3DTiles"
     COLLADA = "DAE"
-    CONSTRAINTS = "ConstraintsInformation"
     CONTEXT_DETECTOR = "ContextDetector"
     CONTEXT_SCENE = "ContextScene"
     DGN = "DGN"
@@ -49,7 +48,6 @@ class Type(Enum):
     TEXTURED_TIE_POINTS = "TexturedTiePoints"
     THREE_SM = "3SM"
     THREE_MX = "3MX"
-    TOUCHUP = "TouchUpData"
     UNSTRUCTURED_DATA = "Unstructured"
 
 
