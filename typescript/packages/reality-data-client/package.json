@@ -48,11 +48,11 @@
     "axios": "^1.8.2"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^5.0.0-dev.116",
-    "@itwin/certa": "^5.0.0-dev.116",
-    "@itwin/core-bentley": "^5.0.0-dev.116",
-    "@itwin/core-common": "^5.0.0-dev.116",
-    "@itwin/core-geometry": "^5.0.0-dev.116",
+    "@itwin/build-tools": "^5.0.2",
+    "@itwin/certa": "^5.0.2",
+    "@itwin/core-bentley": "^5.0.2",
+    "@itwin/core-common": "^5.0.2",
+    "@itwin/core-geometry": "^5.0.2",
     "@itwin/eslint-plugin": "^5.2.1",
     "@itwin/oidc-signin-tool": "^4.4.1",
     "@types/chai": "^4.3.0",
