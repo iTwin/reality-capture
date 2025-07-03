@@ -4,16 +4,18 @@ from enum import Enum
 
 
 class GaussianSplatsInputs(BaseModel):
-    scene: str = Field(description="Reality data ID of ContextScene to process")
-    presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
+    scene: str = Field(description="Reality data ID of ContextScene to process.")
+    splats_reference: Optional[str] = Field(None, description="Reality data ID of the Gaussian Splats Reference.")
 
 
 class GaussianSplatsOutputs(BaseModel):
-    splats: str = Field(description="Reality data ID of Gaussian Splats")
+    splats: Optional[str] = Field(description="Reality data ID of Gaussian Splats.")
+    splats_reference: Optional[str] = Field(None, description="Reality data ID of the Gaussian Splats Reference.")
 
 
 class GaussianSplatsOutputsCreate(Enum):
     SPLATS = "Splats"
+    SPLATS_REFERENCE = "SplatsReference"
 
 
 class GSFormat(Enum):
@@ -38,4 +40,3 @@ class GSCleaning(Enum):
 class GaussianSplatsOptions(BaseModel):
     format: Optional[GSFormat] = Field(default=None, description="Format of the Gaussian Splats")
     quality: Optional[GSQuality] = Field(default=None, description="Quality of the Gaussian Splats")
-    cleaning: Optional[GSCleaning] = Field(default=None, description="Cleaning level for the Gaussian Splats")
