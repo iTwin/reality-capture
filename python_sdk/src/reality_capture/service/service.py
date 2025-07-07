@@ -1,6 +1,7 @@
 import requests
 
 from reality_capture.service.bucket import BucketResponse
+from reality_capture.service.detectors import DetectorsMinimalResponse, DetectorResponse
 from reality_capture.service.estimation import CostEstimationCreate, CostEstimation
 from reality_capture.service.files import Files
 from reality_capture.service.response import Response
@@ -64,9 +65,14 @@ class RealityCaptureService:
     def _get_modeling_url(self) -> str:
         return self._service_url + "reality-modeling/"
 
+    def _get_analysis_url(self) -> str:
+        return self._service_url + "realitydataanalysis/"
+
     def _get_correct_url(self, service: Service) -> str:
         if service == Service.MODELING:
             return self._get_modeling_url()
+        if service == Service.ANALYSIS:
+            return self._get_analysis_url()
         raise NotImplemented("Other services not yet implemented")
 
     @staticmethod
@@ -231,6 +237,44 @@ class RealityCaptureService:
             if response.ok:
                 return Response(status_code=response.status_code,
                                 value=Files.model_validate(response.json()), error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def get_detectors(self) -> Response[DetectorsMinimalResponse]:
+        """
+        Retrieve all available detectors.
+
+        :return: A Response[DetectorsMinimalResponse] containing either the detector list or the error from the service.
+        """
+        response = self._session.get(self._get_correct_url(Service.ANALYSIS) + f"detectors",
+                                     headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code,
+                                value=DetectorsMinimalResponse.model_validate(response.json()), error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def get_detector(self, detector_name: str) -> Response[DetectorResponse]:
+        """
+        Retrieve details of a detector.
+
+        :return: A Response[DetectorResponse] containing either the detector details or the error from the service.
+        """
+        response = self._session.get(self._get_correct_url(Service.ANALYSIS) + f"detectors/{detector_name}",
+                                     headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code,
+                                value=DetectorResponse.model_validate(response.json()), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError) as exception:

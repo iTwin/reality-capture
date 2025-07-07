@@ -22,7 +22,7 @@ class DetectorStatus(Enum):
 
 
 class DetectorVersion(BaseModel):
-    creation_date: datetime = Field(description="Creation date of the version.")
+    creation_date: datetime = Field(description="Creation date of the version.", alias="creationDate")
     version: str = Field(description="Version number.")
     status: DetectorStatus = Field(description="Status of the version.")
     download_url: Optional[str] = Field(None, description="URL to download the detector version. "
@@ -52,7 +52,15 @@ class Detector(DetectorBase):
     versions: list[DetectorVersion] = Field(description="All existing versions of the detector.")
 
 
+class DetectorResponse(BaseModel):
+    detector: Detector = Field(description="Detector.")
+
+
 class DetectorMinimal(DetectorBase):
     latest_version: Optional[str] = Field(None, description="The latest version of the detector "
                                                             "with 'Ready' status, if any.",
                                           alias="latestVersion")
+
+
+class DetectorsMinimalResponse(BaseModel):
+    detectors: list[DetectorMinimal] = Field(description="List of minimal detectors.")
