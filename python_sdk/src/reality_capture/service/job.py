@@ -7,8 +7,6 @@ from reality_capture.specifications.change_detection import (ChangeDetectionSpec
                                                              ChangeDetectionSpecificationsCreate)
 from reality_capture.specifications.constraints import (ConstraintsSpecificationsCreate,
                                                         ConstraintsSpecifications)
-from reality_capture.specifications.extract_ground import (ExtractGroundSpecifications,
-                                                           ExtractGroundSpecificationsCreate)
 from reality_capture.specifications.fill_image_properties import (FillImagePropertiesSpecificationsCreate,
                                                                   FillImagePropertiesSpecifications)
 from reality_capture.specifications.import_point_cloud import ImportPCSpecifications, ImportPCSpecificationsCreate
@@ -37,7 +35,6 @@ class JobType(Enum):
     CALIBRATION = "Calibration"
     CHANGE_DETECTION = "ChangeDetection"
     CONSTRAINTS = "Constraints"
-    EXTRACT_GROUND = "ExtractGround"
     FILL_IMAGE_PROPERTIES = "FillImageProperties"
     IMPORT_POINT_CLOUD = "ImportPointCloud"
     OBJECTS_2D = "Objects2D"
@@ -67,7 +64,7 @@ def _get_appropriate_service(jt: JobType):
               JobType.TOUCH_UP_IMPORT, JobType.WATER_CONSTRAINTS]:
         return Service.MODELING
     if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
-              JobType.CHANGE_DETECTION, JobType.EXTRACT_GROUND, JobType.TRAINING_O2D]:
+              JobType.CHANGE_DETECTION, JobType.TRAINING_O2D]:
         return Service.ANALYSIS
     return Service.CONVERSION
 
@@ -85,7 +82,7 @@ class JobCreate(BaseModel):
     name: Optional[str] = Field(None, description="Displayable job name.", min_length=3)
     type: JobType = Field(description="Type of job.")
     specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
-                          ConstraintsSpecificationsCreate, ExtractGroundSpecificationsCreate,
+                          ConstraintsSpecificationsCreate,
                           FillImagePropertiesSpecificationsCreate, ImportPCSpecificationsCreate,
                           Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
                           ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
@@ -127,7 +124,7 @@ class Job(BaseModel):
     execution_info: Execution = Field(description="Known execution information for the job.", alias="executionInfo")
     user_id: str = Field(description="Identifier of the user that created the job.", alias="userId")
     specifications: Union[CalibrationSpecifications, ChangeDetectionSpecifications,
-                          ConstraintsSpecifications, ExtractGroundSpecifications,
+                          ConstraintsSpecifications,
                           FillImagePropertiesSpecifications, ImportPCSpecifications,
                           Objects2DSpecifications, ProductionSpecifications,
                           ReconstructionSpecifications, Segmentation2DSpecifications,
@@ -147,8 +144,6 @@ class Job(BaseModel):
             model.specifications = ChangeDetectionSpecifications(**model.specifications.model_dump(by_alias=True))
         elif model.type == JobType.CONSTRAINTS:
             model.specifications = ConstraintsSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.EXTRACT_GROUND:
-            model.specifications = ExtractGroundSpecifications(**model.specifications.model_dump(by_alias=True))
         elif model.type == JobType.FILL_IMAGE_PROPERTIES:
             model.specifications = FillImagePropertiesSpecifications(**model.specifications.model_dump(by_alias=True))
         elif model.type == JobType.IMPORT_POINT_CLOUD:
