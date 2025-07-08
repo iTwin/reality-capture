@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Update core dev packages on devDependencies with released versions",
-  "packageName": "@itwin/reality-data-client",
-  "email": "bipin.pachhai@bentley.com",
-  "dependentChangeType": "patch"
-}

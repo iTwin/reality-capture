@@ -1,8 +1,16 @@
 # Change Log - @itwin/reality-data-client
 
-<!-- This log was last generated on Thu, 12 Jun 2025 14:09:49 GMT and should not be manually modified. -->
+<!-- This log was last generated on Tue, 08 Jul 2025 14:00:52 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 1.3.1
+
+Tue, 08 Jul 2025 14:00:52 GMT
+
+### Patches
+
+- Update core dev packages on devDependencies with released versions (bipin.pachhai@bentley.com)
 
 ## 1.3.0
 
