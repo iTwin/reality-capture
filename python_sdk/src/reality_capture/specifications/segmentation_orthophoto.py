@@ -14,11 +14,11 @@ class SegmentationOrthophotoInputs(BaseModel):
 
 
 class SegmentationOrthophotoOutputs(BaseModel):
-    segmentation2d: str = Field(alias="segmentation2D",
-                                description="Reality data id of ContextScene, "
-                                            "pointing to segmented orthophotos")
-    segmented_photos: str = Field(alias="segmentedPhotos",
-                                  description="Reality data id of segmented orthophotos")
+    segmentation2d: Optional[str] = Field(alias="segmentation2D",
+                                          description="Reality data id of ContextScene, "
+                                                      "pointing to segmented orthophotos")
+    segmented_photos: Optional[str] = Field(alias="segmentedPhotos",
+                                            description="Reality data id of segmented orthophotos")
     polygons2d: Optional[str] = Field(None, alias="polygons2D",
                                       description="Reality data id of ContextScene, "
                                                   "annotated with embedded 2D polygons")
@@ -34,9 +34,6 @@ class SegmentationOrthophotoOutputs(BaseModel):
     lines2d_as_shp: Optional[str] = Field(None, alias="lines2DAsSHP",
                                           description="Reality data id of 2D lines as SHP file, "
                                                       "lines2d output must be defined")
-    lines2d_as_dgn: Optional[str] = Field(None, alias="lines2DAsDGN",
-                                          description="Reality data id of 2D lines as DGN file, "
-                                                      "lines2d output must be defined")
     lines2d_as_geojson: Optional[str] = Field(None, alias="lines2DAsGeoJSON",
                                               description="Reality data id of 2D lines as GeoJSON file, "
                                                           "lines2d output must be defined")
@@ -47,26 +44,10 @@ class SegmentationOrthophotoOutputsCreate(Enum):
     SEGMENTED_PHOTOS = "segmentedPhotos"
     POLYGONS2D = "polygons2D"
     POLYGONS2D_AS_SHP = "polygons2DAsSHP"
-    """
-    Requires POLYGONS2D in order to be produced.
-    """
     POLYGONS2D_AS_GEOJSON = "polygons2DAsGeoJSON"
-    """
-    Requires POLYGONS2D in order to be produced.
-    """
     LINES2D = "lines2D"
     LINES2D_AS_SHP = "lines2DAsSHP"
-    """
-    Requires LINES2D in order to be produced.
-    """
-    LINES2D_AS_DGN = "lines2DAsDGN"
-    """
-    Requires LINES2D in order to be produced.
-    """
     LINES2D_AS_GEOJSON = "lines2DAsGeoJSON"
-    """
-    Requires LINES2D in order to be produced.
-    """
 
 
 class SegmentationOrthophotoSpecificationsCreate(BaseModel):

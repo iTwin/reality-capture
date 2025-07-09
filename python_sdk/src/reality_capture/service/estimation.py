@@ -5,7 +5,6 @@ from enum import Enum
 from reality_capture.specifications.calibration import CalibrationSpecificationsCreate, CalibrationCost
 from reality_capture.specifications.change_detection import ChangeDetectionSpecificationsCreate
 from reality_capture.specifications.constraints import ConstraintsSpecificationsCreate, ConstraintsCost
-from reality_capture.specifications.extract_ground import ExtractGroundSpecificationsCreate
 from reality_capture.specifications.fill_image_properties import (FillImagePropertiesSpecificationsCreate,
                                                                   FillImagePropertiesCost)
 from reality_capture.specifications.import_point_cloud import ImportPCSpecificationsCreate, ImportPCCost
@@ -25,7 +24,7 @@ from reality_capture.specifications.water_constraints import WaterConstraintsSpe
 class CostEstimationCreate(BaseModel):
     type: JobType = Field(description="Type of job.")
     specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
-                          ConstraintsSpecificationsCreate, ExtractGroundSpecificationsCreate,
+                          ConstraintsSpecificationsCreate,
                           FillImagePropertiesSpecificationsCreate, ImportPCSpecificationsCreate,
                           Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
                           ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
