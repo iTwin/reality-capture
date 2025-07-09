@@ -49,8 +49,12 @@ class JobType(Enum):
     WATER_CONSTRAINTS = "WaterConstraints"
     TRAINING_O2D = "TrainingO2D"
     TRAINING_S3D = "TrainingS3D"
+    EVAL_O2D = "EvalO2D"
+    EVAL_O3D = "EvalO3D"
+    EVAL_S2D = "EvalS2D"
+    EVAL_S3D = "EvalS3D"
+    EVAL_SORTHO = "EvalSOrtho"
     POINT_CLOUD_CONVERSION = "PointCloudConversion"
-
 
 class Service(Enum):
     MODELING = "Modeling"

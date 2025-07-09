@@ -26,6 +26,11 @@ Specifications regroup all the settings used to create jobs with our APIs.
     segmentation_orthophoto
     segmentation3d
     change_detection
+    eval_o2d
+    eval_o3d
+    eval_s2d
+    eval_s3d
+    eval_sortho
     training_o2d
     training_s3d
     point_cloud_conversion
