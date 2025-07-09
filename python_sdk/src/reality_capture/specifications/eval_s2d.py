@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 from enum import Enum
 
 
@@ -10,7 +11,8 @@ class EvalS2DInputs(BaseModel):
 
 
 class EvalS2DOutputs(BaseModel):
-    report: str = Field(description="Reality data id of json report with confusion matrix")
+    report: Optional[str] = Field(None, description="Path in Bucket of json report with confusion matrix",
+                                  pattern=r"^bkt:.+")
     segmented_photos: str = Field(alias="segmentedPhotos", description="Reality data id of segmented photos, "
                                                                        "annotated with confusion matrix index")
     segmentation2d: str = Field(alias="segmentation2D", description="Reality data id of ContextScene, "

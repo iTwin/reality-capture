@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 from enum import Enum
 
 
@@ -10,10 +11,11 @@ class EvalS3DInputs(BaseModel):
 
 
 class EvalS3DOutputs(BaseModel):
-    report: str = Field(description="Reality data id of json report with confusion matrix")
-    segmented_point_cloud: str = Field(alias="segmentedPointCloud", description="Reality data id of segmented point "
-                                                                                "cloud, annotated with "
-                                                                                "confusion matrix index")
+    report: Optional[str] = Field(None, description="Path in Bucket of json report with confusion matrix",
+                                  pattern=r"^bkt:.+")
+    segmented_point_cloud: str = Field(alias="segmentedPointCloud",
+                                       description="Reality data id of segmented point cloud, annotated with "
+                                                   "confusion matrix index")
     segmentation3d: str = Field(alias="segmentation3D", description="Reality data id of ContextScene, "
                                                                     "pointing to segmented point cloud")
 
