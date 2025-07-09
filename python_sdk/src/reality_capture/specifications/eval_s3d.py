@@ -13,11 +13,12 @@ class EvalS3DInputs(BaseModel):
 class EvalS3DOutputs(BaseModel):
     report: Optional[str] = Field(None, description="Path in Bucket of json report with confusion matrix",
                                   pattern=r"^bkt:.+")
-    segmented_point_cloud: str = Field(alias="segmentedPointCloud",
-                                       description="Reality data id of segmented point cloud, annotated with "
-                                                   "confusion matrix index")
-    segmentation3d: str = Field(alias="segmentation3D", description="Reality data id of ContextScene, "
-                                                                    "pointing to segmented point cloud")
+    segmented_point_cloud: Optional[str] = Field(None, alias="segmentedPointCloud",
+                                                 description="Reality data id of segmented point cloud, "
+                                                             "annotated with confusion matrix index")
+    segmentation3d: Optional[str] = Field(None, alias="segmentation3D",
+                                          description="Reality data id of ContextScene, "
+                                                      "pointing to segmented point cloud")
 
 
 class EvalS3DOutputsCreate(Enum):
