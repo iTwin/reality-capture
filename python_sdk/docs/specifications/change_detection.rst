@@ -11,7 +11,7 @@ The Change Detection job detects changes between two collections of point clouds
 Purposes
 ========
 
-This job has two different purposes :
+This job has one purpose :
 
 .. list-table::
    :widths: 25 25 25 25
@@ -23,9 +23,9 @@ This job has two different purposes :
      - Useful options
    * - | Detect changes between
        | two collections of
-       | point clouds
-     - | *point_clouds1*,
-       | *point_clouds2*
+       | meshes, point clouds
+     - | *reference*,
+       | *toCompare*
      - | *objects3d*
        | *locations3d_as_shp* (optional),
        | *locations3d_as_geojson* (optional)
@@ -34,21 +34,6 @@ This job has two different purposes :
        | *color_threshold_high*,
        | *dist_threshold_low*,
        | *dist_threshold_high*,
-       | *min_points*
-   * - | Detect changes between
-       | two collections of
-       | meshes
-     - | *meshes1*,
-       | *meshes2*
-     - | *objects3d*,
-       | *locations3d_as_shp* (optional),
-       | *locations3d_as_geojson* (optional)
-     - | *resolution*,
-       | *crs*,
-       | *color_threshold_low*,
-       | *color_threshold_high*
-       | *dist_threshold_low*
-       | *dist_threshold_high*
        | *min_points*
 
 Examples
