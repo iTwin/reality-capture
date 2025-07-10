@@ -30,7 +30,8 @@ class ChangeDetectionOutputsCreate(Enum):
 
 
 class ChangeDetectionOptions(BaseModel):
-    output_crs: Optional[str] = Field(None, description="CRS used by locations3DAsSHP output")
+    output_crs: Optional[str] = Field(None, alias="outputCrs",
+                                      description="CRS used by locations3DAsSHP output")
     min_points_per_change: Optional[int] = Field(None, alias="minPointsPerChange",
                                                  description="Minimum number of points in a region "
                                                              "to be considered as a change")
