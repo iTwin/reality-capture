@@ -24,19 +24,17 @@ class GSFormat(Enum):
     PLY = "PLY"
 
 
-class GSQuality(Enum):
-    MODERATE = "Moderate"
-    STANDARD = "Standard"
-    MAXIMUM = "Maximum"
-
-
-class GSCleaning(Enum):
-    NONE = "None"
-    MINIMAL = "Minimal"
-    MODERATE = "Moderate"
-    EXTENSIVE = "Extensive"
-
-
 class GaussianSplatsOptions(BaseModel):
     format: Optional[GSFormat] = Field(default=None, description="Format of the Gaussian Splats")
-    quality: Optional[GSQuality] = Field(default=None, description="Quality of the Gaussian Splats")
+
+
+class GaussianSplatsSpecifications(BaseModel):
+    inputs: GaussianSplatsInputs = Field(description="Inputs")
+    outputs: GaussianSplatsOutputs = Field(description="Outputs")
+    options: Optional[GaussianSplatsOptions] = Field(description="Options")
+
+
+class GaussianSplatsSpecificationsCreate(BaseModel):
+    inputs: GaussianSplatsInputs = Field(description="Inputs")
+    outputs: list[GaussianSplatsOutputsCreate] = Field(description="Outputs")
+    options: Optional[GaussianSplatsOptions] = Field(description="Options")

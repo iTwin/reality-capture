@@ -21,6 +21,7 @@ Specifications regroup all the settings used to create jobs with our APIs.
     constraints
     touchup
     water_constraints
+    gaussian_splats
     objects2d
     segmentation2d
     segmentation_orthophoto
@@ -44,6 +45,7 @@ Modeling
 * :doc:`/specifications/constraints` will import or delete surface constraints from a Reference Model.
 * :doc:`/specifications/touchup` has two jobs that will allow you to export tiles in a editable format for touch up workflows and reimport your modifications.
 * :doc:`/specifications/water_constraints` will take a scene and a Reference Model and will try to detect water constraints.
+* :doc:`/specifications/gaussian_splats` will take a scene and generate Gaussian Splats in various formats.
 
 Analysis
 ========
