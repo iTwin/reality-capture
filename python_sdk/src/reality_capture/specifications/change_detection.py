@@ -4,59 +4,45 @@ from enum import Enum
 
 
 class ChangeDetectionInputs(BaseModel):
-    point_clouds1: Optional[str] = Field(None, alias="pointClouds1", 
-                                         description="Reality data id of ContextScene, "
-                                                     "pointing to a collection of point clouds to process")
-    point_clouds2: Optional[str] = Field(None, alias="pointClouds2", 
-                                         description="Reality data id of ContextScene, "
-                                                     "pointing to a collection of point clouds to process")
-    meshes1: Optional[str] = Field(None, description="Reality data id of ContextScene, "
-                                                     "pointing to a collection of meshes to process")
-    meshes2: Optional[str] = Field(None, description="Reality data id of ContextScene, "
-                                                     "pointing to a collection of meshes to process")
+    reference: str = Field(description="Reality data id of ContextScene, point cloud or mesh")
+    to_compare: str = Field(alias="toCompare", description="Reality data id of ContextScene, point cloud or mesh")
 
 
 class ChangeDetectionOutputs(BaseModel):
-    objects3d: str = Field(alias="objects3D", description="Reality data id of ContextScene, "
-                                                          "annotated with embedded 3D objects")
+    objects3d: Optional[str] = Field(None, alias="objects3D",
+                                     description="Reality data id of ContextScene, annotated with embedded 3D objects")
     locations3d_as_shp: Optional[str] = Field(None, alias="locations3DAsSHP", 
                                               description="Reality data id of 3D objects locations "
                                                           "as SHP format")
     locations3d_as_geojson: Optional[str] = Field(None, alias="locations3DAsGeoJSON", 
                                                   description="Reality data id of 3D objects locations "
                                                               "as GeoJSON file")
+    added: Optional[str] = Field(None, description="Points in toCompare not in reference as OPC")
+    removed: Optional[str] = Field(None, description="Point in reference not in toCompare as OPC")
 
 
 class ChangeDetectionOutputsCreate(Enum):
     OBJECTS3D = "objects3D"
     LOCATIONS3D_AS_SHP = "locations3DAsSHP"
-    """
-    Requires OBJECTS3D in order to be produced.
-    """
     LOCATIONS3D_AS_GEOJSON = "locations3DAsGeoJSON"
-    """
-    Requires OBJECTS3D in order to be produced.
-    """
+    ADDED = "added"
+    REMOVED = "removed"
 
 
 class ChangeDetectionOptions(BaseModel):
-    crs: Optional[str] = Field(None, description="CRS used by locations3DAsSHP output")
-    min_points: Optional[int] = Field(None, alias="minPoints",
-                                      description="Minimum number of points in a region to be considered as a change")
-    resolution: Optional[float] = Field(None,
-                                        description="Target point cloud resolution when starting from meshes")
-    dist_threshold_high: Optional[float] = Field(None, alias="distThresholdHigh",
-                                                 description="High threshold to detect spatial changes "
-                                                             "(hysteresis detection)")
-    dist_threshold_low: Optional[float] = Field(None, alias="distThresholdLow",
-                                                description="Low threshold to detect spatial changes "
-                                                            "(hysteresis detection)")
-    color_threshold_high: Optional[float] = Field(None, alias="colorThresholdHigh",
-                                                  description="High threshold to detect color changes "
-                                                              "(hysteresis detection)")
-    color_threshold_low: Optional[float] = Field(None, alias="colorThresholdLow",
-                                                 description="Low threshold to detect color changes "
-                                                             "(hysteresis detection)")
+    output_crs: Optional[str] = Field(None, alias="outputCrs",
+                                      description="CRS used by locations3DAsSHP output")
+    min_points_per_change: Optional[int] = Field(None, alias="minPointsPerChange",
+                                                 description="Minimum number of points in a region "
+                                                             "to be considered as a change")
+    mesh_sampling_resolution: Optional[float] = Field(None, alias="meshSamplingResolution",
+                                                      description="Target point cloud resolution when starting "
+                                                                  "from meshes")
+    threshold: Optional[float] = Field(None, description="High threshold to detect spatial changes "
+                                                         "(hysteresis detection)")
+    filter_threshold: Optional[float] = Field(None, alias="filterThreshold",
+                                              description="Low threshold to detect spatial changes "
+                                                          "(hysteresis detection)")
 
 
 class ChangeDetectionSpecificationsCreate(BaseModel):

@@ -4,12 +4,10 @@ from enum import Enum
 
 
 class Segmentation3DInputs(BaseModel):
-    point_clouds: Optional[str] = Field(None, alias="pointClouds",
-                                        description="Reality data id of ContextScene, "
-                                                    "pointing to a collection of point clouds to process")
-    meshes: Optional[str] = Field(None,
-                                  description="Reality data id of ContextScene, "
-                                              "pointing to a collection of meshes to process")
+    model_3d: Optional[str] = Field(None, alias="model3D",
+                                    description="Reality data id of ContextScene, "
+                                                "pointing to a collection of point clouds/meshes to process, "
+                                                "or a point cloud, or a mesh.")
     point_cloud_segmentation_detector: Optional[str] = Field(None, alias="pointCloudSegmentationDetector",
                                                              description="Either reality data id "
                                                                          "of point cloud segmentation object "
@@ -21,9 +19,8 @@ class Segmentation3DInputs(BaseModel):
                                                       "pointing to a segmented point cloud, "
                                                       "this input replaces point_cloud_segmentation_detector, "
                                                       "point_clouds and meshes inputs")
-    clip_polygon: Optional[str] = Field(None, alias="clipPolygon",
-                                        description="Path in the bucket of the clipping polygon to apply",
-                                        pattern=r"^bkt:.+")
+    extent: Optional[str] = Field(None, alias="clipPolygon", pattern=r"^bkt:.+",
+                                  description="Path in the bucket of the clipping polygon to apply")
 
 
 class Segmentation3DOutputs(BaseModel):
@@ -52,9 +49,6 @@ class Segmentation3DOutputs(BaseModel):
     objects3d: Optional[str] = Field(None, alias="objects3D",
                                      description="Reality data id of ContextScene, "
                                                  "annotated with embedded 3D objects")
-    objects3d_as_dgn: Optional[str] = Field(None, alias="objects3DAsDGN",
-                                            description="Reality data id of 3D objects as DGN file, "
-                                                        "objects3d output must be defined")
     objects3d_as_3d_tiles: Optional[str] = Field(None, alias="objects3DAs3DTiles",
                                                  description="Reality data id of 3D objects "
                                                              "as 3D Tiles file, objects3d output must be defined")
@@ -70,9 +64,6 @@ class Segmentation3DOutputs(BaseModel):
     lines3d: Optional[str] = Field(None, alias="lines3D",
                                    description="Reality data id of ContextScene, "
                                                "annotated with embedded 3D lines")
-    lines3d_as_dgn: Optional[str] = Field(None, alias="lines3DAsDGN",
-                                          description="Reality data id of 3D lines as DGN file, "
-                                                      "lines3d output must be defined")
     lines3d_as_3d_tiles: Optional[str] = Field(None, alias="lines3DAs3DTiles",
                                                description="Reality data id of 3D lines "
                                                            "as 3D Tiles file, lines3d output must be defined")
@@ -82,9 +73,6 @@ class Segmentation3DOutputs(BaseModel):
     polygons3d: Optional[str] = Field(None, alias="polygons3D",
                                       description="Reality data id of ContextScene, "
                                                   "annotated with embedded 3D polygons")
-    polygons3d_as_dgn: Optional[str] = Field(None, alias="polygons3DAsDGN",
-                                             description="Reality data id of 3D polygons as DGN file, "
-                                                         "polygons3d output must be defined")
     polygons3d_as_3d_tiles: Optional[str] = Field(None, alias="polygons3DAs3DTiles", 
                                                   description="Reality data id of 3D polygons "
                                                               "as 3D Tiles file, polygons3d output must be defined")
@@ -97,68 +85,20 @@ class Segmentation3DOutputsCreate(Enum):
     SEGMENTATION3D = "segmentation3D"
     SEGMENTED_POINT_CLOUD = "segmentedPointCloud"
     SEGMENTATION3D_AS_POD = "segmentation3DAsPOD"
-    """
-    Requires SEGMENTATION3D in order to be produced.
-    """
     SEGMENTATION3D_AS_LAS = "segmentation3DAsLAS"
-    """
-    Requires SEGMENTATION3D in order to be produced.
-    """
     SEGMENTATION3D_AS_LAZ = "segmentation3DAsLAZ"
-    """
-    Requires SEGMENTATION3D in order to be produced.
-    """
     SEGMENTATION3D_AS_PLY = "segmentation3DAsPLY"
-    """
-    Requires SEGMENTATION3D in order to be produced.
-    """
     OBJECTS3D = "objects3D"
-    OBJECTS3D_AS_DGN = "objects3DAsDGN"
-    """
-    Requires OBJECTS3D in order to be produced.
-    """
     OBJECTS3D_AS_3DTILES = "objects3DAs3DTiles"
-    """
-    Requires OBJECTS3D in order to be produced.
-    """
     OBJECTS3D_AS_GEOJSON = "objects3DAsGeoJSON"
-    """
-    Requires OBJECTS3D in order to be produced.
-    """
     LOCATIONS3D_AS_SHP = "locations3DAsSHP"
-    """
-    Requires OBJECTS3D in order to be produced.
-    """
     LOCATIONS3D_AS_GEOJSON = "locations3DAsGeoJSON"
-    """
-    Requires OBJECTS3D in order to be produced.
-    """
     LINES3D = "lines3D"
-    LINES3D_AS_DGN = "lines3DAsDGN"
-    """
-    Requires LINES3D in order to be produced.
-    """
     LINES3D_AS_3DTILES = "lines3DAs3DTiles"
-    """
-    Requires LINES3D in order to be produced.
-    """
     LINES3D_AS_GEOJSON = "lines3DAsGeoJSON"
-    """
-    Requires LINES3D in order to be produced.
-    """
     POLYGONS3D = "polygons3D"
-    POLYGONS3D_AS_DGN = "polygons3DAsDGN"
-    """
-    Requires POLYGONS3D in order to be produced.
-    """
     POLYGONS3D_AS_3DTiles = "polygons3DAs3DTiles"
-    """
-    Requires POLYGONS3D in order to be produced.
-    """
     POLYGONS3D_AS_GeoJSON = "polygons3DAsGeoJSON"
-    """
-    Requires POLYGONS3D in order to be produced.
-    """
 
 
 class Segmentation3DOptions(BaseModel):
