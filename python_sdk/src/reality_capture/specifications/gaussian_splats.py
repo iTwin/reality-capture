@@ -5,12 +5,14 @@ from enum import Enum
 
 class GaussianSplatsInputs(BaseModel):
     scene: str = Field(description="Reality data ID of ContextScene to process.")
-    splats_reference: Optional[str] = Field(None, description="Reality data ID of the Gaussian Splats Reference.")
+    splats_reference: Optional[str] = Field(None, description="Reality data ID of the Gaussian Splats Reference.",
+                                            alias="splatsReference")
 
 
 class GaussianSplatsOutputs(BaseModel):
     splats: Optional[str] = Field(description="Reality data ID of Gaussian Splats.")
-    splats_reference: Optional[str] = Field(None, description="Reality data ID of the Gaussian Splats Reference.")
+    splats_reference: Optional[str] = Field(None, description="Reality data ID of the Gaussian Splats Reference.",
+                                            alias="splatsReference")
 
 
 class GaussianSplatsOutputsCreate(Enum):
