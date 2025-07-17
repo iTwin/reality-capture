@@ -29,6 +29,9 @@ from reality_capture.specifications.training import (TrainingO2DSpecifications, 
                                                      TrainingS3DSpecificationsCreate, TrainingS3DSpecifications)
 from reality_capture.specifications.point_cloud_conversion import (PointCloudConversionSpecificationsCreate,
                                                                    PointCloudConversionSpecifications)
+
+from reality_capture.specifications.gaussian_splats import (GaussianSplatsSpecificationsCreate,
+                                                            GaussianSplatsSpecifications)
 from reality_capture.specifications.eval_o2d import (EvalO2DSpecificationsCreate, EvalO2DSpecifications)
 from reality_capture.specifications.eval_o3d import (EvalO3DSpecificationsCreate, EvalO3DSpecifications)
 from reality_capture.specifications.eval_s2d import (EvalS2DSpecificationsCreate, EvalS2DSpecifications)
@@ -60,6 +63,7 @@ class JobType(Enum):
     EVAL_S3D = "EvalS3D"
     EVAL_SORTHO = "EvalSOrtho"
     POINT_CLOUD_CONVERSION = "PointCloudConversion"
+    GAUSSIAN_SPLATS = "GaussianSplats"
 
 class Service(Enum):
     MODELING = "Modeling"
@@ -70,7 +74,7 @@ class Service(Enum):
 def _get_appropriate_service(jt: JobType):
     if jt in [JobType.FILL_IMAGE_PROPERTIES, JobType.IMPORT_POINT_CLOUD, JobType.CALIBRATION, JobType.TILING,
               JobType.PRODUCTION, JobType.RECONSTRUCTION, JobType.CONSTRAINTS, JobType.TOUCH_UP_EXPORT,
-              JobType.TOUCH_UP_IMPORT, JobType.WATER_CONSTRAINTS]:
+              JobType.TOUCH_UP_IMPORT, JobType.WATER_CONSTRAINTS, JobType.GAUSSIAN_SPLATS]:
         return Service.MODELING
     if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
               JobType.CHANGE_DETECTION, JobType.TRAINING_O2D, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
@@ -100,9 +104,10 @@ class JobCreate(BaseModel):
                           TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
                           TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
                           TrainingO2DSpecificationsCreate, PointCloudConversionSpecificationsCreate, 
-                          TrainingS3DSpecificationsCreate, EvalO2DSpecificationsCreate,
-                          EvalO3DSpecificationsCreate, EvalS2DSpecificationsCreate,
-                          EvalS3DSpecificationsCreate, EvalSOrthoSpecificationsCreate] = (
+                          TrainingS3DSpecificationsCreate, GaussianSplatsSpecificationsCreate, 
+                          EvalO2DSpecificationsCreate, EvalO3DSpecificationsCreate, 
+                          EvalS2DSpecificationsCreate, EvalS3DSpecificationsCreate, 
+                          EvalSOrthoSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -144,9 +149,11 @@ class Job(BaseModel):
                           TilingSpecifications, TouchUpExportSpecifications,
                           TouchUpImportSpecifications, WaterConstraintsSpecifications, 
                           TrainingO2DSpecifications, TrainingS3DSpecifications,
-                          PointCloudConversionSpecifications, EvalO2DSpecifications,
-                          EvalO3DSpecifications, EvalS2DSpecifications,
-                          EvalS3DSpecifications, EvalSOrthoSpecifications] = (
+                          PointCloudConversionSpecifications, GaussianSplatsSpecifications, 
+                          EvalO2DSpecifications, EvalO3DSpecifications, 
+                          EvalS2DSpecifications, EvalS3DSpecifications, 
+                          EvalSOrthoSpecifications] = (
+
         Field(description="Specifications aligned with the job type."))
 
     @model_validator(mode="after")
@@ -188,6 +195,8 @@ class Job(BaseModel):
             model.specifications = TrainingS3DSpecifications(**model.specifications.model_dump(by_alias=True))
         elif model.type == JobType.POINT_CLOUD_CONVERSION:
             model.specifications = PointCloudConversionSpecifications(**model.specifications.model_dump(by_alias=True))
+        elif model.type == JobType.GAUSSIAN_SPLATS:
+            model.specifications = GaussianSplatsSpecifications(**model.specifications.model_dump(by_alias=True))
         elif model.type == JobType.EVAL_O2D:
             model.specifications = EvalO2DSpecifications(**model.specifications.model_dump(by_alias=True))
         elif model.type == JobType.EVAL_O3D:
