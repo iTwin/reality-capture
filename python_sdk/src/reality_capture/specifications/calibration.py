@@ -201,6 +201,8 @@ class CalibrationOptions(BaseModel):
     rigid_registration_scale: Optional[RigidRegistrationScale] = Field(default=None,
                                                                        description="Rigid registration for scale",
                                                                        alias="rigidRegistrationScale")
+    scene_output_crs: Optional[str] = Field(None, alias="sceneOutputCrs",
+                                            description="CRS to use when producing the output ContextScene")
 
 
 class CalibrationSpecifications(BaseModel):
