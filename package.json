@@ -25,7 +25,10 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "beachball": "^2.51.0"
+    "beachball": "^2.54.0"
+  },
+  "overrides": {
+    "form-data": "^4.0.4"
   },
   "repository": {
     "type": "git",
