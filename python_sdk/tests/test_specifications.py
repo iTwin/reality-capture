@@ -20,3 +20,6 @@ class TestSpecifications:
                           }
         export_create_3DTiles = production.ExportCreate(**export_3DTiles_dict) 
         assert isinstance(export_create_3DTiles.options, production.Options3DTiles)
+
+    def test_export_options_from_object(self):
+        construct_from_object = production.ExportCreate(format=production.Format.THREESM, options=production.Options3SM())
