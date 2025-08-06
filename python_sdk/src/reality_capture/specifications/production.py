@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from typing import Optional, Union
 from enum import Enum
 from reality_capture.specifications.geometry import Point3d
@@ -525,6 +525,60 @@ class ExportCreate(BaseModel):
                             OptionsFBX]] = Field(
         None, description="Options associated to format")
     name: Optional[str] = Field(None, description="Name used for the reality data.", min_length=3)
+
+    @model_validator(mode="before")
+    @classmethod
+    def validate_options(cls, data):
+        format = Format(data.get("format"))
+        options = data.get("options")
+
+        if not isinstance(options, dict):
+            return data
+
+        if format == Format.THREEMX:
+            data["options"] = Options3MX(**options)
+        elif format == Format.THREESM:
+            data["options"] = Options3SM(**options)
+        elif format == Format.THREED_TILES:
+            data["options"] = Options3DTiles(**options)
+        elif format == Format.OSGB:
+            data["options"] = OptionsOSGB(**options)
+        elif format == Format.SPACEYES:
+            data["options"] = OptionsSpacEyes(**options)
+        elif format == Format.OBJ:
+            data["options"] = OptionsOBJ(**options)
+        elif format == Format.S3C:
+          data["options"] = OptionsS3C(**options)
+        elif format == Format.I3S:
+          data["options"] = OptionsI3S(**options)
+        elif format == Format.LOD_TREE:
+          data["options"] = OptionsLodTreeExport(**options)
+        elif format == Format.COLLADA:
+          data["options"] = OptionsCollada(**options)
+        elif format == Format.OCP:
+          data["options"] = OptionsOCP(**options)
+        elif format == Format.KML:
+          data["options"] = OptionsKML(**options)
+        elif format == Format.DGN:
+          data["options"] = OptionsDGN(**options)
+        elif format == Format.SUPER_MAP:
+          data["options"] = OptionsSuperMap(**options)
+        elif format == Format.LAS:
+          data["options"] = OptionsLAS(**options)
+        elif format == Format.POD:
+          data["options"] = OptionsPOD(**options)
+        elif format == Format.PLY:
+          data["options"] = OptionsPLY(**options)
+        elif format == Format.OPC:
+          data["options"] = OptionsOPC(**options)
+        elif format == Format.ORTHOPHOTO_DSM:
+          data["options"] = OptionsOrthoDSM(**options)
+        elif format == Format.FBX:
+          data["options"] = OptionsFBX(**options)
+        else:
+            raise ValueError(f"Unsupported format type: {format}")
+        
+        return data
 
 
 class Export(ExportCreate):
