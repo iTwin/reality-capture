@@ -107,7 +107,7 @@ class Segmentation3DOptions(BaseModel):
                                             description="Save confidence in 3D segmentation")
     compute_line_width: Optional[bool] = Field(None, alias="computeLineWidth",
                                                description="Estimation 3D line width at each vertex")
-    remove_small_components: Optional[float] = Field(None, alias="removeSmallComponents",
+    remove_small_lines: Optional[float] = Field(None, alias="removeSmallLines",
                                                      description="Remove 3D lines with total length "
                                                                  "smaller than this value")
     keep_input_resolution: Optional[bool] = Field(None, alias="keepInputResolution",
