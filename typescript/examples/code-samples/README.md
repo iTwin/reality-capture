@@ -35,7 +35,7 @@ To build and run the source code locally you will need a few things:
 
 - Create a new `.env` file, based on `template.env`. Fill in the required fields in the `.env` configuration file.
 
-- Then, replace the input data paths with yours. You can download data samples here : [data](https://communities.bentley.com/products/3d_imaging_and_point_cloud_software/w/wiki/54656/context-insights-detectors-download-page)
+- Then, replace the input data paths with yours. You can download data samples here : [data](https://bentleysystems.service-now.com/community?sys_kb_id=cda378791b714690dc6db99f034bcb5c&id=kb_article_view&sysparm_rank=1&sysparm_tsqueryId=1c9303b31bb1e610dc6db99f034bcb85)
 - Replace qa/dev environment with the one you want to use.
 
 - Run reality data creation example

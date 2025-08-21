@@ -48,6 +48,8 @@ class ConversionSettings:
             settings_dict["inputs"].append({"id": rd_id})
         for rd_id in self.inputs.pointcloud:
             settings_dict["inputs"].append({"id": rd_id})
+        for rd_id in self.inputs.pnts:
+            settings_dict["inputs"].append({"id": rd_id})
 
         if self.outputs.opc:
             settings_dict["outputs"].append("OPC")
@@ -62,6 +64,10 @@ class ConversionSettings:
             settings_dict["options"]["processingEngines"] = self.options.engines
         if not self.options.merge:
             settings_dict["options"]["merge"] = self.options.merge
+        if self.options.input_srs !="":
+            settings_dict["options"]["inputSRS"] = self.options.input_srs
+        if self.options.output_srs !="":
+            settings_dict["options"]["outputSRS"] = self.options.output_srs
 
         return settings_dict
 
@@ -91,6 +97,8 @@ class ConversionSettings:
                     new_job_settings.inputs.opc.append(input_dict["id"])
                 elif input_dict["type"] == "PointCloud":
                     new_job_settings.inputs.pointcloud.append(input_dict["id"])
+                elif input_dict["type"] == "PNTS":
+                    new_job_settings.inputs.pointcloud.append(input_dict["id"])
                 else:
                     raise TypeError(
                         "found non expected input type:" + input_dict["type"]
@@ -119,6 +127,8 @@ class ConversionSettings:
             options_json = settings_json.get("options", {})
             new_job_settings.options.engines = int(options_json.get("processingEngines", 0))
             new_job_settings.options.merge = bool(options_json.get("merge", True))
+            new_job_settings.options.input_srs = options_json.get("inputSRS", "")
+            new_job_settings.options.output_srs = options_json.get("outputSRS", "")
 
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
@@ -135,6 +145,7 @@ class ConversionSettings:
             e57: A list of paths to E57 files.
             opc: A list of paths to OPC files.
             pointcloud: A list of paths to PointCloud files.
+            pnts: A list of paths to PNTS files.
         """
 
         def __init__(self) -> None:
@@ -144,6 +155,7 @@ class ConversionSettings:
             self.e57: List[str] = []
             self.opc: List[str] = []
             self.pointcloud: List[str] = []
+            self.pnts: List[str] = []
 
     class Outputs:
         """
@@ -170,12 +182,17 @@ class ConversionSettings:
             merge: If true, all the input files from multiple containers will be merged into one output file.
             Else output file will be created per input file.
             engines: Quantity of engines to be used by the job.
+            input_srs: Defines the horizontal or horizontal+vertical EPSG codes of the CRS
+            (coordinate reference system) of the input files
+            output_srs: Defines the horizontal or horizontal+vertical EPSG codes of the CRS
+            (coordinate reference system) of the output files
         """
 
         def __init__(self) -> None:
             self.merge: bool = True
             self.engines: int = 0
-
+            self.input_srs: str = ""
+            self.output_srs: str = ""
 
 class ImportFeaturesSettings:
     """

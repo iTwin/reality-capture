@@ -89,7 +89,7 @@ export class ContextCaptureService {
      * @returns {Set<string>} Set of required minimal scopes.
      */
     public static getScopes(): Set<string> {
-        return new Set(["contextcapture:read", "contextcapture:modify"]);
+        return new Set(["itwin-platform"]);
     }
 
     /**

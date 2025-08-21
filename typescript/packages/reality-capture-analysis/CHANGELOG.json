@@ -2,6 +2,21 @@
   "name": "@itwin/reality-capture-analysis",
   "entries": [
     {
+      "date": "Mon, 02 Jun 2025 15:33:43 GMT",
+      "version": "1.2.1",
+      "tag": "@itwin/reality-capture-analysis_v1.2.1",
+      "comments": {
+        "patch": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-capture-analysis",
+            "commit": "b413dd37aed7a1f776571271dfc0db3d300d9690",
+            "comment": "Update SDK"
+          }
+        ]
+      }
+    },
+    {
       "date": "Fri, 15 Nov 2024 15:16:01 GMT",
       "version": "1.2.0",
       "tag": "@itwin/reality-capture-analysis_v1.2.0",
