@@ -212,7 +212,7 @@ importers:
   typescript/packages/reality-capture-analysis:
     dependencies:
       axios:
-        specifier: ^1.7.4
+        specifier: ^1.8.2
         version: 1.11.0
     devDependencies:
       '@itwin/build-tools':
@@ -285,7 +285,7 @@ importers:
   typescript/packages/reality-capture-conversion:
     dependencies:
       axios:
-        specifier: ^1.7.4
+        specifier: ^1.8.2
         version: 1.11.0
     devDependencies:
       '@itwin/build-tools':
@@ -343,7 +343,7 @@ importers:
   typescript/packages/reality-capture-modeling:
     dependencies:
       axios:
-        specifier: ^1.7.4
+        specifier: ^1.8.2
         version: 1.11.0
     devDependencies:
       '@itwin/build-tools':
