@@ -24,7 +24,7 @@ All the packages are available in python, except Reality Management
 ## Requirements
 
 - [Git LFS](https://git-lfs.github.com/) to be installed.
-- [Node](https://nodejs.org/en/): an installation of the latest security patch of Node 18. The Node installation also includes the **npm** package manager.
+- [Node](https://nodejs.org/en/): an installation of the latest security patch of Node 22. The Node installation also includes the **npm** package manager.
 - [pnpm](https://pnpm.io/): [prefer installation via npm corepack](https://pnpm.io/installation#using-corepack)
 
 ## Build Instructions

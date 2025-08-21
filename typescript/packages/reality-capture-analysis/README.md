@@ -18,7 +18,7 @@ A registered application in the iTwin Platform is needed for using the Reality A
 
 To use the Reality Analysis API you will need to have an access to a project. If you don't have one already, contact one of your Organization Administrators or take some time to go through the following tutorial: Create a [Project](https://developer.bentley.com/tutorials/create-and-query-projects-guide).
 
-To build and run the Reality Analysis service, you will need [Node.js](https://nodejs.org/en/) v18 (must be greater than 18.12.x).
+To build and run the Reality Analysis service, you will need [Node.js](https://nodejs.org/en/) v22 (must be greater than 22.14.x).
 
 ## Key Types and Methods
 
