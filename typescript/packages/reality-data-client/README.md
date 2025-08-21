@@ -20,7 +20,7 @@ A registered application in the iTwin Platform is needed for using the Reality D
 
 To use the Reality Management API you will need to have an access to an iTwin. If you don't have one already, contact one of your Organization Administrators or take some time to go through the following tutorial: Create an [iTwin](https://developer.bentley.com/tutorials/create-and-query-itwins-guide/).
 
-To build and run the Reality Data Client, you will need [Node.js](https://nodejs.org/en/) v18 (must be greater than 18.12.x).
+To build and run the Reality Data Client, you will need [Node.js](https://nodejs.org/en/) v22 (must be greater than 22.14.x).
 
 ## Authorization
 

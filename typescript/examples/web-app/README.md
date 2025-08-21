@@ -7,7 +7,7 @@ reality-capture-web-app is a web application to show how reality capture service
  is a service that runs Artificial Intelligence/Machine Learning (AI/ML) on photos, maps, meshes or point clouds. It can detect objects or features in 2D and 3D for defect analysis, image anonymization, image indexing, asset management, mobile mapping, aerial surveying, and more.
 - [Reality Modeling](https://developer.bentley.com/apis/contextcapture/) is a service that turns images and point clouds into reality meshes, orthophotos and other by-products.
 
-It has been tested with Node 18.12.0 and should work with Node 18.12.0 and newer.
+It has been tested with Node 22.14.0 and should work with Node 22.14.0 and newer.
 
 ## Table of contents
 

@@ -25,7 +25,7 @@ jobs:
           version: 8
       - uses: actions/setup-node@v3
         with:
-          node-version: '18.12.0'
+          node-version: '22.14.0'
       - name: Install packages
         working-directory: ./
         run: pnpm install
@@ -66,7 +66,7 @@ jobs:
           version: 8
       - uses: actions/setup-node@v3
         with:
-          node-version: '18.12.0'
+          node-version: '22.14.0'
       - name: Install packages
         working-directory: ./
         run: pnpm install

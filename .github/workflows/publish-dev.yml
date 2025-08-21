@@ -15,10 +15,10 @@ jobs:
           token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
           lfs: true
 
-      - name: Use Node.js 18
+      - name: Use Node.js 22
         uses: actions/setup-node@v3
         with:
-          node-version: 18.12.0
+          node-version: 22.14.0
           registry-url: https://registry.npmjs.org/
       
       - name: Install pnpm
