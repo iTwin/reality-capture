@@ -13,8 +13,8 @@ function loadEnv(envFile) {
   if (!fs.existsSync(envFile))
     return;
 
-  const dotenv = require("dotenv"); // eslint-disable-line @typescript-eslint/no-var-requires
-  const dotenvExpand = require("dotenv-expand"); // eslint-disable-line @typescript-eslint/no-var-requires
+  const dotenv = require("dotenv");
+  const dotenvExpand = require("dotenv-expand");
   const envResult = dotenv.config({ path: envFile });
   if (envResult.error) {
     throw envResult.error;
