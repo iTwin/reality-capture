@@ -10,19 +10,28 @@ import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
 async function runRealityDataExample() {
     /**
-     * This example uploads an images folder in the cloud, and downloads it
+     * This example shows how to upload an images folder in the cloud, and how to download it
      */
-    const images = "path to the images you want to upload";
-    const outputPath = "path to the folder where you want to save downloads";
-    const imagesName = "Test Upload Moto Photos";
 
+    // Inputs to provide
+
+    // Required : path to the image folder to upload
+    const imagesPath = "";
+    // Required : path to the folder where the cloud images will be downloaded
+    const outputPath = "";
+    // Name of the images in the cloud
+    const imagesName = "Sample_Upload_Images";
+
+    // Script
     dotenv.config();
 
-    const iTwinId = process.env.IMJS_PROJECT_ID ?? "";
-    const clientId = process.env.IMJS_CLIENT_ID ?? "";
-    const redirectUrl = process.env.IMJS_REDIRECT_URL ?? "";
-    const env = process.env.IMJS_ENV ?? "";
-    const issuerUrl = env === "prod" ? "https://ims.bentley.com" : "https://qa-ims.bentley.com";
+    const iTwinId = process.env.IMJS_SAMPLE_PROJECT_ID ?? "";
+    const clientId = process.env.IMJS_SAMPLE_CLIENT_ID ?? "";
+    const redirectUrl = process.env.IMJS_SAMPLE_REDIRECT_URL ?? "";
+    const issuerUrl = "https://ims.bentley.com"
+    if(!iTwinId || !clientId || !redirectUrl) {
+        console.log(".env file is not configured properly");
+    }
 
     console.log("Reality Data Transfer example");
     const authorizationClient = new NodeCliAuthorizationClient({
@@ -33,19 +42,14 @@ async function runRealityDataExample() {
     });
     await authorizationClient.signIn();
     
-    let realityDataService: RealityDataTransferNode;
-    if(env === "prod")
-        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
-    else
-        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
-    
+    let realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
     console.log("Service initialized");
 
     // Upload images
     console.log("Uploading images to cloud");
-    const id = await realityDataService.uploadRealityData(images, imagesName, RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
+    const id = await realityDataService.uploadRealityData(imagesPath, imagesName, RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
     console.log("Images uploaded successfully");
 
     // Download images

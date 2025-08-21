@@ -18,6 +18,12 @@ class RCInputs {
     ply: string[];
     /** A list of paths to E57 files. */
     e57: string[];
+    /** A list of paths to POD files. */
+    pointcloud: string[];
+    /** A list of paths to OPC files. */
+    opc: string[];
+    /** A list of paths to PNTS files. */
+    pnts: string[];
 
     constructor() {
         /**
@@ -40,6 +46,21 @@ class RCInputs {
          * @type {string[]}
          */
         this.e57 = [];
+        /**
+         * A list of paths to POD files.
+         * @type {string[]}
+         */
+        this.pointcloud = [];
+        /**
+         * A list of paths to OPC files.
+         * @type {string[]}
+         */
+        this.opc = [];
+        /**
+         * A list of paths to PNTS files.
+         * @type {string[]}
+         */
+        this.pnts = [];
     }
 }
 
@@ -53,6 +74,12 @@ class RCOuputs {
     /** Either a boolean to indicate conversion type or a list of created PNTS files ids. */
     pnts: boolean | string[];
 
+    /** Either a boolean to indicate conversion type or a list of created GLB files ids. */
+    glb: boolean | string[];
+
+    /** Either a boolean to indicate conversion type or a list of created GLBC files ids. */
+    glbc: boolean | string[];
+
     constructor() {
         /**
          * Either a boolean to indicate conversion type or a list of created OPC files ids.
@@ -65,6 +92,18 @@ class RCOuputs {
          * @type {boolean | string[]}
          */
         this.pnts = false;
+
+        /**
+         * Either a boolean to indicate conversion type or a list of created GLB files ids.
+         * @type {boolean | string[]}
+         */
+        this.glb = false;
+
+        /**
+         * Either a boolean to indicate conversion type or a list of created GLBC files ids.
+         * @type {boolean | string[]}
+         */
+        this.glbc = false;
     }
 }
 
@@ -76,6 +115,10 @@ class RCOptions {
     engines: number;
     /** If true, all the input files from multiple containers will be merged into one output file. Else output file will be created per input file. */
     merge: boolean;
+    /** Defines the horizontal or horizontal+vertical EPSG codes of the CRS (coordinate reference system) of the input files. */
+    inputSrs: string;
+    /** Defines the horizontal or horizontal+vertical EPSG codes of the CRS (coordinate reference system) of the output files. */
+    outputSrs: string;
 
     constructor() {
         /**
@@ -88,6 +131,16 @@ class RCOptions {
          * @type { boolean }
          */
         this.merge = false;
+
+        /** Defines the horizontal or horizontal+vertical EPSG codes of the CRS (coordinate reference system) of the input files.
+         * @type { string }
+         */
+        this.inputSrs = "";
+
+        /** Defines the horizontal or horizontal+vertical EPSG codes of the CRS (coordinate reference system) of the output files. 
+         * @type { string }
+         */
+        this.outputSrs = "";
     }
 }
 
@@ -129,6 +182,8 @@ export class RCJobSettings {
             "options": {
                 "processingEngines": this.options.engines,
                 "merge" : this.options.merge,
+                "inputSRS" : this.options.inputSrs,
+                "outputSRS" : this.options.outputSrs,
             }
         };
 
@@ -148,17 +203,39 @@ export class RCJobSettings {
             json["inputs"].push({ "id": id });
         });
 
+        this.inputs.opc.forEach((id) => {
+            json["inputs"].push({ "id": id });
+        });
+
+        this.inputs.pnts.forEach((id) => {
+            json["inputs"].push({ "id": id });
+        });
+
+        this.inputs.pointcloud.forEach((id) => {
+            json["inputs"].push({ "id": id });
+        });
+
         if (this.outputs.opc)
             json["outputs"].push("OPC");
 
         if (this.outputs.pnts)
             json["outputs"].push("PNTS");
 
+        if (this.outputs.glb)
+            json["outputs"].push("GLB");
+
+        if (this.outputs.glbc)
+            json["outputs"].push("GLBC");
+
         if(this.options) {
             if(this.options.engines)
                 json["options"]["processingEngines"] = this.options.engines;
             if(this.options.merge)
                 json["options"]["merge"] = this.options.merge;
+            if(this.options.inputSrs)
+                json["options"]["inputSRS"] = this.options.inputSrs;
+            if(this.options.outputSrs)
+                json["options"]["outputSRS"] = this.options.outputSrs;
             
         }
 
@@ -182,17 +259,29 @@ export class RCJobSettings {
                 newJobSettings.inputs.ply.push(input["id"]);
             else if (input["type"] === "E57")
                 newJobSettings.inputs.e57.push(input["id"]);
+            else if (input["type"] === "OPC")
+                newJobSettings.inputs.opc.push(input["id"]);
+            else if (input["type"] === "PNTS")
+                newJobSettings.inputs.pnts.push(input["id"]);
+            else if (input["type"] === "PointCloud")
+                newJobSettings.inputs.pointcloud.push(input["id"]);
             else
                 return Promise.reject(new Error("Found unexpected input type : " + input["type"]));
         }
         const outputsJson = settingsJson["outputs"];
         newJobSettings.outputs.opc = [];
         newJobSettings.outputs.pnts = [];
+        newJobSettings.outputs.glb = [];
+        newJobSettings.outputs.glbc = [];
         for (const output of outputsJson) {
             if (output["type"] === "OPC")
                 newJobSettings.outputs.opc.push(output["id"]);
             else if (output["type"] === "PNTS")
                 newJobSettings.outputs.pnts.push(output["id"]);
+            else if (output["type"] === "GLB")
+                newJobSettings.outputs.glb.push(output["id"]);
+            else if (output["type"] === "GLBC")
+                newJobSettings.outputs.glbc.push(output["id"]);
             else
                 return Promise.reject(new Error("Found unexpected output type : " + output["type"]));
         }
@@ -202,6 +291,10 @@ export class RCJobSettings {
                 newJobSettings.options.engines = settingsJson["options"]["processingEngines"];
             if(settingsJson["options"]["merge"])
                 newJobSettings.options.merge = settingsJson["options"]["merge"];
+            if(settingsJson["options"]["inputSRS"])
+                newJobSettings.options.inputSrs = settingsJson["options"]["inputSRS"];
+            if(settingsJson["options"]["outputSRS"])
+                newJobSettings.options.outputSrs = settingsJson["options"]["outputSRS"];
         }
 
         return newJobSettings;

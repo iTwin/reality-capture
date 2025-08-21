@@ -15,24 +15,37 @@ export async function sleep(ms: number) { return new Promise(resolve => setTimeo
 
 async function runModelingExample() {
     /**
-     * This example submits a Full Modeling job (Calibration + Reconstruction), and will download the reconstruction output as a 3mx file.
+     * This example show how to submit a Full Modeling job (Calibration + Reconstruction), and how to download the results.
      */
-    const images = "path to your image folder";
-    const ccOrientations = "path to the folder where your ccorientation file is";
-    const outputPath = "path to the folder where you want to save outputs";
 
+    // Inputs to provide
+
+    // Required : path of the image folder
+    const imagesPath = "";
+    // Required : path to the ccorientation folder
+    const orientationsPath = "";
+    // Required : path to the folder where the results will be downloaded
+    const outputPath = "";
+
+    // Name of the modeling job
+    const jobName = "Modeling_Sample_Job";
+    // Name of the workspace
+    const workspaceName = "Modeling_Sample_Workspace";
+    // Name of the images in the cloud
+    const imagesName = "Modeling_Sample_Images";
+    // name of the orientations file in the cloud
+    const orientationsName = "Modeling_Sample_Orientations";
+
+    // Script
     dotenv.config();
 
-    const jobName = "Reality Modeling job SDK sample";
-    const workspaceName = "Reality Modeling test workspace";
-    const imagesName = "Reality Modeling test photos";
-    const ccOrientationsName = "Reality Modeling test ccorientations";
-
-    const iTwindId = process.env.IMJS_PROJECT_ID ?? "";
-    const clientId = process.env.IMJS_CLIENT_ID ?? "";
-    const redirectUrl = process.env.IMJS_REDIRECT_URL ?? "";
-    const env = process.env.IMJS_ENV ?? "";
-    const issuerUrl = env === "prod" ? "https://ims.bentley.com" : "https://qa-ims.bentley.com";
+    const iTwinId = process.env.IMJS_SAMPLE_PROJECT_ID ?? "";
+    const clientId = process.env.IMJS_SAMPLE_CLIENT_ID ?? "";
+    const redirectUrl = process.env.IMJS_SAMPLE_REDIRECT_URL ?? "";
+    const issuerUrl = "https://ims.bentley.com";
+    if (!iTwinId || !clientId || !redirectUrl) {
+        console.log(".env file is not configured properly");
+    }
 
     const authorizationClient = new NodeCliAuthorizationClient({
         clientId: clientId,
@@ -43,100 +56,93 @@ async function runModelingExample() {
     await authorizationClient.signIn();
 
     console.log("Reality Modeling sample job - Full (Calibration + Reconstruction)");
-    let realityDataService: RealityDataTransferNode;
-    if(env === "prod")
-        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
-    else
-        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
-    
+    let realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
 
-    let contextCaptureService;
-    if(env === "prod")
-        contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient));
-    else if(env === "qa")
-        contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
-    else
-        contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient), "dev-");
-
+    let contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient));
     console.log("Service initialized");
 
-    try {
-        // Creating reference table and uploading images, ccOrientations if necessary (not yet on the cloud)
-        const references = new ReferenceTableNode();
-        const referencesPath = path.join(outputPath, "test_references_typescript.txt");
-        if(fs.existsSync(referencesPath) && fs.lstatSync(referencesPath).isFile()) {
-            console.log("Loading preexistent references");
-            await references.load(referencesPath);
-        }
+    // Creating reference table and uploading images, ccOrientations if necessary (not yet on the cloud)
+    const references = new ReferenceTableNode();
+    const referencesPath = path.join(outputPath, "test_references_typescript.txt");
+    if (fs.existsSync(referencesPath) && fs.lstatSync(referencesPath).isFile()) {
+        console.log("Loading preexistent references");
+        await references.load(referencesPath);
+    }
 
-        // Upload images
-        if(!references.hasLocalPath(images)) {
-            console.log("No reference to images found, uploading local files to cloud");
-            const id = await realityDataService.uploadRealityData(images, imagesName, 
-                RealityDataType.CC_IMAGE_COLLECTION, iTwindId);
-            references.addReference(images, id);
-        }
+    // Upload images
+    if (!references.hasLocalPath(imagesPath)) {
+        console.log("Uploading images...");
+        const id = await realityDataService.uploadRealityData(imagesPath, imagesName,
+            RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
+        references.addReference(imagesPath, id);
+        console.log("Images uploaded successfully");
+    }
 
-        // Upload ccOrientations
-        if(!references.hasLocalPath(ccOrientations)) {
-            console.log("No reference to cc orientations found, uploading local files to cloud");
-            const id = await realityDataService.uploadCCOrientations(ccOrientations, ccOrientationsName, iTwindId, references);
-            references.addReference(ccOrientations, id);
-        }
+    // Upload orientations file
+    if (!references.hasLocalPath(orientationsPath)) {
+        console.log("Upoading orientations");
+        const id = await realityDataService.uploadCCOrientations(orientationsPath, orientationsName, iTwinId, references);
+        references.addReference(orientationsPath, id);
+        console.log("Orientations uploaded successfully");
+    }
 
-        await references.save(referencesPath);
-        console.log("Checked data upload");
+    await references.save(referencesPath);
 
-        // Create workspace
-        const workspaceId = await contextCaptureService.createWorkspace(workspaceName, iTwindId);
+    // Create workspace
+    const workspaceId = await contextCaptureService.createWorkspace(workspaceName, iTwinId);
 
-        const settings = new CCJobSettings();
-        settings.inputs = [references.getCloudIdFromLocalPath(images), references.getCloudIdFromLocalPath(ccOrientations)];
-        settings.outputs.threeMX = "threeMX";
-        settings.meshQuality = CCJobQuality.DRAFT;
-        console.log("Settings created");
+    // Create & submit job
+    const settings = new CCJobSettings();
+    settings.inputs = [references.getCloudIdFromLocalPath(imagesPath), references.getCloudIdFromLocalPath(orientationsPath)];
+    settings.outputs.las = "LAS";
+    settings.meshQuality = CCJobQuality.DRAFT;
+    // TODO : srs & density?
+    console.log("Settings created");
 
-        const jobId = await contextCaptureService.createJob(CCJobType.FULL, settings, jobName, workspaceId);
-        console.log("Job created");
+    const jobId = await contextCaptureService.createJob(CCJobType.FULL, settings, jobName, workspaceId);
+    console.log("Job created");
 
-        await contextCaptureService.submitJob(jobId);
-        console.log("Job submitted");
+    await contextCaptureService.submitJob(jobId);
+    console.log("Job submitted");
 
-        let jobInProgress = true;
-        while(jobInProgress) {
+    // Monitor job
+    let jobInProgress = true;
+    while (jobInProgress) {
+        try {
             const progress = await contextCaptureService.getJobProgress(jobId);
-            if(progress.state === JobState.SUCCESS || progress.state === JobState.OVER) {
+            if (progress.state === JobState.SUCCESS || progress.state === JobState.OVER) {
                 jobInProgress = false;
                 break;
             }
-            else if(progress.state === JobState.ACTIVE) {
+            else if (progress.state === JobState.ACTIVE) {
                 console.log("Progress: " + progress.progress + ", step: " + progress.step);
             }
-            else if(progress.state === JobState.CANCELLED) {
+            else if (progress.state === JobState.CANCELLED) {
                 console.log("Job cancelled");
                 return;
             }
-            else if(progress.state === JobState.FAILED) {
+            else if (progress.state === JobState.FAILED) {
                 console.log("Job failed");
                 console.log("Progress: " + progress.progress + ", step: " + progress.step);
                 return;
             }
-            await sleep(6000);
         }
-        console.log("Job done");
+        catch(error: any) {
+            console.error("Job progress error :  ", error.message || error);
+        }
+        await sleep(6000);
+    }
+    console.log("Job done");
 
-        console.log("Retrieving outputs ids");
-        const properties = await contextCaptureService.getJobProperties(jobId);
-        console.log("Downloading outputs");
-        const threeMXId = (properties.settings as CCJobSettings).outputs.threeMX;
-        realityDataService.downloadRealityData(threeMXId, outputPath, iTwindId);
-        console.log("Successfully downloaded output");
-    }
-    catch(error: any) {
-        console.log(error);
-    }
+    // Download results
+    console.log("Retrieving outputs ids");
+    const properties = await contextCaptureService.getJobProperties(jobId);
+    console.log("Downloading outputs");
+    const lasId = (properties.settings as CCJobSettings).outputs.las;
+    await realityDataService.downloadRealityData(lasId, outputPath, iTwinId);
+    console.log("Successfully downloaded output");
 }
 
 runModelingExample();

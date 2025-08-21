@@ -1,6 +1,6 @@
 # Introduction
 
-reality-capture-examples contains reality capture examples.
+reality-capture-examples contains reality capture examples for modeling, analysis and conversion.
 
 It has been tested with Node 22.14.0 and should work with Node 22.14.0 and newer.
 
@@ -8,7 +8,7 @@ It has been tested with Node 22.14.0 and should work with Node 22.14.0 and newer
 
 To build and run the source code locally you will need a few things:
 
-- Install [Node.js](https://nodejs.org/en/) v22 (must be greater than 22.14.x).
+- Install [Node.js](https://nodejs.org/en/) v22 (has been tested with 22.14.0 and should work with newer versions).
 - Install [VS Code](https://code.visualstudio.com/).
 
 ## Build and run the examples
@@ -30,45 +30,49 @@ To build and run the source code locally you will need a few things:
 - Build the project
 
   ```sh
-  npm run build
+  pnpm build
   ```
 
-- Create a new `.env` file, based on `template.env`. Fill in the required fields in the `.env` configuration file.
+- Create a new `.env` file in typescript/examples/code-samples, based on `template.env` root file. Fill in the required fields in the `.env` configuration file.
 
+<<<<<<< HEAD
 - Then, replace the input data paths with yours. You can download data samples here : [data](https://bentleysystems.service-now.com/community?sys_kb_id=cda378791b714690dc6db99f034bcb5c&id=kb_article_view&sysparm_rank=1&sysparm_tsqueryId=1c9303b31bb1e610dc6db99f034bcb85)
 - Replace qa/dev environment with the one you want to use.
+=======
+- Then, in the script, fill in the required inputs. You can download data samples here : [data](https://communities.bentley.com/products/3d_imaging_and_point_cloud_software/w/wiki/54656/context-insights-detectors-download-page)
+>>>>>>> 08069a8 (Update typescript reality conversion sdk and update examples)
 
-- Run reality data creation example
-  
-- Run context capture example
-  
+- Before running the examples, move to code-samples folder
   ```sh
-  cd examples/code-samples
-  npm run start-cc-example
+  cd typescript/examples/code-samples
   ```
 
+- Run reality data management example
+
   ```sh
-  cd examples/code-samples
   npm run start-data-example
   ```
 
-- Run 2d objects detection example
-  
+- Run reality modeling example
+
   ```sh
-  cd examples/code-samples
-  npm run start-o2d-example
+  npm run start-cc-example
   ```
 
 - Run reality conversion example
   
   ```sh
-  cd examples/code-samples
-  npm run start-rcs-example
+  npm run start-conversion-example
+  ```
+
+- Run 2d objects detection example
+  
+  ```sh
+  npm run start-o2d-example
   ```
 
 - Run 2d segmentation example
   
   ```sh
-  cd examples/code-samples
   npm run start-s2d-example
   ```

@@ -3,127 +3,111 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import  path from "path";
 import { RCJobSettings, RealityConversionService } from "@itwin/reality-capture-conversion";
-import * as fs from "fs";
 import * as dotenv from "dotenv";
-import { RealityDataTransferNode, ReferenceTableNode, defaultProgressHook } from "@itwin/reality-data-transfer";
+import { RealityDataTransferNode, defaultProgressHook } from "@itwin/reality-data-transfer";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
 import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
-async function runConversionexample() {
+async function runConversionExample() {
     /**
-     * This example converts a laz file to opc format and downloads the opc file locally.
+     * This example show how to convert a las file to 3DTiles format and how to download the 3DTiles locally.
      */
-    const lazPointCloud = "path to the laz you want to convert";
-    const outputPath = "path to the folder where you want to save the opc file";
 
+    // Inputs to provide
+
+    // Required : path to the las to convert
+    const lasPath = "";
+    // Required : path to the folder where the 3DTiles will be downloaded
+    const outputPath = "";
+
+    // Name for the uploaded data in the cloud
+    const lasName = "Sample_LAS_Input";
+    // Name for the Conversion job
+    const jobName = "Sample_LAS_To_3DTiles_Sample";
+
+    // Script
+    console.log("Reality Conversion sample job to convert LAS in 3DTiles");
     dotenv.config();
 
-    const jobName = "RCS LAZ to OPC sample";
-    const lazName = "RCS LAZ Input";
+    const iTwinId = process.env.IMJS_SAMPLE_PROJECT_ID ?? "";
+    const clientId = process.env.IMJS_SAMPLE_CLIENT_ID ?? "";
+    const redirectUrl = process.env.IMJS_SAMPLE_REDIRECT_URL ?? "";
+    const issuerUrl = "https://ims.bentley.com";
+    if (!iTwinId || !clientId || !redirectUrl) {
+        console.log(".env file is not configured properly");
+    }
 
-    const iTwinId = process.env.IMJS_PROJECT_ID ?? "";
-    const clientId = process.env.IMJS_CLIENT_ID ?? "";
-    const redirectUrl = process.env.IMJS_REDIRECT_URL ?? "";
-    const env = process.env.IMJS_ENV ?? "";
-    const issuerUrl = env === "prod" ? "https://ims.bentley.com" : "https://qa-ims.bentley.com";
-
-    console.log("Reality Analysis sample job detecting 3D lines");
     const authorizationClient = new NodeCliAuthorizationClient({
         clientId: clientId,
-        scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(RealityConversionService.getScopes()).join(" "),
+        scope: Array.from(RealityConversionService.getScopes()).join(" "),
         issuerUrl: issuerUrl,
         redirectUri: redirectUrl,
     });
     await authorizationClient.signIn();
-    
-    let realityDataService: RealityDataTransferNode;
-    if(env === "prod")
-        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
-    else
-        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
 
+    let realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
 
-    let realityConversionService;
-    if(env === "prod")
-        realityConversionService = new RealityConversionService(authorizationClient.getAccessToken.bind(authorizationClient));
-    else if(env === "qa")
-        realityConversionService = new RealityConversionService(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
-    else
-        realityConversionService = new RealityConversionService(authorizationClient.getAccessToken.bind(authorizationClient), "dev-");
+    let realityConversionService = new RealityConversionService(authorizationClient.getAccessToken.bind(authorizationClient));
     console.log("Service initialized");
 
-    try {
-        // Creating reference table and uploading laz point cloud if necessary (not yet on the cloud)
-        const references = new ReferenceTableNode();
-        const referencesPath = path.join(outputPath, "rcs_references_typescript.txt");
-        if(fs.existsSync(referencesPath) && fs.lstatSync(referencesPath).isFile()) {
-            console.log("Loading preexistent references");
-            await references.load(referencesPath);
-        }
+    // Upload LAS
+    console.log("Uploading LAS...")
+    const lasCloudId = await realityDataService.uploadRealityData(lasPath, lasName, RealityDataType.LAS, iTwinId);
+    console.log("Upload done")
 
-        // Upload LAZ
-        if(!references.hasLocalPath(lazPointCloud)) {
-            console.log("No reference to LAZ point cloud found, uploading local files to cloud");
-            const id = await realityDataService.uploadRealityData(lazPointCloud, lazName, RealityDataType.LAZ, iTwinId);
-            references.addReference(lazPointCloud, id);
-        }
+    // Create and submit Conversion job
+    const settings = new RCJobSettings();
+    settings.inputs.las = [lasCloudId];
+    settings.outputs.pnts = true;
+    console.log("Settings created");
 
-        await references.save(referencesPath);
-        console.log("Checked data upload");
+    const jobId = await realityConversionService.createJob(settings, jobName, iTwinId);
+    console.log("Job created");
 
-        const settings = new RCJobSettings();
-        settings.inputs.laz = [references.getCloudIdFromLocalPath(lazPointCloud)];
-        settings.outputs.opc = true;
+    await realityConversionService.submitJob(jobId);
+    console.log("Job submitted");
 
-        console.log("Settings created");
-
-        const jobId = await realityConversionService.createJob(settings, jobName, iTwinId);
-        console.log("Job created");
-
-        await realityConversionService.submitJob(jobId);
-        console.log("Job submitted");
-
-        let jobInProgress = true;
-        while(jobInProgress) {
+    // Monitor job progress
+    let jobInProgress = true;
+    while (jobInProgress) {
+        try {
             const progress = await realityConversionService.getJobProgress(jobId);
-            if(progress.state === JobState.SUCCESS || progress.state === JobState.OVER) {
+            if (progress.state === JobState.SUCCESS || progress.state === JobState.OVER) {
                 jobInProgress = false;
                 break;
             }
-            else if(progress.state === JobState.ACTIVE) {
+            else if (progress.state === JobState.ACTIVE) {
                 console.log("Progress: " + progress.progress + ", step: " + progress.step);
             }
-            else if(progress.state === JobState.CANCELLED) {
+            else if (progress.state === JobState.CANCELLED) {
                 console.log("Job cancelled");
                 return;
             }
-            else if(progress.state === JobState.FAILED) {
+            else if (progress.state === JobState.FAILED) {
                 console.log("Job failed");
-                console.log("Progress: " + progress.progress + ", step: " + progress.step);
                 return;
             }
-            await sleep(6000);
         }
-        console.log("Job done");
-
-        console.log("Retrieving outputs ids");
-        const properties = await realityConversionService.getJobProperties(jobId);
-        console.log("Downloading outputs");
-        const opc = properties.settings.outputs.opc as string[];
-        if(opc.length > 0) {
-            await realityDataService.downloadRealityData(opc[0], outputPath, iTwinId);
-            console.log("Successfully downloaded output");
+        catch(error: any) {
+            console.error("Job progress error :  ", error.message || error);
         }
+        await sleep(6000);
     }
-    catch(error: any) {
-        console.log(error);
+    console.log("Job done");
+
+    // Download 3DTiles
+    const properties = await realityConversionService.getJobProperties(jobId);
+    console.log("Downloading outputs");
+    const pnts = properties.settings.outputs.pnts as string[];
+    if (pnts.length > 0) {
+        await realityDataService.downloadRealityData(pnts[0], outputPath, iTwinId);
+        console.log("Successfully downloaded output");
     }
 }
 
-runConversionexample();
+runConversionExample();
