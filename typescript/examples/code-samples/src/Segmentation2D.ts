@@ -16,56 +16,62 @@ export async function sleep(ms: number) { return new Promise(resolve => setTimeo
 
 async function runSegmentation2DExample() {
     /**
-     * This example submits an segmentation2d analysis job, and downloads an annotations context scene
+     * This example show how to submit a segmentation2d analysis job and how to download the results
      */
-    const images = "path to your image folder";
-    const photosContextScene  = "path to the folder where your context scene file is";
-    const photoSegmentationDetector = "path to the folder where your detector is";
-    const mesh = "path to the folder where your mesh is";
-    const meshContextScene = "path to the folder where your context scene file that references the mesh is";
-    const outputPath = "path to the folder where you want to save outputs";
 
+    // Inputs to provide
+
+    // Required : path to the image folder
+    const imagesPath = "";
+    // Required : path to the context scene folder where the images are referenced
+    const photosContextScenePath  = "";
+    // Required : path to the detector folder
+    const photoSegmentationDetectorPath = "";
+    // Required : path to the mesh folder
+    const meshPath = "";
+    // Required : path to the context scene folder where the meshes are referenced
+    const meshContextScenePath = "";
+    // Required : path to the folder where the results will be downloaded
+    const outputPath = "";
+
+    // Name of the analysis job
+    const jobName = "S2D job SDK sample";
+    // Name of the images in the cloud
+    const imagesName = "Sample_S2D_Images";
+    // Name of the images context scene in the cloud
+    const photosSceneName = "Sample_S2D_Oriented_Scene";
+    // Name of the mesh in the cloud
+    const meshName = "Sample_S2D_Mesh";
+    // Name of the mesh context scene in the cloud
+    const meshSceneName = "Sample_S2D_Mesh_Scene";
+    // Name of the detector in the cloud
+    const detectorName = "Sample_S2D_Detector";
+
+    // Script
     dotenv.config();
 
-    const jobName = "S2D job SDK sample";
-    const imagesName = "Test S2D Photos";
-    const photosSceneName = "Test S2D oriented photos";
-    const meshName = "Test S2D mesh";
-    const contextSceneName = "Test S2D Scene";
-    const detectorName = "Test S2D detector";
-
-    const iTwinId = process.env.IMJS_PROJECT_ID ?? "";
-    const clientId = process.env.IMJS_CLIENT_ID ?? "";
-    const redirectUrl = process.env.IMJS_REDIRECT_URL ?? "";
-    const env = process.env.IMJS_ENV ?? "";
-    const issuerUrl = env === "prod" ? "https://ims.bentley.com" : "https://qa-ims.bentley.com";
+    const iTwinId = process.env.IMJS_SAMPLE_PROJECT_ID ?? "";
+    const clientId = process.env.IMJS_SAMPLE_CLIENT_ID ?? "";
+    const redirectUrl = process.env.IMJS_SAMPLE_REDIRECT_URL ?? "";
+    const issuerUrl = "https://ims.bentley.com";
+    if(!iTwinId || !clientId || !redirectUrl) {
+        console.log(".env file is not configured properly");
+    }
 
     console.log("Reality Analysis sample job producing 2D segmentation and 3D lines");
     const authorizationClient = new NodeCliAuthorizationClient({
         clientId: clientId,
-        scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(RealityDataAnalysisService.getScopes()).join(" "),
+        scope: Array.from(RealityDataAnalysisService.getScopes()).join(" "),
         issuerUrl: issuerUrl,
         redirectUri: redirectUrl,
     });
     await authorizationClient.signIn();
     
-    let realityDataService: RealityDataTransferNode;
-    if(env === "prod")
-        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
-    else
-        realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
-
+    let realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
 
-    let realityDataAnalysisService;
-    if(env === "prod")
-        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient));
-    else if(env === "qa")
-        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient), "qa-");
-    else
-        realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient), "dev-");
-
+    let realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient));
     console.log("Service initialized");
 
     // Creating reference table and uploading ccimageCollection, oriented photos, mesh, mesh contextScene and detector if necessary (not yet on the cloud)
@@ -76,52 +82,56 @@ async function runSegmentation2DExample() {
         await references.load(referencesPath);
     }
 
-    // Upload CCImageCollection
-    if(!references.hasLocalPath(images)) {
-        console.log("No reference to CCimage Collections found, uploading local files to cloud");
-        const id = await realityDataService.uploadRealityData(images, imagesName, RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
-        references.addReference(images, id);
+    // Upload images
+    if(!references.hasLocalPath(imagesPath)) {
+        console.log("Uploading images...");
+        const id = await realityDataService.uploadRealityData(imagesPath, imagesName, RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
+        references.addReference(imagesPath, id);
+        console.log("Images uploaded successfully");
     }
 
-    // Upload Oriented photos (contextScene)
-    if(!references.hasLocalPath(photosContextScene)) {
-        console.log("No reference to oriented photos ContextScene found, uploading local files to cloud");
-        const id = await realityDataService.uploadContextScene(photosContextScene, photosSceneName, iTwinId, references);
-        references.addReference(photosContextScene, id);
+    // Upload oriented context scene
+    if(!references.hasLocalPath(photosContextScenePath)) {
+        console.log("Uploading context scene...");
+        const id = await realityDataService.uploadContextScene(photosContextScenePath, photosSceneName, iTwinId, references);
+        references.addReference(photosContextScenePath, id);
+        console.log("Context scene uploaded successfully");
     }
 
-    // Upload Detector
-    if(!references.hasLocalPath(photoSegmentationDetector)) {
-        console.log("No reference to detector found, uploading local files to cloud");
-        const id = await realityDataService.uploadRealityData(photoSegmentationDetector, detectorName, RealityDataType.CONTEXT_DETECTOR, 
+    // Upload detector
+    if(!references.hasLocalPath(photoSegmentationDetectorPath)) {
+        console.log("Uploading detector...");
+        const id = await realityDataService.uploadRealityData(photoSegmentationDetectorPath, detectorName, RealityDataType.CONTEXT_DETECTOR, 
             iTwinId);
-        references.addReference(photoSegmentationDetector, id);
+        references.addReference(photoSegmentationDetectorPath, id);
+        console.log("Detector uploaded successfully");
     }
 
-    // Upload Mesh
-    if(!references.hasLocalPath(mesh)) {
-        console.log("No reference to mesh found, uploading local files to cloud");
-        const id = await realityDataService.uploadRealityData(mesh, meshName, RealityDataType.THREEMX, iTwinId);
-        references.addReference(mesh, id);
+    // Upload mesh
+    if(!references.hasLocalPath(meshPath)) {
+        console.log("Uploading mesh...");
+        const id = await realityDataService.uploadRealityData(meshPath, meshName, RealityDataType.THREEMX, iTwinId);
+        references.addReference(meshPath, id);
+        console.log("Mesh uploaded successfully");
     }
 
-    // Upload Mesh ContextScene
-    if(!references.hasLocalPath(meshContextScene)) {
-        console.log("No reference to mesh ContextScene found, uploading local files to cloud");
-        const id = await realityDataService.uploadContextScene(meshContextScene, contextSceneName, iTwinId, references);
-        references.addReference(meshContextScene, id);
+    // Upload mesh context scene
+    if(!references.hasLocalPath(meshContextScenePath)) {
+        console.log("Uploading mesh context scene...");
+        const id = await realityDataService.uploadContextScene(meshContextScenePath, meshSceneName, iTwinId, references);
+        references.addReference(meshContextScenePath, id);
+        console.log("Mesh context scene uploaded successfully");
     }
 
     await references.save(referencesPath);
-    console.log("Checked data upload");
 
+    // Create and submit job
     const settings = new S2DJobSettings();
-    settings.inputs.photos = references.getCloudIdFromLocalPath(photosContextScene);
-    settings.inputs.photoSegmentationDetector = references.getCloudIdFromLocalPath(photoSegmentationDetector);
-    settings.inputs.meshes = references.getCloudIdFromLocalPath(meshContextScene);
+    settings.inputs.photos = references.getCloudIdFromLocalPath(photosContextScenePath);
+    settings.inputs.photoSegmentationDetector = references.getCloudIdFromLocalPath(photoSegmentationDetectorPath);
+    settings.inputs.meshes = references.getCloudIdFromLocalPath(meshContextScenePath);
     settings.outputs.lines3D = "lines3D";
     settings.outputs.segmentation2D = "segmentation2D";
-
     console.log("Settings created");
 
     const jobId = await realityDataAnalysisService.createJob(settings, jobName, iTwinId);
@@ -130,34 +140,41 @@ async function runSegmentation2DExample() {
     await realityDataAnalysisService.submitJob(jobId);
     console.log("Job submitted");
 
+    // Monitor job
     let jobInProgress = true;
     while(jobInProgress) {
-        const progress = await realityDataAnalysisService.getJobProgress(jobId);
-        if(progress.state === JobState.SUCCESS) {
-            jobInProgress = false;
-            break;
+        try {
+            const progress = await realityDataAnalysisService.getJobProgress(jobId);
+            if(progress.state === JobState.SUCCESS) {
+                jobInProgress = false;
+                break;
+            }
+            else if(progress.state === JobState.ACTIVE) {
+                console.log("Progress: " + progress.progress + ", step: " + progress.step);
+            }
+            else if(progress.state === JobState.CANCELLED) {
+                console.log("Job cancelled");
+                return;
+            }
+            else if(progress.state === JobState.FAILED) {
+                console.log("Job failed");
+                console.log("Progress: " + progress.progress + ", step: " + progress.step);
+                return;
+            }
         }
-        else if(progress.state === JobState.ACTIVE) {
-            console.log("Progress: " + progress.progress + ", step: " + progress.step);
-        }
-        else if(progress.state === JobState.CANCELLED) {
-            console.log("Job cancelled");
-            return;
-        }
-        else if(progress.state === JobState.FAILED) {
-            console.log("Job failed");
-            console.log("Progress: " + progress.progress + ", step: " + progress.step);
-            return;
+        catch(error: any) {
+            console.error("Job progress error :  ", error.message || error);
         }
         await sleep(6000);
     }
     console.log("Job done");
 
+    // Download results
     console.log("Retrieving outputs ids");
     const properties = await realityDataAnalysisService.getJobProperties(jobId);
     console.log("Downloading outputs");
     const lines3dId = (properties.settings as S2DJobSettings).outputs.lines3D;
-    realityDataService.downloadContextScene(lines3dId, outputPath, iTwinId, references);
+    await realityDataService.downloadContextScene(lines3dId, outputPath, iTwinId, references);
     console.log("Successfully downloaded output");
 }
 

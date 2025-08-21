@@ -342,7 +342,7 @@ export class RealityDataTransferNode {
      * @returns {Set<string>} Set of required minimal scopes.
      */
     public static getScopes(): Set<string> {
-        return new Set(["realitydata:modify", "realitydata:read"]);
+        return new Set(["itwin-platform"]);
     }
 
     private async createRealityData(type: string, name: string, iTwinId: string, rootFile?: string): Promise<ITwinRealityData> {
