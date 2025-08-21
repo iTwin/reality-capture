@@ -23,7 +23,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@itwin/node-cli-authorization": "^3.0.0",
+    "@itwin/node-cli-authorization": "^1.0.0",
     "@itwin/reality-capture-common": "workspace:*",
     "@itwin/reality-capture-analysis": "workspace:*",
     "@itwin/reality-capture-conversion": "workspace:*",
