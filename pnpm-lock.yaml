@@ -228,8 +228,8 @@ importers:
         specifier: workspace:*
         version: link:../reality-data-transfer
       '@itwin/service-authorization':
-        specifier: ^1.0.0
-        version: 1.2.3(@itwin/core-bentley@4.11.3)(@itwin/core-geometry@4.11.3)
+        specifier: ^2.0.0
+        version: 2.0.0(@itwin/core-bentley@4.11.3)
       '@types/chai':
         specifier: ^4.3.3
         version: 4.3.20
@@ -252,8 +252,8 @@ importers:
         specifier: ^16.0.3
         version: 16.5.0
       eslint:
-        specifier: ^8.19.0
-        version: 8.57.1
+        specifier: ^9.0.0
+        version: 9.33.0
       mocha:
         specifier: ^10.1.0
         version: 10.8.2
@@ -261,10 +261,10 @@ importers:
         specifier: ^15.1.0
         version: 15.1.0
       rimraf:
-        specifier: ^3.0.2
-        version: 3.0.2
+        specifier: ^6.0.0
+        version: 6.0.1
       typescript:
-        specifier: ~5.1.0
+        specifier: ^5.0.0
         version: 5.1.6
 
   typescript/packages/reality-capture-common:
@@ -273,13 +273,13 @@ importers:
         specifier: ^4.0.0
         version: 4.11.3(@types/node@24.3.0)
       eslint:
-        specifier: ^8.19.0
-        version: 8.57.1
+        specifier: ^9.0.0
+        version: 9.33.0
       rimraf:
         specifier: ^6.0.0
         version: 6.0.1
       typescript:
-        specifier: ~5.1.0
+        specifier: ^5.0.0
         version: 5.1.6
 
   typescript/packages/reality-capture-conversion:
@@ -359,8 +359,8 @@ importers:
         specifier: workspace:*
         version: link:../reality-data-transfer
       '@itwin/service-authorization':
-        specifier: ^1.0.0
-        version: 1.2.3(@itwin/core-bentley@4.11.3)(@itwin/core-geometry@4.11.3)
+        specifier: ^2.0.0
+        version: 2.0.0(@itwin/core-bentley@4.11.3)
       '@types/chai':
         specifier: ^4.3.3
         version: 4.3.20
@@ -380,11 +380,11 @@ importers:
         specifier: ^7.1.1
         version: 7.1.2(chai@4.5.0)
       dotenv:
-        specifier: ^16.0.3
-        version: 16.5.0
+        specifier: ^17.0.0
+        version: 17.2.1
       eslint:
-        specifier: ^8.19.0
-        version: 8.57.1
+        specifier: ^9.0.0
+        version: 9.33.0
       mocha:
         specifier: ^10.1.0
         version: 10.8.2
@@ -392,10 +392,10 @@ importers:
         specifier: ^15.1.0
         version: 15.1.0
       rimraf:
-        specifier: ^3.0.2
-        version: 3.0.2
+        specifier: ^6.0.0
+        version: 6.0.1
       typescript:
-        specifier: ~5.1.0
+        specifier: ^5.0.0
         version: 5.1.6
 
   typescript/packages/reality-data-client:
@@ -517,11 +517,11 @@ importers:
         specifier: ^7.1.1
         version: 7.1.2(chai@4.5.0)
       dotenv:
-        specifier: ^16.0.3
-        version: 16.5.0
+        specifier: ^17.0.0
+        version: 17.2.1
       eslint:
-        specifier: ^8.19.0
-        version: 8.57.1
+        specifier: ^9.0.0
+        version: 9.33.0
       mocha:
         specifier: ^10.1.0
         version: 10.8.2
@@ -529,10 +529,10 @@ importers:
         specifier: ^15.1.0
         version: 15.1.0
       rimraf:
-        specifier: ^3.0.2
-        version: 3.0.2
+        specifier: ^6.0.0
+        version: 6.0.1
       typescript:
-        specifier: ~5.1.0
+        specifier: ^5.0.0
         version: 5.1.6
 
 packages:
@@ -1284,6 +1284,11 @@ packages:
     peerDependencies:
       '@itwin/core-bentley': ^3.3.0 || ^4.0.0
 
+  '@itwin/service-authorization@2.0.0':
+    resolution: {integrity: sha512-hn+QJpXVW56s4Y27iC2nUsfTvD58TTmzHqZHbOPXkdzMT2wcnhVbA96AqFLMp5mXDf64wym4rtxGNmEgmw7ZKg==}
+    peerDependencies:
+      '@itwin/core-bentley': ^5.0.0
+
   '@itwin/unified-selection@1.1.2':
     resolution: {integrity: sha512-PLw6401EyxFqDGP7CLtW1BXfdCb1/Qie45xSdgN3uxKg65Y/LklT2QBfVHeXf6DrE4WMuzsT6gkWB56z9UJ6jA==}
 
@@ -1711,6 +1716,9 @@ packages:
   '@types/jsonwebtoken@8.5.9':
     resolution: {integrity: sha512-272FMnFGzAVMGtu9tkr29hRL6bZj4Zs1KZNeHLnKqAvp06tAIcarTMwOh8/8bz4FmKRcMxZhZNeUAQsNLoiPhg==}
 
+  '@types/jsonwebtoken@9.0.10':
+    resolution: {integrity: sha512-asx5hIG9Qmf/1oStypjanR7iKTv0gXQ1Ov/jfrX6kS/EO0OFni8orbmGCn0672NHR3kXHwpAwR+B368ZGN/2rA==}
+
   '@types/mdast@4.0.4':
     resolution: {integrity: sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA==}
 
@@ -1722,6 +1730,9 @@ packages:
 
   '@types/mocha@9.1.1':
     resolution: {integrity: sha512-Z61JK7DKDtdKTWwLeElSEBcWGRLY8g95ic5FoQqI9CMx0ns/Ghep3B4DfcEimiKMvtamNVULVNKEsiwV3aQmXw==}
+
+  '@types/ms@2.1.0':
+    resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
   '@types/node-fetch@2.6.12':
     resolution: {integrity: sha512-8nneRWKCg3rMtF69nLQJnOYUcbafYeFSjqkw3jCRLsqkWFlHaoQrr5mXmofFGOx3DKn7UfmBMyov8ySvLRVldA==}
@@ -2744,6 +2755,10 @@ packages:
     resolution: {integrity: sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==}
     engines: {node: '>=12'}
 
+  dotenv@17.2.1:
+    resolution: {integrity: sha512-kQhDYKZecqnM0fCnzI5eIv5L4cAe/iRI+HqMbO/hbRdTAeXDG+M9FjipUxNfbARuEg4iHIbhnhs78BCHNbSxEQ==}
+    engines: {node: '>=12'}
+
   draco3d@1.5.5:
     resolution: {integrity: sha512-JVuNV0EJzD3LBYhGyIXJLeBID/EVtmFO1ZNhAYflTgiMiAJlbhXQmRRda/azjc8MRVMHh0gqGhiqHUo5dIXM8Q==}
 
@@ -3715,6 +3730,9 @@ packages:
     resolution: {integrity: sha512-5hFWIigKqC+e/lRyQhfnirrAqUdIPMB7SJRqflJaO29dW7q5DFvH1XCSTmv6PQ6pb++0k6MJlLRoS0Wv4s38Wg==}
     engines: {node: '>=10.13.0 < 13 || >=13.7.0'}
 
+  jose@4.15.9:
+    resolution: {integrity: sha512-1vUQX+IdDMVPj4k8kOxgUqlcK518yluMuGZwqlr44FS1ppZB/5GWh4rZG89erpOBOJjU/OBsnCVFfapsRz6nEA==}
+
   js-base64@3.7.7:
     resolution: {integrity: sha512-7rCnleh0z2CkXhH67J8K1Ytz0b2Y+yxTPL+/KOJoa20hfnVQ/3/T6W/KflYI4bRHRagNeXeU2bkNGI3v1oS/lw==}
 
@@ -3788,6 +3806,10 @@ packages:
   jwks-rsa@2.1.5:
     resolution: {integrity: sha512-IODtn1SwEm7n6GQZnQLY0oxKDrMh7n/jRH1MzE8mlxWMrh2NnMyOsXTebu8vJ1qCpmuTJcL4DdiE0E4h8jnwsA==}
     engines: {node: '>=10 < 13 || >=14'}
+
+  jwks-rsa@3.2.0:
+    resolution: {integrity: sha512-PwchfHcQK/5PSydeKCs1ylNym0w/SSv8a62DgHJ//7x2ZclCoinlsjAfDxAAbpoTPybOum/Jgy+vkvMmKz89Ww==}
+    engines: {node: '>=14'}
 
   jws@3.2.2:
     resolution: {integrity: sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==}
@@ -6069,7 +6091,7 @@ snapshots:
       rimraf: 3.0.2
       tree-kill: 1.2.2
       typedoc: 0.26.11(typescript@5.6.3)
-      typedoc-plugin-merge-modules: 6.1.0(typedoc@0.26.11(typescript@5.6.3))
+      typedoc-plugin-merge-modules: 6.1.0(typedoc@0.26.11(typescript@5.1.6))
       typescript: 5.6.3
       wtfnode: 0.9.4
       yargs: 17.7.2
@@ -6090,7 +6112,7 @@ snapshots:
       rimraf: 3.0.2
       tree-kill: 1.2.2
       typedoc: 0.26.11(typescript@5.6.3)
-      typedoc-plugin-merge-modules: 6.1.0(typedoc@0.26.11(typescript@5.6.3))
+      typedoc-plugin-merge-modules: 6.1.0(typedoc@0.26.11(typescript@5.1.6))
       typescript: 5.6.3
       wtfnode: 0.9.4
       yargs: 17.7.2
@@ -6111,7 +6133,7 @@ snapshots:
       rimraf: 6.0.1
       tree-kill: 1.2.2
       typedoc: 0.26.11(typescript@5.6.3)
-      typedoc-plugin-merge-modules: 6.1.0(typedoc@0.26.11(typescript@5.6.3))
+      typedoc-plugin-merge-modules: 6.1.0(typedoc@0.26.11(typescript@5.1.6))
       typescript: 5.6.3
       wtfnode: 0.9.4
       yargs: 17.7.2
@@ -6459,6 +6481,15 @@ snapshots:
       jwks-rsa: 2.1.5
     transitivePeerDependencies:
       - '@itwin/core-geometry'
+      - supports-color
+
+  '@itwin/service-authorization@2.0.0(@itwin/core-bentley@4.11.3)':
+    dependencies:
+      '@itwin/core-bentley': 4.11.3
+      got: 12.6.1
+      jsonwebtoken: 9.0.2
+      jwks-rsa: 3.2.0
+    transitivePeerDependencies:
       - supports-color
 
   '@itwin/unified-selection@1.1.2':
@@ -6980,7 +7011,7 @@ snapshots:
   '@types/body-parser@1.19.5':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 18.19.110
+      '@types/node': 24.3.0
 
   '@types/chai-as-promised@7.1.8':
     dependencies:
@@ -6990,7 +7021,7 @@ snapshots:
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 18.19.110
+      '@types/node': 24.3.0
 
   '@types/cors@2.8.18':
     dependencies:
@@ -7010,7 +7041,7 @@ snapshots:
 
   '@types/express-serve-static-core@4.19.6':
     dependencies:
-      '@types/node': 18.19.110
+      '@types/node': 24.3.0
       '@types/qs': 6.14.0
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.4
@@ -7049,6 +7080,11 @@ snapshots:
     dependencies:
       '@types/node': 18.19.110
 
+  '@types/jsonwebtoken@9.0.10':
+    dependencies:
+      '@types/ms': 2.1.0
+      '@types/node': 24.3.0
+
   '@types/mdast@4.0.4':
     dependencies:
       '@types/unist': 3.0.3
@@ -7058,6 +7094,8 @@ snapshots:
   '@types/mocha@10.0.10': {}
 
   '@types/mocha@9.1.1': {}
+
+  '@types/ms@2.1.0': {}
 
   '@types/node-fetch@2.6.12':
     dependencies:
@@ -7111,12 +7149,12 @@ snapshots:
   '@types/send@0.17.4':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 18.19.110
+      '@types/node': 24.3.0
 
   '@types/serve-static@1.15.7':
     dependencies:
       '@types/http-errors': 2.0.4
-      '@types/node': 18.19.110
+      '@types/node': 24.3.0
       '@types/send': 0.17.4
 
   '@types/sizzle@2.3.9': {}
@@ -8290,6 +8328,8 @@ snapshots:
   dotenv@10.0.0: {}
 
   dotenv@16.5.0: {}
+
+  dotenv@17.2.1: {}
 
   draco3d@1.5.5: {}
 
@@ -9537,6 +9577,8 @@ snapshots:
     dependencies:
       '@panva/asn1.js': 1.0.0
 
+  jose@4.15.9: {}
+
   js-base64@3.7.7: {}
 
   js-tokens@4.0.0: {}
@@ -9620,6 +9662,17 @@ snapshots:
       '@types/jsonwebtoken': 8.5.9
       debug: 4.4.1(supports-color@8.1.1)
       jose: 2.0.7
+      limiter: 1.1.5
+      lru-memoizer: 2.3.0
+    transitivePeerDependencies:
+      - supports-color
+
+  jwks-rsa@3.2.0:
+    dependencies:
+      '@types/express': 4.17.22
+      '@types/jsonwebtoken': 9.0.10
+      debug: 4.4.1(supports-color@8.1.1)
+      jose: 4.15.9
       limiter: 1.1.5
       lru-memoizer: 2.3.0
     transitivePeerDependencies:
@@ -11023,7 +11076,7 @@ snapshots:
     dependencies:
       is-typedarray: 1.0.0
 
-  typedoc-plugin-merge-modules@6.1.0(typedoc@0.26.11(typescript@5.6.3)):
+  typedoc-plugin-merge-modules@6.1.0(typedoc@0.26.11(typescript@5.1.6)):
     dependencies:
       typedoc: 0.26.11(typescript@5.6.3)
 

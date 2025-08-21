@@ -57,11 +57,13 @@ describe("Reality conversion unit tests", () => {
                 "type": "Conversion",
                 "name": "Reality Conversion unit test",
                 "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
-                "inputs": [{"id": "lasId"}, {"id": "lazId"}, {"id": "plyId"}, {"id": "e57Id"}],
-                "outputs": ["OPC"],
+                "inputs": [{"id": "lasId"}, {"id": "lazId"}, {"id": "plyId"}, {"id": "e57Id"}, {"id": "opcId"}, {"id": "pntsId"}, {"id": "pointcloudId"}],
+                "outputs": ["OPC", "PNTS", "GLB", "GLBC"],
                 "options": {
                     "processingEngines": 8,
-                    "merge": false
+                    "merge": false,
+                    "inputSRS": "EPSG:32632",
+                    "outputSRS": "EPSG:32632"
                 }
             }).reply(201, 
                 {
@@ -74,11 +76,14 @@ describe("Reality conversion unit tests", () => {
                         "lastModifiedDateTime": "2023-04-13T14:29:55Z",
                         "iTwinId": "510cd1a3-3703-4729-b08c-fecd9c87c3be",
                         "dataCenter": "East US",
-                        "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
+                        "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}, 
+                            {"type": "OPC", "id": "opcId"}, {"type": "PNTS", "id": "pntsId"}, {"type": "PointCloud", "id": "pointcloudId"}],
                         "outputs": [{"type": "OPC", "id": "OPCId"}],
                         "options": {
                             "processingEngines": 8,
-                            "merge": false
+                            "merge": false,
+                            "inputSRS": "EPSG:32632",
+                            "outputSRS": "EPSG:32632"
                         },
                     }
                 });
@@ -88,9 +93,17 @@ describe("Reality conversion unit tests", () => {
             rcSettings.inputs.las = ["lasId"];
             rcSettings.inputs.laz = ["lazId"];
             rcSettings.inputs.ply = ["plyId"];
+            rcSettings.inputs.ply = ["opcId"];
+            rcSettings.inputs.ply = ["pntsId"];
+            rcSettings.inputs.ply = ["pointcloudId"];
             rcSettings.outputs.opc = true;
+            rcSettings.outputs.glb = true;
+            rcSettings.outputs.glbc = true;
+            rcSettings.outputs.pnts = true;
             rcSettings.options.engines = 8;
             rcSettings.options.merge = false;
+            rcSettings.options.inputSrs = "EPSG:32632";
+            rcSettings.options.outputSrs = "EPSG:32632";
             const jobName = "Reality Conversion unit test";
             
             const id = realityConversionService.createJob(rcSettings, jobName, iTwinId);
@@ -109,12 +122,20 @@ describe("Reality conversion unit tests", () => {
                 expect(body.inputs).to.deep.include({"id": "lazId"}),
                 expect(body.inputs).to.deep.include({"id": "plyId"}),
                 expect(body.inputs).to.deep.include({"id": "e57Id"}),
+                expect(body.inputs).to.deep.include({"id": "opcId"}),
+                expect(body.inputs).to.deep.include({"id": "pntsId"}),
+                expect(body.inputs).to.deep.include({"id": "pointcloudId"}),
                 expect(body).to.have.property("outputs"),
                 expect(body.outputs).to.have.length.above(0),
                 expect(body.outputs).to.deep.include("OPC"),
+                expect(body.outputs).to.deep.include("PNTS"),
+                expect(body.outputs).to.deep.include("GLB"),
+                expect(body.outputs).to.deep.include("GLBC"),
                 expect(body).to.have.property("options"),
                 expect(body.options).to.have.property("processingEngines", 8),
                 expect(body.options).to.have.property("merge", false),
+                expect(body.options).to.have.property("inputSRS", "EPSG:32632"),
+                expect(body.options).to.have.property("outputSRS", "EPSG:32632"),
                 expect(id).to.eventually.deep.equal("cc3d35cc-416a-4262-9714-b359da70b419"),
             ]);
         });
@@ -274,12 +295,14 @@ describe("Reality conversion unit tests", () => {
                         "lastModifiedDateTime": "2023-04-13T14:29:55Z",
                         "iTwinId": "c3739cf2-9da3-487b-b03d-f58c8eb97e5b",
                         "dataCenter": "East US",
-                        "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"}],
-                        "outputs": [{
-                            "type": "OPC", "id": "opcId"
-                        }],
+                        "inputs": [{"type": "LAS", "id": "lasId"}, {"type": "LAZ", "id": "lazId"}, {"type": "PLY", "id": "plyId"}, {"type": "E57", "id": "e57Id"},
+                            {"type": "OPC", "id": "opcId"}, {"type": "PNTS", "id": "pntsId"}, {"type": "PointCloud", "id": "pointcloudId"}],
+                        "outputs": [{"type": "OPC", "id": "opcId"},{"type": "PNTS", "id": "pntsId"},{"type": "GLB", "id": "glbId"}, {"type": "GLBC", "id": "glbcId"}],
                         "options": {
-                            "processingEngines": 8
+                            "processingEngines": 8,
+                            "merge": true,
+                            "inputSRS": "EPSG:32632",
+                            "outputSRS": "EPSG:32632"
                         },
                         "costEstimation": {
                             "estimatedCost": 3.5,
@@ -305,8 +328,17 @@ describe("Reality conversion unit tests", () => {
                 expect(properties).to.eventually.have.property("settings").that.has.property("inputs").that.has.property("las").to.deep.include("lasId"),
                 expect(properties).to.eventually.have.property("settings").that.has.property("inputs").that.has.property("ply").to.deep.include("plyId"),
                 expect(properties).to.eventually.have.property("settings").that.has.property("inputs").that.has.property("e57").to.deep.include("e57Id"),
+                expect(properties).to.eventually.have.property("settings").that.has.property("inputs").that.has.property("opc").to.deep.include("opcId"),
+                expect(properties).to.eventually.have.property("settings").that.has.property("inputs").that.has.property("pnts").to.deep.include("pntsId"),
+                expect(properties).to.eventually.have.property("settings").that.has.property("inputs").that.has.property("pointcloud").to.deep.include("pointcloudId"),
                 expect(properties).to.eventually.have.property("settings").that.has.property("outputs").that.has.property("opc").to.deep.include("opcId"),
+                expect(properties).to.eventually.have.property("settings").that.has.property("outputs").that.has.property("pnts").to.deep.include("pntsId"),
+                expect(properties).to.eventually.have.property("settings").that.has.property("outputs").that.has.property("glb").to.deep.include("glbId"),
+                expect(properties).to.eventually.have.property("settings").that.has.property("outputs").that.has.property("glbc").to.deep.include("glbcId"),
                 expect(properties).to.eventually.have.property("settings").that.has.property("options").that.has.property("engines", 8),
+                expect(properties).to.eventually.have.property("settings").that.has.property("options").that.has.property("merge", true),
+                expect(properties).to.eventually.have.property("settings").that.has.property("options").that.has.property("inputSrs", "EPSG:32632"),
+                expect(properties).to.eventually.have.property("settings").that.has.property("options").that.has.property("outputSrs", "EPSG:32632"),
 
                 expect(properties).to.eventually.have.deep.property("costEstimationParameters", {
                     estimatedCost: 3.5,
