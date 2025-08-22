@@ -342,7 +342,7 @@ export class RealityDataTransferNode {
      * @returns {Set<string>} Set of required minimal scopes.
      */
     public static getScopes(): Set<string> {
-        return new Set(["realitydata:modify", "realitydata:read"]);
+        return new Set(["itwin-platform"]);
     }
 
     private async createRealityData(type: string, name: string, iTwinId: string, rootFile?: string): Promise<ITwinRealityData> {
@@ -493,8 +493,8 @@ export class RealityDataTransferNode {
                     // Upload small file (single block)
                     const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.getAccessToken(), "", true);
                     const containerClient = new ContainerClient(azureBlobUrl.toString());
-                    const blockBlobClient = containerClient.getBlockBlobClient(container === "" ? this.dataTransferInfo.files[i] : 
-                        path.join(container, this.dataTransferInfo.files[i]));
+                    const blockBlobClient = containerClient.getBlockBlobClient(container === "" ? path.basename(this.dataTransferInfo.files[i]) : 
+                        path.join(container, path.basename(this.dataTransferInfo.files[i])));
 
                     let fileToUpload = path.join(dataToUpload, this.dataTransferInfo.files[i]);
                     if (isSingleFile)

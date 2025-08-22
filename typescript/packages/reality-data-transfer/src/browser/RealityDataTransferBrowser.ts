@@ -234,7 +234,7 @@ export class RealityDataTransferBrowser {
      * @returns {Set<string>} Set of required minimal scopes.
      */
     public static getScopes(): Set<string> {
-        return new Set(["realitydata:modify", "realitydata:read"]);
+        return new Set(["itwin-platform"]);
     }
 
     /**

@@ -31,5 +31,8 @@ All the packages are available in python, except Reality Management
 
 1. Clone repository (first time) with `git clone` or pull updates to the repository (subsequent times) with `git pull`
 2. Install dependencies: `pnpm update` or `pnpm install`
-3. Build source: `npm run build`
+3. Build source: `pnpm build`
+
+## Unit tests
+
 4. Run unit tests : create a .env file based on template.env, then : `npm run coverage`
