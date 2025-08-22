@@ -26,6 +26,8 @@ async function runModelingExample() {
     const orientationsPath = "";
     // Required : path to the folder where the results will be downloaded
     const outputPath = "";
+    // Optional : path to the production setting file. See https://developer.bentley.com/apis/contextcapture/cc-production-settings/ to create a production setting file
+    const prodSettingsPath = "";
 
     // Name of the modeling job
     const jobName = "Modeling_Sample_Job";
@@ -93,17 +95,24 @@ async function runModelingExample() {
     // Create workspace
     const workspaceId = await contextCaptureService.createWorkspace(workspaceName, iTwinId);
 
-    // Create & submit job
+    // Create job
     const settings = new CCJobSettings();
     settings.inputs = [references.getCloudIdFromLocalPath(imagesPath), references.getCloudIdFromLocalPath(orientationsPath)];
     settings.outputs.las = "LAS";
     settings.meshQuality = CCJobQuality.DRAFT;
-    // TODO : srs & density?
     console.log("Settings created");
 
     const jobId = await contextCaptureService.createJob(CCJobType.FULL, settings, jobName, workspaceId);
     console.log("Job created");
 
+    // Then, upload production settings in the workspace
+    if(prodSettingsPath) {
+        console.log("Uploading production settings in workspace...")
+        await realityDataService.uploadJsonToWorkspace(prodSettingsPath, iTwinId, workspaceId, jobId);
+        console.log("Production settings uploaded successfully")
+    }
+
+    // Submit job
     await contextCaptureService.submitJob(jobId);
     console.log("Job submitted");
 

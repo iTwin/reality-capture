@@ -493,8 +493,8 @@ export class RealityDataTransferNode {
                     // Upload small file (single block)
                     const azureBlobUrl: URL = await iTwinRealityData.getBlobUrl(await this.getAccessToken(), "", true);
                     const containerClient = new ContainerClient(azureBlobUrl.toString());
-                    const blockBlobClient = containerClient.getBlockBlobClient(container === "" ? this.dataTransferInfo.files[i] : 
-                        path.join(container, this.dataTransferInfo.files[i]));
+                    const blockBlobClient = containerClient.getBlockBlobClient(container === "" ? path.basename(this.dataTransferInfo.files[i]) : 
+                        path.join(container, path.basename(this.dataTransferInfo.files[i])));
 
                     let fileToUpload = path.join(dataToUpload, this.dataTransferInfo.files[i]);
                     if (isSingleFile)
