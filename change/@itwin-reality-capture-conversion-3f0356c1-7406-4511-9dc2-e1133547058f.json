@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "Add new inputs and outputs in conversion settings",
+  "packageName": "@itwin/reality-capture-conversion",
+  "email": "110406974+dbiguenet@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
