@@ -10,7 +10,7 @@ Fri, 22 Aug 2025 13:32:09 GMT
 
 ### Patches
 
-- Fix minor issue inreality-data-transfer (110406974+dbiguenet@users.noreply.github.com)
+- Fix file upload path : removed parent folder from destination path (110406974+dbiguenet@users.noreply.github.com)
 
 ## 1.0.1
 
