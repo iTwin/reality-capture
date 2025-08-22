@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Fix minor issue inreality-data-transfer",
-  "packageName": "@itwin/reality-data-transfer",
-  "email": "110406974+dbiguenet@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

@@ -2,6 +2,21 @@
   "name": "@itwin/reality-data-transfer",
   "entries": [
     {
+      "date": "Fri, 22 Aug 2025 13:32:09 GMT",
+      "version": "1.0.2",
+      "tag": "@itwin/reality-data-transfer_v1.0.2",
+      "comments": {
+        "patch": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-data-transfer",
+            "commit": "a7e421bea7de853e34067bca490464bdf5c2fe9d",
+            "comment": "Fix minor issue inreality-data-transfer"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 02 Jun 2025 15:33:43 GMT",
       "version": "1.0.1",
       "tag": "@itwin/reality-data-transfer_v1.0.1",

@@ -1,8 +1,16 @@
 # Change Log - @itwin/reality-data-transfer
 
-<!-- This log was last generated on Mon, 02 Jun 2025 15:33:43 GMT and should not be manually modified. -->
+<!-- This log was last generated on Fri, 22 Aug 2025 13:32:09 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 1.0.2
+
+Fri, 22 Aug 2025 13:32:09 GMT
+
+### Patches
+
+- Fix minor issue inreality-data-transfer (110406974+dbiguenet@users.noreply.github.com)
 
 ## 1.0.1
 

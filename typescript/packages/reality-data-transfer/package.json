@@ -1,6 +1,6 @@
 {
   "name": "@itwin/reality-data-transfer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Utils to upload local data to context share",
   "exports": {
     "node": {
