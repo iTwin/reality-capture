@@ -9,6 +9,7 @@
     "lint": "eslint ./src --ext .ts,.tsx ",
     "lint-fix": "eslint ./src --fix --ext .ts,.tsx",
     "start-modeling-example": "node ./lib/Modeling.js",
+    "start-modeling-service-example": "node ./lib/ModelingWithService.js",
     "start-data-example": "node ./lib/DataTransfer.js",
     "start-o2d-example": "node ./lib/Objects2D.js",
     "start-conversion-example": "node ./lib/RealityConversion.js",
@@ -30,6 +31,8 @@
     "@itwin/reality-capture-modeling": "workspace:*",
     "@itwin/reality-data-transfer": "workspace:*",
     "@itwin/reality-data-client": "workspace:*",
+    "@itwin/service-authorization": "^2.0.0",
+    "@xmldom/xmldom": "^0.8.6",
     "dotenv": "^16.0.3"
   },
   "devDependencies": {
