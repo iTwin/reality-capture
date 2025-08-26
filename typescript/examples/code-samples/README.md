@@ -13,35 +13,13 @@ To build and run the source code locally you will need a few things:
 
 ## Build and run the examples
 
-- Clone the repository
+- To build the code samples, please follow the steps the in the root [README](../../../README.md)
 
-  ```sh
-  git clone https://github.com/iTwin/reality-capture
-  ```
+- In `typescript/examples/code-samples`, you will find a `template.env` file. Create a new `.env` file based on this file and fill in the required fields.
 
-- Open a command prompt in the root directory
+- Then, in the sample code, replace the input data paths with yours. You can download data samples here : [data](https://bentleysystems.service-now.com/community?sys_kb_id=cda378791b714690dc6db99f034bcb5c&id=kb_article_view&sysparm_rank=1&sysparm_tsqueryId=1c9303b31bb1e610dc6db99f034bcb85)
 
-- Install dependencies
-
-  ```sh
-  pnpm install
-  ```
-
-- Build the project
-
-  ```sh
-  pnpm build
-  ```
-
-- Create a new `.env` file in typescript/examples/code-samples, based on `template.env` root file. Fill in the required fields in the `.env` configuration file.
-
-- Then, replace the input data paths with yours. You can download data samples here : [data](https://bentleysystems.service-now.com/community?sys_kb_id=cda378791b714690dc6db99f034bcb5c&id=kb_article_view&sysparm_rank=1&sysparm_tsqueryId=1c9303b31bb1e610dc6db99f034bcb85)
-
-- Before running the examples, move to code-samples folder
-  ```sh
-  cd typescript/examples/code-samples
-  ```
-
+- To run the samples, open a terminal in `code-samples` folder and run these commands :
 - Run reality data management example
 
   ```sh
@@ -71,3 +49,10 @@ To build and run the source code locally you will need a few things:
   ```sh
   npm run start-s2d-example
   ```
+
+## iTwin Applications
+
+To run the samples, you will need an iTwin Application.
+You can see yours, or create a new one [here](https://developer.bentley.com/my-apps/)
+For all samples except ModelingWithService and RealityConversion, you will need to create a Native application.
+ModelingWithService and RealityConversion samples require a Service application.

@@ -7,13 +7,14 @@ import { RCJobSettings, RealityConversionService } from "@itwin/reality-capture-
 import * as dotenv from "dotenv";
 import { RealityDataTransferNode, defaultProgressHook } from "@itwin/reality-data-transfer";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
-import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
+import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function runConversionExample() {
     /**
      * This example show how to convert a las file to 3DTiles format and how to download the 3DTiles locally.
+     * Requires a service iTwin application and a environment file to define IMJS_SAMPLE_PROJECT_ID, IMJS_SAMPLE_CLIENT_ID and IMJS_SAMPLE_CLIENT_SECRET
      */
 
     // Inputs to provide
@@ -22,6 +23,11 @@ async function runConversionExample() {
     const lasPath = "";
     // Required : path to the folder where the 3DTiles will be downloaded
     const outputPath = "";
+
+    // Optional : LAS srs
+    const inputSrs: string = "";
+    // Optional : 3DTiles srs
+    const outputSrs: string = "";
 
     // Name for the uploaded data in the cloud
     const lasName = "Sample_LAS_Input";
@@ -34,19 +40,18 @@ async function runConversionExample() {
 
     const iTwinId = process.env.IMJS_SAMPLE_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_SAMPLE_CLIENT_ID ?? "";
-    const redirectUrl = process.env.IMJS_SAMPLE_REDIRECT_URL ?? "";
-    const issuerUrl = "https://ims.bentley.com";
-    if (!iTwinId || !clientId || !redirectUrl) {
+    const clientSecret = process.env.IMJS_SAMPLE_CLIENT_SECRET ?? "";
+    const authority = "https://ims.bentley.com";
+    if (!iTwinId || !clientId || !clientSecret) {
         console.log(".env file is not configured properly");
     }
-
-    const authorizationClient = new NodeCliAuthorizationClient({
+    
+    const authorizationClient = new ServiceAuthorizationClient({
         clientId: clientId,
+        clientSecret: clientSecret,
         scope: Array.from(RealityConversionService.getScopes()).join(" "),
-        issuerUrl: issuerUrl,
-        redirectUri: redirectUrl,
+        authority: authority
     });
-    await authorizationClient.signIn();
 
     let realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     realityDataService.setUploadHook(defaultProgressHook);
@@ -64,6 +69,10 @@ async function runConversionExample() {
     const settings = new RCJobSettings();
     settings.inputs.las = [lasCloudId];
     settings.outputs.pnts = true;
+    if(inputSrs !== "")
+        settings.options.inputSrs = inputSrs;
+    if(outputSrs !== "")
+        settings.options.outputSrs = outputSrs;
     console.log("Settings created");
 
     const jobId = await realityConversionService.createJob(settings, jobName, iTwinId);

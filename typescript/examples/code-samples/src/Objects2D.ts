@@ -17,6 +17,7 @@ export async function sleep(ms: number) { return new Promise(resolve => setTimeo
 async function runObjects2DExample() {
     /**
      * This example show how to submit an objects2d analysis job and how to download the result
+     * Requires a native iTwin application and a environment file to define IMJS_SAMPLE_PROJECT_ID, IMJS_SAMPLE_CLIENT_ID and IMJS_SAMPLE_CLIENT_REDIRECT_URL
      */
 
     // Inputs to provide
@@ -44,7 +45,7 @@ async function runObjects2DExample() {
 
     const iTwinId = process.env.IMJS_SAMPLE_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_SAMPLE_CLIENT_ID ?? "";
-    const redirectUrl = process.env.IMJS_SAMPLE_REDIRECT_URL ?? "";
+    const redirectUrl = process.env.IMJS_SAMPLE_CLIENT_REDIRECT_URL ?? "";
     const issuerUrl = "https://ims.bentley.com";
     if(!iTwinId || !clientId || !redirectUrl) {
         console.log(".env file is not configured properly");

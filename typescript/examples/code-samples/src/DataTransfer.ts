@@ -11,6 +11,7 @@ import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
 async function runRealityDataExample() {
     /**
      * This example shows how to upload an images folder in the cloud, and how to download it
+     * Requires a native iTwin application and a environment file to define IMJS_SAMPLE_PROJECT_ID, IMJS_SAMPLE_CLIENT_ID and IMJS_SAMPLE_CLIENT_REDIRECT_URL
      */
 
     // Inputs to provide
@@ -27,7 +28,7 @@ async function runRealityDataExample() {
 
     const iTwinId = process.env.IMJS_SAMPLE_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_SAMPLE_CLIENT_ID ?? "";
-    const redirectUrl = process.env.IMJS_SAMPLE_REDIRECT_URL ?? "";
+    const redirectUrl = process.env.IMJS_SAMPLE_CLIENT_REDIRECT_URL ?? "";
     const issuerUrl = "https://ims.bentley.com"
     if(!iTwinId || !clientId || !redirectUrl) {
         console.log(".env file is not configured properly");

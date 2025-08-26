@@ -4,31 +4,34 @@
 *--------------------------------------------------------------------------------------------*/
 
 import path from "path";
+import * as os from "os";
 import { CCJobQuality, CCJobSettings, CCJobType, ContextCaptureService } from "@itwin/reality-capture-modeling";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
-import { RealityDataTransferNode, ReferenceTableNode, defaultProgressHook } from "@itwin/reality-data-transfer";
-import { NodeCliAuthorizationClient } from "@itwin/node-cli-authorization";
+import { RealityDataTransferNode, defaultProgressHook } from "@itwin/reality-data-transfer";
+import { ServiceAuthorizationClient } from "@itwin/service-authorization";
+import { DOMImplementation, XMLSerializer } from '@xmldom/xmldom';
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 async function runModelingExample() {
     /**
      * This example show how to submit a Full Modeling job (Calibration + Reconstruction), and how to download the results.
-     * Requires a native iTwin application and a environment file to define IMJS_SAMPLE_PROJECT_ID, IMJS_SAMPLE_CLIENT_ID and IMJS_SAMPLE_CLIENT_REDIRECT_URL
+     * Requires a service application and a environment file to define IMJS_SAMPLE_PROJECT_ID, IMJS_SAMPLE_CLIENT_ID and IMJS_SAMPLE_CLIENT_SECRET
      */
 
     // Inputs to provide
 
     // Required : path of the image folder
     const imagesPath = "";
-    // Required : path to the ccorientation folder
-    const orientationsPath = "";
     // Required : path to the folder where the results will be downloaded
     const outputPath = "";
-    // Optional : path to the production setting file. See https://developer.bentley.com/apis/contextcapture/cc-production-settings/ to create a production setting file
-    const prodSettingsPath = "";
+    
+    // Optional : sampling distance (in meter)
+    const samplingDistance: number | undefined = undefined;
+    // Optional : srs used in outputs
+    const srs: string | undefined = undefined;
 
     // Name of the modeling job
     const jobName = "Modeling_Sample_Job";
@@ -44,19 +47,18 @@ async function runModelingExample() {
 
     const iTwinId = process.env.IMJS_SAMPLE_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_SAMPLE_CLIENT_ID ?? "";
-    const redirectUrl = process.env.IMJS_SAMPLE_CLIENT_REDIRECT_URL ?? "";
-    const issuerUrl = "https://ims.bentley.com";
-    if (!iTwinId || !clientId || !redirectUrl) {
+    const clientSecret = process.env.IMJS_SAMPLE_CLIENT_SECRET ?? "";
+    const authority = "https://ims.bentley.com";
+    if (!iTwinId || !clientId || !clientSecret) {
         console.log(".env file is not configured properly");
     }
 
-    const authorizationClient = new NodeCliAuthorizationClient({
+    const authorizationClient = new ServiceAuthorizationClient({
         clientId: clientId,
-        scope: Array.from(RealityDataTransferNode.getScopes()).join(" ") + " " + Array.from(ContextCaptureService.getScopes()).join(" "),
-        issuerUrl: issuerUrl,
-        redirectUri: redirectUrl,
+        clientSecret: clientSecret,
+        scope: Array.from(ContextCaptureService.getScopes()).join(" "),
+        authority: authority
     });
-    await authorizationClient.signIn();
 
     console.log("Reality Modeling sample job - Full (Calibration + Reconstruction)");
     let realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
@@ -66,50 +68,86 @@ async function runModelingExample() {
     let contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient));
     console.log("Service initialized");
 
-    // Creating reference table and uploading images, ccOrientations if necessary (not yet on the cloud)
-    const references = new ReferenceTableNode();
-    const referencesPath = path.join(outputPath, "test_references_typescript.txt");
-    if (fs.existsSync(referencesPath) && fs.lstatSync(referencesPath).isFile()) {
-        console.log("Loading preexistent references");
-        await references.load(referencesPath);
-    }
-
     // Upload images
-    if (!references.hasLocalPath(imagesPath)) {
-        console.log("Uploading images...");
-        const id = await realityDataService.uploadRealityData(imagesPath, imagesName,
-            RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
-        references.addReference(imagesPath, id);
-        console.log("Images uploaded successfully");
-    }
+    console.log("Uploading images...");
+    const imagesId = await realityDataService.uploadRealityData(imagesPath, imagesName, RealityDataType.CC_IMAGE_COLLECTION, iTwinId);
+    console.log("Images uploaded successfully");
 
-    // Upload orientations file
-    if (!references.hasLocalPath(orientationsPath)) {
-        console.log("Upoading orientations");
-        const id = await realityDataService.uploadCCOrientations(orientationsPath, orientationsName, iTwinId, references);
-        references.addReference(orientationsPath, id);
-        console.log("Orientations uploaded successfully");
-    }
+    // Create orientations file
+    const domImpl = new DOMImplementation();
+    const doc = domImpl.createDocument(null, "BlocksExchange", null);
+    const root = doc.documentElement;
+    root.setAttribute("version", "2.1");
 
-    await references.save(referencesPath);
+    const block = doc.createElement("Block");
+    root.appendChild(block);
+    const blockName = doc.createElement("Name");
+    blockName.appendChild(doc.createTextNode("Block_1"));
+    block.appendChild(blockName);
+    const bulk = doc.createElement("BulkPhotos");
+    block.appendChild(bulk);
+    const subFiles = await fs.promises.readdir(imagesPath);
+    for (let i = 0; i < subFiles.length; i++) {
+        if(subFiles[i] !== "Thumbs.db") {
+            const photo = doc.createElement("Photo");
+            bulk.appendChild(photo);
+            const photoId = doc.createElement("Id");
+            photoId.appendChild(doc.createTextNode(i.toString()));
+            photo.appendChild(photoId);
+            const photoPath = doc.createElement("ImagePath");
+            photoPath.appendChild(doc.createTextNode(path.join(imagesId, subFiles[i])));
+            photo.appendChild(photoPath);
+            bulk.appendChild(photo);
+        }
+    }
+    const serializer = new XMLSerializer();
+    const xmlContent = '<?xml version="1.0" encoding="utf-8"?>\n' + serializer.serializeToString(doc);
+    let tmpDir = path.join(os.tmpdir(), "Bentley/ContextCapture Internal/", crypto.randomUUID());
+    await fs.promises.mkdir(tmpDir, { recursive: true });
+    fs.writeFileSync(path.join(tmpDir, "Orientations.xml"), xmlContent);
+
+    // Upload orientations.xml file
+    console.log("Upoading orientations");
+    const orientationsId = await realityDataService.uploadCCOrientations(tmpDir, orientationsName, iTwinId);
+    console.log("Orientations uploaded successfully");
 
     // Create workspace
     const workspaceId = await contextCaptureService.createWorkspace(workspaceName, iTwinId);
 
     // Create job
     const settings = new CCJobSettings();
-    settings.inputs = [references.getCloudIdFromLocalPath(imagesPath), references.getCloudIdFromLocalPath(orientationsPath)];
+    settings.inputs = [imagesId, orientationsId];
     settings.outputs.las = "LAS";
-    settings.meshQuality = CCJobQuality.DRAFT;
+    settings.meshQuality = CCJobQuality.EXTRA;
     console.log("Settings created");
 
     const jobId = await contextCaptureService.createJob(CCJobType.FULL, settings, jobName, workspaceId);
     console.log("Job created");
 
-    // Then, upload production settings in the workspace
-    if(prodSettingsPath) {
+    // Create production settings file
+    if(srs || samplingDistance)
+    {
+        const srsValue = srs !== undefined ? srs : "";
+        const samplingValue = samplingDistance !== undefined ? samplingDistance : 0;
+        const data = {
+            "ProductionSettingsExchange": [
+                {
+                    name: "LAS",
+                    settings: {
+                        ...(srsValue !== "" && { SRS: srsValue }),
+                        ...(samplingValue > 0 && { PointSamplingUnit: "meter", PointSamplingDistance: samplingValue.toString() })
+                    }
+                }
+            ]
+        };
+        tmpDir = path.join(os.tmpdir(), "Bentley/ContextCapture Internal/", crypto.randomUUID());
+        await fs.promises.mkdir(tmpDir, { recursive: true });
+        const jsonData = JSON.stringify(data, null, 2);
+        fs.writeFileSync(path.join(tmpDir, "prod_settings.json"), jsonData);
+
+        // Then, upload AT & production settings in the workspace
         console.log("Uploading production settings in workspace...")
-        await realityDataService.uploadJsonToWorkspace(prodSettingsPath, iTwinId, workspaceId, jobId);
+        await realityDataService.uploadJsonToWorkspace(tmpDir, iTwinId, workspaceId, jobId);
         console.log("Production settings uploaded successfully")
     }
 
