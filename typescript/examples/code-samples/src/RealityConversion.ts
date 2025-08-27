@@ -17,17 +17,17 @@ async function runConversionExample() {
      * Requires a service iTwin application and a environment file to define IMJS_SAMPLE_PROJECT_ID, IMJS_SAMPLE_CLIENT_ID and IMJS_SAMPLE_CLIENT_SECRET
      */
 
-    // Inputs to provide
+    // Inputs to provide. Please, adapt values
 
     // Required : path to the las to convert
-    const lasPath = "";
+    const lasPath = "D:/Datasets/Heli/LAS";
     // Required : path to the folder where the 3DTiles will be downloaded
-    const outputPath = "";
+    const outputPath = "D:/Datasets/Heli/3DTiles";
 
-    // Optional : LAS srs
-    const inputSrs: string = "";
-    // Optional : 3DTiles srs
-    const outputSrs: string = "";
+    // Optional : LAS srs. Please, set to an empty string if don't want to specify inputSrs
+    const inputSrs: string = "EPSG:32631";
+    // Optional : 3DTiles srs. Please, set to an empty string if don't want to specify outputSrs
+    const outputSrs: string = "EPSG:4978";
 
     // Name for the uploaded data in the cloud
     const lasName = "Sample_LAS_Input";
