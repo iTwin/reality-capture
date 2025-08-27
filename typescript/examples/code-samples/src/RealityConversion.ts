@@ -17,10 +17,10 @@ async function runConversionExample() {
      * Requires a service iTwin application and a environment file to define IMJS_SAMPLE_PROJECT_ID, IMJS_SAMPLE_CLIENT_ID and IMJS_SAMPLE_CLIENT_SECRET
      */
 
-    // Inputs to provide. Plese, adapt values
+    // Inputs to provide. Please, adapt values
 
     // Required : path to the las to convert
-    const lasPath = "D:/Datasets/Heli/Results";
+    const lasPath = "D:/Datasets/Heli/LAS";
     // Required : path to the folder where the 3DTiles will be downloaded
     const outputPath = "D:/Datasets/Heli/3DTiles";
 

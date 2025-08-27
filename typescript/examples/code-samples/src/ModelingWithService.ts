@@ -21,19 +21,19 @@ async function runModelingExample() {
      * Requires a service application and a environment file to define IMJS_SAMPLE_PROJECT_ID, IMJS_SAMPLE_CLIENT_ID and IMJS_SAMPLE_CLIENT_SECRET
      */
 
-    // Inputs to provide. Plese, adapt values
+    // Inputs to provide. Please, adapt values
 
     // Required : path of the image folder
-    const imagesPath = "D:/Datasets/Heli/CCImageCollection";
+    const imagesPath = "D:/Datasets/Heli/InputImages";
     // Required : path to the folder where the results will be downloaded
-    const outputPath = "D:/Datasets/Heli/Results";
+    const outputPath = "D:/Datasets/Heli/LAS";
     
-    // Optional : sampling distance (in meter). Plese provided undefined if you don't want to specify sampling distance
+    // Optional : sampling distance (in meter). Please, provide undefined if you don't want to specify sampling distance
     const samplingDistance: number | undefined = 0.5;
-    // Optional : srs used in outputs. Plese provided undefined if you don't want to specify srs
+    // Optional : srs used in outputs. Please, provide undefined if you don't want to specify srs
     const srs: string | undefined = "EPSG:32631";
-    // Optional : srs used in outputs. Plese provided empty string if you don't want to specify AT settings
-    const atSettings: string = "D:/Datasets/Heli/ATSettings";
+    // Optional : AT settings. Please, provide empty string if you don't want to specify AT settings
+    const atSettings: string = "";
 
     // Name of the modeling job
     const jobName = "Modeling_Sample_Job";
