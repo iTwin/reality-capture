@@ -28,11 +28,11 @@ async function runModelingExample() {
     // Required : path to the folder where the results will be downloaded
     const outputPath = "D:/Datasets/Heli/LAS";
     
-    // Optional : sampling distance (in meter). Please, provide undefined if you don't want to specify sampling distance
+    // Optional : sampling distance (in meter). Please, set to undefined if you don't want to specify sampling distance
     const samplingDistance: number | undefined = 0.5;
-    // Optional : srs used in outputs. Please, provide undefined if you don't want to specify srs
+    // Optional : srs used in outputs. Please, set to undefined if you don't want to specify srs
     const srs: string | undefined = "EPSG:32631";
-    // Optional : AT settings. Please, provide empty string if you don't want to specify AT settings
+    // Optional : AT settings. Please, set to empty string if you don't want to specify AT settings
     const atSettings: string = "";
 
     // Name of the modeling job

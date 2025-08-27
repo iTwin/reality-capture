@@ -24,9 +24,9 @@ async function runConversionExample() {
     // Required : path to the folder where the 3DTiles will be downloaded
     const outputPath = "D:/Datasets/Heli/3DTiles";
 
-    // Optional : LAS srs. Please, provide an empty string if don't want to specify inputSrs
+    // Optional : LAS srs. Please, set to an empty string if don't want to specify inputSrs
     const inputSrs: string = "EPSG:32631";
-    // Optional : 3DTiles srs. Please, provide an empty string if don't want to specify outputSrs
+    // Optional : 3DTiles srs. Please, set to an empty string if don't want to specify outputSrs
     const outputSrs: string = "EPSG:4978";
 
     // Name for the uploaded data in the cloud
