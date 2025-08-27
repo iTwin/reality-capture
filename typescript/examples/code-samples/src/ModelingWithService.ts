@@ -21,17 +21,19 @@ async function runModelingExample() {
      * Requires a service application and a environment file to define IMJS_SAMPLE_PROJECT_ID, IMJS_SAMPLE_CLIENT_ID and IMJS_SAMPLE_CLIENT_SECRET
      */
 
-    // Inputs to provide
+    // Inputs to provide. Plese, adapt values
 
     // Required : path of the image folder
-    const imagesPath = "";
+    const imagesPath = "D:/Datasets/Heli/CCImageCollection";
     // Required : path to the folder where the results will be downloaded
-    const outputPath = "";
+    const outputPath = "D:/Datasets/Heli/Results";
     
-    // Optional : sampling distance (in meter)
-    const samplingDistance: number | undefined = undefined;
-    // Optional : srs used in outputs
-    const srs: string | undefined = undefined;
+    // Optional : sampling distance (in meter). Plese provided undefined if you don't want to specify sampling distance
+    const samplingDistance: number | undefined = 0.5;
+    // Optional : srs used in outputs. Plese provided undefined if you don't want to specify srs
+    const srs: string | undefined = "EPSG:32631";
+    // Optional : srs used in outputs. Plese provided empty string if you don't want to specify AT settings
+    const atSettings: string = "D:/Datasets/Heli/ATSettings";
 
     // Name of the modeling job
     const jobName = "Modeling_Sample_Job";
@@ -102,7 +104,7 @@ async function runModelingExample() {
     }
     const serializer = new XMLSerializer();
     const xmlContent = '<?xml version="1.0" encoding="utf-8"?>\n' + serializer.serializeToString(doc);
-    let tmpDir = path.join(os.tmpdir(), "Bentley/ContextCapture Internal/", crypto.randomUUID());
+    let tmpDir = path.join(os.tmpdir(), "Bentley", crypto.randomUUID());
     await fs.promises.mkdir(tmpDir, { recursive: true });
     fs.writeFileSync(path.join(tmpDir, "Orientations.xml"), xmlContent);
 
@@ -134,21 +136,28 @@ async function runModelingExample() {
                 {
                     name: "LAS",
                     settings: {
+                        MergePointClouds: "true",
                         ...(srsValue !== "" && { SRS: srsValue }),
                         ...(samplingValue > 0 && { PointSamplingUnit: "meter", PointSamplingDistance: samplingValue.toString() })
                     }
                 }
             ]
         };
-        tmpDir = path.join(os.tmpdir(), "Bentley/ContextCapture Internal/", crypto.randomUUID());
+        tmpDir = path.join(os.tmpdir(), "Bentley/", crypto.randomUUID());
         await fs.promises.mkdir(tmpDir, { recursive: true });
         const jsonData = JSON.stringify(data, null, 2);
         fs.writeFileSync(path.join(tmpDir, "prod_settings.json"), jsonData);
 
         // Then, upload AT & production settings in the workspace
-        console.log("Uploading production settings in workspace...")
+        console.log("Uploading production settings in workspace...");
         await realityDataService.uploadJsonToWorkspace(tmpDir, iTwinId, workspaceId, jobId);
-        console.log("Production settings uploaded successfully")
+        console.log("Production settings uploaded successfully");
+        if(atSettings)
+        {
+            console.log("Uploading AT settings in workspace...");
+            await realityDataService.uploadJsonToWorkspace(atSettings, iTwinId, workspaceId, jobId);
+            console.log("AT settings uploaded successfully");
+        }
     }
 
     // Submit job
