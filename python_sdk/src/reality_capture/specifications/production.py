@@ -19,23 +19,11 @@ class Format(Enum):
     THREEMX = "3MX"
     THREESM = "3SM"
     THREED_TILES = "3DTiles"
-    OSGB = "OSGB"
-    SPACEYES = "SpacEyes"
     OBJ = "OBJ"
-    S3C = "S3C"
-    I3S = "I3S"
-    LOD_TREE = "LodTree"
-    COLLADA = "Collada"
-    OCP = "OCP"
-    KML = "KML"
-    DGN = "DGN"
-    SUPER_MAP = "SuperMap"
     LAS = "LAS"
-    POD = "POD"
     PLY = "PLY"
     OPC = "OPC"
     ORTHOPHOTO_DSM = "OrthophotoDSM"
-    FBX = "FBX"
 
 
 class ColorSource(Enum):
@@ -135,59 +123,6 @@ class Options3DTiles(BaseModel):
     compress: Optional[CesiumCompression] = Field(None, alias="compress", description="Compression type")
 
 
-class OptionsOSGB(BaseModel):
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
-    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
-    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
-    texture_sharpening: Optional[bool] = Field(None, alias="textureSharpening",
-                                               description="Enable or disable texture sharpening.")
-    maximum_texture_size: Optional[int] = Field(None, alias="maximumTextureSize", description="Maximum texture size")
-    texture_compression: Optional[int] = Field(None, alias="textureCompression", ge=0, le=100,
-                                               description="JPG compression of texture file")
-    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
-    lod_type: Optional[LODType] = Field(None, alias="lodType", description="Level of detail type")
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-    crs_origin: Optional[Point3d] = Field(None, alias="crsOrigin", description="Origin of the coordinate "
-                                                                               "reference system")
-
-
-class OptionsSpacEyes(BaseModel):
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
-    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
-    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
-    texture_sharpening: Optional[bool] = Field(None, alias="textureSharpening",
-                                               description="Enable or disable texture sharpening.")
-    maximum_texture_size: Optional[int] = Field(None, alias="maximumTextureSize", description="Maximum texture size")
-    texture_compression: Optional[int] = Field(None, alias="textureCompression", ge=0, le=100,
-                                               description="JPG compression of texture file")
-    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
-    lod_type: Optional[LODType] = Field(None, alias="lodType", description="Level of detail type")
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-    disable_lighting: Optional[bool] = Field(None, alias="disableLighting", description="Flag to disable lighting")
-
-
 class OptionsOBJ(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
@@ -216,218 +151,6 @@ class OptionsOBJ(BaseModel):
     double_precision: Optional[bool] = Field(None, alias="doublePrecision", description="Flag for double precision")
 
 
-class OptionsS3C(BaseModel):
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
-    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
-    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
-    texture_sharpening: Optional[bool] = Field(None, alias="textureSharpening",
-                                               description="Enable or disable texture sharpening.")
-    maximum_texture_size: Optional[int] = Field(None, alias="maximumTextureSize", description="Maximum texture size")
-    texture_compression: Optional[int] = Field(None, alias="textureCompression", ge=0, le=100,
-                                               description="JPG compression of texture file")
-    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-    crs_origin: Optional[Point3d] = Field(None, alias="crsOrigin", description="Origin of the coordinate reference system")
-
-
-class I3SVersion(Enum):
-    V1_6 = "v1_6"
-    V1_8 = "v1_8"
-
-
-class OptionsI3S(BaseModel):
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
-    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
-    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
-    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-    version: Optional[I3SVersion] = Field(None, alias="version", description="I3S version")
-
-
-class OptionsLodTreeExport(BaseModel):
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
-    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
-    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
-    texture_sharpening: Optional[bool] = Field(None, alias="textureSharpening",
-                                               description="Enable or disable texture sharpening.")
-    maximum_texture_size: Optional[int] = Field(None, alias="maximumTextureSize", description="Maximum texture size")
-    texture_compression: Optional[int] = Field(None, alias="textureCompression", ge=0, le=100,
-                                               description="JPG compression of texture file")
-    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
-    lod_type: Optional[LODType] = Field(None, alias="lodType", description="Level of detail type")
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-
-
-class OptionsCollada(BaseModel):
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
-    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
-    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
-    texture_sharpening: Optional[bool] = Field(None, alias="textureSharpening",
-                                               description="Enable or disable texture sharpening.")
-    maximum_texture_size: Optional[int] = Field(None, alias="maximumTextureSize", description="Maximum texture size")
-    texture_compression: Optional[int] = Field(None, alias="textureCompression", ge=0, le=100,
-                                               description="JPG compression of texture file")
-    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
-    lod_type: Optional[LODType] = Field(None, alias="lodType", description="Level of detail type")
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-    crs_origin: Optional[Point3d] = Field(None, alias="crsOrigin", description="Origin of the coordinate reference system")
-
-
-class OptionsOCP(BaseModel):
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
-    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
-    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
-    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-
-
-class OptionsKML(BaseModel):
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
-    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
-    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
-    texture_sharpening: Optional[bool] = Field(None, alias="textureSharpening",
-                                               description="Enable or disable texture sharpening.")
-    maximum_texture_size: Optional[int] = Field(None, alias="maximumTextureSize", description="Maximum texture size")
-    texture_compression: Optional[int] = Field(None, alias="textureCompression", ge=0, le=100,
-                                               description="JPG compression of texture file")
-    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
-    lod_type: Optional[LODType] = Field(None, alias="lodType", description="Level of detail type")
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-    height_offset: Optional[float] = Field(None, alias="heightOffset", description="Height offset")
-
-
-class OptionsDGN(BaseModel):
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
-    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
-    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
-    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
-    lod_type: Optional[LODType] = Field(None, alias="lodType", description="Level of detail type")
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-    crs_origin: Optional[Point3d] = Field(None, alias="crsOrigin", description="Origin of the coordinate reference system")
-
-
-class OptionsSuperMap(BaseModel):
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
-    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
-    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
-    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-
-
-class OptionsFBX(BaseModel):
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
-    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
-    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
-    texture_sharpening: Optional[bool] = Field(None, alias="textureSharpening",
-                                               description="Enable or disable texture sharpening.")
-    maximum_texture_size: Optional[int] = Field(None, alias="maximumTextureSize", description="Maximum texture size")
-    texture_compression: Optional[int] = Field(None, alias="textureCompression", ge=0, le=100,
-                                               description="JPG compression of texture file")
-    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
-    lod_type: Optional[LODType] = Field(None, alias="lodType", description="Level of detail type")
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-    crs_origin: Optional[Point3d] = Field(None, alias="crsOrigin", description="Origin of the coordinate reference system")
-
-
 class SamplingStrategy(Enum):
     RESOLUTION = "Resolution"
     ABSOLUTE = "Absolute"
@@ -445,15 +168,6 @@ class OptionsLAS(BaseModel):
     sampling_distance: Optional[float] = Field(None, alias="samplingDistance", description="Sampling distance")
     compress: Optional[LasCompression] = Field(None, description="Compression type")
     merge_point_clouds: Optional[bool] = Field(None, alias="mergePointClouds", description="Flag to merge point clouds")
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-
-
-class OptionsPOD(BaseModel):
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-    sampling_strategy: Optional[SamplingStrategy] = Field(None, alias="samplingStrategy",
-                                                          description="Sampling strategy")
-    sampling_distance: Optional[float] = Field(None, alias="samplingDistance", description="Sampling distance")
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
 
@@ -485,14 +199,11 @@ class ProjectionMode(Enum):
 
 class OrthoFormat(Enum):
     GEOTIFF = "GeoTIFF"
-    JPEG = "JPEG"
-    KML_SUPER_OVERLAY = "KML_SuperOverlay"
     NONE = "None"
 
 
 class DSMFormat(Enum):
     GEOTIFF = "GeoTIFF"
-    XYZ = "XYZ"
     ASC = "ASC"
     NONE = "None"
 
@@ -519,10 +230,9 @@ class OptionsOrthoDSM(BaseModel):
 
 class ExportCreate(BaseModel):
     format: Format = Field(description="Export format")
-    options: Optional[Union[Options3MX, Options3SM, Options3DTiles, OptionsOSGB, OptionsSpacEyes, OptionsOBJ, OptionsS3C,
-                            OptionsI3S, OptionsLodTreeExport, OptionsCollada, OptionsOCP, OptionsKML, OptionsDGN,
-                            OptionsSuperMap, OptionsLAS, OptionsPOD, OptionsPLY, OptionsOPC, OptionsOrthoDSM,
-                            OptionsFBX]] = Field(
+    options: Optional[Union[Options3MX, Options3SM, Options3DTiles, OptionsOBJ,
+                            OptionsLAS, OptionsPLY, OptionsOPC,
+                            OptionsOrthoDSM,]] = Field(
         None, description="Options associated to format")
     name: Optional[str] = Field(None, description="Name used for the reality data.", min_length=3)
 
@@ -541,40 +251,16 @@ class ExportCreate(BaseModel):
             data["options"] = Options3SM(**options)
         elif format == Format.THREED_TILES:
             data["options"] = Options3DTiles(**options)
-        elif format == Format.OSGB:
-            data["options"] = OptionsOSGB(**options)
-        elif format == Format.SPACEYES:
-            data["options"] = OptionsSpacEyes(**options)
         elif format == Format.OBJ:
             data["options"] = OptionsOBJ(**options)
-        elif format == Format.S3C:
-          data["options"] = OptionsS3C(**options)
-        elif format == Format.I3S:
-          data["options"] = OptionsI3S(**options)
-        elif format == Format.LOD_TREE:
-          data["options"] = OptionsLodTreeExport(**options)
-        elif format == Format.COLLADA:
-          data["options"] = OptionsCollada(**options)
-        elif format == Format.OCP:
-          data["options"] = OptionsOCP(**options)
-        elif format == Format.KML:
-          data["options"] = OptionsKML(**options)
-        elif format == Format.DGN:
-          data["options"] = OptionsDGN(**options)
-        elif format == Format.SUPER_MAP:
-          data["options"] = OptionsSuperMap(**options)
         elif format == Format.LAS:
-          data["options"] = OptionsLAS(**options)
-        elif format == Format.POD:
-          data["options"] = OptionsPOD(**options)
+            data["options"] = OptionsLAS(**options)
         elif format == Format.PLY:
-          data["options"] = OptionsPLY(**options)
+            data["options"] = OptionsPLY(**options)
         elif format == Format.OPC:
-          data["options"] = OptionsOPC(**options)
+            data["options"] = OptionsOPC(**options)
         elif format == Format.ORTHOPHOTO_DSM:
-          data["options"] = OptionsOrthoDSM(**options)
-        elif format == Format.FBX:
-          data["options"] = OptionsFBX(**options)
+            data["options"] = OptionsOrthoDSM(**options)
         else:
             raise ValueError(f"Unsupported format type: {format}")
         
