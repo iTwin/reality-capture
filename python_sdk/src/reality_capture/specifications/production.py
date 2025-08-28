@@ -16,8 +16,6 @@ class ProductionInputs(BaseModel):
 
 
 class Format(Enum):
-    THREEMX = "3MX"
-    THREESM = "3SM"
     THREED_TILES = "3DTiles"
     OBJ = "OBJ"
     LAS = "LAS"
@@ -51,51 +49,6 @@ class LODType(Enum):
     OCTREE = "Octree"
     ADAPTIVE = "Adaptive"
     BING_MAPS = "BingMaps"
-
-
-class Options3MX(BaseModel):
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color "
-                                                                                 "source")
-    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color "
-                                                                          "source")
-    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color "
-                                                                          "source")
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-    crs_origin: Optional[Point3d] = Field(None, alias="crsOrigin", description="Origin of the coordinate"
-                                                                               " reference system")
-    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
-    generate_web_app: Optional[bool] = Field(None, alias="generateWebApp",
-                                             description="Flag to generate a web application")
-
-
-class Options3SM(BaseModel):
-    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
-                                                        description="Source of the texture color")
-    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
-                                                          description="Minimum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
-                                                          description="Maximum resolution for the texture color source",
-                                                          ge=0)
-    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
-    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
-    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
-    crs: Optional[str] = Field(None, description="Coordinate reference system")
-    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
 
 
 class CesiumCompression(Enum):
@@ -230,7 +183,7 @@ class OptionsOrthoDSM(BaseModel):
 
 class ExportCreate(BaseModel):
     format: Format = Field(description="Export format")
-    options: Optional[Union[Options3MX, Options3SM, Options3DTiles, OptionsOBJ,
+    options: Optional[Union[Options3DTiles, OptionsOBJ,
                             OptionsLAS, OptionsPLY, OptionsOPC,
                             OptionsOrthoDSM,]] = Field(
         None, description="Options associated to format")
@@ -239,30 +192,26 @@ class ExportCreate(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def validate_options(cls, data):
-        format = Format(data.get("format"))
+        fmt = Format(data.get("format"))
         options = data.get("options")
 
         if not isinstance(options, dict):
             return data
 
-        if format == Format.THREEMX:
-            data["options"] = Options3MX(**options)
-        elif format == Format.THREESM:
-            data["options"] = Options3SM(**options)
-        elif format == Format.THREED_TILES:
+        if fmt == Format.THREED_TILES:
             data["options"] = Options3DTiles(**options)
-        elif format == Format.OBJ:
+        elif fmt == Format.OBJ:
             data["options"] = OptionsOBJ(**options)
-        elif format == Format.LAS:
+        elif fmt == Format.LAS:
             data["options"] = OptionsLAS(**options)
-        elif format == Format.PLY:
+        elif fmt == Format.PLY:
             data["options"] = OptionsPLY(**options)
-        elif format == Format.OPC:
+        elif fmt == Format.OPC:
             data["options"] = OptionsOPC(**options)
-        elif format == Format.ORTHOPHOTO_DSM:
+        elif fmt == Format.ORTHOPHOTO_DSM:
             data["options"] = OptionsOrthoDSM(**options)
         else:
-            raise ValueError(f"Unsupported format type: {format}")
+            raise ValueError(f"Unsupported format type: {fmt}")
         
         return data
 
