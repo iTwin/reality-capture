@@ -113,6 +113,7 @@ class Tag(Enum):
 class ColorEqualization(Enum):
     NO = "None"
     BLOCK_WISE = "BlockWise"
+    MACHINE_LEARNING = "MachineLearning"
 
 
 class AdjustmentConstraints(Enum):
