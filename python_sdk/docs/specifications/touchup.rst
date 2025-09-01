@@ -55,11 +55,6 @@ Classes
 .. autopydantic_model:: TouchUpExportOutputs
     :model-show-json: False
 
-.. autoclass:: TouchFormat
-    :show-inheritance:
-    :members:
-    :undoc-members:
-
 .. autoclass:: TouchLevel
     :show-inheritance:
     :members:

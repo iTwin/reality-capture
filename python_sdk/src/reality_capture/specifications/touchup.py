@@ -9,18 +9,12 @@ class TouchUpExportInputs(BaseModel):
                                                    description="List of tiles to export for touch up")
 
 
-class TouchFormat(Enum):
-    OBJ = "OBJ"
-    DGN = "DGN"
-
-
 class TouchLevel(Enum):
     GEOMETRY = "Geometry"
     GEOMETRY_AND_TEXTURE = "GeometryAndTexture"
 
 
 class TouchUpExportOptions(BaseModel):
-    format: Optional[TouchFormat] = Field(None, description="Touch Up format")
     level: Optional[TouchLevel] = Field(None, description="Touch Up level")
     crs: Optional[str] = Field(None, description="Export CRS")
 
