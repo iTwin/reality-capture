@@ -6,6 +6,8 @@ from enum import Enum
 class ChangeDetectionInputs(BaseModel):
     reference: str = Field(description="Reality data id of ContextScene, point cloud or mesh")
     to_compare: str = Field(alias="toCompare", description="Reality data id of ContextScene, point cloud or mesh")
+    extent: Optional[str] = Field(None, alias="extent", pattern=r"^bkt:.+",
+                                  description="Path in the bucket of the clipping polygon to apply")
 
 
 class ChangeDetectionOutputs(BaseModel):
