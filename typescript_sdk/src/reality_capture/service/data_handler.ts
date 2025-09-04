@@ -50,7 +50,7 @@ class _DataHandler {
     return Math.min(32, 4 + Math.floor(nbSmallFiles / 100));
   }
 
-  static async download_data(
+  static async downloadData(
     containerUrl: string,
     dst: string,
     src: string,
@@ -61,8 +61,8 @@ class _DataHandler {
     for await (const blob of client.listBlobsFlat()) {
       if (blob.name.startsWith(src)) blobs.push([blob.name, blob.properties.contentLength || 0]);
     }
-    const nbThreads = _DataHandler._getNbThreads(blobs);
-    const totalSize = blobs.reduce((acc, [, size]) => acc + size, 0);
+    //const nbThreads = _DataHandler._getNbThreads(blobs);
+    const totalSize = blobs.reduce((acc, [, size]) => acc + (size as number), 0);
     let proceed = true;
     const downloadedValues: { [k: string]: number } = {};
 
@@ -74,7 +74,7 @@ class _DataHandler {
       const chunks: Buffer[] = [];
       for await (const chunk of downloadResponse.readableStreamBody!) {
         loaded += chunk.length;
-        chunks.push(chunk);
+        chunks.push(chunk as Buffer<ArrayBufferLike>);
         if (progressHook) {
           downloadedValues[blobName] = loaded;
           const percent =
@@ -95,27 +95,25 @@ class _DataHandler {
     try {
       // TODO: Implement parallel downloads in Node.js. Here it's sequential for demo purposes.
       for (const blobTuple of blobs) {
-        await downloadBlob(blobTuple);
+        await downloadBlob([blobTuple[0] as string, blobTuple[1] as number]);
       }
     } catch (err: any) {
       if (err.message === "Download interrupted by callback function") {
-        const de = new DetailedErrorResponse({
-          code: "DownloadInterrupted",
-          message: "Download was interrupted by user.",
-        });
+        const de = { 
+          error : {code: "UploadInterrupted", message: "Upload was interrupted by user."}
+        };
         return new Response(499, de, null);
       } else {
-        const de = new DetailedErrorResponse({
-          code: "DownloadFailure",
-          message: `Download failed: ${err}.`,
-        });
+        const de = { 
+          error : {code: "UploadFailure", message: `Upload failed: ${err}.`}
+        };
         return new Response(500, de, null);
       }
     }
     return new Response(200, null, null);
   }
 
-  static async upload_data(
+  static async uploadData(
     containerUrl: string,
     src: string,
     realityDataDst: string,
@@ -157,23 +155,21 @@ class _DataHandler {
       }
     } catch (err: any) {
       if (err.message === "Upload interrupted by callback function") {
-        const de = new DetailedErrorResponse({
-          code: "UploadInterrupted",
-          message: "Upload was interrupted by user.",
-        });
+        const de = { 
+          error : {code: "UploadInterrupted", message: "Upload was interrupted by user."}
+        };
         return new Response(499, de, null);
       } else {
-        const de = new DetailedErrorResponse({
-          code: "UploadFailure",
-          message: `Upload failed: ${err}.`,
-        });
+        const de = { 
+          error : {code: "UploadFailure", message: `Upload failed: ${err}.`}
+        };
         return new Response(500, de, null);
       }
     }
     return new Response(200, null, null);
   }
 
-  static async list_data(containerUrl: string): Promise<Response<string[]>> {
+  static async listData(containerUrl: string): Promise<Response<string[]>> {
     const client = new ContainerClient(containerUrl);
     const blobNames: string[] = [];
     for await (const blob of client.listBlobsFlat()) {
@@ -182,7 +178,7 @@ class _DataHandler {
     return new Response(200, null, blobNames);
   }
 
-  static async delete_data(
+  static async deleteData(
     containerUrl: string,
     filesToDelete: string[]
   ): Promise<Response<null>> {
@@ -195,18 +191,20 @@ class _DataHandler {
         failed.push(file);
       }
     }
+    const detailsArray = failed.map((fail) => ({
+      code: "DeletionFailed",
+      message: "Failed to delete a file",
+      target: fail
+    }));
     if (!failed.length) {
       return new Response(204, null, null);
     }
-    const detailedError = new DetailedError(
-      "DeletionFailed",
-      "Failed to delete one or multiple files",
-      failed.map(
-        (fail) =>
-          new DetailedErrorType("DeletionFailed", "Failed to delete a file", fail)
-      )
-    );
-    return new Response(400, new DetailedErrorResponse({ error: detailedError }), null);
+    const detailedError = {
+      code: "DeletionFailed",
+      message: "Failed to delete one or multiple files",
+      details: detailsArray
+    } as DetailedError;
+    return new Response(400, { error: detailedError }, null);
   }
 }
 
@@ -225,20 +223,20 @@ export class RealityDataHandler {
     readOnly: boolean
   ): Promise<Response<ContainerDetails>> {
     if (!readOnly) {
-      return await this._service.get_reality_data_write_access(rdId, itwinId);
+      return await this._service.getRealityDataWriteAccess(rdId, itwinId);
     }
-    return await this._service.get_reality_data_read_access(rdId, itwinId);
+    return await this._service.getRealityDataReadAccess(rdId, itwinId);
   }
 
   private async _setAuthoring(
     rdId: string,
     authoring: boolean
   ): Promise<Response<RealityData>> {
-    const rdu = new RealityDataUpdate({ authoring });
-    return await this._service.update_reality_data(rdu, rdId);
+    const rdu = { authoring } as RealityDataUpdate;
+    return await this._service.updateRealityData(rdu, rdId);
   }
 
-  async upload_data(
+  async uploadData(
     realityDataId: string,
     src: string,
     realityDataDst = "",
@@ -248,8 +246,8 @@ export class RealityDataHandler {
     if (rlink.is_error()) return new Response(rlink.status_code, rlink.error, null);
     const r = await this._setAuthoring(realityDataId, true);
     if (r.is_error()) return new Response(r.status_code, r.error, null);
-    const resp = await _DataHandler.upload_data(
-      rlink.value.links.container_url.href,
+    const resp = await _DataHandler.uploadData(
+      rlink.value!._links.containerUrl.href,
       src,
       realityDataDst,
       this._progressHook
@@ -259,7 +257,7 @@ export class RealityDataHandler {
     return resp;
   }
 
-  async download_data(
+  async downloadData(
     realityDataId: string,
     dst: string,
     realityDataSrc = "",
@@ -267,34 +265,34 @@ export class RealityDataHandler {
   ): Promise<Response<null>> {
     const r = await this._getLink(realityDataId, itwinId, true);
     if (r.is_error()) return new Response(r.status_code, r.error, null);
-    return await _DataHandler.download_data(
-      r.value.links.container_url.href,
+    return await _DataHandler.downloadData(
+      r.value!._links.containerUrl.href,
       dst,
       realityDataSrc,
       this._progressHook
     );
   }
 
-  async list_data(
+  async listData(
     realityDataId: string,
     itwinId?: string
   ): Promise<Response<string[]>> {
     const r = await this._getLink(realityDataId, itwinId, true);
-    if (r.is_error()) return new Response(r.status_code, r.error, null);
-    return await _DataHandler.list_data(r.value.links.container_url.href);
+    if (r.is_error()) return new Response<string[]>(r.status_code, r.error, null);
+    return await _DataHandler.listData(r.value!._links.containerUrl.href);
   }
 
-  async delete_data(
+  async deleteData(
     realityDataId: string,
     filesToDelete: string[],
     itwinId?: string
   ): Promise<Response<null>> {
     const r = await this._getLink(realityDataId, itwinId, false);
     if (r.is_error()) return new Response(r.status_code, r.error, null);
-    return await _DataHandler.delete_data(r.value.links.container_url.href, filesToDelete);
+    return await _DataHandler.deleteData(r.value!._links.containerUrl.href, filesToDelete);
   }
 
-  set_progress_hook(hook: ProgressHook): void {
+  setProgressHook(hook: ProgressHook): void {
     this._progressHook = hook;
   }
 }
@@ -309,55 +307,55 @@ export class BucketDataHandler {
   }
 
   private async _getBucket(itwinId: string): Promise<Response<BucketResponse>> {
-    return await this._service.get_bucket(itwinId);
+    return await this._service.getBucket(itwinId);
   }
 
-  async upload_data(
+  async uploadData(
     itwinId: string,
     src: string,
     bucketDst = ""
   ): Promise<Response<null>> {
     const r = await this._getBucket(itwinId);
     if (r.is_error()) return new Response(r.status_code, r.error, null);
-    return await _DataHandler.upload_data(
-      r.value.links.container_url.href,
+    return await _DataHandler.uploadData(
+      r.value!._links.containerUrl.href,
       src,
       bucketDst,
       this._progressHook
     );
   }
 
-  async download_data(
+  async downloadData(
     itwinId: string,
     dst: string,
     bucketSrc = ""
   ): Promise<Response<null>> {
     const r = await this._getBucket(itwinId);
     if (r.is_error()) return new Response(r.status_code, r.error, null);
-    return await _DataHandler.download_data(
-      r.value.links.container_url.href,
+    return await _DataHandler.downloadData(
+      r.value!._links.containerUrl.href,
       dst,
       bucketSrc,
       this._progressHook
     );
   }
 
-  async list_data(itwinId: string): Promise<Response<string[]>> {
+  async listData(itwinId: string): Promise<Response<string[]>> {
     const r = await this._getBucket(itwinId);
-    if (r.is_error()) return new Response(r.status_code, r.error, null);
-    return await _DataHandler.list_data(r.value.links.container_url.href);
+    if (r.is_error()) return new Response<string[]>(r.status_code, r.error, null);
+    return await _DataHandler.listData(r.value!._links.containerUrl.href);
   }
 
-  async delete_data(
+  async deleteData(
     itwinId: string,
     filesToDelete: string[]
   ): Promise<Response<null>> {
     const r = await this._getBucket(itwinId);
     if (r.is_error()) return new Response(r.status_code, r.error, null);
-    return await _DataHandler.delete_data(r.value.links.container_url.href, filesToDelete);
+    return await _DataHandler.deleteData(r.value!._links.containerUrl.href, filesToDelete);
   }
 
-  set_progress_hook(hook: ProgressHook): void {
+  setProgressHook(hook: ProgressHook): void {
     this._progressHook = hook;
   }
 }

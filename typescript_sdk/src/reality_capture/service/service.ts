@@ -5,7 +5,7 @@ import { CostEstimationCreate, CostEstimation } from "./estimation";
 import { Files } from "./files";
 import { Response } from "./response";
 import { JobCreate, Job, Progress, Messages, Service, getAppropriateService } from "./job";
-import { RealityDataCreate, RealityData, RealityDataUpdate, ContainerDetails, RealityDataFilter, Prefer, RealityDatas } from "./reality_data";
+import { RealityDataCreate, RealityData, RealityDataUpdate, ContainerDetails, RealityDataFilter, Prefer, RealityDatas, filterAsDictForServiceCall } from "./reality_data";
 import { DetailedErrorResponse, DetailedError } from "./error";
 
 export class RealityCaptureService {
@@ -231,7 +231,7 @@ export class RealityCaptureService {
       const encodedParams = new URLSearchParams(params).toString();
       url = `${url}?${encodedParams}`;
     }
-    const headers = this._getHeader("v1");
+    const headers: any = this._getHeader("v1");
     headers["Prefer"] = prefer === Prefer.REPRESENTATION ? "return=representation" : "return=minimal";
     try {
       const resp = await this._axios.get(url, { headers });
@@ -244,24 +244,24 @@ export class RealityCaptureService {
   private _handleError<T>(error: any): Response<T> {
     if (error.response) {
       try {
-        return new Response(
+        return new Response<T>(
           error.response.status,
           error.response.data as DetailedErrorResponse,
           null
         );
       } catch (e) {
-        const detError = new DetailedError({
+        const detError = {
           code: "UnknownError",
           message: this._getIllFormedMessage(error.response, e),
-        });
-        return new Response(error.response.status, { error: detError }, null);
+        } as DetailedError;
+        return new Response<T>(error.response.status, { error: detError }, null);
       }
     } else {
-      const detError = new DetailedError({
+      const detError = {
         code: "UnknownError",
         message: error.message,
-      });
-      return new Response(500, { error: detError }, null);
+      } as DetailedError;
+      return new Response<T>(500, { error: detError }, null);
     }
   }
 }
