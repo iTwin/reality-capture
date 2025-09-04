@@ -1,8 +1,7 @@
 import { z } from "zod";
-import { ModelingReference, TilingOptions } from "./tiling";
-import { Export, ExportCreate } from "./production";
+import { ModelingReferenceSchema, TilingOptionsSchema } from "./tiling";
+import { ExportSchema, ExportCreateSchema } from "./production";
 
-// ReconstructionInputs
 export const ReconstructionInputsSchema = z.object({
   scene: z.string().describe("Reality data id of ContextScene to process"),
   regionOfInterest: z
@@ -30,52 +29,47 @@ export const ReconstructionInputsSchema = z.object({
 });
 export type ReconstructionInputs = z.infer<typeof ReconstructionInputsSchema>;
 
-// ReconstructionOutputs
 export const ReconstructionOutputsSchema = z.object({
-  modelingReference: ModelingReference.schema
+  modelingReference: ModelingReferenceSchema
     .optional()
     .describe("Modeling reference"),
   exports: z
-    .array(Export.schema)
+    .array(ExportSchema)
     .optional()
     .describe("List of exports")
 });
 export type ReconstructionOutputs = z.infer<typeof ReconstructionOutputsSchema>;
 
-// ReconstructionOutputsCreate
 export const ReconstructionOutputsCreateSchema = z.object({
   modelingReference: z
     .boolean()
     .optional()
     .describe("Modeling reference"),
   exports: z
-    .array(ExportCreate.schema)
+    .array(ExportCreateSchema)
     .optional()
     .describe("Exports")
 });
 export type ReconstructionOutputsCreate = z.infer<typeof ReconstructionOutputsCreateSchema>;
 
-// ReconstructionSpecificationsCreate
 export const ReconstructionSpecificationsCreateSchema = z.object({
   inputs: ReconstructionInputsSchema.describe("Inputs"),
   outputs: ReconstructionOutputsCreateSchema.describe("Outputs"),
-  options: TilingOptions.schema
+  options: TilingOptionsSchema
     .optional()
     .describe("Options")
 });
 export type ReconstructionSpecificationsCreate = z.infer<typeof ReconstructionSpecificationsCreateSchema>;
 
-// ReconstructionSpecifications
 export const ReconstructionSpecificationsSchema = z.object({
   inputs: ReconstructionInputsSchema.describe("Inputs"),
   outputs: ReconstructionOutputsSchema.describe("Outputs"),
-  options: TilingOptions.schema
+  options: TilingOptionsSchema
     .optional()
     .describe("Options")
 });
 export type ReconstructionSpecifications = z.infer<typeof ReconstructionSpecificationsSchema>;
 
-// ReconstructionCost
 export const ReconstructionCostSchema = z.object({
   gpix: z
     .number()

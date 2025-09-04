@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BoundingBox, Point3d } from "./geometry";
+import { BoundingBoxSchema, Point3dSchema } from "./geometry";
 
 export const ImportPCInputsSchema = z.object({
   scene: z.string().describe("Reality data id of ContextScene to process")
@@ -34,8 +34,7 @@ export const ImportPCCostSchema = z.object({
 });
 export type ImportPCCost = z.infer<typeof ImportPCCostSchema>;
 
-// Assuming Point3d is a zod schema imported from ./geometry
-export const Point3dTimeSchema = Point3d.extend({
+export const Point3dTimeSchema = Point3dSchema.extend({
   t: z.number().describe("Timestamp of point")
 });
 export type Point3dTime = z.infer<typeof Point3dTimeSchema>;
@@ -46,7 +45,7 @@ export const ScanSchema = z.object({
   hasColor: z.boolean().describe("True if Scan has color information"),
   hasIntensity: z.boolean().describe("True if Scan has intensity information"),
   hasClassification: z.boolean().describe("True if Scan has classification information"),
-  position: Point3d.optional().describe("Scanner position if scan is static"),
+  position: Point3dSchema.optional().describe("Scanner position if scan is static"),
   trajectories: z.array(z.array(Point3dTimeSchema)).optional().describe("List of trajectories if scan was mobile")
 });
 export type Scan = z.infer<typeof ScanSchema>;
@@ -59,7 +58,7 @@ export const PodMetadataSchema = z.object({
   minIntensity: z.number().int().min(-32768).max(32767).describe("Minimum intensity"),
   maxIntensity: z.number().int().min(-32768).max(32767).describe("Maximum intensity"),
   crs: z.string().describe("Coordinate Reference System definition"),
-  bounding: BoundingBox.describe("Bounding box of the PointCloud"),
+  bounding: BoundingBoxSchema.describe("Bounding box of the PointCloud"),
   scans: z.array(ScanSchema).describe("List of scans")
 });
 export type PodMetadata = z.infer<typeof PodMetadataSchema>;

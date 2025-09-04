@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Point3d } from "./geometry";
+import { Point3dSchema } from "./geometry";
 import { GeometricPrecision } from "./tiling";
 
 export enum Format {
@@ -117,7 +117,7 @@ export const Options3MXSchema = z.object({
   textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
   textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
   crs: z.string().optional().describe("Coordinate reference system"),
-  crsOrigin: Point3d.optional().describe("Origin of the coordinate reference system"),
+  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
   lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
   generateWebApp: z.boolean().optional().describe("Flag to generate a web application"),
 });
@@ -161,7 +161,7 @@ export const OptionsOSGBSchema = z.object({
   lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
   lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
   crs: z.string().optional().describe("Coordinate reference system"),
-  crsOrigin: Point3d.optional().describe("Origin of the coordinate reference system"),
+  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
 });
 export type OptionsOSGB = z.infer<typeof OptionsOSGBSchema>;
 
@@ -195,7 +195,7 @@ export const OptionsOBJSchema = z.object({
   lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
   lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
   crs: z.string().optional().describe("Coordinate reference system"),
-  crsOrigin: Point3d.optional().describe("Origin of the coordinate reference system"),
+  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
   doublePrecision: z.boolean().optional().describe("Flag for double precision"),
 });
 export type OptionsOBJ = z.infer<typeof OptionsOBJSchema>;
@@ -212,7 +212,7 @@ export const OptionsS3CSchema = z.object({
   textureCompression: z.number().int().min(0).max(100).optional().describe("JPG compression of texture file"),
   lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
   crs: z.string().optional().describe("Coordinate reference system"),
-  crsOrigin: Point3d.optional().describe("Origin of the coordinate reference system"),
+  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
 });
 export type OptionsS3C = z.infer<typeof OptionsS3CSchema>;
 
@@ -258,7 +258,7 @@ export const OptionsColladaSchema = z.object({
   lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
   lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
   crs: z.string().optional().describe("Coordinate reference system"),
-  crsOrigin: Point3d.optional().describe("Origin of the coordinate reference system"),
+  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
 });
 export type OptionsCollada = z.infer<typeof OptionsColladaSchema>;
 
@@ -301,7 +301,7 @@ export const OptionsDGNSchema = z.object({
   lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
   lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
   crs: z.string().optional().describe("Coordinate reference system"),
-  crsOrigin: Point3d.optional().describe("Origin of the coordinate reference system"),
+  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
 });
 export type OptionsDGN = z.infer<typeof OptionsDGNSchema>;
 
@@ -330,7 +330,7 @@ export const OptionsFBXSchema = z.object({
   lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
   lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
   crs: z.string().optional().describe("Coordinate reference system"),
-  crsOrigin: Point3d.optional().describe("Origin of the coordinate reference system"),
+  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
 });
 export type OptionsFBX = z.infer<typeof OptionsFBXSchema>;
 
@@ -442,6 +442,6 @@ export type ProductionSpecificationsCreate = z.infer<typeof ProductionSpecificat
 export const ProductionCostSchema = z.object({
   gpix: z.number().min(0).describe("Number of GigaPixels in the overall inputs, after applying downsampling."),
   mpoints: z.number().min(0).describe("Number of MegaPoints in the overall inputs."),
-  geometricPrecision: GeometricPrecision.optional().describe("Geometric precision used in Tiling"),
+  geometricPrecision: z.nativeEnum(GeometricPrecision).optional().describe("Geometric precision used in Tiling"),
 });
 export type ProductionCost = z.infer<typeof ProductionCostSchema>;

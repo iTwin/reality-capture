@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BoundingBox, Point3d, RegionOfInterest } from "./geometry";
+import { BoundingBoxSchema, Point3dSchema, RegionOfInterestSchema } from "./geometry";
 
 // Enums
 export enum ModelingReferenceType {
@@ -92,7 +92,7 @@ export const TilingOptionsSchema = z.object({
   modelingReferenceType: z.nativeEnum(ModelingReferenceType).describe("Modeling Reference Type").optional(),
   tilingMode: z.nativeEnum(TilingMode).describe("Tiling Mode").optional(),
   tilingValue: z.number().describe("Tiling Value").gte(0).optional(),
-  tilingOrigin: Point3d.describe("Tiling origin").optional(),
+  tilingOrigin: Point3dSchema.describe("Tiling origin").optional(),
   discardEmptyTiles: z.boolean().describe("Discard emtpy tiles").optional(),
   crs: z.string().describe("Coordinate Reference System").optional(),
   geometricPrecision: z.nativeEnum(GeometricPrecision).describe("Geometric precision").optional(),
@@ -148,8 +148,8 @@ export type TilingCost = z.infer<typeof TilingCostSchema>;
 
 export const LayoutTileSchema = z.object({
   name: z.string().describe("Tile name"),
-  boxTight: BoundingBox.describe("Tight box encompassing the tile"),
-  boxOverlapping: BoundingBox.describe(
+  boxTight: BoundingBoxSchema.describe("Tight box encompassing the tile"),
+  boxOverlapping: BoundingBoxSchema.describe(
     "Overlapping box encompassing the tile and a bit of its neighbors"
   ),
   memoryUsage: z.number().describe("Memory usage of the tile").gte(0),
@@ -160,6 +160,6 @@ export const LayoutSchema = z.object({
   tiles: z.array(LayoutTileSchema).describe("List of tiles in the layout"),
   enuDefinition: z.string().describe("Definition of the Internal Coordinate System"),
   crsDefinition: z.string().describe("Definition of the Layout Coordinate System"),
-  roi: RegionOfInterest.describe("Region of interest of the layout"),
+  roi: RegionOfInterestSchema.describe("Region of interest of the layout"),
 });
 export type Layout = z.infer<typeof LayoutSchema>;

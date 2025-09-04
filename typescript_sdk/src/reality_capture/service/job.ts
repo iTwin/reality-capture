@@ -141,41 +141,137 @@ export const ExecutionSchema = z.object({
 });
 export type Execution = z.infer<typeof ExecutionSchema>;
 
-export const JobSchema = z.object({
+const CommonFields = {
   id: z.string().describe("Job unique identifier."),
   name: z.string().min(3).optional().describe("Displayable job name."),
-  type: z.nativeEnum(JobType).describe("Type of job."),
-  itwin_id: z.string().describe("iTwin ID, used by the service for finding input reality data and uploading output data."),
+  itwinId: z.string().describe("iTwin ID, used by the service for finding input reality data and uploading output data."),
   state: z.nativeEnum(JobState).describe("State of the job."),
-  execution_info: ExecutionSchema.describe("Known execution information for the job."),
-  user_id: z.string().describe("Identifier of the user that created the job."),
-  specifications: z.union([
-    CalibrationSpecificationsSchema,
-    ChangeDetectionSpecificationsSchema,
-    ConstraintsSpecificationsSchema,
-    FillImagePropertiesSpecificationsSchema,
-    ImportPCSpecificationsSchema,
-    Objects2DSpecificationsSchema,
-    ProductionSpecificationsSchema,
-    ReconstructionSpecificationsSchema,
-    Segmentation2DSpecificationsSchema,
-    Segmentation3DSpecificationsSchema,
-    SegmentationOrthophotoSpecificationsSchema,
-    TilingSpecificationsSchema,
-    TouchUpExportSpecificationsSchema,
-    TouchUpImportSpecificationsSchema,
-    WaterConstraintsSpecificationsSchema,
-    TrainingO2DSpecificationsSchema,
-    TrainingS3DSpecificationsSchema,
-    PointCloudConversionSpecificationsSchema,
-    GaussianSplatsSpecificationsSchema,
-    EvalO2DSpecificationsSchema,
-    EvalO3DSpecificationsSchema,
-    EvalS2DSpecificationsSchema,
-    EvalS3DSpecificationsSchema,
-    EvalSOrthoSpecificationsSchema
-  ]).describe("Specifications aligned with the job type."),
-});
+  executionInfo: ExecutionSchema.describe("Known execution information for the job."),
+  userId: z.string().describe("Identifier of the user that created the job."),
+};
+
+export const JobSchema = z.discriminatedUnion("type", [
+  z.object({
+    ...CommonFields,
+    type: z.literal("Calibration"),
+    specifications: CalibrationSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("ChangeDetection"),
+    specifications: ChangeDetectionSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("Constraints"),
+    specifications: ConstraintsSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("FillImageProperties"),
+    specifications: FillImagePropertiesSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("ImportPointCloud"),
+    specifications: ImportPCSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("Objects2D"),
+    specifications: Objects2DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("Production"),
+    specifications: ProductionSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("Reconstruction"),
+    specifications: ReconstructionSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("Segmentation2D"),
+    specifications: Segmentation2DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("Segmentation3D"),
+    specifications: Segmentation3DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("SegmentationOrthophoto"),
+    specifications: SegmentationOrthophotoSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("Tiling"),
+    specifications: TilingSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("TouchUpExport"),
+    specifications: TouchUpExportSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("TouchUpImport"),
+    specifications: TouchUpImportSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("WaterConstraints"),
+    specifications: WaterConstraintsSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("TrainingO2D"),
+    specifications: TrainingO2DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("TrainingS3D"),
+    specifications: TrainingS3DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("PointCloudConversion"),
+    specifications: PointCloudConversionSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("GaussianSplats"),
+    specifications: GaussianSplatsSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("EvalO2D"),
+    specifications: EvalO2DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("EvalO3D"),
+    specifications: EvalO3DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("EvalS2D"),
+    specifications: EvalS2DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("EvalS3D"),
+    specifications: EvalS3DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("EvalSOrtho"),
+    specifications: EvalSOrthoSpecificationsSchema,
+  }),
+]);
 export type Job = z.infer<typeof JobSchema>;
 
 export const JobResponseSchema = z.object({
