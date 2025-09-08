@@ -129,15 +129,15 @@ export const JobCreateSchema = z.object({
     EvalS3DSpecificationsCreateSchema,
     EvalSOrthoSpecificationsCreateSchema
   ]).describe("Specifications aligned with the job type."),
-  itwin_id: z.string().describe("iTwin ID, used by the service for finding input reality data and uploading output data."),
+  iTwinId: z.string().describe("iTwin ID, used by the service for finding input reality data and uploading output data."),
 });
 export type JobCreate = z.infer<typeof JobCreateSchema>;
 
 export const ExecutionSchema = z.object({
-  created_date_time: z.coerce.date().describe("Creation date time for the job."),
-  started_date_time: z.coerce.date().nullable().optional().describe("Start date time for the job."),
-  ended_date_time: z.coerce.date().nullable().optional().describe("End date time for the job."),
-  estimated_units: z.number().nullable().optional().describe("Estimated number of units consumed by the job."),
+  createdDateTime: z.coerce.date().describe("Creation date time for the job."),
+  startedDateTime: z.coerce.date().nullable().optional().describe("Start date time for the job."),
+  endedDateTime: z.coerce.date().nullable().optional().describe("End date time for the job."),
+  estimatedUnits: z.number().nullable().optional().describe("Estimated number of units consumed by the job."),
 });
 export type Execution = z.infer<typeof ExecutionSchema>;
 

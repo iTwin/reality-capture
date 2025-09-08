@@ -243,9 +243,9 @@ export class RealityDataHandler {
     itwinId?: string
   ): Promise<Response<null>> {
     const rlink = await this._getLink(realityDataId, itwinId, false);
-    if (rlink.is_error()) return new Response(rlink.status_code, rlink.error, null);
+    if (rlink.isError()) return new Response(rlink.status_code, rlink.error, null);
     const r = await this._setAuthoring(realityDataId, true);
-    if (r.is_error()) return new Response(r.status_code, r.error, null);
+    if (r.isError()) return new Response(r.status_code, r.error, null);
     const resp = await _DataHandler.uploadData(
       rlink.value!._links.containerUrl.href,
       src,
@@ -253,7 +253,7 @@ export class RealityDataHandler {
       this._progressHook
     );
     const r2 = await this._setAuthoring(realityDataId, false);
-    if (r2.is_error()) return new Response(r2.status_code, r2.error, null);
+    if (r2.isError()) return new Response(r2.status_code, r2.error, null);
     return resp;
   }
 
@@ -264,7 +264,7 @@ export class RealityDataHandler {
     itwinId?: string
   ): Promise<Response<null>> {
     const r = await this._getLink(realityDataId, itwinId, true);
-    if (r.is_error()) return new Response(r.status_code, r.error, null);
+    if (r.isError()) return new Response(r.status_code, r.error, null);
     return await _DataHandler.downloadData(
       r.value!._links.containerUrl.href,
       dst,
@@ -278,7 +278,7 @@ export class RealityDataHandler {
     itwinId?: string
   ): Promise<Response<string[]>> {
     const r = await this._getLink(realityDataId, itwinId, true);
-    if (r.is_error()) return new Response<string[]>(r.status_code, r.error, null);
+    if (r.isError()) return new Response<string[]>(r.status_code, r.error, null);
     return await _DataHandler.listData(r.value!._links.containerUrl.href);
   }
 
@@ -288,7 +288,7 @@ export class RealityDataHandler {
     itwinId?: string
   ): Promise<Response<null>> {
     const r = await this._getLink(realityDataId, itwinId, false);
-    if (r.is_error()) return new Response(r.status_code, r.error, null);
+    if (r.isError()) return new Response(r.status_code, r.error, null);
     return await _DataHandler.deleteData(r.value!._links.containerUrl.href, filesToDelete);
   }
 
@@ -316,7 +316,7 @@ export class BucketDataHandler {
     bucketDst = ""
   ): Promise<Response<null>> {
     const r = await this._getBucket(itwinId);
-    if (r.is_error()) return new Response(r.status_code, r.error, null);
+    if (r.isError()) return new Response(r.status_code, r.error, null);
     return await _DataHandler.uploadData(
       r.value!._links.containerUrl.href,
       src,
@@ -331,7 +331,7 @@ export class BucketDataHandler {
     bucketSrc = ""
   ): Promise<Response<null>> {
     const r = await this._getBucket(itwinId);
-    if (r.is_error()) return new Response(r.status_code, r.error, null);
+    if (r.isError()) return new Response(r.status_code, r.error, null);
     return await _DataHandler.downloadData(
       r.value!._links.containerUrl.href,
       dst,
@@ -342,7 +342,7 @@ export class BucketDataHandler {
 
   async listData(itwinId: string): Promise<Response<string[]>> {
     const r = await this._getBucket(itwinId);
-    if (r.is_error()) return new Response<string[]>(r.status_code, r.error, null);
+    if (r.isError()) return new Response<string[]>(r.status_code, r.error, null);
     return await _DataHandler.listData(r.value!._links.containerUrl.href);
   }
 
@@ -351,7 +351,7 @@ export class BucketDataHandler {
     filesToDelete: string[]
   ): Promise<Response<null>> {
     const r = await this._getBucket(itwinId);
-    if (r.is_error()) return new Response(r.status_code, r.error, null);
+    if (r.isError()) return new Response(r.status_code, r.error, null);
     return await _DataHandler.deleteData(r.value!._links.containerUrl.href, filesToDelete);
   }
 

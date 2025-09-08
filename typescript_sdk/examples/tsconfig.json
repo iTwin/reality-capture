@@ -7,7 +7,7 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "outDir": "lib",
-    "rootDir": "src"
+    "rootDir": "../"
   },
   "include": [
     "src/**/*.ts"

@@ -1,0 +1,34 @@
+{
+  "name": "reality-capture-examples",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reality-capture examples",
+  "scripts": {
+    "build": "tsc 1>&2",
+    "lint": "eslint ./src --ext .ts ",
+    "lint-fix": "eslint ./src --fix --ext .ts",
+    "start-modeling-example": "node ./lib/examples/src/example_modeling.js"
+  },
+  "author": {
+    "name": "Bentley Systems, Inc.",
+    "url": "http://www.bentley.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@itwin/node-cli-authorization": "^3.0.0",
+    "@itwin/service-authorization": "^2.0.0",
+    "axios": "^1.6.0",
+    "dotenv": "^16.0.3",
+    "zod": "^3.22.2",
+    "class-validator": "^0.14.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "eslint": "^8.52.0",
+    "@types/node": "^20.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iTwin/reality-capture"
+  }
+}

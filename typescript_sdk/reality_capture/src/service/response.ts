@@ -23,7 +23,7 @@ export class Response<T> extends Array<any> {
      * Return the HTTP response status_code
      * @returns int. The HTTP response status_code
      */
-    get_response_status_code(): number {
+    getResponseStatusCode(): number {
         return this.status_code;
     }
 
@@ -31,7 +31,7 @@ export class Response<T> extends Array<any> {
      * Checks whether the response is an error response.
      * @returns True if the response contains a valid error.
      */
-    is_error(): boolean {
+    isError(): boolean {
         return this.error !== null && this.error !== undefined;
     }
 }
