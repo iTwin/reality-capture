@@ -54,6 +54,6 @@ class UnitType(Enum):
 
 class CostEstimation(CostEstimationCreate):
     unique_id: str = Field(description="Estimation id", alias="id")
-    estimated_units: float = Field(description="Estimated number of units that the job will cost.",
+    estimated_units: float = Field(description="Estimated number of processing units that the job will cost.",
                                    alias="estimatedUnits")
     unit_type: UnitType = Field(description="Type of unit for the job.", alias="unitType")
