@@ -66,7 +66,7 @@ class RealityCaptureService:
         return self._service_url + "reality-modeling/"
 
     def _get_analysis_url(self) -> str:
-        return self._service_url + "realitydataanalysis/"
+        return self._service_url + "reality-analysis/"
 
     def _get_correct_url(self, service: Service) -> str:
         if service == Service.MODELING:
