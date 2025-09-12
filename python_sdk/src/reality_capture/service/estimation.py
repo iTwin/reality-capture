@@ -23,16 +23,15 @@ from reality_capture.specifications.water_constraints import WaterConstraintsSpe
 
 class CostEstimationCreate(BaseModel):
     type: JobType = Field(description="Type of job.")
-    """
-    specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
-                          ConstraintsSpecificationsCreate,
-                          FillImagePropertiesSpecificationsCreate, ImportPCSpecificationsCreate,
-                          Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
-                          ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
-                          Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
-                          TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
-                          TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate] = (
-        Field(description="Specifications aligned with the job type."))"""
+    # specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
+    #                       ConstraintsSpecificationsCreate,
+    #                       FillImagePropertiesSpecificationsCreate, ImportPCSpecificationsCreate,
+    #                       Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
+    #                       ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
+    #                       Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
+    #                       TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
+    #                       TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate] = (
+    #     Field(description="Specifications aligned with the job type."))
     specifications: Union[CalibrationSpecificationsCreate,
                           ConstraintsSpecificationsCreate,
                           FillImagePropertiesSpecificationsCreate, ImportPCSpecificationsCreate,

@@ -76,10 +76,10 @@ def _get_appropriate_service(jt: JobType):
               JobType.PRODUCTION, JobType.RECONSTRUCTION, JobType.CONSTRAINTS, JobType.TOUCH_UP_EXPORT,
               JobType.TOUCH_UP_IMPORT, JobType.WATER_CONSTRAINTS, JobType.GAUSSIAN_SPLATS]:
         return Service.MODELING
-    """if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
-              JobType.CHANGE_DETECTION, JobType.TRAINING_O2D, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
-              JobType.EVAL_S3D, JobType.EVAL_SORTHO]:
-        return Service.ANALYSIS"""
+    # if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
+    #           JobType.CHANGE_DETECTION, JobType.TRAINING_O2D, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
+    #           JobType.EVAL_S3D, JobType.EVAL_SORTHO]:
+    #     return Service.ANALYSIS
     # return Service.CONVERSION
     raise NotImplemented("Other services not yet implemented")
 
@@ -96,21 +96,20 @@ class JobState(Enum):
 class JobCreate(BaseModel):
     name: Optional[str] = Field(None, description="Displayable job name.", min_length=3)
     type: JobType = Field(description="Type of job.")
-    """
-    specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
-                          ConstraintsSpecificationsCreate,
-                          FillImagePropertiesSpecificationsCreate, ImportPCSpecificationsCreate,
-                          Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
-                          ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
-                          Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
-                          TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
-                          TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
-                          TrainingO2DSpecificationsCreate, PointCloudConversionSpecificationsCreate, 
-                          TrainingS3DSpecificationsCreate, GaussianSplatsSpecificationsCreate, 
-                          EvalO2DSpecificationsCreate, EvalO3DSpecificationsCreate, 
-                          EvalS2DSpecificationsCreate, EvalS3DSpecificationsCreate, 
-                          EvalSOrthoSpecificationsCreate] = (
-        Field(description="Specifications aligned with the job type."))"""
+    # specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
+    #                       ConstraintsSpecificationsCreate,
+    #                       FillImagePropertiesSpecificationsCreate, ImportPCSpecificationsCreate,
+    #                       Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
+    #                       ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
+    #                       Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
+    #                       TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
+    #                       TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
+    #                       TrainingO2DSpecificationsCreate, PointCloudConversionSpecificationsCreate,
+    #                       TrainingS3DSpecificationsCreate, GaussianSplatsSpecificationsCreate,
+    #                       EvalO2DSpecificationsCreate, EvalO3DSpecificationsCreate,
+    #                       EvalS2DSpecificationsCreate, EvalS3DSpecificationsCreate,
+    #                       EvalSOrthoSpecificationsCreate] = (
+    #     Field(description="Specifications aligned with the job type."))
     specifications: Union[CalibrationSpecificationsCreate,
                           ConstraintsSpecificationsCreate,
                           FillImagePropertiesSpecificationsCreate, ImportPCSpecificationsCreate,
@@ -151,20 +150,20 @@ class Job(BaseModel):
     state: JobState = Field(description="State of the job.")
     execution_info: Execution = Field(description="Known execution information for the job.", alias="executionInfo")
     user_id: str = Field(description="Identifier of the user that created the job.", alias="userId")
-    """specifications: Union[CalibrationSpecifications, ChangeDetectionSpecifications,
-                          ConstraintsSpecifications,
-                          FillImagePropertiesSpecifications, ImportPCSpecifications,
-                          Objects2DSpecifications, ProductionSpecifications,
-                          ReconstructionSpecifications, Segmentation2DSpecifications,
-                          Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
-                          TilingSpecifications, TouchUpExportSpecifications,
-                          TouchUpImportSpecifications, WaterConstraintsSpecifications, 
-                          TrainingO2DSpecifications, TrainingS3DSpecifications,
-                          PointCloudConversionSpecifications, GaussianSplatsSpecifications, 
-                          EvalO2DSpecifications, EvalO3DSpecifications, 
-                          EvalS2DSpecifications, EvalS3DSpecifications, 
-                          EvalSOrthoSpecifications] = (
-        Field(description="Specifications aligned with the job type."))"""
+    # specifications: Union[CalibrationSpecifications, ChangeDetectionSpecifications,
+    #                       ConstraintsSpecifications,
+    #                       FillImagePropertiesSpecifications, ImportPCSpecifications,
+    #                       Objects2DSpecifications, ProductionSpecifications,
+    #                       ReconstructionSpecifications, Segmentation2DSpecifications,
+    #                       Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
+    #                       TilingSpecifications, TouchUpExportSpecifications,
+    #                       TouchUpImportSpecifications, WaterConstraintsSpecifications,
+    #                       TrainingO2DSpecifications, TrainingS3DSpecifications,
+    #                       PointCloudConversionSpecifications, GaussianSplatsSpecifications,
+    #                       EvalO2DSpecifications, EvalO3DSpecifications,
+    #                       EvalS2DSpecifications, EvalS3DSpecifications,
+    #                       EvalSOrthoSpecifications] = (
+    #     Field(description="Specifications aligned with the job type."))
     specifications: Union[CalibrationSpecifications,
                         ConstraintsSpecifications,
                         FillImagePropertiesSpecifications, ImportPCSpecifications,

@@ -28,8 +28,11 @@ As an input for a Tiling job, you can specify a Region of Interest.
 It will define the region for the tiling, and will be the default extent for subsequent exports.
 It is a ``JSON`` file documented in :class:`reality_capture.specifications.geometry.RegionOfInterest`.
 
+.. _modeling-reference:
+
 Modeling Reference
 ==================
+
 
 The Tiling job creates and initializes a Modeling Reference. Among other files, the Modeling Reference contains a ``layout.json`` file that describes the tiling layout.
 This information can be useful in subsequent jobs such as Touchup jobs.
