@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+"""from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
 
@@ -36,3 +36,4 @@ class EvalO2DSpecifications(BaseModel):
     inputs: EvalO2DInputs = Field(description="Inputs")
     outputs: EvalO2DOutputs = Field(description="Outputs")
     options: Optional[EvalO2DOptions] = Field(None, description="Options")
+"""

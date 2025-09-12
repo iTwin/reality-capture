@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+"""from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
 
@@ -124,3 +124,4 @@ class Segmentation3DSpecifications(BaseModel):
     inputs: Segmentation3DInputs = Field(description="Inputs")
     outputs: Segmentation3DOutputs = Field(description="Outputs")
     options: Optional[Segmentation3DOptions] = Field(None, description="Options")
+"""

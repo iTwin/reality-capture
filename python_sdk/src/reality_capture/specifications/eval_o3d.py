@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+"""from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
 
@@ -36,3 +36,4 @@ class EvalO3DSpecifications(BaseModel):
     inputs: EvalO3DInputs = Field(description="Inputs")
     outputs: EvalO3DOutputs = Field(description="Outputs")
     options: Optional[EvalO3DOptions] = Field(None, description="Options")
+"""

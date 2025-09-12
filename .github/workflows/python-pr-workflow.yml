@@ -2,7 +2,7 @@ name: Python SDK PR Workflow
 
 on:
   pull_request:
-    branches: [ "feature/2.0.0" ]
+    branches: [ "feature/2.0.0", "feature/2.0.0-release" ]
 
 jobs:
   build_and_publish_sdk:

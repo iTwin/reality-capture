@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+"""from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
 
@@ -58,3 +58,4 @@ class SegmentationOrthophotoSpecificationsCreate(BaseModel):
 class SegmentationOrthophotoSpecifications(BaseModel):
     inputs: SegmentationOrthophotoInputs = Field(description="Inputs")
     outputs: SegmentationOrthophotoOutputs = Field(description="Outputs")
+"""
