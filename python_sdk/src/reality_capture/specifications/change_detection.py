@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+"""from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
 
@@ -57,3 +57,4 @@ class ChangeDetectionSpecifications(BaseModel):
     inputs: ChangeDetectionInputs = Field(description="Inputs")
     outputs: ChangeDetectionOutputs = Field(description="Outputs")
     options: Optional[ChangeDetectionOptions] = Field(None, description="Options")
+"""

@@ -1,37 +1,38 @@
-from pydantic import BaseModel, Field
+"""from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
 
 
-class EvalS2DInputs(BaseModel):
+class EvalSOrthoInputs(BaseModel):
     reference: str = Field(description="Reality data id of ContextScene, "
                                        "pointing to segmented photos reference")
     prediction: str = Field(description="Reality data id of ContextScene, "
                                         "pointing to segmented photos prediction")
 
 
-class EvalS2DOutputs(BaseModel):
+class EvalSOrthoOutputs(BaseModel):
     report: Optional[str] = Field(None, description="Path in Bucket of json report with confusion matrix",
                                   pattern=r"^bkt:.+")
-    segmented_photos: Optional[str] = Field(None, alias="segmentedPhotos",
+    segmented_photos: Optional[str] = Field(alias="segmentedPhotos",
                                             description="Reality data id of segmented photos, "
                                                         "annotated with confusion matrix index")
-    segmentation2d: Optional[str] = Field(None, alias="segmentation2D",
+    segmentation2d: Optional[str] = Field(alias="segmentation2D",
                                           description="Reality data id of ContextScene, "
                                                       "pointing to segmented photos")
 
 
-class EvalS2DOutputsCreate(Enum):
+class EvalSOrthoOutputsCreate(Enum):
     REPORT = "report"
     SEGMENTED_PHOTOS = "segmentedPhotos"
     SEGMENTATION2D = "segmentation2D"
 
 
-class EvalS2DSpecificationsCreate(BaseModel):
-    inputs: EvalS2DInputs = Field(description="Inputs")
-    outputs: list[EvalS2DOutputsCreate] = Field(description="Outputs")
+class EvalSOrthoSpecificationsCreate(BaseModel):
+    inputs: EvalSOrthoInputs = Field(description="Inputs")
+    outputs: list[EvalSOrthoOutputsCreate] = Field(description="Outputs")
 
 
-class EvalS2DSpecifications(BaseModel):
-    inputs: EvalS2DInputs = Field(description="Inputs")
-    outputs: EvalS2DOutputs = Field(description="Outputs")
+class EvalSOrthoSpecifications(BaseModel):
+    inputs: EvalSOrthoInputs = Field(description="Inputs")
+    outputs: EvalSOrthoOutputs = Field(description="Outputs")
+"""

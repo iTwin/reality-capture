@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+"""from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
 
@@ -67,3 +67,4 @@ class Objects2DSpecifications(BaseModel):
     inputs: Objects2DInputs = Field(description="Inputs")
     outputs: Objects2DOutputs = Field(description="Outputs")
     options: Optional[Objects2DOptions] = Field(None, description="Options")
+"""

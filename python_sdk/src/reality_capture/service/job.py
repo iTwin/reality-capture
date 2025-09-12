@@ -81,6 +81,7 @@ def _get_appropriate_service(jt: JobType):
               JobType.EVAL_S3D, JobType.EVAL_SORTHO]:
         return Service.ANALYSIS"""
     # return Service.CONVERSION
+    raise NotImplemented("Other services not yet implemented")
 
 
 class JobState(Enum):
