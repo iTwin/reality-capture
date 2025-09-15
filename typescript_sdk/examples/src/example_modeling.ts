@@ -3,13 +3,12 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import path from "path";
-import * as fs from "fs";
 import * as dotenv from "dotenv";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import { RealityCaptureService } from "../../reality_capture/src/service/service";
 import { ReconstructionSpecificationsCreate, ReconstructionInputs, ReconstructionOutputsCreate, ReconstructionOutputs } from "../../reality_capture/src/specifications/reconstruction";
-import { ExportCreate, Format } from "../../reality_capture/src/specifications/production";
+import { ExportCreate, Format, OptionsLAS, SamplingStrategy } from "../../reality_capture/src/specifications/production";
+import { TilingOptions, GeometricPrecision } from "../../reality_capture/src/specifications/tiling";
 import { JobCreate, JobType, JobState, Progress, getAppropriateService } from "../../reality_capture/src/service/job";
 import { Type } from "../../reality_capture/src/service/reality_data";
 import { RealityDataHandler } from "../../reality_capture/src/service/data_handler";
@@ -22,13 +21,21 @@ async function runModelingExample() {
     /**
      * This example shows how to submit a Reconstruction job
      */
-    const orientedScene = "D:/Datasets/Modeling/Salamandre_サンショウウオ/OrientedPhotos_シーン";
-    const outputPath = "path to the folder where you want to save outputs";
 
-    dotenv.config();
+    // Inputs to provide. Please, adapt values
+    const orientedScene = "D:/Helico/ContextScene";
+    const outputPath = "D:/output/LAS";
+
+    // Optional : sampling distance (in meter). Please, set to undefined if you don't want to specify sampling distance
+    const samplingDistance: number | undefined = 0.5;
+    // Optional : srs used in outputs. Please, set to undefined if you don't want to specify srs
+    const crs: string | undefined = "EPSG:32631";
 
     const jobName = "Reality Modeling job SDK sample";
     const contextSceneName = "Reality Modeling SDK sample context scene"
+
+    // Script
+    dotenv.config();
 
     const iTwindId = process.env.IMJS_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
@@ -67,9 +74,18 @@ async function runModelingExample() {
         console.log("Successfully uploaded oriented context scene")
 
         let reconsInputs: ReconstructionInputs = { scene: realityDataId.value!.id };
-        let exp: ExportCreate = { format: Format.THREED_TILES }
+        let lasOptions: OptionsLAS = { };
+        if (crs) {
+            lasOptions.crs = crs;
+        }
+        if (samplingDistance) {
+            lasOptions.samplingStrategy = SamplingStrategy.ABSOLUTE;
+            lasOptions.samplingDistance = samplingDistance;
+        }
+        let exp: ExportCreate = { format: Format.LAS, options: lasOptions };
+        let tilingOptions: TilingOptions = { geometricPrecision: GeometricPrecision.EXTRA };
         let reconsOutputs: ReconstructionOutputsCreate = { exports: [exp] };
-        let reconsSpecs: ReconstructionSpecificationsCreate = { inputs: reconsInputs, outputs: reconsOutputs };
+        let reconsSpecs: ReconstructionSpecificationsCreate = { inputs: reconsInputs, outputs: reconsOutputs, options: tilingOptions };
 
         let jobToSubmit: JobCreate = { name: jobName, specifications: reconsSpecs, type: JobType.RECONSTRUCTION, iTwinId: iTwindId };
         const submitResponse = await realityCaptureService.submitJob(jobToSubmit);
@@ -105,7 +121,7 @@ async function runModelingExample() {
         }
         const downloadResponse = await realityDataHandler.downloadData((propertiesResponse.value!.specifications.outputs as ReconstructionOutputs).exports![0].location, outputPath, "", iTwindId);
         if (downloadResponse.isError()) {
-            console.log("Failed to download 3DTiles : " + submitResponse.error!.error.message);
+            console.log("Failed to download LAS : " + submitResponse.error!.error.message);
             return;
         }
         console.log("Successfully downloaded output");
