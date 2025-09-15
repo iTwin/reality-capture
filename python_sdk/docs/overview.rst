@@ -2,7 +2,7 @@
 Overview
 ========
 
-This package helps you interacts with the Bentley Reality Capture APIs. Here we will describe quickly each of them
+This package helps you interact with the Bentley Reality Capture APIs. Here we will describe quickly each of them
 
 .. contents:: Quick access
    :local:
