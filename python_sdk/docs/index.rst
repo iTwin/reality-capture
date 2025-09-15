@@ -10,8 +10,20 @@ Reality Capture documentation
 The ``reality_capture`` package enables you to interact easily with Bentley Reality Capture APIs.
 It's divided into multiple parts:
 
+* Overview gives a quick run down of all the possibilities of this SDK ;
 * Specifications gives in-depth details about existing job specifications, their usage and their options ;
 * Service describes the general endpoints and responses of the Reality Capture APIs ;
+
+Overview
+========
+
+The :doc:`overview` section describes quickly all the possibilities of this SDK.
+
+.. toctree::
+    :titlesonly:
+    :hidden:
+
+    overview
 
 Specifications
 ==============
