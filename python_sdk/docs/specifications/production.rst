@@ -53,55 +53,13 @@ Classes
     :members:
     :undoc-members:
 
-.. autopydantic_model:: Options3MX
-    :model-show-json: False
-
-.. autopydantic_model:: Options3SM
-    :model-show-json: False
-
 .. autopydantic_model:: Options3DTiles
-    :model-show-json: False
-
-.. autopydantic_model:: OptionsOSGB
-    :model-show-json: False
-
-.. autopydantic_model:: OptionsSpacEyes
     :model-show-json: False
 
 .. autopydantic_model:: OptionsOBJ
     :model-show-json: False
 
-.. autopydantic_model:: OptionsS3C
-    :model-show-json: False
-
-.. autopydantic_model:: OptionsI3S
-    :model-show-json: False
-
-.. autopydantic_model:: OptionsLodTreeExport
-    :model-show-json: False
-
-.. autopydantic_model:: OptionsCollada
-    :model-show-json: False
-
-.. autopydantic_model:: OptionsOCP
-    :model-show-json: False
-
-.. autopydantic_model:: OptionsKML
-    :model-show-json: False
-
-.. autopydantic_model:: OptionsDGN
-    :model-show-json: False
-
-.. autopydantic_model:: OptionsSuperMap
-    :model-show-json: False
-
-.. autopydantic_model:: OptionsFBX
-    :model-show-json: False
-
 .. autopydantic_model:: OptionsLAS
-    :model-show-json: False
-
-.. autopydantic_model:: OptionsPOD
     :model-show-json: False
 
 .. autopydantic_model:: OptionsPLY
@@ -134,11 +92,6 @@ Classes
     :undoc-members:
 
 .. autoclass:: CesiumCompression
-    :show-inheritance:
-    :members:
-    :undoc-members:
-
-.. autoclass:: I3SVersion
     :show-inheritance:
     :members:
     :undoc-members:
