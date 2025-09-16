@@ -11,3 +11,10 @@ class RCJobType(Enum):
     CONVERSION = "Conversion"
     IMPORT_FEATURES = "ImportFeatures"
     NONE = "not recognized"
+
+class XYZTileFormat(Enum):
+    """
+    Possible formats for XYZTileMap.
+    """
+    JPG = "JPG"
+    PNG = "PNG"
