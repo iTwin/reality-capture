@@ -5,14 +5,9 @@
 
 import * as dotenv from "dotenv";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
-import { RealityCaptureService } from "reality-capture/src/service/service";
-import { ReconstructionSpecificationsCreate, ReconstructionInputs, ReconstructionOutputsCreate, ReconstructionOutputs } from "reality-capture/src/specifications/reconstruction";
-import { ExportCreate, Format, OptionsLAS, SamplingStrategy } from "reality-capture/src/specifications/production";
-import { TilingOptions, GeometricPrecision } from "reality-capture/src/specifications/tiling";
-import { JobCreate, JobType, JobState, Progress, getAppropriateService } from "reality-capture/src/service/job";
-import { Type } from "reality-capture/src/service/reality_data";
-import { RealityDataHandler } from "reality-capture/src/service/data_handler";
-
+import { RealityCaptureService, ReconstructionSpecificationsCreate, ReconstructionInputs, ReconstructionOutputsCreate, 
+    ReconstructionOutputs, ExportCreate, Format, OptionsLAS, SamplingStrategy, TilingOptions, GeometricPrecision, 
+    JobCreate, JobType, JobState, Progress, getAppropriateService, Type, RealityDataHandler } from "reality-capture";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }

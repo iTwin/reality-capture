@@ -5,9 +5,7 @@
 
 import * as dotenv from "dotenv";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
-import { RealityCaptureService } from "reality-capture/src/service/service";
-import { RealityDataHandler } from "reality-capture/src/service/data_handler";
-import { Type } from "reality-capture/src/service/reality_data";
+import { RealityCaptureService, RealityDataHandler, Type } from "reality-capture";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
