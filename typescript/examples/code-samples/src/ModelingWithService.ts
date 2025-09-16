@@ -33,7 +33,7 @@ async function runModelingExample() {
     // Optional : srs used in outputs. Please, set to undefined if you don't want to specify srs
     const srs: string | undefined = "EPSG:32631";
     // Optional : AT settings. Please, set to an empty string if you don't want to specify AT settings
-    const atSettings: string = "";
+    const atSettings: string = "D:/Datasets/Heli/ATSettings";
 
     // Name of the modeling job
     const jobName = "Modeling_Sample_Job";
