@@ -2,7 +2,9 @@ name: Typescript SDK PR Workflow
 
 on:
   pull_request:
-    branches: [ "feature/2.0.0", "feature/2.0.0-release" ]
+    paths:
+      - "typescript_sdk/**"
+    branches: [ "feature/2.0.0", "feature/2.0.0-release", "feature/2.0.0-ts" ]
 
 jobs:
   build_and_test_sdk:
