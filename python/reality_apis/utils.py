@@ -39,6 +39,10 @@ class RealityDataType(Enum):
     PointCloud = "PointCloud"
     Unstructured = "Unstructured"
     PNTS = "PNTS"
+    XYZTileMap = "XYZTileMap"
+    Orthophoto = "Orthophoto"
+    OrthophotoDSM = "OrthophotoDSM"
+    OMI = "OMI"
 
 
 class JobState(Enum):
