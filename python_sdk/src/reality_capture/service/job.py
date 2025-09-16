@@ -126,8 +126,8 @@ class Execution(BaseModel):
     created_date_time: datetime = Field(description="Creation date time for the job.", alias="createdDateTime")
     started_date_time: Optional[datetime] = Field(None, description="Start date time for the job.", alias="startedDateTime")
     ended_date_time: Optional[datetime] = Field(None, description="End date time for the job.", alias="endedDateTime")
-    estimated_units: Optional[float] = Field(None, description="Estimated number of units consumed by the job.",
-                                             alias="estimatedUnits")
+    processing_units: Optional[float] = Field(None, description="Processing units consumed by the job.",
+                                             alias="processingUnits")
 
 
 class Job(BaseModel):
