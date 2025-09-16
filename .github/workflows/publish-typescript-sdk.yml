@@ -38,5 +38,6 @@ jobs:
       #   run: pnpm coverage
 
       - name: Publish packages as tgz
+        if: ${{ matrix.os == 'windows-latest' && startsWith(matrix.node-version, '22')}}
         working-directory: ./typescript_sdk/reality_capture
         run: npm pack --pack-destination ./lib
