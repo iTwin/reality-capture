@@ -11,19 +11,13 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x, 22.x, 24.x]
-        operating-system: [windows-latest, windows-latest, macos-latest]
+        operating-system: [windows-latest, ubuntu-latest, macos-latest]
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
     
     steps:
       - uses: actions/checkout@v3
-
-      - name: Use Node.js 22
-        uses: actions/setup-node@v3
-        with:
-          node-version: 22.14.0
-          registry-url: https://registry.npmjs.org/
 
       - name: Install dependencies
         working-directory: ./typescript_sdk/reality_capture
