@@ -5,13 +5,13 @@
 
 import * as dotenv from "dotenv";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
-import { RealityCaptureService } from "../../reality_capture/src/service/service";
-import { ReconstructionSpecificationsCreate, ReconstructionInputs, ReconstructionOutputsCreate, ReconstructionOutputs } from "../../reality_capture/src/specifications/reconstruction";
-import { ExportCreate, Format, OptionsLAS, SamplingStrategy } from "../../reality_capture/src/specifications/production";
-import { TilingOptions, GeometricPrecision } from "../../reality_capture/src/specifications/tiling";
-import { JobCreate, JobType, JobState, Progress, getAppropriateService } from "../../reality_capture/src/service/job";
-import { Type } from "../../reality_capture/src/service/reality_data";
-import { RealityDataHandler } from "../../reality_capture/src/service/data_handler";
+import { RealityCaptureService } from "reality-capture/src/service/service";
+import { ReconstructionSpecificationsCreate, ReconstructionInputs, ReconstructionOutputsCreate, ReconstructionOutputs } from "reality-capture/src/specifications/reconstruction";
+import { ExportCreate, Format, OptionsLAS, SamplingStrategy } from "reality-capture/src/specifications/production";
+import { TilingOptions, GeometricPrecision } from "reality-capture/src/specifications/tiling";
+import { JobCreate, JobType, JobState, Progress, getAppropriateService } from "reality-capture/src/service/job";
+import { Type } from "reality-capture/src/service/reality_data";
+import { RealityDataHandler } from "reality-capture/src/service/data_handler";
 
 
 
@@ -37,7 +37,7 @@ async function runModelingExample() {
     // Script
     dotenv.config();
 
-    const iTwindId = process.env.IMJS_PROJECT_ID ?? "";
+    const iTwindId = process.env.IMJS_ITWIN_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_CLIENT_SECRET ?? "";
     const issuerUrl = "https://ims.bentley.com";

@@ -18,6 +18,7 @@
   "dependencies": {
     "@itwin/node-cli-authorization": "^3.0.0",
     "@itwin/service-authorization": "^2.0.0",
+    "reality-capture" : "../reality_capture/lib/reality-capture-1.0.0.tgz",
     "axios": "^1.6.0",
     "@azure/storage-blob": "^12.15.0",
     "dotenv": "^16.0.3",

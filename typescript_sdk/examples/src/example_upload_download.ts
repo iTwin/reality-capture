@@ -3,13 +3,11 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import path from "path";
-import * as fs from "fs";
 import * as dotenv from "dotenv";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
-import { RealityCaptureService } from "../../reality_capture/src/service/service";
-import { RealityDataHandler } from "../../reality_capture/src/service/data_handler";
-import { Type } from "../../reality_capture/src/service/reality_data";
+import { RealityCaptureService } from "reality-capture/src/service/service";
+import { RealityDataHandler } from "reality-capture/src/service/data_handler";
+import { Type } from "reality-capture/src/service/reality_data";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -24,7 +22,7 @@ async function runUploadExample() {
 
     const imagesName = "Reality Modeling SDK sample context scene"
 
-    const iTwindId = process.env.IMJS_PROJECT_ID ?? "";
+    const iTwindId = process.env.IMJS_ITWIN_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_CLIENT_SECRET ?? "";
     const issuerUrl = "https://ims.bentley.com";
