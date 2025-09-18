@@ -20,8 +20,8 @@ class GaussianSplatsOutputs(BaseModel):
 
 
 class GaussianSplatsOutputsCreate(Enum):
-    SPLATS = "Splats"
-    SPLATS_REFERENCE = "SplatsReference"
+    SPLATS = "splats"
+    SPLATS_REFERENCE = "splatsReference"
 
 
 class GSFormat(Enum):
