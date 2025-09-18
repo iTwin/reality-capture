@@ -1,0 +1,42 @@
+{
+  "name": "reality-capture",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "version": "1.0.0-rc.1",
+  "description": "This package contains a SDK for Reality Modeling, Reality Analysis and Reality Conversion iTwin APIs as well as Reality Management API utils. It provides classes, functions and examples to upload local data to ContextShare, run jobs and download the results.",
+  "scripts": {
+    "build": "tsc 1>&2",
+    "lint": "eslint ./src --ext .ts ",
+    "lint-fix": "eslint ./src --fix --ext .ts"
+  },
+  "keywords": [
+    "typescript",
+    "sdk",
+    "reality-capture",
+    "bentley",
+    "azure"
+  ],
+  "author": {
+    "name": "Bentley Systems, Inc.",
+    "url": "http://www.bentley.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@azure/storage-blob": "^12.15.0",
+    "@itwin/reality-data-client": "^1.3.0",
+    "@itwin/core-common": "5.0.0",
+    "@itwin/core-bentley": "5.0.0",
+    "axios": "^1.6.0",
+    "zod": "^3.22.2",
+    "class-validator": "^0.14.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "eslint": "^8.52.0",
+    "@types/node": "^20.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iTwin/reality-capture"
+  }
+}
