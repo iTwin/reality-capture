@@ -65,7 +65,7 @@ class ConversionSettings:
         if getattr(self.options, 'sample_world_step', None) is not None:
             settings_dict["options"]["sampleWorldStep"] = self.options.sample_world_step
         if getattr(self.options, 'tile_format', None) is not None:
-            settings_dict["options"]["tileFormat"] = self.options.tile_format.value
+            settings_dict["options"]["tileFormat"] = self.options.tile_format
         if getattr(self.options, 'top_level', None) is not None:
             settings_dict["options"]["topLevel"] = self.options.top_level
         if getattr(self.options, 'bottom_level', None) is not None:
