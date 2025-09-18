@@ -62,17 +62,17 @@ class ConversionSettings:
             settings_dict["options"]["inputSRS"] = self.options.input_srs
         if self.options.output_srs !="":
             settings_dict["options"]["outputSRS"] = self.options.output_srs
-        if self.options.sample_world_step:
+        if hasattr(self.options, 'sampleWorldStep'):
             settings_dict["options"]["sampleWorldStep"] = self.options.sample_world_step
-        if self.options.tile_format:
+        if hasattr(self.options, 'tile_format'):
             settings_dict["options"]["tileFormat"] = self.options.tile_format.value
-        if self.options.top_level:
+        if hasattr(self.options, 'top_level'):
             settings_dict["options"]["topLevel"] = self.options.top_level
-        if self.options.bottom_level:
+        if hasattr(self.options, 'bottom_level'):
             settings_dict["options"]["bottomLevel"] = self.options.bottom_level
-        if self.options.jpg_quality:
+        if hasattr(self.options, 'jpg_quality'):
             settings_dict["options"]["jpgQuality"] = self.options.jpg_quality
-        if self.options.background_color:
+        if hasattr(self.options, 'background_color'):
             settings_dict["options"]["backgroundColor"] = self.options.background_color
 
         return settings_dict
@@ -159,12 +159,18 @@ class ConversionSettings:
             new_job_settings.options.merge = bool(options_json.get("merge", True))
             new_job_settings.options.input_srs = options_json.get("inputSRS", "")
             new_job_settings.options.output_srs = options_json.get("outputSRS", "")
-            new_job_settings.options.sample_world_step = float(options_json.get("sampleWorldStep", 0.125))
-            new_job_settings.options.tile_format = XYZTileFormat(options_json.get("tileFormat", "JPG"))
-            new_job_settings.options.top_level = int(options_json.get("topLevel", -1))
-            new_job_settings.options.bottom_level = int(options_json.get("bottomLevel", -1))
-            new_job_settings.options.jpg_quality = float(options_json.get("jpgQuality", 85.0))
-            new_job_settings.options.background_color = options_json.get("backgroundColor", "")
+            if "sampleWorldStep" in options_json:
+                new_job_settings.options.sample_world_step = float(options_json["sampleWorldStep"])
+            if "tileFormat" in options_json:
+                new_job_settings.options.tile_format = XYZTileFormat(options_json["tileFormat"])
+            if "topLevel" in options_json:
+                new_job_settings.options.top_level = int(options_json["topLevel"])
+            if "bottomLevel" in options_json:
+                new_job_settings.options.bottom_level = int(options_json["bottomLevel"])
+            if "jpgQuality" in options_json:
+                new_job_settings.options.jpg_quality = float(options_json["jpgQuality"])
+            if "backgroundColor" in options_json:
+                new_job_settings.options.background_color = options_json["backgroundColor"]
 
         except (KeyError, TypeError) as e:
             return ReturnValue(value=cls(), error=str(e))
@@ -257,12 +263,12 @@ class ConversionSettings:
             self.engines: int = 0
             self.input_srs: str = ""
             self.output_srs: str = ""
-            self.sample_world_step: float = 0.125
-            self.tile_format: XYZTileFormat = XYZTileFormat.JPG
-            self.top_level: int = -1
-            self.bottom_level: int = -1
-            self.jpg_quality: int = 85
-            self.background_color: str = "255.255.255"
+            self.sample_world_step: float
+            self.tile_format: XYZTileFormat
+            self.top_level: int
+            self.bottom_level: int
+            self.jpg_quality: int
+            self.background_color: str
 
 class ImportFeaturesSettings:
     """
