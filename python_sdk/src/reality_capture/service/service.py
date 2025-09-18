@@ -38,7 +38,7 @@ class RealityCaptureService:
 
         add_ua = ""
         if "user-agent" in kwargs.keys():
-            add_ua = f" {kwargs["user-agent"]}"
+            add_ua = " " + kwargs["user-agent"]
 
         self._header = {
             "Authorization": None,
