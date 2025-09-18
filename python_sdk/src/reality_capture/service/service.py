@@ -26,14 +26,23 @@ class RealityCaptureService:
 
         :param token_factory: An object that implements a ``get_token() -> str`` method.
         :type token_factory: Object
-        :param \**kwargs: Internal parameters used only for development purposes.
+        :param \**kwargs: See below.
+
+        :Keyword Arguments:
+            * *user-agent* (``str``) --
+              Additional user agent string
+
         """
         self._token_factory = token_factory
         self._session = requests.Session()
 
+        add_ua = ""
+        if "user-agent" in kwargs.keys():
+            add_ua = " " + kwargs["user-agent"]
+
         self._header = {
             "Authorization": None,
-            "User-Agent": f"Reality Capture Python SDK/{__version__}",
+            "User-Agent": f"Reality Capture Python SDK/{__version__}{add_ua}",
             "Content-type": "application/json",
             "Accept": "application/vnd.bentley.itwin-platform.v1+json",
         }
