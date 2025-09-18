@@ -16,5 +16,5 @@ class XYZTileFormat(Enum):
     """
     Possible formats for XYZTileMap.
     """
-    JPG = "JPG"
-    PNG = "PNG"
+    JPG = "jpg"
+    PNG = "png"
