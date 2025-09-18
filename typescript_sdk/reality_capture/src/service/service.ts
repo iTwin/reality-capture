@@ -1,20 +1,20 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
+import { AuthorizationClient } from "@itwin/core-common";
 import { BucketResponse } from "./bucket";
 import { DetectorsMinimalResponse, DetectorResponse } from "./detectors";
 import { CostEstimationCreate, CostEstimation } from "./estimation";
 import { Files } from "./files";
 import { Response } from "./response";
 import { JobCreate, Job, Progress, Messages, Service, getAppropriateService } from "./job";
-import { RealityDataCreate, RealityData, RealityDataUpdate, ContainerDetails, RealityDataFilter, Prefer, RealityDatas, filterAsDictForServiceCall } from "./reality_data";
 import { DetailedErrorResponse, DetailedError } from "./error";
 
 export class RealityCaptureService {
-  private _tokenFactory: { get_token: () => Promise<string> };
+  private _authorizationClient: AuthorizationClient;
   private _axios: AxiosInstance;
   private _serviceUrl: string;
 
-  constructor(tokenFactory: { get_token: () => Promise<string> }, kwargs?: { env?: string }) {
-    this._tokenFactory = tokenFactory;
+  constructor(authorizationClient: AuthorizationClient, kwargs?: { env?: string }) {
+    this._authorizationClient = authorizationClient;
     this._axios = axios.create();
     const env = kwargs?.env;
     if (env === "qa") {
@@ -28,7 +28,7 @@ export class RealityCaptureService {
 
   private async _getHeader(version: "v1" | "v2") {
     return {
-      Authorization: await this._tokenFactory.get_token(),
+      Authorization: await this._authorizationClient.getAccessToken(),
       "User-Agent": "Reality Capture TypeScript SDK",
       "Content-type": "application/json",
       Accept: `application/vnd.bentley.itwin-platform.${version}+json`,
@@ -159,85 +159,6 @@ export class RealityCaptureService {
       return new Response(resp.status, null, resp.data as DetectorResponse);
     } catch (error: any) {
       return this._handleError<DetectorResponse>(error);
-    }
-  }
-
-  async createRealityData(realityData: RealityDataCreate): Promise<Response<RealityData>> {
-    try {
-      const resp = await this._axios.post(this._getRealityManagementRdUrl(), realityData, { headers: await this._getHeader("v1") });
-      return new Response(resp.status, null, resp.data.realityData as RealityData);
-    } catch (error: any) {
-      return this._handleError<RealityData>(error);
-    }
-  }
-
-  async getRealityData(realityDataId: string, itwinId?: string): Promise<Response<RealityData>> {
-    let url = this._getRealityManagementRdUrl() + realityDataId;
-    if (itwinId) url += `?iTwinId=${itwinId}`;
-    try {
-      const resp = await this._axios.get(url, { headers: await this._getHeader("v1") });
-      return new Response(resp.status, null, resp.data.realityData as RealityData);
-    } catch (error: any) {
-      return this._handleError<RealityData>(error);
-    }
-  }
-
-  async updateRealityData(realityDataUpdate: RealityDataUpdate, realityDataId: string): Promise<Response<RealityData>> {
-    const url = this._getRealityManagementRdUrl() + realityDataId;
-    try {
-      const resp = await this._axios.patch(url, realityDataUpdate, { headers: await this._getHeader("v1") });
-      return new Response(resp.status, null, resp.data.realityData as RealityData);
-    } catch (error: any) {
-      return this._handleError<RealityData>(error);
-    }
-  }
-
-  async deleteRealityData(realityDataId: string): Promise<Response<null>> {
-    const url = this._getRealityManagementRdUrl() + realityDataId;
-    try {
-      const resp = await this._axios.delete(url, { headers: await this._getHeader("v1") });
-      return new Response(resp.status, null, null);
-    } catch (error: any) {
-      return this._handleError<null>(error);
-    }
-  }
-
-  async getRealityDataWriteAccess(realityDataId: string, itwinId?: string): Promise<Response<ContainerDetails>> {
-    let url = this._getRealityManagementRdUrl() + realityDataId + "/writeaccess";
-    if (itwinId) url += `?iTwinId=${itwinId}`;
-    try {
-      const resp = await this._axios.get(url, { headers: await this._getHeader("v1") });
-      return new Response(resp.status, null, resp.data as ContainerDetails);
-    } catch (error: any) {
-      return this._handleError<ContainerDetails>(error);
-    }
-  }
-
-  async getRealityDataReadAccess(realityDataId: string, itwinId?: string): Promise<Response<ContainerDetails>> {
-    let url = this._getRealityManagementRdUrl() + realityDataId + "/readaccess";
-    if (itwinId) url += `?iTwinId=${itwinId}`;
-    try {
-      const resp = await this._axios.get(url, { headers: await this._getHeader("v1") });
-      return new Response(resp.status, null, resp.data as ContainerDetails);
-    } catch (error: any) {
-      return this._handleError<ContainerDetails>(error);
-    }
-  }
-
-  async listRealityData(realityDataFilter?: RealityDataFilter, prefer?: Prefer): Promise<Response<RealityDatas>> {
-    let url = this._getRealityManagementRdUrl();
-    if (realityDataFilter) {
-      const params = realityDataFilter ? filterAsDictForServiceCall(realityDataFilter) : {};
-      const encodedParams = new URLSearchParams(params).toString();
-      url = `${url}?${encodedParams}`;
-    }
-    const headers: any = this._getHeader("v1");
-    headers["Prefer"] = prefer === Prefer.REPRESENTATION ? "return=representation" : "return=minimal";
-    try {
-      const resp = await this._axios.get(url, { headers });
-      return new Response(resp.status, null, resp.data as RealityDatas);
-    } catch (error: any) {
-      return this._handleError<RealityDatas>(error);
     }
   }
 

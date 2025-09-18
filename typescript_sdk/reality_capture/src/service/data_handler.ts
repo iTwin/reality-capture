@@ -1,20 +1,18 @@
 import * as fs from "fs";
 import * as path from "path";
 import { ContainerClient } from "@azure/storage-blob";
+import { AuthorizationClient } from "@itwin/core-common";
+import { BentleyError } from "@itwin/core-bentley";
 // TODO : ThreadPool type does not have native Node.js equivalent : multi-thread for IO must be readapted (here, ploads and downloads are sequential.
 //import { ThreadPool } from "some-threadpool-lib";
 import {
   DetailedErrorResponse,
   DetailedError,
-  Error as DetailedErrorType,
+  Error
 } from "./error";
+import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
 import { Response } from "./response";
 import { RealityCaptureService } from "./service";
-import {
-  RealityDataUpdate,
-  RealityData,
-  ContainerDetails,
-} from "./reality_data";
 import { BucketResponse } from "./bucket";
 
 
@@ -50,12 +48,7 @@ class _DataHandler {
     return Math.min(32, 4 + Math.floor(nbSmallFiles / 100));
   }
 
-  static async downloadData(
-    containerUrl: string,
-    dst: string,
-    src: string,
-    progressHook: ProgressHook
-  ): Promise<Response<null>> {
+  static async downloadData(containerUrl: string, dst: string, src: string, progressHook: ProgressHook): Promise<Response<null>> {
     const client = new ContainerClient(containerUrl);
     const blobs = [];
     for await (const blob of client.listBlobsFlat()) {
@@ -113,12 +106,7 @@ class _DataHandler {
     return new Response(200, null, null);
   }
 
-  static async uploadData(
-    containerUrl: string,
-    src: string,
-    realityDataDst: string,
-    progressHook: ProgressHook
-  ): Promise<Response<null>> {
+  static async uploadData(containerUrl: string, src: string, realityDataDst: string, progressHook: ProgressHook): Promise<Response<null>> {
     const files = _DataHandler._getFilesAndSizes(src);
     const nbThreads = _DataHandler._getNbThreads(files);
     const totalSize = files.reduce((acc, [, size]) => acc + size, 0);
@@ -178,10 +166,7 @@ class _DataHandler {
     return new Response(200, null, blobNames);
   }
 
-  static async deleteData(
-    containerUrl: string,
-    filesToDelete: string[]
-  ): Promise<Response<null>> {
+  static async deleteData(containerUrl: string, filesToDelete: string[]): Promise<Response<null>> {
     const client = new ContainerClient(containerUrl);
     const failed: string[] = [];
     for (const file of filesToDelete) {
@@ -209,87 +194,71 @@ class _DataHandler {
 }
 
 export class RealityDataHandler {
-  private _service: RealityCaptureService;
+  private _realityDataClient: RealityDataAccessClient;
   private _progressHook: ProgressHook;
 
-  constructor(tokenFactory: any, kwargs?: any) {
-    this._service = new RealityCaptureService(tokenFactory, kwargs);
+  constructor(authorizationClient: AuthorizationClient, kwargs?: any) {
+    const env = kwargs?.env;
+    let url = ""
+    if(env === "dev" || env === "qa")
+      url = "https://" + env + "-api.bentley.com/reality-management/reality-data";
+    else
+      url = "https://api.bentley.com/reality-management/reality-data";
+    const realityDataClientOptions: RealityDataClientOptions = {
+      authorizationClient: authorizationClient,
+      baseUrl: url,
+    };
+    this._realityDataClient = new RealityDataAccessClient(realityDataClientOptions);
     this._progressHook = null;
   }
 
-  private async _getLink(
-    rdId: string,
-    itwinId: string | undefined,
-    readOnly: boolean
-  ): Promise<Response<ContainerDetails>> {
-    if (!readOnly) {
-      return await this._service.getRealityDataWriteAccess(rdId, itwinId);
+  private async _getContainerUrlFromRealityDataId(realityDataId: string, iTwinId?: string, writeAccess: boolean = false): Promise<Response<string>> {
+    let realityData: ITwinRealityData;
+    try {
+      realityData = await this._realityDataClient.getRealityData("", iTwinId, realityDataId);
     }
-    return await this._service.getRealityDataReadAccess(rdId, itwinId);
+    catch(error: any) {
+      console.log("Cannot find reality data id " + realityDataId + " in iTwin " + iTwinId);
+      if(error instanceof BentleyError)
+        return new Response(error.errorNumber, { error : { code: error.name, message: error.message }}, "");
+      else
+        return new Response(520, { error : { code: "UnknownError", message: "Unknown error"}}, "");
+    }
+    const url = await realityData.getBlobUrl("", "", writeAccess);
+    return new Response(200, null, url.toString());
   }
 
-  private async _setAuthoring(
-    rdId: string,
-    authoring: boolean
-  ): Promise<Response<RealityData>> {
-    const rdu = { authoring } as RealityDataUpdate;
-    return await this._service.updateRealityData(rdu, rdId);
-  }
-
-  async uploadData(
-    realityDataId: string,
-    src: string,
-    realityDataDst = "",
-    itwinId?: string
-  ): Promise<Response<null>> {
-    const rlink = await this._getLink(realityDataId, itwinId, false);
-    if (rlink.isError()) return new Response(rlink.status_code, rlink.error, null);
-    const r = await this._setAuthoring(realityDataId, true);
-    if (r.isError()) return new Response(r.status_code, r.error, null);
-    const resp = await _DataHandler.uploadData(
-      rlink.value!._links.containerUrl.href,
-      src,
-      realityDataDst,
-      this._progressHook
-    );
-    const r2 = await this._setAuthoring(realityDataId, false);
-    if (r2.isError()) return new Response(r2.status_code, r2.error, null);
+  async uploadData(realityDataId: string, src: string, realityDataDst = "", iTwinId?: string): Promise<Response<null>> {
+    const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, true);
+    if(urlResponse.isError()) {
+      // TODO
+    }
+    const resp = await _DataHandler.uploadData(urlResponse.value!, src, realityDataDst, this._progressHook);
     return resp;
   }
 
-  async downloadData(
-    realityDataId: string,
-    dst: string,
-    realityDataSrc = "",
-    itwinId?: string
-  ): Promise<Response<null>> {
-    const r = await this._getLink(realityDataId, itwinId, true);
-    if (r.isError()) return new Response(r.status_code, r.error, null);
-    return await _DataHandler.downloadData(
-      r.value!._links.containerUrl.href,
-      dst,
-      realityDataSrc,
-      this._progressHook
-    );
+  async downloadData(realityDataId: string, dst: string, realityDataSrc = "", iTwinId?: string): Promise<Response<null>> {
+    const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, false);
+    if(urlResponse.isError()) {
+      // TODO
+    }
+    return await _DataHandler.downloadData(urlResponse.value!, dst, realityDataSrc, this._progressHook);
   }
 
-  async listData(
-    realityDataId: string,
-    itwinId?: string
-  ): Promise<Response<string[]>> {
-    const r = await this._getLink(realityDataId, itwinId, true);
-    if (r.isError()) return new Response<string[]>(r.status_code, r.error, null);
-    return await _DataHandler.listData(r.value!._links.containerUrl.href);
+  async listData(realityDataId: string, iTwinId?: string): Promise<Response<string[]>> {
+    const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, false);
+    if(urlResponse.isError()) {
+      // TODO
+    }
+    return await _DataHandler.listData(urlResponse.value!);
   }
 
-  async deleteData(
-    realityDataId: string,
-    filesToDelete: string[],
-    itwinId?: string
-  ): Promise<Response<null>> {
-    const r = await this._getLink(realityDataId, itwinId, false);
-    if (r.isError()) return new Response(r.status_code, r.error, null);
-    return await _DataHandler.deleteData(r.value!._links.containerUrl.href, filesToDelete);
+  async deleteData(realityDataId: string, filesToDelete: string[], iTwinId?: string): Promise<Response<null>> {
+    const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, false);
+    if(urlResponse.isError()) {
+      // TODO
+    }
+    return await _DataHandler.deleteData(urlResponse.value!, filesToDelete);
   }
 
   setProgressHook(hook: ProgressHook): void {
@@ -301,8 +270,8 @@ export class BucketDataHandler {
   private _service: RealityCaptureService;
   private _progressHook: ProgressHook;
 
-  constructor(tokenFactory: any, kwargs?: any) {
-    this._service = new RealityCaptureService(tokenFactory, kwargs);
+  constructor(authorizationClient: AuthorizationClient, kwargs?: any) {
+    this._service = new RealityCaptureService(authorizationClient, kwargs);
     this._progressHook = null;
   }
 
@@ -310,34 +279,16 @@ export class BucketDataHandler {
     return await this._service.getBucket(itwinId);
   }
 
-  async uploadData(
-    itwinId: string,
-    src: string,
-    bucketDst = ""
-  ): Promise<Response<null>> {
+  async uploadData(itwinId: string, src: string, bucketDst = ""): Promise<Response<null>> {
     const r = await this._getBucket(itwinId);
     if (r.isError()) return new Response(r.status_code, r.error, null);
-    return await _DataHandler.uploadData(
-      r.value!._links.containerUrl.href,
-      src,
-      bucketDst,
-      this._progressHook
-    );
+    return await _DataHandler.uploadData(r.value!._links.containerUrl.href, src, bucketDst, this._progressHook);
   }
 
-  async downloadData(
-    itwinId: string,
-    dst: string,
-    bucketSrc = ""
-  ): Promise<Response<null>> {
+  async downloadData(itwinId: string, dst: string, bucketSrc = ""): Promise<Response<null>> {
     const r = await this._getBucket(itwinId);
     if (r.isError()) return new Response(r.status_code, r.error, null);
-    return await _DataHandler.downloadData(
-      r.value!._links.containerUrl.href,
-      dst,
-      bucketSrc,
-      this._progressHook
-    );
+    return await _DataHandler.downloadData(r.value!._links.containerUrl.href, dst, bucketSrc, this._progressHook);
   }
 
   async listData(itwinId: string): Promise<Response<string[]>> {
@@ -346,10 +297,7 @@ export class BucketDataHandler {
     return await _DataHandler.listData(r.value!._links.containerUrl.href);
   }
 
-  async deleteData(
-    itwinId: string,
-    filesToDelete: string[]
-  ): Promise<Response<null>> {
+  async deleteData(itwinId: string, filesToDelete: string[]): Promise<Response<null>> {
     const r = await this._getBucket(itwinId);
     if (r.isError()) return new Response(r.status_code, r.error, null);
     return await _DataHandler.deleteData(r.value!._links.containerUrl.href, filesToDelete);

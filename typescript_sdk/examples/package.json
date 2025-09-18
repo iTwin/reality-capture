@@ -8,7 +8,8 @@
     "lint": "eslint ./src --ext .ts ",
     "lint-fix": "eslint ./src --fix --ext .ts",
     "start-modeling-example": "node ./lib/examples/src/example_modeling.js",
-    "start-upload-download-example": "node ./lib/examples/src/example_upload_download.js"
+    "start-upload-reality-data-example": "node ./lib/examples/src/example_upload_reality_data.js",
+    "start-upload-bucket-data-example": "node ./lib/examples/src/example_upload_bucket_data.js"
   },
   "author": {
     "name": "Bentley Systems, Inc.",
@@ -16,8 +17,9 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@itwin/reality-data-client": "^1.3.0",
     "@itwin/service-authorization": "^2.0.0",
-    "reality-capture" : "../reality_capture/lib/reality-capture-1.0.0.tgz",
+    "reality-capture" : "../reality_capture/lib/reality-capture-1.0.0-rc.1.tgz",
     "dotenv": "^16.0.3"
   },
   "devDependencies": {
