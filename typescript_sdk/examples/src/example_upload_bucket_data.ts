@@ -24,7 +24,7 @@ async function runUploadExample() {
     const iTwinId = process.env.IMJS_ITWIN_ID ?? "";
     const clientId = process.env.IMJS_CLIENT_ID ?? "";
     const secret = process.env.IMJS_CLIENT_SECRET ?? "";
-    const issuerUrl = "https://qa-ims.bentley.com";
+    const issuerUrl = "https://ims.bentley.com";
 
     const authorizationClient = new ServiceAuthorizationClient({
         clientId: clientId,
@@ -33,7 +33,7 @@ async function runUploadExample() {
         authority: issuerUrl,
     });
 
-    const bucketDataHandler = new BucketDataHandler(authorizationClient, { env: "qa"});
+    const bucketDataHandler = new BucketDataHandler(authorizationClient);
     console.log("Bucket Data handler initialized");
 
     try {
