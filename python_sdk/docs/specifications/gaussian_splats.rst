@@ -44,3 +44,8 @@ Classes
     :show-inheritance:
     :members:
     :undoc-members:
+
+.. autoclass:: GSImageSize
+    :show-inheritance:
+    :members:
+    :undoc-members:

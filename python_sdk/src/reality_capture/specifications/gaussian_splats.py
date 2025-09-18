@@ -7,6 +7,10 @@ class GaussianSplatsInputs(BaseModel):
     scene: str = Field(description="Reality data ID of ContextScene to process.")
     splats_reference: Optional[str] = Field(None, description="Reality data ID of the Gaussian Splats Reference.",
                                             alias="splatsReference")
+    region_of_interest: Optional[str] = Field(description="Path in the bucket to region of interest file",
+                                              alias="regionOfInterest",
+                                              default=None,
+                                              pattern=r"^bkt:.+")
 
 
 class GaussianSplatsOutputs(BaseModel):
@@ -26,8 +30,20 @@ class GSFormat(Enum):
     PLY = "PLY"
 
 
+class GSImageSize(Enum):
+    SMALL = "Small"
+    MEDIUM = "Medium"
+    LARGE = "Large"
+    FULL = "Full"
+
+
 class GaussianSplatsOptions(BaseModel):
-    format: Optional[GSFormat] = Field(default=None, description="Format of the Gaussian Splats")
+    export_format: Optional[GSFormat] = Field(default=None, description="Format of the exported Gaussian Splats",
+                                              alias="exportFormat")
+    reference_image_size: Optional[GSImageSize] = Field(default=None,
+                                                        description="Size of images to use to "
+                                                                    "generate the Splats Reference",
+                                                        alias="referenceImageSize")
 
 
 class GaussianSplatsSpecifications(BaseModel):
