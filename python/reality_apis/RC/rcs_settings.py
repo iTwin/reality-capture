@@ -62,17 +62,17 @@ class ConversionSettings:
             settings_dict["options"]["inputSRS"] = self.options.input_srs
         if self.options.output_srs !="":
             settings_dict["options"]["outputSRS"] = self.options.output_srs
-        if hasattr(self.options, 'sampleWorldStep'):
+        if getattr(self.options, 'sample_world_step', None) is not None:
             settings_dict["options"]["sampleWorldStep"] = self.options.sample_world_step
-        if hasattr(self.options, 'tile_format'):
+        if getattr(self.options, 'tile_format', None) is not None:
             settings_dict["options"]["tileFormat"] = self.options.tile_format.value
-        if hasattr(self.options, 'top_level'):
+        if getattr(self.options, 'top_level', None) is not None:
             settings_dict["options"]["topLevel"] = self.options.top_level
-        if hasattr(self.options, 'bottom_level'):
+        if getattr(self.options, 'bottom_level', None) is not None:
             settings_dict["options"]["bottomLevel"] = self.options.bottom_level
-        if hasattr(self.options, 'jpg_quality'):
+        if getattr(self.options, 'jpg_quality', None) is not None:
             settings_dict["options"]["jpgQuality"] = self.options.jpg_quality
-        if hasattr(self.options, 'background_color'):
+        if getattr(self.options, 'background_color', None) is not None:
             settings_dict["options"]["backgroundColor"] = self.options.background_color
 
         return settings_dict
