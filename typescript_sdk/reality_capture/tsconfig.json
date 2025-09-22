@@ -9,10 +9,12 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "outDir": "lib",
-    "rootDir": "src"
+    "rootDirs": ["src", "tests"],
+    "types": ["mocha", "node"]
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts", 
+    "tests/**/*.ts"
   ],
   "exclude": [
     "node_modules",

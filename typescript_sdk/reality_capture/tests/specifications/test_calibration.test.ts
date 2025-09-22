@@ -1,5 +1,5 @@
 import { expect } from "chai";
-
+import { z } from "zod";
 import {
   CalibrationOutputsCreate,
   RigSynchro,
@@ -28,7 +28,7 @@ import {
   CalibrationSpecificationsSchema,
   CalibrationSpecificationsCreateSchema,
   CalibrationCostSchema
-} from "../../../reality_capture/src/specifications/calibration";
+} from "../../src/specifications/calibration";
 
 describe("calibration.ts", () => {
   describe("Enums", () => {
@@ -76,7 +76,7 @@ describe("calibration.ts", () => {
 
     it("should throw on missing scene", () => {
       const invalid = { presets: ["preset/path"] };
-      expect(() => CalibrationInputsSchema.parse(invalid)).to.throw();
+      expect(() => CalibrationInputsSchema.parse(invalid)).to.throw(z.ZodError);
     });
   });
 
@@ -100,7 +100,7 @@ describe("calibration.ts", () => {
         scene: "scene-id",
         report: "invalid-report-path"
       };
-      expect(() => CalibrationOutputsSchema.parse(invalid)).to.throw();
+      expect(() => CalibrationOutputsSchema.parse(invalid)).to.throw(z.ZodError);
     });
   });
 
@@ -154,7 +154,7 @@ describe("calibration.ts", () => {
       const invalid = {
         outputs: { scene: "scene-id2", report: "bkt:/bucket/report.pdf" }
       };
-      expect(() => CalibrationSpecificationsSchema.parse(invalid)).to.throw();
+      expect(() => CalibrationSpecificationsSchema.parse(invalid)).to.throw(z.ZodError);
     });
   });
 
@@ -173,7 +173,7 @@ describe("calibration.ts", () => {
         inputs: { scene: "scene-id" },
         outputs: CalibrationOutputsCreate.SCENE
       };
-      expect(() => CalibrationSpecificationsCreateSchema.parse(invalid)).to.throw();
+      expect(() => CalibrationSpecificationsCreateSchema.parse(invalid)).to.throw(z.ZodError);
     });
   });
 
@@ -185,12 +185,12 @@ describe("calibration.ts", () => {
 
     it("should throw if gpix is negative", () => {
       const invalid = { gpix: -1, mpoints: 100.0 };
-      expect(() => CalibrationCostSchema.parse(invalid)).to.throw();
+      expect(() => CalibrationCostSchema.parse(invalid)).to.throw(z.ZodError);
     });
 
     it("should throw if mpoints is negative", () => {
       const invalid = { gpix: 1.5, mpoints: -10 };
-      expect(() => CalibrationCostSchema.parse(invalid)).to.throw();
+      expect(() => CalibrationCostSchema.parse(invalid)).to.throw(z.ZodError);
     });
   });
 });

@@ -7,7 +7,9 @@
   "scripts": {
     "build": "tsc 1>&2",
     "lint": "eslint ./src --ext .ts ",
-    "lint-fix": "eslint ./src --fix --ext .ts"
+    "lint-fix": "eslint ./src --fix --ext .ts",
+    "test:unit": "mocha ./lib/**/*.test.js --slow 0",
+    "coverage": "nyc npm run test:unit"
   },
   "keywords": [
     "typescript",
@@ -31,12 +33,32 @@
     "class-validator": "^0.14.0"
   },
   "devDependencies": {
-    "typescript": "^5.2.2",
+    "@types/chai": "^5.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^20.8.0",
+    "chai": "^6.0.0",
     "eslint": "^8.52.0",
-    "@types/node": "^20.8.0"
+    "mocha": "^11.0.0",
+    "nyc": "^17.0.0",
+    "typescript": "^5.2.2"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/iTwin/reality-capture"
-  }
+  },
+  "nyc": {
+    "statements": 90,
+    "lines": 90,
+    "functions": 90,
+    "all": true,
+    "check-coverage": true,
+    "per-file": true,
+    "include": ["lib/src/**/*.js"],
+    "exclude": ["tests/**/*.js", "lib/src/index.js"],
+    "extension": [".js"],
+    "reporter": ["text", "html"]
+  },
+  "files": [
+    "src/"
+  ]
 }
