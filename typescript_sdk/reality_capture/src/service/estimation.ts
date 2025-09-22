@@ -61,7 +61,7 @@ export enum UnitType {
 
 export const CostEstimationSchema = CostEstimationCreateSchema.extend({
   id: z.string().describe("Estimation id"),
-  estimatedUnits: z.number().describe("Estimated number of units that the job will cost."),
+  estimatedUnits: z.number().describe("Estimated number of processing units that the job will cost."),
   unitType: z.nativeEnum(UnitType).describe("Type of unit for the job."),
 });
 export type CostEstimation = z.infer<typeof CostEstimationSchema>;

@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import { z } from "zod";
 import {
-  TouchFormat,
   TouchLevel,
   TouchUpExportOutputsCreate,
   TouchUpImportOutputsCreate,
@@ -48,16 +47,10 @@ describe("Touchup Specifications Schemas", () => {
 
     it("should validate with all options", () => {
       const data = {
-        format: TouchFormat.OBJ,
         level: TouchLevel.GEOMETRY_AND_TEXTURE,
         crs: "EPSG:4326",
       };
       expect(() => TouchUpExportOptionsSchema.parse(data)).to.not.throw();
-    });
-
-    it("should fail with invalid format", () => {
-      const data = { format: "INVALID_FORMAT" };
-      expect(() => TouchUpExportOptionsSchema.parse(data)).to.throw(z.ZodError);
     });
   });
 
@@ -78,7 +71,7 @@ describe("Touchup Specifications Schemas", () => {
       const data = {
         inputs: { modelingReference: "ref1" },
         outputs: { touchUpData: "data1" },
-        options: { format: TouchFormat.OBJ },
+        options: { crs: "CRS" },
       };
       expect(() => TouchUpExportSpecificationsSchema.parse(data)).to.not.throw();
     });
@@ -104,7 +97,7 @@ describe("Touchup Specifications Schemas", () => {
       const data = {
         inputs: { modelingReference: "ref1" },
         outputs: [TouchUpExportOutputsCreate.TOUCH_UP_DATA],
-        options: { format: TouchFormat.DGN },
+        options: { crs: "CRS" },
       };
       expect(() => TouchUpExportSpecificationsCreateSchema.parse(data)).to.not.throw();
     });

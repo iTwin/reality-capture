@@ -3,26 +3,12 @@ import { Point3dSchema } from "./geometry";
 import { GeometricPrecision } from "./tiling";
 
 export enum Format {
-  THREEMX = "3MX",
-  THREESM = "3SM",
   THREED_TILES = "3DTiles",
-  OSGB = "OSGB",
-  SPACEYES = "SpacEyes",
   OBJ = "OBJ",
-  S3C = "S3C",
-  I3S = "I3S",
-  LOD_TREE = "LodTree",
-  COLLADA = "Collada",
-  OCP = "OCP",
-  KML = "KML",
-  DGN = "DGN",
-  SUPER_MAP = "SuperMap",
   LAS = "LAS",
-  POD = "POD",
   PLY = "PLY",
   OPC = "OPC",
-  ORTHOPHOTO_DSM = "OrthophotoDSM",
-  FBX = "FBX"
+  ORTHOPHOTO_DSM = "OrthophotoDSM"
 }
 
 export enum ColorSource {
@@ -79,14 +65,11 @@ export enum ProjectionMode {
 
 export enum OrthoFormat {
   GEOTIFF = "GeoTIFF",
-  JPEG = "JPEG",
-  KML_SUPER_OVERLAY = "KML_SuperOverlay",
   NONE = "None"
 }
 
 export enum DSMFormat {
   GEOTIFF = "GeoTIFF",
-  XYZ = "XYZ",
   ASC = "ASC",
   NONE = "None"
 }
@@ -109,32 +92,6 @@ export const ProductionInputsSchema = z.object({
 });
 export type ProductionInputs = z.infer<typeof ProductionInputsSchema>;
 
-export const Options3MXSchema = z.object({
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
-  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
-  generateWebApp: z.boolean().optional().describe("Flag to generate a web application"),
-});
-export type Options3MX = z.infer<typeof Options3MXSchema>;
-
-export const Options3SMSchema = z.object({
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
-});
-export type Options3SM = z.infer<typeof Options3SMSchema>;
-
 export const Options3DTilesSchema = z.object({
   textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
   textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
@@ -147,40 +104,6 @@ export const Options3DTilesSchema = z.object({
   compress: z.nativeEnum(CesiumCompression).optional().describe("Compression type"),
 });
 export type Options3DTiles = z.infer<typeof Options3DTilesSchema>;
-
-export const OptionsOSGBSchema = z.object({
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
-  textureSharpening: z.boolean().optional().describe("Enable or disable texture sharpening."),
-  maximumTextureSize: z.number().int().optional().describe("Maximum texture size"),
-  textureCompression: z.number().int().min(0).max(100).optional().describe("JPG compression of texture file"),
-  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
-  lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
-});
-export type OptionsOSGB = z.infer<typeof OptionsOSGBSchema>;
-
-export const OptionsSpacEyesSchema = z.object({
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
-  textureSharpening: z.boolean().optional().describe("Enable or disable texture sharpening."),
-  maximumTextureSize: z.number().int().optional().describe("Maximum texture size"),
-  textureCompression: z.number().int().min(0).max(100).optional().describe("JPG compression of texture file"),
-  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
-  lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-  disableLighting: z.boolean().optional().describe("Flag to disable lighting"),
-});
-export type OptionsSpacEyes = z.infer<typeof OptionsSpacEyesSchema>;
 
 export const OptionsOBJSchema = z.object({
   textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
@@ -200,140 +123,6 @@ export const OptionsOBJSchema = z.object({
 });
 export type OptionsOBJ = z.infer<typeof OptionsOBJSchema>;
 
-export const OptionsS3CSchema = z.object({
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
-  textureSharpening: z.boolean().optional().describe("Enable or disable texture sharpening."),
-  maximumTextureSize: z.number().int().optional().describe("Maximum texture size"),
-  textureCompression: z.number().int().min(0).max(100).optional().describe("JPG compression of texture file"),
-  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
-});
-export type OptionsS3C = z.infer<typeof OptionsS3CSchema>;
-
-export const OptionsI3SSchema = z.object({
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
-  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-  version: z.nativeEnum(I3SVersion).optional().describe("I3S version"),
-});
-export type OptionsI3S = z.infer<typeof OptionsI3SSchema>;
-
-export const OptionsLodTreeExportSchema = z.object({
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
-  textureSharpening: z.boolean().optional().describe("Enable or disable texture sharpening."),
-  maximumTextureSize: z.number().int().optional().describe("Maximum texture size"),
-  textureCompression: z.number().int().min(0).max(100).optional().describe("JPG compression of texture file"),
-  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
-  lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-});
-export type OptionsLodTreeExport = z.infer<typeof OptionsLodTreeExportSchema>;
-
-export const OptionsColladaSchema = z.object({
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
-  textureSharpening: z.boolean().optional().describe("Enable or disable texture sharpening."),
-  maximumTextureSize: z.number().int().optional().describe("Maximum texture size"),
-  textureCompression: z.number().int().min(0).max(100).optional().describe("JPG compression of texture file"),
-  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
-  lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
-});
-export type OptionsCollada = z.infer<typeof OptionsColladaSchema>;
-
-export const OptionsOCPSchema = z.object({
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
-  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-});
-export type OptionsOCP = z.infer<typeof OptionsOCPSchema>;
-
-export const OptionsKMLSchema = z.object({
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
-  textureSharpening: z.boolean().optional().describe("Enable or disable texture sharpening."),
-  maximumTextureSize: z.number().int().optional().describe("Maximum texture size"),
-  textureCompression: z.number().int().min(0).max(100).optional().describe("JPG compression of texture file"),
-  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
-  lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-  heightOffset: z.number().optional().describe("Height offset"),
-});
-export type OptionsKML = z.infer<typeof OptionsKMLSchema>;
-
-export const OptionsDGNSchema = z.object({
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
-  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
-  lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
-});
-export type OptionsDGN = z.infer<typeof OptionsDGNSchema>;
-
-export const OptionsSuperMapSchema = z.object({
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
-  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-});
-export type OptionsSuperMap = z.infer<typeof OptionsSuperMapSchema>;
-
-export const OptionsFBXSchema = z.object({
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
-  textureSharpening: z.boolean().optional().describe("Enable or disable texture sharpening."),
-  maximumTextureSize: z.number().int().optional().describe("Maximum texture size"),
-  textureCompression: z.number().int().min(0).max(100).optional().describe("JPG compression of texture file"),
-  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
-  lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
-});
-export type OptionsFBX = z.infer<typeof OptionsFBXSchema>;
-
 export const OptionsLASSchema = z.object({
   crs: z.string().optional().describe("Coordinate reference system"),
   samplingStrategy: z.nativeEnum(SamplingStrategy).optional().describe("Sampling strategy"),
@@ -343,14 +132,6 @@ export const OptionsLASSchema = z.object({
   textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
 });
 export type OptionsLAS = z.infer<typeof OptionsLASSchema>;
-
-export const OptionsPODSchema = z.object({
-  crs: z.string().optional().describe("Coordinate reference system"),
-  samplingStrategy: z.nativeEnum(SamplingStrategy).optional().describe("Sampling strategy"),
-  samplingDistance: z.number().optional().describe("Sampling distance"),
-  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
-});
-export type OptionsPOD = z.infer<typeof OptionsPODSchema>;
 
 export const OptionsPLYSchema = z.object({
   crs: z.string().optional().describe("Coordinate reference system"),
@@ -387,26 +168,12 @@ export type OptionsOrthoDSM = z.infer<typeof OptionsOrthoDSMSchema>;
 export const ExportCreateSchema = z.object({
   format: z.nativeEnum(Format).describe("Export format"),
   options: z.union([
-    Options3MXSchema,
-    Options3SMSchema,
     Options3DTilesSchema,
-    OptionsOSGBSchema,
-    OptionsSpacEyesSchema,
     OptionsOBJSchema,
-    OptionsS3CSchema,
-    OptionsI3SSchema,
-    OptionsLodTreeExportSchema,
-    OptionsColladaSchema,
-    OptionsOCPSchema,
-    OptionsKMLSchema,
-    OptionsDGNSchema,
-    OptionsSuperMapSchema,
     OptionsLASSchema,
-    OptionsPODSchema,
     OptionsPLYSchema,
     OptionsOPCSchema,
-    OptionsOrthoDSMSchema,
-    OptionsFBXSchema
+    OptionsOrthoDSMSchema
   ]).optional().describe("Options associated to format"),
   name: z.string().min(3).optional().describe("Name used for the reality data."),
 });

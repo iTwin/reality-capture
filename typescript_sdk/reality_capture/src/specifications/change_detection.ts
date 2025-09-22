@@ -11,6 +11,9 @@ export enum ChangeDetectionOutputsCreate {
 export const ChangeDetectionInputsSchema = z.object({
   reference: z.string().describe("Reality data id of ContextScene, point cloud or mesh"),
   toCompare: z.string().describe("Reality data id of ContextScene, point cloud or mesh"),
+  extent: z.string().describe("Path in the bucket of the clipping polygon to apply").regex(/^bkt:.+/, {
+    message: "Path in the bucket to the extent file must start with 'bkt:'",
+  }).optional(),
 });
 export type ChangeDetectionInputs = z.infer<typeof ChangeDetectionInputsSchema>;
 

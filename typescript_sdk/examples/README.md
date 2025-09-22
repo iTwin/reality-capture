@@ -49,10 +49,16 @@ Copy the [.env](./template.env), rename it to ".env" and fill in the environment
 
 You can now run the examples
 
-- Upload & download example
+- Upload & download reality data example
 
   ```sh
-  npm run start-upload-download-example
+  npm run start-upload-reality-data-example
+  ```
+
+- Upload & download bucket data example
+
+  ```sh
+  npm run start-upload-bucket-data-example
   ```
 
 - Modeling Reconstruction example

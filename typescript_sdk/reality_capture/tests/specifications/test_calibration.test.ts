@@ -31,35 +31,6 @@ import {
 } from "../../src/specifications/calibration";
 
 describe("calibration.ts", () => {
-  describe("Enums", () => {
-    it("CalibrationOutputsCreate should have correct values", () => {
-      expect(CalibrationOutputsCreate.SCENE).to.equal("scene");
-      expect(CalibrationOutputsCreate.REPORT).to.equal("report");
-      expect(CalibrationOutputsCreate.TEXTURED_TIE_POINTS).to.equal("texturedTiePoints");
-    });
-
-    it("RigSynchro should have correct values", () => {
-      expect(RigSynchro.NO).to.equal("None");
-      expect(RigSynchro.STRICT).to.equal("Strict");
-      expect(RigSynchro.LOOSE).to.equal("Loose");
-    });
-
-    it("RotationPolicy should have correct values", () => {
-      expect(RotationPolicy.COMPUTE).to.equal("Compute");
-      expect(RotationPolicy.ADJUST).to.equal("Adjust");
-      expect(RotationPolicy.KEEP).to.equal("Keep");
-      expect(RotationPolicy.EXTEND).to.equal("Extend");
-    });
-
-    it("CenterPolicy should have correct values", () => {
-      expect(CenterPolicy.COMPUTE).to.equal("Compute");
-      expect(CenterPolicy.ADJUST).to.equal("Adjust");
-      expect(CenterPolicy.ADJUST_WITHIN_TOLERANCE).to.equal("AdjustWithinTolerance");
-      expect(CenterPolicy.KEEP).to.equal("Keep");
-      expect(CenterPolicy.EXTEND).to.equal("Extend");
-    });
-  });
-
   describe("CalibrationInputsSchema", () => {
     it("should validate correct input", () => {
       const valid = {

@@ -173,8 +173,8 @@ describe("LayoutTileSchema", () => {
   it("should validate all properties", () => {
     const valid = {
       name: "tile1",
-      boxTight: boundingBox,
-      boxOverlapping: boundingBox,
+      boxTight: { xmin: 0, xmax: 10, ymin: 0, ymax: 10, zmin: 0, zmax: 10 },
+      boxOverlapping: { xmin: 0, xmax: 10, ymin: 0, ymax: 10, zmin: 0, zmax: 10 },
       memoryUsage: 100,
     };
     expect(() => LayoutTileSchema.parse(valid)).to.not.throw();
@@ -192,21 +192,26 @@ describe("LayoutTileSchema", () => {
 });
 
 describe("LayoutSchema", () => {
-  const boundingBox = { min: { x: 0, y: 0, z: 0 }, max: { x: 1, y: 1, z: 1 } };
-  const roi = { region: "some-region" };
   it("should validate correct layout", () => {
     const valid = {
       tiles: [
         {
           name: "tile1",
-          boxTight: boundingBox,
-          boxOverlapping: boundingBox,
+          boxTight: { xmin: 0, xmax: 10, ymin: 0, ymax: 10, zmin: 0, zmax: 10 },
+          boxOverlapping: { xmin: 0, xmax: 10, ymin: 0, ymax: 10, zmin: 0, zmax: 10 },
           memoryUsage: 100,
         },
       ],
       enuDefinition: "ENU",
       crsDefinition: "CRS",
-      roi,
+      roi: { 
+        crs: "CRS",
+        altitudeMin: 0,
+        altitudeMax: 150,
+        polygons: [{
+          outsideBounds: [{x: 0, y: 1}]
+        }]
+      }
     };
     expect(() => LayoutSchema.parse(valid)).to.not.throw();
   });
@@ -215,7 +220,14 @@ describe("LayoutSchema", () => {
     const invalid = {
       enuDefinition: "ENU",
       crsDefinition: "CRS",
-      roi,
+      roi: { 
+        crs: "CRS",
+        altitudeMin: 0,
+        altitudeMax: 150,
+        polygons: [{
+          outsideBounds: [{x: 0, y: 1}]
+        }]
+      }
     };
     expect(() => LayoutSchema.parse(invalid)).to.throw(z.ZodError);
   });

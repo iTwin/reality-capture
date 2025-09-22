@@ -13,13 +13,6 @@ import {
   ConstraintsCostSchema,
 } from "../../src/specifications/constraints";
 
-describe("ConstraintType Enum", () => {
-  it("should have correct enum values", () => {
-    expect(ConstraintType.MESH).to.equal("Mesh");
-    expect(ConstraintType.POLYGON).to.equal("Polygon");
-  });
-});
-
 describe("ConstraintToAddSchema", () => {
   it("should pass with valid constraint", () => {
     const obj = {

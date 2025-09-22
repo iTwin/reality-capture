@@ -8,12 +8,12 @@ import {
   ReconstructionSpecificationsSchema,
   ReconstructionCostSchema,
 } from "../../src/specifications/reconstruction";
-
-// Mock dependencies for ModelingReferenceSchema, TilingOptionsSchema, ExportSchema, ExportCreateSchema
-const ModelingReferenceMock = { id: "mockModelRef" };
-const ExportMock = { id: "mockExport" };
-const ExportCreateMock = { type: "mockType" };
-const TilingOptionsMock = { option: "mockOption" };
+import {
+  ModelingReference, TilingOptions
+} from "../../src/specifications/tiling"; // TODO : mock
+import {
+  Export, ExportCreate, Format
+} from "../../src/specifications/production"; // TODO : mock
 
 describe("ReconstructionInputsSchema", () => {
   it("should pass with minimal valid input", () => {
@@ -45,7 +45,7 @@ describe("ReconstructionInputsSchema", () => {
 
 describe("ReconstructionOutputsSchema", () => {
   it("should accept modelingReference and exports", () => {
-    const data = { modelingReference: ModelingReferenceMock, exports: [ExportMock] };
+    const data = { modelingReference: { location : "path"}, exports: [ { location: "path", format: Format.LAS } ] };
     expect(() => ReconstructionOutputsSchema.parse(data)).to.not.throw();
   });
 
@@ -61,7 +61,7 @@ describe("ReconstructionOutputsSchema", () => {
 
 describe("ReconstructionOutputsCreateSchema", () => {
   it("should accept boolean modelingReference and exports array", () => {
-    const data = { modelingReference: true, exports: [ExportCreateMock] };
+    const data = { modelingReference: true, exports: [ {format: Format.LAS} ] };
     expect(() => ReconstructionOutputsCreateSchema.parse(data)).to.not.throw();
   });
 
@@ -74,16 +74,16 @@ describe("ReconstructionSpecificationsCreateSchema", () => {
   it("should accept valid inputs, outputs, and options", () => {
     const data = {
       inputs: { scene: "sceneId" },
-      outputs: { modelingReference: false, exports: [ExportCreateMock] },
-      options: TilingOptionsMock,
+      outputs: { modelingReference: false, exports: [ {format: Format.LAS} ] },
+      options: { crs: "CRS" },
     };
     expect(() => ReconstructionSpecificationsCreateSchema.parse(data)).to.not.throw();
   });
 
   it("should fail if inputs missing", () => {
     const data = {
-      outputs: { modelingReference: false, exports: [ExportCreateMock] },
-      options: TilingOptionsMock,
+      outputs: { modelingReference: false, exports: [ {format: Format.LAS} ] },
+      options: { crs: "CRS" },
     };
     expect(() => ReconstructionSpecificationsCreateSchema.parse(data)).to.throw(z.ZodError);
   });
@@ -91,7 +91,7 @@ describe("ReconstructionSpecificationsCreateSchema", () => {
   it("should accept without options", () => {
     const data = {
       inputs: { scene: "sceneId" },
-      outputs: { modelingReference: false, exports: [ExportCreateMock] },
+      outputs: { modelingReference: false, exports: [ {format: Format.LAS} ] },
     };
     expect(() => ReconstructionSpecificationsCreateSchema.parse(data)).to.not.throw();
   });
@@ -101,8 +101,8 @@ describe("ReconstructionSpecificationsSchema", () => {
   it("should accept valid inputs, outputs, and options", () => {
     const data = {
       inputs: { scene: "sceneId" },
-      outputs: { modelingReference: ModelingReferenceMock, exports: [ExportMock] },
-      options: TilingOptionsMock,
+      outputs: { modelingReference: { location: "path" }, exports: [ {format: Format.LAS} ]  },
+      options: { crs: "CRS" },
     };
     expect(() => ReconstructionSpecificationsSchema.parse(data)).to.not.throw();
   });

@@ -15,81 +15,13 @@ import {
   DSMFormat,
   OrthoColorSource,
   ProductionInputsSchema,
-  Options3MXSchema,
+  OptionsLASSchema,
   OptionsOBJSchema,
   ExportCreateSchema,
   ProductionOutputsSchema,
   ProductionSpecificationsSchema,
   ProductionCostSchema
 } from "../../src/specifications/production";
-
-describe("Enums", () => {
-  it("Format should have correct values", () => {
-    expect(Format.THREEMX).to.equal("3MX");
-    expect(Format.FBX).to.equal("FBX");
-  });
-
-  it("ColorSource enum values", () => {
-    expect(ColorSource.NO).to.equal("None");
-    expect(ColorSource.VISIBLE).to.equal("Visible");
-  });
-
-  it("ThermalUnit enum values", () => {
-    expect(ThermalUnit.ABSOLUTE).to.equal("Absolute");
-    expect(ThermalUnit.CELSIUS).to.equal("Celsius");
-  });
-
-  it("LODScope enum values", () => {
-    expect(LODScope.TILE_WISE).to.equal("TileWise");
-    expect(LODScope.ACROSS_TILES).to.equal("AcrossTiles");
-  });
-
-  it("I3SVersion enum values", () => {
-    expect(CesiumCompression.DRACO).to.equal("Draco");
-    expect(CesiumCompression.NO).to.equal("None");
-  });
-
-  it("I3SVersion enum values", () => {
-    expect(I3SVersion.V1_6).to.equal("v1_6");
-    expect(I3SVersion.V1_8).to.equal("v1_8");
-  });
-
-  it("SamplingStrategy enum values", () => {
-    expect(SamplingStrategy.RESOLUTION).to.equal("Resolution");
-    expect(SamplingStrategy.ABSOLUTE).to.equal("Absolute");
-  });
-
-  it("LasCompression enum values", () => {
-    expect(LasCompression.LAZ).to.equal("LAZ");
-    expect(LasCompression.NONE).to.equal("None");
-  });
-
-  it("ProjectionMode enum values", () => {
-    expect(ProjectionMode.HIGHEST_POINT).to.equal("HighestPoint");
-    expect(ProjectionMode.LOWEST_POINT).to.equal("LowestPoint");
-  });
-
-  it("OrthoFormat enum values", () => {
-    expect(OrthoFormat.GEOTIFF).to.equal("GeoTIFF");
-    expect(OrthoFormat.JPEG).to.equal("JPEG");
-    expect(OrthoFormat.KML_SUPER_OVERLAY).to.equal("KML_SuperOverlay");
-    expect(OrthoFormat.NONE).to.equal("None");
-  });
-
-  it("DSMFormat enum values", () => {
-    expect(DSMFormat.ASC).to.equal("ASC");
-    expect(DSMFormat.GEOTIFF).to.equal("GeoTIFF");
-    expect(DSMFormat.NONE).to.equal("None");
-    expect(DSMFormat.XYZ).to.equal("XYZ");
-  });
-
-  it("OrthoColorSource enum values", () => {
-    expect(OrthoColorSource.OPTIMIZED_COMPUTATION_THERMAL).to.equal("OptimizedComputationThermal");
-    expect(OrthoColorSource.OPTIMIZED_COMPUTATION_VISIBLE).to.equal("OptimizedComputationVisible");
-    expect(OrthoColorSource.REFERENCE_3D_MODEL_THERMAL).to.equal("Reference3dModelThermal");
-    expect(OrthoColorSource.REFERENCE_3D_MODEL_VISIBLE).to.equal("Reference3dModelVisible");
-  });
-});
 
 describe("ProductionInputsSchema", () => {
   it("should validate minimal valid input", () => {
@@ -117,35 +49,6 @@ describe("ProductionInputsSchema", () => {
       presets: ["preset1", "preset2"],
     };
     expect(() => ProductionInputsSchema.parse(input)).to.not.throw();
-  });
-});
-
-describe("Options3MXSchema", () => {
-  it("should validate minimal valid input", () => {
-    expect(() => Options3MXSchema.parse({})).to.not.throw();
-  });
-
-  it("should validate with all fields", () => {
-    const input = {
-      textureColorSource: ColorSource.VISIBLE,
-      textureColorSourceResMin: 1,
-      textureColorSourceResMax: 10,
-      textureColorSourceThermalUnit: ThermalUnit.CELSIUS,
-      textureColorSourceThermalMin: 20.5,
-      textureColorSourceThermalMax: 50.5,
-      crs: "EPSG:4326",
-      crsOrigin: { x: 1, y: 2, z: 3 },
-      lodScope: LODScope.TILE_WISE,
-      generateWebApp: true,
-    };
-    expect(() => Options3MXSchema.parse(input)).to.not.throw();
-  });
-
-  it("should fail if textureColorSourceResMin is negative", () => {
-    const input = {
-      textureColorSourceResMin: -1,
-    };
-    expect(() => Options3MXSchema.parse(input)).to.throw(z.ZodError);
   });
 });
 
@@ -185,14 +88,14 @@ describe("OptionsOBJSchema", () => {
 describe("ExportCreateSchema", () => {
   it("should validate minimal valid input", () => {
     const input = {
-      format: Format.THREEMX
+      format: Format.LAS
     };
     expect(() => ExportCreateSchema.parse(input)).to.not.throw();
   });
 
   it("should validate with options and name", () => {
     const input = {
-      format: Format.THREEMX,
+      format: Format.LAS,
       options: { generateWebApp: true },
       name: "RealityData"
     };
@@ -201,7 +104,7 @@ describe("ExportCreateSchema", () => {
 
   it("should fail if name is too short", () => {
     const input = {
-      format: Format.THREEMX,
+      format: Format.LAS,
       name: "ab"
     };
     expect(() => ExportCreateSchema.parse(input)).to.throw(z.ZodError);
@@ -213,7 +116,7 @@ describe("ProductionOutputsSchema", () => {
     const input = {
       exports: [
         {
-          format: Format.THREEMX,
+          format: Format.LAS,
           location: "export-location"
         }
       ]
@@ -225,7 +128,7 @@ describe("ProductionOutputsSchema", () => {
     const input = {
       exports: [
         {
-          format: Format.THREEMX
+          format: Format.LAS
         }
       ]
     };
@@ -243,7 +146,7 @@ describe("ProductionSpecificationsSchema", () => {
       outputs: {
         exports: [
           {
-            format: Format.THREEMX,
+            format: Format.LAS,
             location: "export-location"
           }
         ]

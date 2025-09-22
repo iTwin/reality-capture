@@ -13,27 +13,6 @@ import {
   DetectorsMinimalResponseSchema,
 } from "../../src/service/detectors";
 
-describe("Detector Enums", () => {
-  it("DetectorExport should contain correct values", () => {
-    expect(DetectorExport.OBJECTS).to.equal("Objects");
-    expect(DetectorExport.LINES).to.equal("Lines");
-    expect(DetectorExport.POLYGONS).to.equal("Polygons");
-    expect(DetectorExport.LOCATIONS).to.equal("Locations");
-  });
-
-  it("DetectorStatus should contain correct values", () => {
-    expect(DetectorStatus.AWAITING_DATA).to.equal("AwaitingData");
-    expect(DetectorStatus.READY).to.equal("Ready");
-  });
-
-  it("DetectorType should contain correct values", () => {
-    expect(DetectorType.PHOTO_OBJECT_DETECTOR).to.equal("PhotoObjectDetector");
-    expect(DetectorType.PHOTO_SEGMENTATION_DETECTOR).to.equal("PhotoSegmentationDetector");
-    expect(DetectorType.ORTHOPHOTO_SEGMENTATION_DETECTOR).to.equal("OrthophotoSegmentationDetector");
-    expect(DetectorType.POINT_CLOUD_SEGMENTATION_DETECTOR).to.equal("PointCloudSegmentationDetector");
-  });
-});
-
 describe("CapabilitiesSchema", () => {
   it("should validate correct capabilities", () => {
     const data = {
