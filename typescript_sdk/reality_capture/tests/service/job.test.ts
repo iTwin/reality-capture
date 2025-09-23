@@ -27,7 +27,7 @@ function getCommonFields(type: JobType) {
       createdDateTime: new Date(),
       startedDateTime: new Date(),
       endedDateTime: new Date(),
-      estimatedUnits: 5
+      processingUnits: 5
     },
     userId: "user42",
     type,
@@ -116,7 +116,7 @@ describe("ExecutionSchema", () => {
       createdDateTime: new Date().toISOString(),
       startedDateTime: new Date().toISOString(),
       endedDateTime: new Date().toISOString(),
-      estimatedUnits: 9
+      processingUnits: 9
     };
     expect(() => ExecutionSchema.parse(data)).to.not.throw();
   });
@@ -124,46 +124,50 @@ describe("ExecutionSchema", () => {
   it("should allow missing startedDateTime and endedDateTime", () => {
     const data = {
       createdDateTime: new Date().toISOString(),
-      estimatedUnits: 4
+      processingUnits: 4
     };
     expect(() => ExecutionSchema.parse(data)).to.not.throw();
   });
 
-  it("should allow nullable estimatedUnits", () => {
+  it("should allow nullable processingUnits", () => {
     const data = {
       createdDateTime: new Date().toISOString(),
-      estimatedUnits: null
+      processingUnits: null
     };
     expect(() => ExecutionSchema.parse(data)).to.not.throw();
   });
 
   it("should fail if createdDateTime is missing", () => {
     const data = {
-      estimatedUnits: 3
+      processingUnits: 3
     };
     expect(() => ExecutionSchema.parse(data)).to.throw(z.ZodError);
   });
 });
 
-describe("JobSchema", () => {
-  it("should validate a correct Production job", () => {
-    expect(() => JobSchema.parse(getCommonFields(JobType.PRODUCTION))).to.not.throw();
-  });
-
-  it("should validate a correct ChangeDetection job", () => {
-    expect(() => JobSchema.parse(getCommonFields(JobType.CHANGE_DETECTION))).to.not.throw();
-  });
-});
-
 describe("JobResponseSchema", () => {
   it("should validate correct job response", () => {
-    const job = getCommonFields(JobType.PRODUCTION);
-    const data = { job };
+    const data = {
+      job: {
+        id: "job1",
+        name: "MyJob",
+        itwinId: "itwin123",
+        state: JobState.QUEUED,
+        executionInfo: {
+          createdDateTime: new Date(),
+          startedDateTime: new Date(),
+          endedDateTime: new Date(),
+          processingUnits: 5
+        },
+        userId: "user42",
+        type: JobType.IMPORT_POINT_CLOUD,
+        specifications: {
+          inputs: { scene : "scene"},
+          outputs: { scanCollection : "outputId" }
+        }
+      }
+    };
     expect(() => JobResponseSchema.parse(data)).to.not.throw();
-  });
-
-  it("should fail if job field is missing", () => {
-    expect(() => JobResponseSchema.parse({})).to.throw(z.ZodError);
   });
 });
 

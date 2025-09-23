@@ -101,7 +101,7 @@ describe("ReconstructionSpecificationsSchema", () => {
   it("should accept valid inputs, outputs, and options", () => {
     const data = {
       inputs: { scene: "sceneId" },
-      outputs: { modelingReference: { location: "path" }, exports: [ {format: Format.LAS} ]  },
+      outputs: { modelingReference: { location: "path" }, exports: [ { location: "path", format: Format.LAS } ]  },
       options: { crs: "CRS" },
     };
     expect(() => ReconstructionSpecificationsSchema.parse(data)).to.not.throw();
