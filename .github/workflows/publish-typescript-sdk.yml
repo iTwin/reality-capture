@@ -33,7 +33,31 @@ jobs:
         working-directory: ./typescript_sdk/reality_capture
         run: npm run coverage
 
+      # Node 22 on Windows : publish pre release
       - name: Publish packages as tgz
         if: ${{ matrix.os == 'windows-latest' && startsWith(matrix.node-version, '22')}}
         working-directory: ./typescript_sdk/reality_capture
         run: npm pack --pack-destination ./lib
+
+      - name: Get version
+        id: get_version
+        if: ${{ matrix.os == 'windows-latest' && startsWith(matrix.node-version, '22')}}
+        working-directory: ./typescript_sdk/reality_capture
+        shell: pwsh
+        run: | 
+          $packageVersion=(Get-Content .\package.json | ConvertFrom-Json).version
+          Write-Output "version=$($packageVersion)" >> $Env:GITHUB_OUTPUT
+
+      - name: Create Pre-Release
+        if: ${{ matrix.os == 'windows-latest' && startsWith(matrix.node-version, '22')}}
+        uses: softprops/action-gh-release@v2
+        id: create_pre_release
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          name: "Version ${{ steps.get_version.outputs.version }}"
+          draft: true
+          prerelease: true
+          files: | 
+            ./typescript_sdk/reality_capture/lib/reality-capture-${{ steps.get_version.outputs.version }}.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
