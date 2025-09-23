@@ -31,7 +31,7 @@ jobs:
 
       - name: Run unit tests
         working-directory: ./typescript_sdk/reality_capture
-        run: npm coverage
+        run: npm run coverage
 
       - name: Publish packages as tgz
         if: ${{ matrix.os == 'windows-latest' && startsWith(matrix.node-version, '22')}}
