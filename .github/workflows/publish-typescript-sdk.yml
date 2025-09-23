@@ -25,7 +25,7 @@ jobs:
 
       - name: Build
         working-directory: ./typescript_sdk/reality_capture
-        run: npm build
+        run: npm run build
 
       # - name: Build doc
 
