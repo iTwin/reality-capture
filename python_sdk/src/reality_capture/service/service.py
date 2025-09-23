@@ -29,7 +29,7 @@ class RealityCaptureService:
         :param \**kwargs: See below.
 
         :Keyword Arguments:
-            * *user-agent* (``str``) --
+            * *user_agent* (``str``) --
               Additional user agent string
 
         """
@@ -37,8 +37,8 @@ class RealityCaptureService:
         self._session = requests.Session()
 
         add_ua = ""
-        if "user-agent" in kwargs.keys():
-            add_ua = " " + kwargs["user-agent"]
+        if "user_agent" in kwargs.keys() and len(kwargs["user_agent"]) > 0:
+            add_ua = " " + kwargs["user_agent"]
 
         self._header = {
             "Authorization": None,
