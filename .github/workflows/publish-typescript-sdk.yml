@@ -54,7 +54,7 @@ jobs:
         id: create_pre_release
         with:
           tag_name: ${{ steps.get_version.outputs.version }}
-          name: "Version ${{ steps.get_version.outputs.version }}"
+          name: "Typescript Version ${{ steps.get_version.outputs.version }}"
           draft: true
           prerelease: true
           files: | 
