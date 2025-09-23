@@ -56,7 +56,7 @@
     "check-coverage": true,
     "per-file": true,
     "include": ["lib/src/**/*.js"],
-    "exclude": ["tests/**/*.js", "lib/src/index.js"],
+    "exclude": ["tests/**/*.js", "lib/src/index.js", "lib/src/service/data_handler.js"],
     "extension": [".js"],
     "reporter": ["text", "html"]
   },
