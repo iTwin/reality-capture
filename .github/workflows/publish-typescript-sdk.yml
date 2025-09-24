@@ -1,5 +1,5 @@
 
-name: Typescript SDK PR Workflow
+name: Publish Typescript SDK Workflow
 
 on: workflow_dispatch
 
