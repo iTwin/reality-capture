@@ -48,3 +48,14 @@ Add this line in your project package.json:
   ```
   "reality-capture" : "<path_to_tgz>/reality-capture-1.0.0.tgz",
   ```
+
+### Unit tests
+
+Run the following command for the unit tests :
+
+- Build the unit tests
+  ```sh
+  npm coverage
+  ```
+
+It will generate a report for each source file: covered lines, branches, statements and functions. Each file should be at least 90% covered.

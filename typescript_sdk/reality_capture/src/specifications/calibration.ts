@@ -97,6 +97,7 @@ export enum Tag {
 export enum ColorEqualization {
   NO = "None",
   BLOCK_WISE = "BlockWise",
+  MACHINE_LEARNING = "MachineLearning"
 }
 
 export enum AdjustmentConstraints {

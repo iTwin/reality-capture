@@ -35,16 +35,12 @@ export class RealityCaptureService {
     };
   }
 
-  private _getRealityManagementRdUrl() {
-    return this._serviceUrl + "reality-management/reality-data/";
-  }
-
   private _getModelingUrl() {
     return this._serviceUrl + "reality-modeling/";
   }
 
   private _getAnalysisUrl() {
-    return this._serviceUrl + "realitydataanalysis/";
+    return this._serviceUrl + "reality-analysis/";
   }
 
   private _getCorrectUrl(service: Service): string {
@@ -164,19 +160,15 @@ export class RealityCaptureService {
 
   private _handleError<T>(error: any): Response<T> {
     if (error.response) {
-      try {
-        return new Response<T>(
-          error.response.status,
-          error.response.data as DetailedErrorResponse,
-          null
-        );
-      } catch (e) {
+      const data = error.response.data;
+      if (!data || typeof data !== "object" || !("error" in data)) {
         const detError = {
           code: "UnknownError",
-          message: this._getIllFormedMessage(error.response, e),
+          message: this._getIllFormedMessage(error.response, "Malformed error data"),
         } as DetailedError;
         return new Response<T>(error.response.status, { error: detError }, null);
       }
+      return new Response<T>(error.response.status, data as DetailedErrorResponse, null);
     } else {
       const detError = {
         code: "UnknownError",

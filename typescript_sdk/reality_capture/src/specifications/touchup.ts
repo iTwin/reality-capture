@@ -1,10 +1,5 @@
 import { z } from "zod";
 
-export enum TouchFormat {
-  OBJ = "OBJ",
-  DGN = "DGN"
-}
-
 export enum TouchLevel {
   GEOMETRY = "Geometry",
   GEOMETRY_AND_TEXTURE = "GeometryAndTexture"
@@ -25,7 +20,6 @@ export const TouchUpExportInputsSchema = z.object({
 export type TouchUpExportInputs = z.infer<typeof TouchUpExportInputsSchema>;
 
 export const TouchUpExportOptionsSchema = z.object({
-  format: z.nativeEnum(TouchFormat).optional().describe("Touch Up format"),
   level: z.nativeEnum(TouchLevel).optional().describe("Touch Up level"),
   crs: z.string().optional().describe("Export CRS"),
 });

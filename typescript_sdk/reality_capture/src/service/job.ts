@@ -137,7 +137,7 @@ export const ExecutionSchema = z.object({
   createdDateTime: z.coerce.date().describe("Creation date time for the job."),
   startedDateTime: z.coerce.date().nullable().optional().describe("Start date time for the job."),
   endedDateTime: z.coerce.date().nullable().optional().describe("End date time for the job."),
-  estimatedUnits: z.number().nullable().optional().describe("Estimated number of units consumed by the job."),
+  processingUnits: z.number().nullable().optional().describe("Processing units consumed by the job."),
 });
 export type Execution = z.infer<typeof ExecutionSchema>;
 
