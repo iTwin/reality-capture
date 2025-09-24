@@ -1,4 +1,4 @@
-import { z } from "zod";
+/*import { z } from "zod";
 
 export enum Segmentation2DOutputsCreate {
   SEGMENTATION2D = "segmentation2D",
@@ -79,4 +79,4 @@ export const Segmentation2DSpecificationsSchema = z.object({
   outputs: Segmentation2DOutputsSchema.describe("Outputs"),
   options: Segmentation2DOptionsSchema.optional().describe("Options"),
 });
-export type Segmentation2DSpecifications = z.infer<typeof Segmentation2DSpecificationsSchema>;
+export type Segmentation2DSpecifications = z.infer<typeof Segmentation2DSpecificationsSchema>;*/

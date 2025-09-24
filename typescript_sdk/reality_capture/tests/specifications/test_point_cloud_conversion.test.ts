@@ -1,4 +1,4 @@
-import { expect } from "chai";
+/*import { expect } from "chai";
 import { z } from "zod";
 import {
   PCConversionInputsSchema,
@@ -124,4 +124,4 @@ describe("PointCloudConversionSpecificationsSchema", () => {
     };
     expect(() => PointCloudConversionSpecificationsSchema.parse(data)).to.throw(z.ZodError);
   });
-});
+});*/

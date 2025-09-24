@@ -1,4 +1,4 @@
-import { expect } from "chai";
+/*import { expect } from "chai";
 import { z } from "zod";
 import {
   Segmentation2DOutputsCreate,
@@ -139,4 +139,4 @@ describe("Segmentation2DOutputsCreate enum", () => {
     expect(Segmentation2DOutputsCreate.POLYGONS3D_AS_3DTILES).to.equal("polygons3DAs3DTiles");
     expect(Segmentation2DOutputsCreate.POLYGONS3D_AS_GEOJSON).to.equal("polygons3DAsGeoJSON");
   });
-});
+});*/

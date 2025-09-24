@@ -1,16 +1,16 @@
 import { z } from "zod";
 import { JobType, getAppropriateService, Service } from "./job";
 import { CalibrationSpecificationsCreateSchema, CalibrationCostSchema } from "../specifications/calibration";
-import { ChangeDetectionSpecificationsCreateSchema } from "../specifications/change_detection";
+//import { ChangeDetectionSpecificationsCreateSchema } from "../specifications/change_detection";
 import { ConstraintsSpecificationsCreateSchema, ConstraintsCostSchema } from "../specifications/constraints";
 import { FillImagePropertiesSpecificationsCreateSchema, FillImagePropertiesCostSchema } from "../specifications/fill_image_properties";
 import { ImportPCSpecificationsCreateSchema, ImportPCCostSchema } from "../specifications/import_point_cloud";
-import { Objects2DSpecificationsCreateSchema } from "../specifications/objects2d";
+//import { Objects2DSpecificationsCreateSchema } from "../specifications/objects2d";
 import { ProductionSpecificationsCreateSchema, ProductionCostSchema } from "../specifications/production";
 import { ReconstructionSpecificationsCreateSchema, ReconstructionCostSchema } from "../specifications/reconstruction";
-import { Segmentation2DSpecificationsCreateSchema } from "../specifications/segmentation2d";
-import { Segmentation3DSpecificationsCreateSchema } from "../specifications/segmentation3d";
-import { SegmentationOrthophotoSpecificationsCreateSchema } from "../specifications/segmentation_orthophoto";
+//import { Segmentation2DSpecificationsCreateSchema } from "../specifications/segmentation2d";
+//import { Segmentation3DSpecificationsCreateSchema } from "../specifications/segmentation3d";
+//import { SegmentationOrthophotoSpecificationsCreateSchema } from "../specifications/segmentation_orthophoto";
 import { TilingSpecificationsCreateSchema, TilingCostSchema } from "../specifications/tiling";
 import { TouchUpImportSpecificationsCreateSchema, TouchUpExportSpecificationsCreateSchema, TouchUpExportCostSchema, TouchUpImportCostSchema } from "../specifications/touchup";
 import { WaterConstraintsSpecificationsCreateSchema, WaterConstraintsCostSchema } from "../specifications/water_constraints";
@@ -19,16 +19,16 @@ export const CostEstimationCreateSchema = z.object({
   type: z.nativeEnum(JobType).describe("Type of job."),
   specifications: z.union([
     CalibrationSpecificationsCreateSchema,
-    ChangeDetectionSpecificationsCreateSchema,
+    //ChangeDetectionSpecificationsCreateSchema,
     ConstraintsSpecificationsCreateSchema,
     FillImagePropertiesSpecificationsCreateSchema,
     ImportPCSpecificationsCreateSchema,
-    Objects2DSpecificationsCreateSchema,
+    //Objects2DSpecificationsCreateSchema,
     ProductionSpecificationsCreateSchema,
     ReconstructionSpecificationsCreateSchema,
-    Segmentation2DSpecificationsCreateSchema,
-    Segmentation3DSpecificationsCreateSchema,
-    SegmentationOrthophotoSpecificationsCreateSchema,
+    //Segmentation2DSpecificationsCreateSchema,
+    //Segmentation3DSpecificationsCreateSchema,
+    //SegmentationOrthophotoSpecificationsCreateSchema,
     TilingSpecificationsCreateSchema,
     TouchUpExportSpecificationsCreateSchema,
     TouchUpImportSpecificationsCreateSchema,
@@ -55,8 +55,8 @@ export function getAppropriateServiceForEstimation(estimation: CostEstimationCre
 
 export enum UnitType {
   MODELING = "Modeling",
-  ANALYSIS = "Analysis",
-  CONVERION = "Conversion",
+  //ANALYSIS = "Analysis",
+  //CONVERION = "Conversion",
 }
 
 export const CostEstimationSchema = CostEstimationCreateSchema.extend({

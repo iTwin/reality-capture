@@ -1,4 +1,4 @@
-import { z } from "zod";
+/*import { z } from "zod";
 
 export enum EvalSOrthoOutputsCreate {
   REPORT = "report",
@@ -47,4 +47,4 @@ export const EvalSOrthoSpecificationsSchema = z.object({
   inputs: EvalSOrthoInputsSchema.describe("Inputs"),
   outputs: EvalSOrthoOutputsSchema.describe("Outputs"),
 });
-export type EvalSOrthoSpecifications = z.infer<typeof EvalSOrthoSpecificationsSchema>;
+export type EvalSOrthoSpecifications = z.infer<typeof EvalSOrthoSpecificationsSchema>;*/

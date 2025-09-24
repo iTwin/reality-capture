@@ -1,4 +1,4 @@
-import { expect } from "chai";
+/*import { expect } from "chai";
 import { z } from "zod";
 import {
   Objects2DInputsSchema,
@@ -113,4 +113,4 @@ describe("Objects2DSpecificationsSchema", () => {
     };
     expect(() => Objects2DSpecificationsSchema.parse(data)).to.throw(z.ZodError);
   });
-});
+});*/

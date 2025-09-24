@@ -1,4 +1,4 @@
-import { z } from "zod";
+/*import { z } from "zod";
 
 export enum Segmentation3DOutputsCreate {
   SEGMENTATION3D = "segmentation3D",
@@ -73,4 +73,4 @@ export const Segmentation3DSpecificationsSchema = z.object({
   outputs: Segmentation3DOutputsSchema.describe("Outputs"),
   options: Segmentation3DOptionsSchema.optional().describe("Options")
 });
-export type Segmentation3DSpecifications = z.infer<typeof Segmentation3DSpecificationsSchema>;
+export type Segmentation3DSpecifications = z.infer<typeof Segmentation3DSpecificationsSchema>;*/

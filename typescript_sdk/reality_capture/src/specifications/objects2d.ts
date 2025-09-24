@@ -1,4 +1,4 @@
-import { z } from "zod";
+/*import { z } from "zod";
 
 export const Objects2DInputsSchema = z.object({
   photos: z.string().describe("Reality data id of ContextScene, pointing to photos to process"),
@@ -73,4 +73,4 @@ export const Objects2DSpecificationsSchema = z.object({
   outputs: Objects2DOutputsSchema.describe("Outputs"),
   options: Objects2DOptionsSchema.optional().describe("Options"),
 });
-export type Objects2DSpecifications = z.infer<typeof Objects2DSpecificationsSchema>;
+export type Objects2DSpecifications = z.infer<typeof Objects2DSpecificationsSchema>;*/

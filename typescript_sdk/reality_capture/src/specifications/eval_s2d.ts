@@ -1,4 +1,4 @@
-import { z } from "zod";
+/*import { z } from "zod";
 
 export const EvalS2DInputsSchema = z.object({
   reference: z.string().describe("Reality data id of ContextScene, pointing to segmented photos reference"),
@@ -36,4 +36,4 @@ export const EvalS2DSpecificationsSchema = z.object({
   inputs: EvalS2DInputsSchema.describe("Inputs"),
   outputs: EvalS2DOutputsSchema.describe("Outputs"),
 });
-export type EvalS2DSpecifications = z.infer<typeof EvalS2DSpecificationsSchema>;
+export type EvalS2DSpecifications = z.infer<typeof EvalS2DSpecificationsSchema>;*/

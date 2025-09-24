@@ -1,4 +1,4 @@
-import { z } from "zod";
+/*import { z } from "zod";
 
 export const EvalS3DInputsSchema = z.object({
   reference: z.string().describe("Reality data id of ContextScene, pointing to segmented point cloud reference"),
@@ -36,4 +36,4 @@ export const EvalS3DSpecificationsSchema = z.object({
   inputs: EvalS3DInputsSchema.describe("Inputs"),
   outputs: EvalS3DOutputsSchema.describe("Outputs"),
 });
-export type EvalS3DSpecifications = z.infer<typeof EvalS3DSpecificationsSchema>;
+export type EvalS3DSpecifications = z.infer<typeof EvalS3DSpecificationsSchema>;*/
