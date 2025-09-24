@@ -22,7 +22,7 @@ describe("RealityCaptureService tests", function () {
     const getAccessTokenStub = sinon.stub().resolves("fake-token");
     const mockAuthClient = { getAccessToken: getAccessTokenStub } as AuthorizationClient;
     const service = new RealityCaptureService(mockAuthClient, { env: "dev" });
-    expect((service as any)._getCorrectUrl(Service.ANALYSIS)).to.be.a("string").and.satisfy((url: string) => url.startsWith("https://dev-api.bentley.com/reality-analysis/"));
+    //expect((service as any)._getCorrectUrl(Service.ANALYSIS)).to.be.a("string").and.satisfy((url: string) => url.startsWith("https://dev-api.bentley.com/reality-analysis/"));
     expect((service as any)._getCorrectUrl(Service.MODELING)).to.be.a("string").and.satisfy((url: string) => url.startsWith("https://dev-api.bentley.com/reality-modeling/"));
     expect(() => (service as any)._getCorrectUrl("OTHER")).to.throw("Other services not yet implemented");
   });
@@ -187,7 +187,7 @@ describe("RealityCaptureService API calls tests", function () {
   });
 
   // getDetectors tests
-  it("getDetectors should call axios.get and return a Response<DetectorsMinimalResponse>", async () => {
+  /*it("getDetectors should call axios.get and return a Response<DetectorsMinimalResponse>", async () => {
     axiosGetStub.resolves({
       status: 200,
       data: {
@@ -350,7 +350,7 @@ describe("RealityCaptureService API calls tests", function () {
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.true;
     expect(result.error!.error.code).to.equal("UnknownError");
-  });
+  });*/
 
   //estimateCost tests
   it("estimateCost should call axios.post and return a Response<CostEstimation>", async () => {

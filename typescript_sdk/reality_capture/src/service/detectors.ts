@@ -1,4 +1,4 @@
-import { z } from "zod";
+/*import { z } from "zod";
 
 export enum DetectorExport {
   OBJECTS = "Objects",
@@ -62,4 +62,4 @@ export type DetectorMinimal = z.infer<typeof DetectorMinimalSchema>;
 export const DetectorsMinimalResponseSchema = z.object({
   detectors: z.array(DetectorMinimalSchema).describe("List of minimal detectors."),
 });
-export type DetectorsMinimalResponse = z.infer<typeof DetectorsMinimalResponseSchema>;
+export type DetectorsMinimalResponse = z.infer<typeof DetectorsMinimalResponseSchema>;*/

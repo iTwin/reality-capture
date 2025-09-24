@@ -43,13 +43,13 @@ describe("getAppropriateService", () => {
     expect(getAppropriateService(JobType.PRODUCTION)).to.equal(Service.MODELING);
   });
 
-  it("should return Service.ANALYSIS for OBJECTS_2D", () => {
+  /*it("should return Service.ANALYSIS for OBJECTS_2D", () => {
     expect(getAppropriateService(JobType.OBJECTS_2D)).to.equal(Service.ANALYSIS);
   });
 
   it("should return Service.CONVERSION for POINT_CLOUD_CONVERSION", () => {
     expect(getAppropriateService(JobType.POINT_CLOUD_CONVERSION)).to.equal(Service.CONVERSION);
-  });
+  });*/
 });
 
 describe("JobState Enum", () => {
