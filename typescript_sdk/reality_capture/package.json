@@ -2,7 +2,7 @@
   "name": "reality-capture",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0-alpha.1",
   "description": "This package contains a SDK for Reality Modeling, Reality Analysis and Reality Conversion iTwin APIs as well as Reality Management API utils. It provides classes, functions and examples to upload local data to ContextShare, run jobs and download the results.",
   "scripts": {
     "build": "tsc 1>&2",
