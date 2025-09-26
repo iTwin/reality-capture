@@ -18,6 +18,7 @@ class ProductionInputs(BaseModel):
 class Format(Enum):
     THREED_TILES = "3DTiles"
     OBJ = "OBJ"
+    THREEMX = "3MX"
     LAS = "LAS"
     PLY = "PLY"
     OPC = "OPC"
@@ -104,6 +105,32 @@ class OptionsOBJ(BaseModel):
     double_precision: Optional[bool] = Field(None, alias="doublePrecision", description="Flag for double precision")
 
 
+class Options3MX(BaseModel):
+    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
+                                                        description="Source of the texture color")
+    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
+                                                          description="Minimum resolution for the texture color source",
+                                                          ge=0)
+    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
+                                                          description="Maximum resolution for the texture color source",
+                                                          ge=0)
+    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
+                                                                     description="Thermal unit for the texture color "
+                                                                                 "source")
+    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
+                                                              description="Minimum thermal value for the texture color "
+                                                                          "source")
+    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
+                                                              description="Maximum thermal value for the texture color "
+                                                                          "source")
+    crs: Optional[str] = Field(None, description="Coordinate reference system")
+    crs_origin: Optional[Point3d] = Field(None, alias="crsOrigin", description="Origin of the coordinate"
+                                                                               " reference system")
+    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
+    generate_web_app: Optional[bool] = Field(None, alias="generateWebApp",
+                                             description="Flag to generate a web application")
+
+
 class SamplingStrategy(Enum):
     RESOLUTION = "Resolution"
     ABSOLUTE = "Absolute"
@@ -183,7 +210,7 @@ class OptionsOrthoDSM(BaseModel):
 
 class ExportCreate(BaseModel):
     format: Format = Field(description="Export format")
-    options: Optional[Union[Options3DTiles, OptionsOBJ,
+    options: Optional[Union[Options3DTiles, OptionsOBJ, Options3MX,
                             OptionsLAS, OptionsPLY, OptionsOPC,
                             OptionsOrthoDSM,]] = Field(
         None, description="Options associated to format")
@@ -202,6 +229,8 @@ class ExportCreate(BaseModel):
             data["options"] = Options3DTiles(**options)
         elif fmt == Format.OBJ:
             data["options"] = OptionsOBJ(**options)
+        elif fmt == Format.THREEMX:
+            data["options"] = Options3MX(**options)
         elif fmt == Format.LAS:
             data["options"] = OptionsLAS(**options)
         elif fmt == Format.PLY:
