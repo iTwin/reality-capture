@@ -45,7 +45,12 @@ Classes
     :members:
     :undoc-members:
 
-.. autoclass:: GSImageSize
+.. autoclass:: GSImageQuality
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autoclass:: GSSplatsDensity
     :show-inheritance:
     :members:
     :undoc-members:
