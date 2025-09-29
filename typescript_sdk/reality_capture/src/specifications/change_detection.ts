@@ -1,4 +1,4 @@
-import { z } from "zod";
+/*import { z } from "zod";
 
 export enum ChangeDetectionOutputsCreate {
   OBJECTS3D = "objects3D",
@@ -47,4 +47,4 @@ export const ChangeDetectionSpecificationsSchema = z.object({
   outputs: ChangeDetectionOutputsSchema.describe("Outputs"),
   options: ChangeDetectionOptionsSchema.optional().describe("Options"),
 });
-export type ChangeDetectionSpecifications = z.infer<typeof ChangeDetectionSpecificationsSchema>;
+export type ChangeDetectionSpecifications = z.infer<typeof ChangeDetectionSpecificationsSchema>;*/

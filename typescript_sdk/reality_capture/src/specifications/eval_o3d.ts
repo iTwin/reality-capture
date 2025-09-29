@@ -1,4 +1,4 @@
-import { z } from "zod";
+/*import { z } from "zod";
 
 export const EvalO3DInputsSchema = z.object({
   reference: z.string().describe("Reality data id of ContextScene, annotated with embedded 3D object references"),
@@ -44,4 +44,4 @@ export const EvalO3DSpecificationsSchema = z.object({
   outputs: EvalO3DOutputsSchema.describe("Outputs"),
   options: EvalO3DOptionsSchema.describe("Options").optional(),
 });
-export type EvalO3DSpecifications = z.infer<typeof EvalO3DSpecificationsSchema>;
+export type EvalO3DSpecifications = z.infer<typeof EvalO3DSpecificationsSchema>;*/

@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { AuthorizationClient } from "@itwin/core-common";
 import { BucketResponse } from "./bucket";
-import { DetectorsMinimalResponse, DetectorResponse } from "./detectors";
+//import { DetectorsMinimalResponse, DetectorResponse } from "./detectors";
 import { CostEstimationCreate, CostEstimation } from "./estimation";
 import { Files } from "./files";
 import { Response } from "./response";
@@ -39,16 +39,16 @@ export class RealityCaptureService {
     return this._serviceUrl + "reality-modeling/";
   }
 
-  private _getAnalysisUrl() {
+  /*private _getAnalysisUrl() {
     return this._serviceUrl + "reality-analysis/";
-  }
+  }*/
 
   private _getCorrectUrl(service: Service): string {
     switch (service) {
       case Service.MODELING:
         return this._getModelingUrl();
-      case Service.ANALYSIS:
-        return this._getAnalysisUrl();
+      //case Service.ANALYSIS:
+      //  return this._getAnalysisUrl();
       default:
         throw new Error("Other services not yet implemented");
     }
@@ -138,7 +138,7 @@ export class RealityCaptureService {
     }
   }
 
-  async getDetectors(): Promise<Response<DetectorsMinimalResponse>> {
+  /*async getDetectors(): Promise<Response<DetectorsMinimalResponse>> {
     const url = this._getAnalysisUrl() + "detectors";
     try {
       const resp = await this._axios.get(url, { headers: await this._getHeader("v2") });
@@ -156,7 +156,7 @@ export class RealityCaptureService {
     } catch (error: any) {
       return this._handleError<DetectorResponse>(error);
     }
-  }
+  }*/
 
   private _handleError<T>(error: any): Response<T> {
     if (error.response) {

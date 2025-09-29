@@ -1,4 +1,4 @@
-import { z } from "zod";
+/*import { z } from "zod";
 
 export enum PCConversionOutputsCreate {
   OPC = "opc",
@@ -46,4 +46,4 @@ export const PointCloudConversionSpecificationsSchema = z.object({
   outputs: PCConversionOutputsSchema.describe("Outputs"),
   options: PCConversionOptionsSchema.optional().describe("Options"),
 }).strict();
-export type PointCloudConversionSpecifications = z.infer<typeof PointCloudConversionSpecificationsSchema>;
+export type PointCloudConversionSpecifications = z.infer<typeof PointCloudConversionSpecificationsSchema>;*/

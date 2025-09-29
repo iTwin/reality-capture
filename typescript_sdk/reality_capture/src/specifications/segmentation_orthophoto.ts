@@ -1,4 +1,4 @@
-import { z } from "zod";
+/*import { z } from "zod";
 
 export const SegmentationOrthophotoInputsSchema = z.object({
   orthophoto: z.string().describe("Reality data id of ContextScene, pointing to orthophotos to process"),
@@ -57,4 +57,4 @@ export const SegmentationOrthophotoSpecificationsSchema = z.object({
   inputs: SegmentationOrthophotoInputsSchema.describe("Inputs"),
   outputs: SegmentationOrthophotoOutputsSchema.describe("Outputs"),
 });
-export type SegmentationOrthophotoSpecifications = z.infer<typeof SegmentationOrthophotoSpecificationsSchema>;
+export type SegmentationOrthophotoSpecifications = z.infer<typeof SegmentationOrthophotoSpecificationsSchema>;*/

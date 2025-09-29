@@ -1,4 +1,4 @@
-import { z } from "zod";
+/*import { z } from "zod";
 
 export const TrainingO2DInputsSchema = z.object({
   scene: z.string().describe(
@@ -104,4 +104,4 @@ export const TrainingS3DSpecificationsSchema = z.object({
   outputs: TrainingS3DOutputsSchema.describe("Outputs"),
   options: TrainingS3DOptionsSchema.describe("Options").optional(),
 });
-export type TrainingS3DSpecifications = z.infer<typeof TrainingS3DSpecificationsSchema>;
+export type TrainingS3DSpecifications = z.infer<typeof TrainingS3DSpecificationsSchema>;*/
