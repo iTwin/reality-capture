@@ -5,7 +5,8 @@ from enum import Enum
 
 class GaussianSplatsInputs(BaseModel):
     scene: str = Field(description="Reality data ID of ContextScene to process.")
-    splats_reference: Optional[str] = Field(None, description="Reality data ID of the Gaussian Splats Reference.",
+    splats_reference: Optional[str] = Field(default=None,
+                                            description="Reality data ID of the Gaussian Splats Reference.",
                                             alias="splatsReference")
     region_of_interest: Optional[str] = Field(description="Path in the bucket to region of interest file",
                                               alias="regionOfInterest",
@@ -30,20 +31,31 @@ class GSFormat(Enum):
     PLY = "PLY"
 
 
-class GSImageSize(Enum):
-    SMALL = "Small"
+class GSImageQuality(Enum):
     MEDIUM = "Medium"
-    LARGE = "Large"
-    FULL = "Full"
+    STANDARD = "Standard"
+    HIGH = "High"
+
+
+class GSSplatsDensity(Enum):
+    MEDIUM = "Medium"
+    STANDARD = "Standard"
+    HIGH = "High"
 
 
 class GaussianSplatsOptions(BaseModel):
     export_format: Optional[GSFormat] = Field(default=None, description="Format of the exported Gaussian Splats",
                                               alias="exportFormat")
-    reference_image_size: Optional[GSImageSize] = Field(default=None,
-                                                        description="Size of images to use to "
-                                                                    "generate the Splats Reference",
-                                                        alias="referenceImageSize")
+    reference_image_quality: Optional[GSImageQuality] = Field(default=None,
+                                                              description="Image quality to use to "
+                                                                          "generate the Splats Reference",
+                                                              alias="referenceImageQuality")
+    reference_splats_density: Optional[GSSplatsDensity] = Field(default=None,
+                                                               description="Splats density to use to "
+                                                                           "generate the Splats Reference",
+                                                               alias="referenceSplatsDensity")
+    reference_tile_size: Optional[float] = Field(default=None, description="Tile size for the Splats Reference",
+                                                 alias="referenceTileSize")
 
 
 class GaussianSplatsSpecifications(BaseModel):
