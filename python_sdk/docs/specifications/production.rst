@@ -59,6 +59,9 @@ Classes
 .. autopydantic_model:: OptionsOBJ
     :model-show-json: False
 
+.. autopydantic_model:: Options3MX
+    :model-show-json: False
+
 .. autopydantic_model:: OptionsLAS
     :model-show-json: False
 
