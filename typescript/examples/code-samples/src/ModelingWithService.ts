@@ -199,7 +199,7 @@ async function runModelingExample() {
     console.log("Downloading outputs");
     const lasId = (properties.settings as CCJobSettings).outputs.las;
     await realityDataService.downloadRealityData(lasId, path.join(outputPath, "LAS"), iTwinId);
-    await realityDataService.downloadRealityData(workspaceId, path.join(outputPath, "Workspace"), iTwinId, jobId + "/outputs/calibration");
+    await realityDataService.downloadRealityData(workspaceId, path.join(outputPath, "CalibResults"), iTwinId, jobId + "/outputs/calibration");
     console.log("Successfully downloaded output");
 }
 
