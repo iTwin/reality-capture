@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Add parameter in downloadRealitydata to download a specific file/fold… (#222)",
-  "packageName": "@itwin/reality-data-transfer",
-  "email": "110406974+dbiguenet@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
