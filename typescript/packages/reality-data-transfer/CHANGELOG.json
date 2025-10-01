@@ -2,6 +2,21 @@
   "name": "@itwin/reality-data-transfer",
   "entries": [
     {
+      "date": "Wed, 01 Oct 2025 09:02:42 GMT",
+      "version": "1.1.0",
+      "tag": "@itwin/reality-data-transfer_v1.1.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-data-transfer",
+            "commit": "2337b20f7329d616cee9f496847ee1bc23d3431e",
+            "comment": "Add parameter in downloadRealitydata to download a specific file/fold… (#222)"
+          }
+        ]
+      }
+    },
+    {
       "date": "Fri, 22 Aug 2025 13:32:09 GMT",
       "version": "1.0.2",
       "tag": "@itwin/reality-data-transfer_v1.0.2",
