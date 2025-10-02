@@ -15,8 +15,8 @@ class GaussianSplatsInputs(BaseModel):
 
 
 class GaussianSplatsOutputs(BaseModel):
-    splats: Optional[str] = Field(description="Reality data ID of Gaussian Splats.")
-    splats_reference: Optional[str] = Field(None, description="Reality data ID of the Gaussian Splats Reference.",
+    splats: Optional[str] = Field(default=None, description="Reality data ID of Gaussian Splats.")
+    splats_reference: Optional[str] = Field(default=None, description="Reality data ID of the Gaussian Splats Reference.",
                                             alias="splatsReference")
 
 
