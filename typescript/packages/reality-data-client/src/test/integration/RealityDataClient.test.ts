@@ -548,9 +548,11 @@ describe("RealityServicesClient Normal (#integration)", () => {
     realityData.dataset = "Test Dataset for iTwinjs";
     realityData.group = "Test group";
     realityData.description = "Dummy description for a test reality data";
+    realityData.attribution = "Attribution text";
+    realityData.termsOfUse = "Terms of use text";
     realityData.rootDocument = "RootDocumentFile.txt";
     realityData.classification = "Undefined";
-    realityData.type = "3MX";
+    realityData.type = "LAS";
     realityData.acquisition = {
       startDateTime: new Date("2019-05-10T09:46:16Z"),
       endDateTime: new Date("2019-05-10T09:46:16Z"),
@@ -566,6 +568,10 @@ describe("RealityServicesClient Normal (#integration)", () => {
         longitude: 2.1,
       },
     };
+    realityData.crs = {
+      id: "EPSG:4326",
+      verticalId: "EPSG:5773",
+    };
     realityData.tags = ["tag1", "tag2"];
     realityData.authoring = false;
 
@@ -575,6 +581,8 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(realityDataAdded.group === realityData.group);
     chai.assert(realityDataAdded.dataset === realityData.dataset);
     chai.assert(realityDataAdded.description === realityData.description);
+    chai.assert(realityDataAdded.attribution === realityData.attribution);
+    chai.assert(realityDataAdded.termsOfUse === realityData.termsOfUse);
     chai.assert(realityDataAdded.rootDocument === realityData.rootDocument);
     chai.assert(realityDataAdded.classification === realityData.classification);
     chai.assert(realityDataAdded.type?.toLowerCase() === realityData.type.toLowerCase());
@@ -589,6 +597,9 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(realityDataAdded.extent.southWest.longitude === 2.0);
     chai.assert(realityDataAdded.extent.northEast.latitude === 1.1);
     chai.assert(realityDataAdded.extent.northEast.longitude === 2.1);
+    chai.assert(realityDataAdded.crs);
+    chai.assert(realityDataAdded.crs.id === "EPSG:4326");
+    chai.assert(realityDataAdded.crs.verticalId === "EPSG:5773");
 
     chai.assert(realityDataAdded.tags);
     chai.assert(realityDataAdded.tags.includes("tag1"));
@@ -616,6 +627,12 @@ describe("RealityServicesClient Normal (#integration)", () => {
     };
     realityDataAdded.extent = { southWest: { latitude: 1.1, longitude: 2.0 }, northEast: { latitude: 1.2, longitude: 2.1 } };
     realityDataAdded.tags = ["tag1", "tag2", "tag3"];
+    realityDataAdded.crs = {
+      id: "EPSG:3857",
+      verticalId: "EPSG:5703",
+    };
+    realityDataAdded.attribution = "MODIFIED Attribution text";
+    realityDataAdded.termsOfUse = "MODIFIED Terms of use text";
 
     const realityDataModified = await realityDataAccessClientForTest.modifyRealityData(accessToken, iTwinId, realityDataAdded);
 
@@ -636,6 +653,11 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(realityDataModified.extent.southWest.longitude === 2.0);
     chai.assert(realityDataModified.extent.northEast.latitude === 1.2);
     chai.assert(realityDataModified.extent.northEast.longitude === 2.1);
+    chai.assert(realityDataModified.crs);
+    chai.assert(realityDataModified.crs.id === realityDataAdded.crs.id);
+    chai.assert(realityDataModified.crs.verticalId === realityDataAdded.crs.verticalId);
+    chai.assert(realityDataModified.attribution === realityDataAdded.attribution);
+    chai.assert(realityDataModified.termsOfUse === realityDataAdded.termsOfUse);
     chai.assert(realityDataModified.tags);
     chai.assert(realityDataModified.tags.includes("tag1"));
     chai.assert(realityDataModified.tags.includes("tag2"));

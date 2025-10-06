@@ -422,6 +422,9 @@ export class RealityDataAccessClient implements RealityDataAccess {
         acquisition: iTwinRealityData.acquisition,
         authoring: iTwinRealityData.authoring,
         extent: iTwinRealityData.extent,
+        crs: iTwinRealityData.crs,
+        attribution: iTwinRealityData.attribution,
+        termsOfUse: iTwinRealityData.termsOfUse,
       };
 
       const response = await axios.post(url, realityDataToCreate, options);
@@ -466,6 +469,9 @@ export class RealityDataAccessClient implements RealityDataAccess {
         acquisition: iTwinRealityData.acquisition,
         authoring: iTwinRealityData.authoring,
         extent: iTwinRealityData.extent,
+        crs: iTwinRealityData.crs,
+        attribution: iTwinRealityData.attribution,
+        termsOfUse: iTwinRealityData.termsOfUse,
       };
 
       const response = await axios.patch(url.href, realityDataToModify, options);
