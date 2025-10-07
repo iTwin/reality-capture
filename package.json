@@ -1,8 +1,8 @@
 {
-  "name": "@itwin/reality-capture",
+  "name": "@itwin/reality-capture-monorepo",
   "private": true,
   "version": "1.0.0",
-  "description": "This project contains reality-capture SDK for Reality Modeling, Reality Analysis, Reality Conversion and Reality Management APIs, as well as Reality Management utils.",
+  "description": "This project contains reality-capture SDK for Reality Modeling, Reality Analysis, Reality Conversion and Reality Management APIs",
   "packageManager": "pnpm@8.7.0",
   "scripts": {
     "build": "pnpm -r run build",

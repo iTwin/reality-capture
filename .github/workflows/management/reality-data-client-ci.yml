@@ -1,0 +1,49 @@
+name: CI Build for Reality Data Client
+
+on:
+  push:
+    paths:
+      - "typescript_sdk/reality-data-client/**"
+    branches: [ "feature/2.0.0", "feature/2.0.0-release", "feature/2.0.0-ts" ]
+  pull_request:
+    paths:
+      - "typescript_sdk/reality-data-client/**"
+    branches: [ "feature/2.0.0", "feature/2.0.0-release", "feature/2.0.0-ts" ]
+  workflow_dispatch:
+
+jobs:
+  integration-tests:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [windows-latest]
+    steps:
+      - name: Checkout github repo (+ download lfs dependencies)
+        uses: actions/checkout@v3
+        with:
+          lfs: true
+      - name: Checkout LFS objects
+        run: git lfs checkout
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '22.14.0'
+      - name: Install packages
+        working-directory: ./typescript_sdk/reality-data-client
+        run: npm install
+      - name: Build packages
+        working-directory: ./reality-data-client
+        run: pnpm build
+      - name: EsLint
+        working-directory: ./reality-data-client
+        run: pnpm lint
+      - name: Run SDK Integration Tests
+        working-directory: ./reality-data-client
+        env:
+          IMJS_TEST_REGULAR_USER_NAME: ${{ vars.IMJS_TEST_REGULAR_USER_NAME }}
+          IMJS_TEST_REGULAR_USER_PASSWORD: ${{ secrets.IMJS_TEST_REGULAR_USER_PASSWORD }}
+          IMJS_TEST_MANAGER_USER_NAME: ${{ vars.IMJS_TEST_MANAGER_USER_NAME }}
+          IMJS_TEST_MANAGER_USER_PASSWORD: ${{ secrets.IMJS_TEST_MANAGER_USER_PASSWORD }}
+        run: pnpm integration-tests

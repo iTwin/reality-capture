@@ -67,10 +67,9 @@ To build, run and test locally, this checklist below can help solve most issues.
 - Verify Node version. This client should match the Node version requirement from `itwinjs-core` as described here in `nodeSupportedVersionRange` : <https://github.com/iTwin/itwinjs-core/blob/master/rush.json>
 
 Example commands below to install, clean, build and test :
-- `npm i`
+- `pnpm install`
 - `npm run clean`
 - `npm run build`
-- `npm run lint`
-- `npm run test:integration` to run integration tests locally.
+- `integration-tests`
 - `beachball change` to generate a changelog entry.
   - We use [beachball](https://github.com/microsoft/beachball) to manage versioning and changelogs.
