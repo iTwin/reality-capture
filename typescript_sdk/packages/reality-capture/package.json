@@ -12,7 +12,7 @@
     "clean": "rimraf lib",
     "lint": "eslint ./src --ext .ts ",
     "lint-fix": "eslint ./src --fix --ext .ts",
-    "test:unit": "mocha ./lib/**/*.test.js --slow 0",
+    "test:unit": "mocha ./lib/cjs/**/*.test.js --slow 0",
     "coverage": "nyc npm run test:unit"
   },
   "keywords": [
@@ -61,12 +61,8 @@
     "all": true,
     "check-coverage": true,
     "per-file": true,
-    "include": ["lib/src/**/*.js"],
-    "exclude": ["tests/**/*.js", "lib/src/index.js", "lib/src/service/data_handler.js"],
+    "include": ["lib/cjs/**/*.js"],
     "extension": [".js"],
     "reporter": ["text", "html"]
-  },
-  "files": [
-    "src/"
-  ]
+  }
 }

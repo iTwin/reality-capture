@@ -5,6 +5,9 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "sourceMap": true,
+    "inlineSources": true,
+    "types": ["mocha", "node"],
+    "rootDir": "src"
   },
   "include": [
     "src/**/*.ts", 
