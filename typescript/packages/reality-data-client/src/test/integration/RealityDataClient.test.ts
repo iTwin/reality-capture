@@ -619,7 +619,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     realityDataAdded.description = "MODIFIED Dummy description for a test reality data";
     realityDataAdded.rootDocument = "MODIFIED RootDocumentFile.txt";
     realityDataAdded.classification = "Model";
-    realityDataAdded.type = "3SM";
+    realityDataAdded.type = "LAZ";
     realityDataAdded.acquisition = {
       startDateTime:  new Date("2021-05-10T09:46:16Z"),
       endDateTime: new Date("2021-05-10T10:46:16Z"),
