@@ -1,4 +1,4 @@
-import { DetailedErrorResponse } from './error';
+import { DetailedErrorResponse } from "./error";
 
 export class Response<T> extends Array<any> {
     status_code: number;

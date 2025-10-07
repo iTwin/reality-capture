@@ -15,8 +15,6 @@ To build and run the source code locally you will need a few things:
 
 ### Build
 
-First, you must build reality-capture package locally and generate the .tgz file. See [here](../reality-capture/README.md) to build the package locally.
-
 Then, open a new terminal in the current loation and run the following commands : 
 
 - Install dependencies

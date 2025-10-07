@@ -10,7 +10,7 @@ import { CalibrationInputs, CalibrationSpecificationsCreate, CalibrationOptions,
     FillImagePropertiesOutputsCreate, FillImagePropertiesOptions, FillImagePropertiesOutputs,
     RealityCaptureService, ReconstructionSpecificationsCreate, ReconstructionInputs, ReconstructionOutputsCreate, 
     ReconstructionOutputs, ExportCreate, Format, OptionsLAS, SamplingStrategy, TilingOptions, GeometricPrecision, 
-    JobCreate, JobType, JobState, Progress, getAppropriateService, RealityDataHandler } from "reality-capture";
+    JobCreate, JobType, JobState, Progress, getAppropriateService, RealityDataHandler } from "@itwin/reality-capture";
 import { RealityDataClientOptions, RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
 
 

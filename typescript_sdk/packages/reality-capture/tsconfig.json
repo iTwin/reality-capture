@@ -1,23 +1,16 @@
 {
+  "extends": "./node_modules/@itwin/build-tools/tsconfig-base.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "declaration": true,
-    "emitDeclarationOnly": false,
-    "module": "commonjs",
-    "strict": true,
+    "strictPropertyInitialization": false,
+    "moduleResolution": "node",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "outDir": "lib",
-    "rootDirs": ["src", "tests"],
-    "types": ["mocha", "node"]
+    "sourceMap": true,
   },
   "include": [
     "src/**/*.ts", 
-    "tests/**/*.ts"
+    "src/tests/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
     "lib"
   ]
 }

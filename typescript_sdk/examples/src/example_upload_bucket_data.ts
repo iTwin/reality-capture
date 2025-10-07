@@ -5,7 +5,7 @@
 
 import * as dotenv from "dotenv";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
-import { BucketDataHandler } from "reality-capture";
+import { BucketDataHandler } from "@itwin/reality-capture";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
