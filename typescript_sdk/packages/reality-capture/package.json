@@ -61,8 +61,15 @@
     "all": true,
     "check-coverage": true,
     "per-file": true,
+    "sourceMap": false,
+    "instrument": true,
     "include": ["lib/cjs/**/*.js"],
+    "exclude": ["lib/cjs/index.js", "lib/cjs/tests/**/*.js", "lib/cjs/service/data_handler.js"],
     "extension": [".js"],
     "reporter": ["text", "html"]
-  }
+  },
+  "files": [
+    "src/service/",
+    "src/specifications/"
+  ]
 }
