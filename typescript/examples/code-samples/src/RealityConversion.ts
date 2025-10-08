@@ -69,9 +69,9 @@ async function runConversionExample() {
     const settings = new RCJobSettings();
     settings.inputs.las = [lasCloudId];
     settings.outputs.pnts = true;
-    if(inputSrs !== "")
+    if(inputSrs)
         settings.options.inputSrs = inputSrs;
-    if(outputSrs !== "")
+    if(outputSrs)
         settings.options.outputSrs = outputSrs;
     console.log("Settings created");
 
