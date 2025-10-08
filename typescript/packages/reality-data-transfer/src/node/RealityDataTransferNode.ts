@@ -660,8 +660,9 @@ export class RealityDataTransferNode {
      * @param {string} realityDataId The ID of the data to download.
      * @param {string} downloadPath The path where downloaded data should be saved.
      * @param {string} iTwinId ID of the iTwin project the reality data is linked to.
+     * @param {string} realityDataSubPath Path to a specific file/folder to download instead of the entire reality data.
      */
-    public async downloadRealityData(realityDataId: string, downloadPath: string, iTwinId: string): Promise<void> {
+    public async downloadRealityData(realityDataId: string, downloadPath: string, iTwinId: string, realityDataSubPath: string = ""): Promise<void> {
         try {
             this.currentPercentage = 0;
             await fs.promises.mkdir(downloadPath, { recursive: true });
@@ -681,10 +682,13 @@ export class RealityDataTransferNode {
             const containerClient = new ContainerClient(azureBlobUrl.toString());
             const iter = await containerClient.listBlobsFlat();
 
+            realityDataSubPath = realityDataSubPath.replace(/\\/g, "/");
             for await (const blob of iter) {
-                this.dataTransferInfo.totalFilesSize += blob.properties.contentLength ?? 0;
-                this.dataTransferInfo.files.push(blob.name);
-                this.dataTransferInfo.sizes.push(blob.properties.contentLength!);
+                if(blob.name.startsWith(realityDataSubPath)){
+                    this.dataTransferInfo.totalFilesSize += blob.properties.contentLength ?? 0;
+                    this.dataTransferInfo.files.push(blob.name);
+                    this.dataTransferInfo.sizes.push(blob.properties.contentLength!);
+                }
             }
 
             let downloadPromises: any[] = [];

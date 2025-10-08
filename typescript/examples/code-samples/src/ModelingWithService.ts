@@ -26,14 +26,14 @@ async function runModelingExample() {
     // Required : path of the image folder
     const imagesPath = "D:/Datasets/Heli/InputImages";
     // Required : path to the folder where the results will be downloaded
-    const outputPath = "D:/Datasets/Heli/LAS";
+    const outputPath = "D:/Datasets/Heli";
     
     // Optional : sampling distance (in meter). Please, set to undefined if you don't want to specify sampling distance
     const samplingDistance: number | undefined = 0.5;
     // Optional : srs used in outputs. Please, set to undefined if you don't want to specify srs
     const srs: string | undefined = "EPSG:32631";
     // Optional : AT settings. Please, set to an empty string if you don't want to specify AT settings
-    const atSettings: string = "";
+    const atSettings: string = "D:/Datasets/Heli/ATSettings";
 
     // Name of the modeling job
     const jobName = "Modeling_Sample_Job";
@@ -198,7 +198,8 @@ async function runModelingExample() {
     const properties = await contextCaptureService.getJobProperties(jobId);
     console.log("Downloading outputs");
     const lasId = (properties.settings as CCJobSettings).outputs.las;
-    await realityDataService.downloadRealityData(lasId, outputPath, iTwinId);
+    await realityDataService.downloadRealityData(lasId, path.join(outputPath, "LAS"), iTwinId);
+    await realityDataService.downloadRealityData(workspaceId, path.join(outputPath, "CalibResults"), iTwinId, jobId + "/outputs/calibration");
     console.log("Successfully downloaded output");
 }
 

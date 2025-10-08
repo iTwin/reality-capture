@@ -1,8 +1,16 @@
 # Change Log - @itwin/reality-data-transfer
 
-<!-- This log was last generated on Fri, 22 Aug 2025 13:32:09 GMT and should not be manually modified. -->
+<!-- This log was last generated on Wed, 01 Oct 2025 09:02:42 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 1.1.0
+
+Wed, 01 Oct 2025 09:02:42 GMT
+
+### Minor changes
+
+- Add parameter in downloadRealitydata to download a specific file/fold… (#222) (110406974+dbiguenet@users.noreply.github.com)
 
 ## 1.0.2
 
