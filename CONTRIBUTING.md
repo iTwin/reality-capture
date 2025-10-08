@@ -70,6 +70,7 @@ Example commands below to install, clean, build and test :
 - `pnpm install`
 - `npm run clean`
 - `npm run build`
-- `integration-tests`
+- `npm run lint`
+- `npm run integration-tests`
 - `beachball change` to generate a changelog entry.
   - We use [beachball](https://github.com/microsoft/beachball) to manage versioning and changelogs.
