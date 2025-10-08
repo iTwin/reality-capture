@@ -25,9 +25,9 @@ async function runConversionExample() {
     const outputPath = "D:/Datasets/Heli/3DTiles";
 
     // Optional : LAS srs. Please, set to an empty string if don't want to specify inputSrs
-    const inputSrs: string = "EPSG:32631";
+    const inputSrs = "EPSG:32631";
     // Optional : 3DTiles srs. Please, set to an empty string if don't want to specify outputSrs
-    const outputSrs: string = "EPSG:4978";
+    const outputSrs = "EPSG:4978";
 
     // Name for the uploaded data in the cloud
     const lasName = "Sample_LAS_Input";
@@ -53,17 +53,17 @@ async function runConversionExample() {
         authority: authority
     });
 
-    let realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
+    const realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
 
-    let realityConversionService = new RealityConversionService(authorizationClient.getAccessToken.bind(authorizationClient));
+    const realityConversionService = new RealityConversionService(authorizationClient.getAccessToken.bind(authorizationClient));
     console.log("Service initialized");
 
     // Upload LAS
-    console.log("Uploading LAS...")
+    console.log("Uploading LAS...");
     const lasCloudId = await realityDataService.uploadRealityData(lasPath, lasName, RealityDataType.LAS, iTwinId);
-    console.log("Upload done")
+    console.log("Upload done");
 
     // Create and submit Conversion job
     const settings = new RCJobSettings();

@@ -41,7 +41,7 @@ async function runObjects2DExample() {
     const detectorName = "Sample_O2D_Photo_Detector";
 
     // Script
-    dotenv.config()
+    dotenv.config();
 
     const iTwinId = process.env.IMJS_SAMPLE_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_SAMPLE_CLIENT_ID ?? "";
@@ -60,11 +60,11 @@ async function runObjects2DExample() {
     });
     await authorizationClient.signIn();
     
-    let realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
+    const realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
 
-    let realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient));
+    const realityDataAnalysisService = new RealityDataAnalysisService(authorizationClient.getAccessToken.bind(authorizationClient));
     console.log("Service initialized");
 
     // Creating reference table and uploading images, contextScene and detector if necessary (not yet on the cloud)
