@@ -2,7 +2,7 @@ name: Publish Python SDK Release
 
 on: workflow_dispatch
 
-# Creates release in Github repo. Does not publish package to Pypi
+# Creates a release in Github repo. Does not publish package to Pypi
 jobs:
   build_and_test_sdk:
     strategy:

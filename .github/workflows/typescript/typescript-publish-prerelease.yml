@@ -2,45 +2,38 @@ name: Publish Typescript Reality Capture SDK
 
 on: workflow_dispatch
 
+# Creates a pre-release in GitHub repo. Does not publish to npm.
+# Does not create pre release for reality-data-client.
 jobs:
-  build_test_and_publish_sdk:
+  build_and_test_sdk:
     strategy:
       matrix:
         node-version: [20.x, 22.x, 24.x]
         os: [windows-latest, ubuntu-latest, macos-latest]
       fail-fast: false
 
+    uses: ./.github/workflows/steps/typescript-build-and-test.yml
+    with:
+      node-version: ${{ matrix.node-version }}
+      os: ${{ matrix.os }}
+  
+  create_pre_release:
+    needs: build_and_test_sdk
+    strategy:
+      matrix:
+        node-version: [22.x]
+        os: [windows-latest]
+      fail-fast: false
+
     runs-on: ${{ matrix.os }}
-    
+
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install dependencies
-        working-directory: ./typescript_sdk/reality-capture
-        run: npm install --frozen-lockfile=true
-
-      - name: Build
-        working-directory: ./typescript_sdk/reality-capture
-        run: npm run build
-
-      - name: Run unit tests
-        working-directory: ./typescript_sdk/reality-capture
-        run: npm run coverage
-
-      # Node 22 on Windows : publish pre release
       - name: Publish packages as tgz
-        if: ${{ matrix.os == 'windows-latest' && startsWith(matrix.node-version, '22')}}
         working-directory: ./typescript_sdk/reality-capture
         run: npm pack --pack-destination ./lib
 
       - name: Get version
         id: get_version
-        if: ${{ matrix.os == 'windows-latest' && startsWith(matrix.node-version, '22')}}
         working-directory: ./typescript_sdk/reality-capture
         shell: pwsh
         run: | 
@@ -48,7 +41,6 @@ jobs:
           Write-Output "version=$($packageVersion)" >> $Env:GITHUB_OUTPUT
 
       - name: Create Pre-Release
-        if: ${{ matrix.os == 'windows-latest' && startsWith(matrix.node-version, '22')}}
         uses: softprops/action-gh-release@v2
         id: create_pre_release
         with:

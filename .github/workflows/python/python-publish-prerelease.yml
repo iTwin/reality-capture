@@ -2,7 +2,7 @@ name: Publish Python SDK Pre-Release
 
 on: workflow_dispatch
 
-# Creates pre-release in Github repo.
+# Creates a pre-release in Github repo. Does not publish package to Pypi
 jobs:
   build_and_test_sdk:
     strategy:
