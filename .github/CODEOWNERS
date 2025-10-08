@@ -1,6 +1,6 @@
 * @dbiguenet @cnovel @lr06 @RenaudKeriven @arianacarnielli @mcote01 @MarcBedard8
  
-.github/workflows/publish.yml @aruniverse @itwin/oss-admins
+.github/workflows/typescript/typescript-publish.yml @aruniverse @itwin/oss-admins
  
 python_sdk/ @dbiguenet @cnovel @RenaudKeriven
  

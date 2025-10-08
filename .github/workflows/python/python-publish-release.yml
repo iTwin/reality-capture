@@ -1,0 +1,71 @@
+name: Publish Python SDK Release
+
+on: workflow_dispatch
+
+# Creates release in Github repo. Does not publish package to Pypi
+jobs:
+  build_and_test_sdk:
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13']
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+
+    uses: ./.github/workflows/python-build-and-test.yml
+    with:
+      python-version: ${{ matrix.python-version }}
+      os: ${{ matrix.os }}
+      
+  create_release:
+    needs: build_and_test_sdk
+    strategy:
+      matrix:
+        python-version: ['3.10']
+        os: [windows-latest]
+      fail-fast: false
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Reformat doc
+      id: reformat_doc
+      working-directory: ./python_sdk/docs
+      run: |
+        New-Item -Path "./User Guide/en" -ItemType Directory -Force
+        Copy-Item -Path ./_build/html -Destination "./User Guide/en/html5" -Recurse
+        Compress-Archive -Path "./User Guide" -DestinationPath ./Documentation.zip
+        $zip_abs_path = (Get-Item "./Documentation.zip").FullName
+        Write-Host "Zip path : $zip_abs_path"
+        "doc_zip_path=$zip_abs_path" >> $env:GITHUB_OUTPUT
+      shell: pwsh
+
+    - name: Get version from pyproject
+      working-directory: ./python_sdk
+      id: extract_version
+      run: |
+        if ($env:RUNNER_OS -eq "Windows") {
+          ./venv/Scripts/Activate.ps1
+          python -m pip install toml
+          $version = ./venv/Scripts/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
+        } else {
+          . ./venv/bin/Activate.ps1
+          python -m pip install toml
+          $version = ./venv/bin/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
+        }
+        Write-Host "Version : $version"
+        "version=$version" >> $env:GITHUB_OUTPUT
+      shell: pwsh
+
+    # TODO : add make_latest, body_path and generate_release_notes?
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      id: create_release
+      with:
+        tag_name: ${{ steps.extract_version.outputs.version }}
+        name: "Python Version ${{ steps.extract_version.outputs.version }}"
+        draft: true
+        files: | 
+          ${{ needs.build_and_test_sdk.outputs.wheel_abs_path }}
+          ${{ steps.reformat_doc.outputs.doc_zip_path }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

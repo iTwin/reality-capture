@@ -1,46 +1,63 @@
-name: CI Build for Reality Data Client
+name: Typescript SDK CI
 
 on:
   push:
     paths:
-      - "typescript_sdk/reality-data-client/**"
+      - "typescript_sdk/**"
     branches: [ "feature/2.0.0", "feature/2.0.0-release", "feature/2.0.0-ts" ]
   pull_request:
     paths:
-      - "typescript_sdk/reality-data-client/**"
+      - "typescript_sdk/**"
     branches: [ "feature/2.0.0", "feature/2.0.0-release", "feature/2.0.0-ts" ]
   workflow_dispatch:
 
 jobs:
-  integration-tests:
-    runs-on: ${{ matrix.operating-system }}
+  build_and_test_sdk:
     strategy:
       matrix:
-        operating-system: [windows-latest]
+        node-version: [20.x, 22.x, 24.x]
+        os: [windows-latest, ubuntu-latest, macos-latest]
+      fail-fast: false
+
+    runs-on: ${{ matrix.os }}
+    
     steps:
       - name: Checkout github repo (+ download lfs dependencies)
         uses: actions/checkout@v3
         with:
           lfs: true
+
       - name: Checkout LFS objects
         run: git lfs checkout
-      - uses: pnpm/action-setup@v2
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
         with:
           version: 8
-      - uses: actions/setup-node@v3
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
         with:
-          node-version: '22.14.0'
-      - name: Install packages
-        working-directory: ./typescript_sdk/reality-data-client
-        run: npm install
-      - name: Build packages
-        working-directory: ./reality-data-client
-        run: pnpm build
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        working-directory: ./
+        run: pnpm install --frozen-lockfile=true
+
+      - name: Build
+        working-directory: ./
+        run: npm run build
+
       - name: EsLint
-        working-directory: ./reality-data-client
-        run: pnpm lint
+        working-directory: ./
+        run: npm run lint
+
+      - name: Run unit tests and coverage
+        working-directory: ./
+        run: npm run coverage
+
       - name: Run SDK Integration Tests
-        working-directory: ./reality-data-client
+        working-directory: ./
         env:
           IMJS_INTEGRATION_TESTS_PROJECT_ID: ${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}
           IMJS_INTEGRATION_TESTS_CLIENT_ID: ${{ secrets.INTEGRATION_TESTS_CLIENT_ID }}
@@ -52,4 +69,4 @@ jobs:
           IMJS_TEST_REGULAR_USER_PASSWORD: ${{ secrets.IMJS_TEST_REGULAR_USER_PASSWORD }}
           IMJS_TEST_MANAGER_USER_NAME: ${{ vars.IMJS_TEST_MANAGER_USER_NAME }}
           IMJS_TEST_MANAGER_USER_PASSWORD: ${{ secrets.IMJS_TEST_MANAGER_USER_PASSWORD }}
-        run: pnpm integration-tests
+        run: npm run integration-tests
