@@ -19,7 +19,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
       fail-fast: false
       
-    uses: ./.github/workflows/python-build-and-test.yml
+    uses: ./.github/workflows/steps/python-build-and-test.yml
     with:
       python-version: ${{ matrix.python-version }}
       os: ${{ matrix.os }}
