@@ -573,6 +573,37 @@ export class RealityDataAccessClient implements RealityDataAccess {
     else
       return false;
   }
+/**
+ * Moves a RealityData to a different iTwin
+ * @param accessToken The client request context.
+ * @param realityDataId The id of the RealityData to move.
+ * @param iTwinId The id of the iTwin to move the RealityData to.
+ * @returns true if successful (204 response) or false if not
+ * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
+ * @throws [[BentleyError]] with code 404 when the specified reality data or iTwin was not found
+ * @throws [[BentleyError]] with code 422 when the request is invalid
+ * @throws [[BentleyError]] with code 409 when the reality data is already associated with the specified iTwin
+ * @beta
+ */
+  public async moveRealityData(accessToken: AccessToken, realityDataId: string, iTwinId: string): Promise<boolean> {
+
+    let response: AxiosResponse;
+    try {
+      const accessTokenResolved = await this.resolveAccessToken(accessToken);
+      const url = `${this.baseUrl}/${realityDataId}/move`;
+      const options = getRequestConfig(accessTokenResolved, "PATCH", url, this.apiVersion);
+      const payload = { iTwinId };
+
+      response = await axios.patch(url, payload, options);
+
+    } catch (error) {
+      return this.handleError(error);
+    }
+    if (response.status === 204)
+      return true;
+    else
+      return false;
+  }
 
   /**
   * Handle errors thrown.

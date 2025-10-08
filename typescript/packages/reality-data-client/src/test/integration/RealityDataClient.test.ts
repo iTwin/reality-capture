@@ -681,7 +681,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(await realityDataAccessClientForTest.deleteRealityData(accessToken, realityDataAdded.id));
   });
 
-  it("should be able to create modify, and delete  Reality Data, (Without iTwinId)", async () => {
+  it("should be able to create modify, and delete Reality Data, (Without iTwinId)", async () => {
     const realityData = new ITwinRealityData(realityDataAccessClientForTest);
     realityData.displayName = "iTwinjs RealityData Client CRUD test without iTwinId";
     realityData.classification = "Undefined";
@@ -697,6 +697,28 @@ describe("RealityServicesClient Normal (#integration)", () => {
 
     chai.assert(await realityDataAccessClientForTest.deleteRealityData(accessToken, realityDataAdded.id));
   });
+
+  it("should be able to move Reality Data", async () => {
+    const realityData = new ITwinRealityData(realityDataAccessClientForTest);
+    realityData.displayName = "iTwinjs RealityData Client move test";
+    realityData.classification = "Undefined";
+    realityData.type = "3MX";
+    const realityDataAdded = await realityDataAccessClientForTest.createRealityData(accessToken, iTwinId, realityData);
+    chai.assert(realityDataAdded.id);
+    try {
+      // move the reality data to another iTwin
+      const movedRealityData = await realityDataAccessClientForTest.moveRealityData(accessToken, realityDataAdded.id, iTwinId2);
+      chai.assert(movedRealityData);
+
+      // get itwins
+      const itwins = await realityDataAccessClientForTest.getRealityDataITwins(accessToken, realityDataAdded.id);
+      chai.assert(itwins.length === 1);
+      chai.assert(itwins[0] === iTwinId2);
+    } finally {
+      // delete the moved reality data
+      chai.assert(await realityDataAccessClientForTest.deleteRealityData(accessToken, realityDataAdded.id));
+    }
+    });
 });
 
 describe("RealityServicesClient Errors (#integration)", () => {
@@ -820,5 +842,15 @@ describe("RealityServicesClient Errors (#integration)", () => {
       return;
     }
     chai.assert(false, "dissociateRealityData should throw an error.");
+  });
+
+  it("should throw a 404 error when reality data id does not exist (moving a reality data)", async () => {
+    try {
+      await realityDataAccessClientForTest.moveRealityData(accessToken, nonExistentRealityDataId, iTwinId);
+    } catch (errorResponse: any) {
+      chai.assert(errorResponse.errorNumber === 404, `Error code should be 404. It is ${errorResponse.errorNumber}.`);
+      return;
+    }
+    chai.assert(false, "moveRealityData should throw an error.");
   });
 });
