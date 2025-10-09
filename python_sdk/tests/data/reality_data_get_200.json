@@ -30,6 +30,12 @@
         "modifiedDateTime": "2021-04-09T19:03:12Z",
         "lastAccessedDateTime": "2021-04-09T00:00:00Z",
         "createdDateTime": "2021-02-22T20:03:40Z",
-        "ownerId": "f1d49cc7-f9b3-494f-9c67-563ea5597063"
+        "ownerId": "f1d49cc7-f9b3-494f-9c67-563ea5597063",
+        "attribution": "Attribution of reality data",
+        "termsOfUse": "Terms of use of reality data",
+        "crs": {
+            "id": "EPSG:4326",
+            "verticalId": "EPSG:5773"
+        }
     }
 }

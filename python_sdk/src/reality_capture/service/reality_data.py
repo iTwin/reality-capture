@@ -66,6 +66,13 @@ class Coordinate(BaseModel):
     longitude: float = Field(description="Longitude in degrees.", ge=-180, le=180)
 
 
+class Crs(BaseModel):
+    id: str = Field(description="Identifier of the coordinate reference system.")
+    vertical_id: Optional[float] = Field(None,
+                                         description="Optional identifier of the vertical coordinate reference system.",
+                                         alias="verticalId")
+
+
 class Extent(BaseModel):
     south_west: Coordinate = Field(description="Extent's southwest coordinate.", alias="southWest")
     north_east: Coordinate = Field(description="Extent's northeast coordinate.", alias="northEast")
@@ -91,6 +98,9 @@ class RealityDataBase(BaseModel):
     authoring: Optional[bool] = Field(None, description="A boolean value that is true if the data is being created. "
                                                         "It is false if the data has been completely uploaded.")
     owner_id: Optional[str] = Field(None, description="Identifier of the owner of the reality data.", alias="ownerId")
+    attribution: Optional[str] = Field(None, description="The attribution of the reality data.")
+    terms_of_use: Optional[str] = Field(None, description="Terms of use of the reality data.", alias="termsOfUse")
+    crs: Optional[Crs] = Field(None, description="Details about the reality data's coordinate reference system.")
 
 
 class RealityDataCreate(RealityDataBase):

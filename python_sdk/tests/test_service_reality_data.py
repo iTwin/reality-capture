@@ -313,3 +313,38 @@ class TestRealityData:
         assert len(response.value.reality_data) == 2
         assert isinstance(response.value.reality_data[0], RealityData)
         assert get_continuation_token(response.value) is None
+
+    @responses.activate
+    def test_move_data_ill_formed(self):
+        rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        itwin_id = "9t78c69e-850d-4hhd-9490-d3d75a6b5c97"
+        responses.add(responses.PATCH,
+                      f'https://api.bentley.com/reality-management/reality-data/{rd_id}/move',
+                      json={'bad': 'response'}, status=400)
+        response = self.rcs.move_reality_data(rd_id, itwin_id)
+        assert response.is_error()
+        assert response.error.error.code == "UnknownError"
+
+    @responses.activate
+    def test_move_data_401(self):
+        rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        itwin_id = "9t78c69e-850d-4hhd-9490-d3d75a6b5c97"
+        responses.add(responses.PATCH,
+                      f'https://api.bentley.com/reality-management/reality-data/{rd_id}/move',
+                      json={"error": {"code": "HeaderNotFound",
+                                      "message": "Header Authorization was not found in the request. Access denied."}},
+                      status=401)
+        response = self.rcs.move_reality_data(rd_id, itwin_id)
+        assert response.is_error()
+        assert response.error.error.code == "HeaderNotFound"
+
+    @responses.activate
+    def test_move_data_204(self):
+        rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        itwin_id = "9t78c69e-850d-4hhd-9490-d3d75a6b5c97"
+        responses.add(responses.PATCH,
+                      f'https://api.bentley.com/reality-management/reality-data/{rd_id}/move',
+                      status=204)
+        response = self.rcs.move_reality_data(rd_id, itwin_id)
+        assert not response.is_error()
+        assert response.value is None
