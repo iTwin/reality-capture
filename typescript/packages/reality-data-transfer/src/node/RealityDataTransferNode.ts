@@ -662,7 +662,7 @@ export class RealityDataTransferNode {
      * @param {string} iTwinId ID of the iTwin project the reality data is linked to.
      * @param {string} realityDataSubPath Path to a specific file/folder to download instead of the entire reality data.
      */
-    public async downloadRealityData(realityDataId: string, downloadPath: string, iTwinId: string, realityDataSubPath: string = ""): Promise<void> {
+    public async downloadRealityData(realityDataId: string, downloadPath: string, iTwinId: string, realityDataSubPath = ""): Promise<void> {
         try {
             this.currentPercentage = 0;
             await fs.promises.mkdir(downloadPath, { recursive: true });

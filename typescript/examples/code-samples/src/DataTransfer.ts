@@ -29,7 +29,7 @@ async function runRealityDataExample() {
     const iTwinId = process.env.IMJS_SAMPLE_PROJECT_ID ?? "";
     const clientId = process.env.IMJS_SAMPLE_CLIENT_ID ?? "";
     const redirectUrl = process.env.IMJS_SAMPLE_CLIENT_REDIRECT_URL ?? "";
-    const issuerUrl = "https://ims.bentley.com"
+    const issuerUrl = "https://ims.bentley.com";
     if(!iTwinId || !clientId || !redirectUrl) {
         console.log(".env file is not configured properly");
     }
@@ -43,7 +43,7 @@ async function runRealityDataExample() {
     });
     await authorizationClient.signIn();
     
-    let realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
+    const realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
     console.log("Service initialized");
