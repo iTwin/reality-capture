@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@itwin/core-geometry": "^4.0.0",
-    "axios": "^1.7.4"
+    "axios": "^1.8.2"
   },
   "devDependencies": {
     "@itwin/build-tools": "^4.0.0",
@@ -54,7 +54,7 @@
     "@itwin/core-bentley": "^4.0.0",
     "@itwin/core-common": "^4.0.0",
     "@itwin/eslint-plugin": "^4.0.0-dev.41",
-    "@itwin/oidc-signin-tool": "^4.0.0",
+    "@itwin/oidc-signin-tool": "^4.4.1",
     "@types/chai": "^4.3.0",
     "@types/chai-as-promised": "^7.1.4",
     "@types/mocha": "^9.1.0",
