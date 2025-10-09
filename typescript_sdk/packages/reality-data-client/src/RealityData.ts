@@ -1,11 +1,9 @@
-/* eslint-disable indent */
 /*---------------------------------------------------------------------------------------------
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-
 import type { RealityData } from "@itwin/core-common";
-import { type AccessToken,  BentleyError, type GuidString } from "@itwin/core-bentley";
+import {type AccessToken, BentleyError, type GuidString } from "@itwin/core-bentley";
 import type { RealityDataAccessClient } from "./RealityDataClient";
 
 import { getRequestConfig } from "./RequestOptions";
@@ -93,7 +91,7 @@ export class ITwinRealityData implements RealityData {
   public type?: string;
   public extent?: Extent;
   /** @deprecated in 1.0.1 not used in Reality Management API. Will be removed in next major update.*/
-  public accessControl?: string; // TODO remove in next major update
+  public accessControl?: string; // TODO: remove in next major update
   public modifiedDateTime?: Date;
   public lastAccessedDateTime?: Date;
   public createdDateTime?: Date;
@@ -111,10 +109,9 @@ export class ITwinRealityData implements RealityData {
    * Creates an instance of RealityData.
    * @beta
    */
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-  public constructor(client: RealityDataAccessClient, realityData?: any | undefined, iTwinId?: any | undefined) {
+  public constructor(client: RealityDataAccessClient, realityData?: any, iTwinId?: GuidString) {
 
-    this.client = client!;
+    this.client = client;
     this._containerCache = new ContainerCache();
 
     if (realityData) {
@@ -137,7 +134,7 @@ export class ITwinRealityData implements RealityData {
       this.classification = realityData.classification;
       this.type = realityData.type;
       this.extent = realityData.extent;
-      // eslint-disable-next-line deprecation/deprecation
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
       this.accessControl = realityData.accessControl;
       this.modifiedDateTime = new Date(realityData.modifiedDateTime);
       this.lastAccessedDateTime = new Date(realityData.lastAccessedDateTime);
@@ -218,8 +215,9 @@ export class ITwinRealityData implements RealityData {
 
         this._containerCache.setCache(newContainerCacheValue, access);
       }
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return this._containerCache.getCache(access)!.url;
-    } catch (errorResponse: any) {
+    } catch {
       throw new BentleyError(422, "Invalid container request.");
     }
   }

@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 /*---------------------------------------------------------------------------------------------
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
@@ -10,14 +9,11 @@
 
 import { type AccessToken, BentleyError} from "@itwin/core-bentley";
 import type { AuthorizationClient, CartographicRange, RealityDataAccess } from "@itwin/core-common";
-import { Angle } from "@itwin/core-geometry";
-import type { AxiosResponse } from "axios";
-// eslint-disable-next-line no-duplicate-imports
-import axios from "axios";
-
+import axios, { type AxiosResponse } from "axios";
 import { ITwinRealityData } from "./RealityData";
 import { getRequestConfig } from "./RequestOptions";
 import {Project} from "./Projects";
+import { Angle } from "./helper/Angle";
 
 /** Options for initializing Reality Data Client
  * @beta
@@ -582,8 +578,8 @@ export class RealityDataAccessClient implements RealityDataAccess {
     let status = 422;
     let message = "Unknown error. Please ensure that the request is valid.";
 
-    if (axios.isAxiosError(error)) {
-      const axiosResponse = error.response!;
+    if (axios.isAxiosError(error) && error.response) {
+      const axiosResponse = error.response;
       status = axiosResponse.status;
       message = axiosResponse.data?.error?.message;
     } else {
