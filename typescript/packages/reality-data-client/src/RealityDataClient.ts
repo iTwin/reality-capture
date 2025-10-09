@@ -378,13 +378,13 @@ export class RealityDataAccessClient implements RealityDataAccess {
 
       const iTwinsResponseBody = response.data;
 
-      const itwinsResponse: string[] = [];
+      const iTwinsResponse: string[] = [];
 
       iTwinsResponseBody.iTwins.forEach((itwinValue: any) => {
-        itwinsResponse.push(itwinValue);
+        iTwinsResponse.push(itwinValue);
       });
 
-      return itwinsResponse;
+      return iTwinsResponse;
 
     } catch (error) {
       return this.handleError(error);
