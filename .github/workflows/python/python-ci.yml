@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "python_sdk/**"
-    branches: [ "feature/2.0.0", "feature/2.0.0-release", "feature/2.0.0-ts" ]
+    branches: [ "feature/2.0.0", "feature/2.0.0-release" ]
   pull_request:
     paths: 
       - "python_sdk/**"

@@ -464,7 +464,7 @@ class RealityCaptureService:
 
         :param reality_data_id The id of the RealityData to move.
         :param itwin_id The id of the iTwin to move the RealityData to.
-        :return: A Response[bool] containing either true if successful or false if not.
+        :return: A Response[None] containing either true if successful or false if not.
         """
         url = self._get_reality_management_rd_url() + reality_data_id + "/move"
         response = self._session.patch(url, {"iTwinId": itwin_id}, headers=self._get_header_v1())
