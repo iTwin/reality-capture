@@ -59,11 +59,11 @@ async function runModelingExample() {
     await authorizationClient.signIn();
 
     console.log("Reality Modeling sample job - Full (Calibration + Reconstruction)");
-    let realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
+    const realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
 
-    let contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient));
+    const contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient));
     console.log("Service initialized");
 
     // Creating reference table and uploading images, ccOrientations if necessary (not yet on the cloud)
@@ -108,9 +108,9 @@ async function runModelingExample() {
 
     // Then, upload production settings in the workspace
     if(prodSettingsPath) {
-        console.log("Uploading production settings in workspace...")
+        console.log("Uploading production settings in workspace...");
         await realityDataService.uploadJsonToWorkspace(prodSettingsPath, iTwinId, workspaceId, jobId);
-        console.log("Production settings uploaded successfully")
+        console.log("Production settings uploaded successfully");
     }
 
     // Submit job

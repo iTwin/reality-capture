@@ -11,7 +11,7 @@ import * as dotenv from "dotenv";
 import { JobState, RealityDataType } from "@itwin/reality-capture-common";
 import { RealityDataTransferNode, defaultProgressHook } from "@itwin/reality-data-transfer";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
-import { DOMImplementation, XMLSerializer } from '@xmldom/xmldom';
+import { DOMImplementation, XMLSerializer } from "@xmldom/xmldom";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -33,7 +33,7 @@ async function runModelingExample() {
     // Optional : srs used in outputs. Please, set to undefined if you don't want to specify srs
     const srs: string | undefined = "EPSG:32631";
     // Optional : AT settings. Please, set to an empty string if you don't want to specify AT settings
-    const atSettings: string = "D:/Datasets/Heli/ATSettings";
+    const atSettings = "D:/Datasets/Heli/ATSettings";
 
     // Name of the modeling job
     const jobName = "Modeling_Sample_Job";
@@ -63,11 +63,11 @@ async function runModelingExample() {
     });
 
     console.log("Reality Modeling sample job - Full (Calibration + Reconstruction)");
-    let realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
+    const realityDataService = new RealityDataTransferNode(authorizationClient.getAccessToken.bind(authorizationClient));
     realityDataService.setUploadHook(defaultProgressHook);
     realityDataService.setDownloadHook(defaultProgressHook);
 
-    let contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient));
+    const contextCaptureService = new ContextCaptureService(authorizationClient.getAccessToken.bind(authorizationClient));
     console.log("Service initialized");
 
     // Upload images
@@ -103,7 +103,7 @@ async function runModelingExample() {
         }
     }
     const serializer = new XMLSerializer();
-    const xmlContent = '<?xml version="1.0" encoding="utf-8"?>\n' + serializer.serializeToString(doc);
+    const xmlContent = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + serializer.serializeToString(doc);
     let tmpDir = path.join(os.tmpdir(), "Bentley", crypto.randomUUID());
     await fs.promises.mkdir(tmpDir, { recursive: true });
     fs.writeFileSync(path.join(tmpDir, "Orientations.xml"), xmlContent);
