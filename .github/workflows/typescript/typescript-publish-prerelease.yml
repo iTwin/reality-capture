@@ -1,0 +1,54 @@
+name: Publish Typescript Reality Capture SDK
+
+on: workflow_dispatch
+
+# Creates a pre-release in GitHub repo. Does not publish to npm.
+# Does not create pre release for reality-data-client.
+jobs:
+  build_and_test_sdk:
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x, 24.x]
+        os: [windows-latest, ubuntu-latest, macos-latest]
+      fail-fast: false
+
+    uses: ./.github/workflows/steps/typescript-build-and-test.yml
+    with:
+      node-version: ${{ matrix.node-version }}
+      os: ${{ matrix.os }}
+  
+  create_pre_release:
+    needs: build_and_test_sdk
+    strategy:
+      matrix:
+        node-version: [22.x]
+        os: [windows-latest]
+      fail-fast: false
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Publish packages as tgz
+        working-directory: ./typescript_sdk/reality-capture
+        run: npm pack --pack-destination ./lib
+
+      - name: Get version
+        id: get_version
+        working-directory: ./typescript_sdk/reality-capture
+        shell: pwsh
+        run: | 
+          $packageVersion=(Get-Content .\package.json | ConvertFrom-Json).version
+          Write-Output "version=$($packageVersion)" >> $Env:GITHUB_OUTPUT
+
+      - name: Create Pre-Release
+        uses: softprops/action-gh-release@v2
+        id: create_pre_release
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          name: "Typescript Version ${{ steps.get_version.outputs.version }}"
+          draft: true
+          prerelease: true
+          files: | 
+            ./typescript_sdk/reality-capture/lib/reality-capture-${{ steps.get_version.outputs.version }}.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -5,26 +5,19 @@ Copyright © Bentley Systems, Incorporated. All rights reserved. See
 
 ## About this Repository
 
-This repository contains Reality Capture SDKs for Reality Modeling, Reality Analysis, Reality Conversion and Reality Management services, as well as Reality Management API utils. It provides classes, functions and examples to create reality data, upload local data to Reality Management, run Analysis/Conversion/Modeling jobs and download results.
-Besides, a typescript web application example is available to show how to create a web application running the whole workflow and displaying the results in the browser.
+This repository contains Reality Capture SDKs for Reality Modeling, Reality Analysis, Reality Conversion and Reality Management services. It provides classes, functions and examples to create reality data, upload local data to Reality Management, run Analysis/Conversion/Modeling jobs and download results.
 
-- [Reality Management](./typescript/packages/reality-data-client/README.md)
-- [Reality Analysis](./typescript/packages/reality-capture-analysis/README.md)
-- [Reality Conversion](./typescript/packages/reality-capture-conversion/README.md)
-- [Reality Modeling](./typescript/packages/reality-capture-modeling/README.md)
+- [Reality Management](./typescript_sdk/packages/reality-data-client/README.md)
+- [Reality Capture](./typescript_sdk/packages/reality-capture/README.md)
 
-Reality data utils to upload and download results
+All the packages are also available in python
 
-- [Reality Data transfer utils](./typescript/packages/reality-data-transfer/README.md)
-
-All the packages are available in python, except Reality Management
-
-- [Python sdk](./python/README.md)
+- [Python sdk](./python_sdk/README.md)
 
 ## Requirements
 
 - [Git LFS](https://git-lfs.github.com/) to be installed.
-- [Node](https://nodejs.org/en/): an installation of the latest security patch of Node 18. The Node installation also includes the **npm** package manager.
+- [Node](https://nodejs.org/en/): an installation of the latest security patch of Node 22. The Node installation also includes the **npm** package manager.
 - [pnpm](https://pnpm.io/): [prefer installation via npm corepack](https://pnpm.io/installation#using-corepack)
 
 ## Build Instructions

@@ -1,0 +1,65 @@
+name: Build and test Pytho SDK
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: true
+        type: string
+      os:
+        required: true
+        type: string
+
+jobs:
+  build_and_test_sdk:
+    runs-on: ${{ inputs.os }}
+      
+    steps:
+      - name: Checkout github repo (+ download lfs dependencies)
+        uses: actions/checkout@v3
+        with:
+          lfs: true
+
+      - name: Checkout LFS objects
+        run: git lfs checkout
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js ${{ inputs.python-version.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.python-version.node-version }}
+
+      - name: Install dependencies
+        working-directory: ./
+        run: pnpm install --frozen-lockfile=true
+
+      - name: Build
+        working-directory: ./
+        run: npm run build
+
+      - name: EsLint
+        working-directory: ./
+        run: npm run lint
+
+      - name: Run unit tests and coverage
+        working-directory: ./
+        run: npm run coverage
+
+      - name: Run SDK Integration Tests
+        working-directory: ./
+        env:
+          IMJS_INTEGRATION_TESTS_PROJECT_ID: ${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}
+          IMJS_INTEGRATION_TESTS_CLIENT_ID: ${{ secrets.INTEGRATION_TESTS_CLIENT_ID }}
+          IMJS_INTEGRATION_TESTS_SECRET: ${{ secrets.INTEGRATION_TESTS_SECRET }}
+          IMJS_OIDC_BROWSER_TEST_CLIENT_ID: ${{ secrets.IMJS_OIDC_BROWSER_TEST_CLIENT_ID }}
+          IMJS_OIDC_BROWSER_TEST_REDIRECT_URI: ${{ vars.IMJS_OIDC_BROWSER_TEST_REDIRECT_URI }}
+          IMJS_OIDC_BROWSER_TEST_SCOPES: ${{ vars.IMJS_OIDC_BROWSER_TEST_SCOPES }}
+          IMJS_TEST_REGULAR_USER_NAME: ${{ vars.IMJS_TEST_REGULAR_USER_NAME }}
+          IMJS_TEST_REGULAR_USER_PASSWORD: ${{ secrets.IMJS_TEST_REGULAR_USER_PASSWORD }}
+          IMJS_TEST_MANAGER_USER_NAME: ${{ vars.IMJS_TEST_MANAGER_USER_NAME }}
+          IMJS_TEST_MANAGER_USER_PASSWORD: ${{ secrets.IMJS_TEST_MANAGER_USER_PASSWORD }}
+        run: npm run integration-tests
