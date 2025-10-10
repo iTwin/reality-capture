@@ -26,6 +26,16 @@ export interface Point {
 }
 
 /**
+ * Coordinate Reference System (CRS) used for the reality data.
+ * It is restricted to specific reality data types, read documentation here:
+ * https://developer.bentley.com/apis/reality-management/rm-rd-details/#crs
+ */
+export interface Crs {
+  id: string;
+  verticalId?: string;
+}
+
+/**
  * Provides information regarding the acquisition, such as dates and acquirer used.
  */
 export interface Acquisition {
@@ -80,6 +90,8 @@ export class ITwinRealityData implements RealityData {
   public displayName?: string;
   public dataset?: string;
   public group?: string;
+  public attribution?: string;
+  public termsOfUse?: string;
   public dataCenterLocation?: string;
   public description?: string;
   public rootDocument?: string;
@@ -90,6 +102,7 @@ export class ITwinRealityData implements RealityData {
   public classification?: string;
   public type?: string;
   public extent?: Extent;
+  public crs?: Crs;
   /** @deprecated in 1.0.1 not used in Reality Management API. Will be removed in next major update.*/
   public accessControl?: string; // TODO: remove in next major update
   public modifiedDateTime?: Date;
@@ -119,6 +132,8 @@ export class ITwinRealityData implements RealityData {
       this.displayName = realityData.displayName;
       this.dataset = realityData.dataset;
       this.group = realityData.group;
+      this.attribution = realityData.attribution;
+      this.termsOfUse = realityData.termsOfUse;
       this.dataCenterLocation = realityData.dataCenterLocation;
       this.description = realityData.description;
       this.rootDocument = realityData.rootDocument;
@@ -134,6 +149,7 @@ export class ITwinRealityData implements RealityData {
       this.classification = realityData.classification;
       this.type = realityData.type;
       this.extent = realityData.extent;
+      this.crs = realityData.crs;
       // eslint-disable-next-line @typescript-eslint/no-deprecated
       this.accessControl = realityData.accessControl;
       this.modifiedDateTime = new Date(realityData.modifiedDateTime);

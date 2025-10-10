@@ -378,13 +378,13 @@ export class RealityDataAccessClient implements RealityDataAccess {
 
       const iTwinsResponseBody = response.data;
 
-      const itwinsResponse: string[] = [];
+      const iTwinsResponse: string[] = [];
 
       iTwinsResponseBody.iTwins.forEach((itwinValue: any) => {
-        itwinsResponse.push(itwinValue);
+        iTwinsResponse.push(itwinValue);
       });
 
-      return itwinsResponse;
+      return iTwinsResponse;
 
     } catch (error) {
       return this.handleError(error);
@@ -422,6 +422,9 @@ export class RealityDataAccessClient implements RealityDataAccess {
         acquisition: iTwinRealityData.acquisition,
         authoring: iTwinRealityData.authoring,
         extent: iTwinRealityData.extent,
+        crs: iTwinRealityData.crs,
+        attribution: iTwinRealityData.attribution,
+        termsOfUse: iTwinRealityData.termsOfUse,
       };
 
       const response = await axios.post(url, realityDataToCreate, options);
@@ -466,6 +469,9 @@ export class RealityDataAccessClient implements RealityDataAccess {
         acquisition: iTwinRealityData.acquisition,
         authoring: iTwinRealityData.authoring,
         extent: iTwinRealityData.extent,
+        crs: iTwinRealityData.crs,
+        attribution: iTwinRealityData.attribution,
+        termsOfUse: iTwinRealityData.termsOfUse,
       };
 
       const response = await axios.patch(url.href, realityDataToModify, options);
@@ -558,6 +564,37 @@ export class RealityDataAccessClient implements RealityDataAccess {
       const options = getRequestConfig(accessTokenResolved, "DELETE", url, this.apiVersion);
 
       response = await axios.delete(url, options);
+
+    } catch (error) {
+      return this.handleError(error);
+    }
+    if (response.status === 204)
+      return true;
+    else
+      return false;
+  }
+/**
+ * Moves a RealityData to a different iTwin
+ * @param accessToken The client request context.
+ * @param realityDataId The id of the RealityData to move.
+ * @param iTwinId The id of the iTwin to move the RealityData to.
+ * @returns true if successful (204 response) or false if not
+ * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
+ * @throws [[BentleyError]] with code 404 when the specified reality data or iTwin was not found
+ * @throws [[BentleyError]] with code 422 when the request is invalid
+ * @throws [[BentleyError]] with code 409 when the reality data is already associated with the specified iTwin
+ * @beta
+ */
+  public async moveRealityData(accessToken: AccessToken, realityDataId: string, iTwinId: string): Promise<boolean> {
+
+    let response: AxiosResponse;
+    try {
+      const accessTokenResolved = await this.resolveAccessToken(accessToken);
+      const url = `${this.baseUrl}/${realityDataId}/move`;
+      const options = getRequestConfig(accessTokenResolved, "PATCH", url, this.apiVersion);
+      const payload = { iTwinId };
+
+      response = await axios.patch(url, payload, options);
 
     } catch (error) {
       return this.handleError(error);
