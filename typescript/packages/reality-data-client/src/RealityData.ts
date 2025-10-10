@@ -27,6 +27,8 @@ export interface Point {
 
 /**
  * Coordinate Reference System (CRS) used for the reality data.
+ * It is restricted to specific reality data types, read documentation here:
+ * https://developer.bentley.com/apis/reality-management/rm-rd-details/#crs
  */
 export interface Crs {
   id: string;
