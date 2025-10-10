@@ -30,7 +30,7 @@ export interface Point {
  */
 export interface Crs {
   id: string;
-  verticalId: string;
+  verticalId?: string;
 }
 
 /**
