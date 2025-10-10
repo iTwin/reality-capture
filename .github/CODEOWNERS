@@ -11,7 +11,7 @@ typescript/packages/reality-capture-conversion/ @dbiguenet @RenaudKeriven @arian
 typescript/packages/reality-capture-modeling/ @dbiguenet @RenaudKeriven @arianacarnielli
  
 # https://developer.bentley.com/apis/reality-management/overview/
-typescript/packages/reality-data-client/ @mcote01 @MarcBedard8
- 
+typescript/packages/reality-data-client/ @mcote01 @MarcBedard8 @matmarchand @BeChaRem
+
 # not an actual reality capture api
 typescript/packages/reality-data-transfer/ @dbiguenet @RenaudKeriven @arianacarnielli
