@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 /*---------------------------------------------------------------------------------------------
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
@@ -10,14 +9,11 @@
 
 import { type AccessToken, BentleyError} from "@itwin/core-bentley";
 import type { AuthorizationClient, CartographicRange, RealityDataAccess } from "@itwin/core-common";
-import { Angle } from "@itwin/core-geometry";
-import type { AxiosResponse } from "axios";
-// eslint-disable-next-line no-duplicate-imports
-import axios from "axios";
-
+import axios, { type AxiosResponse } from "axios";
 import { ITwinRealityData } from "./RealityData";
 import { getRequestConfig } from "./RequestOptions";
 import {Project} from "./Projects";
+import { Angle } from "./helper/Angle";
 
 /** Options for initializing Reality Data Client
  * @beta
@@ -426,6 +422,9 @@ export class RealityDataAccessClient implements RealityDataAccess {
         acquisition: iTwinRealityData.acquisition,
         authoring: iTwinRealityData.authoring,
         extent: iTwinRealityData.extent,
+        crs: iTwinRealityData.crs,
+        attribution: iTwinRealityData.attribution,
+        termsOfUse: iTwinRealityData.termsOfUse,
       };
 
       const response = await axios.post(url, realityDataToCreate, options);
@@ -470,6 +469,9 @@ export class RealityDataAccessClient implements RealityDataAccess {
         acquisition: iTwinRealityData.acquisition,
         authoring: iTwinRealityData.authoring,
         extent: iTwinRealityData.extent,
+        crs: iTwinRealityData.crs,
+        attribution: iTwinRealityData.attribution,
+        termsOfUse: iTwinRealityData.termsOfUse,
       };
 
       const response = await axios.patch(url.href, realityDataToModify, options);
@@ -573,6 +575,38 @@ export class RealityDataAccessClient implements RealityDataAccess {
   }
 
   /**
+ * Moves a RealityData to a different iTwin
+ * @param accessToken The client request context.
+ * @param realityDataId The id of the RealityData to move.
+ * @param iTwinId The id of the iTwin to move the RealityData to.
+ * @returns true if successful (204 response) or false if not
+ * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
+ * @throws [[BentleyError]] with code 404 when the specified reality data or iTwin was not found
+ * @throws [[BentleyError]] with code 422 when the request is invalid
+ * @throws [[BentleyError]] with code 409 when the reality data is already associated with the specified iTwin
+ * @beta
+ */
+  public async moveRealityData(accessToken: AccessToken, realityDataId: string, iTwinId: string): Promise<boolean> {
+
+    let response: AxiosResponse;
+    try {
+      const accessTokenResolved = await this.resolveAccessToken(accessToken);
+      const url = `${this.baseUrl}/${realityDataId}/move`;
+      const options = getRequestConfig(accessTokenResolved, "PATCH", url, this.apiVersion);
+      const payload = { iTwinId };
+
+      response = await axios.patch(url, payload, options);
+
+    } catch (error) {
+      return this.handleError(error);
+    }
+    if (response.status === 204)
+      return true;
+    else
+      return false;
+  }
+
+  /**
   * Handle errors thrown.
   * Handled errors can be of AxiosError type or BentleyError.
   * @beta
@@ -582,8 +616,8 @@ export class RealityDataAccessClient implements RealityDataAccess {
     let status = 422;
     let message = "Unknown error. Please ensure that the request is valid.";
 
-    if (axios.isAxiosError(error)) {
-      const axiosResponse = error.response!;
+    if (axios.isAxiosError(error) && error.response) {
+      const axiosResponse = error.response;
       status = axiosResponse.status;
       message = axiosResponse.data?.error?.message;
     } else {

@@ -458,3 +458,24 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
+    def move_reality_data(self, reality_data_id: str, itwin_id: str) -> Response[None]:
+        """
+        Move a RealityData to a different iTwin.
+
+        :param reality_data_id The id of the RealityData to move.
+        :param itwin_id The id of the iTwin to move the RealityData to.
+        :return: A Response[bool] containing either true if successful or false if not.
+        """
+        url = self._get_reality_management_rd_url() + reality_data_id + "/move"
+        response = self._session.patch(url, {"iTwinId": itwin_id}, headers=self._get_header_v1())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code,
+                                value=None, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except ValidationError as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
