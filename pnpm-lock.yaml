@@ -9,7 +9,7 @@ importers:
   .:
     devDependencies:
       beachball:
-        specifier: ^2.47.1
+        specifier: ^2.55.1
         version: 2.55.1(typescript@5.6.3)
 
   typescript_sdk/examples:
@@ -103,9 +103,6 @@ importers:
 
   typescript_sdk/packages/reality-data-client:
     dependencies:
-      '@itwin/core-geometry':
-        specifier: ^4.0.0
-        version: 4.11.6
       axios:
         specifier: ^1.8.2
         version: 1.12.2
@@ -121,13 +118,16 @@ importers:
         version: 5.2.0
       '@itwin/core-common':
         specifier: ^5.0.2
-        version: 5.2.0(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@4.11.6)
+        version: 5.2.0(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@5.2.3)
+      '@itwin/core-geometry':
+        specifier: ^5.0.2
+        version: 5.2.3
       '@itwin/eslint-plugin':
         specifier: ^5.2.1
         version: 5.2.1(eslint@8.57.1)(typescript@5.6.3)
       '@itwin/oidc-signin-tool':
         specifier: ^4.4.1
-        version: 4.4.1(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@4.11.6)
+        version: 4.4.1(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@5.2.3)
       '@types/chai':
         specifier: ^4.3.0
         version: 4.3.20
@@ -689,9 +689,6 @@ packages:
       - supports-color
     dev: true
 
-  /@itwin/core-bentley@4.11.6:
-    resolution: {integrity: sha512-8jlNtx26TAmhBvWKuAY/xtOcl/bIVVLjSwf9pAeY3l35pdRf9KmOiMijWIXhICKeAI4s+sr4REY7BO44cT33fQ==}
-
   /@itwin/core-bentley@5.0.0:
     resolution: {integrity: sha512-9XJyk8q1NdsRBwuYPGo4U9ARKXVbyXSRHcU20PgHU8wU89omrDkXdQhTRJnWmGZk2a3R+OJY9DQnfM4/Wajnzw==}
     dev: false
@@ -699,14 +696,18 @@ packages:
   /@itwin/core-bentley@5.2.0:
     resolution: {integrity: sha512-n6ZHc7I2WGDB9iHwht0Fo8yasO5sgQcvS1QXRNevolw5sxgbuk/8G+1s58UejJya/svVd/BciW71dVQTvrwZSA==}
 
-  /@itwin/core-common@4.11.6(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@4.11.6):
+  /@itwin/core-bentley@5.2.3:
+    resolution: {integrity: sha512-XExcf0s0WDF4WWkXXcw4Yw5nMYaJ0PUl+eNjjHXZI7VXs+kZhPsOPXO06+d1Wzl5fFKgiaix//vG2fdwOMeYwQ==}
+    dev: true
+
+  /@itwin/core-common@4.11.6(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@5.2.3):
     resolution: {integrity: sha512-YrZDUhFB629HKh942wpRUTQV5fZQEVDk0M5Bmx2AvtSbzUQCwVvgKsJq20ltmYbYePZyQexFkQ1JcHZISSPKfQ==}
     peerDependencies:
       '@itwin/core-bentley': ^4.11.6
       '@itwin/core-geometry': ^4.11.6
     dependencies:
       '@itwin/core-bentley': 5.2.0
-      '@itwin/core-geometry': 4.11.6
+      '@itwin/core-geometry': 5.2.3
       flatbuffers: 1.12.0
       js-base64: 3.7.8
     dev: true
@@ -723,23 +724,17 @@ packages:
       js-base64: 3.7.8
     dev: false
 
-  /@itwin/core-common@5.2.0(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@4.11.6):
+  /@itwin/core-common@5.2.0(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@5.2.3):
     resolution: {integrity: sha512-nBubhL0ujTpIoQcNzeQdn1LPDSTAGKnWLxEeH1MwcX3vFWe29P31rN9mPEJNxdV5eZdAY8lhumQTl3W+9NI+gA==}
     peerDependencies:
       '@itwin/core-bentley': 5.2.0
       '@itwin/core-geometry': 5.2.0
     dependencies:
       '@itwin/core-bentley': 5.2.0
-      '@itwin/core-geometry': 4.11.6
+      '@itwin/core-geometry': 5.2.3
       flatbuffers: 1.12.0
       js-base64: 3.7.8
     dev: true
-
-  /@itwin/core-geometry@4.11.6:
-    resolution: {integrity: sha512-GqD03D4BoQDfpy/vZdS3x/GCz/oYXSnpkObErdeDrSTELLXnQtk9wL+RVrfkZco0KVUqXpBAfe3+rBHwWhFhqw==}
-    dependencies:
-      '@itwin/core-bentley': 4.11.6
-      flatbuffers: 1.12.0
 
   /@itwin/core-geometry@5.0.0:
     resolution: {integrity: sha512-qIvWH4xa1zqSNny0lgkt1PlBHdQniKf8+NO2ex7rt5KAmDaTsQ8Nw+Pz/xmzOJkP7MTSbEIkDd79gITj4vNuwA==}
@@ -747,6 +742,13 @@ packages:
       '@itwin/core-bentley': 5.0.0
       flatbuffers: 1.12.0
     dev: false
+
+  /@itwin/core-geometry@5.2.3:
+    resolution: {integrity: sha512-SFjDJIotQjUL2xLuf92MvzDmTx8qREN7lhin27X1RG0KVewXeI0wBvURx9mrvZ8o7OiGMw1a6OFCWodhDHtSmQ==}
+    dependencies:
+      '@itwin/core-bentley': 5.2.3
+      flatbuffers: 1.12.0
+    dev: true
 
   /@itwin/eslint-plugin@5.2.1(eslint@8.57.1)(typescript@5.6.3):
     resolution: {integrity: sha512-iFmxAXzBYUm/yHiyp37V8Qn2oZ9iqwB1HxWX1AAhewk77JUIhO1KLY2hrBNisHx49giy7hZmIOBEaXc357z+Uw==}
@@ -775,7 +777,7 @@ packages:
       - supports-color
     dev: true
 
-  /@itwin/oidc-signin-tool@4.4.1(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@4.11.6):
+  /@itwin/oidc-signin-tool@4.4.1(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@5.2.3):
     resolution: {integrity: sha512-E/Mg8RyKKOasZ+H36UFLgjlIbpYIpw1og/506ml0x9BkiCwfnkFb8YtrCWbgvWeV0sWLg+VwjiB8E3HN1QGd/A==}
     requiresBuild: true
     peerDependencies:
@@ -783,8 +785,8 @@ packages:
     dependencies:
       '@itwin/certa': 4.11.6
       '@itwin/core-bentley': 5.2.0
-      '@itwin/core-common': 4.11.6(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@4.11.6)
-      '@itwin/service-authorization': 1.2.3(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@4.11.6)
+      '@itwin/core-common': 4.11.6(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@5.2.3)
+      '@itwin/service-authorization': 1.2.3(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@5.2.3)
       '@playwright/test': 1.48.2
       dotenv: 10.0.0
       dotenv-expand: 5.1.0
@@ -795,13 +797,13 @@ packages:
       - supports-color
     dev: true
 
-  /@itwin/service-authorization@1.2.3(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@4.11.6):
+  /@itwin/service-authorization@1.2.3(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@5.2.3):
     resolution: {integrity: sha512-KoN7Y60Mbmeq5r5U3wfmDu9oAyCo00cb73zR/wwBVWFpdYUfDQbQKHofS0TrXLANO9uva3BdwH5L+S41szXYmg==}
     peerDependencies:
       '@itwin/core-bentley': ^3.3.0 || ^4.0.0
     dependencies:
       '@itwin/core-bentley': 5.2.0
-      '@itwin/core-common': 4.11.6(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@4.11.6)
+      '@itwin/core-common': 4.11.6(@itwin/core-bentley@5.2.0)(@itwin/core-geometry@5.2.3)
       got: 12.6.1
       jsonwebtoken: 9.0.2
       jwks-rsa: 2.1.5
