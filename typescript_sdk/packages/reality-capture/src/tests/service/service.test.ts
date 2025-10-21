@@ -13,9 +13,24 @@ describe("RealityCaptureService tests", function () {
         const serviceDev = new RealityCaptureService(mockAuthClient, { env: "dev" });
         const serviceQa = new RealityCaptureService(mockAuthClient, { env: "qa" });
         const serviceProd = new RealityCaptureService(mockAuthClient);
-        expect((serviceDev as any)._serviceUrl).to.be.a("string").and.satisfy((url: string) => url.startsWith("https://dev-api.bentley.com"));
-        expect((serviceQa as any)._serviceUrl).to.be.a("string").and.satisfy((url: string) => url.startsWith("https://qa-api.bentley.com"));
-        expect((serviceProd as any)._serviceUrl).to.be.a("string").and.satisfy((url: string) => url.startsWith("https://api.bentley.com"));
+        expect((serviceDev as any)._serviceUrl).to.be.a("string").and.satisfy((url: string) => {
+            try {
+                const parsed = new URL(url);
+                return parsed.protocol === "https:" && parsed.host === "dev-api.bentley.com";
+            } catch (e) { return false; }
+        });
+        expect((serviceQa as any)._serviceUrl).to.be.a("string").and.satisfy((url: string) => {
+            try {
+                const parsed = new URL(url);
+                return parsed.protocol === "https:" && parsed.host === "qa-api.bentley.com";
+            } catch (e) { return false; }
+        });
+        expect((serviceProd as any)._serviceUrl).to.be.a("string").and.satisfy((url: string) => {
+            try {
+                const parsed = new URL(url);
+                return parsed.protocol === "https:" && parsed.host === "api.bentley.com";
+            } catch (e) { return false; }
+        });
     });
 
     it("should validate service url", async () => {
@@ -23,7 +38,14 @@ describe("RealityCaptureService tests", function () {
         const mockAuthClient = { getAccessToken: getAccessTokenStub } as AuthorizationClient;
         const service = new RealityCaptureService(mockAuthClient, { env: "dev" });
         //expect((service as any)._getCorrectUrl(Service.ANALYSIS)).to.be.a("string").and.satisfy((url: string) => url.startsWith("https://dev-api.bentley.com/reality-analysis/"));
-        expect((service as any)._getCorrectUrl(Service.MODELING)).to.be.a("string").and.satisfy((url: string) => url.startsWith("https://dev-api.bentley.com/reality-modeling/"));
+        expect((service as any)._getCorrectUrl(Service.MODELING)).to.be.a("string").and.satisfy((url: string) => {
+            try {
+                const parsed = new URL(url);
+                return parsed.protocol === "https:" &&
+                    parsed.host === "dev-api.bentley.com" &&
+                    parsed.pathname.startsWith("/reality-modeling/");
+            } catch (e) { return false; }
+        });
         expect(() => (service as any)._getCorrectUrl("OTHER")).to.throw("Other services not yet implemented");
     });
 });
