@@ -97,7 +97,8 @@ export enum JobState {
   ACTIVE = "Active",
   SUCCESS = "Success",
   FAILED = "Failed",
-  TERMINATING = "Terminating",
+  TERMINATING_ON_CANCEL = "TerminatingOnCancel",
+  TERMINATING_ON_FAILURE = "TerminatingOnFailure",
   CANCELLED = "Cancelled"
 }
 
