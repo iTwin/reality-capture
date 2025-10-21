@@ -45,7 +45,6 @@
     "publish-packages-dev": "beachball publish --config beachball.config.dev.js --keep-change-files"
   },
   "dependencies": {
-    "@itwin/core-geometry": "^4.0.0",
     "axios": "^1.8.2"
   },
   "devDependencies": {

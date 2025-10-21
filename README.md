@@ -18,11 +18,14 @@ All the packages are also available in python
 
 - [Git LFS](https://git-lfs.github.com/) to be installed.
 - [Node](https://nodejs.org/en/): an installation of the latest security patch of Node 22. The Node installation also includes the **npm** package manager.
-- [pnpm](https://pnpm.io/): [prefer installation via npm corepack](https://pnpm.io/installation#using-corepack)
+- [pnpm](https://pnpm.io/): [prefer installation via npm corepack](https://pnpm.io/installation#using-corepack). We recommend you to install it globally.
 
 ## Build Instructions
 
 1. Clone repository (first time) with `git clone` or pull updates to the repository (subsequent times) with `git pull`
-2. Install dependencies: `pnpm update` or `pnpm install`
-3. Build source: `npm run build`
+2. Install dependencies: `pnpm install`
+3. Build source: `pnpm build`
+
+## Unit tests
+
 4. Run unit tests : create a .env file based on template.env, then : `npm run coverage`
