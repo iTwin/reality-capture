@@ -7,8 +7,8 @@ Copyright © Bentley Systems, Incorporated. All rights reserved. See
 
 This repository contains Reality Capture SDKs for Reality Modeling, Reality Analysis, Reality Conversion and Reality Management services. It provides classes, functions and examples to create reality data, upload local data to Reality Management, run Analysis/Conversion/Modeling jobs and download results.
 
-- [Reality Management](./typescript_sdk/packages/reality-data-client/README.md)
-- [Reality Capture](./typescript_sdk/packages/reality-capture/README.md)
+- [Reality Management](./typescript/packages/reality-data-client/README.md)
+- [Reality Capture](./typescript/packages/reality-capture/README.md)
 
 All the packages are also available in python
 
