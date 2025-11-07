@@ -3,7 +3,7 @@ name: Typescript SDK PR Workflow
 on:
   pull_request:
     paths:
-      - "typescript/**"
+      - "typescript_sdk/**"
     branches: [ "feature/2.0.0", "feature/2.0.0-release", "feature/2.0.0-ts" ]
 
 jobs:
@@ -26,11 +26,11 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - name: Install dependencies
-        working-directory: ./typescript/reality_capture
+        working-directory: ./typescript_sdk/reality_capture
         run: npm install --frozen-lockfile=true
 
       - name: Build
-        working-directory: ./typescript/reality_capture
+        working-directory: ./typescript_sdk/reality_capture
         run: npm build
 
       # - name: Build doc

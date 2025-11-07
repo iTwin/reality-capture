@@ -29,12 +29,12 @@ jobs:
 
     steps:
       - name: Publish packages as tgz
-        working-directory: ./typescript/reality-capture
+        working-directory: ./typescript_sdk/reality-capture
         run: npm pack --pack-destination ./lib
 
       - name: Get version
         id: get_version
-        working-directory: ./typescript/reality-capture
+        working-directory: ./typescript_sdk/reality-capture
         shell: pwsh
         run: | 
           $packageVersion=(Get-Content .\package.json | ConvertFrom-Json).version
@@ -49,6 +49,6 @@ jobs:
           draft: true
           prerelease: true
           files: | 
-            ./typescript/reality-capture/lib/reality-capture-${{ steps.get_version.outputs.version }}.tgz
+            ./typescript_sdk/reality-capture/lib/reality-capture-${{ steps.get_version.outputs.version }}.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

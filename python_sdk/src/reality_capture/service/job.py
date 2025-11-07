@@ -3,7 +3,6 @@ from datetime import datetime
 from enum import Enum
 from typing import Union, Optional, Any
 from reality_capture.specifications.calibration import CalibrationSpecifications, CalibrationSpecificationsCreate
-
 """from reality_capture.specifications.change_detection import (ChangeDetectionSpecifications,
                                                              ChangeDetectionSpecificationsCreate)"""
 from reality_capture.specifications.constraints import (ConstraintsSpecificationsCreate,
@@ -28,15 +27,9 @@ from reality_capture.specifications.water_constraints import (WaterConstraintsSp
                                                               WaterConstraintsSpecificationsCreate)
 """from reality_capture.specifications.training import (TrainingO2DSpecifications, TrainingO2DSpecificationsCreate,
                                                      TrainingS3DSpecificationsCreate, TrainingS3DSpecifications)"""
-from reality_capture.specifications.point_cloud_conversion import (PointCloudConversionSpecificationsCreate,
-                                                                   PointCloudConversionSpecifications)
-from reality_capture.specifications.mesh_sampling import MeshSamplingSpecifications, MeshSamplingSpecificationsCreate
-from reality_capture.specifications.tile_map_optimization import TileMapOptimizationSpecifications, \
-    TileMapOptimizationSpecificationsCreate
-from reality_capture.specifications.point_cloud_optimization import PCOptimizationSpecifications, \
-    PCOptimizationSpecificationsCreate
-from reality_capture.specifications.vector_optimization import VectorOptimizationSpecifications, \
-    VectorOptimizationSpecificationsCreate
+"""from reality_capture.specifications.point_cloud_conversion import (PointCloudConversionSpecificationsCreate,
+                                                                   PointCloudConversionSpecifications)"""
+
 from reality_capture.specifications.gaussian_splats import (GaussianSplatsSpecificationsCreate,
                                                             GaussianSplatsSpecifications)
 """from reality_capture.specifications.eval_o2d import (EvalO2DSpecificationsCreate, EvalO2DSpecifications)
@@ -69,17 +62,13 @@ class JobType(Enum):
     # EVAL_S2D = "EvalS2D"
     # EVAL_S3D = "EvalS3D"
     # EVAL_SORTHO = "EvalSOrtho"
-    POINT_CLOUD_CONVERSION = "PointCloudConversion"
-    POINT_CLOUD_OPTIMIZATION = "PointCloudOptimization"
-    MESH_SAMPLING = "MeshSampling"
-    TILE_MAP_OPTIMIZATION = "TileMapOptimization"
-    VECTOR_OPTIMIZATION = "VectorOptimization"
+    # POINT_CLOUD_CONVERSION = "PointCloudConversion"
     GAUSSIAN_SPLATS = "GaussianSplats"
 
 class Service(Enum):
     MODELING = "Modeling"
     # ANALYSIS = "Analysis"
-    CONVERSION = "Conversion"
+    # CONVERSION = "Conversion"
 
 
 def _get_appropriate_service(jt: JobType):
@@ -91,9 +80,7 @@ def _get_appropriate_service(jt: JobType):
     #           JobType.CHANGE_DETECTION, JobType.TRAINING_O2D, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
     #           JobType.EVAL_S3D, JobType.EVAL_SORTHO]:
     #     return Service.ANALYSIS
-    if jt in [JobType.POINT_CLOUD_CONVERSION, JobType.POINT_CLOUD_OPTIMIZATION, JobType.MESH_SAMPLING,
-              JobType.TILE_MAP_OPTIMIZATION, JobType.VECTOR_OPTIMIZATION]:
-        return Service.CONVERSION
+    # return Service.CONVERSION
     raise NotImplemented("Other services not yet implemented")
 
 
@@ -110,6 +97,20 @@ class JobState(Enum):
 class JobCreate(BaseModel):
     name: Optional[str] = Field(None, description="Displayable job name.", min_length=3)
     type: JobType = Field(description="Type of job.")
+    # specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
+    #                       ConstraintsSpecificationsCreate,
+    #                       FillImagePropertiesSpecificationsCreate, ImportPCSpecificationsCreate,
+    #                       Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
+    #                       ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
+    #                       Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
+    #                       TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
+    #                       TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
+    #                       TrainingO2DSpecificationsCreate, PointCloudConversionSpecificationsCreate,
+    #                       TrainingS3DSpecificationsCreate, GaussianSplatsSpecificationsCreate,
+    #                       EvalO2DSpecificationsCreate, EvalO3DSpecificationsCreate,
+    #                       EvalS2DSpecificationsCreate, EvalS3DSpecificationsCreate,
+    #                       EvalSOrthoSpecificationsCreate] = (
+    #     Field(description="Specifications aligned with the job type."))
     specifications: Union[CalibrationSpecificationsCreate,
                           ConstraintsSpecificationsCreate,
                           FillImagePropertiesSpecificationsCreate, ImportPCSpecificationsCreate,
@@ -117,10 +118,7 @@ class JobCreate(BaseModel):
                           ReconstructionSpecificationsCreate,
                           TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
                           TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
-                          GaussianSplatsSpecificationsCreate,
-                          PointCloudConversionSpecificationsCreate, PCOptimizationSpecificationsCreate,
-                          MeshSamplingSpecificationsCreate, TileMapOptimizationSpecificationsCreate,
-                          VectorOptimizationSpecificationsCreate] = (
+                          GaussianSplatsSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -153,6 +151,20 @@ class Job(BaseModel):
     state: JobState = Field(description="State of the job.")
     execution_info: Execution = Field(description="Known execution information for the job.", alias="executionInfo")
     user_id: str = Field(description="Identifier of the user that created the job.", alias="userId")
+    # specifications: Union[CalibrationSpecifications, ChangeDetectionSpecifications,
+    #                       ConstraintsSpecifications,
+    #                       FillImagePropertiesSpecifications, ImportPCSpecifications,
+    #                       Objects2DSpecifications, ProductionSpecifications,
+    #                       ReconstructionSpecifications, Segmentation2DSpecifications,
+    #                       Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
+    #                       TilingSpecifications, TouchUpExportSpecifications,
+    #                       TouchUpImportSpecifications, WaterConstraintsSpecifications,
+    #                       TrainingO2DSpecifications, TrainingS3DSpecifications,
+    #                       PointCloudConversionSpecifications, GaussianSplatsSpecifications,
+    #                       EvalO2DSpecifications, EvalO3DSpecifications,
+    #                       EvalS2DSpecifications, EvalS3DSpecifications,
+    #                       EvalSOrthoSpecifications] = (
+    #     Field(description="Specifications aligned with the job type."))
     specifications: Union[CalibrationSpecifications,
                         ConstraintsSpecifications,
                         FillImagePropertiesSpecifications, ImportPCSpecifications,
@@ -160,10 +172,7 @@ class Job(BaseModel):
                         ReconstructionSpecifications,
                         TilingSpecifications, TouchUpExportSpecifications,
                         TouchUpImportSpecifications, WaterConstraintsSpecifications,
-                        GaussianSplatsSpecifications,
-                        PointCloudConversionSpecifications, PCOptimizationSpecifications,
-                        MeshSamplingSpecifications, TileMapOptimizationSpecifications,
-                        VectorOptimizationSpecifications] = (
+                        GaussianSplatsSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @model_validator(mode="after")
@@ -203,16 +212,8 @@ class Job(BaseModel):
         #    model.specifications = TrainingO2DSpecifications(**model.specifications.model_dump(by_alias=True))
         # elif model.type == JobType.TRAINING_S3D:
         #    model.specifications = TrainingS3DSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.POINT_CLOUD_CONVERSION:
-           model.specifications = PointCloudConversionSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.POINT_CLOUD_OPTIMIZATION:
-           model.specifications = PCOptimizationSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.MESH_SAMPLING:
-           model.specifications = MeshSamplingSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.TILE_MAP_OPTIMIZATION:
-           model.specifications = TileMapOptimizationSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.VECTOR_OPTIMIZATION:
-           model.specifications = VectorOptimizationSpecifications(**model.specifications.model_dump(by_alias=True))
+        # elif model.type == JobType.POINT_CLOUD_CONVERSION:
+        #    model.specifications = PointCloudConversionSpecifications(**model.specifications.model_dump(by_alias=True))
         elif model.type == JobType.GAUSSIAN_SPLATS:
             model.specifications = GaussianSplatsSpecifications(**model.specifications.model_dump(by_alias=True))
         # elif model.type == JobType.EVAL_O2D:

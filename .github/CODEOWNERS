@@ -5,8 +5,8 @@
 python_sdk/ @dbiguenet @cnovel @RenaudKeriven
  
 # https://developer.bentley.com/apis/reality-management/overview/
-typescript/packages/reality-data-client/ @mcote01 @MarcBedard8 @matmarchand @BeChaRem
+typescript_sdk/packages/reality-data-client/ @mcote01 @MarcBedard8 @matmarchand @BeChaRem
 
-typescript/packages/reality-capture/ @dbiguenet @cnovel @RenaudKeriven
+typescript_sdk/packages/reality-capture/ @dbiguenet @cnovel @RenaudKeriven
 
-typescript/examples/ @dbiguenet @cnovel @RenaudKeriven
+typescript_sdk/examples/ @dbiguenet @cnovel @RenaudKeriven
