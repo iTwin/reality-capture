@@ -16,9 +16,9 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@itwin/reality-capture" : "workspace:*",
     "@itwin/reality-data-client": "workspace:*",
     "@itwin/service-authorization": "^2.0.0",
-    "@itwin/reality-capture" : "workspace:*",
     "dotenv": "^16.0.3"
   },
   "devDependencies": {

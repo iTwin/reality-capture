@@ -227,7 +227,7 @@ export class RealityDataHandler {
     async uploadData(realityDataId: string, src: string, realityDataDst = "", iTwinId?: string): Promise<Response<null>> {
         const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, true);
         if(urlResponse.isError()) {
-            // TODO
+            return new Response<null>(urlResponse.status_code, urlResponse.error);
         }
         const resp = await _DataHandler.uploadData(urlResponse.value!, src, realityDataDst, this._progressHook);
         return resp;
@@ -236,7 +236,7 @@ export class RealityDataHandler {
     async downloadData(realityDataId: string, dst: string, realityDataSrc = "", iTwinId?: string): Promise<Response<null>> {
         const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, false);
         if(urlResponse.isError()) {
-            // TODO
+            return new Response<null>(urlResponse.status_code, urlResponse.error);
         }
         return await _DataHandler.downloadData(urlResponse.value!, dst, realityDataSrc, this._progressHook);
     }
@@ -244,7 +244,7 @@ export class RealityDataHandler {
     async listData(realityDataId: string, iTwinId?: string): Promise<Response<string[]>> {
         const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, false);
         if(urlResponse.isError()) {
-            // TODO
+            return new Response<string[]>(urlResponse.status_code, urlResponse.error, []);
         }
         return await _DataHandler.listData(urlResponse.value!);
     }
@@ -252,7 +252,7 @@ export class RealityDataHandler {
     async deleteData(realityDataId: string, filesToDelete: string[], iTwinId?: string): Promise<Response<null>> {
         const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, false);
         if(urlResponse.isError()) {
-            // TODO
+            return new Response<null>(urlResponse.status_code, urlResponse.error);
         }
         return await _DataHandler.deleteData(urlResponse.value!, filesToDelete);
     }

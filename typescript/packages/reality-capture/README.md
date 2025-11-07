@@ -19,20 +19,20 @@ To build the reality-capture locally, open a new terminal in the current loation
 - Install dependencies
 
   ```sh
-  npm install
+  pnpm install
   ```
 
 - Build the project
 
   ```sh
-  npm run build
+  pnpm build
   ```
 
 ### Build package
 
-In case you need a package to install it in your own project, run the following command :
+In case you need a package for your own project, run the following command :
 
-- Build the project
+- Build the package
 
   ```sh
   npm pack --pack-destination ./lib
@@ -40,8 +40,6 @@ In case you need a package to install it in your own project, run the following 
 
 You will find the .tgz file in /lib folder
 Add this line in your project package.json:
-
-- Build the project
 
   ```
   "reality-capture" : "<path_to_tgz>/reality-capture-1.0.0.tgz",
@@ -53,7 +51,7 @@ Run the following command for the unit tests :
 
 - Build the unit tests
   ```sh
-  npm coverage
+  pnpm coverage
   ```
 
 It will generate a report for each source file: covered lines, branches, statements and functions. Each file should be at least 90% covered.
