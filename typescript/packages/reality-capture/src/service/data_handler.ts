@@ -1,12 +1,12 @@
 import * as fs from "fs";
 import * as path from "path";
 import { ContainerClient } from "@azure/storage-blob";
-import { AuthorizationClient } from "@itwin/core-common";
+import type { AuthorizationClient } from "@itwin/core-common";
 import { BentleyError } from "@itwin/core-bentley";
 //TODO : ThreadPool type does not have native Node.js equivalent. Multi-thread for IO must be readapted (here, ploads and downloads are sequential.
 //import { ThreadPool } from "some-threadpool-lib";
 import { DetailedError } from "./error";
-import { ITwinRealityData, RealityDataAccessClient, RealityDataClientOptions } from "@itwin/reality-data-client";
+import { ITwinRealityData, RealityDataAccessClient, type RealityDataClientOptions } from "@itwin/reality-data-client";
 import { Response } from "./response";
 import { RealityCaptureService } from "./service";
 import { BucketResponse } from "./bucket";

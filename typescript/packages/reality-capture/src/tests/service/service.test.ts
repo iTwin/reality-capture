@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import sinon from "sinon";
 import { RealityCaptureService } from "../../service/service";
-import { AuthorizationClient } from "@itwin/core-common";
+import type { AuthorizationClient } from "@itwin/core-common";
 import { Response } from "../../service/response";
 import { JobCreate, JobType, Service } from "../../service/job";
 import { CostEstimationCreate } from "../../service/estimation";

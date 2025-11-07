@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
-import { AuthorizationClient } from "@itwin/core-common";
+import type { AuthorizationClient } from "@itwin/core-common";
 import { BucketResponse } from "./bucket";
 //import { DetectorsMinimalResponse, DetectorResponse } from "./detectors";
 import { CostEstimationCreate, CostEstimation } from "./estimation";
