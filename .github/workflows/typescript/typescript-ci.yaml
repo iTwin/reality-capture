@@ -3,11 +3,11 @@ name: Typescript SDK CI
 on:
   push:
     paths:
-      - "typescript_sdk/**"
+      - "typescript/**"
     branches: [ "feature/2.0.0", "feature/2.0.0-release", "feature/2.0.0-ts", "main" ]
   pull_request:
     paths:
-      - "typescript_sdk/**"
+      - "typescript/**"
     branches: [ "feature/2.0.0", "feature/2.0.0-release", "feature/2.0.0-ts", "main" ]
   workflow_dispatch:
 

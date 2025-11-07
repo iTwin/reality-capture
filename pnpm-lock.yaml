@@ -12,7 +12,7 @@ importers:
         specifier: ^2.55.1
         version: 2.55.1(typescript@5.6.3)
 
-  typescript_sdk/examples:
+  typescript/examples:
     dependencies:
       '@itwin/reality-capture':
         specifier: workspace:*
@@ -40,7 +40,7 @@ importers:
         specifier: ^5.2.2
         version: 5.9.3
 
-  typescript_sdk/packages/reality-capture:
+  typescript/packages/reality-capture:
     dependencies:
       '@azure/storage-blob':
         specifier: ^12.15.0
@@ -101,7 +101,7 @@ importers:
         specifier: ^5.2.2
         version: 5.9.3
 
-  typescript_sdk/packages/reality-data-client:
+  typescript/packages/reality-data-client:
     dependencies:
       axios:
         specifier: ^1.8.2
