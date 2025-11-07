@@ -7,8 +7,6 @@ import { Response } from "./response";
 import { JobCreate, Job, Progress, Messages, Service, getAppropriateService } from "./job";
 import { DetailedErrorResponse, DetailedError } from "./error";
 
-var pjson = require('./package.json');
-
 export class RealityCaptureService {
     private _authorizationClient: AuthorizationClient;
     private _axios: AxiosInstance;
@@ -37,7 +35,7 @@ export class RealityCaptureService {
     private async _getHeader(version: "v1" | "v2") {
         return {
             Authorization: await this._authorizationClient.getAccessToken(),
-            "User-Agent": "Reality Capture TypeScript SDK/" + pjson.version + this._additionalUserAgent,
+            "User-Agent": "Reality Capture TypeScript SDK/" + this._additionalUserAgent,
             "Content-type": "application/json",
             Accept: `application/vnd.bentley.itwin-platform.${version}+json`,
         };

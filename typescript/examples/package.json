@@ -6,9 +6,9 @@
   "scripts": {
     "build": "tsc 1>&2",
     "clean": "rimraf lib",
-    "start-modeling-example": "node ./lib/examples/src/example_modeling.js",
-    "start-upload-reality-data-example": "node ./lib/examples/src/example_upload_reality_data.js",
-    "start-upload-bucket-data-example": "node ./lib/examples/src/example_upload_bucket_data.js"
+    "start-modeling-example": "node ./lib/example_modeling.js",
+    "start-upload-reality-data-example": "node ./lib/example_upload_reality_data.js",
+    "start-upload-bucket-data-example": "node ./lib/example_upload_bucket_data.js"
   },
   "author": {
     "name": "Bentley Systems, Inc.",

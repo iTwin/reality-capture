@@ -2,13 +2,32 @@
   "name": "@itwin/reality-capture",
   "version": "0.1.0",
   "description": "This package contains a SDK for Reality Modeling, Reality Analysis and Reality Conversion iTwin APIs as well as Reality Management API utils. It provides classes, functions and examples to upload local data to Reality Management, run jobs and download the results.",
-  "main": "lib/cjs/index.js",
-  "module": "lib/esm/index.js",
-  "types": "lib/cjs/index.d.ts",
+  "main": "lib/cjs/index.node.js",
+  "module": "lib/esm/index.web.js",
+  "types": "lib/cjs/index.node.d.ts",
+  "exports": {
+    ".": {
+      "browser": {
+        "import": "./lib/esm/index.web.js",
+        "types": "./lib/esm/index.web.d.ts",
+        "default": "./lib/esm/index.web.js"
+      },
+      "node": {
+        "import": "./lib/cjs/index.node.js",
+        "types": "./lib/cjs/index.node.d.ts",
+        "default": "./lib/cjs/index.node.js"
+      },
+      "default": {
+        "import": "./lib/cjs/index.node.js",
+        "types": "./lib/cjs/index.node.d.ts",
+        "default": "./lib/cjs/index.node.js"
+      }
+    }
+  },
   "scripts": {
     "build": "npm run -s build:cjs && npm run -s build:esm",
-    "build:cjs": "tsc 1>&2 --outDir lib/cjs",
-    "build:esm": "tsc 1>&2 --module ES2020 --outDir lib/esm",
+    "build:cjs": "tsc 1>&2 -p tsconfig.node.json",
+    "build:esm": "tsc 1>&2 -p tsconfig.web.json",
     "clean": "rimraf lib",
     "lint": "eslint ./src --ext .ts ",
     "lint-fix": "eslint ./src --fix --ext .ts",
@@ -37,7 +56,7 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^4.0.0",
+    "@itwin/build-tools": "^5.0.0",
     "@types/chai": "^5.0.0",
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.8.0",
@@ -64,7 +83,7 @@
     "sourceMap": false,
     "instrument": true,
     "include": ["lib/cjs/**/*.js"],
-    "exclude": ["lib/cjs/index.js", "lib/cjs/tests/**/*.js", "lib/cjs/service/data_handler.js"],
+    "exclude": ["lib/cjs/index.node.js", "lib/cjs/index.web.js", "lib/cjs/tests/**/*.js", "lib/cjs/service/data_handler.js"],
     "extension": [".js"],
     "reporter": ["text", "html"]
   },

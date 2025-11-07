@@ -1,11 +1,12 @@
 {
   "extends": "./node_modules/@itwin/build-tools/tsconfig-base.json",
   "compilerOptions": {
-    "moduleResolution": "node",
     "esModuleInterop": true,
-    "sourceMap": true,
-    "inlineSources": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "types": ["mocha", "node"],
+    "outDir": "lib/cjs",
+    "resolveJsonModule": true,
     "rootDir": "src"
   },
   "include": [
