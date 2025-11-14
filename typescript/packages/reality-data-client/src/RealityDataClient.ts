@@ -361,6 +361,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
 
   /**
   * Retrieves the list of iTwins associated to the specified realityData.
+  * @deprecated in 1.3.2 , will be removed in future major version to enforce 1:1 mapping between iTwin and reality data.
   * @param accessToken The client request context.
   * @param realityDataId realityData identifier
   * @returns an array of iTwin identifiers that are associated to the realityData.
@@ -516,6 +517,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
 
   /**
    * Associates a RealityData to an iTwin
+   * @deprecated in 1.3.2 , use moveRealityData method instead.
    * @param accessToken The client request context.
    * @param iTwinId id of iTwin to associate the realityData to.
    * @param realityDataId id of the RealityData.
@@ -546,6 +548,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
 
   /**
   * Dissociates a RealityData from an iTwin
+  * @deprecated in 1.3.2 , use moveRealityData method instead.
   * @param accessToken The client request context.
   * @param iTwinId id of iTwin to dissociate the realityData from.
   * @param realityDataId id of the RealityData.
