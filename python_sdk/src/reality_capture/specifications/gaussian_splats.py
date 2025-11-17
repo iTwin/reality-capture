@@ -31,13 +31,7 @@ class GSFormat(Enum):
     PLY = "PLY"
 
 
-class GSImageQuality(Enum):
-    MEDIUM = "Medium"
-    STANDARD = "Standard"
-    HIGH = "High"
-
-
-class GSSplatsDensity(Enum):
+class GSQuality(Enum):
     MEDIUM = "Medium"
     STANDARD = "Standard"
     HIGH = "High"
@@ -46,14 +40,10 @@ class GSSplatsDensity(Enum):
 class GaussianSplatsOptions(BaseModel):
     export_format: Optional[GSFormat] = Field(default=None, description="Format of the exported Gaussian Splats",
                                               alias="exportFormat")
-    reference_image_quality: Optional[GSImageQuality] = Field(default=None,
-                                                              description="Image quality to use to "
+    reference_quality: Optional[GSQuality] = Field(default=None,
+                                                              description="Quality to use to "
                                                                           "generate the Splats Reference",
-                                                              alias="referenceImageQuality")
-    reference_splats_density: Optional[GSSplatsDensity] = Field(default=None,
-                                                               description="Splats density to use to "
-                                                                           "generate the Splats Reference",
-                                                               alias="referenceSplatsDensity")
+                                                              alias="referenceQuality")
     reference_tile_size: Optional[float] = Field(default=None, description="Tile size for the Splats Reference",
                                                  alias="referenceTileSize")
 
