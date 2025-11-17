@@ -23,8 +23,16 @@ export enum GSFormat {
   PLY = "PLY"
 }
 
+export enum GSQuality {
+  MEDIUM = "Medium",
+  STANDARD = "Standard",
+  HIGH = "High"
+}
+
 export const GaussianSplatsOptionsSchema = z.object({
-    format: z.nativeEnum(GSFormat).optional().describe("Format of the Gaussian Splats")
+    export_format: z.nativeEnum(GSFormat).optional().describe("Format of the Gaussian Splats"),
+    reference_quality: z.nativeEnum(GSQuality).optional().describe("Quality to use to generate the Splats Reference"),
+    reference_tile_size: z.number().optional().describe("Tile size for the Splats Reference")
 });
 export type GaussianSplatsOptions = z.infer<typeof GaussianSplatsOptionsSchema>;
 
