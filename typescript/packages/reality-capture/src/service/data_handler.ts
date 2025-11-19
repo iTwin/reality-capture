@@ -63,7 +63,7 @@ class _DataHandler {
             const chunks: Buffer[] = [];
             for await (const chunk of downloadResponse.readableStreamBody!) {
                 loaded += chunk.length;
-                chunks.push(chunk as Buffer<ArrayBufferLike>);
+                chunks.push(chunk as Buffer);
                 if (progressHook) {
                     downloadedValues[blobName] = loaded;
                     const percent =

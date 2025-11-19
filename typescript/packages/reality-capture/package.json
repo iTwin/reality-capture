@@ -31,7 +31,7 @@
     "clean": "rimraf lib",
     "lint": "eslint ./src --ext .ts ",
     "lint-fix": "eslint ./src --fix --ext .ts",
-    "test:unit": "mocha ./lib/cjs/**/*.test.js --slow 0",
+    "test:unit": "mocha --require ts-node/register ./src/tests/**/*.test.ts --slow 0",
     "coverage": "nyc npm run test:unit"
   },
   "keywords": [
@@ -67,6 +67,7 @@
     "nyc": "^17.0.0",
     "rimraf": "^4.4.1",
     "sinon": "^21.0.0",
+    "ts-node": "10.9.2",
     "typescript": "^5.2.2"
   },
   "repository": {
@@ -82,13 +83,9 @@
     "per-file": true,
     "sourceMap": false,
     "instrument": true,
-    "include": ["lib/cjs/**/*.js"],
-    "exclude": ["lib/cjs/index.node.js", "lib/cjs/index.web.js", "lib/cjs/tests/**/*.js", "lib/cjs/service/data_handler.js"],
-    "extension": [".js"],
+    "include": ["src/**/*.ts"],
+    "exclude": ["src/index.node.ts", "src/index.web.ts", "src/tests/**/*.ts", "src/service/data_handler.ts"],
+    "extension": [".ts"],
     "reporter": ["text", "html"]
-  },
-  "files": [
-    "src/service/",
-    "src/specifications/"
-  ]
+  }
 }
