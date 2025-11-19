@@ -1,6 +1,6 @@
 # reality-capture-examples
 
-reality-capture-examples contains many examples you can un locally to show how to :
+reality-capture-examples contains many examples you can run locally to show how to :
  * Upload local data in an iTwin, and how to download data from an iTwin
  * Configure and submit a Modeling Reconstruction job
 
