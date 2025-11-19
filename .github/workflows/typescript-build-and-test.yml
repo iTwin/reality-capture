@@ -39,15 +39,15 @@ jobs:
 
       - name: Build
         working-directory: ./
-        run: npm run build
+        run: pnpm build
 
       - name: EsLint
         working-directory: ./
-        run: npm run lint
+        run: pnpm lint
 
       - name: Run unit tests and coverage
         working-directory: ./
-        run: npm run coverage
+        run: pnpm coverage
 
       - name: Run SDK Integration Tests
         working-directory: ./
@@ -62,4 +62,4 @@ jobs:
           IMJS_TEST_REGULAR_USER_PASSWORD: ${{ secrets.IMJS_TEST_REGULAR_USER_PASSWORD }}
           IMJS_TEST_MANAGER_USER_NAME: ${{ vars.IMJS_TEST_MANAGER_USER_NAME }}
           IMJS_TEST_MANAGER_USER_PASSWORD: ${{ secrets.IMJS_TEST_MANAGER_USER_PASSWORD }}
-        run: npm run integration-tests
+        run: pnpm integration-tests

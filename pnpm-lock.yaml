@@ -48,9 +48,6 @@ importers:
       '@itwin/core-bentley':
         specifier: 5.0.0
         version: 5.0.0
-      '@itwin/core-common':
-        specifier: 5.0.0
-        version: 5.0.0(@itwin/core-bentley@5.0.0)(@itwin/core-geometry@5.0.0)
       '@itwin/reality-data-client':
         specifier: workspace:*
         version: link:../reality-data-client
@@ -67,6 +64,9 @@ importers:
       '@itwin/build-tools':
         specifier: ^5.0.0
         version: 5.3.1(@types/node@20.19.24)
+      '@itwin/core-common':
+        specifier: 5.0.0
+        version: 5.0.0(@itwin/core-bentley@5.0.0)(@itwin/core-geometry@5.0.0)
       '@types/chai':
         specifier: ^5.0.0
         version: 5.2.3
@@ -677,7 +677,6 @@ packages:
 
   /@itwin/core-bentley@5.0.0:
     resolution: {integrity: sha512-9XJyk8q1NdsRBwuYPGo4U9ARKXVbyXSRHcU20PgHU8wU89omrDkXdQhTRJnWmGZk2a3R+OJY9DQnfM4/Wajnzw==}
-    dev: false
 
   /@itwin/core-bentley@5.3.1:
     resolution: {integrity: sha512-QJhSQqiK1VM87xHJYWCo4+DsfnZKeE1uyBtlMDp+ULCTLWiPVkp1Z0ARlmNv39FzkyklXVzlRY4KsPiLCAKPsw==}
@@ -704,7 +703,7 @@ packages:
       '@itwin/core-geometry': 5.0.0
       flatbuffers: 1.12.0
       js-base64: 3.7.8
-    dev: false
+    dev: true
 
   /@itwin/core-common@5.3.1(@itwin/core-bentley@5.3.1)(@itwin/core-geometry@5.3.1):
     resolution: {integrity: sha512-kbyAX6KAUYcoWuSHD+W1b8Qdk4soSl0OexXnmvX2+GXz5e38J+4X2YRqO4l12h+xc5SpyHHyhoTbTgzb6XQQlg==}
@@ -723,7 +722,7 @@ packages:
     dependencies:
       '@itwin/core-bentley': 5.0.0
       flatbuffers: 1.12.0
-    dev: false
+    dev: true
 
   /@itwin/core-geometry@5.3.1:
     resolution: {integrity: sha512-P/xth2x3KjRHPi+19nb/fhbrV1M7zo0bbI8/pBjbHgFdTezbuP4k8DngbBn9QXRUuBYtBwV/3Q7t6gXUH36sRQ==}
@@ -3419,6 +3418,7 @@ packages:
 
   /flatbuffers@1.12.0:
     resolution: {integrity: sha512-c7CZADjRcl6j0PlvFy0ZqXQ67qSEZfrVPynmnL+2zPc+NtMvrF8Y0QceMo7QqnSPc7+uWjUIAbvCQ5WIKlMVdQ==}
+    dev: true
 
   /flatted@3.3.3:
     resolution: {integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==}
@@ -4367,6 +4367,7 @@ packages:
 
   /js-base64@3.7.8:
     resolution: {integrity: sha512-hNngCeKxIUQiEUN3GPJOkz4wF/YvdUdbNL9hsBcMQTkKzboD7T/q3OYOuuPZLUE6dBxSGpwhk5mwuDud7JVAow==}
+    dev: true
 
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
