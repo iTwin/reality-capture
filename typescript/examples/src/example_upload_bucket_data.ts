@@ -40,7 +40,7 @@ async function runUploadExample() {
         console.log("Upload ROI in ", iTwinId, " bucket");
         const response = await bucketDataHandler.uploadData(iTwinId, roiPath, "RealityCaptureExample/ROI");
         if(response.isError()) {
-            console.log("Failed to upload reality data : " + response.error!.error.message);
+            console.log("Failed to upload bucket data : " + response.error!.error.message);
             return;
         }
         console.log("Successfully uploaded ROI in iTwin bucket")
@@ -48,7 +48,7 @@ async function runUploadExample() {
         console.log("Downloading ROI in ", outputPath);
         const responseDownload = await bucketDataHandler.downloadData(iTwinId, outputPath, "RealityCaptureExample/ROI");
         if(responseDownload.isError()) {
-            console.log("Failed to download reality data : " + responseDownload.error!.error.message);
+            console.log("Failed to download bucket data : " + responseDownload.error!.error.message);
             return;
         }
         console.log("Successfully downloaded ROI from iTwin bucket");
