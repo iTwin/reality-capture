@@ -1,4 +1,0 @@
-# Placeholder to run action on feature branches
-name: Publish Typescript Reality Capture SDK
-
-on: workflow_dispatch

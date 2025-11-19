@@ -1,4 +1,0 @@
-# Placeholder to run action on feature branchesname: Publish packages to NPM
-name: Publish packages to NPM
-
-on: workflow_dispatch

@@ -1,4 +1,0 @@
-# Placeholder to run action on feature branches
-name: Publish Python SDK Release
-
-on: workflow_dispatch

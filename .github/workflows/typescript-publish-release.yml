@@ -1,0 +1,35 @@
+name: Publish packages to NPM
+
+on: workflow_dispatch
+
+jobs:
+  build_and_test_sdk:
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x, 24.x]
+        os: [windows-latest, ubuntu-latest, macos-latest]
+      fail-fast: false
+
+    uses: ./.github/workflows/steps/typescript-build-and-test.yml
+    with:
+      node-version: ${{ matrix.node-version }}
+      os: ${{ matrix.os }}
+    
+  publish_release:
+    needs: build_and_test_sdk
+    strategy:
+      matrix:
+        node-version: [22.x]
+        os: [windows-latest]
+      fail-fast: false
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Publish packages
+        run: |
+          git config --local user.email imodeljs-admin@users.noreply.github.com
+          git config --local user.name imodeljs-admin 
+          pnpm publish-packages --new --branch ${{ github.ref_name }} --message "Version bump [skip actions]"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
