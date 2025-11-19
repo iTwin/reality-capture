@@ -14,7 +14,7 @@ To build and run the source code locally you will need a few things:
 
 ### Build
 
-To build the reality-capture locally, open a new terminal in the current loation and run the following commands : 
+To build the reality-capture locally, open a new terminal in the current location and run the following commands : 
 
 - Install dependencies
 
