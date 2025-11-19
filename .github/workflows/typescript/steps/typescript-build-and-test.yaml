@@ -1,4 +1,4 @@
-name: Build and test Pytho SDK
+name: Build and test Typescript SDK
 
 on:
   workflow_call:
@@ -28,10 +28,10 @@ jobs:
         with:
           version: 8
 
-      - name: Setup Node.js ${{ inputs.python-version.node-version }}
+      - name: Setup Node.js ${{ inputs.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ inputs.python-version.node-version }}
+          node-version: ${{ inputs.node-version }}
 
       - name: Install dependencies
         working-directory: ./

@@ -62,7 +62,7 @@ async function runUploadExample() {
         console.log("Downloading images in ", outputPath);
         const responseDownload = await realityDataHandler.downloadData(createdRealityData.id, outputPath, "", iTwinId);
         if(responseDownload.isError()) {
-            console.log("Failed to download reality data : " + response.error!.error.message);
+            console.log("Failed to download reality data : " + responseDownload.error!.error.message);
             return;
         }
         console.log("Successfully downloaded images");

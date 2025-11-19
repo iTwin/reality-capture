@@ -48,7 +48,7 @@ async function runUploadExample() {
         console.log("Downloading ROI in ", outputPath);
         const responseDownload = await bucketDataHandler.downloadData(iTwinId, outputPath, "RealityCaptureExample/ROI");
         if(responseDownload.isError()) {
-            console.log("Failed to download reality data : " + response.error!.error.message);
+            console.log("Failed to download reality data : " + responseDownload.error!.error.message);
             return;
         }
         console.log("Successfully downloaded ROI from iTwin bucket");
