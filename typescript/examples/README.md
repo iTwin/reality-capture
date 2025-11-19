@@ -15,7 +15,7 @@ To build and run the source code locally you will need a few things:
 
 ### Build
 
-Then, open a new terminal in the current loation and run the following commands : 
+Then, open a new terminal in the current location and run the following commands : 
 
 - Install dependencies
 
