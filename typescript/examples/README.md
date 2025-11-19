@@ -31,7 +31,7 @@ Then, open a new terminal in the current location and run the following commands
 
 ## Create an iTwin
 
-Input ou output data are stored in iTwins. If you don't have one yet, go [here](https://connect.bentley.com/SelectProject/Index) and select "Register new project".
+Input or output data are stored in iTwins. If you don't have one yet, go [here](https://connect.bentley.com/SelectProject/Index) and select "Register new project".
 
 ## Create a client application
 
