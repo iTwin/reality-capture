@@ -19,7 +19,7 @@ jobs:
         os: [windows-latest, ubuntu-latest, macos-latest]
       fail-fast: false
 
-    uses: ./.github/workflows/steps/typescript-build-and-test.yml
+    uses: ./.github/workflows/typescript-build-and-test.yml
     with:
       node-version: ${{ matrix.node-version }}
       os: ${{ matrix.os }}
