@@ -49,6 +49,12 @@ jobs:
         working-directory: ./
         run: pnpm coverage
 
+      - name: Debug variables
+        run: |
+          echo "${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}"
+          echo "${{ secrets.INTEGRATION_TESTS_CLIENT_ID }}"
+          echo "${{ secrets.IMJS_TEST_REGULAR_USER_NAME }}"
+
       - name: Run SDK Integration Tests
         working-directory: ./
         env:
