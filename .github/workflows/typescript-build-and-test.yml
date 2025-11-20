@@ -49,11 +49,13 @@ jobs:
         working-directory: ./
         run: pnpm coverage
 
-      - name: Debug variables
+      - name: Check secrets
         run: |
-          echo "${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}"
-          echo "${{ secrets.INTEGRATION_TESTS_CLIENT_ID }}"
-          echo "${{ secrets.IMJS_TEST_REGULAR_USER_NAME }}"
+          if [ -z "${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}" ]; then
+            echo "INTEGRATION_TESTS_PROJECT_ID is NOT set"
+          else
+            echo "INTEGRATION_TESTS_PROJECT_ID is available"
+          fi
 
       - name: Run SDK Integration Tests
         working-directory: ./
