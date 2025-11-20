@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Added moveRealityData method and new reality data properties : Crs, Attribution & termsOfUse",
-  "packageName": "@itwin/reality-data-client",
-  "email": "Marc-Andre.Cote@bentley.com",
-  "dependentChangeType": "patch"
-}
