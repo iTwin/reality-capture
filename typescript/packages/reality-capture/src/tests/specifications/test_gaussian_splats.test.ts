@@ -7,7 +7,8 @@ import {
     GaussianSplatsSpecificationsSchema,
     GaussianSplatsSpecificationsCreateSchema,
     GSFormat,
-    GaussianSplatsOutputsCreate
+    GaussianSplatsOutputsCreate,
+    GSQuality
 } from "../../specifications/gaussian_splats";
 
 describe("GaussianSplatsInputsSchema", () => {
@@ -46,17 +47,27 @@ describe("GaussianSplatsOutputsSchema", () => {
 
 describe("GaussianSplatsOptionsSchema", () => {
     it("should validate with valid format", () => {
-        const data = { format: GSFormat.SPZ };
+        const data = { exportFormat: GSFormat.SPZ };
         expect(() => GaussianSplatsOptionsSchema.parse(data)).to.not.throw();
     });
 
-    it("should validate with no format", () => {
+    it("should validate with valid quality", () => {
+        const data = { referenceQuality: GSQuality.HIGH };
+        expect(() => GaussianSplatsOptionsSchema.parse(data)).to.not.throw();
+    });
+
+    it("should validate with no format and no quality", () => {
         const data = {};
         expect(() => GaussianSplatsOptionsSchema.parse(data)).to.not.throw();
     });
 
     it("should throw with invalid format", () => {
-        const data = { format: "INVALID" };
+        const data = { exportFormat: "INVALID" };
+        expect(() => GaussianSplatsOptionsSchema.parse(data)).to.throw(z.ZodError);
+    });
+
+    it("should throw with invalid quality", () => {
+        const data = { referenceQuality: "INVALID" };
         expect(() => GaussianSplatsOptionsSchema.parse(data)).to.throw(z.ZodError);
     });
 });

@@ -30,9 +30,9 @@ export enum GSQuality {
 }
 
 export const GaussianSplatsOptionsSchema = z.object({
-    export_format: z.nativeEnum(GSFormat).optional().describe("Format of the Gaussian Splats"),
-    reference_quality: z.nativeEnum(GSQuality).optional().describe("Quality to use to generate the Splats Reference"),
-    reference_tile_size: z.number().optional().describe("Tile size for the Splats Reference")
+    exportFormat: z.nativeEnum(GSFormat).optional().describe("Format of the Gaussian Splats"),
+    referenceQuality: z.nativeEnum(GSQuality).optional().describe("Quality to use to generate the Splats Reference"),
+    referenceTileSize: z.number().optional().describe("Tile size for the Splats Reference")
 });
 export type GaussianSplatsOptions = z.infer<typeof GaussianSplatsOptionsSchema>;
 
