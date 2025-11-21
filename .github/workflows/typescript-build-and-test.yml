@@ -49,6 +49,14 @@ jobs:
         working-directory: ./
         run: pnpm coverage
 
+      - name: Check secrets
+        run: |
+          if [ -z "${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}" ]; then
+            echo "INTEGRATION_TESTS_PROJECT_ID is NOT set"
+          else
+            echo "INTEGRATION_TESTS_PROJECT_ID is available"
+          fi
+
       - name: Run SDK Integration Tests
         working-directory: ./
         env:
