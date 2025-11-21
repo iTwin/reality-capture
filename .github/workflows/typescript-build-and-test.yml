@@ -9,6 +9,27 @@ on:
       os:
         required: true
         type: string
+    secrets:
+      INTEGRATION_TESTS_PROJECT_ID:
+        required: true
+      INTEGRATION_TESTS_CLIENT_ID:
+        required: true
+      INTEGRATION_TESTS_SECRET:
+        required: true
+      IMJS_OIDC_BROWSER_TEST_CLIENT_ID:
+        required: true
+      IMJS_OIDC_BROWSER_TEST_REDIRECT_URI:
+        required: true
+      IMJS_OIDC_BROWSER_TEST_SCOPES:
+        required: true
+      IMJS_TEST_REGULAR_USER_NAME:
+        required: true
+      IMJS_TEST_REGULAR_USER_PASSWORD:
+        required: true
+      IMJS_TEST_MANAGER_USER_NAME:
+        required: true
+      IMJS_TEST_MANAGER_USER_PASSWORD:
+        required: true
 
 jobs:
   build_and_test_sdk:
@@ -48,14 +69,6 @@ jobs:
       - name: Run unit tests and coverage
         working-directory: ./
         run: pnpm coverage
-
-      - name: Check secrets
-        run: |
-          if [ -z "${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}" ]; then
-            echo "INTEGRATION_TESTS_PROJECT_ID is NOT set"
-          else
-            echo "INTEGRATION_TESTS_PROJECT_ID is available"
-          fi
 
       - name: Run SDK Integration Tests
         working-directory: ./
