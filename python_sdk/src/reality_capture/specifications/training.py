@@ -74,12 +74,12 @@ class TrainingS3DOptions(BaseModel):
     )
     spacing: Optional[float] = Field(
         None,
-        description="Spacing of the pointcloud seen by the detector",
+        description="Spacing of the pointcloud seen by the detector (in meters).",
         gt=0
     )
-    model: Optional[Segmentation3DTrainingModel] = Field(None, description="Training Model architecture to use")
-    features: Optional[list[PointCloudFeature]] = Field(None, description="Features to use for the training")
-    version_name: Optional[str] = Field(None, description="Version name for the newly trained detector")
+    model: Optional[Segmentation3DTrainingModel] = Field(None, description="Training Model architecture to use.")
+    features: Optional[list[PointCloudFeature]] = Field(None, description="Features to use for the training.")
+    version_name: Optional[str] = Field(None, description="Version name for the newly trained detector.")
 
 
 class TrainingS3DOutputsCreate(Enum):
