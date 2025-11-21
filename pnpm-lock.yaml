@@ -45,9 +45,6 @@ importers:
       '@azure/storage-blob':
         specifier: ^12.15.0
         version: 12.29.1
-      '@itwin/core-bentley':
-        specifier: 5.0.0
-        version: 5.0.0
       '@itwin/reality-data-client':
         specifier: workspace:*
         version: link:../reality-data-client
@@ -64,9 +61,12 @@ importers:
       '@itwin/build-tools':
         specifier: ^5.0.0
         version: 5.3.1(@types/node@20.19.24)
+      '@itwin/core-bentley':
+        specifier: ^5.0.0
+        version: 5.3.1
       '@itwin/core-common':
-        specifier: 5.0.0
-        version: 5.0.0(@itwin/core-bentley@5.0.0)(@itwin/core-geometry@5.0.0)
+        specifier: ^5.0.0
+        version: 5.3.1(@itwin/core-bentley@5.3.1)(@itwin/core-geometry@5.3.1)
       '@types/chai':
         specifier: ^5.0.0
         version: 5.2.3
@@ -98,7 +98,7 @@ importers:
         specifier: ^21.0.0
         version: 21.0.0
       ts-node:
-        specifier: 10.9.2
+        specifier: ^10.9.2
         version: 10.9.2(@types/node@20.19.24)(typescript@5.6.3)
       typescript:
         specifier: ^5.2.2
@@ -675,9 +675,6 @@ packages:
       - supports-color
     dev: true
 
-  /@itwin/core-bentley@5.0.0:
-    resolution: {integrity: sha512-9XJyk8q1NdsRBwuYPGo4U9ARKXVbyXSRHcU20PgHU8wU89omrDkXdQhTRJnWmGZk2a3R+OJY9DQnfM4/Wajnzw==}
-
   /@itwin/core-bentley@5.3.1:
     resolution: {integrity: sha512-QJhSQqiK1VM87xHJYWCo4+DsfnZKeE1uyBtlMDp+ULCTLWiPVkp1Z0ARlmNv39FzkyklXVzlRY4KsPiLCAKPsw==}
 
@@ -693,18 +690,6 @@ packages:
       js-base64: 3.7.8
     dev: true
 
-  /@itwin/core-common@5.0.0(@itwin/core-bentley@5.0.0)(@itwin/core-geometry@5.0.0):
-    resolution: {integrity: sha512-psOW6dxLzuy1XkPVRNQOFG8XRtT9yEBl0edtLwjfW0wcuWLfNveGRPDPi4t4QsfQbUiUifeLVAQ+U+xmwSuJJQ==}
-    peerDependencies:
-      '@itwin/core-bentley': 5.0.0
-      '@itwin/core-geometry': 5.0.0
-    dependencies:
-      '@itwin/core-bentley': 5.0.0
-      '@itwin/core-geometry': 5.0.0
-      flatbuffers: 1.12.0
-      js-base64: 3.7.8
-    dev: true
-
   /@itwin/core-common@5.3.1(@itwin/core-bentley@5.3.1)(@itwin/core-geometry@5.3.1):
     resolution: {integrity: sha512-kbyAX6KAUYcoWuSHD+W1b8Qdk4soSl0OexXnmvX2+GXz5e38J+4X2YRqO4l12h+xc5SpyHHyhoTbTgzb6XQQlg==}
     peerDependencies:
@@ -715,13 +700,6 @@ packages:
       '@itwin/core-geometry': 5.3.1
       flatbuffers: 1.12.0
       js-base64: 3.7.8
-    dev: true
-
-  /@itwin/core-geometry@5.0.0:
-    resolution: {integrity: sha512-qIvWH4xa1zqSNny0lgkt1PlBHdQniKf8+NO2ex7rt5KAmDaTsQ8Nw+Pz/xmzOJkP7MTSbEIkDd79gITj4vNuwA==}
-    dependencies:
-      '@itwin/core-bentley': 5.0.0
-      flatbuffers: 1.12.0
     dev: true
 
   /@itwin/core-geometry@5.3.1:
