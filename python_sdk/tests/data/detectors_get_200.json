@@ -1,0 +1,18 @@
+{
+    "detectors": [{
+            "name": "@bentley/cracks-ortho",
+            "displayName": "Cracks Ortho",
+            "description": "Detects cracks in concrete infrastructure to enable defect inspection workflows.",
+            "type": "OrthophotoSegmentationDetector",
+            "documentationUrl": "https://www.bentley.com",
+            "latestVersion": "1.0"
+        },
+        {
+            "name": "traffic-signs",
+            "displayName": "Traffic signs detector",
+            "description": "Detects all traffic signs within a scene.",
+            "type": "PhotoObjectDetector",
+            "documentationUrl": "https://www.example.com"
+        }
+    ]
+}

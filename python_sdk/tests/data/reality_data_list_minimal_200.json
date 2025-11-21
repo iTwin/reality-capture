@@ -1,0 +1,12 @@
+{
+    "realityData": [{
+        "id": "95d8dccd-d89e-4287-bb5f-3219acbc71ae",
+        "displayName": "Name of reality data",
+        "type": "OPC"
+    }],
+    "_links": {
+        "next": {
+            "href": "https://api.bentley.com/reality-management/reality-data?iTwinId=0d4e1f7b-1a4c-0000-0000-1643d04e3954&continuationToken=eyJ0b3AiOjEwMCwic2tpcCI6MTAwfQ"
+        }
+    }
+}

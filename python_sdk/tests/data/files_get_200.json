@@ -1,0 +1,15 @@
+{
+    "files": [{
+            "id": "File_1",
+            "name": "file 1",
+            "type": "Preset",
+            "description": "preset file"
+        },
+        {
+            "id": "File_2",
+            "name": "file 2",
+            "type": "Preset",
+            "deprecated": true
+        }
+    ]
+}

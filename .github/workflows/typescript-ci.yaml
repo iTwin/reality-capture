@@ -19,7 +19,18 @@ jobs:
         os: [windows-latest, ubuntu-latest, macos-latest]
       fail-fast: false
 
-    uses: ./.github/workflows/steps/typescript-build-and-test.yml
+    uses: ./.github/workflows/typescript-build-and-test.yml
     with:
       node-version: ${{ matrix.node-version }}
       os: ${{ matrix.os }}
+    secrets:
+      INTEGRATION_TESTS_PROJECT_ID: ${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}
+      INTEGRATION_TESTS_CLIENT_ID: ${{ secrets.INTEGRATION_TESTS_CLIENT_ID }}
+      INTEGRATION_TESTS_SECRET: ${{ secrets.INTEGRATION_TESTS_SECRET }}
+      IMJS_OIDC_BROWSER_TEST_CLIENT_ID: ${{ secrets.IMJS_OIDC_BROWSER_TEST_CLIENT_ID }}
+      IMJS_OIDC_BROWSER_TEST_REDIRECT_URI: ${{ secrets.IMJS_OIDC_BROWSER_TEST_REDIRECT_URI }}
+      IMJS_OIDC_BROWSER_TEST_SCOPES: ${{ secrets.IMJS_OIDC_BROWSER_TEST_SCOPES }}
+      IMJS_TEST_REGULAR_USER_NAME: ${{ secrets.IMJS_TEST_REGULAR_USER_NAME }}
+      IMJS_TEST_REGULAR_USER_PASSWORD: ${{ secrets.IMJS_TEST_REGULAR_USER_PASSWORD }}
+      IMJS_TEST_MANAGER_USER_NAME: ${{ secrets.IMJS_TEST_MANAGER_USER_NAME }}
+      IMJS_TEST_MANAGER_USER_PASSWORD: ${{ secrets.IMJS_TEST_MANAGER_USER_PASSWORD }}

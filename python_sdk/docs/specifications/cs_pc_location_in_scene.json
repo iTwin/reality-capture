@@ -1,0 +1,29 @@
+{
+  "version": "6.0",
+  "SpatialReferenceSystems": {
+    "0": {
+      "Definition": "EPSG:4978"
+    }
+  },
+  "PointCloudCollection": {
+    "SRSId": 0,
+    "PointClouds": {
+      "0": {
+        "Name": "pump",
+        "Path": "0:pump.las",
+        "Type": "Static",
+        "Location": "Center",
+        "Center": {
+          "x": 12.5,
+          "y": 20.3,
+          "z": 5.4
+        }
+      }
+    }
+  },
+  "References": {
+    "0": {
+      "Path": "rds:1a043cb1-c8d8-4af9-9b3a-10ba8cd47800"
+    }
+  }
+}

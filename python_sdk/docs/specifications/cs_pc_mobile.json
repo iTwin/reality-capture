@@ -1,0 +1,41 @@
+{
+  "version": "6.0",
+  "SpatialReferenceSystems": {
+    "0": {
+      "Definition": "EPSG:4978"
+    }
+  },
+  "PointCloudCollection": {
+    "SRSId": 0,
+    "PointClouds": {
+      "0": {
+        "Name": "mobile",
+        "Path": "0:mobile.las",
+        "Type": "Mobile",
+        "SRSId": 0,
+        "TrajectoryId": 0
+      }
+    }
+  },
+  "TrajectoryCollection": {
+    "SRSId": 0,
+    "Trajectories": {
+      "0": {
+        "Paths": ["0:traj_1.csv", "0:traj_2.csv"],
+        "Delimiters": [" ", ","],
+        "CombineConsecutiveDelimiters": true,
+        "DecimalSeparator": ".",
+        "LinesToIgnore": 1,
+        "TimeColumnId": 0,
+        "XColumnId": 1,
+        "YColumnId": 2,
+        "ZColumnId": 3
+      }
+    }
+  },
+  "References": {
+    "0": {
+      "Path": "rds:1a043cb1-c8d8-4af9-9b3a-10ba8cd47800"
+    }
+  }
+}

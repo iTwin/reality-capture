@@ -1,17 +1,12 @@
-* @dbiguenet @lr06 @RenaudKeriven @arianacarnielli @mcote01 @MarcBedard8
+* @dbiguenet @cnovel @lr06 @RenaudKeriven @arianacarnielli @mcote01 @MarcBedard8
  
-.github/workflows/publish.yml @aruniverse @itwin/oss-admins
+.github/workflows/typescript/typescript-publish-release.yml @aruniverse @itwin/oss-admins
  
-python/ @arianacarnielli @dbiguenet @RenaudKeriven @cnovel
-python_sdk/ @arianacarnielli @dbiguenet @RenaudKeriven @cnovel
- 
-typescript/packages/reality-capture-analysis/ @dbiguenet @RenaudKeriven @arianacarnielli
-typescript/packages/reality-capture-common/ @dbiguenet @RenaudKeriven @arianacarnielli
-typescript/packages/reality-capture-conversion/ @dbiguenet @RenaudKeriven @arianacarnielli
-typescript/packages/reality-capture-modeling/ @dbiguenet @RenaudKeriven @arianacarnielli
+python_sdk/ @dbiguenet @cnovel @RenaudKeriven
  
 # https://developer.bentley.com/apis/reality-management/overview/
 typescript/packages/reality-data-client/ @mcote01 @MarcBedard8 @matmarchand @BeChaRem
 
-# not an actual reality capture api
-typescript/packages/reality-data-transfer/ @dbiguenet @RenaudKeriven @arianacarnielli
+typescript/packages/reality-capture/ @dbiguenet @cnovel @RenaudKeriven
+
+typescript/examples/ @dbiguenet @cnovel @RenaudKeriven
