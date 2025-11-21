@@ -17,11 +17,7 @@ jobs:
     steps:
       - name: Check secrets
         run: |
-          if [ -z "${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}" ]; then
-            echo "INTEGRATION_TESTS_PROJECT_ID is NOT set"
-          else
-            echo "INTEGRATION_TESTS_PROJECT_ID is available"
-          fi
+          echo "${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}"
   build_and_test_sdk:
     strategy:
       matrix:
