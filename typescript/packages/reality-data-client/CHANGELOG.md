@@ -1,8 +1,16 @@
 # Change Log - @itwin/reality-data-client
 
-<!-- This log was last generated on Tue, 08 Jul 2025 14:00:52 GMT and should not be manually modified. -->
+<!-- This log was last generated on Thu, 20 Nov 2025 15:18:53 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 1.4.0
+
+Thu, 20 Nov 2025 15:18:53 GMT
+
+### Minor changes
+
+- Added moveRealityData method and new reality data properties : Crs, Attribution & termsOfUse (Marc-Andre.Cote@bentley.com)
 
 ## 1.3.1
 
