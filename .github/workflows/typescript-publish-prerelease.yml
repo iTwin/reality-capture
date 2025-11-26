@@ -1,4 +1,4 @@
-name: Publish Typescript Reality Capture SDK
+name: Publish Typescript Reality Capture SDK Pre-release
 
 on: workflow_dispatch
 

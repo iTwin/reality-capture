@@ -1,4 +1,4 @@
-name: Publish packages to NPM
+name: Publish Typescript Reality Capture SDK Release
 
 on: workflow_dispatch
 
