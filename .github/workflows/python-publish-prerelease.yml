@@ -26,9 +26,6 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
-    outputs:
-      wheel_abs_path: ${{ steps.find_wheel.outputs.wheel_abs_path }}
-
     steps:
     - uses: actions/checkout@v3
 
@@ -103,7 +100,7 @@ jobs:
         draft: true
         prerelease: true
         files: | 
-          ${{ needs.build_and_test_sdk.outputs.wheel_abs_path }}
+          ${{ steps.find_wheel.outputs.wheel_abs_path }}
           ${{ steps.reformat_doc.outputs.doc_zip_path }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
