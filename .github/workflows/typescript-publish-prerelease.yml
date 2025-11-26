@@ -66,12 +66,12 @@ jobs:
         run: pnpm build
 
       - name: Publish packages as tgz
-        working-directory: ./typescript/reality-capture
+        working-directory: ./
         run: pnpm bundle
 
       - name: Get version
         id: get_version
-        working-directory: ./typescript/reality-capture
+        working-directory: ./typescript/packages/reality-capture
         shell: pwsh
         run: | 
           $packageVersion=(Get-Content .\package.json | ConvertFrom-Json).version
