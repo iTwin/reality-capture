@@ -1,6 +1,6 @@
 {
   "name": "@itwin/reality-capture",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "This package contains a SDK for Reality Modeling, Reality Analysis and Reality Conversion iTwin APIs as well as Reality Management API utils. It provides classes, functions and examples to upload local data to Reality Management, run jobs and download the results.",
   "main": "lib/cjs/index.node.js",
   "module": "lib/esm/index.web.js",
