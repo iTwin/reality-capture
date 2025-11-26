@@ -86,6 +86,6 @@ jobs:
           draft: true
           prerelease: true
           files: | 
-            ./typescript/packages/reality-capture/lib/reality-capture-${{ steps.get_version.outputs.version }}.tgz
+            ./typescript/packages/reality-capture/lib/itwin-reality-capture-${{ steps.get_version.outputs.version }}.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
