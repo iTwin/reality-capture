@@ -35,7 +35,7 @@ In case you need a package for your own project, run the following command :
 - Build the package
 
   ```sh
-  npm pack --pack-destination ./lib
+  pnpm bundle
   ```
 
 You will find the .tgz file in /lib folder

@@ -32,7 +32,8 @@
     "lint": "eslint ./src --ext .ts ",
     "lint-fix": "eslint ./src --fix --ext .ts",
     "test:unit": "mocha --require ts-node/register ./src/tests/**/*.test.ts --slow 0",
-    "coverage": "nyc npm run test:unit"
+    "coverage": "nyc npm run test:unit",
+    "pack": "npm pack --pack-destination ./lib"
   },
   "keywords": [
     "typescript",

@@ -1,6 +1,6 @@
 import { DetailedErrorResponse } from "./error";
 
-export class Response<T> extends Array<any> {
+export class Response<T> {
     status_code: number;
     error?: DetailedErrorResponse | null;
     value?: T | null;
@@ -12,11 +12,9 @@ export class Response<T> extends Array<any> {
      * @param value Optional object if the request succeeded.
      */
     constructor(status_code: number, error?: DetailedErrorResponse | null, value?: T | null) {
-        super();
         this.status_code = status_code;
         this.error = error ?? null;
         this.value = value ?? null;
-        this.push(status_code, error ?? null, value ?? null);
     }
 
     /**
