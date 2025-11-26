@@ -29,7 +29,7 @@ jobs:
     steps:
     - name: Reformat doc
       id: reformat_doc
-      working-directory: ./python_sdk/docs
+      working-directory: python_sdk/docs
       run: |
         New-Item -Path "./User Guide/en" -ItemType Directory -Force
         Copy-Item -Path ./_build/html -Destination "./User Guide/en/html5" -Recurse
@@ -40,18 +40,12 @@ jobs:
       shell: pwsh
 
     - name: Get version from pyproject
-      working-directory: ./python_sdk
+      working-directory: python_sdk
       id: extract_version
       run: |
-        if ($env:RUNNER_OS -eq "Windows") {
-          ./venv/Scripts/Activate.ps1
-          python -m pip install toml
-          $version = ./venv/Scripts/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
-        } else {
-          . ./venv/bin/Activate.ps1
-          python -m pip install toml
-          $version = ./venv/bin/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
-        }
+        ./venv/Scripts/Activate.ps1
+        python -m pip install toml
+        $version = ./venv/Scripts/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
         Write-Host "Version : $version"
         "version=$version" >> $env:GITHUB_OUTPUT
       shell: pwsh
