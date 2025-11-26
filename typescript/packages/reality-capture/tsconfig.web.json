@@ -1,0 +1,28 @@
+{
+  "extends": "./node_modules/@itwin/build-tools/tsconfig-base.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "module": "ES2020",
+    "moduleResolution": "bundler",
+    "outDir": "lib/esm",
+    "resolveJsonModule": true,
+    "rootDir": "src"
+  },
+  "include": [
+    "src/specifications/**/*.ts",
+    "src/tests/**/*.ts",
+    "src/service/bucket.ts",
+    "src/service/error.ts",
+    "src/service/estimation.ts",
+    "src/service/files.ts",
+    "src/service/job.ts",
+    "src/service/response.ts",
+    "src/service/service.ts",
+    "src/index.web.ts"
+  ],
+  "exclude": [
+    "lib",
+    "src/service/data_handler.ts",
+    "src/tests/**/*"
+  ]
+}

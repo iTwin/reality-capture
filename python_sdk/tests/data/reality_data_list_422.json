@@ -1,0 +1,11 @@
+{
+    "error": {
+        "code": "InvalidRealityDataRequest",
+        "message": "Invalid RealityData request.",
+        "details": [{
+            "code": "InvalidParameter",
+            "message": "The field Top must be between 1 and 1000.",
+            "target": "$Top"
+        }]
+    }
+}

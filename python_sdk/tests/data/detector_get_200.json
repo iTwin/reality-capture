@@ -1,0 +1,54 @@
+{
+    "detector": {
+        "name": "mydetector",
+        "displayName": "Cracks detector",
+        "description": "Detects all the cracks within a scene.",
+        "type": "PhotoObjectDetector",
+        "documentationUrl": "https://www.bentley.com",
+        "versions": [{
+                "creationDate": "2025-03-18T14:11:15.5325351Z",
+                "version": "2.0",
+                "status": "AwaitingData",
+                "creatorId": "e8be5445-c76a-41c6-9bfe-6a3d71953624",
+                "capabilities": {
+                    "labels": [
+                        "crack"
+                    ],
+                    "exports": [
+                        "Lines"
+                    ]
+                }
+            },
+            {
+                "creationDate": "2025-03-12T13:32:06.8787916Z",
+                "version": "1.1",
+                "status": "Ready",
+                "creatorId": "e8be5445-c76a-41c6-9bfe-6a3d71953624",
+                "downloadUrl": "https://cicsdetectorsprodeussa01.blob.core.windows.net/bd9bf908-9b82-4fcd-9ab4-ff15286d2ada/cracks-detector-1.1.zip?sv=2024-08-04&se=2025-04-23T11%3A26%3A11Z&sr=b&sp=r&sig=***REMOVED***",
+                "capabilities": {
+                    "labels": [
+                        "crack"
+                    ],
+                    "exports": [
+                        "Lines"
+                    ]
+                }
+            },
+            {
+                "creationDate": "2025-03-11T15:11:24.2712971Z",
+                "version": "1.0",
+                "status": "Ready",
+                "creatorId": "d2b5b8e7-8248-49a3-94ac-b097a7a67b6d",
+                "downloadUrl": "https://cicsdetectorsprodeussa01.blob.core.windows.net/bd9bf908-9b82-4fcd-9ab4-ff15286d2ada/cracks-detector-1.0.zip?sv=2024-08-04&se=2025-04-23T11%3A26%3A11Z&sr=b&sp=r&sig=***REMOVED***",
+                "capabilities": {
+                    "labels": [
+                        "Crack Object"
+                    ],
+                    "exports": [
+                        "Lines"
+                    ]
+                }
+            }
+        ]
+    }
+}
