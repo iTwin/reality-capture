@@ -28,9 +28,35 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      - name: Checkout github repo (+ download lfs dependencies)
+        uses: actions/checkout@v3
+        with:
+          lfs: true
+
+      - name: Checkout LFS objects
+        run: git lfs checkout
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install dependencies
+        working-directory: ./
+        run: pnpm install --frozen-lockfile=true
+
+      - name: Build
+        working-directory: ./
+        run: pnpm build
+
       - name: Publish packages as tgz
         working-directory: ./typescript/reality-capture
-        run: npm pack --pack-destination ./lib
+        run: pnpm bundle
 
       - name: Get version
         id: get_version
@@ -44,7 +70,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         id: create_pre_release
         with:
-          tag_name: ${{ steps.get_version.outputs.version }}
+          tag_name: ${{ steps.get_version.outputs.version }}-ts
           name: "Typescript Version ${{ steps.get_version.outputs.version }}"
           draft: true
           prerelease: true
