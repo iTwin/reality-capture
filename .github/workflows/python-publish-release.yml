@@ -96,7 +96,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       id: create_release
       with:
-        tag_name: ${{ steps.extract_version.outputs.version }}
+        tag_name: ${{ steps.extract_version.outputs.version }}-py
         name: "Python Version ${{ steps.extract_version.outputs.version }}"
         draft: true
         files: | 
