@@ -22,7 +22,7 @@ importers:
         version: link:../packages/reality-data-client
       '@itwin/service-authorization':
         specifier: ^2.0.0
-        version: 2.1.0(@itwin/core-bentley@5.3.1)
+        version: 2.1.0(@itwin/core-bentley@5.3.3)
       dotenv:
         specifier: ^16.0.3
         version: 16.6.1
@@ -677,6 +677,11 @@ packages:
 
   /@itwin/core-bentley@5.3.1:
     resolution: {integrity: sha512-QJhSQqiK1VM87xHJYWCo4+DsfnZKeE1uyBtlMDp+ULCTLWiPVkp1Z0ARlmNv39FzkyklXVzlRY4KsPiLCAKPsw==}
+    dev: true
+
+  /@itwin/core-bentley@5.3.3:
+    resolution: {integrity: sha512-oc5+gNL5B7h4P2Qbmk8EmyE21lmlppIImYUCm4+k8800JnppT31vLqtB5uPhzhwhaiM+7bsojz3aJi38l/y1kA==}
+    dev: false
 
   /@itwin/core-common@4.11.6(@itwin/core-bentley@5.3.1)(@itwin/core-geometry@5.3.1):
     resolution: {integrity: sha512-YrZDUhFB629HKh942wpRUTQV5fZQEVDk0M5Bmx2AvtSbzUQCwVvgKsJq20ltmYbYePZyQexFkQ1JcHZISSPKfQ==}
@@ -771,12 +776,12 @@ packages:
       - supports-color
     dev: true
 
-  /@itwin/service-authorization@2.1.0(@itwin/core-bentley@5.3.1):
+  /@itwin/service-authorization@2.1.0(@itwin/core-bentley@5.3.3):
     resolution: {integrity: sha512-UHaXyJOgpzAjo2aBX1PDcr2t7GnDx76TQjYAamUPhG58w0BFhQ69LFt9c6mdXi2BZBdYHNc6xIijGGjoHDGz1A==}
     peerDependencies:
       '@itwin/core-bentley': ^5.0.0
     dependencies:
-      '@itwin/core-bentley': 5.3.1
+      '@itwin/core-bentley': 5.3.3
       got: 12.6.1
       jsonwebtoken: 9.0.2
       jwks-rsa: 3.2.0
