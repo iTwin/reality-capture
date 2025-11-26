@@ -83,7 +83,7 @@ jobs:
           name: "Typescript Version ${{ steps.get_version.outputs.version }}"
           draft: true
           files: | 
-            ./typescript/reality-capture/lib/reality-capture-${{ steps.get_version.outputs.version }}.tgz
+            ./typescript/packages/reality-capture/lib/reality-capture-${{ steps.get_version.outputs.version }}.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
