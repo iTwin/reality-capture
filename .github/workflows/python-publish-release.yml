@@ -29,12 +29,12 @@ jobs:
     steps:
     - name: Reformat doc
       id: reformat_doc
-      working-directory: python_sdk/docs
+      working-directory: python_sdk\docs
       run: |
-        New-Item -Path "./User Guide/en" -ItemType Directory -Force
-        Copy-Item -Path ./_build/html -Destination "./User Guide/en/html5" -Recurse
-        Compress-Archive -Path "./User Guide" -DestinationPath ./Documentation.zip
-        $zip_abs_path = (Get-Item "./Documentation.zip").FullName
+        New-Item -Path ".\User Guide\en" -ItemType Directory -Force
+        Copy-Item -Path .\_build\html -Destination ".\User Guide\en\html5" -Recurse
+        Compress-Archive -Path ".\User Guide" -DestinationPath .\Documentation.zip
+        $zip_abs_path = (Get-Item ".\Documentation.zip").FullName
         Write-Host "Zip path : $zip_abs_path"
         "doc_zip_path=$zip_abs_path" >> $env:GITHUB_OUTPUT
       shell: pwsh
@@ -43,9 +43,9 @@ jobs:
       working-directory: python_sdk
       id: extract_version
       run: |
-        ./venv/Scripts/Activate.ps1
+        .\venv\Scripts\Activate.ps1
         python -m pip install toml
-        $version = ./venv/Scripts/python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
+        $version = .\venv\Scripts\python -c "import toml; print(toml.load(open('pyproject.toml'))['project']['version'])"
         Write-Host "Version : $version"
         "version=$version" >> $env:GITHUB_OUTPUT
       shell: pwsh
