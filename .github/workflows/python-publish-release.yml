@@ -27,9 +27,16 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ inputs.python-version }}
+
     - name: Reformat doc
       id: reformat_doc
-      working-directory: python_sdk\docs
+      working-directory: python_sdk/docs
       run: |
         New-Item -Path ".\User Guide\en" -ItemType Directory -Force
         Copy-Item -Path .\_build\html -Destination ".\User Guide\en\html5" -Recurse
