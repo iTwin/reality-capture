@@ -35,17 +35,13 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
-        python-version: ${{ inputs.python-version }}
+        python-version: '3.10'
 
     - name: Create venv and build wheel
       working-directory: ./python_sdk
       run: |
         python -m venv venv
-        if ($env:RUNNER_OS -eq "Windows") {
-          ./venv/Scripts/Activate.ps1
-        } else {
-          . ./venv/bin/Activate.ps1
-        }
+        ./venv/Scripts/Activate.ps1
         python -m pip install build
         python -m build
       shell: pwsh
@@ -63,11 +59,7 @@ jobs:
     - name: Install documentation dependencies
       working-directory: ./python_sdk
       run: |
-        if ($env:RUNNER_OS -eq "Windows") {
-          ./venv/Scripts/Activate.ps1
-        } else {
-          . ./venv/bin/Activate.ps1
-        }
+        ./venv/Scripts/Activate.ps1
         python -m pip install ${{ steps.find_wheel.outputs.wheel_abs_path }}
         python -m pip install .[dev]
       shell: pwsh
@@ -75,13 +67,8 @@ jobs:
     - name: Build documentation
       working-directory: ./python_sdk/docs
       run: |
-        if ($env:RUNNER_OS -eq "Windows") {
-          ../venv/Scripts/Activate.ps1
-          & ./make.bat html
-        } else {
-          . ../venv/bin/Activate.ps1
-          make html
-        }
+        ../venv/Scripts/Activate.ps1
+        & ./make.bat html
       shell: pwsh
     
     - name: Reformat doc
