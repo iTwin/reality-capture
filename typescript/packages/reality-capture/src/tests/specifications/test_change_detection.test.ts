@@ -7,7 +7,7 @@ import {
   ChangeDetectionOptionsSchema,
   ChangeDetectionSpecificationsCreateSchema,
   ChangeDetectionSpecificationsSchema,
-} from "../../src/specifications/change_detection";
+} from "../../specifications/change_detection";
 
 describe("change_detection specifications", () => {
   describe("ChangeDetectionInputsSchema", () => {

@@ -7,7 +7,7 @@ import {
   EvalO3DSpecificationsCreateSchema,
   EvalO3DSpecificationsSchema,
   EvalO3DOutputsCreate,
-} from "../../src/specifications/eval_o3d";
+} from "../../specifications/eval_o3d";
 
 describe("EvalO3DInputsSchema", () => {
   it("should validate correct input objects", () => {

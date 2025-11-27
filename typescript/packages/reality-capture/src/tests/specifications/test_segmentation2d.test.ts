@@ -7,7 +7,7 @@ import {
   Segmentation2DOptionsSchema,
   Segmentation2DSpecificationsCreateSchema,
   Segmentation2DSpecificationsSchema,
-} from "../../src/specifications/segmentation2d";
+} from "../../specifications/segmentation2d";
 
 describe("Segmentation2DInputsSchema", () => {
   it("should validate required and optional fields", () => {

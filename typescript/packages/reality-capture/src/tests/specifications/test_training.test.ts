@@ -13,7 +13,7 @@ import {
   TrainingS3DOutputsCreate,
   TrainingS3DSpecificationsCreateSchema,
   TrainingS3DSpecificationsSchema,
-} from "../../src/specifications/training";
+} from "../../specifications/training";
 
 describe("TrainingO2DInputsSchema", () => {
   it("should validate a correct input", () => {

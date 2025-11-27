@@ -11,7 +11,7 @@ import {
   DetectorResponseSchema,
   DetectorMinimalSchema,
   DetectorsMinimalResponseSchema,
-} from "../../src/service/detectors";
+} from "../../service/detectors";
 
 describe("CapabilitiesSchema", () => {
   it("should validate correct capabilities", () => {

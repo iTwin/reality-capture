@@ -7,7 +7,7 @@ import {
   EvalSOrthoOutputsSchema,
   EvalSOrthoSpecificationsCreateSchema,
   EvalSOrthoSpecificationsSchema,
-} from "../../src/specifications/eval_sortho";
+} from "../../specifications/eval_sortho";
 
 describe("EvalSOrthoInputsSchema", () => {
   it("should validate correct inputs", () => {

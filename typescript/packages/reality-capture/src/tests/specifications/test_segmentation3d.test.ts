@@ -7,7 +7,7 @@ import {
   Segmentation3DOptionsSchema,
   Segmentation3DSpecificationsCreateSchema,
   Segmentation3DSpecificationsSchema,
-} from "../../src/specifications/segmentation3d";
+} from "../../specifications/segmentation3d";
 
 describe("Segmentation3DInputsSchema", () => {
   it("should validate minimal valid input", () => {

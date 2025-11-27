@@ -7,7 +7,7 @@ import {
   Objects2DSpecificationsCreateSchema,
   Objects2DSpecificationsSchema,
   Objects2DOutputsCreate,
-} from "../../src/specifications/objects2d";
+} from "../../specifications/objects2d";
 
 describe("Objects2DInputsSchema", () => {
   it("should validate required and optional fields", () => {

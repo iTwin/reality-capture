@@ -6,7 +6,7 @@ import {
   SegmentationOrthophotoOutputsCreate,
   SegmentationOrthophotoSpecificationsCreateSchema,
   SegmentationOrthophotoSpecificationsSchema,
-} from "../../src/specifications/segmentation_orthophoto";
+} from "../../specifications/segmentation_orthophoto";
 
 describe("SegmentationOrthophotoInputsSchema", () => {
   it("should validate correct inputs", () => {

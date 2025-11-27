@@ -10,7 +10,7 @@ import {
   EvalS2DOutputs,
   EvalS2DSpecificationsCreate,
   EvalS2DSpecifications
-} from "../../src/specifications/eval_s2d";
+} from "../../specifications/eval_s2d";
 
 describe("EvalS2DInputsSchema", () => {
   it("should validate correct inputs", () => {

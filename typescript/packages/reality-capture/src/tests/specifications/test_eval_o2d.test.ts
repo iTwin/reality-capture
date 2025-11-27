@@ -7,7 +7,7 @@ import {
   EvalO2DSpecificationsCreateSchema,
   EvalO2DSpecificationsSchema,
   EvalO2DOutputsCreate,
-} from "../../src/specifications/eval_o2d";
+} from "../../specifications/eval_o2d";
 
 describe("EvalO2DInputsSchema", () => {
   it("should validate correct inputs", () => {

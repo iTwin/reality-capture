@@ -7,7 +7,7 @@ import {
   EvalS3DOutputsCreate,
   EvalS3DSpecificationsCreateSchema,
   EvalS3DSpecificationsSchema,
-} from "../../src/specifications/eval_s3d";
+} from "../../specifications/eval_s3d";
 
 describe("EvalS3DInputsSchema", () => {
   it("should validate correct inputs", () => {
