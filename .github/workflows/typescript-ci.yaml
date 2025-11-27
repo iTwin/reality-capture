@@ -4,11 +4,11 @@ on:
   push:
     paths:
       - "typescript/**"
-    branches: [ "feature/2.0.0", "feature/2.0.0-release", "feature/2.0.0-ts", "main", "tmp/CN/2rc_MergeMain" ]
+    branches: [ "main" ]
   pull_request:
     paths:
       - "typescript/**"
-    branches: [ "feature/2.0.0", "feature/2.0.0-release", "feature/2.0.0-ts", "main", "tmp/CN/2rc_MergeMain" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
