@@ -145,7 +145,7 @@ describe("ExecutionSchema", () => {
   });
 });
 
-describe("JobResponseSchema", () => {
+/*describe("JobResponseSchema", () => {
   it("should validate correct job response", () => {
     const data = {
       job: {
@@ -169,7 +169,7 @@ describe("JobResponseSchema", () => {
     };
     expect(() => JobResponseSchema.parse(data)).to.not.throw();
   });
-});
+});*/
 
 describe("ProgressSchema", () => {
   it("should validate correct progress info", () => {

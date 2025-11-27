@@ -72,7 +72,7 @@ export function getAppropriateService(jt: JobType): Service {
     JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D, JobType.EVAL_S3D,
     JobType.EVAL_SORTHO, JobType.TRAINING_O2D, JobType.TRAINING_S3D
   ].includes(jt)) {
-    return Service.MODELING;
+    return Service.ANALYSIS;
   }
   // return Service.CONVERSION;
   throw new Error("Other job types are not implemented yet");
@@ -238,11 +238,6 @@ export const JobSchema = z.discriminatedUnion("type", [
     ...CommonFields,
     type: z.literal("TraningS3D"),
     specifications: TrainingS3DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("Tiling"),
-    specifications: TilingSpecificationsSchema,
   }),
   z.object({
     ...CommonFields,
