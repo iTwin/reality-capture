@@ -16,41 +16,41 @@ import { TouchUpImportSpecificationsCreateSchema, TouchUpExportSpecificationsCre
 import { WaterConstraintsSpecificationsCreateSchema, WaterConstraintsCostSchema } from "../specifications/water_constraints";
 
 export const CostEstimationCreateSchema = z.object({
-    type: z.nativeEnum(JobType).describe("Type of job."),
-    specifications: z.union([
-        CalibrationSpecificationsCreateSchema,
-        ChangeDetectionSpecificationsCreateSchema,
-        ConstraintsSpecificationsCreateSchema,
-        FillImagePropertiesSpecificationsCreateSchema,
-        ImportPCSpecificationsCreateSchema,
-        Objects2DSpecificationsCreateSchema,
-        ProductionSpecificationsCreateSchema,
-        ReconstructionSpecificationsCreateSchema,
-        Segmentation2DSpecificationsCreateSchema,
-        Segmentation3DSpecificationsCreateSchema,
-        SegmentationOrthophotoSpecificationsCreateSchema,
-        TilingSpecificationsCreateSchema,
-        TouchUpExportSpecificationsCreateSchema,
-        TouchUpImportSpecificationsCreateSchema,
-        WaterConstraintsSpecificationsCreateSchema,
-    ]).describe("Specifications aligned with the job type."),
-    costParameters: z.union([
-        CalibrationCostSchema,
-        ConstraintsCostSchema,
-        FillImagePropertiesCostSchema,
-        ImportPCCostSchema,
-        ProductionCostSchema,
-        ReconstructionCostSchema,
-        TilingCostSchema,
-        TouchUpExportCostSchema,
-        TouchUpImportCostSchema,
-        WaterConstraintsCostSchema,
-    ]).describe("Cost format aligned with the job type.")
+  type: z.nativeEnum(JobType).describe("Type of job."),
+  specifications: z.union([
+    CalibrationSpecificationsCreateSchema,
+    ChangeDetectionSpecificationsCreateSchema,
+    ConstraintsSpecificationsCreateSchema,
+    FillImagePropertiesSpecificationsCreateSchema,
+    ImportPCSpecificationsCreateSchema,
+    Objects2DSpecificationsCreateSchema,
+    ProductionSpecificationsCreateSchema,
+    ReconstructionSpecificationsCreateSchema,
+    Segmentation2DSpecificationsCreateSchema,
+    Segmentation3DSpecificationsCreateSchema,
+    SegmentationOrthophotoSpecificationsCreateSchema,
+    TilingSpecificationsCreateSchema,
+    TouchUpExportSpecificationsCreateSchema,
+    TouchUpImportSpecificationsCreateSchema,
+    WaterConstraintsSpecificationsCreateSchema,
+  ]).describe("Specifications aligned with the job type."),
+  costParameters: z.union([
+    CalibrationCostSchema,
+    ConstraintsCostSchema,
+    FillImagePropertiesCostSchema,
+    ImportPCCostSchema,
+    ProductionCostSchema,
+    ReconstructionCostSchema,
+    TilingCostSchema,
+    TouchUpExportCostSchema,
+    TouchUpImportCostSchema,
+    WaterConstraintsCostSchema,
+  ]).describe("Cost format aligned with the job type.")
 });
 export type CostEstimationCreate = z.infer<typeof CostEstimationCreateSchema>;
 
 export function getAppropriateServiceForEstimation(estimation: CostEstimationCreate): Service {
-    return getAppropriateService(estimation.type);
+  return getAppropriateService(estimation.type);
 }
 
 export enum UnitType {
@@ -60,8 +60,8 @@ export enum UnitType {
 }
 
 export const CostEstimationSchema = CostEstimationCreateSchema.extend({
-    id: z.string().describe("Estimation id"),
-    estimatedUnits: z.number().describe("Estimated number of processing units that the job will cost."),
-    unitType: z.nativeEnum(UnitType).describe("Type of unit for the job."),
+  id: z.string().describe("Estimation id"),
+  estimatedUnits: z.number().describe("Estimated number of processing units that the job will cost."),
+  unitType: z.nativeEnum(UnitType).describe("Type of unit for the job."),
 });
 export type CostEstimation = z.infer<typeof CostEstimationSchema>;

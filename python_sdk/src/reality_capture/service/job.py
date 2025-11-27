@@ -108,9 +108,8 @@ class JobCreate(BaseModel):
                         ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
                         Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                         TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
-                        TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
-                        TrainingO2DSpecificationsCreate,
-                        TrainingS3DSpecificationsCreate] = (
+                        TouchUpImportSpecificationsCreate, TrainingO2DSpecificationsCreate, 
+                        TrainingS3DSpecificationsCreate, WaterConstraintsSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -155,8 +154,7 @@ class Job(BaseModel):
                         Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                         TilingSpecifications, TouchUpExportSpecifications,
                         TouchUpImportSpecifications, WaterConstraintsSpecifications,
-                        TrainingO2DSpecifications, TrainingS3DSpecifications,
-                        GaussianSplatsSpecifications] = (
+                        TrainingO2DSpecifications, TrainingS3DSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @model_validator(mode="after")
