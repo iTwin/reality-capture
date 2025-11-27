@@ -72,7 +72,7 @@ export function getAppropriateService(jt: JobType): Service {
     JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D, JobType.EVAL_S3D,
     JobType.EVAL_SORTHO, JobType.TRAINING_O2D, JobType.TRAINING_S3D
   ].includes(jt)) {
-    return Service.ANALYSIS;
+    return Service.MODELING;
   }
   // return Service.CONVERSION;
   throw new Error("Other job types are not implemented yet");
@@ -156,14 +156,44 @@ export const JobSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     ...CommonFields,
+    type: z.literal("EvalO2D"),
+    specifications: EvalO2DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("EvalO3D"),
+    specifications: EvalO3DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("EvalS2D"),
+    specifications: EvalS2DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("EvalS3D"),
+    specifications: EvalS3DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("EvalSOrtho"),
+    specifications: EvalSOrthoSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
     type: z.literal("FillImageProperties"),
     specifications: FillImagePropertiesSpecificationsSchema,
   }),
   z.object({
     ...CommonFields,
+    type: z.literal("GaussianSplats"),
+    specifications: GaussianSplatsSpecificationsSchema,
+  }),
+  /*z.object({
+    ...CommonFields,
     type: z.literal("ImportPointCloud"),
     specifications: ImportPCSpecificationsSchema,
-  }),
+  }),*/
   z.object({
     ...CommonFields,
     type: z.literal("Objects2D"),
@@ -201,6 +231,21 @@ export const JobSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     ...CommonFields,
+    type: z.literal("TraningO2D"),
+    specifications: TrainingO2DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("TraningS3D"),
+    specifications: TrainingS3DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("Tiling"),
+    specifications: TilingSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
     type: z.literal("TouchUpExport"),
     specifications: TouchUpExportSpecificationsSchema,
   }),
@@ -213,52 +258,7 @@ export const JobSchema = z.discriminatedUnion("type", [
     ...CommonFields,
     type: z.literal("WaterConstraints"),
     specifications: WaterConstraintsSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("TrainingO2D"),
-    specifications: TrainingO2DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("TrainingS3D"),
-    specifications: TrainingS3DSpecificationsSchema,
-  }),
-  /*z.object({
-    ...CommonFields,
-    type: z.literal("PointCloudConversion"),
-    specifications: PointCloudConversionSpecificationsSchema,
-  }),*/
-  z.object({
-    ...CommonFields,
-    type: z.literal("GaussianSplats"),
-    specifications: GaussianSplatsSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("EvalO2D"),
-    specifications: EvalO2DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("EvalO3D"),
-    specifications: EvalO3DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("EvalS2D"),
-    specifications: EvalS2DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("EvalS3D"),
-    specifications: EvalS3DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("EvalSOrtho"),
-    specifications: EvalSOrthoSpecificationsSchema,
-  }),
+  })
 ]);
 export type Job = z.infer<typeof JobSchema>;
 

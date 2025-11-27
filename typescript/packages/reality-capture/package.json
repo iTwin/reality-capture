@@ -88,9 +88,21 @@
     "per-file": true,
     "sourceMap": false,
     "instrument": true,
-    "include": ["src/**/*.ts"],
-    "exclude": ["src/index.node.ts", "src/index.web.ts", "src/tests/**/*.ts", "src/service/data_handler.ts"],
-    "extension": [".ts"],
-    "reporter": ["text", "html"]
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/index.node.ts",
+      "src/index.web.ts",
+      "src/tests/**/*.ts",
+      "src/service/data_handler.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "reporter": [
+      "text",
+      "html"
+    ]
   }
 }

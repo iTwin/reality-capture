@@ -210,35 +210,31 @@ describe("RealityCaptureService API calls tests", function () {
 
   // getDetectors tests
   it("getDetectors should call axios.get and return a Response<DetectorsMinimalResponse>", async () => {
+    origin / main
     axiosGetStub.resolves({
       status: 200,
       data: {
-        "detectors": [{
-          "name": "@bentley/cracks-ortho",
-          "displayName": "Cracks Ortho",
-          "description": "Detects cracks in concrete infrastructure to enable defect inspection workflows.",
-          "type": "OrthophotoSegmentationDetector",
-          "documentationUrl": "https://www.bentley.com",
-          "latestVersion": "1.0"
-        },
+        "bucket":
         {
-          "name": "traffic-signs",
-          "displayName": "Traffic signs detector",
-          "description": "Detects all traffic signs within a scene.",
-          "type": "PhotoObjectDetector",
-          "documentationUrl": "https://www.example.com"
+          "iTwinId": "uuidIT"
+        },
+        "_links":
+        {
+          "containerUrl":
+          {
+            "href": "https://realityprodneusa01.blob.core.windows.net/78e3a82d-076e-4d1d-b8ef-ab0625fbb856?sv=2020-08-04&se=2021-07-22T03%3A50%3A21Z&sr=c&sp=rl&sig=**removed**"
+          }
         }
-        ]
       }
     });
-    const result = await service.getDetectors();
+    const result = await service.getBucket(iTwinId);
     expect(axiosGetStub.calledOnce).to.be.true;
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.false;
-    expect(result.value!.detectors).to.have.lengthOf(2);
+    expect(result.value!.bucket.iTwinId).to.equal(iTwinId);
   });
 
-  it("getDetectors 401 error", async () => {
+  it("getBucket 401 error", async () => {
     axiosGetStub.rejects({
       response: {
         status: 401,
@@ -250,14 +246,14 @@ describe("RealityCaptureService API calls tests", function () {
         }
       }
     });
-    const result = await service.getDetectors();
+    const result = await service.getBucket(iTwinId);
     expect(axiosGetStub.calledOnce).to.be.true;
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.true;
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
-  it("getDetectors ill formed error", async () => {
+  it("getBucket ill formed error", async () => {
     axiosGetStub.rejects({
       response: {
         status: 400,
@@ -266,80 +262,45 @@ describe("RealityCaptureService API calls tests", function () {
         }
       }
     });
-    const result = await service.getDetectors();
+    const result = await service.getBucket(iTwinId);
     expect(axiosGetStub.calledOnce).to.be.true;
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.true;
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
-  // getDetector tests
-  it("getDetector should call axios.get and return a Response<DetectorResponse>", async () => {
+  // getServiceFiles tests
+  it("getServiceFiles should call axios.get and return a Response<Files>", async () => {
     axiosGetStub.resolves({
       status: 200,
       data: {
-        "detector": {
-          "name": "mydetector",
-          "displayName": "Cracks detector",
-          "description": "Detects all the cracks within a scene.",
-          "type": "PhotoObjectDetector",
-          "documentationUrl": "https://www.bentley.com",
-          "versions": [{
-            "creationDate": "2025-03-18T14:11:15.5325351Z",
-            "version": "2.0",
-            "status": "AwaitingData",
-            "creatorId": "e8be5445-c76a-41c6-9bfe-6a3d71953624",
-            "capabilities": {
-              "labels": [
-                "crack"
-              ],
-              "exports": [
-                "Lines"
-              ]
-            }
-          },
-          {
-            "creationDate": "2025-03-12T13:32:06.8787916Z",
-            "version": "1.1",
-            "status": "Ready",
-            "creatorId": "e8be5445-c76a-41c6-9bfe-6a3d71953624",
-            "downloadUrl": "https://cicsdetectorsprodeussa01.blob.core.windows.net/bd9bf908-9b82-4fcd-9ab4-ff15286d2ada/cracks-detector-1.1.zip?sv=2024-08-04&se=2025-04-23T11%3A26%3A11Z&sr=b&sp=r&sig=***REMOVED***",
-            "capabilities": {
-              "labels": [
-                "crack"
-              ],
-              "exports": [
-                "Lines"
-              ]
-            }
-          },
-          {
-            "creationDate": "2025-03-11T15:11:24.2712971Z",
-            "version": "1.0",
-            "status": "Ready",
-            "creatorId": "d2b5b8e7-8248-49a3-94ac-b097a7a67b6d",
-            "downloadUrl": "https://cicsdetectorsprodeussa01.blob.core.windows.net/bd9bf908-9b82-4fcd-9ab4-ff15286d2ada/cracks-detector-1.0.zip?sv=2024-08-04&se=2025-04-23T11%3A26%3A11Z&sr=b&sp=r&sig=***REMOVED***",
-            "capabilities": {
-              "labels": [
-                "Crack Object"
-              ],
-              "exports": [
-                "Lines"
-              ]
-            }
-          }
-          ]
+        "files": [{
+          "id": "File_1",
+          "name": "file 1",
+          "type": "Preset",
+          "description": "preset file"
+        },
+        {
+          "id": "File_2",
+          "name": "file 2",
+          "type": "Preset",
+          "deprecated": true
         }
+        ]
       }
     });
-    const result = await service.getDetector("mydetector");
+    const result = await service.getServiceFiles();
     expect(axiosGetStub.calledOnce).to.be.true;
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.false;
-    expect(result.value!.detector.name).to.equal("mydetector");
+    expect(result.value!.files).to.have.lengthOf(2);
+    expect(result.value!.files[0].deprecated).to.be.undefined;
+    expect(result.value!.files[0].description).to.equal("preset file");
+    expect(result.value!.files[1].description).to.be.undefined;
+    expect(result.value!.files[1].deprecated).to.be.true;
   });
 
-  it("getDetector 401 error", async () => {
+  it("getServiceFiles 401 error", async () => {
     axiosGetStub.rejects({
       response: {
         status: 401,
@@ -351,14 +312,14 @@ describe("RealityCaptureService API calls tests", function () {
         }
       }
     });
-    const result = await service.getDetector("mydetector");
+    const result = await service.getServiceFiles();
     expect(axiosGetStub.calledOnce).to.be.true;
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.true;
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
-  it("getDetector ill formed error", async () => {
+  it("getServiceFiles ill formed error", async () => {
     axiosGetStub.rejects({
       response: {
         status: 400,
@@ -367,7 +328,354 @@ describe("RealityCaptureService API calls tests", function () {
         }
       }
     });
-    const result = await service.getDetector("mydetector");
+    const result = await service.getServiceFiles();
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  // getDetectors tests
+  /*it("getDetectors should call axios.get and return a Response<DetectorsMinimalResponse>", async () => {
+  axiosGetStub.resolves({
+    status: 200,
+    data: {
+      "detectors": [{
+        "name": "@bentley/cracks-ortho",
+        "displayName": "Cracks Ortho",
+        "description": "Detects cracks in concrete infrastructure to enable defect inspection workflows.",
+        "type": "OrthophotoSegmentationDetector",
+        "documentationUrl": "https://www.bentley.com",
+        "latestVersion": "1.0"
+      },
+      {
+        "name": "traffic-signs",
+        "displayName": "Traffic signs detector",
+        "description": "Detects all traffic signs within a scene.",
+        "type": "PhotoObjectDetector",
+        "documentationUrl": "https://www.example.com"
+      }
+      ]
+    }
+  });
+  const result = await service.getDetectors();
+  expect(axiosGetStub.calledOnce).to.be.true;
+  expect(result).to.be.instanceOf(Response);
+  expect(result.isError()).to.be.false;
+  expect(result.value!.detectors).to.have.lengthOf(2);
+});
+
+it("getDetectors 401 error", async () => {
+  axiosGetStub.rejects({
+    response: {
+      status: 401,
+      data: {
+        error: {
+          code: "HeaderNotFound",
+          message: "Header Authorization was not found in the request. Access denied."
+        }
+      }
+    }
+  });
+  const result = await service.getDetectors();
+  expect(axiosGetStub.calledOnce).to.be.true;
+  expect(result).to.be.instanceOf(Response);
+  expect(result.isError()).to.be.true;
+  expect(result.error!.error.code).to.equal("HeaderNotFound");
+});
+
+it("getDetectors ill formed error", async () => {
+  axiosGetStub.rejects({
+    response: {
+      status: 400,
+      data: {
+        bad: "response"
+      }
+    }
+  });
+  const result = await service.getDetectors();
+  expect(axiosGetStub.calledOnce).to.be.true;
+  expect(result).to.be.instanceOf(Response);
+  expect(result.isError()).to.be.true;
+  expect(result.error!.error.code).to.equal("UnknownError");
+});
+
+// getDetector tests
+it("getDetector should call axios.get and return a Response<DetectorResponse>", async () => {
+  axiosGetStub.resolves({
+    status: 200,
+    data: {
+      "detector": {
+        "name": "mydetector",
+        "displayName": "Cracks detector",
+        "description": "Detects all the cracks within a scene.",
+        "type": "PhotoObjectDetector",
+        "documentationUrl": "https://www.bentley.com",
+        "versions": [{
+          "creationDate": "2025-03-18T14:11:15.5325351Z",
+          "version": "2.0",
+          "status": "AwaitingData",
+          "creatorId": "e8be5445-c76a-41c6-9bfe-6a3d71953624",
+          "capabilities": {
+            "labels": [
+              "crack"
+            ],
+            "exports": [
+              "Lines"
+            ]
+          }
+        },
+        {
+          "creationDate": "2025-03-12T13:32:06.8787916Z",
+          "version": "1.1",
+          "status": "Ready",
+          "creatorId": "e8be5445-c76a-41c6-9bfe-6a3d71953624",
+          "downloadUrl": "https://cicsdetectorsprodeussa01.blob.core.windows.net/bd9bf908-9b82-4fcd-9ab4-ff15286d2ada/cracks-detector-1.1.zip?sv=2024-08-04&se=2025-04-23T11%3A26%3A11Z&sr=b&sp=r&sig=***REMOVED***",
+          "capabilities": {
+            "labels": [
+              "crack"
+            ],
+            "exports": [
+              "Lines"
+            ]
+          }
+        },
+        {
+          "creationDate": "2025-03-11T15:11:24.2712971Z",
+          "version": "1.0",
+          "status": "Ready",
+          "creatorId": "d2b5b8e7-8248-49a3-94ac-b097a7a67b6d",
+          "downloadUrl": "https://cicsdetectorsprodeussa01.blob.core.windows.net/bd9bf908-9b82-4fcd-9ab4-ff15286d2ada/cracks-detector-1.0.zip?sv=2024-08-04&se=2025-04-23T11%3A26%3A11Z&sr=b&sp=r&sig=***REMOVED***",
+          "capabilities": {
+            "labels": [
+              "Crack Object"
+            ],
+            "exports": [
+              "Lines"
+            ]
+          }
+        }
+        ]
+      }
+    }
+  });
+  const result = await service.getDetector("mydetector");
+  expect(axiosGetStub.calledOnce).to.be.true;
+  expect(result).to.be.instanceOf(Response);
+  expect(result.isError()).to.be.false;
+  expect(result.value!.detector.name).to.equal("mydetector");
+});
+
+it("getDetector 401 error", async () => {
+  axiosGetStub.rejects({
+    response: {
+      status: 401,
+      data: {
+        error: {
+          code: "HeaderNotFound",
+          message: "Header Authorization was not found in the request. Access denied."
+        }
+      }
+    }
+  });
+  const result = await service.getDetector("mydetector");
+  expect(axiosGetStub.calledOnce).to.be.true;
+  expect(result).to.be.instanceOf(Response);
+  expect(result.isError()).to.be.true;
+  expect(result.error!.error.code).to.equal("HeaderNotFound");
+});
+
+it("getDetector ill formed error", async () => {
+  axiosGetStub.rejects({
+    response: {
+      status: 400,
+      data: {
+        bad: "response"
+      }
+    }
+  });
+  const result = await service.getDetector("mydetector");
+  expect(axiosGetStub.calledOnce).to.be.true;
+  expect(result).to.be.instanceOf(Response);
+  expect(result.isError()).to.be.true;
+  expect(result.error!.error.code).to.equal("UnknownError");
+});*/
+
+  //estimateCost tests
+  it("estimateCost should call axios.post and return a Response<CostEstimation>", async () => {
+    axiosPostStub.resolves({
+      status: 200,
+      data: {
+        "costEstimation": {
+          "id": "jobId",
+          "estimatedUnits": 8,
+          "unitType": "Modeling"
+        }
+      }
+    });
+    const costCreate: CostEstimationCreate = { type: JobType.CALIBRATION } as any;
+    const result = await service.estimateCost(costCreate);
+    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.false;
+    expect(result.value!.estimatedUnits).to.equal(8);
+  });
+
+  it("estimateCost 401 error", async () => {
+    axiosPostStub.rejects({
+      response: {
+        status: 401,
+        data: {
+          error: {
+            code: "HeaderNotFound",
+            message: "Header Authorization was not found in the request. Access denied."
+          }
+        }
+      }
+    });
+    const costCreate: CostEstimationCreate = { type: JobType.CALIBRATION } as any;
+    const result = await service.estimateCost(costCreate);
+    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("HeaderNotFound");
+  });
+
+  it("estimateCost ill formed error", async () => {
+    axiosPostStub.rejects({
+      response: {
+        status: 400,
+        data: {
+          bad: "response"
+        }
+      }
+    });
+    const costCreate: CostEstimationCreate = { type: JobType.CALIBRATION } as any;
+    const result = await service.estimateCost(costCreate);
+    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  // cancelJob tests
+  it("cancelJob should call axios.delete and return a Response<Job>", async () => {
+    axiosDeleteStub.resolves({
+      status: 200,
+      data: {
+        "job": {
+          "id": "jobId",
+          "state": "Terminating",
+          "userId": "911edf8b-59ad-404c-a743-aec05ca038e9",
+          "executionInfo": {
+            "startedDateTime": "2025-03-10T11:30:03Z",
+            "createdDateTime": "2025-03-10T11:30:00Z"
+          },
+          "specifications": {
+            "inputs": {
+              "scene": "sceneId"
+            },
+            "outputs": {
+              "modelingReference": {
+                "location": "modelingReferenceId"
+              }
+            }
+          },
+          "name": "jobName",
+          "type": "Reconstruction",
+          "iTwinId": "uuidIT"
+        }
+      }
+    });
+    const result = await service.cancelJob("jobId", Service.MODELING);
+    expect(axiosDeleteStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.false;
+    expect(result.value!.state).to.equal("Terminating");
+  });
+
+  it("cancelJob 401 error", async () => {
+    axiosDeleteStub.rejects({
+      response: {
+        status: 401,
+        data: {
+          error: {
+            code: "HeaderNotFound",
+            message: "Header Authorization was not found in the request. Access denied."
+          }
+        }
+      }
+    });
+    const result = await service.cancelJob("jobId", Service.MODELING);
+    expect(axiosDeleteStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("HeaderNotFound");
+  });
+
+  it("cancelJob ill formed error", async () => {
+    axiosDeleteStub.rejects({
+      response: {
+        status: 400,
+        data: {
+          bad: "response"
+        }
+      }
+    });
+    const result = await service.cancelJob("jobId", Service.MODELING);
+    expect(axiosDeleteStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  // getJobProgress tests
+  it("getJobProgress should call axios.get and return a Response<Progress>", async () => {
+    axiosGetStub.resolves({
+      status: 200,
+      data: {
+        "progress": {
+          "percentage": 5,
+          "state": "Active"
+        }
+      }
+    });
+    const result = await service.getJobProgress("jobId", Service.MODELING);
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.false;
+    expect(result.value!.percentage).to.equal(5);
+  });
+
+  it("getJobProgress 401 error", async () => {
+    axiosGetStub.rejects({
+      response: {
+        status: 401,
+        data: {
+          error: {
+            code: "HeaderNotFound",
+            message: "Header Authorization was not found in the request. Access denied."
+          }
+        }
+      }
+    });
+    const result = await service.getJobProgress("jobId", Service.MODELING);
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("HeaderNotFound");
+  });
+
+  it("cancelJob ill formed error", async () => {
+    axiosGetStub.rejects({
+      response: {
+        status: 400,
+        data: {
+          bad: "response"
+        }
+      }
+    });
+    const result = await service.getJobProgress("jobId", Service.MODELING);
     expect(axiosGetStub.calledOnce).to.be.true;
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.true;
@@ -738,6 +1046,7 @@ describe("RealityCaptureService API calls tests", function () {
     expect(result.isError()).to.be.true;
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
+
 
   it("submitJob ill formed error", async () => {
     axiosPostStub.rejects({
