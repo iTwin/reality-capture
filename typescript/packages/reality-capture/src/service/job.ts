@@ -1,95 +1,81 @@
 import { z } from "zod";
 
 import { CalibrationSpecificationsCreateSchema, CalibrationSpecificationsSchema } from "../specifications/calibration";
-//import { ChangeDetectionSpecificationsCreateSchema, ChangeDetectionSpecificationsSchema } from '../specifications/change_detection';
+import { ChangeDetectionSpecificationsCreateSchema, ChangeDetectionSpecificationsSchema } from '../specifications/change_detection';
 import { ConstraintsSpecificationsCreateSchema, ConstraintsSpecificationsSchema } from "../specifications/constraints";
 import { FillImagePropertiesSpecificationsCreateSchema, FillImagePropertiesSpecificationsSchema } from "../specifications/fill_image_properties";
 import { ImportPCSpecificationsCreateSchema, ImportPCSpecificationsSchema } from "../specifications/import_point_cloud";
-//import { Objects2DSpecificationsCreateSchema, Objects2DSpecificationsSchema } from '../specifications/objects2d';
+import { Objects2DSpecificationsCreateSchema, Objects2DSpecificationsSchema } from '../specifications/objects2d';
 import { ProductionSpecificationsCreateSchema, ProductionSpecificationsSchema } from "../specifications/production";
 import { ReconstructionSpecificationsCreateSchema, ReconstructionSpecificationsSchema } from "../specifications/reconstruction";
-//import { Segmentation2DSpecificationsCreateSchema, Segmentation2DSpecificationsSchema } from '../specifications/segmentation2d';
-//import { Segmentation3DSpecificationsCreateSchema, Segmentation3DSpecificationsSchema } from '../specifications/segmentation3d';
-//import { SegmentationOrthophotoSpecificationsCreateSchema, SegmentationOrthophotoSpecificationsSchema } from '../specifications/segmentation_orthophoto';
+import { Segmentation2DSpecificationsCreateSchema, Segmentation2DSpecificationsSchema } from '../specifications/segmentation2d';
+import { Segmentation3DSpecificationsCreateSchema, Segmentation3DSpecificationsSchema } from '../specifications/segmentation3d';
+import { SegmentationOrthophotoSpecificationsCreateSchema, SegmentationOrthophotoSpecificationsSchema } from '../specifications/segmentation_orthophoto';
 import { TilingSpecificationsCreateSchema, TilingSpecificationsSchema } from "../specifications/tiling";
 import { TouchUpExportSpecificationsCreateSchema, TouchUpImportSpecificationsCreateSchema, TouchUpExportSpecificationsSchema, TouchUpImportSpecificationsSchema } from "../specifications/touchup";
 import { WaterConstraintsSpecificationsCreateSchema, WaterConstraintsSpecificationsSchema } from "../specifications/water_constraints";
-//import { TrainingO2DSpecificationsCreateSchema, TrainingS3DSpecificationsCreateSchema, TrainingO2DSpecificationsSchema, TrainingS3DSpecificationsSchema } from '../specifications/training';
+import { TrainingO2DSpecificationsCreateSchema, TrainingS3DSpecificationsCreateSchema, TrainingO2DSpecificationsSchema, TrainingS3DSpecificationsSchema } from '../specifications/training';
 //import { PointCloudConversionSpecificationsCreateSchema, PointCloudConversionSpecificationsSchema } from '../specifications/point_cloud_conversion';
 import { GaussianSplatsSpecificationsCreateSchema, GaussianSplatsSpecificationsSchema } from "../specifications/gaussian_splats";
-//import { EvalO2DSpecificationsCreateSchema, EvalO2DSpecificationsSchema } from '../specifications/eval_o2d';
-//import { EvalO3DSpecificationsCreateSchema, EvalO3DSpecificationsSchema } from '../specifications/eval_o3d';
-//import { EvalS2DSpecificationsCreateSchema, EvalS2DSpecificationsSchema } from '../specifications/eval_s2d';
-//import { EvalS3DSpecificationsCreateSchema, EvalS3DSpecificationsSchema } from '../specifications/eval_s3d';
-//import { EvalSOrthoSpecificationsCreateSchema, EvalSOrthoSpecificationsSchema  } from '../specifications/eval_sortho';
+import { EvalO2DSpecificationsCreateSchema, EvalO2DSpecificationsSchema } from '../specifications/eval_o2d';
+import { EvalO3DSpecificationsCreateSchema, EvalO3DSpecificationsSchema } from '../specifications/eval_o3d';
+import { EvalS2DSpecificationsCreateSchema, EvalS2DSpecificationsSchema } from '../specifications/eval_s2d';
+import { EvalS3DSpecificationsCreateSchema, EvalS3DSpecificationsSchema } from '../specifications/eval_s3d';
+import { EvalSOrthoSpecificationsCreateSchema, EvalSOrthoSpecificationsSchema  } from '../specifications/eval_sortho';
 
 
 export enum JobType {
   CALIBRATION = "Calibration",
-  //CHANGE_DETECTION = "ChangeDetection",
+  CHANGE_DETECTION = "ChangeDetection",
   CONSTRAINTS = "Constraints",
+  EVAL_O2D = "EvalO2D",
+  EVAL_O3D = "EvalO3D",
+  EVAL_S2D = "EvalS2D",
+  EVAL_S3D = "EvalS3D",
+  EVAL_SORTHO = "EvalSOrtho",
   FILL_IMAGE_PROPERTIES = "FillImageProperties",
+  GAUSSIAN_SPLATS = "GaussianSplats",
   IMPORT_POINT_CLOUD = "ImportPointCloud",
-  //OBJECTS_2D = "Objects2D",
+  OBJECTS_2D = "Objects2D",
   PRODUCTION = "Production",
   RECONSTRUCTION = "Reconstruction",
-  //SEGMENTATION_2D = "Segmentation2D",
-  //SEGMENTATION_3D = "Segmentation3D",
-  //SEGMENTATION_ORTHOPHOTO = "SegmentationOrthophoto",
+  SEGMENTATION_2D = "Segmentation2D",
+  SEGMENTATION_3D = "Segmentation3D",
+  SEGMENTATION_ORTHOPHOTO = "SegmentationOrthophoto",
   TILING = "Tiling",
+  TRAINING_O2D = "TrainingO2D",
+  TRAINING_S3D = "TrainingS3D",
   TOUCH_UP_IMPORT = "TouchUpImport",
   TOUCH_UP_EXPORT = "TouchUpExport",
-  WATER_CONSTRAINTS = "WaterConstraints",
-  //TRAINING_O2D = "TrainingO2D",
-  //TRAINING_S3D = "TrainingS3D",
-  //EVAL_O2D = "EvalO2D",
-  //EVAL_O3D = "EvalO3D",
-  //EVAL_S2D = "EvalS2D",
-  //EVAL_S3D = "EvalS3D",
-  //EVAL_SORTHO = "EvalSOrtho",
+  WATER_CONSTRAINTS = "WaterConstraints"
   //POINT_CLOUD_CONVERSION = "PointCloudConversion",
-  GAUSSIAN_SPLATS = "GaussianSplats"
 }
 
 export enum Service {
   MODELING = "Modeling",
   ANALYSIS = "Analysis",
-  CONVERSION = "Conversion"
+  // CONVERSION = "Conversion"
 }
 
 export function getAppropriateService(jt: JobType): Service {
-    if ([
-        JobType.FILL_IMAGE_PROPERTIES,
-        JobType.IMPORT_POINT_CLOUD,
-        JobType.CALIBRATION,
-        JobType.TILING,
-        JobType.PRODUCTION,
-        JobType.RECONSTRUCTION,
-        JobType.CONSTRAINTS,
-        JobType.TOUCH_UP_EXPORT,
-        JobType.TOUCH_UP_IMPORT,
-        JobType.WATER_CONSTRAINTS,
-        JobType.GAUSSIAN_SPLATS
-    ].includes(jt)) {
-        return Service.MODELING;
-    }
-    /*if ([
-    JobType.OBJECTS_2D,
-    JobType.SEGMENTATION_2D,
-    JobType.SEGMENTATION_3D,
-    JobType.SEGMENTATION_ORTHOPHOTO,
-    JobType.CHANGE_DETECTION,
-    JobType.TRAINING_O2D,
-    JobType.EVAL_O2D,
-    JobType.EVAL_O3D,
-    JobType.EVAL_S2D,
-    JobType.EVAL_S3D,
+  if ([
+    JobType.FILL_IMAGE_PROPERTIES, JobType.IMPORT_POINT_CLOUD, JobType.CALIBRATION,
+    JobType.TILING, JobType.PRODUCTION, JobType.RECONSTRUCTION, JobType.CONSTRAINTS,
+    JobType.TOUCH_UP_EXPORT, JobType.TOUCH_UP_IMPORT, JobType.WATER_CONSTRAINTS,
+    JobType.GAUSSIAN_SPLATS
+  ].includes(jt)) {
+    return Service.MODELING;
+  }
+  if ([
+    JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D,
+    JobType.SEGMENTATION_ORTHOPHOTO, JobType.CHANGE_DETECTION, JobType.TRAINING_O2D,
+    JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D, JobType.EVAL_S3D,
     JobType.EVAL_SORTHO
   ].includes(jt)) {
     return Service.ANALYSIS;
   }
-  return Service.CONVERSION;*/
-    throw new Error("Other job types are not implemented yet");
+  // return Service.CONVERSION;
+  throw new Error("Other job types are not implemented yet");
 }
 
 export enum JobState {
@@ -107,29 +93,29 @@ export const JobCreateSchema = z.object({
     type: z.nativeEnum(JobType).describe("Type of job."),
     specifications: z.union([
         CalibrationSpecificationsCreateSchema,
-        //ChangeDetectionSpecificationsCreateSchema,
+        ChangeDetectionSpecificationsCreateSchema,
         ConstraintsSpecificationsCreateSchema,
+        EvalO2DSpecificationsCreateSchema,
+        EvalO3DSpecificationsCreateSchema,
+        EvalS2DSpecificationsCreateSchema,
+        EvalS3DSpecificationsCreateSchema,
+        EvalSOrthoSpecificationsCreateSchema, 
         FillImagePropertiesSpecificationsCreateSchema,
+        GaussianSplatsSpecificationsCreateSchema,
         ImportPCSpecificationsCreateSchema,
-        //Objects2DSpecificationsCreateSchema,
+        Objects2DSpecificationsCreateSchema,
         ProductionSpecificationsCreateSchema,
         ReconstructionSpecificationsCreateSchema,
-        //Segmentation2DSpecificationsCreateSchema,
-        //Segmentation3DSpecificationsCreateSchema,
-        //SegmentationOrthophotoSpecificationsCreateSchema,
+        Segmentation2DSpecificationsCreateSchema,
+        Segmentation3DSpecificationsCreateSchema,
+        SegmentationOrthophotoSpecificationsCreateSchema,
         TilingSpecificationsCreateSchema,
         TouchUpExportSpecificationsCreateSchema,
         TouchUpImportSpecificationsCreateSchema,
         WaterConstraintsSpecificationsCreateSchema,
-        //TrainingO2DSpecificationsCreateSchema,
+        TrainingO2DSpecificationsCreateSchema,
         //PointCloudConversionSpecificationsCreateSchema,
-        //TrainingS3DSpecificationsCreateSchema,
-        GaussianSplatsSpecificationsCreateSchema,
-    //EvalO2DSpecificationsCreateSchema,
-    //EvalO3DSpecificationsCreateSchema,
-    //EvalS2DSpecificationsCreateSchema,
-    //EvalS3DSpecificationsCreateSchema,
-    //EvalSOrthoSpecificationsCreateSchema
+        TrainingS3DSpecificationsCreateSchema,
     ]).describe("Specifications aligned with the job type."),
     iTwinId: z.string().describe("iTwin ID, used by the service for finding input reality data and uploading output data."),
 });
@@ -158,11 +144,11 @@ export const JobSchema = z.discriminatedUnion("type", [
         type: z.literal("Calibration"),
         specifications: CalibrationSpecificationsSchema,
     }),
-    /*z.object({
-    ...CommonFields,
-    type: z.literal("ChangeDetection"),
-    specifications: ChangeDetectionSpecificationsSchema,
-  }),*/
+    z.object({
+      ...CommonFields,
+      type: z.literal("ChangeDetection"),
+      specifications: ChangeDetectionSpecificationsSchema,
+    }),
     z.object({
         ...CommonFields,
         type: z.literal("Constraints"),
@@ -178,11 +164,11 @@ export const JobSchema = z.discriminatedUnion("type", [
         type: z.literal("ImportPointCloud"),
         specifications: ImportPCSpecificationsSchema,
     }),
-    /*z.object({
-    ...CommonFields,
-    type: z.literal("Objects2D"),
-    specifications: Objects2DSpecificationsSchema,
-  }),*/
+    z.object({
+      ...CommonFields,
+      type: z.literal("Objects2D"),
+      specifications: Objects2DSpecificationsSchema,
+    }),
     z.object({
         ...CommonFields,
         type: z.literal("Production"),
@@ -193,21 +179,21 @@ export const JobSchema = z.discriminatedUnion("type", [
         type: z.literal("Reconstruction"),
         specifications: ReconstructionSpecificationsSchema,
     }),
-    /*z.object({
-    ...CommonFields,
-    type: z.literal("Segmentation2D"),
-    specifications: Segmentation2DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("Segmentation3D"),
-    specifications: Segmentation3DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("SegmentationOrthophoto"),
-    specifications: SegmentationOrthophotoSpecificationsSchema,
-  }),*/
+    z.object({
+      ...CommonFields,
+      type: z.literal("Segmentation2D"),
+      specifications: Segmentation2DSpecificationsSchema,
+    }),
+    z.object({
+      ...CommonFields,
+      type: z.literal("Segmentation3D"),
+      specifications: Segmentation3DSpecificationsSchema,
+    }),
+    z.object({
+      ...CommonFields,
+      type: z.literal("SegmentationOrthophoto"),
+      specifications: SegmentationOrthophotoSpecificationsSchema,
+    }),
     z.object({
         ...CommonFields,
         type: z.literal("Tiling"),
@@ -228,51 +214,51 @@ export const JobSchema = z.discriminatedUnion("type", [
         type: z.literal("WaterConstraints"),
         specifications: WaterConstraintsSpecificationsSchema,
     }),
+    z.object({
+      ...CommonFields,
+      type: z.literal("TrainingO2D"),
+      specifications: TrainingO2DSpecificationsSchema,
+    }),
+    z.object({
+      ...CommonFields,
+      type: z.literal("TrainingS3D"),
+      specifications: TrainingS3DSpecificationsSchema,
+    }),
     /*z.object({
-    ...CommonFields,
-    type: z.literal("TrainingO2D"),
-    specifications: TrainingO2DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("TrainingS3D"),
-    specifications: TrainingS3DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("PointCloudConversion"),
-    specifications: PointCloudConversionSpecificationsSchema,
-  }),*/
+      ...CommonFields,
+      type: z.literal("PointCloudConversion"),
+      specifications: PointCloudConversionSpecificationsSchema,
+    }),*/
     z.object({
         ...CommonFields,
         type: z.literal("GaussianSplats"),
         specifications: GaussianSplatsSpecificationsSchema,
     }),
-    /*z.object({
-    ...CommonFields,
-    type: z.literal("EvalO2D"),
-    specifications: EvalO2DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("EvalO3D"),
-    specifications: EvalO3DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("EvalS2D"),
-    specifications: EvalS2DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("EvalS3D"),
-    specifications: EvalS3DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("EvalSOrtho"),
-    specifications: EvalSOrthoSpecificationsSchema,
-  }),*/
+    z.object({
+      ...CommonFields,
+      type: z.literal("EvalO2D"),
+      specifications: EvalO2DSpecificationsSchema,
+    }),
+    z.object({
+      ...CommonFields,
+      type: z.literal("EvalO3D"),
+      specifications: EvalO3DSpecificationsSchema,
+    }),
+    z.object({
+      ...CommonFields,
+      type: z.literal("EvalS2D"),
+      specifications: EvalS2DSpecificationsSchema,
+    }),
+    z.object({
+      ...CommonFields,
+      type: z.literal("EvalS3D"),
+      specifications: EvalS3DSpecificationsSchema,
+    }),
+    z.object({
+      ...CommonFields,
+      type: z.literal("EvalSOrtho"),
+      specifications: EvalSOrthoSpecificationsSchema,
+    }),
 ]);
 export type Job = z.infer<typeof JobSchema>;
 
