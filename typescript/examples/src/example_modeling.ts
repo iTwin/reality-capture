@@ -79,7 +79,6 @@ async function runCalibration(realityCaptureService: RealityCaptureService, buck
     throw new Error("Failed to retrieve Calibration job properties : " + calibPropertiesResponse.error!.error.message);
   }
   const outputs = calibPropertiesResponse.value!.specifications.outputs as CalibrationOutputs;
-  console.log("report : ", outputs.report!) // TODO : remove
   const chars = outputs.report!.split(":"); // Remove 'bkt:' from the report bucket path
   const calibDownloadResponse = await bucketDataHandler.downloadData(iTwinId, path.join(outputPath, "Report"), chars[1]);
   if (calibDownloadResponse.isError()) {
@@ -129,8 +128,8 @@ async function runModelingExample() {
    */
 
   // Inputs to provide. Please, adapt values
-  const imagesPath = "D:/Datasets/Heli/Images";
-  const outputPath = "D:/Datasets/Heli/Results";
+  const imagesPath = "D:/Datasets/Helico/Images";
+  const outputPath = "D:/Datasets/Helico/Results";
 
   // Options for calibration
   const calibOptions: CalibrationOptions = { 
@@ -161,7 +160,7 @@ async function runModelingExample() {
   const iTwinId = process.env.IMJS_ITWIN_ID ?? "";
   const clientId = process.env.IMJS_CLIENT_ID ?? "";
   const secret = process.env.IMJS_CLIENT_SECRET ?? "";
-  const issuerUrl = "https://qa-ims.bentley.com";
+  const issuerUrl = "https://ims.bentley.com";
 
   const authorizationClient = new ServiceAuthorizationClient({
     clientId: clientId,
@@ -170,18 +169,18 @@ async function runModelingExample() {
     authority: issuerUrl,
   });
 
-  const realityCaptureService = new RealityCaptureService(authorizationClient, {env: "qa"});
+  const realityCaptureService = new RealityCaptureService(authorizationClient);
   console.log("Reality Capture service initialized");
 
-  const realityDataHandler = new RealityDataHandler(authorizationClient, {env: "qa"});
+  const realityDataHandler = new RealityDataHandler(authorizationClient);
   console.log("Reality Data handler initialized");
 
-  const bucketDataHandler = new BucketDataHandler(authorizationClient, {env: "qa"});
+  const bucketDataHandler = new BucketDataHandler(authorizationClient);
   console.log("Bucket Data handler initialized");
 
   const realityDataClientOptions: RealityDataClientOptions = {
     authorizationClient: authorizationClient,
-    baseUrl: "https://qa-api.bentley.com/reality-management/reality-data",
+    baseUrl: "https://api.bentley.com/reality-management/reality-data",
   };
   const realityDataClient = new RealityDataAccessClient(realityDataClientOptions);
   console.log("Reality Data Client initialized");
