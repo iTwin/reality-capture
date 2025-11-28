@@ -77,7 +77,7 @@ async function runCalibration(realityCaptureService: RealityCaptureService, buck
   const calibPropertiesResponse = await realityCaptureService.getJob(calibJobId, getAppropriateService(JobType.CALIBRATION));
   if (calibPropertiesResponse.isError()) {
     throw new Error("Failed to retrieve Calibration job properties : " + calibPropertiesResponse.error!.error.message);
-  }bucketDataHandler
+  }
   const outputs = calibPropertiesResponse.value!.specifications.outputs as CalibrationOutputs;
   console.log("report : ", outputs.report!) // TODO : remove
   const chars = outputs.report!.split(":"); // Remove 'bkt:' from the report bucket path
@@ -176,7 +176,7 @@ async function runModelingExample() {
   const realityDataHandler = new RealityDataHandler(authorizationClient, {env: "qa"});
   console.log("Reality Data handler initialized");
 
-  const bucketDataHandler = new BucketDataHandler(authorizationClient);
+  const bucketDataHandler = new BucketDataHandler(authorizationClient, {env: "qa"});
   console.log("Bucket Data handler initialized");
 
   const realityDataClientOptions: RealityDataClientOptions = {
