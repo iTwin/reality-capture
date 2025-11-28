@@ -12,10 +12,10 @@ import {
   RealityCaptureService, ReconstructionSpecificationsCreate, ReconstructionInputs, ReconstructionOutputsCreate,
   ReconstructionOutputs, ExportCreate, Format, OptionsLAS, SamplingStrategy, TilingOptions, GeometricPrecision,
   JobCreate, JobType, JobState, Progress, getAppropriateService, RealityDataHandler,
-  Options3DTiles,
-  AdjustmentConstraints
+  Options3DTiles, BucketDataHandler, AdjustmentConstraints
 } from "@itwin/reality-capture";
 import { RealityDataClientOptions, RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
+import path from "path";
 
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -61,7 +61,7 @@ async function runFillImageProperties(realityCaptureService: RealityCaptureServi
   return (fipPropertiesResponse.value!.specifications.outputs as FillImagePropertiesOutputs).scene;
 }
 
-async function runCalibration(realityCaptureService: RealityCaptureService, realityDataHandler: RealityDataHandler, fipOutputContextScene: string, calibJobName: string, outputPath: string, iTwinId: string, calibOptions: CalibrationOptions): Promise<string> {
+async function runCalibration(realityCaptureService: RealityCaptureService, bucketDataHandler: BucketDataHandler, fipOutputContextScene: string, calibJobName: string, outputPath: string, iTwinId: string, calibOptions: CalibrationOptions): Promise<string> {
   // Submit Calibration job to get an oriented context scene
   let calibInputs: CalibrationInputs = { scene: fipOutputContextScene };
   let calibOutputs = [CalibrationOutputsCreate.SCENE, CalibrationOutputsCreate.REPORT];
@@ -77,9 +77,11 @@ async function runCalibration(realityCaptureService: RealityCaptureService, real
   const calibPropertiesResponse = await realityCaptureService.getJob(calibJobId, getAppropriateService(JobType.CALIBRATION));
   if (calibPropertiesResponse.isError()) {
     throw new Error("Failed to retrieve Calibration job properties : " + calibPropertiesResponse.error!.error.message);
-  }
+  }bucketDataHandler
   const outputs = calibPropertiesResponse.value!.specifications.outputs as CalibrationOutputs;
-  const calibDownloadResponse = await realityDataHandler.downloadData(outputs.report!, outputPath, "", iTwinId);
+  console.log("report : ", outputs.report!) // TODO : remove
+  const chars = outputs.report!.split(":"); // Remove 'bkt:' from the report bucket path
+  const calibDownloadResponse = await bucketDataHandler.downloadData(iTwinId, path.join(outputPath, "Report"), chars[1]);
   if (calibDownloadResponse.isError()) {
     throw new Error("Failed to download report " + calibDownloadResponse.error!.error.message);
   }
@@ -112,7 +114,7 @@ async function runReconstruction(realityCaptureService: RealityCaptureService, r
   const outputs = reconsPropertiesResponse.value!.specifications.outputs as ReconstructionOutputs;
   for(let reconsExport of outputs.exports!)
   {
-    const reconsDownloadResponse = await realityDataHandler.downloadData(reconsExport.location, outputPath, "", iTwinId);
+    const reconsDownloadResponse = await realityDataHandler.downloadData(reconsExport.location, path.join(outputPath, reconsExport.format), "", iTwinId);
     if (reconsDownloadResponse.isError()) {
       throw new Error("Failed to download export " +  reconsExport.format +  " : " + reconsDownloadResponse.error!.error.message);
     }
@@ -127,8 +129,8 @@ async function runModelingExample() {
    */
 
   // Inputs to provide. Please, adapt values
-  const imagesPath = "D:/Datasets/Helico/Images";
-  const outputPath = "D:/Datasets/Helico/LAS";
+  const imagesPath = "D:/Datasets/Heli/Images";
+  const outputPath = "D:/Datasets/Heli/Results";
 
   // Options for calibration
   const calibOptions: CalibrationOptions = { 
@@ -159,7 +161,7 @@ async function runModelingExample() {
   const iTwinId = process.env.IMJS_ITWIN_ID ?? "";
   const clientId = process.env.IMJS_CLIENT_ID ?? "";
   const secret = process.env.IMJS_CLIENT_SECRET ?? "";
-  const issuerUrl = "https://ims.bentley.com";
+  const issuerUrl = "https://qa-ims.bentley.com";
 
   const authorizationClient = new ServiceAuthorizationClient({
     clientId: clientId,
@@ -168,15 +170,18 @@ async function runModelingExample() {
     authority: issuerUrl,
   });
 
-  const realityCaptureService = new RealityCaptureService(authorizationClient);
+  const realityCaptureService = new RealityCaptureService(authorizationClient, {env: "qa"});
   console.log("Reality Capture service initialized");
 
-  const realityDataHandler = new RealityDataHandler(authorizationClient);
+  const realityDataHandler = new RealityDataHandler(authorizationClient, {env: "qa"});
   console.log("Reality Data handler initialized");
+
+  const bucketDataHandler = new BucketDataHandler(authorizationClient);
+  console.log("Bucket Data handler initialized");
 
   const realityDataClientOptions: RealityDataClientOptions = {
     authorizationClient: authorizationClient,
-    baseUrl: "https://api.bentley.com/reality-management/reality-data",
+    baseUrl: "https://qa-api.bentley.com/reality-management/reality-data",
   };
   const realityDataClient = new RealityDataAccessClient(realityDataClientOptions);
   console.log("Reality Data Client initialized");
@@ -195,7 +200,7 @@ async function runModelingExample() {
 
     const fipOutputContextScene = await runFillImageProperties(realityCaptureService, createdRealityData, fipJobName, iTwinId);
 
-    const calibOutputContextScene = await runCalibration(realityCaptureService, realityDataHandler, fipOutputContextScene, calibJobName, outputPath, iTwinId, calibOptions);
+    const calibOutputContextScene = await runCalibration(realityCaptureService, bucketDataHandler, fipOutputContextScene, calibJobName, outputPath, iTwinId, calibOptions);
 
     await runReconstruction(realityCaptureService, realityDataHandler, calibOutputContextScene, reconsJobName, outputPath, iTwinId, lasOptions, tiles3dOptions);
   }
