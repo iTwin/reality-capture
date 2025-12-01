@@ -22,7 +22,7 @@ def run_upload_example():
     # Inputs to provide. Please, adapt values
     images_path = "D:/Datasets/Helico/Images"
     output_path = "D:/Downloads/Helico/Images"
-    images_name = "Reality Capture SDK context scene example"
+    images_name = "Reality Capture SDK images example"
 
     # Load environment variables
     load_dotenv()
@@ -43,7 +43,7 @@ def run_upload_example():
                                                 displayName=images_name)
         ret = reality_capture_service_data.create_reality_data(reality_data_create)
         if ret.is_error():
-            print(f"Can't create reality data {images_name} in iTwin {itwin_id}")
+            print(f"Can't create reality data '{images_name}' in iTwin {itwin_id}")
             return
         reality_data_id = ret.value.id
         response = reality_data_handler.upload_data(reality_data_id, images_path, "", itwin_id)
