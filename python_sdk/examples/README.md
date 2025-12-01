@@ -1,10 +1,69 @@
-To run an example file you will need to change the config.py file: 
-- client_id should be the id of your application (a service application)
-- secret should be the secret of your service application
-- project_id the id of your ProjectWise project. 
-To retrieve the id of your project, click on the ContextShare button bellow the name of your project at CONNECT Center and copy the contextId string on the address bar. 
-Don't forget to also change the secret variable if your application has one.
+# Reality Capture SDK examples
 
-You will also need to change the variables at the beginning of the example file you’re running so that they reflect the files you want to use and where you want to save the results. 
-You can download the detectors available as well as example datasets here. 
-Don't forget to first open context scene files with a text editor and replace the reference paths to the path of the images in your machine so that they point to the local path where you saved the images.
+## Create an iTwin
+
+Input or output data are stored in iTwins. If you don't have one yet, go [here](https://connect.bentley.com/SelectProject/Index) and select "Register new project".
+
+## Create a client application
+
+To run the examples, you will also need a client application. To create one, go [here](https://developer.bentley.com/my-apps/) and select "Register new".
+Select "Service" application type and register the application.
+
+## Configure environment
+
+Once you have created the iTwin and the application, you must configure the environment for the examples.
+Copy the [template.env](./template.env) file, rename it to ".env" and fill in the environment variables.
+
+## Create python virtual environment
+
+- Create a new virtual environment
+
+  ```sh
+  python -m venv virtual_env_name
+  ```
+
+- Then, to activate the environment, run this command in virtual_env_name/Scripts
+
+  ```sh
+  activate.bat
+  ```
+
+- Install Reality Capture SDK. Run this command in 'python_sdk' folder.
+
+  ```sh
+  pip install . -e
+  ```
+
+- Alternatively, you can install Reality Capture SDK from an existing wheel. You can find the wheel in the GitHub repo : [Releases](https://github.com/iTwin/reality-capture/releases)
+
+  ```sh
+  pip install <reality_capture_sdk.whl>
+  ```
+
+- Install dev dependencies. Run this command in 'python_sdk' folder.
+
+  ```sh
+  pip install .[dev]
+  ```
+
+## Run examples
+
+Run these commands in 'python_sdk/examples' folder.
+
+- Upload & download reality data example
+
+  ```sh
+  python example_upload_reality_data.py
+  ```
+
+- Upload & download bucket data example
+
+  ```sh
+  python example_upload_bucket_data.py
+  ```
+
+- Modeling Reconstruction example
+
+  ```sh
+  python example_modeling.py
+  ```

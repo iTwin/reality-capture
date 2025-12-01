@@ -105,7 +105,7 @@ def run_reconstruction(reality_capture_service, reality_data_handler, calib_outp
         raise Exception("Failed to retrieve Reconstruction job properties : " + recons_properties_response.error.error.message)
     outputs = recons_properties_response.value.specifications.outputs
     for recons_export in outputs.exports:
-        recons_download_response = reality_data_handler.download_data(recons_export.location, os.path.join(output_path, recons_export.format), "", itwin_id)
+        recons_download_response = reality_data_handler.download_data(recons_export.location, os.path.join(output_path, recons_export.format.value), "", itwin_id)
         if recons_download_response.is_error():
             raise Exception("Failed to download export {}: {}".format(recons_export.format, recons_download_response.error.error.message))
     print("Successfully downloaded Reconstruction LAS output")
@@ -170,6 +170,10 @@ def run_modeling_example():
             print(f"Can't create reality data {images_reality_data_name} in iTwin {itwin_id}")
             return
         reality_data_id = ret.value.id
+        response = reality_data_handler.upload_data(reality_data_id, images_path, "", itwin_id)
+        if response.is_error():
+            print("Failed to upload reality data:", response.error.error.message)
+            return
         print("Successfully uploaded images")
 
         fip_output_context_scene = run_fill_image_properties(reality_capture_service, reality_data_id, fip_job_name, itwin_id)
