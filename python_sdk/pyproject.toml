@@ -37,7 +37,8 @@ dev = [
     "autodoc_pydantic >= 2.2.0",
     "pytest >= 8.3.4",
     "pytest-cov >= 6.0.0",
-    "responses >= 0.25.6"
+    "responses >= 0.25.6",
+    "dotenv >= 1.2.0"
 ]
 
 [project.urls]
