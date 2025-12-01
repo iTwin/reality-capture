@@ -12,7 +12,8 @@ import {
   RealityCaptureService, ReconstructionSpecificationsCreate, ReconstructionInputs, ReconstructionOutputsCreate,
   ReconstructionOutputs, ExportCreate, Format, OptionsLAS, SamplingStrategy, TilingOptions, GeometricPrecision,
   JobCreate, JobType, JobState, Progress, getAppropriateService, RealityDataHandler,
-  Options3DTiles, BucketDataHandler, AdjustmentConstraints
+  Options3DTiles, BucketDataHandler, AdjustmentConstraints,
+  LODScope
 } from "@itwin/reality-capture";
 import { RealityDataClientOptions, RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
 import path from "path";
@@ -144,7 +145,7 @@ async function runModelingExample() {
   }
   // Options for Reconstruction 3DTiles export
   const tiles3dOptions: Options3DTiles = {
-    crs: "EPSG:32631" // CRS used for this export
+    lodScope: LODScope.ACROSS_TILES // produce global LOD structure (e.g., a quadtree) for an entire reconstruction
   }
 
   // Optional : images reality data name
