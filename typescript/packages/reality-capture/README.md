@@ -2,6 +2,8 @@
 
 reality-capture is a typescript package that allows any user to interact with Bentley Reality Capture services including:
  * [Reality Modeling](https://developer.bentley.com/apis/contextcapture/)
+ * [Reality Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
+ <!--- * [Reality Conversion](https://developer.bentley.com/apis/realityconversion/)-->
 
 ## Building locally
 
@@ -35,7 +37,7 @@ In case you need a package for your own project, run the following command :
 - Build the package
 
   ```sh
-  npm pack --pack-destination ./lib
+  pnpm bundle
   ```
 
 You will find the .tgz file in /lib folder

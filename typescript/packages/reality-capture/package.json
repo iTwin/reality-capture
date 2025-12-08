@@ -1,6 +1,6 @@
 {
   "name": "@itwin/reality-capture",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "This package contains a SDK for Reality Modeling, Reality Analysis and Reality Conversion iTwin APIs as well as Reality Management API utils. It provides classes, functions and examples to upload local data to Reality Management, run jobs and download the results.",
   "main": "lib/cjs/index.node.js",
   "module": "lib/esm/index.web.js",
@@ -32,7 +32,8 @@
     "lint": "eslint ./src --ext .ts ",
     "lint-fix": "eslint ./src --fix --ext .ts",
     "test:unit": "mocha --require ts-node/register ./src/tests/**/*.test.ts --slow 0",
-    "coverage": "nyc npm run test:unit"
+    "coverage": "nyc npm run test:unit",
+    "pack": "npm pack --pack-destination ./lib"
   },
   "keywords": [
     "typescript",
@@ -87,9 +88,21 @@
     "per-file": true,
     "sourceMap": false,
     "instrument": true,
-    "include": ["src/**/*.ts"],
-    "exclude": ["src/index.node.ts", "src/index.web.ts", "src/tests/**/*.ts", "src/service/data_handler.ts"],
-    "extension": [".ts"],
-    "reporter": ["text", "html"]
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/index.node.ts",
+      "src/index.web.ts",
+      "src/tests/**/*.ts",
+      "src/service/data_handler.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "reporter": [
+      "text",
+      "html"
+    ]
   }
 }

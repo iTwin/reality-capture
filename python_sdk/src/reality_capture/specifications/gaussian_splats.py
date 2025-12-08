@@ -38,6 +38,8 @@ class GSQuality(Enum):
 
 
 class GaussianSplatsOptions(BaseModel):
+    export_crs: Optional[str] = Field(default=None, description="CRS for the exported gaussian splats",
+                                      alias="exportCrs")
     export_format: Optional[GSFormat] = Field(default=None, description="Format of the exported Gaussian Splats",
                                               alias="exportFormat")
     reference_quality: Optional[GSQuality] = Field(default=None,

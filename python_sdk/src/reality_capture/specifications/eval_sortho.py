@@ -1,4 +1,4 @@
-"""from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field
 from typing import Optional
 from enum import Enum
 
@@ -35,4 +35,3 @@ class EvalSOrthoSpecificationsCreate(BaseModel):
 class EvalSOrthoSpecifications(BaseModel):
     inputs: EvalSOrthoInputs = Field(description="Inputs")
     outputs: EvalSOrthoOutputs = Field(description="Outputs")
-"""

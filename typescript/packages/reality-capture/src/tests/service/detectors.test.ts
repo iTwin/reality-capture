@@ -1,4 +1,4 @@
-/*import { expect } from "chai";
+import { expect } from "chai";
 import { z } from "zod";
 import {
   DetectorExport,
@@ -11,7 +11,7 @@ import {
   DetectorResponseSchema,
   DetectorMinimalSchema,
   DetectorsMinimalResponseSchema,
-} from "../../src/service/detectors";
+} from "../../service/detectors";
 
 describe("CapabilitiesSchema", () => {
   it("should validate correct capabilities", () => {
@@ -181,4 +181,4 @@ describe("DetectorsMinimalResponseSchema", () => {
     const data = {};
     expect(() => DetectorsMinimalResponseSchema.parse(data)).to.throw(z.ZodError);
   });
-});*/
+});

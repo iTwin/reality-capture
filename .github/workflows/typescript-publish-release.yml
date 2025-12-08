@@ -1,4 +1,4 @@
-name: Publish packages to NPM
+name: Publish Typescript Reality Capture SDK Release
 
 on: workflow_dispatch
 
@@ -14,6 +14,17 @@ jobs:
     with:
       node-version: ${{ matrix.node-version }}
       os: ${{ matrix.os }}
+    secrets:
+      INTEGRATION_TESTS_PROJECT_ID: ${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}
+      INTEGRATION_TESTS_CLIENT_ID: ${{ secrets.INTEGRATION_TESTS_CLIENT_ID }}
+      INTEGRATION_TESTS_SECRET: ${{ secrets.INTEGRATION_TESTS_SECRET }}
+      IMJS_OIDC_BROWSER_TEST_CLIENT_ID: ${{ secrets.IMJS_OIDC_BROWSER_TEST_CLIENT_ID }}
+      IMJS_OIDC_BROWSER_TEST_REDIRECT_URI: ${{ secrets.IMJS_OIDC_BROWSER_TEST_REDIRECT_URI }}
+      IMJS_OIDC_BROWSER_TEST_SCOPES: ${{ secrets.IMJS_OIDC_BROWSER_TEST_SCOPES }}
+      IMJS_TEST_REGULAR_USER_NAME: ${{ secrets.IMJS_TEST_REGULAR_USER_NAME }}
+      IMJS_TEST_REGULAR_USER_PASSWORD: ${{ secrets.IMJS_TEST_REGULAR_USER_PASSWORD }}
+      IMJS_TEST_MANAGER_USER_NAME: ${{ secrets.IMJS_TEST_MANAGER_USER_NAME }}
+      IMJS_TEST_MANAGER_USER_PASSWORD: ${{ secrets.IMJS_TEST_MANAGER_USER_PASSWORD }}
     
   publish_release:
     needs: build_and_test_sdk
@@ -26,10 +37,60 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Publish packages
-        run: |
-          git config --local user.email imodeljs-admin@users.noreply.github.com
-          git config --local user.name imodeljs-admin 
-          pnpm publish-packages --new --branch ${{ github.ref_name }} --message "Version bump [skip actions]"
+      - name: Checkout github repo (+ download lfs dependencies)
+        uses: actions/checkout@v3
+        with:
+          lfs: true
+
+      - name: Checkout LFS objects
+        run: git lfs checkout
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install dependencies
+        working-directory: ./
+        run: pnpm install --frozen-lockfile=true
+
+      - name: Build
+        working-directory: ./
+        run: pnpm build
+
+      - name: Publish packages as tgz
+        working-directory: ./
+        run: pnpm bundle
+
+      - name: Get version
+        id: get_version
+        working-directory: ./typescript/packages/reality-capture
+        shell: pwsh
+        run: | 
+          $packageVersion=(Get-Content .\package.json | ConvertFrom-Json).version
+          Write-Output "version=$($packageVersion)" >> $Env:GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        id: create_release
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}-ts
+          name: "Typescript Version ${{ steps.get_version.outputs.version }}"
+          draft: true
+          files: | 
+            ./typescript/packages/reality-capture/lib/itwin-reality-capture-${{ steps.get_version.outputs.version }}.tgz
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      #- name: Publish packages
+      ##  run: |
+      #    git config --local user.email imodeljs-admin@users.noreply.github.com
+      #    git config --local user.name imodeljs-admin 
+      #    pnpm publish-packages --new --branch ${{ github.ref_name }} --message "Version bump [skip actions]"
+      #  env:
+      #    NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
