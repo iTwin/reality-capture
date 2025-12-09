@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 from datetime import datetime
 from enum import Enum
 from typing import Union, Optional, Any
@@ -157,60 +157,63 @@ class Job(BaseModel):
                         TrainingO2DSpecifications, TrainingS3DSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
-    @model_validator(mode="after")
+    @field_validator("specifications", mode="plain")
     @classmethod
-    def validate_specifications(cls, model):
-        if model.type == JobType.CALIBRATION:
-            model.specifications = CalibrationSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.CHANGE_DETECTION:
-            model.specifications = ChangeDetectionSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.CONSTRAINTS:
-            model.specifications = ConstraintsSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.EVAL_O2D:
-           model.specifications = EvalO2DSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.EVAL_O3D:
-           model.specifications = EvalO3DSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.EVAL_S2D:
-           model.specifications = EvalS2DSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.EVAL_S3D:
-           model.specifications = EvalS3DSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.EVAL_SORTHO:
-           model.specifications = EvalSOrthoSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.FILL_IMAGE_PROPERTIES:
-            model.specifications = FillImagePropertiesSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.GAUSSIAN_SPLATS:
-            model.specifications = GaussianSplatsSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.IMPORT_POINT_CLOUD:
-            model.specifications = ImportPCSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.OBJECTS_2D:
-            model.specifications = Objects2DSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.PRODUCTION:
-            model.specifications = ProductionSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.RECONSTRUCTION:
-            model.specifications = ReconstructionSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.SEGMENTATION_2D:
-           model.specifications = Segmentation2DSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.SEGMENTATION_3D:
-           model.specifications = Segmentation3DSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.SEGMENTATION_ORTHOPHOTO:
-           model.specifications = SegmentationOrthophotoSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.TILING:
-            model.specifications = TilingSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.TOUCH_UP_EXPORT:
-            model.specifications = TouchUpExportSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.TOUCH_UP_IMPORT:
-            model.specifications = TouchUpImportSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.WATER_CONSTRAINTS:
-            model.specifications = WaterConstraintsSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.TRAINING_O2D:
-           model.specifications = TrainingO2DSpecifications(**model.specifications.model_dump(by_alias=True))
-        elif model.type == JobType.TRAINING_S3D:
-           model.specifications = TrainingS3DSpecifications(**model.specifications.model_dump(by_alias=True))
-        # elif model.type == JobType.POINT_CLOUD_CONVERSION:
-        #    model.specifications = PointCloudConversionSpecifications(**model.specifications.model_dump(by_alias=True))
+    def set_specification_validation_model(cls, raw_dict: dict[str, Any], validation_info: ValidationInfo):
+        job_type = validation_info.data['type']
+
+        specifications = None
+
+        if job_type == JobType.CALIBRATION:
+            specifications = CalibrationSpecifications(**raw_dict)
+        elif job_type == JobType.CHANGE_DETECTION:
+            specifications = ChangeDetectionSpecifications(**raw_dict)
+        elif job_type == JobType.CONSTRAINTS:
+            specifications = ConstraintsSpecifications(**raw_dict)
+        elif job_type == JobType.EVAL_O2D:
+           specifications = EvalO2DSpecifications(**raw_dict)
+        elif job_type == JobType.EVAL_O3D:
+           specifications = EvalO3DSpecifications(**raw_dict)
+        elif job_type == JobType.EVAL_S2D:
+           specifications = EvalS2DSpecifications(**raw_dict)
+        elif job_type == JobType.EVAL_S3D:
+           specifications = EvalS3DSpecifications(**raw_dict)
+        elif job_type == JobType.EVAL_SORTHO:
+           specifications = EvalSOrthoSpecifications(**raw_dict)
+        elif job_type == JobType.FILL_IMAGE_PROPERTIES:
+            specifications = FillImagePropertiesSpecifications(**raw_dict)
+        elif job_type == JobType.GAUSSIAN_SPLATS:
+            specifications = GaussianSplatsSpecifications(**raw_dict)
+        elif job_type == JobType.IMPORT_POINT_CLOUD:
+            specifications = ImportPCSpecifications(**raw_dict)
+        elif job_type == JobType.OBJECTS_2D:
+            specifications = Objects2DSpecifications(**raw_dict)
+        elif job_type == JobType.PRODUCTION:
+            specifications = ProductionSpecifications(**raw_dict)
+        elif job_type == JobType.RECONSTRUCTION:
+            specifications = ReconstructionSpecifications(**raw_dict)
+        elif job_type == JobType.SEGMENTATION_2D:
+           specifications = Segmentation2DSpecifications(**raw_dict)
+        elif job_type == JobType.SEGMENTATION_3D:
+           specifications = Segmentation3DSpecifications(**raw_dict)
+        elif job_type == JobType.SEGMENTATION_ORTHOPHOTO:
+           specifications = SegmentationOrthophotoSpecifications(**raw_dict)
+        elif job_type == JobType.TILING:
+            specifications = TilingSpecifications(**raw_dict)
+        elif job_type == JobType.TOUCH_UP_EXPORT:
+            specifications = TouchUpExportSpecifications(**raw_dict)
+        elif job_type == JobType.TOUCH_UP_IMPORT:
+            specifications = TouchUpImportSpecifications(**raw_dict)
+        elif job_type == JobType.WATER_CONSTRAINTS:
+            specifications = WaterConstraintsSpecifications(**raw_dict)
+        elif job_type == JobType.TRAINING_O2D:
+           specifications = TrainingO2DSpecifications(**raw_dict)
+        elif job_type == JobType.TRAINING_S3D:
+           specifications = TrainingS3DSpecifications(**raw_dict)
         else:
-            raise ValueError(f"Unsupported job type: {model.type}")
-        return model
+            raise ValueError(f"Unsupported job type: {job_type}")
+
+        return specifications
 
     def get_appropriate_service(self) -> Service:
         """
