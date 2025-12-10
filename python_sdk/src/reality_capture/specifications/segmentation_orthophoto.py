@@ -14,10 +14,10 @@ class SegmentationOrthophotoInputs(BaseModel):
 
 
 class SegmentationOrthophotoOutputs(BaseModel):
-    segmentation2d: Optional[str] = Field(alias="segmentation2D",
+    segmentation2d: Optional[str] = Field(None, alias="segmentation2D",
                                           description="Reality data id of ContextScene, "
                                                       "pointing to segmented orthophotos")
-    segmented_photos: Optional[str] = Field(alias="segmentedPhotos",
+    segmented_photos: Optional[str] = Field(None, alias="segmentedPhotos",
                                             description="Reality data id of segmented orthophotos")
     polygons2d: Optional[str] = Field(None, alias="polygons2D",
                                       description="Reality data id of ContextScene, "
