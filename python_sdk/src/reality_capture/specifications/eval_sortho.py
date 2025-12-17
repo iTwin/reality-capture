@@ -13,10 +13,10 @@ class EvalSOrthoInputs(BaseModel):
 class EvalSOrthoOutputs(BaseModel):
     report: Optional[str] = Field(None, description="Path in Bucket of json report with confusion matrix",
                                   pattern=r"^bkt:.+")
-    segmented_photos: Optional[str] = Field(alias="segmentedPhotos",
+    segmented_photos: Optional[str] = Field(None, alias="segmentedPhotos",
                                             description="Reality data id of segmented photos, "
                                                         "annotated with confusion matrix index")
-    segmentation2d: Optional[str] = Field(alias="segmentation2D",
+    segmentation2d: Optional[str] = Field(None, alias="segmentation2D",
                                           description="Reality data id of ContextScene, "
                                                       "pointing to segmented photos")
 
