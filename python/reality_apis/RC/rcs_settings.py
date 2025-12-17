@@ -53,6 +53,14 @@ class ConversionSettings:
             settings_dict["outputs"].append("GeoJSON")
         if self.outputs.xyztilemap:
             settings_dict["outputs"].append("XYZTileMap")
+        if self.outputs.las:
+            settings_dict["outputs"].append("LAS")
+        if self.outputs.laz:
+            settings_dict["outputs"].append("LAZ")
+        if self.outputs.e57:
+            settings_dict["outputs"].append("E57")
+        if self.outputs.pointcloud:
+            settings_dict["outputs"].append("PointCloud")
 
         if self.options.engines > 0:
             settings_dict["options"]["processingEngines"] = self.options.engines
@@ -149,6 +157,18 @@ class ConversionSettings:
                 elif output_dict["type"] == "XYZTileMap":
                     new_job_settings.outputs.xyztilemap = []
                     new_job_settings.outputs.xyztilemap.append(output_dict["id"])
+                elif output_dict["type"] == "LAS":
+                    new_job_settings.outputs.las = []
+                    new_job_settings.outputs.las.append(output_dict["id"])
+                elif output_dict["type"] == "LAZ":
+                    new_job_settings.outputs.laz = []
+                    new_job_settings.outputs.laz.append(output_dict["id"])
+                elif output_dict["type"] == "E57":
+                    new_job_settings.outputs.e57 = []
+                    new_job_settings.outputs.e57.append(output_dict["id"])
+                elif output_dict["type"] == "PointCloud":
+                    new_job_settings.outputs.pointcloud = []
+                    new_job_settings.outputs.pointcloud.append(output_dict["id"])
                 else:
                     raise TypeError(
                         "found non expected output type" + output_dict["type"]
@@ -228,6 +248,10 @@ class ConversionSettings:
             glbc: Either a boolean to indicate conversion type or a list of created PNTS files ids.
             geojson: Either a boolean to indicate conversion type or a list of created GeoJSON files ids.
             xyztilemap: Either a boolean to indicate conversion type or a list of created XYZTileMap files ids.
+            las: Either a boolean to indicate conversion type or a list of created LAS files ids.
+            laz: Either a boolean to indicate conversion type or a list of created LAZ files ids.
+            e57: Either a boolean to indicate conversion type or a list of created E57 files ids.
+            pointcloud: Either a boolean to indicate conversion type or a list of created PointCloud (POD) files ids.
         """
 
         def __init__(self) -> None:
@@ -237,6 +261,10 @@ class ConversionSettings:
             self.glbc: Union[bool, List[str]] = False
             self.geojson: Union[bool, List[str]] = False
             self.xyztilemap: Union[bool, List[str]] = False
+            self.las: Union[bool, List[str]] = False
+            self.laz: Union[bool, List[str]] = False
+            self.e57: Union[bool, List[str]] = False
+            self.pointcloud: Union[bool, List[str]] = False
 
     class Options:
         """
