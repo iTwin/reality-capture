@@ -4,8 +4,8 @@ from enum import Enum
 
 
 class ChangeDetectionInputs(BaseModel):
-    reference: str = Field(description="Reality data id of ContextScene, point cloud or mesh")
-    to_compare: str = Field(alias="toCompare", description="Reality data id of ContextScene, point cloud or mesh")
+    model_3d_a: str = Field(alias="model3dA", description="Reality data id of ContextScene, point cloud or mesh")
+    model_3d_b: str = Field(alias="model3dB", description="Reality data id of ContextScene, point cloud or mesh")
     extent: Optional[str] = Field(None, alias="extent", pattern=r"^bkt:.+",
                                   description="Path in the bucket of the clipping polygon to apply")
 
@@ -19,8 +19,8 @@ class ChangeDetectionOutputs(BaseModel):
     locations3d_as_geojson: Optional[str] = Field(None, alias="locations3DAsGeoJSON", 
                                                   description="Reality data id of 3D objects locations "
                                                               "as GeoJSON file")
-    added: Optional[str] = Field(None, description="Points in toCompare not in reference as OPC")
-    removed: Optional[str] = Field(None, description="Point in reference not in toCompare as OPC")
+    changes_in_model_b: Optional[str] = Field(None, description="Points in B not in A as OPC", alias="changesInModelB")
+    changes_in_model_a: Optional[str] = Field(None, description="Points in A not in B as OPC", alias="changesInModelA")
 
 
 class ChangeDetectionOutputsCreate(Enum):
