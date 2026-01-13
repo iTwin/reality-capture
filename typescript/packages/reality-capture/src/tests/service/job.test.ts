@@ -14,10 +14,9 @@ import {
   MessageSchema,
   MessagesSchema,
   MessagesResponseSchema,
-  NextLinkSchema
+  NextLinkSchema,
 } from "../../service/job";
 import { ImportPCOutputsCreate } from "../../specifications/import_point_cloud"; // TODO : mock?
-import { describe } from "zod/v4/core";
 
 function getCommonFields(type: JobType) {
   return {
