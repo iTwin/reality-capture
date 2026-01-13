@@ -63,11 +63,7 @@ export class RealityCaptureService {
     const url = this._getCorrectUrl(service);
     try {
       const resp = await this._axios.get(url + "/jobs", {
-        params: {
-          "$filter": filters,
-          "$top": top,
-          continuationToken
-        }, 
+        params: {"$filter": filters,  "$top": top, continuationToken }, 
         headers: await this._getHeader("v2")
       });
       return new Response(resp.status, null, resp.data as Jobs);
