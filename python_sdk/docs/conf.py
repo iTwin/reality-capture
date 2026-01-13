@@ -19,10 +19,7 @@ release = reality_capture.__version__
 extensions = ['myst_parser', 'sphinx.ext.autodoc', 'sphinxcontrib.autodoc_pydantic']
 
 templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store',
-                    'specifications/change_detection.rst', 'specifications/eval_*.rst',
-                    'specifications/segmentation*.rst', 'specifications/training*.rst',
-                    'specifications/objects2d.rst', 'specifications/point_cloud_conversion.rst']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'specifications/point_cloud_conversion.rst']
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

@@ -23,7 +23,6 @@ Specifications regroup all the settings used to create jobs with our APIs.
     water_constraints
     gaussian_splats
     geometry
-    point_cloud_conversion
     objects2d
     segmentation2d
     segmentation_orthophoto
