@@ -27,8 +27,8 @@ class ChangeDetectionOutputsCreate(Enum):
     OBJECTS3D = "objects3D"
     LOCATIONS3D_AS_SHP = "locations3DAsSHP"
     LOCATIONS3D_AS_GEOJSON = "locations3DAsGeoJSON"
-    ADDED = "added"
-    REMOVED = "removed"
+    CHANGES_IN_MODEL_A = "changesInModelA"
+    CHANGES_IN_MODEL_B = "changesInModelB"
 
 
 class ChangeDetectionOptions(BaseModel):
