@@ -1,3 +1,5 @@
+import urllib.parse
+
 from pydantic import BaseModel, Field, model_validator
 from datetime import datetime
 from enum import Enum
@@ -38,6 +40,7 @@ from reality_capture.specifications.eval_s2d import (EvalS2DSpecificationsCreate
 from reality_capture.specifications.eval_s3d import (EvalS3DSpecificationsCreate, EvalS3DSpecifications)
 from reality_capture.specifications.eval_sortho import (EvalSOrthoSpecificationsCreate, EvalSOrthoSpecifications)"""
 
+from reality_capture.service.reality_data import URL
 
 class JobType(Enum):
     CALIBRATION = "Calibration"
@@ -242,6 +245,31 @@ class Job(BaseModel):
 class JobResponse(BaseModel):
     job: Job = Field(description="Complete job information.")
 
+
+class NextPageLink(BaseModel):
+    next: URL = Field(description="URL for getting the next page of results.")
+
+
+class Jobs(BaseModel):
+    jobs: list[Job] = Field(description="List of jobs.")
+    links: Optional[NextPageLink] = Field(default=None, alias="_links",
+                                          description="Contains the hyperlink to the next page of results, "
+                                                      "if applicable.")
+
+    def get_continuation_token(self) -> Optional[str]:
+        """
+        Return continuation token for next query
+
+        :return: Continuation Token value if any
+        """
+        if not self.links:
+            return None
+        parsed = urllib.parse.urlparse(self.links.next.href)
+        params = urllib.parse.parse_qs(parsed.query)
+        cts = params.get("continuationToken")
+        if cts is None:
+            return None
+        return cts[0]
 
 class Progress(BaseModel):
     state: JobState = Field(description="State of the job.")
