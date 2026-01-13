@@ -279,13 +279,13 @@ export type Job = z.infer<typeof JobSchema>;
 
 export const NextLinkSchema = z.object({
   next: URLSchema.describe("URL for getting the next page of results.")
-})
+});
 export type NextLink = z.infer<typeof NextLinkSchema>;
 
 export const JobsSchema = z.object({
   jobs: z.array(JobSchema).describe("List of jobs."),
   _links: NextLinkSchema.describe("Contains the hyperlink to the next page of results, if applicable."),
-})
+});
 export type Jobs = z.infer<typeof JobsSchema>;
 
 export const JobResponseSchema = z.object({
