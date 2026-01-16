@@ -46,11 +46,11 @@ class TestServiceDetector:
     def test_get_detector_200(self):
         with open(f"{self.data_folder}/detector_get_200.json", 'r') as payload_data:
             payload = json.load(payload_data)
-        responses.add(responses.GET, f'https://api.bentley.com/reality-analysis/detectors/mydetector',
+        responses.add(responses.GET, f'https://api.bentley.com/reality-analysis/detectors/%40bentley%2Fbentley-city-a-s3d',
                       json=payload, status=200)
-        response = self.rcs.get_detector("mydetector")
+        response = self.rcs.get_detector("@bentley/bentley-city-a-s3d")
         assert not response.is_error()
-        assert response.value.detector.name == "mydetector"
+        assert response.value.detector.name == "@bentley/bentley-city-a-s3d"
 
     @responses.activate
     def test_get_detectors_ill_formed(self):
