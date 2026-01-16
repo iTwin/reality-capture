@@ -29,7 +29,7 @@ In order to contribute, you'll need to clone the repository, install the package
 
 ```bash
 pip install . -e
-pip instal .[dev]
+pip install .[dev]
 ```
 
 Tests are located in the `tests` subfolder and can be run with `pytest`.

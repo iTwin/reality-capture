@@ -1,0 +1,64 @@
+{
+    "jobs": [{
+            "id": "2e8b5984-15b1-45d5-8175-572583d8c3c8",
+            "state": "Success",
+            "userId": "c6ed4bad-b7d1-46d5-b9f3-7bae29cf39a9",
+            "executionInfo": {
+                "startedDateTime": "2025-11-24T08:12:33Z",
+                "endedDateTime": "2025-11-24T08:14:00Z",
+                "createdDateTime": "2025-11-24T08:12:09Z",
+                "processingUnits": 0
+            },
+            "specifications": {
+                "inputs": {
+                    "imageCollections": [
+                        "fc2746d5-7b62-4f00-9a88-1bfaa22475d7"
+                    ]
+                },
+                "outputs": {
+                    "scene": "0bdccf29-452e-4610-b00c-d2a1f58c9100"
+                },
+                "options": {
+                    "recursiveImageCollections": false,
+                    "altitudeReference": "SeaLevel"
+                }
+            },
+            "name": "Unified Job- FillImageProperties",
+            "type": "FillImageProperties",
+            "iTwinId": "2c8e4988-eb9b-4e5f-a903-8c7c18f3030a"
+        },
+        {
+            "id": "7358a7f6-dcf3-4f81-8cdd-5df3396bb0c9",
+            "state": "Failed",
+            "userId": "c6ed4bad-b7d1-46d5-b9f3-7bae29cf39a9",
+            "executionInfo": {
+                "startedDateTime": "2025-11-24T13:31:39Z",
+                "endedDateTime": "2025-11-24T13:31:39Z",
+                "createdDateTime": "2025-11-24T08:12:12Z",
+                "processingUnits": 0.0
+            },
+            "specifications": {
+                "inputs": {
+                    "imageCollections": [
+                        "fc2746d5-7b62-4f00-9a88-1bfaa22475d7"
+                    ]
+                },
+                "outputs": {
+                    "scene": "66d86817-e959-4eea-ac65-176dde1093cf"
+                },
+                "options": {
+                    "recursiveImageCollections": false,
+                    "altitudeReference": "SeaLevel"
+                }
+            },
+            "name": "Unified Job- FillImageProperties",
+            "type": "FillImageProperties",
+            "iTwinId": "2c8e4988-eb9b-4e5f-a903-8c7c18f3030a"
+        }
+    ],
+    "_links": {
+        "next": {
+            "href": "https://api.bentley.com/reality-modeling/jobs?$filter=iTwinId%20eq%202c8e4988-eb9b-4e5f-a903-8c7c18f3030a&$top=2&continuationToken=MTRmZDkwOGYtNWEzOS00YzY3LWFmMGYtMGMxMWQxYWNkMDhl"
+        }
+    }
+}
