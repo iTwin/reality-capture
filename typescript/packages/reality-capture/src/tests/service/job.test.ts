@@ -13,7 +13,8 @@ import {
   ProgressResponseSchema,
   MessageSchema,
   MessagesSchema,
-  MessagesResponseSchema
+  MessagesResponseSchema,
+  NextLinkSchema,
 } from "../../service/job";
 import { ImportPCOutputsCreate } from "../../specifications/import_point_cloud"; // TODO : mock?
 
@@ -260,5 +261,20 @@ describe("MessagesResponseSchema", () => {
 
   it("should fail if messages field is missing", () => {
     expect(() => MessagesResponseSchema.parse({})).to.throw(z.ZodError);
+  });
+});
+
+describe("NextLinkSchema", () => {
+  it ("should validate correct next link", () => {
+    const data = {
+      next: {
+        href: "https://api.bentley.com/reality-modeling/jobs?$filter=iTwinId%20eq%202c8e4988-eb9b-4e5f-a903-8c7c18f3030a&$top=2&continuationToken=MTRmZDkwOGYtNWEzOS00YzY3LWFmMGYtMGMxMWQxYWNkMDhl"
+      }
+    };
+    expect(() => NextLinkSchema.parse(data)).to.not.throw();
+  });
+
+  it ("should fail if empty", () => {
+    expect(() => NextLinkSchema.parse({})).to.throw(z.ZodError);
   });
 });

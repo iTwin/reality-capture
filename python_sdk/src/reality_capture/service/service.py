@@ -1,3 +1,4 @@
+import urllib.parse
 import requests
 
 from reality_capture.service.bucket import BucketResponse
@@ -5,7 +6,7 @@ from reality_capture.service.detectors import DetectorsMinimalResponse, Detector
 from reality_capture.service.estimation import CostEstimationCreate, CostEstimation
 from reality_capture.service.files import Files
 from reality_capture.service.response import Response
-from reality_capture.service.job import JobCreate, Job, Progress, Messages, Service
+from reality_capture.service.job import JobCreate, Job, Progress, Messages, Service, Jobs
 from reality_capture.service.reality_data import (RealityDataCreate, RealityData, RealityDataUpdate, ContainerDetails,
                                                   RealityDataFilter, Prefer, RealityDatas)
 from reality_capture.service.error import DetailedErrorResponse, DetailedError
@@ -88,6 +89,37 @@ class RealityCaptureService:
     def _get_ill_formed_message(response, exception) -> str:
         r = response.json()
         return f"Service response is ill-formed: {r}. Exception : {exception}"
+
+    def get_jobs(self, service: Service, filters: str = "",
+                 top: int = None, continuation_token: str = "") -> Response[Jobs]:
+        """
+        Get list of jobs from a specific service.
+
+        :param service: Service to target
+        :param filters: The given filter is evaluated for each job and only job where the filter evaluates to true are returned. See `API documentation <https://developer.bentley.com/apis/reality-modeling/operations/jobs-get-all/#request-parameters>`_ to know more.
+        :param top: The number of jobs to get in each page. Min 2, max 1000.
+        :param continuation_token: Parameter that enables continuing to the next page of the previous paged query. This must be passed exactly as it is in the response body's _links.next property.
+        """
+        url = self._get_correct_url(service)+ "jobs"
+        params = {}
+        if filters:
+            params["$filter"] = filters
+        if top is not None:
+            params["$top"] = max(min(top, 1000), 2)
+        if continuation_token:
+            params["continuationToken"] = continuation_token
+        response = self._session.get(url, params=params, headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code, value=Jobs.model_validate(response.json()),
+                                error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
 
     def submit_job(self, job: JobCreate) -> Response[Job]:
         """

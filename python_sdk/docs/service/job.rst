@@ -2,7 +2,7 @@
 Job
 ===
 
-This section describes extensively the Job object.
+This section describes extensively the Job object and associated objects.
 The Job object and its associated objects are the main payload information concerning jobs.
 
 Classes
@@ -47,3 +47,8 @@ Classes
     :model-show-json: False
 
 .. autopydantic_model:: MessagesResponse
+
+.. autopydantic_model:: NextPageLink
+    :model-show-json: False
+
+.. autopydantic_model:: Jobs
