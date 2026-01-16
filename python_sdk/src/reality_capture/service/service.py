@@ -279,7 +279,7 @@ class RealityCaptureService:
     
         :return: A Response[DetectorResponse] containing either the detector details or the error from the service.
         """
-        url_encoded_name = urllib.parse.quote(detector_name)
+        url_encoded_name = urllib.parse.quote(detector_name, safe="")
         response = self._session.get(self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}",
                                      headers=self._get_header_v2())
         try:
