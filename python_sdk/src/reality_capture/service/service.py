@@ -1,3 +1,4 @@
+import urllib.parse
 import requests
 
 from reality_capture.service.bucket import BucketResponse
@@ -278,7 +279,8 @@ class RealityCaptureService:
     
         :return: A Response[DetectorResponse] containing either the detector details or the error from the service.
         """
-        response = self._session.get(self._get_correct_url(Service.ANALYSIS) + f"detectors/{detector_name}",
+        url_encoded_name = urllib.parse.quote(detector_name)
+        response = self._session.get(self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}",
                                      headers=self._get_header_v2())
         try:
             if response.ok:

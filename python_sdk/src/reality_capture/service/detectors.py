@@ -23,7 +23,7 @@ class DetectorStatus(Enum):
 
 class DetectorVersion(BaseModel):
     creation_date: datetime = Field(description="Creation date of the version.", alias="creationDate")
-    version: str = Field(description="Version number.")
+    version_number: str = Field(description="Version number.", alias="versionNumber")
     status: DetectorStatus = Field(description="Status of the version.")
     download_url: Optional[str] = Field(None, description="URL to download the detector version. "
                                                           "It is present only if the version status is 'Ready'.",
