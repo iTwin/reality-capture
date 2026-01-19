@@ -1,5 +1,4 @@
 import urllib.parse
-
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 from datetime import datetime
 from enum import Enum
@@ -255,6 +254,7 @@ class Jobs(BaseModel):
         if cts is None:
             return None
         return cts[0]
+
 
 class Progress(BaseModel):
     state: JobState = Field(description="State of the job.")
