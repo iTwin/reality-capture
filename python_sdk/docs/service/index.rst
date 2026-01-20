@@ -18,7 +18,6 @@ Service regroups all the classes used to interact with the APIs.
     job
     bucket
     service_files
-    estimation
     reality_data
     data_handler
 
@@ -28,6 +27,5 @@ Service regroups all the classes used to interact with the APIs.
 * :doc:`/service/job` provides classes and enums to describe a job.
 * :doc:`/service/bucket` provides classes to describe a bucket.
 * :doc:`/service/service_files` provides classes to describe files usable through the service.
-* :doc:`/service/estimation` provides classes and enum to describe a cost estomation.
 * :doc:`/service/reality_data` provides classes and enums to describe a reality data.
 * :doc:`/service/data_handler` provide classes for uploading to and downloading from a reality data or a bucket.

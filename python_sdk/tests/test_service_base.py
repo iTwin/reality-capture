@@ -11,7 +11,7 @@ class TestServiceBase:
                 return "Bearer invalid"
 
         ftf = FakeTokenFactory()
-        rcs_qa = RealityCaptureService(ftf, env="qa")
+        rcs_qa = RealityCaptureService(ftf, env="qa", user_agent="Test")
         assert urlparse(rcs_qa._service_url).hostname == "qa-api.bentley.com"
         rcs_dev = RealityCaptureService(ftf, env="dev")
         assert urlparse(rcs_dev._service_url).hostname == "dev-api.bentley.com"

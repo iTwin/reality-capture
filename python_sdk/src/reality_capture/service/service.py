@@ -3,7 +3,6 @@ import requests
 
 from reality_capture.service.bucket import BucketResponse
 from reality_capture.service.detectors import DetectorsMinimalResponse, DetectorResponse
-from reality_capture.service.estimation import CostEstimationCreate, CostEstimation
 from reality_capture.service.files import Files
 from reality_capture.service.response import Response
 from reality_capture.service.job import JobCreate, Job, Progress, Messages, Service, Jobs
@@ -129,7 +128,7 @@ class RealityCaptureService:
         :return: A Response[Job] containing either the Job created or the error from the service.
         """
         url = self._get_correct_url(job.get_appropriate_service())
-        response = self._session.post(url + "/jobs", job.model_dump_json(by_alias=True), headers=self._get_header_v2())
+        response = self._session.post(url + "jobs", job.model_dump_json(by_alias=True), headers=self._get_header_v2())
         try:
             if response.ok:
                 return Response(status_code=response.status_code, value=Job.model_validate(response.json()["job"]),
@@ -150,7 +149,7 @@ class RealityCaptureService:
         :return: A Response[Job] containing either the Job information or the error from the service.
         """
         url = self._get_correct_url(service)
-        response = self._session.get(url + "/jobs/" + job_id, headers=self._get_header_v2())
+        response = self._session.get(url + "jobs/" + job_id, headers=self._get_header_v2())
         try:
             if response.ok:
                 return Response(status_code=response.status_code, value=Job.model_validate(response.json()["job"]),
@@ -171,7 +170,7 @@ class RealityCaptureService:
         :return: A Response[Messages] containing either the messages for the job or the error from the service.
         """
         url = self._get_correct_url(service)
-        response = self._session.get(url + "/jobs/" + job_id + "/messages", headers=self._get_header_v2())
+        response = self._session.get(url + "jobs/" + job_id + "/messages", headers=self._get_header_v2())
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
@@ -193,7 +192,7 @@ class RealityCaptureService:
         :return: A Response[Progress] containing either the job progress or the error from the service.
         """
         url = self._get_correct_url(service)
-        response = self._session.get(url + "/jobs/" + job_id + "/progress", headers=self._get_header_v2())
+        response = self._session.get(url + "jobs/" + job_id + "/progress", headers=self._get_header_v2())
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
@@ -214,32 +213,11 @@ class RealityCaptureService:
         :return: A Response[Job] containing either the job information or the error from the service.
         """
         url = self._get_correct_url(service)
-        response = self._session.delete(url + "/jobs/" + job_id, headers=self._get_header_v2())
+        response = self._session.delete(url + "jobs/" + job_id, headers=self._get_header_v2())
         try:
             if response.ok:
                 return Response(status_code=response.status_code,
                                 value=Job.model_validate(response.json()["job"]), error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
-
-    def estimate_cost(self, estimation_create: CostEstimationCreate) -> Response[CostEstimation]:
-        """
-        Estimate the processing cost of a job.
-
-        :param estimation_create: Estimation parameters
-        :return: A Response[Estimation] containing either the cost estimation or the error from the service.
-        """
-        url = self._get_correct_url(estimation_create.get_appropriate_service())
-        response = self._session.post(url + "/costs", estimation_create.model_dump_json(by_alias=True),
-                                      headers=self._get_header_v2())
-        try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=CostEstimation.model_validate(response.json()["costEstimation"]), error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError) as exception:
