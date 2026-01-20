@@ -18,7 +18,6 @@ from reality_capture.specifications.segmentation3d import Segmentation3DSpecific
 from reality_capture.specifications.segmentation_orthophoto import SegmentationOrthophotoSpecifications
 from reality_capture.specifications.tiling import TilingSpecifications
 from reality_capture.specifications.touchup import TouchUpImportSpecifications, TouchUpExportSpecifications
-from reality_capture.specifications.training import TrainingO2DSpecifications, TrainingS3DSpecifications
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecifications
 
 
@@ -342,31 +341,3 @@ class TestJobValidator:
         }
         job = Job(**j)
         assert isinstance(job.specifications, WaterConstraintsSpecifications)
-
-    def test_validation_training_o2d(self):
-        j = self.j_base.copy()
-        j["type"] = "TrainingO2D"
-        j["specifications"] = {
-            "inputs": {
-                "scene": "sid"
-            },
-            "outputs": {
-                "detector": "Dectetor/1.0"
-            }
-        }
-        job = Job(**j)
-        assert isinstance(job.specifications, TrainingO2DSpecifications)
-
-    def test_validation_training_s3d(self):
-        j = self.j_base.copy()
-        j["type"] = "TrainingS3D"
-        j["specifications"] = {
-            "inputs": {
-                "scene": "sid"
-            },
-            "outputs": {
-                "detector": "Dectetor/1.0"
-            }
-        }
-        job = Job(**j)
-        assert isinstance(job.specifications, TrainingS3DSpecifications)
