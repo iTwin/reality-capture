@@ -1,4 +1,4 @@
-name: Build and test Python SDK
+name: (PyBuildTest) Build and test Python SDK
 
 on:
   workflow_call:
