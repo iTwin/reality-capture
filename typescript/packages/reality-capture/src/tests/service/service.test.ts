@@ -37,7 +37,14 @@ describe("RealityCaptureService tests", function () {
     const getAccessTokenStub = sinon.stub().resolves("fake-token");
     const mockAuthClient = { getAccessToken: getAccessTokenStub } as AuthorizationClient;
     const service = new RealityCaptureService(mockAuthClient, { env: "dev" });
-    //expect((service as any)._getCorrectUrl(Service.ANALYSIS)).to.be.a("string").and.satisfy((url: string) => url.startsWith("https://dev-api.bentley.com/reality-analysis/"));
+    expect((service as any)._getCorrectUrl(Service.ANALYSIS)).to.be.a("string").and.satisfy((url: string) => {
+      try {
+        const parsed = new URL(url);
+        return parsed.protocol === "https:" &&
+          parsed.host === "dev-api.bentley.com" &&
+          parsed.pathname.startsWith("/reality-analysis/");
+      } catch (e) { return false; }
+    });
     expect((service as any)._getCorrectUrl(Service.MODELING)).to.be.a("string").and.satisfy((url: string) => {
       try {
         const parsed = new URL(url);
@@ -209,170 +216,170 @@ describe("RealityCaptureService API calls tests", function () {
   });
 
   // getDetectors tests
-  /*it("getDetectors should call axios.get and return a Response<DetectorsMinimalResponse>", async () => {
-  axiosGetStub.resolves({
-    status: 200,
-    data: {
-      "detectors": [{
-        "name": "@bentley/cracks-ortho",
-        "displayName": "Cracks Ortho",
-        "description": "Detects cracks in concrete infrastructure to enable defect inspection workflows.",
-        "type": "OrthophotoSegmentationDetector",
-        "documentationUrl": "https://www.bentley.com",
-        "latestVersion": "1.0"
-      },
-      {
-        "name": "traffic-signs",
-        "displayName": "Traffic signs detector",
-        "description": "Detects all traffic signs within a scene.",
-        "type": "PhotoObjectDetector",
-        "documentationUrl": "https://www.example.com"
-      }
-      ]
-    }
-  });
-  const result = await service.getDetectors();
-  expect(axiosGetStub.calledOnce).to.be.true;
-  expect(result).to.be.instanceOf(Response);
-  expect(result.isError()).to.be.false;
-  expect(result.value!.detectors).to.have.lengthOf(2);
-});
-
-it("getDetectors 401 error", async () => {
-  axiosGetStub.rejects({
-    response: {
-      status: 401,
+  it("getDetectors should call axios.get and return a Response<DetectorsMinimalResponse>", async () => {
+    axiosGetStub.resolves({
+      status: 200,
       data: {
-        error: {
-          code: "HeaderNotFound",
-          message: "Header Authorization was not found in the request. Access denied."
-        }
-      }
-    }
-  });
-  const result = await service.getDetectors();
-  expect(axiosGetStub.calledOnce).to.be.true;
-  expect(result).to.be.instanceOf(Response);
-  expect(result.isError()).to.be.true;
-  expect(result.error!.error.code).to.equal("HeaderNotFound");
-});
-
-it("getDetectors ill formed error", async () => {
-  axiosGetStub.rejects({
-    response: {
-      status: 400,
-      data: {
-        bad: "response"
-      }
-    }
-  });
-  const result = await service.getDetectors();
-  expect(axiosGetStub.calledOnce).to.be.true;
-  expect(result).to.be.instanceOf(Response);
-  expect(result.isError()).to.be.true;
-  expect(result.error!.error.code).to.equal("UnknownError");
-});
-
-// getDetector tests
-it("getDetector should call axios.get and return a Response<DetectorResponse>", async () => {
-  axiosGetStub.resolves({
-    status: 200,
-    data: {
-      "detector": {
-        "name": "mydetector",
-        "displayName": "Cracks detector",
-        "description": "Detects all the cracks within a scene.",
-        "type": "PhotoObjectDetector",
-        "documentationUrl": "https://www.bentley.com",
-        "versions": [{
-          "creationDate": "2025-03-18T14:11:15.5325351Z",
-          "version": "2.0",
-          "status": "AwaitingData",
-          "creatorId": "e8be5445-c76a-41c6-9bfe-6a3d71953624",
-          "capabilities": {
-            "labels": [
-              "crack"
-            ],
-            "exports": [
-              "Lines"
-            ]
-          }
+        "detectors": [{
+          "name": "@bentley/cracks-ortho",
+          "displayName": "Cracks Ortho",
+          "description": "Detects cracks in concrete infrastructure to enable defect inspection workflows.",
+          "type": "OrthophotoSegmentationDetector",
+          "documentationUrl": "https://www.bentley.com",
+          "latestVersion": "1.0"
         },
         {
-          "creationDate": "2025-03-12T13:32:06.8787916Z",
-          "version": "1.1",
-          "status": "Ready",
-          "creatorId": "e8be5445-c76a-41c6-9bfe-6a3d71953624",
-          "downloadUrl": "https://cicsdetectorsprodeussa01.blob.core.windows.net/bd9bf908-9b82-4fcd-9ab4-ff15286d2ada/cracks-detector-1.1.zip?sv=2024-08-04&se=2025-04-23T11%3A26%3A11Z&sr=b&sp=r&sig=***REMOVED***",
-          "capabilities": {
-            "labels": [
-              "crack"
-            ],
-            "exports": [
-              "Lines"
-            ]
-          }
-        },
-        {
-          "creationDate": "2025-03-11T15:11:24.2712971Z",
-          "version": "1.0",
-          "status": "Ready",
-          "creatorId": "d2b5b8e7-8248-49a3-94ac-b097a7a67b6d",
-          "downloadUrl": "https://cicsdetectorsprodeussa01.blob.core.windows.net/bd9bf908-9b82-4fcd-9ab4-ff15286d2ada/cracks-detector-1.0.zip?sv=2024-08-04&se=2025-04-23T11%3A26%3A11Z&sr=b&sp=r&sig=***REMOVED***",
-          "capabilities": {
-            "labels": [
-              "Crack Object"
-            ],
-            "exports": [
-              "Lines"
-            ]
-          }
+          "name": "traffic-signs",
+          "displayName": "Traffic signs detector",
+          "description": "Detects all traffic signs within a scene.",
+          "type": "PhotoObjectDetector",
+          "documentationUrl": "https://www.example.com"
         }
         ]
       }
-    }
+    });
+    const result = await service.getDetectors();
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.false;
+    expect(result.value!.detectors).to.have.lengthOf(2);
   });
-  const result = await service.getDetector("mydetector");
-  expect(axiosGetStub.calledOnce).to.be.true;
-  expect(result).to.be.instanceOf(Response);
-  expect(result.isError()).to.be.false;
-  expect(result.value!.detector.name).to.equal("mydetector");
-});
 
-it("getDetector 401 error", async () => {
-  axiosGetStub.rejects({
-    response: {
-      status: 401,
-      data: {
-        error: {
-          code: "HeaderNotFound",
-          message: "Header Authorization was not found in the request. Access denied."
+  it("getDetectors 401 error", async () => {
+    axiosGetStub.rejects({
+      response: {
+        status: 401,
+        data: {
+          error: {
+            code: "HeaderNotFound",
+            message: "Header Authorization was not found in the request. Access denied."
+          }
         }
       }
-    }
+    });
+    const result = await service.getDetectors();
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
-  const result = await service.getDetector("mydetector");
-  expect(axiosGetStub.calledOnce).to.be.true;
-  expect(result).to.be.instanceOf(Response);
-  expect(result.isError()).to.be.true;
-  expect(result.error!.error.code).to.equal("HeaderNotFound");
-});
 
-it("getDetector ill formed error", async () => {
-  axiosGetStub.rejects({
-    response: {
-      status: 400,
-      data: {
-        bad: "response"
+  it("getDetectors ill formed error", async () => {
+    axiosGetStub.rejects({
+      response: {
+        status: 400,
+        data: {
+          bad: "response"
+        }
       }
-    }
+    });
+    const result = await service.getDetectors();
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
   });
-  const result = await service.getDetector("mydetector");
-  expect(axiosGetStub.calledOnce).to.be.true;
-  expect(result).to.be.instanceOf(Response);
-  expect(result.isError()).to.be.true;
-  expect(result.error!.error.code).to.equal("UnknownError");
-});*/
+
+  // getDetector tests
+  it("getDetector should call axios.get and return a Response<DetectorResponse>", async () => {
+    axiosGetStub.resolves({
+      status: 200,
+      data: {
+        "detector": {
+          "name": "mydetector",
+          "displayName": "Cracks detector",
+          "description": "Detects all the cracks within a scene.",
+          "type": "PhotoObjectDetector",
+          "documentationUrl": "https://www.bentley.com",
+          "versions": [{
+            "creationDate": "2025-03-18T14:11:15.5325351Z",
+            "version": "2.0",
+            "status": "AwaitingData",
+            "creatorId": "e8be5445-c76a-41c6-9bfe-6a3d71953624",
+            "capabilities": {
+              "labels": [
+                "crack"
+              ],
+              "exports": [
+                "Lines"
+              ]
+            }
+          },
+          {
+            "creationDate": "2025-03-12T13:32:06.8787916Z",
+            "version": "1.1",
+            "status": "Ready",
+            "creatorId": "e8be5445-c76a-41c6-9bfe-6a3d71953624",
+            "downloadUrl": "https://cicsdetectorsprodeussa01.blob.core.windows.net/bd9bf908-9b82-4fcd-9ab4-ff15286d2ada/cracks-detector-1.1.zip?sv=2024-08-04&se=2025-04-23T11%3A26%3A11Z&sr=b&sp=r&sig=***REMOVED***",
+            "capabilities": {
+              "labels": [
+                "crack"
+              ],
+              "exports": [
+                "Lines"
+              ]
+            }
+          },
+          {
+            "creationDate": "2025-03-11T15:11:24.2712971Z",
+            "version": "1.0",
+            "status": "Ready",
+            "creatorId": "d2b5b8e7-8248-49a3-94ac-b097a7a67b6d",
+            "downloadUrl": "https://cicsdetectorsprodeussa01.blob.core.windows.net/bd9bf908-9b82-4fcd-9ab4-ff15286d2ada/cracks-detector-1.0.zip?sv=2024-08-04&se=2025-04-23T11%3A26%3A11Z&sr=b&sp=r&sig=***REMOVED***",
+            "capabilities": {
+              "labels": [
+                "Crack Object"
+              ],
+              "exports": [
+                "Lines"
+              ]
+            }
+          }
+          ]
+        }
+      }
+    });
+    const result = await service.getDetector("mydetector");
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.false;
+    expect(result.value!.detector.name).to.equal("mydetector");
+  });
+
+  it("getDetector 401 error", async () => {
+    axiosGetStub.rejects({
+      response: {
+        status: 401,
+        data: {
+          error: {
+            code: "HeaderNotFound",
+            message: "Header Authorization was not found in the request. Access denied."
+          }
+        }
+      }
+    });
+    const result = await service.getDetector("mydetector");
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("HeaderNotFound");
+  });
+
+  it("getDetector ill formed error", async () => {
+    axiosGetStub.rejects({
+      response: {
+        status: 400,
+        data: {
+          bad: "response"
+        }
+      }
+    });
+    const result = await service.getDetector("mydetector");
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
 
   //estimateCost tests
   it("estimateCost should call axios.post and return a Response<CostEstimation>", async () => {

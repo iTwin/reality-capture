@@ -23,8 +23,6 @@ Specifications regroup all the settings used to create jobs with our APIs.
     water_constraints
     gaussian_splats
     geometry
-..
-    point_cloud_conversion
     objects2d
     segmentation2d
     segmentation_orthophoto
@@ -35,8 +33,7 @@ Specifications regroup all the settings used to create jobs with our APIs.
     eval_s2d
     eval_s3d
     eval_sortho
-    training_o2d
-    training_s3d
+
 
 Modeling
 ========
@@ -52,17 +49,15 @@ Modeling
 * :doc:`/specifications/water_constraints` will take a scene and a Reference Model and will try to detect water constraints.
 * :doc:`/specifications/gaussian_splats` will take a scene and generate Gaussian Splats in various formats.
 
-.. Analysis
-.. ========
+Analysis
+========
 
-.. * :doc:`/specifications/objects2d` uses a photo detector to detect 2D objects in photos. If the photos are oriented, it can turn these 2D objects into 3D features.
-.. * :doc:`/specifications/segmentation2d` uses a photo segmentation detector to classify pixels in photos. If photos are oriented, it can project this classification onto reality data like meshes to create 3D features.
-.. * :doc:`/specifications/segmentation_orthophoto` uses an orthophoto segmentation detector to classify pixels in an orthophoto and create 2D features.
-.. * :doc:`/specifications/segmentation3d` uses a point cloud segmentation detector to classify each point of a point cloud and create 3D features.
-.. * :doc:`/specifications/change_detection` will take two point clouds or two meshes to to get 3D regions that capture the changes.
-.. * :doc:`/specifications/training_o2d` will train an o2d detector from a ContextScene
-.. * :doc:`/specifications/training_s3d` will train an s3d detector from a ContextScene
-.. * :doc:`/specifications/eval_o2d`, :doc:`/specifications/eval_o3d`, :doc:`/specifications/eval_s2d`, :doc:`/specifications/eval_s3d` and :doc:`/specifications/eval_sortho` will compare a prediction to a reference for a specific detection.
+* :doc:`/specifications/objects2d` uses a photo detector to detect 2D objects in photos. If the photos are oriented, it can turn these 2D objects into 3D features.
+* :doc:`/specifications/segmentation2d` uses a photo segmentation detector to classify pixels in photos. If photos are oriented, it can project this classification onto reality data like meshes to create 3D features.
+* :doc:`/specifications/segmentation_orthophoto` uses an orthophoto segmentation detector to classify pixels in an orthophoto and create 2D features.
+* :doc:`/specifications/segmentation3d` uses a point cloud segmentation detector to classify each point of a point cloud and create 3D features.
+* :doc:`/specifications/change_detection` will take two point clouds or two meshes to to get 3D regions that capture the changes.
+* :doc:`/specifications/eval_o2d`, :doc:`/specifications/eval_o3d`, :doc:`/specifications/eval_s2d`, :doc:`/specifications/eval_s3d` and :doc:`/specifications/eval_sortho` will compare a prediction to a reference for a specific detection.
 
 .. Conversion
 .. ==========

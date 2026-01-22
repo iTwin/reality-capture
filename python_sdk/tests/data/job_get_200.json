@@ -1,0 +1,25 @@
+{
+    "job": {
+        "id": "796715aa-bc5a-4df5-9554-ceed038babc6",
+        "state": "Active",
+        "userId": "911edf8b-59ad-404c-a743-aec05ca038e9",
+        "executionInfo": {
+            "createdDateTime": "2025-03-06T09:42:33Z"
+        },
+        "specifications": {
+            "inputs": {
+                "sceneToProcess": "4b72d64d-fa15-4059-b3a6-ef65486e3786"
+            },
+            "outputs": {
+                "scene": "09cc000e-726b-4719-88ee-a6085d5432db"
+            },
+            "options": {
+                "recursiveImageCollections": false,
+                "altitudeReference": "SeaLevel"
+            }
+        },
+        "name": "My first Reality Modeling job",
+        "type": "FillImageProperties",
+        "iTwinId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+}

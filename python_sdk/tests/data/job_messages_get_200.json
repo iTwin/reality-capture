@@ -1,0 +1,11 @@
+{
+    "messages": {
+        "errors": [{
+            "code": "InputData_Invalid",
+            "message": "Invalid input data. Please check the documentation. (\"%1\")",
+            "title": "Invalid input data",
+            "params": ["Sample_scan"]
+        }],
+        "warnings": []
+    }
+}
