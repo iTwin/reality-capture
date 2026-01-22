@@ -1,4 +1,4 @@
-name: Typescript SDK CI
+name: (TSCI) Typescript SDK CI
 
 on:
   push:
