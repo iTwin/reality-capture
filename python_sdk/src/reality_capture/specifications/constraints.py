@@ -38,6 +38,8 @@ class ConstraintsInputs(BaseModel):
                                                          description="IDs of constraints to delete")
     constraints_to_add: Optional[list[ConstraintToAdd]] = Field(None, alias="constraintsToAdd",
                                                                 description="Constraints to add")
+    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData",
+                                    pattern=r"^bkt:.+")
 
 
 class ConstraintsOutputs(BaseModel):

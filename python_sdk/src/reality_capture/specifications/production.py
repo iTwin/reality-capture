@@ -13,6 +13,8 @@ class ProductionInputs(BaseModel):
                                                     "used for export extent",
                                   pattern=r"^bkt:.+")
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
+    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData",
+                                    pattern=r"^bkt:.+")
 
 
 class Format(Enum):
