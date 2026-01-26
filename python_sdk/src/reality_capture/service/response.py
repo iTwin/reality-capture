@@ -1,11 +1,12 @@
 from typing import TypeVar, Generic, Optional
+from dataclasses import dataclass
 from reality_capture.service.error import DetailedErrorResponse
 
 
 T = TypeVar("T")
 
-
-class Response(tuple, Generic[T]):
+@dataclass
+class Response(Generic[T]):
     """
     A tuple containing a Service response.
     """
@@ -16,13 +17,6 @@ class Response(tuple, Generic[T]):
     "Optional error if the request failed."
     value: Optional[T]
     "Optional object if the request succeed."
-
-    def __new__(cls, status_code: int, error: Optional[DetailedErrorResponse], value: Optional[T]):
-        self = tuple.__new__(cls, (status_code, error, value))
-        self.value = value
-        self.status_code = status_code
-        self.error = error
-        return self
 
     def get_response_status_code(self) -> int:
         """

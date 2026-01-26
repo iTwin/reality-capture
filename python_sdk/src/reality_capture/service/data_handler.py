@@ -1,11 +1,16 @@
 import os.path
-from typing import Optional
+import io
+import urllib.parse
+from typing import Callable, Optional
+import requests
+import zipfile
 from reality_capture.service.error import DetailedErrorResponse, DetailedError, Error
 from reality_capture.service.response import Response
-from reality_capture.service.service import RealityCaptureService
+from reality_capture.service.service import DetectorMinimal, RealityCaptureService
 from reality_capture.service.reality_data import RealityDataUpdate, RealityData, ContainerDetails
 from reality_capture.service.bucket import BucketResponse
 from azure.storage.blob import ContainerClient
+from reality_capture.service.detectors import Detector, DetectorCreate, DetectorVersion, DetectorType
 from multiprocessing.pool import ThreadPool
 
 
@@ -169,7 +174,7 @@ class RealityDataHandler:
 
         :param token_factory: An object that implements a ``get_token() -> str`` method.
         :type token_factory: Object
-        :param \**kwargs: Internal parameters used only for development purposes.
+        :param \\**kwargs: Internal parameters used only for development purposes.
         """
         self._service = RealityCaptureService(token_factory, **kwargs)
         self._progress_hook = None
@@ -252,7 +257,7 @@ class RealityDataHandler:
             return Response(r.status_code, r.error, None)
         return _DataHandler.delete_data(r.value.links.container_url.href, files_to_delete)
 
-    def set_progress_hook(self, hook: Optional) -> None:
+    def set_progress_hook(self, hook: Optional[Callable[[float], bool]]) -> None:
         """
         Set the progress hook.
 
@@ -273,7 +278,7 @@ class BucketDataHandler:
 
         :param token_factory: An object that implements a ``get_token() -> str`` method.
         :type token_factory: Object
-        :param \**kwargs: Internal parameters used only for development purposes.
+        :param \\**kwargs: Internal parameters used only for development purposes.
         """
         self._service = RealityCaptureService(token_factory, **kwargs)
         self._progress_hook = None
@@ -336,7 +341,7 @@ class BucketDataHandler:
             return Response(r.status_code, r.error, None)
         return _DataHandler.delete_data(r.value.links.container_url.href, files_to_delete)
 
-    def set_progress_hook(self, hook: Optional) -> None:
+    def set_progress_hook(self, hook: Optional[Callable[[float], bool]]) -> None:
         """
         Set the progress hook.
 
@@ -344,3 +349,102 @@ class BucketDataHandler:
          When returning false, the ongoing action will be cancelled. Can be None if no progress hook is needed.
         """
         self._progress_hook = hook
+
+class DetectorDataHandler:
+    """
+    Class for interacting with detectors
+    """
+
+    def __init__(self, token_factory, **kwargs) -> None:
+        """
+        Constructor method
+
+        :param token_factory: An object that implements a ``get_token() -> str`` method.
+        :type token_factory: Object
+        :param \\**kwargs: Internal parameters used only for development purposes.
+        """
+        self._service = RealityCaptureService(token_factory, **kwargs)
+        self._progress_hook = None
+
+    def get_detector(self, detector_name: str) -> Response[Detector]:
+        return self._service.get_detector(detector_name)
+
+    def get_specific_detector_version(self, detector_name: str, version_number: str) -> Response[DetectorVersion]:
+        r = self.get_detector(detector_name)
+
+        if r.is_error() or r.value is None:
+            return Response(r.status_code, r.error, None)
+
+        detector = next((d for d in r.value.versions if d.version == version_number), None)
+
+        return Response(r.status_code, r.error, detector)
+    
+    def create_detector(self,
+            name: str, type: DetectorType,
+            display_name: Optional[str] = None,
+            description: Optional[str] = None,
+            documentation_url: Optional[str] = None
+    ) -> Response[DetectorMinimal]:
+
+        detector_attributes = DetectorCreate(
+            name = name,
+            type = type,
+            displayName = display_name,
+            description = description,
+            documentationUrl = documentation_url
+        )
+
+        return self._service.create_detector(detector_attributes)
+    
+    def list_available_detectors(self) -> Response[list[DetectorMinimal]]:
+        return self._service.get_detectors()
+
+    def download_detector_archive(self, detector_name: str, version_number: str) -> Response[io.BytesIO]:
+        """
+        Download detector archive from a detector version.
+
+        :param dst: Destination path of the downloads.
+        :param detector_src: Source folder to download in the detector, default to root.
+        :return: A Response[io.BytesIO] containing the error from the service if any.
+        """
+        r = self.get_specific_detector_version(detector_name, version_number)
+
+        if r.is_error():
+            return Response(r.status_code, r.error, None)
+
+        assert r.value is not None
+        detector_version = r.value
+        assert detector_version.download_url is not None
+
+        response = requests.get(detector_version.download_url, stream=True)
+        content = io.BytesIO(response.content)
+
+        return Response(r.status_code, r.error, content)
+
+    def delete_detector(self, detector_name: str) -> Response[None]:
+        """
+        Delete a detector and all its versions
+
+        :return: A Response[list[str]] containing either the files in the detector or the error from the service.
+        """
+        return self._service.delete_detector(detector_name)
+
+    def delete_detector_version(self, detector_name: str, version_number: str) -> Response[None]:
+        """
+        Delete a specific version of a detector
+
+        :param itwin_id: iTwin id for finding the detector.
+        :param files_to_delete: List of files to delete.
+        :return: A Response[None] containing either the files in the detector or the error from the service.
+        """
+        return self._service.delete_detector_version(detector_name, version_number)
+
+    def set_progress_hook(self, hook: Optional[Callable[[float], bool]]) -> None:
+        """
+        Set the progress hook.
+
+        :param hook: Function taking a float as an argument and returning a bool.
+         When returning false, the ongoing action will be cancelled. Can be None if no progress hook is needed.
+        """
+        self._progress_hook = hook
+

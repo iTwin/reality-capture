@@ -78,7 +78,7 @@ def _get_appropriate_service(jt: JobType):
         return Service.MODELING
     if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
             JobType.CHANGE_DETECTION, JobType.TRAINING_O2D, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
-            JobType.EVAL_S3D, JobType.EVAL_SORTHO]:
+            JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.TRAINING_S3D]:
         return Service.ANALYSIS
     # return Service.CONVERSION
     raise NotImplemented("Other services not yet implemented")
