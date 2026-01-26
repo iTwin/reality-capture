@@ -62,9 +62,9 @@ class JobType(Enum):
     TOUCH_UP_IMPORT = "TouchUpImport"
     TOUCH_UP_EXPORT = "TouchUpExport"
     WATER_CONSTRAINTS = "WaterConstraints"
-	# POINT_CLOUD_CONVERSION = "PointCloudConversion"
     TRAINING_O2D = "TrainingO2D"
     TRAINING_S3D = "TrainingS3D"
+	# POINT_CLOUD_CONVERSION = "PointCloudConversion"
 
 class Service(Enum):
     MODELING = "Modeling"
@@ -79,7 +79,7 @@ def _get_appropriate_service(jt: JobType):
         return Service.MODELING
     if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
             JobType.CHANGE_DETECTION, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
-            JobType.EVAL_S3D, JobType.EVAL_SORTHO]:
+            JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.TRAINING_S3D]:
         return Service.ANALYSIS
     # return Service.CONVERSION
     raise NotImplemented("Other services not yet implemented")
@@ -100,18 +100,18 @@ class JobCreate(BaseModel):
     type: JobType = Field(description="Type of job.")
     # TODO : PointCloudConversionSpecificationsCreate,
     specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
-    					ConstraintsSpecificationsCreate,
+                        ConstraintsSpecificationsCreate, # PointCloudConversionSpecifications,
                         EvalO2DSpecificationsCreate, EvalO3DSpecificationsCreate,
                         EvalS2DSpecificationsCreate, EvalS3DSpecificationsCreate,
                         EvalSOrthoSpecificationsCreate, FillImagePropertiesSpecificationsCreate,
-    					GaussianSplatsSpecificationsCreate, ImportPCSpecificationsCreate,
+                        GaussianSplatsSpecificationsCreate, ImportPCSpecificationsCreate,
                         Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
                         ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
                         Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                         TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
                         TouchUpImportSpecifications, WaterConstraintsSpecificationsCreate,
-                        TrainingO2DSpecificationsCreate, PointCloudConversionSpecificationsCreate,
-                        TrainingS3DSpecificationsCreate] =  Field(description="Specifications aligned with the job type.")
+                        TrainingO2DSpecificationsCreate, TrainingS3DSpecificationsCreate
+                    ] =  Field(description="Specifications aligned with the job type.")
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
                           alias="iTwinId")
@@ -145,7 +145,7 @@ class Job(BaseModel):
     user_id: str = Field(description="Identifier of the user that created the job.", alias="userId")
     # TODO : add PointCloudConversionSpecifications
     specifications: Union[CalibrationSpecifications, ChangeDetectionSpecifications,
-                        ConstraintsSpecifications, 
+                        ConstraintsSpecifications, # PointCloudConversionSpecifications,
                         EvalO2DSpecifications, EvalO3DSpecifications,
                         EvalS2DSpecifications, EvalS3DSpecifications,
                         EvalSOrthoSpecifications, FillImagePropertiesSpecifications, 
@@ -156,7 +156,7 @@ class Job(BaseModel):
                         TilingSpecifications, TouchUpExportSpecifications,
                         TouchUpImportSpecifications, WaterConstraintsSpecifications,
                         TrainingO2DSpecifications, TrainingS3DSpecifications,
-						PointCloudConversionSpecifications] = Field(description="Specifications aligned with the job type.")
+                    ] = Field(description="Specifications aligned with the job type.")
 
     @field_validator("specifications", mode="plain")
     @classmethod
@@ -207,10 +207,10 @@ class Job(BaseModel):
             specifications = TouchUpImportSpecifications(**raw_dict)
         elif job_type == JobType.WATER_CONSTRAINTS:
             specifications = WaterConstraintsSpecifications(**raw_dict)
-		elif job_type == JobType.TrainingS3D:
-			specifications = TrainingS3DSpecifications(**raw_dict)
-		elif job_type == JobType.TrainingO2D:
-			specifications = TrainingO2DSpecifications(**raw_dict)
+        elif job_type == JobType.TRAINING_S3D:
+            specifications = TrainingS3DSpecifications(**raw_dict)
+        elif job_type == JobType.TRAINING_O2D:
+            specifications = TrainingO2DSpecifications(**raw_dict)
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 

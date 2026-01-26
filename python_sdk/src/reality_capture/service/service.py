@@ -2,7 +2,7 @@ import urllib.parse
 import requests
 
 from reality_capture.service.bucket import BucketResponse
-from reality_capture.service.detectors import DetectorsMinimalResponse, DetectorResponse
+from reality_capture.service.detectors import DetectorCreate, DetectorUpdate, DetectorVersionCreate, DetectorsMinimalResponse, DetectorResponse, Detector, DetectorMinimal, DetectorVersionCreateResponseLinks, Links
 from reality_capture.service.files import Files
 from reality_capture.service.response import Response
 from reality_capture.service.job import JobCreate, Job, Progress, Messages, Service, Jobs
@@ -26,7 +26,7 @@ class RealityCaptureService:
 
         :param token_factory: An object that implements a ``get_token() -> str`` method.
         :type token_factory: Object
-        :param \**kwargs: See below.
+        :param \\**kwargs: See below.
 
         :Keyword Arguments:
             * *user_agent* (``str``) --
@@ -263,18 +263,18 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
-    def get_detectors(self) -> Response[DetectorsMinimalResponse]:
+    def get_detectors(self) -> Response[list[DetectorMinimal]]:
         """
         Retrieve all available detectors.
     
         :return: A Response[DetectorsMinimalResponse] containing either the detector list or the error from the service.
         """
-        response = self._session.get(self._get_correct_url(Service.ANALYSIS) + f"detectors",
+        response = self._session.get(self._get_correct_url(Service.ANALYSIS) + "detectors",
                                      headers=self._get_header_v2())
         try:
             if response.ok:
-                return Response(status_code=response.status_code,
-                                value=DetectorsMinimalResponse.model_validate(response.json()), error=None)
+                payload: DetectorsMinimalResponse = DetectorsMinimalResponse.model_validate(response.json())
+                return Response(status_code=response.status_code, value=payload.detectors, error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError) as exception:
@@ -282,19 +282,122 @@ class RealityCaptureService:
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse(error=error), value=None)
 
-    def get_detector(self, detector_name: str) -> Response[DetectorResponse]:
+    def get_detector(self, detector_name: str) -> Response[Detector]:
         """
         Retrieve details of a detector.
     
         :return: A Response[DetectorResponse] containing either the detector details or the error from the service.
         """
         url_encoded_name = urllib.parse.quote(detector_name, safe="")
-        response = self._session.get(self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}",
-                                     headers=self._get_header_v2())
+        endpoint_url = self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}"
+        response = self._session.get(endpoint_url, headers=self._get_header_v2())
         try:
             if response.ok:
-                return Response(status_code=response.status_code,
-                                value=DetectorResponse.model_validate(response.json()), error=None)
+                payload: DetectorResponse = DetectorResponse.model_validate(response.json())
+                return Response(status_code=response.status_code, value=payload.detector, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def create_detector(self, attributes: DetectorCreate) -> Response[DetectorMinimal]:
+        response = self._session.post(
+            self._get_correct_url(Service.ANALYSIS) + "detectors",
+		    attributes.model_dump_json(by_alias=True, exclude_none=True),
+            headers=self._get_header_v2()
+        )
+        try:
+            if response.ok:
+                payload: DetectorResponse = DetectorResponse.model_validate(response.json())
+                return Response(status_code=response.status_code, value=payload.detector, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def create_detector_version(self, detector_name: str, version_attributes: DetectorVersionCreate) -> Response[DetectorVersionCreateResponseLinks]:
+
+        response = self._session.post(self._get_correct_url(Service.ANALYSIS) + f"detectors/{detector_name}/versions",
+                                      version_attributes.model_dump_json(by_alias=True, exclude_none=True),
+                                      headers=self._get_header_v2())
+
+        try:
+            if response.ok:
+                payload = DetectorVersionCreateResponseLinks.model_validate(response.json())
+                return Response(status_code=response.status_code, value=payload, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def delete_detector(self, detector_name: str) -> Response[None]:
+        url_encoded_name = urllib.parse.quote(detector_name, safe="")
+        response = self._session.get(self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}",
+                                      headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code, value=None, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+        
+    def delete_detector_version(self, detector_name: str, version_number: str) -> Response[None]:
+        response = self._session.delete(self._get_correct_url(Service.ANALYSIS) + f"detectors/{detector_name}/versions/{version_number}",
+                                      headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code, value=None, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def modify_detector(self, detector_name: str, detector_attrs: DetectorUpdate) -> Response[None]:
+        response = self._session.patch(self._get_correct_url(Service.ANALYSIS) + f"detectors/{detector_name}",
+                                      headers=self._get_header_v2())
+
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code, value=None, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def publish_detector_version(self, detector_name: str, version_number: str) -> Response[None]:
+        response = self._session.post(self._get_correct_url(Service.ANALYSIS) + f"detectors/{detector_name}/versions/{version_number}/publish",
+                                      headers=self._get_header_v2())
+
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code, value=None, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def unpublish_detector_version(self, detector_name: str, version_number: str) -> Response[None]:
+        response = self._session.post(self._get_correct_url(Service.ANALYSIS) + f"detectors/{detector_name}/versions/{version_number}/unpublish",
+                                      headers=self._get_header_v2())
+
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code, value=None, error=None)
             return Response(status_code=response.status_code,
                             error=DetailedErrorResponse.model_validate(response.json()), value=None)
         except (ValidationError, KeyError) as exception:

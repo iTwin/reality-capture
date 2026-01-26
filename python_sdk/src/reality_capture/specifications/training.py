@@ -79,7 +79,12 @@ class TrainingS3DOptions(BaseModel):
     )
     model: Optional[Segmentation3DTrainingModel] = Field(None, description="Training Model architecture to use.")
     features: Optional[list[PointCloudFeature]] = Field(None, description="Features to use for the training.")
-    version_name: Optional[str] = Field(None, description="Version name for the newly trained detector.", alias="versionName")
+    version_number: Optional[str] = Field(
+        None, 
+        description="String representing the version number for the newly trained detector.",
+        alias="versionNumber",
+        pattern=r"\d+(.\d+)?"
+    )
 
 
 class TrainingS3DOutputsCreate(Enum):
