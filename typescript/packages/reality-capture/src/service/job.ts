@@ -17,6 +17,7 @@ import { WaterConstraintsSpecificationsCreateSchema, WaterConstraintsSpecificati
 import { TrainingO2DSpecificationsCreateSchema, TrainingS3DSpecificationsCreateSchema, TrainingO2DSpecificationsSchema, TrainingS3DSpecificationsSchema } from "../specifications/training";
 //import { PointCloudConversionSpecificationsCreateSchema, PointCloudConversionSpecificationsSchema } from '../specifications/point_cloud_conversion';
 import { GaussianSplatsSpecificationsCreateSchema, GaussianSplatsSpecificationsSchema } from "../specifications/gaussian_splats";
+import { URLSchema } from "./bucket";
 import { EvalO2DSpecificationsCreateSchema, EvalO2DSpecificationsSchema } from "../specifications/eval_o2d";
 import { EvalO3DSpecificationsCreateSchema, EvalO3DSpecificationsSchema } from "../specifications/eval_o3d";
 import { EvalS2DSpecificationsCreateSchema, EvalS2DSpecificationsSchema } from "../specifications/eval_s2d";
@@ -256,6 +257,17 @@ export const JobSchema = z.discriminatedUnion("type", [
   })
 ]);
 export type Job = z.infer<typeof JobSchema>;
+
+export const NextLinkSchema = z.object({
+  next: URLSchema.describe("URL for getting the next page of results.")
+});
+export type NextLink = z.infer<typeof NextLinkSchema>;
+
+export const JobsSchema = z.object({
+  jobs: z.array(JobSchema).describe("List of jobs."),
+  _links: NextLinkSchema.describe("Contains the hyperlink to the next page of results, if applicable."),
+});
+export type Jobs = z.infer<typeof JobsSchema>;
 
 export const JobResponseSchema = z.object({
   job: JobSchema.describe("Complete job information."),

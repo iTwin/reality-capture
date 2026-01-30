@@ -8,34 +8,6 @@ The Change Detection job detects changes between two collections of point clouds
    :local:
    :depth: 2
 
-Purposes
-========
-
-This job has one purpose :
-
-.. list-table::
-   :widths: 25 25 25 25
-   :header-rows: 1
-
-   * - Purpose
-     - Inputs
-     - Possible outputs
-     - Useful options
-   * - | Detect changes between
-       | two collections of
-       | meshes, point clouds
-     - | *reference*,
-       | *toCompare*
-     - | *objects3d*
-       | *locations3d_as_shp* (optional),
-       | *locations3d_as_geojson* (optional)
-     - | *crs*,
-       | *color_threshold_low*,
-       | *color_threshold_high*,
-       | *dist_threshold_low*,
-       | *dist_threshold_high*,
-       | *min_points*
-
 Examples
 ========
 

@@ -41,7 +41,7 @@ Select "Service" application type and register the application.
 ## Configure environment
 
 Once you have created the iTwin and the application, you must configure the environment for the examples.
-Copy the [.env](./template.env), rename it to ".env" and fill in the environment variables.
+Copy the [template.env](./template.env) file, rename it to ".env" and fill in the environment variables.
 
 ## Run examples
 

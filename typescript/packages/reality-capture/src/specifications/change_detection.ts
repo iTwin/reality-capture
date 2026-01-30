@@ -4,13 +4,13 @@ export enum ChangeDetectionOutputsCreate {
   OBJECTS3D = "objects3D",
   LOCATIONS3D_AS_SHP = "locations3DAsSHP",
   LOCATIONS3D_AS_GEOJSON = "locations3DAsGeoJSON",
-  ADDED = "added",
-  REMOVED = "removed",
+  CHANGES_IN_MODEL_A = "changesInModelA",
+  CHANGES_IN_MODEL_B = "changesInModelB",
 }
 
 export const ChangeDetectionInputsSchema = z.object({
-  reference: z.string().describe("Reality data id of ContextScene, point cloud or mesh"),
-  toCompare: z.string().describe("Reality data id of ContextScene, point cloud or mesh"),
+  model3dA: z.string().describe("Reality data id of ContextScene, point cloud or mesh"),
+  model3dB: z.string().describe("Reality data id of ContextScene, point cloud or mesh"),
   extent: z.string().describe("Path in the bucket of the clipping polygon to apply").regex(/^bkt:.+/, {
     message: "Path in the bucket to the extent file must start with 'bkt:'",
   }).optional(),
@@ -21,8 +21,8 @@ export const ChangeDetectionOutputsSchema = z.object({
   objects3D: z.string().optional().describe("Reality data id of ContextScene, annotated with embedded 3D objects"),
   locations3DAsSHP: z.string().optional().describe("Reality data id of 3D objects locations as SHP format"),
   locations3DAsGeoJSON: z.string().optional().describe("Reality data id of 3D objects locations as GeoJSON file"),
-  added: z.string().optional().describe("Points in toCompare not in reference as OPC"),
-  removed: z.string().optional().describe("Point in reference not in toCompare as OPC"),
+  changesInModelB: z.string().optional().describe("Points in B not in A as OPC"),
+  changesInModelA: z.string().optional().describe("Points in A not in B as OPC"),
 });
 export type ChangeDetectionOutputs = z.infer<typeof ChangeDetectionOutputsSchema>;
 

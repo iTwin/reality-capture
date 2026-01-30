@@ -1,9 +1,7 @@
 import os.path
 import io
-import urllib.parse
 from typing import Callable, Optional
 import requests
-import zipfile
 from reality_capture.service.error import DetailedErrorResponse, DetailedError, Error
 from reality_capture.service.response import Response
 from reality_capture.service.service import DetectorMinimal, RealityCaptureService

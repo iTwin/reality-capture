@@ -5,7 +5,7 @@ import { DetectorsMinimalResponse, DetectorResponse } from "./detectors";
 import { CostEstimationCreate, CostEstimation } from "./estimation";
 import { Files } from "./files";
 import { Response } from "./response";
-import { JobCreate, Job, Progress, Messages, Service, getAppropriateService } from "./job";
+import { JobCreate, Job, Progress, Messages, Service, getAppropriateService, Jobs } from "./job";
 import { DetailedErrorResponse, DetailedError } from "./error";
 
 export class RealityCaptureService {
@@ -62,6 +62,19 @@ export class RealityCaptureService {
 
   private _getIllFormedMessage(response: any, exception: any): string {
     return `Service response is ill-formed: ${JSON.stringify(response.data)}. Exception: ${exception}`;
+  }
+
+  async getJobs(service: Service, filters: string = "", top: number = 100, continuationToken: string = ""): Promise<Response<Jobs>> {
+    const url = this._getCorrectUrl(service);
+    try {
+      const resp = await this._axios.get(url + "/jobs", {
+        params: {"$filter": filters,  "$top": top, continuationToken },
+        headers: await this._getHeader("v2")
+      });
+      return new Response(resp.status, null, resp.data as Jobs);
+    } catch (error: any) {
+      return this._handleError<Jobs>(error);
+    }
   }
 
   async submitJob(job: JobCreate): Promise<Response<Job>> {

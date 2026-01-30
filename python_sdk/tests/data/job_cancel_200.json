@@ -1,0 +1,33 @@
+{
+    "job": {
+        "id": "796715aa-bc5a-4df5-9554-ceed038babc6",
+        "state": "TerminatingOnCancel",
+        "userId": "911edf8b-59ad-404c-a743-aec05ca038e9",
+        "executionInfo": {
+            "startedDateTime": "2025-03-10T11:30:03Z",
+            "createdDateTime": "2025-03-10T11:30:00Z"
+        },
+        "specifications": {
+            "inputs": {
+                "scene": "7e8bd05b-f82f-4955-81e9-7d66a731857a"
+            },
+            "outputs": {
+                "modelingReference": {
+                    "location": "1aee1cb3-d0cc-4bb3-a261-fdc17b598464"
+                },
+                "exports": [{
+                        "location": "9d9da8fa-0b26-4eaa-b297-b22c2bb8e1d1",
+                        "format": "3DTiles"
+                    },
+                    {
+                        "location": "8359a84c-8bd0-4af9-9403-d5f78d8e37e8",
+                        "format": "OBJ"
+                    }
+                ]
+            }
+        },
+        "name": "My first Reality Modeling job",
+        "type": "Reconstruction",
+        "iTwinId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+}
