@@ -1,4 +1,4 @@
-name: Publish dev pre-release NPM packages
+name: (DevReleaseV1) Publish v1 dev packages
 
 on: workflow_dispatch
 

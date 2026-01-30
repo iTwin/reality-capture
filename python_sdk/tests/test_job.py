@@ -1,5 +1,6 @@
 import datetime
 from reality_capture.service.job import Service, JobCreate, Job, JobType, JobState
+from reality_capture.specifications.eval_o2d import EvalO2DSpecifications
 from reality_capture.specifications.tiling import TilingOutputsCreate
 from reality_capture.specifications.segmentation3d import Segmentation3DOutputsCreate
 # from reality_capture.specifications.point_cloud_conversion import PCConversionOutputsCreate
@@ -11,11 +12,11 @@ class TestJob:
         cdt = {"createdDateTime": cdt, "startedDateTime": None, "endedDateTime": None, "estimatedUnits": None}
         tiling_specs = {"inputs": {"scene": "scene"}, "outputs": {"modelingReference": {"location": "location"}}}
         j = Job(id="id", type=JobType.TILING, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
-                userId="claude@example.org", specifications=tiling_specs, bucketId="bucket")
+                userId="claude@example.org", specifications=tiling_specs)
         assert j.get_appropriate_service() == Service.MODELING
-        training_specs = {"inputs": {"scene": "scene"}, "outputs": {"detector": "detector"}}
-        j = Job(id="id", type=JobType.TRAINING_O2D, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
-                userId="claude@example.org", specifications=training_specs, bucketId="bucket")
+        specs = {"inputs": {"reference": "ref", "prediction": "pred"}, "outputs": {"objects2D": "objects2d"}}
+        j = Job(id="id", type=JobType.EVAL_O2D, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
+                userId="claude@example.org", specifications=specs)
         assert j.get_appropriate_service() == Service.ANALYSIS
         # pc_conversion_specs = {"inputs": {"pointClouds": ["point_cloud"]}, "outputs": {"opc": "opc"}}
         # j = Job(id="id", type=JobType.POINT_CLOUD_CONVERSION, iTwinId="itwin", state=JobState.SUCCESS,

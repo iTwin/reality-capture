@@ -1,4 +1,3 @@
-import urllib.parse
 import requests
 
 from reality_capture.service.bucket import BucketResponse
