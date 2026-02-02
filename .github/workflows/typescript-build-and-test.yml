@@ -1,4 +1,4 @@
-name: Build and test Typescript SDK
+name: (TSBuildTest) Build and test Typescript SDK
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: Publish Python SDK Release
+name: (PyRelease) Publish Python SDK Release
 
 on: workflow_dispatch
 

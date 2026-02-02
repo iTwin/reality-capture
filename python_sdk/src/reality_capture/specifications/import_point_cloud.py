@@ -6,6 +6,8 @@ from reality_capture.specifications.geometry import BoundingBox, Point3d
 
 class ImportPCInputs(BaseModel):
     scene: str = Field(description="Reality data id of ContextScene to process")
+    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData",
+                                    pattern=r"^bkt:.+")
 
 
 class ImportPCOutputs(BaseModel):

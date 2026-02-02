@@ -88,7 +88,7 @@ async function runCalibration(realityCaptureService: RealityCaptureService, buck
   return (calibPropertiesResponse.value!.specifications.outputs as CalibrationOutputs).scene;
 }
 
-async function runReconstruction(realityCaptureService: RealityCaptureService, realityDataHandler: RealityDataHandler, calibOutputContextScene: string, reconsJobName: string, outputPath: string, iTwinId: string, 
+async function runReconstruction(realityCaptureService: RealityCaptureService, realityDataHandler: RealityDataHandler, calibOutputContextScene: string, reconsJobName: string, outputPath: string, iTwinId: string,
   lasOptions: OptionsLAS, tiles3dOptions: Options3DTiles) {
   // Submit Reconstruction job to generate the LAS
   let reconsInputs: ReconstructionInputs = { scene: calibOutputContextScene };
@@ -133,7 +133,7 @@ async function runModelingExample() {
   const outputPath = "D:/Datasets/Helico/Results";
 
   // Options for calibration
-  const calibOptions: CalibrationOptions = { 
+  const calibOptions: CalibrationOptions = {
     adjustmentConstraints: [AdjustmentConstraints.POSITION_METADATA] // Adjustment from photos position metadata
   };
 

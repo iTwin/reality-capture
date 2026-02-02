@@ -12,7 +12,8 @@ class GaussianSplatsInputs(BaseModel):
                                               alias="regionOfInterest",
                                               default=None,
                                               pattern=r"^bkt:.+")
-
+    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData",
+                                    pattern=r"^bkt:.+")
 
 class GaussianSplatsOutputs(BaseModel):
     splats: Optional[str] = Field(default=None, description="Reality data ID of Gaussian Splats.")

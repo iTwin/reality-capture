@@ -59,3 +59,13 @@ Classes
 
 .. autopydantic_model:: TrainingS3DOptions
     :model-show-json: False
+
+.. autoclass:: PointCloudFeature
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
+.. autoclass:: Segmentation3DTrainingModel
+    :show-inheritance:
+    :members:
+    :undoc-members:

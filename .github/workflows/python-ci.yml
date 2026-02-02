@@ -1,4 +1,4 @@
-name: Python SDK CI
+name: (PyCI) Python SDK CI
 
 on:
   push:

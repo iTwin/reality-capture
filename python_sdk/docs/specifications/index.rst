@@ -33,8 +33,7 @@ Specifications regroup all the settings used to create jobs with our APIs.
     eval_s2d
     eval_s3d
     eval_sortho
-    training_o2d
-    training_s3d
+
 
 Modeling
 ========

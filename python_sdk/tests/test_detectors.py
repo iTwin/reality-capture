@@ -79,4 +79,4 @@ class TestServiceDetector:
                       json=payload, status=200)
         response = self.rcs.get_detectors()
         assert not response.is_error()
-        assert len(response.value.detectors) == 2
+        assert len(response.value) == 2
