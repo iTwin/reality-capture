@@ -23,7 +23,7 @@ import { EvalO3DSpecificationsCreateSchema, EvalO3DSpecificationsSchema } from "
 import { EvalS2DSpecificationsCreateSchema, EvalS2DSpecificationsSchema } from "../specifications/eval_s2d";
 import { EvalS3DSpecificationsCreateSchema, EvalS3DSpecificationsSchema } from "../specifications/eval_s3d";
 import { EvalSOrthoSpecificationsCreateSchema, EvalSOrthoSpecificationsSchema } from "../specifications/eval_sortho";
-
+import { ClearanceSpecificationsCreateSchema, ClearanceSpecificationsSchema } from "../specifications/clearance";
 
 export enum JobType {
   CALIBRATION = "Calibration",
@@ -48,7 +48,8 @@ export enum JobType {
   TRAINING_S3D = "TrainingS3D",
   TOUCH_UP_IMPORT = "TouchUpImport",
   TOUCH_UP_EXPORT = "TouchUpExport",
-  WATER_CONSTRAINTS = "WaterConstraints"
+  WATER_CONSTRAINTS = "WaterConstraints",
+  CLEARANCE_CALCULATION = "ClearanceCalculation",
   //POINT_CLOUD_CONVERSION = "PointCloudConversion",
 }
 
@@ -71,7 +72,8 @@ export function getAppropriateService(jt: JobType): Service {
     JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D,
     JobType.SEGMENTATION_ORTHOPHOTO, JobType.CHANGE_DETECTION, JobType.TRAINING_O2D,
     JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D, JobType.EVAL_S3D,
-    JobType.EVAL_SORTHO, JobType.TRAINING_O2D, JobType.TRAINING_S3D
+    JobType.EVAL_SORTHO, JobType.TRAINING_O2D, JobType.TRAINING_S3D,
+    JobType.CLEARANCE_CALCULATION
   ].includes(jt)) {
     return Service.ANALYSIS;
   }
@@ -117,6 +119,7 @@ export const JobCreateSchema = z.object({
     TrainingO2DSpecificationsCreateSchema,
     //PointCloudConversionSpecificationsCreateSchema,
     TrainingS3DSpecificationsCreateSchema,
+    ClearanceSpecificationsCreateSchema,
   ]).describe("Specifications aligned with the job type."),
   iTwinId: z.string().describe("iTwin ID, used by the service for finding input reality data and uploading output data."),
 });
@@ -254,6 +257,11 @@ export const JobSchema = z.discriminatedUnion("type", [
     ...CommonFields,
     type: z.literal("WaterConstraints"),
     specifications: WaterConstraintsSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("ClearanceCalculation"),
+    specifications: ClearanceSpecificationsSchema,
   })
 ]);
 export type Job = z.infer<typeof JobSchema>;

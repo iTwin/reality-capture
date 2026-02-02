@@ -19,7 +19,7 @@ from reality_capture.specifications.segmentation_orthophoto import SegmentationO
 from reality_capture.specifications.tiling import TilingSpecifications
 from reality_capture.specifications.touchup import TouchUpImportSpecifications, TouchUpExportSpecifications
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecifications
-
+from reality_capture.specifications.clearance import ClearanceSpecifications
 
 class TestJobValidator:
     j_base = {
@@ -341,3 +341,18 @@ class TestJobValidator:
         }
         job = Job(**j)
         assert isinstance(job.specifications, WaterConstraintsSpecifications)
+
+    def test_validation_clearance(self):
+        j = self.j_base.copy()
+        j["type"] = "ClearanceCalculation"
+        j["specifications"] = {
+            "inputs": {
+                "model3d": "mfid",
+                "clearanceFootprint": "sid"
+            },
+            "outputs": {
+                "ovfPoints": "rdId"
+            }
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, ClearanceSpecifications)
