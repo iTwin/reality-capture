@@ -25,7 +25,8 @@ export const ReconstructionInputsSchema = z.object({
   presets: z
     .array(z.string())
     .describe("List of paths to preset")
-    .optional()
+    .optional(),
+  crsData: z.string().regex(/^bkt:.+/).optional().describe("Path in the bucket for CRS data."),
 });
 export type ReconstructionInputs = z.infer<typeof ReconstructionInputsSchema>;
 

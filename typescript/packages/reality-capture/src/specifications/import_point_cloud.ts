@@ -2,7 +2,8 @@ import { z } from "zod";
 import { BoundingBoxSchema, Point3dSchema } from "./geometry";
 
 export const ImportPCInputsSchema = z.object({
-  scene: z.string().describe("Reality data id of ContextScene to process")
+  scene: z.string().describe("Reality data id of ContextScene to process"),
+  crsData: z.string().regex(/^bkt:.+/).optional().describe("Path in the bucket for CRS data."),
 });
 export type ImportPCInputs = z.infer<typeof ImportPCInputsSchema>;
 

@@ -89,6 +89,7 @@ export const ProductionInputsSchema = z.object({
     .optional()
     .describe("Path in the bucket to region of interest file, used for export extent"),
   presets: z.array(z.string()).optional().describe("List of paths to preset"),
+  crsData: z.string().regex(/^bkt:.+/).optional().describe("Path in the bucket for CRS data."),
 });
 export type ProductionInputs = z.infer<typeof ProductionInputsSchema>;
 
