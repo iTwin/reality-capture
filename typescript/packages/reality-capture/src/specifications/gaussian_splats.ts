@@ -2,7 +2,8 @@ import { z } from "zod";
 
 export const GaussianSplatsInputsSchema = z.object({
   scene: z.string().describe("Reality data ID of ContextScene to process."),
-  splatsReference: z.string().optional().describe("Reality data ID of the Gaussian Splats Reference.")
+  splatsReference: z.string().optional().describe("Reality data ID of the Gaussian Splats Reference."),
+  crsData: z.string().regex(/^bkt:.+/).optional().describe("Path in the bucket for CRS data."),
 });
 export type GaussianSplatsInputs = z.infer<typeof GaussianSplatsInputsSchema>;
 

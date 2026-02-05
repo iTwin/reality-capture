@@ -139,6 +139,7 @@ export enum RigidRegistrationScale {
 export const CalibrationInputsSchema = z.object({
   scene: z.string().describe("Reality data ID of ContextScene to process"),
   presets: z.array(z.string()).optional().describe("List of paths to preset"),
+  crsData: z.string().regex(/^bkt:.+/).optional().describe("Path in the bucket for CRS data."),
 });
 export type CalibrationInputs = z.infer<typeof CalibrationInputsSchema>;
 

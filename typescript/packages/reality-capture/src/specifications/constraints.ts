@@ -38,6 +38,7 @@ export const ConstraintsInputsSchema = z.object({
   modelingReference: z.string().describe("Modeling reference to update."),
   constraintsToDelete: z.array(z.string().uuid()).optional().describe("IDs of constraints to delete"),
   constraintsToAdd: z.array(ConstraintToAddSchema).optional().describe("Constraints to add"),
+  crsData: z.string().regex(/^bkt:.+/).optional().describe("Path in the bucket for CRS data."),
 });
 export type ConstraintsInputs = z.infer<typeof ConstraintsInputsSchema>;
 
