@@ -19,6 +19,11 @@ from reality_capture.specifications.segmentation_orthophoto import SegmentationO
 from reality_capture.specifications.tiling import TilingSpecifications
 from reality_capture.specifications.touchup import TouchUpImportSpecifications, TouchUpExportSpecifications
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecifications
+from reality_capture.specifications.point_cloud_conversion import PointCloudConversionSpecifications
+from reality_capture.specifications.point_cloud_optimization import PCOptimizationSpecifications
+from reality_capture.specifications.mesh_sampling import MeshSamplingSpecifications
+from reality_capture.specifications.tile_map_optimization import TileMapOptimizationSpecifications
+from reality_capture.specifications.vector_optimization import VectorOptimizationSpecifications
 
 
 class TestJobValidator:
@@ -341,3 +346,63 @@ class TestJobValidator:
         }
         job = Job(**j)
         assert isinstance(job.specifications, WaterConstraintsSpecifications)
+
+    def test_validation_pc_conv(self):
+        j = self.j_base.copy()
+        j["type"] = "PointCloudConversion"
+        j["specifications"] = {
+            "inputs": {
+                "pointCloud": "mfid"
+            },
+            "outputs": "outId"
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, PointCloudConversionSpecifications)
+
+    def test_validation_pc_optim(self):
+        j = self.j_base.copy()
+        j["type"] = "PointCloudOptimization"
+        j["specifications"] = {
+            "inputs": {
+                "pointClouds": ["mfid"]
+            },
+            "outputs": "outId"
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, PCOptimizationSpecifications)
+
+    def test_validation_mesh_sampling(self):
+        j = self.j_base.copy()
+        j["type"] = "MeshSampling"
+        j["specifications"] = {
+            "inputs": {
+                "meshes": ["mId"]
+            },
+            "outputs": "outId"
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, MeshSamplingSpecifications)
+
+    def test_validation_tm_optim(self):
+        j = self.j_base.copy()
+        j["type"] = "TileMapOptimization"
+        j["specifications"] = {
+            "inputs": {
+                "tileMaps": ["mId"]
+            },
+            "outputs": "outId"
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, TileMapOptimizationSpecifications)
+
+    def test_validation_vector_optim(self):
+        j = self.j_base.copy()
+        j["type"] = "VectorOptimization"
+        j["specifications"] = {
+            "inputs": {
+                "vectors": ["vId"]
+            },
+            "outputs": "outId"
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, VectorOptimizationSpecifications)

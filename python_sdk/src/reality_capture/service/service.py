@@ -77,11 +77,16 @@ class RealityCaptureService:
     def _get_analysis_url(self) -> str:
         return self._service_url + "reality-analysis/"
 
+    def _get_conversion_url(self) -> str:
+        return self._service_url + "reality-conversion/"
+
     def _get_correct_url(self, service: Service) -> str:
         if service == Service.MODELING:
             return self._get_modeling_url()
         if service == Service.ANALYSIS:
             return self._get_analysis_url()
+        if service == Service.CONVERSION:
+            return self._get_conversion_url()
         raise NotImplemented("Other services not yet implemented")
 
     @staticmethod

@@ -26,8 +26,15 @@ from reality_capture.specifications.touchup import (TouchUpImportSpecifications,
                                                     TouchUpExportSpecifications, TouchUpExportSpecificationsCreate)
 from reality_capture.specifications.water_constraints import (WaterConstraintsSpecifications,
                                                               WaterConstraintsSpecificationsCreate)
-"""from reality_capture.specifications.point_cloud_conversion import (PointCloudConversionSpecificationsCreate,
-                                                                   PointCloudConversionSpecifications)"""
+from reality_capture.specifications.point_cloud_conversion import (PointCloudConversionSpecificationsCreate,
+                                                                   PointCloudConversionSpecifications)
+from reality_capture.specifications.point_cloud_optimization import (PCOptimizationSpecificationsCreate,
+                                                                     PCOptimizationSpecifications)
+from reality_capture.specifications.mesh_sampling import MeshSamplingSpecificationsCreate, MeshSamplingSpecifications
+from reality_capture.specifications.tile_map_optimization import (TileMapOptimizationSpecificationsCreate,
+                                                                  TileMapOptimizationSpecifications)
+from reality_capture.specifications.vector_optimization import (VectorOptimizationSpecificationsCreate,
+                                                                VectorOptimizationSpecifications)
 
 from reality_capture.specifications.gaussian_splats import (GaussianSplatsSpecificationsCreate,
                                                             GaussianSplatsSpecifications)
@@ -61,12 +68,17 @@ class JobType(Enum):
     TOUCH_UP_IMPORT = "TouchUpImport"
     TOUCH_UP_EXPORT = "TouchUpExport"
     WATER_CONSTRAINTS = "WaterConstraints"
-    # POINT_CLOUD_CONVERSION = "PointCloudConversion"
+    POINT_CLOUD_CONVERSION = "PointCloudConversion"
+    POINT_CLOUD_OPTIMIZATION = "PointCloudOptimization"
+    MESH_SAMPLING = "MeshSampling"
+    TILE_MAP_OPTIMIZATION = "TileMapOptimization"
+    VECTOR_OPTIMIZATION = "VectorOptimization"
+
 
 class Service(Enum):
     MODELING = "Modeling"
     ANALYSIS = "Analysis"
-    # CONVERSION = "Conversion"
+    CONVERSION = "Conversion"
 
 
 def _get_appropriate_service(jt: JobType):
@@ -78,8 +90,7 @@ def _get_appropriate_service(jt: JobType):
             JobType.CHANGE_DETECTION, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
             JobType.EVAL_S3D, JobType.EVAL_SORTHO]:
         return Service.ANALYSIS
-    # return Service.CONVERSION
-    raise NotImplemented("Other services not yet implemented")
+    return Service.CONVERSION
 
 
 class JobState(Enum):
@@ -95,7 +106,6 @@ class JobState(Enum):
 class JobCreate(BaseModel):
     name: Optional[str] = Field(None, description="Displayable job name.", min_length=3)
     type: JobType = Field(description="Type of job.")
-    # TODO : PointCloudConversionSpecificationsCreate,
     specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
                         ConstraintsSpecificationsCreate,
                         EvalO2DSpecificationsCreate, EvalO3DSpecificationsCreate,
@@ -106,7 +116,10 @@ class JobCreate(BaseModel):
                         ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
                         Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                         TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
-                        TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate] = (
+                        TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
+                        PointCloudConversionSpecificationsCreate, PCOptimizationSpecificationsCreate,
+                        MeshSamplingSpecificationsCreate, TileMapOptimizationSpecificationsCreate,
+                        VectorOptimizationSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -150,7 +163,10 @@ class Job(BaseModel):
                         ReconstructionSpecifications, Segmentation2DSpecifications,
                         Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                         TilingSpecifications, TouchUpExportSpecifications,
-                        TouchUpImportSpecifications, WaterConstraintsSpecifications] = (
+                        TouchUpImportSpecifications, WaterConstraintsSpecifications,
+                        PointCloudConversionSpecifications, PCOptimizationSpecifications,
+                        MeshSamplingSpecifications, TileMapOptimizationSpecifications,
+                        VectorOptimizationSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @field_validator("specifications", mode="plain")
@@ -202,6 +218,16 @@ class Job(BaseModel):
             specifications = TouchUpImportSpecifications(**raw_dict)
         elif job_type == JobType.WATER_CONSTRAINTS:
             specifications = WaterConstraintsSpecifications(**raw_dict)
+        elif job_type == JobType.POINT_CLOUD_CONVERSION:
+            specifications = PointCloudConversionSpecifications(**raw_dict)
+        elif job_type == JobType.POINT_CLOUD_OPTIMIZATION:
+            specifications = PCOptimizationSpecifications(**raw_dict)
+        elif job_type == JobType.MESH_SAMPLING:
+            specifications = MeshSamplingSpecifications(**raw_dict)
+        elif job_type == JobType.TILE_MAP_OPTIMIZATION:
+            specifications = TileMapOptimizationSpecifications(**raw_dict)
+        elif job_type == JobType.VECTOR_OPTIMIZATION:
+            specifications = VectorOptimizationSpecifications(**raw_dict)
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 
