@@ -13,8 +13,8 @@ class VectorOptimizationFormat(Enum):
 
 
 class VectorOptimizationOptions(BaseModel):
-    out_format: Optional[VectorOptimizationFormat] = Field(None, description="Output format for the conversion.",
-                                                     alias="format")
+    output_format: Optional[VectorOptimizationFormat] = Field(None, description="Output format for the conversion.",
+                                                     alias="outputFormat")
     input_crs: Optional[str] = Field(None, description="CRS for the input data", alias="inputCrs")
     output_crs: Optional[str] = Field(None, description="CRS for the output data", alias="outputCrs")
     feature_class_display_name: Optional[str] = Field(None, description="Display class name",
@@ -28,5 +28,5 @@ class VectorOptimizationSpecificationsCreate(BaseModel):
 
 class VectorOptimizationSpecifications(BaseModel):
     inputs: VectorOptimizationInputs = Field(description="Inputs")
-    outputs: str = Field(description="Reality Data id of the vector data or Feature DB index (fdb:)")
+    output: str = Field(description="Reality Data id of the vector data or Feature DB index (fdb:)")
     options: Optional[VectorOptimizationOptions] = Field(None, description="Options")

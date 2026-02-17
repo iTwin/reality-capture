@@ -9,14 +9,17 @@ class PCConversionInputs(BaseModel):
 
 class PCConversionFormat(Enum):
     OPC = "OPC"
-    PNTS = "PNTS"
-    CESIUM_3D_Tiles = "Cesium3DTiles"
+    THREE_D_TILES_PNTS = "3DTilesPnts"
+    THREE_D_TILES_GLBC = "3DTilesGlbc"
     LAS = "LAS"
+    LAZ = "LAZ"
+    E57 = "E57"
+    POD = "POD"
 
 
 class PCConversionOptions(BaseModel):
-    out_format: Optional[PCConversionFormat] = Field(None, description="Output format for the conversion.",
-                                                     alias="format")
+    output_format: Optional[PCConversionFormat] = Field(None, description="Output format for the conversion.",
+                                                     alias="outputFormat")
     input_crs: Optional[str] = Field(None, description="CRS for the input data", alias="inputCrs")
     output_crs: Optional[str] = Field(None, description="CRS for the output data", alias="outputCrs")
 
@@ -28,5 +31,5 @@ class PointCloudConversionSpecificationsCreate(BaseModel):
 
 class PointCloudConversionSpecifications(BaseModel):
     inputs: PCConversionInputs = Field(description="Inputs")
-    outputs: str = Field(description="Reality Data id of the converted point cloud")
+    output: str = Field(description="Reality Data id of the converted point cloud")
     options: Optional[PCConversionOptions] = Field(None, description="Options")

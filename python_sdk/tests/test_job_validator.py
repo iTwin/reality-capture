@@ -354,7 +354,7 @@ class TestJobValidator:
             "inputs": {
                 "pointCloud": "mfid"
             },
-            "outputs": "outId"
+            "output": "outId"
         }
         job = Job(**j)
         assert isinstance(job.specifications, PointCloudConversionSpecifications)
@@ -366,7 +366,7 @@ class TestJobValidator:
             "inputs": {
                 "pointClouds": ["mfid"]
             },
-            "outputs": "outId"
+            "output": "outId"
         }
         job = Job(**j)
         assert isinstance(job.specifications, PCOptimizationSpecifications)
@@ -378,7 +378,7 @@ class TestJobValidator:
             "inputs": {
                 "meshes": ["mId"]
             },
-            "outputs": "outId"
+            "output": "outId"
         }
         job = Job(**j)
         assert isinstance(job.specifications, MeshSamplingSpecifications)
@@ -390,7 +390,7 @@ class TestJobValidator:
             "inputs": {
                 "tileMaps": ["mId"]
             },
-            "outputs": "outId"
+            "output": "outId"
         }
         job = Job(**j)
         assert isinstance(job.specifications, TileMapOptimizationSpecifications)
@@ -402,7 +402,7 @@ class TestJobValidator:
             "inputs": {
                 "vectors": ["vId"]
             },
-            "outputs": "outId"
+            "output": "outId"
         }
         job = Job(**j)
         assert isinstance(job.specifications, VectorOptimizationSpecifications)

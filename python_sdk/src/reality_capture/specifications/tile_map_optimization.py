@@ -17,8 +17,8 @@ class TileMapImageFormat(Enum):
 
 
 class TileMapOptimizationOptions(BaseModel):
-    out_format: Optional[TileMapOptimizationFormat] = Field(None, description="Output format for the conversion.",
-                                                            alias="format")
+    output_format: Optional[TileMapOptimizationFormat] = Field(None, description="Output format for the conversion.",
+                                                            alias="outputFormat")
     input_crs: Optional[str] = Field(None, description="CRS for the input data", alias="inputCrs")
     output_crs: Optional[str] = Field(None, description="CRS for the output data", alias="outputCrs")
     top_level: Optional[int] = Field(None, description="Top level of the tile map to generate.", alias="topLevel")
@@ -38,5 +38,5 @@ class TileMapOptimizationSpecificationsCreate(BaseModel):
 
 class TileMapOptimizationSpecifications(BaseModel):
     inputs: TileMapOptimizationInputs = Field(description="Inputs")
-    outputs: str = Field(description="Reality Data id of the tile map")
+    output: str = Field(description="Reality Data id of the tile map")
     options: Optional[TileMapOptimizationOptions] = Field(None, description="Options")

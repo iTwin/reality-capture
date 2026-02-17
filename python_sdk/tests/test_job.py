@@ -18,7 +18,7 @@ class TestJob:
         j = Job(id="id", type=JobType.EVAL_O2D, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
                 userId="claude@example.org", specifications=specs)
         assert j.get_appropriate_service() == Service.ANALYSIS
-        pc_conversion_specs = {"inputs": {"pointCloud": "point_cloud"}, "outputs": "pcId"}
+        pc_conversion_specs = {"inputs": {"pointCloud": "point_cloud"}, "output": "pcId"}
         j = Job(id="id", type=JobType.POINT_CLOUD_CONVERSION, iTwinId="itwin", state=JobState.SUCCESS,
                 executionInfo=cdt, userId="claude@example.org", specifications=pc_conversion_specs)
         assert j.get_appropriate_service() == Service.CONVERSION
