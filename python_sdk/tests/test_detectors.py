@@ -1,7 +1,6 @@
 import responses
 import json
 import os
-from datetime import datetime
 
 from reality_capture.service.service import RealityCaptureService
 
@@ -50,7 +49,7 @@ class TestServiceDetector:
                       json=payload, status=200)
         response = self.rcs.get_detector("@bentley/bentley-city-a-s3d")
         assert not response.is_error()
-        assert response.value.detector.name == "@bentley/bentley-city-a-s3d"
+        assert response.value.name == "@bentley/bentley-city-a-s3d"
 
     @responses.activate
     def test_get_detectors_ill_formed(self):
@@ -79,4 +78,4 @@ class TestServiceDetector:
                       json=payload, status=200)
         response = self.rcs.get_detectors()
         assert not response.is_error()
-        assert len(response.value.detectors) == 2
+        assert len(response.value) == 2
