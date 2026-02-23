@@ -13,7 +13,8 @@ class CSObject(Enum):
 
 
 class CSTilerOptions(BaseModel):
-    object_to_tile: Optional[CSObject] = Field(None, description="Object to tile inside the ContextScene.")
+    object_to_tile: Optional[CSObject] = Field(None, description="Object to tile inside the ContextScene.",
+                                               alias="objectToTile")
 
 
 class ContextSceneTilerSpecificationsCreate(BaseModel):
