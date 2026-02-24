@@ -24,6 +24,7 @@ from reality_capture.specifications.point_cloud_optimization import PCOptimizati
 from reality_capture.specifications.mesh_sampling import MeshSamplingSpecifications
 from reality_capture.specifications.tile_map_optimization import TileMapOptimizationSpecifications
 from reality_capture.specifications.vector_optimization import VectorOptimizationSpecifications
+from reality_capture.specifications.cs_tiler import ContextSceneTilerSpecifications
 
 
 class TestJobValidator:
@@ -406,3 +407,15 @@ class TestJobValidator:
         }
         job = Job(**j)
         assert isinstance(job.specifications, VectorOptimizationSpecifications)
+
+    def test_validation_cs_tiler(self):
+        j = self.j_base.copy()
+        j["type"] = "ContextSceneTiler"
+        j["specifications"] = {
+            "inputs": {
+                "scene": "vId"
+            },
+            "output": "outId"
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, ContextSceneTilerSpecifications)

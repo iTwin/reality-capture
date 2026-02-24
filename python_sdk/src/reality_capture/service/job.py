@@ -35,6 +35,8 @@ from reality_capture.specifications.tile_map_optimization import (TileMapOptimiz
                                                                   TileMapOptimizationSpecifications)
 from reality_capture.specifications.vector_optimization import (VectorOptimizationSpecificationsCreate,
                                                                 VectorOptimizationSpecifications)
+from reality_capture.specifications.cs_tiler import (ContextSceneTilerSpecifications,
+                                                     ContextSceneTilerSpecificationsCreate)
 
 from reality_capture.specifications.gaussian_splats import (GaussianSplatsSpecificationsCreate,
                                                             GaussianSplatsSpecifications)
@@ -73,6 +75,7 @@ class JobType(Enum):
     MESH_SAMPLING = "MeshSampling"
     TILE_MAP_OPTIMIZATION = "TileMapOptimization"
     VECTOR_OPTIMIZATION = "VectorOptimization"
+    CONTEXTSCENE_TILER = "ContextSceneTiler"
 
 
 class Service(Enum):
@@ -119,7 +122,7 @@ class JobCreate(BaseModel):
                         TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
                         PointCloudConversionSpecificationsCreate, PCOptimizationSpecificationsCreate,
                         MeshSamplingSpecificationsCreate, TileMapOptimizationSpecificationsCreate,
-                        VectorOptimizationSpecificationsCreate] = (
+                        VectorOptimizationSpecificationsCreate, ContextSceneTilerSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -166,7 +169,7 @@ class Job(BaseModel):
                         TouchUpImportSpecifications, WaterConstraintsSpecifications,
                         PointCloudConversionSpecifications, PCOptimizationSpecifications,
                         MeshSamplingSpecifications, TileMapOptimizationSpecifications,
-                        VectorOptimizationSpecifications] = (
+                        VectorOptimizationSpecifications, ContextSceneTilerSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @field_validator("specifications", mode="plain")
@@ -228,6 +231,8 @@ class Job(BaseModel):
             specifications = TileMapOptimizationSpecifications(**raw_dict)
         elif job_type == JobType.VECTOR_OPTIMIZATION:
             specifications = VectorOptimizationSpecifications(**raw_dict)
+        elif job_type == JobType.CONTEXTSCENE_TILER:
+            specifications = ContextSceneTilerSpecifications(**raw_dict)
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 
