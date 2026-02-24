@@ -180,8 +180,9 @@ async function runCalibration(
         calibPropertiesResponse.error!.error.message,
     );
   }
-  const outputs = calibPropertiesResponse.value!.specifications
-    .outputs as CalibrationOutputs;
+  const outputs = (
+    calibPropertiesResponse.value!.specifications as CalibrationSpecifications
+  ).outputs;
   const chars = outputs.report!.split(":"); // Remove 'bkt:' from the report bucket path
   const calibDownloadResponse = await bucketDataHandler.downloadData(
     iTwinId,
