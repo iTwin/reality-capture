@@ -84,6 +84,7 @@ export const TilingInputsSchema = z.object({
     .describe("Path in the bucket to region of interest file")
     .optional(),
   presets: z.array(z.string()).describe("List of paths to preset").optional(),
+  crsData: z.string().regex(/^bkt:.+/).optional().describe("Path in the bucket for CRS data."),
 });
 
 export type TilingInputs = z.infer<typeof TilingInputsSchema>;

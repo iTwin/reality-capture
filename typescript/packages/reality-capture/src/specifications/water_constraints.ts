@@ -7,6 +7,7 @@ export enum WaterConstraintsOutputsCreate {
 export const WaterConstraintsInputsSchema = z.object({
   scene: z.string().describe("Reality data id of ContextScene"),
   modelingReference: z.string().describe("Reality data id of Modeling Reference"),
+  crsData: z.string().regex(/^bkt:.+/).optional().describe("Path in the bucket for CRS data."),
 });
 export type WaterConstraintsInputs = z.infer<typeof WaterConstraintsInputsSchema>;
 
