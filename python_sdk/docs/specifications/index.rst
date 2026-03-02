@@ -33,6 +33,7 @@ Specifications regroup all the settings used to create jobs with our APIs.
     eval_s2d
     eval_s3d
     eval_sortho
+    clearance
 
 
 Modeling
@@ -58,6 +59,7 @@ Analysis
 * :doc:`/specifications/segmentation3d` uses a point cloud segmentation detector to classify each point of a point cloud and create 3D features.
 * :doc:`/specifications/change_detection` will take two point clouds or two meshes to to get 3D regions that capture the changes.
 * :doc:`/specifications/eval_o2d`, :doc:`/specifications/eval_o3d`, :doc:`/specifications/eval_s2d`, :doc:`/specifications/eval_s3d` and :doc:`/specifications/eval_sortho` will compare a prediction to a reference for a specific detection.
+* :doc:`/specifications/clearance` uses a 3D model and a footprint to compute clearance information.
 
 .. Conversion
 .. ==========
