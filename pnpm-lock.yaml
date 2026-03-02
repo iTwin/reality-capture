@@ -22,7 +22,7 @@ importers:
         version: link:../packages/reality-data-client
       '@itwin/service-authorization':
         specifier: ^2.0.0
-        version: 2.1.0(@itwin/core-bentley@5.3.1)
+        version: 2.1.0(@itwin/core-bentley@5.6.0)
       dotenv:
         specifier: ^16.0.3
         version: 16.6.1
@@ -49,8 +49,8 @@ importers:
         specifier: workspace:*
         version: link:../reality-data-client
       axios:
-        specifier: ^1.6.0
-        version: 1.13.2
+        specifier: ^1.13.5
+        version: 1.13.5
       class-validator:
         specifier: ^0.14.0
         version: 0.14.2
@@ -107,8 +107,8 @@ importers:
   typescript/packages/reality-data-client:
     dependencies:
       axios:
-        specifier: ^1.8.2
-        version: 1.13.2
+        specifier: ^1.13.5
+        version: 1.13.5
     devDependencies:
       '@itwin/build-tools':
         specifier: ^5.0.2
@@ -677,6 +677,11 @@ packages:
 
   /@itwin/core-bentley@5.3.1:
     resolution: {integrity: sha512-QJhSQqiK1VM87xHJYWCo4+DsfnZKeE1uyBtlMDp+ULCTLWiPVkp1Z0ARlmNv39FzkyklXVzlRY4KsPiLCAKPsw==}
+    dev: true
+
+  /@itwin/core-bentley@5.6.0:
+    resolution: {integrity: sha512-EnV1QXefaT/MRhnBRD11rJDnm92W6xA6FS3OC5tpjrzMFtI6G8ZfD+c1L3dkkLH0N7sbwVMCYOSSQ0xI55nEcA==}
+    dev: false
 
   /@itwin/core-common@4.11.6(@itwin/core-bentley@5.3.1)(@itwin/core-geometry@5.3.1):
     resolution: {integrity: sha512-YrZDUhFB629HKh942wpRUTQV5fZQEVDk0M5Bmx2AvtSbzUQCwVvgKsJq20ltmYbYePZyQexFkQ1JcHZISSPKfQ==}
@@ -771,12 +776,12 @@ packages:
       - supports-color
     dev: true
 
-  /@itwin/service-authorization@2.1.0(@itwin/core-bentley@5.3.1):
+  /@itwin/service-authorization@2.1.0(@itwin/core-bentley@5.6.0):
     resolution: {integrity: sha512-UHaXyJOgpzAjo2aBX1PDcr2t7GnDx76TQjYAamUPhG58w0BFhQ69LFt9c6mdXi2BZBdYHNc6xIijGGjoHDGz1A==}
     peerDependencies:
       '@itwin/core-bentley': ^5.0.0
     dependencies:
-      '@itwin/core-bentley': 5.3.1
+      '@itwin/core-bentley': 5.6.0
       got: 12.6.1
       jsonwebtoken: 9.0.2
       jwks-rsa: 3.2.0
@@ -1980,11 +1985,11 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /axios@1.13.2:
-    resolution: {integrity: sha512-VPk9ebNqPcy5lRGuSlKx752IlDatOjT9paPlm8A7yOuW2Fbvp4X3JznJtT4f0GzGLLiWE9W8onz51SqLYwzGaA==}
+  /axios@1.13.5:
+    resolution: {integrity: sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==}
     dependencies:
       follow-redirects: 1.15.11
-      form-data: 4.0.4
+      form-data: 4.0.5
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
@@ -3439,8 +3444,8 @@ packages:
     resolution: {integrity: sha512-yDYSgNMraqvnxiEXO4hi88+YZxaHC6QKzb5N84iRCTDeRO7ZALpir/lVmf/uXUhnwUr2O4HU8s/n6x+yNjQkHw==}
     engines: {node: '>= 14.17'}
 
-  /form-data@4.0.4:
-    resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
+  /form-data@4.0.5:
+    resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
     engines: {node: '>= 6'}
     dependencies:
       asynckit: 0.4.0
