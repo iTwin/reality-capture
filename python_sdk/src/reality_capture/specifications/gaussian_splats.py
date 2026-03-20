@@ -31,7 +31,7 @@ class GSFormat(Enum):
     PLY = "PLY"
     SPZ = "SPZ"
     THREED_TILES = "3DTiles"
-    THREED_TILES_LOD = "3DTilesWithLOD"
+    THREED_TILES_LOD = "3DTilesLOD"
 
 
 class GSQuality(Enum):
