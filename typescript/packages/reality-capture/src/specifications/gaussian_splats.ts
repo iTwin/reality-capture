@@ -19,9 +19,10 @@ export enum GaussianSplatsOutputsCreate {
 }
 
 export enum GSFormat {
+  PLY = "PLY",
   SPZ = "SPZ",
   THREED_TILES = "3DTiles",
-  PLY = "PLY"
+  THREED_TILES_LOD = "3DTilesLOD"
 }
 
 export enum GSQuality {
