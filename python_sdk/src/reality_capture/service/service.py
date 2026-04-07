@@ -1,5 +1,6 @@
 import urllib.parse
 import requests
+import certifi
 
 from reality_capture.service.bucket import BucketResponse
 from reality_capture.service.detectors import DetectorsMinimalResponse, DetectorResponse
@@ -35,6 +36,7 @@ class RealityCaptureService:
         """
         self._token_factory = token_factory
         self._session = requests.Session()
+        self._session.verify = certifi.where()
 
         add_ua = ""
         if "user_agent" in kwargs.keys() and len(kwargs["user_agent"]) > 0:
