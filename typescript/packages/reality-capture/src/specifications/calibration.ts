@@ -92,6 +92,7 @@ export enum Tag {
   QR = "QR",
   APRIL = "April",
   CHILI = "Chili",
+  CHECKERBOARDS = "Checkerboards",
 }
 
 export enum ColorEqualization {
