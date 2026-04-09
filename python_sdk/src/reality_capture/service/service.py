@@ -10,8 +10,8 @@ from reality_capture.service.reality_data import (RealityDataCreate, RealityData
                                                   RealityDataFilter, Prefer, RealityDatas)
 from reality_capture.service.error import DetailedErrorResponse, DetailedError
 from reality_capture import __version__
-from typing import Optional
-from pydantic import ValidationError
+from typing import Optional, Type
+from pydantic import BaseModel, ValidationError
 from urllib.parse import urlencode
 
 
@@ -89,6 +89,37 @@ class RealityCaptureService:
         r = response.json()
         return f"Service response is ill-formed: {r}. Exception : {exception}"
 
+    def _execute_request(self, method: str, url: str, headers: dict, success_model: Type[BaseModel] = None,
+                         data_key: str = None, **kwargs) -> Response:
+        try:
+            response = self._session.request(method, url, headers=headers, **kwargs)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            try:
+                error_details = DetailedErrorResponse.model_validate(e.response.json())
+                return Response(status_code=e.response.status_code, value=None, error=error_details)
+            except (ValidationError, KeyError, requests.exceptions.JSONDecodeError):
+                error = DetailedError(code="ApiError", message=str(e))
+                return Response(status_code=e.response.status_code, value=None,
+                                error=DetailedErrorResponse(error=error))
+        except requests.exceptions.RequestException as e:
+            error = DetailedError(code="NetworkError", message=f"Network error : {e}")
+            return Response(status_code=503, value=None, error=DetailedErrorResponse(error=error))
+
+        try:
+            if not success_model:
+                return Response(status_code=response.status_code, value=None, error=None)
+            json_data = response.json()
+            if data_key:
+                data_to_validate = json_data[data_key]
+            else:
+                data_to_validate = json_data
+            validated_data = success_model.model_validate(data_to_validate)
+            return Response(status_code=response.status_code, value=validated_data, error=None)
+        except (ValidationError, KeyError, requests.exceptions.JSONDecodeError) as e:
+            error = DetailedError(code="InvalidResponse", message=self._get_ill_formed_message(response, e))
+            return Response(status_code=502, error=DetailedErrorResponse(error=error), value=None)
+
     def get_jobs(self, service: Service, filters: str = "",
                  top: int = None, continuation_token: str = "") -> Response[Jobs]:
         """
@@ -99,7 +130,13 @@ class RealityCaptureService:
         :param top: The number of jobs to get in each page. Min 2, max 1000.
         :param continuation_token: Parameter that enables continuing to the next page of the previous paged query. This must be passed exactly as it is in the response body's _links.next property.
         """
-        url = self._get_correct_url(service)+ "jobs"
+        try:
+            url = self._get_correct_url(service) + "jobs"
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not get jobs, bad request : "
+                                                                        f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
         params = {}
         if filters:
             params["$filter"] = filters
@@ -107,18 +144,9 @@ class RealityCaptureService:
             params["$top"] = max(min(top, 1000), 2)
         if continuation_token:
             params["continuationToken"] = continuation_token
-        response = self._session.get(url, params=params, headers=self._get_header_v2())
-        try:
-            if response.ok:
-                return Response(status_code=response.status_code, value=Jobs.model_validate(response.json()),
-                                error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
 
+        return self._execute_request(method="GET", url=url, headers=self._get_header_v2(), success_model=Jobs,
+                                     params=params)
 
     def submit_job(self, job: JobCreate) -> Response[Job]:
         """
@@ -127,18 +155,16 @@ class RealityCaptureService:
         :param job: JobCreate information to use for the job.
         :return: A Response[Job] containing either the Job created or the error from the service.
         """
-        url = self._get_correct_url(job.get_appropriate_service())
-        response = self._session.post(url + "jobs", job.model_dump_json(by_alias=True), headers=self._get_header_v2())
         try:
-            if response.ok:
-                return Response(status_code=response.status_code, value=Job.model_validate(response.json()["job"]),
-                                error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+            url = self._get_correct_url(job.get_appropriate_service()) + "jobs"
+            json_dump = job.model_dump_json(by_alias=True)
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not submit job, bad request : "
+                                                                        f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="POST", url=url, headers=self._get_header_v2(), success_model=Job,
+                                     data_key="job", data=json_dump)
 
     def get_job(self, job_id: str, service: Service) -> Response[Job]:
         """
@@ -148,18 +174,15 @@ class RealityCaptureService:
         :param service: Service to target.
         :return: A Response[Job] containing either the Job information or the error from the service.
         """
-        url = self._get_correct_url(service)
-        response = self._session.get(url + "jobs/" + job_id, headers=self._get_header_v2())
         try:
-            if response.ok:
-                return Response(status_code=response.status_code, value=Job.model_validate(response.json()["job"]),
-                                error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+            url = self._get_correct_url(service) + "jobs/" + job_id
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not get job, bad request : "
+                                                                        f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="GET", url=url, headers=self._get_header_v2(),
+                                     success_model=Job, data_key="job")
 
     def get_job_messages(self, job_id: str, service: Service) -> Response[Messages]:
         """
@@ -169,19 +192,15 @@ class RealityCaptureService:
         :param service: Service to target.
         :return: A Response[Messages] containing either the messages for the job or the error from the service.
         """
-        url = self._get_correct_url(service)
-        response = self._session.get(url + "jobs/" + job_id + "/messages", headers=self._get_header_v2())
         try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=Messages.model_validate(response.json()["messages"]),
-                                error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+            url = self._get_correct_url(service) + "jobs/" + job_id + "/messages"
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not get job messages, bad request : "
+                                                                        f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="GET", url=url, headers=self._get_header_v2(),
+                                     success_model=Messages, data_key="messages")
 
     def get_job_progress(self, job_id: str, service: Service) -> Response[Progress]:
         """
@@ -191,18 +210,16 @@ class RealityCaptureService:
         :param service: Service to target.
         :return: A Response[Progress] containing either the job progress or the error from the service.
         """
-        url = self._get_correct_url(service)
-        response = self._session.get(url + "jobs/" + job_id + "/progress", headers=self._get_header_v2())
+
         try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=Progress.model_validate(response.json()["progress"]), error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+            url = self._get_correct_url(service) + "jobs/" + job_id + "/progress"
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not get job progress, bad request : "
+                                                                        f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="GET", url=url, headers=self._get_header_v2(),
+                                     success_model=Progress, data_key="progress")
 
     def cancel_job(self, job_id: str, service: Service) -> Response[Job]:
         """
@@ -212,18 +229,16 @@ class RealityCaptureService:
         :param service: Service to target.
         :return: A Response[Job] containing either the job information or the error from the service.
         """
-        url = self._get_correct_url(service)
-        response = self._session.delete(url + "jobs/" + job_id, headers=self._get_header_v2())
+
         try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=Job.model_validate(response.json()["job"]), error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+            url = self._get_correct_url(service) + "jobs/" + job_id
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not get job progress, bad request : "
+                                                                        f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="DELETE", url=url, headers=self._get_header_v2(),
+                                     success_model=Job, data_key="job")
 
     def get_bucket(self, itwin_id: str) -> Response[BucketResponse]:
         """
@@ -232,18 +247,11 @@ class RealityCaptureService:
         :param itwin_id: iTwin id for finding the bucket
         :return: A Response[BucketResponse] containing either the bucket information or the error from the service.
         """
-        response = self._session.get(self._get_correct_url(Service.MODELING) + f"itwins/{itwin_id}/bucket",
-                                     headers=self._get_header_v2())
-        try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=BucketResponse.model_validate(response.json()), error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+
+        return self._execute_request(method="GET",
+                                     url=self._get_correct_url(Service.MODELING) + f"itwins/{itwin_id}/bucket",
+                                     headers=self._get_header_v2(),
+                                     success_model=BucketResponse)
 
     def get_service_files(self) -> Response[Files]:
         """
@@ -251,17 +259,10 @@ class RealityCaptureService:
 
         :return: A Response[Files] containing either the files information or the error from the service.
         """
-        response = self._session.get(self._get_correct_url(Service.MODELING) + f"files", headers=self._get_header_v2())
-        try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=Files.model_validate(response.json()), error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+
+        return self._execute_request(method="GET", url=self._get_correct_url(Service.MODELING) + f"files",
+                                     headers=self._get_header_v2(),
+                                     success_model=Files)
 
     def get_detectors(self) -> Response[DetectorsMinimalResponse]:
         """
@@ -269,18 +270,10 @@ class RealityCaptureService:
     
         :return: A Response[DetectorsMinimalResponse] containing either the detector list or the error from the service.
         """
-        response = self._session.get(self._get_correct_url(Service.ANALYSIS) + f"detectors",
-                                     headers=self._get_header_v2())
-        try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=DetectorsMinimalResponse.model_validate(response.json()), error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+
+        return self._execute_request(method="GET", url=self._get_correct_url(Service.ANALYSIS) + f"detectors",
+                                     headers=self._get_header_v2(),
+                                     success_model=DetectorsMinimalResponse)
 
     def get_detector(self, detector_name: str) -> Response[DetectorResponse]:
         """
@@ -288,19 +281,17 @@ class RealityCaptureService:
     
         :return: A Response[DetectorResponse] containing either the detector details or the error from the service.
         """
-        url_encoded_name = urllib.parse.quote(detector_name, safe="")
-        response = self._session.get(self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}",
-                                     headers=self._get_header_v2())
+
         try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=DetectorResponse.model_validate(response.json()), error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+            url_encoded_name = urllib.parse.quote(detector_name, safe="")
+            url = self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}"
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not get job progress, bad request : "
+                                                                        f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="GET", url=url, headers=self._get_header_v2(),
+                                     success_model=DetectorResponse)
 
     def create_reality_data(self, reality_data: RealityDataCreate) -> Response[RealityData]:
         """
@@ -309,19 +300,17 @@ class RealityCaptureService:
         :param reality_data: Reality Data information to use.
         :return: A Response[RealityData] containing either the reality data information or the error from the service.
         """
-        response = self._session.post(self._get_reality_management_rd_url(),
-                                      reality_data.model_dump_json(by_alias=True, exclude_none=True),
-                                      headers=self._get_header_v1())
+
         try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=RealityData.model_validate(response.json()["realityData"]), error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+            json_dump = reality_data.model_dump_json(by_alias=True, exclude_none=True)
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not create reality data, bad request : "
+                                                                        f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="POST", url=self._get_reality_management_rd_url(),
+                                     success_model=RealityData, data=json_dump, data_key="realityData",
+                                     headers=self._get_header_v1())
 
     def get_reality_data(self, reality_data_id: str, itwin_id: Optional[str] = None) -> Response[RealityData]:
         """
@@ -331,20 +320,12 @@ class RealityCaptureService:
         :param itwin_id: Optional iTwin id for finding the reality data.
         :return: A Response[RealityData] containing either the reality data information or the error from the service.
         """
+
         url = self._get_reality_management_rd_url() + reality_data_id
         if itwin_id is not None:
             url += "?iTwinId=" + itwin_id
-        response = self._session.get(url, headers=self._get_header_v1())
-        try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=RealityData.model_validate(response.json()["realityData"]), error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+        return self._execute_request(method="GET", url=url, success_model=RealityData, data_key="realityData",
+                                     headers=self._get_header_v1())
 
     def update_reality_data(self, reality_data_update: RealityDataUpdate,
                             reality_data_id: str) -> Response[RealityData]:
@@ -355,19 +336,17 @@ class RealityCaptureService:
         :param reality_data_id: Id of the existing reality data.
         :return: A Response[RealityData] containing either the reality data information or the error from the service.
         """
-        url = self._get_reality_management_rd_url() + reality_data_id
-        response = self._session.patch(url, reality_data_update.model_dump_json(by_alias=True, exclude_none=True),
-                                       headers=self._get_header_v1())
+
         try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=RealityData.model_validate(response.json()["realityData"]), error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except (ValidationError, KeyError) as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+            json_dump = reality_data_update.model_dump_json(by_alias=True, exclude_none=True)
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not create reality data, bad request : "
+                                                                        f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="POST", url=self._get_reality_management_rd_url() + reality_data_id,
+                                     success_model=RealityData, data=json_dump, data_key="realityData",
+                                     headers=self._get_header_v1())
 
     def delete_reality_data(self, reality_data_id: str) -> Response[None]:
         """
@@ -376,18 +355,9 @@ class RealityCaptureService:
         :param reality_data_id: Id of the existing reality data.
         :return: A Response[RealityData] containing either nothing if successful or the error from the service.
         """
-        url = self._get_reality_management_rd_url() + reality_data_id
-        response = self._session.delete(url, headers=self._get_header_v1())
-        try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=None, error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except ValidationError as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+
+        return self._execute_request(method="DELETE", url=self._get_reality_management_rd_url() + reality_data_id,
+                                     headers=self._get_header_v1())
 
     def get_reality_data_write_access(self, reality_data_id: str,
                                       itwin_id: Optional[str] = None) -> Response[ContainerDetails]:
@@ -398,20 +368,13 @@ class RealityCaptureService:
         :param itwin_id: Optional iTwin id for finding the reality data.
         :return: A Response[ContainerDetails] containing either the container details or the error from the service.
         """
+
         url = self._get_reality_management_rd_url() + reality_data_id + "/writeaccess"
         if itwin_id is not None:
             url += "?iTwinId=" + itwin_id
-        response = self._session.get(url, headers=self._get_header_v1())
-        try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=ContainerDetails.model_validate(response.json()), error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except ValidationError as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+
+        return self._execute_request(method="GET", url=url, headers=self._get_header_v1(),
+                                     success_model=ContainerDetails)
 
     def get_reality_data_read_access(self, reality_data_id: str,
                                      itwin_id: Optional[str] = None) -> Response[ContainerDetails]:
@@ -422,20 +385,13 @@ class RealityCaptureService:
         :param itwin_id: Optional iTwin id for finding the reality data.
         :return: A Response[ContainerDetails] containing either the container details or the error from the service.
         """
+
         url = self._get_reality_management_rd_url() + reality_data_id + "/readaccess"
         if itwin_id is not None:
             url += "?iTwinId=" + itwin_id
-        response = self._session.get(url, headers=self._get_header_v1())
-        try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=ContainerDetails.model_validate(response.json()), error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except ValidationError as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+
+        return self._execute_request(method="GET", url=url, headers=self._get_header_v1(),
+                                     success_model=ContainerDetails)
 
     def list_reality_data(self, reality_data_filter: Optional[RealityDataFilter] = None,
                           prefer: Optional[Prefer] = None) -> Response[RealityDatas]:
@@ -456,18 +412,7 @@ class RealityCaptureService:
         if prefer == Prefer.REPRESENTATION:
             header["Prefer"] = "return=representation"
 
-        response = self._session.get(url, headers=header)
-
-        try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=RealityDatas.model_validate(response.json()), error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except ValidationError as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
+        return self._execute_request(method="GET", url=url, headers=header, success_model=RealityDatas)
 
     def move_reality_data(self, reality_data_id: str, itwin_id: str) -> Response[None]:
         """
@@ -477,16 +422,8 @@ class RealityCaptureService:
         :param itwin_id The id of the iTwin to move the RealityData to.
         :return: A Response[bool] containing either true if successful or false if not.
         """
-        url = self._get_reality_management_rd_url() + reality_data_id + "/move"
-        response = self._session.patch(url, {"iTwinId": itwin_id}, headers=self._get_header_v1())
-        try:
-            if response.ok:
-                return Response(status_code=response.status_code,
-                                value=None, error=None)
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
-        except ValidationError as exception:
-            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
-            return Response(status_code=response.status_code,
-                            error=DetailedErrorResponse(error=error), value=None)
 
+        return self._execute_request(method="PATCH",
+                                     url=self._get_reality_management_rd_url() + reality_data_id + "/move",
+                                     headers=self._get_header_v1(), success_model=None,
+                                     data={"iTwinId": itwin_id})
