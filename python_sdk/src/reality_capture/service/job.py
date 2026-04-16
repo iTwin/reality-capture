@@ -38,6 +38,7 @@ from reality_capture.specifications.eval_s3d import (EvalS3DSpecificationsCreate
 from reality_capture.specifications.eval_sortho import (EvalSOrthoSpecificationsCreate, EvalSOrthoSpecifications)
 
 from reality_capture.specifications.clearance import (ClearanceSpecificationsCreate, ClearanceSpecifications)
+from reality_capture.specifications.volume import (VolumeSpecificationsCreate, VolumeSpecifications)
 
 from reality_capture.service.reality_data import URL
 
@@ -64,6 +65,7 @@ class JobType(Enum):
     TOUCH_UP_EXPORT = "TouchUpExport"
     WATER_CONSTRAINTS = "WaterConstraints"
     CLEARANCE_CALCULATION = "ClearanceCalculation"
+    VOLUME_CALCULATION = "VolumeCalculation"
     # POINT_CLOUD_CONVERSION = "PointCloudConversion"
 
 class Service(Enum):
@@ -79,7 +81,7 @@ def _get_appropriate_service(jt: JobType):
         return Service.MODELING
     if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
             JobType.CHANGE_DETECTION, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
-            JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.CLEARANCE_CALCULATION]:
+            JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.CLEARANCE_CALCULATION, JobType.VOLUME_CALCULATION]:
         return Service.ANALYSIS
     # return Service.CONVERSION
     raise NotImplemented("Other services not yet implemented")
@@ -110,7 +112,7 @@ class JobCreate(BaseModel):
                         Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                         TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
                         TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
-                        ClearanceSpecificationsCreate] = (
+                        ClearanceSpecificationsCreate, VolumeSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -155,7 +157,7 @@ class Job(BaseModel):
                         Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                         TilingSpecifications, TouchUpExportSpecifications,
                         TouchUpImportSpecifications, WaterConstraintsSpecifications,
-                        ClearanceSpecifications] = (
+                        ClearanceSpecifications, VolumeSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @field_validator("specifications", mode="plain")
@@ -209,6 +211,8 @@ class Job(BaseModel):
             specifications = WaterConstraintsSpecifications(**raw_dict)
         elif job_type == JobType.CLEARANCE_CALCULATION:
             specifications = ClearanceSpecifications(**raw_dict)
+        elif job_type == JobType.VOLUME_CALCULATION:
+            specifications = VolumeSpecifications(**raw_dict)
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 

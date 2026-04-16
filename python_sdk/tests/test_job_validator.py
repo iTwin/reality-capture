@@ -20,6 +20,7 @@ from reality_capture.specifications.tiling import TilingSpecifications
 from reality_capture.specifications.touchup import TouchUpImportSpecifications, TouchUpExportSpecifications
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecifications
 from reality_capture.specifications.clearance import ClearanceSpecifications
+from reality_capture.specifications.volume import VolumeSpecifications
 
 class TestJobValidator:
     j_base = {
@@ -356,3 +357,18 @@ class TestJobValidator:
         }
         job = Job(**j)
         assert isinstance(job.specifications, ClearanceSpecifications)
+
+    def test_validation_volume(self):
+        j = self.j_base.copy()
+        j["type"] = "VolumeCalculation"
+        j["specifications"] = {
+            "inputs": {
+                "model3d": "mfid",
+                "regionOfInterest": "bkt:roi"
+            },
+            "outputs": {
+                "volume": "bkt:volume"
+            }
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, VolumeSpecifications)
