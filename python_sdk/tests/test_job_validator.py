@@ -364,7 +364,7 @@ class TestJobValidator:
         j["specifications"] = {
             "inputs": {
                 "model3d": "mfid",
-                "regionOfInterest": "bkt:roi"
+                "footprint": "bkt:roi"
             },
             "outputs": {
                 "volume": "bkt:volume"

@@ -2,7 +2,7 @@
 Volume Calculation
 ==================
 
-The *Volume calculation* job allows you to compute volume information for a 3D model within a specified region of interest.
+The *Volume calculation* job allows you to compute volume information for a 3D model within a specified region of interest. Currently, footprint has to be provided as a GeoJSON polygon file or a WKT polygon text file.
 
 
 .. contents:: Quick access

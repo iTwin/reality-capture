@@ -5,8 +5,8 @@ from enum import Enum
 
 class VolumeInputs(BaseModel):
     model_3d: str = Field(alias="model3d", description="Reality data id of a point cloud.")
-    region_of_interest: str = Field(alias="regionOfInterest", pattern=r"^bkt:.+",
-                                    description="Path in the bucket to region of interest for volume computation.")
+    footprint: str = Field(alias="footprint", pattern=r"^bkt:.+",
+                           description="Path in the bucket to footprint for volume computation.")
 
 
 class VolumeOutputs(BaseModel):
