@@ -6,11 +6,11 @@ from enum import Enum
 class VolumeInputs(BaseModel):
     model_3d: str = Field(alias="model3d", description="Reality data id of a point cloud.")
     region_of_interest: str = Field(alias="regionOfInterest", pattern=r"^bkt:.+",
-                                    description="Path to region of interest for volume computation.")
+                                    description="Path in the bucket to region of interest for volume computation.")
 
 
 class VolumeOutputs(BaseModel):
-    volume: Optional[str] = Field(None, description="Reality data id of OVF Clearance Points", pattern=r"^bkt:.+")
+    volume: Optional[str] = Field(None, description="Path in the bucket to volume information.", pattern=r"^bkt:.+")
 
 
 class VolumeOutputsCreate(Enum):
