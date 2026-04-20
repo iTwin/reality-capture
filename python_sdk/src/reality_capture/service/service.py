@@ -342,7 +342,7 @@ class RealityCaptureService:
         try:
             json_dump = reality_data_update.model_dump_json(by_alias=True, exclude_none=True)
         except (NotImplementedError, ValidationError) as e:
-            detailed_error = DetailedError(code="UnknownError", message=f"Could not create reality data, bad request : "
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not update reality data, bad request : "
                                                                         f"{e}")
             return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
 
