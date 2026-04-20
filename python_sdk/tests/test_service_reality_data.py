@@ -69,6 +69,21 @@ class TestRealityData:
         assert response.error.error.code == "UnknownError"
 
     @responses.activate
+    def test_get_data_ill_formed_text_response(self):
+        rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        responses.add(
+            responses.GET,
+            f'https://api.bentley.com/reality-management/reality-data/{rd_id}',
+            body="I'm not a JSON response",
+            content_type="text/plain",
+            status=400
+        )
+        response = self.rcs.get_reality_data(rd_id)
+        assert response.is_error()
+        assert response.error.error.code == "UnknownError"
+        assert "I'm not a JSON response" in response.error.error.message
+
+    @responses.activate
     def test_get_data_401(self):
         rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
         responses.add(responses.GET, f'https://api.bentley.com/reality-management/reality-data/{rd_id}',
