@@ -235,7 +235,7 @@ class RealityCaptureService:
         try:
             url = self._get_correct_url(service) + "jobs/" + job_id
         except (NotImplementedError, ValidationError) as e:
-            detailed_error = DetailedError(code="UnknownError", message=f"Could not get job progress, bad request : "
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not cancel job, bad request : "
                                                                         f"{e}")
             return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
 
@@ -288,7 +288,7 @@ class RealityCaptureService:
             url_encoded_name = urllib.parse.quote(detector_name, safe="")
             url = self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}"
         except (NotImplementedError, ValidationError) as e:
-            detailed_error = DetailedError(code="UnknownError", message=f"Could not get job progress, bad request : "
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not get detector, bad request : "
                                                                         f"{e}")
             return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
 
@@ -346,7 +346,7 @@ class RealityCaptureService:
                                                                         f"{e}")
             return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
 
-        return self._execute_request(method="POST", url=self._get_reality_management_rd_url() + reality_data_id,
+        return self._execute_request(method="PATCH", url=self._get_reality_management_rd_url() + reality_data_id,
                                      success_model=RealityData, data=json_dump, data_key="realityData",
                                      headers=self._get_header_v1())
 
