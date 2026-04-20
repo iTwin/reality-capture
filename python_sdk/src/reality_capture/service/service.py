@@ -84,11 +84,14 @@ class RealityCaptureService:
             return self._get_modeling_url()
         if service == Service.ANALYSIS:
             return self._get_analysis_url()
-        raise NotImplemented("Other services not yet implemented")
+        raise NotImplementedError("Other services not yet implemented")
 
     @staticmethod
     def _get_ill_formed_message(response, exception) -> str:
-        r = response.json()
+        try:
+            r = response.json()
+        except requests.exceptions.JSONDecodeError:
+            r = response.text
         return f"Service response is ill-formed: {r}. Exception : {exception}"
 
     def _execute_request(self, method: str, url: str, headers: dict, success_model: Type[BaseModel] = None,
@@ -101,7 +104,7 @@ class RealityCaptureService:
                 error_details = DetailedErrorResponse.model_validate(e.response.json())
                 return Response(status_code=e.response.status_code, value=None, error=error_details)
             except (ValidationError, KeyError, requests.exceptions.JSONDecodeError):
-                error = DetailedError(code="ApiError", message=str(e))
+                error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(e.response, e))
                 return Response(status_code=e.response.status_code, value=None,
                                 error=DetailedErrorResponse(error=error))
         except requests.exceptions.RequestException as e:
