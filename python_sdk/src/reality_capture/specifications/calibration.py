@@ -110,6 +110,7 @@ class Tag(Enum):
     QR = "QR"
     APRIL = "April"
     CHILI = "Chili"
+    CHECKERBOARDS = "Checkerboards"
 
 
 class ColorEqualization(Enum):
