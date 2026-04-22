@@ -5,6 +5,7 @@ import { GeometricPrecision } from "./tiling";
 export enum Format {
   THREED_TILES = "3DTiles",
   OBJ = "OBJ",
+  I3S = "I3S",
   LAS = "LAS",
   PLY = "PLY",
   OPC = "OPC",
@@ -124,6 +125,19 @@ export const OptionsOBJSchema = z.object({
 });
 export type OptionsOBJ = z.infer<typeof OptionsOBJSchema>;
 
+export const OptionsI3SSchema = z.object({
+  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
+  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
+  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
+  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
+  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
+  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
+  crs: z.string().optional().describe("Coordinate reference system"),
+  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
+  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
+});
+export type OptionsI3S = z.infer<typeof OptionsI3SSchema>;
+
 export const OptionsLASSchema = z.object({
   crs: z.string().optional().describe("Coordinate reference system"),
   samplingStrategy: z.nativeEnum(SamplingStrategy).optional().describe("Sampling strategy"),
@@ -171,6 +185,7 @@ export const ExportCreateSchema = z.object({
   options: z.union([
     Options3DTilesSchema,
     OptionsOBJSchema,
+    OptionsI3SSchema,
     OptionsLASSchema,
     OptionsPLYSchema,
     OptionsOPCSchema,
