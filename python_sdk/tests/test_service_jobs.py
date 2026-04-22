@@ -25,20 +25,20 @@ class TestServiceJobs:
 
     @responses.activate
     def test_get_jobs_ill_formed(self):
-        responses.add(responses.GET, f'https://api.bentley.com/reality-modeling/jobs',
+        responses.add(responses.GET, f'https://api.bentley.com/reality-modeling/jobs?$filter=iTwinId%20eq%202c8e4988-eb9b-4e5f-a903-8c7c18f3030a',
                       json={"bad": "response"},
                       status=400)
-        response = self.rcs.get_jobs(Service.MODELING)
+        response = self.rcs.get_jobs(Service.MODELING, filters="iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a")
         assert response.is_error()
         assert response.error.error.code == "UnknownError"
 
     @responses.activate
     def test_get_files_401(self):
-        responses.add(responses.GET, f'https://api.bentley.com/reality-modeling/jobs',
+        responses.add(responses.GET, f'https://api.bentley.com/reality-modeling/jobs?$filter=iTwinId%20eq%202c8e4988-eb9b-4e5f-a903-8c7c18f3030a',
                       json={"error": {"code": "HeaderNotFound",
                                       "message": "Header Authorization was not found in the request. Access denied."}},
                       status=401)
-        response = self.rcs.get_jobs(Service.MODELING)
+        response = self.rcs.get_jobs(Service.MODELING, filters="iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a")
         assert response.is_error()
         assert response.error.error.code == "HeaderNotFound"
 

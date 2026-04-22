@@ -125,13 +125,13 @@ class RealityCaptureService:
             error = DetailedError(code="InvalidResponse", message=self._get_ill_formed_message(response, e))
             return Response(status_code=502, error=DetailedErrorResponse(error=error), value=None)
 
-    def get_jobs(self, service: Service, filters: str = "",
+    def get_jobs(self, service: Service, filters: str,
                  top: int = None, continuation_token: str = "") -> Response[Jobs]:
         """
         Get list of jobs from a specific service.
 
         :param service: Service to target
-        :param filters: The given filter is evaluated for each job and only job where the filter evaluates to true are returned. See `API documentation <https://developer.bentley.com/apis/reality-modeling/operations/jobs-get-all/#request-parameters>`_ to know more.
+        :param filters: The given filter is evaluated for each job and only job where the filter evaluates to true are returned. At least one filter criteria is required by the API. See `API documentation <https://developer.bentley.com/apis/reality-modeling/operations/jobs-get-all/#request-parameters>`_ to know more.
         :param top: The number of jobs to get in each page. Min 2, max 1000.
         :param continuation_token: Parameter that enables continuing to the next page of the previous paged query. This must be passed exactly as it is in the response body's _links.next property.
         """

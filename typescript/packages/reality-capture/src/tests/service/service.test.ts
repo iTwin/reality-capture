@@ -845,7 +845,7 @@ describe("RealityCaptureService API calls tests", function () {
         },
       },
     });
-    const result = await service.getJobs(Service.MODELING);
+    const result = await service.getJobs(Service.MODELING, "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a");
     expect(axiosGetStub.calledOnce).to.be.true;
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.false;
@@ -871,7 +871,7 @@ describe("RealityCaptureService API calls tests", function () {
         },
       },
     });
-    const result = await service.getJobs(Service.MODELING);
+    const result = await service.getJobs(Service.MODELING, "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a");
     expect(axiosGetStub.calledOnce).to.be.true;
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.true;
@@ -887,7 +887,7 @@ describe("RealityCaptureService API calls tests", function () {
         },
       },
     });
-    const result = await service.getJobs(Service.MODELING);
+    const result = await service.getJobs(Service.MODELING, "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a");
     expect(axiosGetStub.calledOnce).to.be.true;
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.true;
