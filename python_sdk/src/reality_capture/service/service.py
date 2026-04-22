@@ -269,14 +269,27 @@ class RealityCaptureService:
                                      headers=self._get_header_v2(),
                                      success_model=Files)
 
-    def get_detectors(self) -> Response[DetectorsMinimalResponse]:
+    def get_detectors(self, detectors_filter: Optional[str] = None) -> Response[DetectorsMinimalResponse]:
         """
         Retrieve all available detectors.
-    
+
+        :param detectors_filter: The $filter query option requests a specific set of detectors.
+                       Properties supported for filtering: labels, exports.
+                       Supported operators: and, or, not, in.
+                       Example: "exports in ('Polygons', 'Lines') and labels in ('crack')"
         :return: A Response[DetectorsMinimalResponse] containing either the detector list or the error from the service.
         """
+        url = self._get_correct_url(Service.ANALYSIS) + "detectors"
+        params = {}
+        if detectors_filter:
+            params["$filter"] = detectors_filter
 
-        return self._execute_request(method="GET", url=self._get_correct_url(Service.ANALYSIS) + f"detectors",
+        encoded_params = urlencode(params)
+        if encoded_params:
+            url = f"{url}?{encoded_params}"
+
+        return self._execute_request(method="GET",
+                                     url=url,
                                      headers=self._get_header_v2(),
                                      success_model=DetectorsMinimalResponse)
 

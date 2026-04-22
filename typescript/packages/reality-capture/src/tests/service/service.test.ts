@@ -245,6 +245,22 @@ describe("RealityCaptureService API calls tests", function () {
     expect(result.value!.detectors).to.have.lengthOf(2);
   });
 
+  it("getDetectors should pass filters as query params", async () => {
+    axiosGetStub.resolves({
+      status: 200,
+      data: {
+        "detectors": []
+      }
+    });
+    const detectorsFilter = "exports in ('Polygons', 'Lines') and labels in ('crack')";
+    const result = await service.getDetectors(detectorsFilter);
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors");
+    expect(axiosGetStub.firstCall.args[1].params).to.deep.equal({ "$filter": detectorsFilter });
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.false;
+  });
+
   it("getDetectors 401 error", async () => {
     axiosGetStub.rejects({
       response: {

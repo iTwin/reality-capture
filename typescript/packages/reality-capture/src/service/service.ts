@@ -157,10 +157,13 @@ export class RealityCaptureService {
     }
   }
 
-  async getDetectors(): Promise<Response<DetectorsMinimalResponse>> {
+  async getDetectors(detectorsFilter?: string): Promise<Response<DetectorsMinimalResponse>> {
     const url = this._getAnalysisUrl() + "detectors";
     try {
-      const resp = await this._axios.get(url, { headers: await this._getHeader("v2") });
+      const resp = await this._axios.get(url, {
+        params: detectorsFilter ? { "$filter": detectorsFilter } : undefined,
+        headers: await this._getHeader("v2")
+      });
       return new Response(resp.status, null, resp.data as DetectorsMinimalResponse);
     } catch (error: any) {
       return this._handleError<DetectorsMinimalResponse>(error);
