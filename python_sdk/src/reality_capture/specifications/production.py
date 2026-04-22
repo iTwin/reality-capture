@@ -174,6 +174,27 @@ class OptionsOPC(BaseModel):
                                                         description="Source of the texture color")
 
 
+class OptionsOSGB(BaseModel):
+    textureColorSource: Optional[ColorSource] = Field(None, description="Texture color source for the export")
+    textureColorSourceResMin: Optional[float] = Field(None, description="In case of resolution color source, "
+                                                                        "minimum resolution value to use")
+    textureColorSourceResMax: Optional[float] = Field(None, description="In case of resolution color source, "
+                                                                        "maximum resolution value to use")
+    textureColorSourceThermalUnit: Optional[ThermalUnit] = Field(None, description="In case of thermal color source, "
+                                                                                   "thermal unit to use")
+    textureColorSourceThermalMin: Optional[float] = Field(None, description="In case of thermal color source, "
+                                                                            "minimum temperature value to use")
+    textureColorSourceThermalMax: Optional[float] = Field(None, description="In case of thermal color source, "
+                                                                            "maximum temperature value to use")
+    textureSharpening: Optional[bool] = Field(None, description="Enable/disable texture sharpening")
+    maximumTextureSize: Optional[int] = Field(None, description="Maximum texture size")
+    textureCompression: Optional[int] = Field(None, description="Texture compression between 0 and 100")
+    crs: Optional[str] = Field(None, description="Coordinate reference system definition for the export")
+    crsOrigin: Optional[Point3d] = Field(None, description="CRS origin")
+    lodScope: Optional[LODScope] = Field(None, description="Level of details scope")
+    lodType: Optional[LODType] = Field(None, description="Type of level of details")
+
+
 class ProjectionMode(Enum):
     HIGHEST_POINT = "HighestPoint"
     LOWEST_POINT = "LowestPoint"
