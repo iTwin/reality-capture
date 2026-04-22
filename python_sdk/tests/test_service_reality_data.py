@@ -363,3 +363,4 @@ class TestRealityData:
         response = self.rcs.move_reality_data(rd_id, itwin_id)
         assert not response.is_error()
         assert response.value is None
+        assert json.loads(responses.calls[0].request.body.decode("utf-8")) == {"iTwinId": itwin_id}

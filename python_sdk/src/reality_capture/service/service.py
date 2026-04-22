@@ -444,4 +444,4 @@ class RealityCaptureService:
         return self._execute_request(method="PATCH",
                                      url=self._get_reality_management_rd_url() + reality_data_id + "/move",
                                      headers=self._get_header_v1(), success_model=None,
-                                     data={"iTwinId": itwin_id})
+                                     json={"iTwinId": itwin_id})
