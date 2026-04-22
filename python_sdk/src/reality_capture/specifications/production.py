@@ -59,6 +59,29 @@ class CesiumCompression(Enum):
     DRACO = "Draco"
 
 
+class OptionsI3S(BaseModel):
+    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
+                                                        description="Texture color source for the export")
+    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
+                                                          description="In case of resolution color source, "
+                                                                      "minimum resolution value to use")
+    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
+                                                          description="In case of resolution color source, "
+                                                                      "maximum resolution value to use")
+    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
+                                                                     description="In case of thermal color source, "
+                                                                                 "thermal unit to use")
+    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
+                                                              description="In case of thermal color source, "
+                                                                          "minimum temperature value to use")
+    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
+                                                              description="In case of thermal color source, "
+                                                                          "maximum temperature value to use")
+    crs: Optional[str] = Field(None, description="Coordinate reference system definition for the export")
+    crs_origin: Optional[Point3d] = Field(None, alias="crsOrigin", description="CRS origin as Point")
+    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
+
+
 class Options3DTiles(BaseModel):
     texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
                                                         description="Source of the texture color")
