@@ -26,6 +26,10 @@ class TestSpecifications:
         export_create_3mx = production.ExportCreate(**export_3mx_dict)
         assert isinstance(export_create_3mx.options, production.Options3MX)
 
+        export_i3s_dict = {"format": "I3S", "name": "MyI3S", "options": {"crs": "EPSG:4978"}}
+        export_create_i3s = production.ExportCreate(**export_i3s_dict)
+        assert isinstance(export_create_i3s.options, production.OptionsI3S)
+
         export_las_dict = {"format": "LAS", "name": "MyLas", "options": {"crs": "EPSG:4978"}}
         export_create_las = production.ExportCreate(**export_las_dict)
         assert isinstance(export_create_las.options, production.OptionsLAS)
