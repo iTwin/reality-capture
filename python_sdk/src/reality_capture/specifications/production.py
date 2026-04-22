@@ -175,24 +175,33 @@ class OptionsOPC(BaseModel):
 
 
 class OptionsOSGB(BaseModel):
-    textureColorSource: Optional[ColorSource] = Field(None, description="Texture color source for the export")
-    textureColorSourceResMin: Optional[float] = Field(None, description="In case of resolution color source, "
-                                                                        "minimum resolution value to use")
-    textureColorSourceResMax: Optional[float] = Field(None, description="In case of resolution color source, "
-                                                                        "maximum resolution value to use")
-    textureColorSourceThermalUnit: Optional[ThermalUnit] = Field(None, description="In case of thermal color source, "
-                                                                                   "thermal unit to use")
-    textureColorSourceThermalMin: Optional[float] = Field(None, description="In case of thermal color source, "
-                                                                            "minimum temperature value to use")
-    textureColorSourceThermalMax: Optional[float] = Field(None, description="In case of thermal color source, "
-                                                                            "maximum temperature value to use")
-    textureSharpening: Optional[bool] = Field(None, description="Enable/disable texture sharpening")
-    maximumTextureSize: Optional[int] = Field(None, description="Maximum texture size")
-    textureCompression: Optional[int] = Field(None, description="Texture compression between 0 and 100")
+    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
+                                                        description="Texture color source for the export")
+    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
+                                                          description="In case of resolution color source, "
+                                                                      "minimum resolution value to use")
+    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
+                                                          description="In case of resolution color source, "
+                                                                      "maximum resolution value to use")
+    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
+                                                                     description="In case of thermal color source, "
+                                                                                 "thermal unit to use")
+    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
+                                                              description="In case of thermal color source, "
+                                                                          "minimum temperature value to use")
+    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
+                                                              description="In case of thermal color source, "
+                                                                          "maximum temperature value to use")
+    texture_sharpening: Optional[bool] = Field(None, alias="textureSharpening",
+                                               description="Enable/disable texture sharpening")
+    maximum_texture_size: Optional[int] = Field(None, alias="maximumTextureSize",
+                                                description="Maximum texture size")
+    texture_compression: Optional[int] = Field(None, alias="textureCompression",
+                                               description="Texture compression between 0 and 100")
     crs: Optional[str] = Field(None, description="Coordinate reference system definition for the export")
-    crsOrigin: Optional[Point3d] = Field(None, description="CRS origin")
-    lodScope: Optional[LODScope] = Field(None, description="Level of details scope")
-    lodType: Optional[LODType] = Field(None, description="Type of level of details")
+    crs_origin: Optional[Point3d] = Field(None, alias="crsOrigin", description="CRS origin")
+    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of details scope")
+    lod_type: Optional[LODType] = Field(None, alias="lodType", description="Type of level of details")
 
 
 class ProjectionMode(Enum):
