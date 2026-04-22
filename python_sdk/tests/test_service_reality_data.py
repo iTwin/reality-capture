@@ -1,7 +1,8 @@
 from reality_capture.service.service import RealityCaptureService
 from reality_capture.service.reality_data import (RealityDataCreate, RealityDataUpdate, Access,
                                                   RealityDataFilter, get_continuation_token, Prefer,
-                                                  RealityDataMinimal, RealityData, Type)
+                                                  RealityDataMinimal, RealityData, RealityDatas, Type,
+                                                  Extent, Coordinate)
 import responses
 import json
 import os
@@ -328,6 +329,58 @@ class TestRealityData:
         assert len(response.value.reality_data) == 2
         assert isinstance(response.value.reality_data[0], RealityData)
         assert get_continuation_token(response.value) is None
+
+    def test_get_continuation_token_with_null_next(self):
+        rd = {
+            "realityData": [{
+                "id": "7799a2a5-a170-4eeb-9dab-c10fecb49618",
+                "displayName": "Images",
+                "type": "CCImageCollection"
+            }],
+            "_links": {
+                "next": None
+            }
+        }
+        parsed = RealityDatas.model_validate(rd)
+        assert parsed.links is not None
+        assert parsed.links.next is None
+        assert get_continuation_token(parsed) is None
+
+    def test_reality_data_filter_serialization_matches_api_doc(self):
+        dt_s = datetime.strptime("2021-05-12T20:03:12Z", "%Y-%m-%dT%H:%M:%SZ")
+        dt_e = datetime.strptime("2022-05-12T20:03:12Z", "%Y-%m-%dT%H:%M:%SZ")
+        rdf = RealityDataFilter(
+            iTwinId="123e4567-e89b-12d3-a456-426614174000",
+            continuationToken="token-123",
+            **{
+                "$top": 25,
+                "$orderBy": "displayName desc",
+                "$search": "Images",
+            },
+            types=[Type.OPC, Type.TERRAIN_3D_TILES],
+            extent=Extent(
+                southWest=Coordinate(longitude=-75.637679, latitude=40.032871),
+                northEast=Coordinate(longitude=-75.633647, latitude=40.032771),
+            ),
+            createdDateTime=(dt_s, dt_e),
+            dataCenter="East US",
+            ownerId="123e4567-e89b-12d3-a456-426614174000",
+            tag="survey"
+        )
+
+        params = rdf.as_dict_for_service_call()
+
+        assert params["iTwinId"] == "123e4567-e89b-12d3-a456-426614174000"
+        assert params["continuationToken"] == "token-123"
+        assert params["$top"] == 25
+        assert params["$orderBy"] == "displayName desc"
+        assert params["$search"] == "Images"
+        assert params["types"] == "OPC,Terrain3DTiles"
+        assert params["extent"] == "-75.637679,40.032871,-75.633647,40.032771"
+        assert params["createdDateTime"] == "2021-05-12T20:03:12Z/2022-05-12T20:03:12Z"
+        assert params["dataCenter"] == "East US"
+        assert params["ownerId"] == "123e4567-e89b-12d3-a456-426614174000"
+        assert params["tag"] == "survey"
 
     @responses.activate
     def test_move_data_ill_formed(self):

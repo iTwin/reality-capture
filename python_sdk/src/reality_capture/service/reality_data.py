@@ -49,6 +49,12 @@ class Type(Enum):
     THREE_SM = "3SM"
     THREE_MX = "3MX"
     UNSTRUCTURED_DATA = "Unstructured"
+    ORTHOPHOTO = "Orthophoto"
+    GS_PLY = "GS_PLY"
+    GS_SPZ = "GS_SPZ"
+    GS_3DT = "GS_3DT"
+    GEO_JSON = "GeoJSON"
+    SHP = "SHP"
 
 
 class Acquisition(BaseModel):
@@ -161,7 +167,7 @@ class Prefer(Enum):
 
 class RealityDataFilter(BaseModel):
     itwin_id: Optional[str] = Field(None, description="Id of iTwin. The operation gets all reality data in this iTwin.",
-                                    alias="itwinId")
+                                    alias="iTwinId")
     continuation_token: Optional[str] = Field(None, alias="continuationToken",
                                               description="Parameter that enables continuing to the next page of the "
                                                           "previous paged query. This must be passed exactly as it is "
@@ -203,6 +209,17 @@ class RealityDataFilter(BaseModel):
         for k in [key for key in params.keys() if key.endswith("DateTime")]:
             params[k] = f'{params[k][0].strftime("%Y-%m-%dT%H:%M:%SZ")}/{params[k][1].strftime("%Y-%m-%dT%H:%M:%SZ")}'
 
+        if "extent" in params:
+            south_west = params["extent"]["southWest"]
+            north_east = params["extent"]["northEast"]
+            params["extent"] = (
+                f'{south_west["longitude"]},{south_west["latitude"]},'
+                f'{north_east["longitude"]},{north_east["latitude"]}'
+            )
+
+        if "types" in params:
+            params["types"] = ",".join(t.value if isinstance(t, Type) else str(t) for t in params["types"])
+
         return params
 
 
@@ -215,7 +232,7 @@ class RealityDataMinimal(BaseModel):
 
 
 class NextPageLink(BaseModel):
-    next: URL = Field(description="Link.")
+    next: Optional[URL] = Field(None, description="Link.")
 
 
 class RealityDatas(BaseModel):
@@ -225,7 +242,7 @@ class RealityDatas(BaseModel):
 
 
 def get_continuation_token(rd: RealityDatas) -> Optional[str]:
-    if not rd.links:
+    if not rd.links or not rd.links.next:
         return None
     parsed_url = urlparse(rd.links.next.href)
     query_params = parse_qs(parsed_url.query)
