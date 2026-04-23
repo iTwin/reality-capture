@@ -232,7 +232,7 @@ class RealityDataMinimal(BaseModel):
 
 
 class NextPageLink(BaseModel):
-    next: Optional[URL] = Field(None, description="Link.")
+    next: URL = Field(description="Link.")
 
 
 class RealityDatas(BaseModel):
@@ -242,7 +242,7 @@ class RealityDatas(BaseModel):
 
 
 def get_continuation_token(rd: RealityDatas) -> Optional[str]:
-    if not rd.links or not rd.links.next:
+    if not rd.links:
         return None
     parsed_url = urlparse(rd.links.next.href)
     query_params = parse_qs(parsed_url.query)

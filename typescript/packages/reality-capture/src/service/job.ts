@@ -267,7 +267,7 @@ export const JobSchema = z.discriminatedUnion("type", [
 export type Job = z.infer<typeof JobSchema>;
 
 export const NextLinkSchema = z.object({
-  next: URLSchema.optional().describe("URL for getting the next page of results.")
+  next: URLSchema.describe("URL for getting the next page of results.")
 });
 export type NextLink = z.infer<typeof NextLinkSchema>;
 

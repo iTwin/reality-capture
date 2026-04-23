@@ -857,8 +857,8 @@ describe("RealityCaptureService API calls tests", function () {
       "2e8b5984-15b1-45d5-8175-572583d8c3c8"
     );
     expect(result.value!.jobs[1].state).to.equal("Failed");
-    expect(result.value!._links.next).to.not.be.undefined;
-    expect(result.value!._links.next!.href).to.include("continuationToken");
+    expect(result.value!._links).to.not.be.undefined;
+    expect(result.value!._links!.next.href).to.include("continuationToken");
   });
 
   it("getJobs 401 error", async () => {

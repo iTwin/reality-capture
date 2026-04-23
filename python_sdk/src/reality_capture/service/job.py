@@ -228,7 +228,7 @@ class JobResponse(BaseModel):
 
 
 class NextPageLink(BaseModel):
-    next: Optional[URL] = Field(default=None, description="URL for getting the next page of results.")
+    next: URL = Field(description="URL for getting the next page of results.")
 
 
 class Jobs(BaseModel):

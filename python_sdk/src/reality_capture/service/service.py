@@ -142,9 +142,7 @@ class RealityCaptureService:
                                                                         f"{e}")
             return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
 
-        params = {}
-        if filters:
-            params["$filter"] = filters
+        params = {"$filter": filters}
         if top is not None:
             params["$top"] = max(min(top, 1000), 2)
         if continuation_token:
