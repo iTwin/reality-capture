@@ -274,7 +274,7 @@ describe("NextLinkSchema", () => {
     expect(() => NextLinkSchema.parse(data)).to.not.throw();
   });
 
-  it ("should validate empty next link", () => {
-    expect(() => NextLinkSchema.parse({})).to.not.throw();
+  it ("should fail if empty", () => {
+    expect(() => NextLinkSchema.parse({})).to.throw(z.ZodError);
   });
 });

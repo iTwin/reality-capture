@@ -182,7 +182,7 @@ class RealityDataFilter(BaseModel):
                                                       "descending order. Default is ascending. Example: displayName "
                                                       "desc",
                                     alias="$orderBy")
-    search: Optional[str] = Field(None, description="Search reality data.")
+    search: Optional[str] = Field(None, description="Search reality data.", alias="$search")
     types: Optional[list[Type]] = Field(None, description="List of reality data types.")
     acquisition_date_time: Optional[Tuple[datetime, datetime]] = Field(None, alias="acquisitionDateTime",
                                                                   description="Aquisition datetime range (start, end) "
