@@ -847,6 +847,9 @@ describe("RealityCaptureService API calls tests", function () {
     });
     const result = await service.getJobs(Service.MODELING, "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a");
     expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.firstCall.args[1].params).to.deep.include({
+      $filter: "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a",
+    });
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.false;
     expect(result.value!.jobs).to.have.lengthOf(2);
