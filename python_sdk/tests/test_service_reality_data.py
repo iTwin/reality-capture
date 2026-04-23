@@ -6,7 +6,9 @@ from reality_capture.service.reality_data import (RealityDataCreate, RealityData
 import responses
 import json
 import os
+import pytest
 from datetime import datetime
+from pydantic import ValidationError
 
 
 class FakeTokenFactory:
@@ -341,10 +343,8 @@ class TestRealityData:
                 "next": None
             }
         }
-        parsed = RealityDatas.model_validate(rd)
-        assert parsed.links is not None
-        assert parsed.links.next is None
-        assert get_continuation_token(parsed) is None
+        with pytest.raises(ValidationError):
+            RealityDatas.model_validate(rd)
 
     def test_reality_data_filter_serialization_matches_api_doc(self):
         dt_s = datetime.strptime("2021-05-12T20:03:12Z", "%Y-%m-%dT%H:%M:%SZ")
