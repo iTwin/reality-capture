@@ -6,6 +6,7 @@ import responses
 import json
 import os
 from datetime import datetime
+from unittest.mock import patch
 
 
 class FakeTokenFactory:
@@ -26,6 +27,14 @@ class TestRealityData:
         pass
 
     # Create Data
+    def test_create_data_model_dump_error(self):
+        rdc = RealityDataCreate(iTwinId="1b21484b-8d97-4610-9001-b0b67cd83fbd", displayName="My Data", type=Type.OPC)
+        with patch.object(RealityDataCreate, "model_dump_json", side_effect=NotImplementedError("dump failed")):
+            response = self.rcs.create_reality_data(rdc)
+        assert response.is_error()
+        assert response.status_code == 400
+        assert "Could not create reality data" in response.error.error.message
+
     @responses.activate
     def test_create_data_ill_formed(self):
         rdc = RealityDataCreate(iTwinId="1b21484b-8d97-4610-9001-b0b67cd83fbd", displayName="My Data", type=Type.OPC)
@@ -121,6 +130,15 @@ class TestRealityData:
         assert response.value.id == rd_id
 
     # Update Data
+    def test_update_data_model_dump_error(self):
+        rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        rdu = RealityDataUpdate(description="New description")
+        with patch.object(RealityDataUpdate, "model_dump_json", side_effect=NotImplementedError("dump failed")):
+            response = self.rcs.update_reality_data(rdu, rd_id)
+        assert response.is_error()
+        assert response.status_code == 400
+        assert "Could not update reality data" in response.error.error.message
+
     @responses.activate
     def test_update_data_ill_formed(self):
         rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
