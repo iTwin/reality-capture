@@ -46,5 +46,9 @@ class TestSpecifications:
         export_create_odsm = production.ExportCreate(**export_odsm_dict)
         assert isinstance(export_create_odsm.options, production.OptionsOrthoDSM)
 
+        export_osgb_dict = {"format": "OSGB", "name": "MyOsgb", "options": {"crs": "EPSG:4978"}}
+        export_create_osgb = production.ExportCreate(**export_osgb_dict)
+        assert isinstance(export_create_osgb.options, production.OptionsOSGB)
+
     def test_export_options_from_object(self):
         construct_from_object = production.ExportCreate(format=production.Format.OBJ, options=production.OptionsOBJ())
