@@ -14,6 +14,8 @@ class GaussianSplatsInputs(BaseModel):
                                               pattern=r"^bkt:.+")
     crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData",
                                     pattern=r"^bkt:.+")
+    preset: Optional[str] = Field(default=None, description="Path to preset")
+
 
 
 class GaussianSplatsOutputs(BaseModel):
