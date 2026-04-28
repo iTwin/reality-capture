@@ -13,33 +13,17 @@ class ChangeDetectionInputs(BaseModel):
 class ChangeDetectionOutputs(BaseModel):
     objects3d: Optional[str] = Field(None, alias="objects3D",
                                      description="Reality data id of ContextScene, annotated with embedded 3D objects")
-    locations3d_as_shp: Optional[str] = Field(None, alias="locations3DAsSHP", 
-                                              description="Reality data id of 3D objects locations "
-                                                          "as SHP format")
-    locations3d_as_geojson: Optional[str] = Field(None, alias="locations3DAsGeoJSON", 
-                                                  description="Reality data id of 3D objects locations "
-                                                              "as GeoJSON file")
-    changes_in_model_b: Optional[str] = Field(None, description="Points in B not in A as OPC", alias="changesInModelB")
-    changes_in_model_a: Optional[str] = Field(None, description="Points in A not in B as OPC", alias="changesInModelA")
+    classified_model_a: Optional[str] = Field(None, description="Model A with change classification", alias="changesInModelB")
+    classified_model_b: Optional[str] = Field(None, description="Model B with change classification", alias="changesInModelA")
 
 
 class ChangeDetectionOutputsCreate(Enum):
-    OBJECTS3D = "objects3D"
-    LOCATIONS3D_AS_SHP = "locations3DAsSHP"
-    LOCATIONS3D_AS_GEOJSON = "locations3DAsGeoJSON"
-    CHANGES_IN_MODEL_A = "changesInModelA"
-    CHANGES_IN_MODEL_B = "changesInModelB"
+    OBJECTS_3D = "objects3d"
+    CLASSIFIED_MODEL_A = "classifiedModelA"
+    CLASSIFIED_MODEL_B = "classifiedModelB"
 
 
 class ChangeDetectionOptions(BaseModel):
-    output_crs: Optional[str] = Field(None, alias="outputCrs",
-                                      description="CRS used by locations3DAsSHP output")
-    min_points_per_change: Optional[int] = Field(None, alias="minPointsPerChange",
-                                                 description="Minimum number of points in a region "
-                                                             "to be considered as a change")
-    mesh_sampling_resolution: Optional[float] = Field(None, alias="meshSamplingResolution",
-                                                      description="Target point cloud resolution when starting "
-                                                                  "from meshes")
     threshold: Optional[float] = Field(None, description="High threshold to detect spatial changes "
                                                          "(hysteresis detection)")
     filter_threshold: Optional[float] = Field(None, alias="filterThreshold",
