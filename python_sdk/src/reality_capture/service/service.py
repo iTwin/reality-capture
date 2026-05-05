@@ -125,13 +125,13 @@ class RealityCaptureService:
             error = DetailedError(code="InvalidResponse", message=self._get_ill_formed_message(response, e))
             return Response(status_code=502, error=DetailedErrorResponse(error=error), value=None)
 
-    def get_jobs(self, service: Service, filters: str = "",
+    def get_jobs(self, service: Service, filters: str,
                  top: int = None, continuation_token: str = "") -> Response[Jobs]:
         """
         Get list of jobs from a specific service.
 
         :param service: Service to target
-        :param filters: The given filter is evaluated for each job and only job where the filter evaluates to true are returned. See `API documentation <https://developer.bentley.com/apis/reality-modeling/operations/jobs-get-all/#request-parameters>`_ to know more.
+        :param filters: The given filter is evaluated for each job and only job where the filter evaluates to true are returned. At least one filter criteria is required by the API. See `API documentation <https://developer.bentley.com/apis/reality-modeling/operations/jobs-get-all/#request-parameters>`_ to know more.
         :param top: The number of jobs to get in each page. Min 2, max 1000.
         :param continuation_token: Parameter that enables continuing to the next page of the previous paged query. This must be passed exactly as it is in the response body's _links.next property.
         """
@@ -142,9 +142,7 @@ class RealityCaptureService:
                                                                         f"{e}")
             return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
 
-        params = {}
-        if filters:
-            params["$filter"] = filters
+        params = {"$filter": filters}
         if top is not None:
             params["$top"] = max(min(top, 1000), 2)
         if continuation_token:
@@ -269,14 +267,27 @@ class RealityCaptureService:
                                      headers=self._get_header_v2(),
                                      success_model=Files)
 
-    def get_detectors(self) -> Response[DetectorsMinimalResponse]:
+    def get_detectors(self, detectors_filter: Optional[str] = None) -> Response[DetectorsMinimalResponse]:
         """
         Retrieve all available detectors.
-    
+
+        :param detectors_filter: The $filter query option requests a specific set of detectors.
+                       Properties supported for filtering: labels, exports.
+                       Supported operators: and, or, not, in.
+                       Example: "exports in ('Polygons', 'Lines') and labels in ('crack')"
         :return: A Response[DetectorsMinimalResponse] containing either the detector list or the error from the service.
         """
+        url = self._get_correct_url(Service.ANALYSIS) + "detectors"
+        params = {}
+        if detectors_filter:
+            params["$filter"] = detectors_filter
 
-        return self._execute_request(method="GET", url=self._get_correct_url(Service.ANALYSIS) + f"detectors",
+        encoded_params = urlencode(params)
+        if encoded_params:
+            url = f"{url}?{encoded_params}"
+
+        return self._execute_request(method="GET",
+                                     url=url,
                                      headers=self._get_header_v2(),
                                      success_model=DetectorsMinimalResponse)
 
@@ -431,4 +442,4 @@ class RealityCaptureService:
         return self._execute_request(method="PATCH",
                                      url=self._get_reality_management_rd_url() + reality_data_id + "/move",
                                      headers=self._get_header_v1(), success_model=None,
-                                     data={"iTwinId": itwin_id})
+                                     json={"iTwinId": itwin_id})
