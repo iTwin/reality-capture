@@ -88,3 +88,19 @@ class TestServiceDetector:
         response = self.rcs.get_detectors()
         assert not response.is_error()
         assert len(response.value.detectors) == 2
+
+    @responses.activate
+    def test_get_detectors_with_filter_200(self):
+        with open(f"{self.data_folder}/detectors_get_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(
+            responses.GET,
+            "https://api.bentley.com/reality-analysis/detectors?$filter=exports+in+%28%27Polygons%27%29",
+            json=payload,
+            status=200,
+        )
+        response = self.rcs.get_detectors("exports in ('Polygons')")
+        assert not response.is_error()
+        assert len(response.value.detectors) == 2
+        assert responses.calls[0].request.url == \
+            "https://api.bentley.com/reality-analysis/detectors?%24filter=exports+in+%28%27Polygons%27%29"
