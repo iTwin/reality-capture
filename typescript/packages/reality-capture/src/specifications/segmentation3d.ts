@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export enum Segmentation3DOutputsCreate {
   SEGMENTATION3D = "segmentation3D",
-  SEGMENTED_POINT_CLOUD = "segmentedPointCloud",
+  SEGMENTED_MODEL_3D = "segmentedModel3d",
   SEGMENTATION3D_AS_POD = "segmentation3DAsPOD",
   SEGMENTATION3D_AS_LAS = "segmentation3DAsLAS",
   SEGMENTATION3D_AS_LAZ = "segmentation3DAsLAZ",

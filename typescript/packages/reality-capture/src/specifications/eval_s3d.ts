@@ -22,7 +22,7 @@ export type EvalS3DOutputs = z.infer<typeof EvalS3DOutputsSchema>;
 
 export enum EvalS3DOutputsCreate {
   REPORT = "report",
-  SEGMENTED_POINT_CLOUD = "segmentedPointCloud",
+  SEGMENTED_MODEL_3D = "segmentedModel3d",
   SEGMENTATION3D = "segmentation3D",
 }
 

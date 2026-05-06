@@ -76,7 +76,7 @@ describe("EvalS3DOutputsSchema", () => {
 describe("EvalS3DOutputsCreate enum", () => {
   it("should have the right values", () => {
     expect(EvalS3DOutputsCreate.REPORT).to.equal("report");
-    expect(EvalS3DOutputsCreate.SEGMENTED_POINT_CLOUD).to.equal("segmentedPointCloud");
+    expect(EvalS3DOutputsCreate.SEGMENTED_MODEL_3D).to.equal("segmentedModel3d");
     expect(EvalS3DOutputsCreate.SEGMENTATION3D).to.equal("segmentation3D");
   });
 });
@@ -90,7 +90,7 @@ describe("EvalS3DSpecificationsCreateSchema", () => {
       },
       outputs: [
         EvalS3DOutputsCreate.REPORT,
-        EvalS3DOutputsCreate.SEGMENTED_POINT_CLOUD,
+        EvalS3DOutputsCreate.SEGMENTED_MODEL_3D,
       ],
     };
     expect(() => EvalS3DSpecificationsCreateSchema.parse(input)).to.not.throw();

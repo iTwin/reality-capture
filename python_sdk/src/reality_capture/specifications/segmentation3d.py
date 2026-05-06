@@ -27,8 +27,8 @@ class Segmentation3DOutputs(BaseModel):
     segmentation3d: Optional[str] = Field(None, alias="segmentation3D",
                                           description="Reality data id of ContextScene, "
                                                       "pointing to the segmented point cloud")
-    segmented_point_cloud: Optional[str] = Field(None, alias="segmentedPointCloud",
-                                                 description="Reality data id of "
+    segmented_model_3d: Optional[str] = Field(None, alias="segmentedModel3d",
+                                              description="Reality data id of "
                                                              "the 3D segmentation as OPC file")
     objects3d: Optional[str] = Field(None, alias="objects3D",
                                      description="Reality data id of ContextScene, "
@@ -67,7 +67,7 @@ class Segmentation3DOutputs(BaseModel):
 
 class Segmentation3DOutputsCreate(Enum):
     SEGMENTATION3D = "segmentation3D"
-    SEGMENTED_POINT_CLOUD = "segmentedPointCloud"
+    SEGMENTED_MODEL_3D = "segmentedModel3d"
     OBJECTS3D = "objects3D"
     OBJECTS3D_AS_3DTILES = "objects3DAs3DTiles"
     OBJECTS3D_AS_GEOJSON = "objects3DAsGeoJSON"

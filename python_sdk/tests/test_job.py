@@ -3,6 +3,10 @@ from reality_capture.service.job import Service, JobCreate, Job, JobType, JobSta
 from reality_capture.specifications.eval_o2d import EvalO2DSpecifications
 from reality_capture.specifications.tiling import TilingOutputsCreate
 from reality_capture.specifications.segmentation3d import Segmentation3DOutputsCreate
+
+from python_sdk.src.reality_capture.specifications.segmentation3d import Segmentation3DOutputsCreate
+
+
 # from reality_capture.specifications.point_cloud_conversion import PCConversionOutputsCreate
 
 
@@ -29,7 +33,7 @@ class TestJob:
         assert j.get_appropriate_service() == Service.MODELING
         eg_specs = {"inputs": {"model3D": "pointClouds"},
                     "outputs": [Segmentation3DOutputsCreate.SEGMENTATION3D,
-                                Segmentation3DOutputsCreate.SEGMENTED_POINT_CLOUD]}
+                                Segmentation3DOutputsCreate.SEGMENTED_MODEL_3D]}
         j = JobCreate(**{"type": JobType.SEGMENTATION_3D, "iTwinId": "itwin", "specifications": eg_specs})
         # assert j.get_appropriate_service() == Service.ANALYSIS
         # pc_conversion_specs = {"inputs": {"pointClouds": ["point_cloud"]}, "outputs": PCConversionOutputsCreate.OPC}
