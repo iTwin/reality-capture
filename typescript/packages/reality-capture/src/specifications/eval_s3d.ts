@@ -11,7 +11,7 @@ export const EvalS3DOutputsSchema = z.object({
     .regex(/^bkt:.+/)
     .describe("Path in Bucket of json report with confusion matrix")
     .optional(),
-  segmentedPointCloud: z.string()
+  segmentedModel3D: z.string()
     .describe("Reality data id of segmented point cloud, annotated with confusion matrix index")
     .optional(),
   segmentation3D: z.string()
@@ -22,7 +22,7 @@ export type EvalS3DOutputs = z.infer<typeof EvalS3DOutputsSchema>;
 
 export enum EvalS3DOutputsCreate {
   REPORT = "report",
-  SEGMENTED_MODEL_3D = "segmentedModel3d",
+  SEGMENTED_MODEL_3D = "segmentedModel3D",
   SEGMENTATION3D = "segmentation3D",
 }
 

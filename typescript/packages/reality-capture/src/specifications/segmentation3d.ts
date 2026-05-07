@@ -2,11 +2,7 @@ import { z } from "zod";
 
 export enum Segmentation3DOutputsCreate {
   SEGMENTATION3D = "segmentation3D",
-  SEGMENTED_MODEL_3D = "segmentedModel3d",
-  SEGMENTATION3D_AS_POD = "segmentation3DAsPOD",
-  SEGMENTATION3D_AS_LAS = "segmentation3DAsLAS",
-  SEGMENTATION3D_AS_LAZ = "segmentation3DAsLAZ",
-  SEGMENTATION3D_AS_PLY = "segmentation3DAsPLY",
+  SEGMENTED_MODEL_3D = "segmentedModel3D",
   OBJECTS3D = "objects3D",
   OBJECTS3D_AS_3DTILES = "objects3DAs3DTiles",
   OBJECTS3D_AS_GEOJSON = "objects3DAsGeoJSON",
@@ -33,11 +29,7 @@ export type Segmentation3DInputs = z.infer<typeof Segmentation3DInputsSchema>;
 
 export const Segmentation3DOutputsSchema = z.object({
   segmentation3D: z.string().optional().describe("Reality data id of ContextScene, pointing to the segmented point cloud"),
-  segmentedPointCloud: z.string().optional().describe("Reality data id of the 3D segmentation as OPC file"),
-  segmentation3DAsPOD: z.string().optional().describe("Reality data id of the segmented point cloud as POD file, segmentation3D output must be defined"),
-  segmentation3DAsLAS: z.string().optional().describe("Reality data id of the segmented point cloud as LAS file, segmentation3D output must be defined"),
-  segmentation3DAsLAZ: z.string().optional().describe("Reality data id of the segmented point cloud as LAZ file, segmentation3D output must be defined"),
-  segmentation3DAsPLY: z.string().optional().describe("Reality data id of the segmented point cloud as PLY file, segmentation3D output must be defined"),
+  segmentedModel3D: z.string().optional().describe("Reality data id of the 3D segmentation as OPC file"),
   objects3D: z.string().optional().describe("Reality data id of ContextScene, annotated with embedded 3D objects"),
   objects3DAs3DTiles: z.string().optional().describe("Reality data id of 3D objects as 3D Tiles file, objects3d output must be defined"),
   objects3DAsGeoJSON: z.string().optional().describe("Reality data id of 3D objects as GeoJSON file, objects3d output must be defined"),
@@ -53,7 +45,6 @@ export const Segmentation3DOutputsSchema = z.object({
 export type Segmentation3DOutputs = z.infer<typeof Segmentation3DOutputsSchema>;
 
 export const Segmentation3DOptionsSchema = z.object({
-  crs: z.string().optional().describe("CRS used by POD, LAS, LAZ, PLY, DGN and SHP outputs"),
   saveConfidence: z.boolean().optional().describe("Save confidence in 3D segmentation"),
   computeLineWidth: z.boolean().optional().describe("Estimation 3D line width at each vertex"),
   removeSmallLines: z.number().optional().describe("Remove 3D lines with total length smaller than this value"),

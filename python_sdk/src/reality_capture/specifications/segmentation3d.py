@@ -27,7 +27,7 @@ class Segmentation3DOutputs(BaseModel):
     segmentation3d: Optional[str] = Field(None, alias="segmentation3D",
                                           description="Reality data id of ContextScene, "
                                                       "pointing to the segmented point cloud")
-    segmented_model_3d: Optional[str] = Field(None, alias="segmentedModel3d",
+    segmented_model_3d: Optional[str] = Field(None, alias="segmentedModel3D",
                                               description="Reality data id of "
                                                              "the 3D segmentation as OPC file")
     objects3d: Optional[str] = Field(None, alias="objects3D",
@@ -67,7 +67,7 @@ class Segmentation3DOutputs(BaseModel):
 
 class Segmentation3DOutputsCreate(Enum):
     SEGMENTATION3D = "segmentation3D"
-    SEGMENTED_MODEL_3D = "segmentedModel3d"
+    SEGMENTED_MODEL_3D = "segmentedModel3D"
     OBJECTS3D = "objects3D"
     OBJECTS3D_AS_3DTILES = "objects3DAs3DTiles"
     OBJECTS3D_AS_GEOJSON = "objects3DAsGeoJSON"
@@ -82,7 +82,6 @@ class Segmentation3DOutputsCreate(Enum):
 
 
 class Segmentation3DOptions(BaseModel):
-    crs: Optional[str] = Field(None, description="CRS used by DGN and SHP outputs")
     save_confidence: Optional[bool] = Field(None, alias="saveConfidence",
                                             description="Save confidence in 3D segmentation")
     compute_line_width: Optional[bool] = Field(None, alias="computeLineWidth",
