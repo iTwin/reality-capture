@@ -1,6 +1,8 @@
 from reality_capture.service.job import Service
 from reality_capture.service.service import RealityCaptureService
 from urllib.parse import urlparse
+from unittest.mock import MagicMock
+import pytest
 
 
 class TestServiceBase:
@@ -20,3 +22,10 @@ class TestServiceBase:
         assert r.is_error()
         r = rcs_dev.get_job("fake_job_dev", Service.MODELING)
         assert r.is_error()
+
+    def test_get_correct_url_unsupported_service_raises(self):
+        rcs = RealityCaptureService(None)
+        unsupported = MagicMock(name="UnsupportedService")
+        with pytest.raises(NotImplementedError):
+            rcs._get_correct_url(unsupported)
+

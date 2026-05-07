@@ -2,6 +2,7 @@ import responses
 import json
 import os
 from datetime import datetime
+from unittest.mock import patch
 
 from reality_capture.service.service import RealityCaptureService
 
@@ -51,6 +52,13 @@ class TestServiceDetector:
         response = self.rcs.get_detector("@bentley/bentley-city-a-s3d")
         assert not response.is_error()
         assert response.value.detector.name == "@bentley/bentley-city-a-s3d"
+
+    def test_get_detector_unsupported_service(self):
+        with patch.object(self.rcs, "_get_correct_url", side_effect=NotImplementedError("unsupported")):
+            response = self.rcs.get_detector("mydetector")
+        assert response.is_error()
+        assert response.status_code == 400
+        assert "Could not get detector" in response.error.error.message
 
     @responses.activate
     def test_get_detectors_ill_formed(self):

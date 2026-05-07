@@ -20,6 +20,9 @@ from reality_capture.specifications.tiling import TilingSpecifications
 from reality_capture.specifications.touchup import TouchUpImportSpecifications, TouchUpExportSpecifications
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecifications
 from reality_capture.specifications.clearance import ClearanceSpecifications
+import pytest
+from unittest.mock import patch, MagicMock
+import reality_capture.service.job as job_module
 
 class TestJobValidator:
     j_base = {
@@ -356,3 +359,18 @@ class TestJobValidator:
         }
         job = Job(**j)
         assert isinstance(job.specifications, ClearanceSpecifications)
+
+    def test_validation_unsupported_job_type_raises(self):
+        j = self.j_base.copy()
+        j["specifications"] = {"inputs": {}, "outputs": {}}
+        unsupported = MagicMock(name="UnsupportedJobType")
+        with patch.object(job_module, "JobType", wraps=job_module.JobType) as mock_jt:
+            # Make the type field parse to an unsupported value
+            j["type"] = unsupported
+            mock_jt.return_value = unsupported
+            with pytest.raises(Exception) as exc_info:
+                Job.set_specification_validation_model.__func__(
+                    Job, j["specifications"], MagicMock(data={"type": unsupported})
+                )
+            assert "Unsupported job type" in str(exc_info.value)
+

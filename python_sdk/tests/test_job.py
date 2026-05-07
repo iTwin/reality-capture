@@ -1,5 +1,7 @@
 import datetime
-from reality_capture.service.job import Service, JobCreate, Job, JobType, JobState
+import pytest
+from unittest.mock import MagicMock
+from reality_capture.service.job import Service, JobCreate, Job, JobType, JobState, _get_appropriate_service
 from reality_capture.specifications.eval_o2d import EvalO2DSpecifications
 from reality_capture.specifications.tiling import TilingOutputsCreate
 from reality_capture.specifications.segmentation3d import Segmentation3DOutputsCreate
@@ -35,3 +37,9 @@ class TestJob:
         # pc_conversion_specs = {"inputs": {"pointClouds": ["point_cloud"]}, "outputs": PCConversionOutputsCreate.OPC}
         # j = JobCreate(**{"type": JobType.POINT_CLOUD_CONVERSION, "iTwinId": "itwin", "specifications": pc_conversion_specs})
         # assert j.get_appropriate_service() == Service.CONVERSION
+
+    def test_get_appropriate_service_unsupported_job_type(self):
+        unsupported = MagicMock(name="UnsupportedJobType")
+        with pytest.raises(Exception):
+            _get_appropriate_service(unsupported)
+
