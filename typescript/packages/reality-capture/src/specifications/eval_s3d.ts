@@ -12,7 +12,7 @@ export const EvalS3DOutputsSchema = z.object({
     .describe("Path in Bucket of json report with confusion matrix")
     .optional(),
   segmentedModel3D: z.string()
-    .describe("Reality data id of segmented point cloud, annotated with confusion matrix index")
+    .describe("Reality data id of segmented 3D model, annotated with confusion matrix index")
     .optional(),
   segmentation3D: z.string()
     .describe("Reality data id of ContextScene, pointing to segmented point cloud")
