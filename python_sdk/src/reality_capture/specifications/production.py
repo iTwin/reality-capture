@@ -234,6 +234,7 @@ class ProjectionMode(Enum):
 
 class OrthoFormat(Enum):
     GEOTIFF = "GeoTIFF"
+    JPEG = "JPEG"
     NONE = "None"
 
 
@@ -250,8 +251,15 @@ class OrthoColorSource(Enum):
     OPTIMIZED_COMPUTATION_THERMAL = "OptimizedComputationThermal"
 
 
+class OverviewType(Enum):
+    NONE = "None"
+    EMBEDDED = "Embedded"
+    OVR_FILE = "OvrFile"
+
+
 class OptionsOrthoDSM(BaseModel):
     crs: Optional[str] = Field(None, description="Coordinate reference system")
+    overviews: Optional[OverviewType] = Field(None, description="Overviews to generate")
     sampling_distance: Optional[float] = Field(None, alias="samplingDistance", description="Sampling distance")
     projection_mode: Optional[ProjectionMode] = Field(None, alias="projectionMode", description="Projection mode")
     merge_parts: Optional[bool] = Field(None, alias="mergeParts", description="Flag to merge parts")
