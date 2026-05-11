@@ -124,6 +124,11 @@ Classes
     :members:
     :undoc-members:
 
+.. autoclass:: OverviewType
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
 .. autoclass:: OrthoColorSource
     :show-inheritance:
     :members:
