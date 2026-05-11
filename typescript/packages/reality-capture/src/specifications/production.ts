@@ -67,6 +67,7 @@ export enum ProjectionMode {
 
 export enum OrthoFormat {
   GEOTIFF = "GeoTIFF",
+  JPEG = "JPEG",
   NONE = "None"
 }
 
@@ -81,6 +82,12 @@ export enum OrthoColorSource {
   OPTIMIZED_COMPUTATION_VISIBLE = "OptimizedComputationVisible",
   REFERENCE_3D_MODEL_THERMAL = "Reference3dModelThermal",
   OPTIMIZED_COMPUTATION_THERMAL = "OptimizedComputationThermal"
+}
+
+export enum OverviewType {
+  NONE = "None",
+  EMBEDDED = "Embedded",
+  OVR_FILE = "OvrFile"
 }
 
 export const ProductionInputsSchema = z.object({
@@ -183,6 +190,7 @@ export type OptionsOPC = z.infer<typeof OptionsOPCSchema>;
 
 export const OptionsOrthoDSMSchema = z.object({
   crs: z.string().optional().describe("Coordinate reference system"),
+  overviews: z.nativeEnum(OverviewType).optional().describe("Overviews to generate"),
   samplingDistance: z.number().optional().describe("Sampling distance"),
   projectionMode: z.nativeEnum(ProjectionMode).optional().describe("Projection mode"),
   mergeParts: z.boolean().optional().describe("Flag to merge parts"),
