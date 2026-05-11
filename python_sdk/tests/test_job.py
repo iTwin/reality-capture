@@ -1,11 +1,7 @@
 import datetime
 from reality_capture.service.job import Service, JobCreate, Job, JobType, JobState
-from reality_capture.specifications.eval_o2d import EvalO2DSpecifications
 from reality_capture.specifications.tiling import TilingOutputsCreate
 from reality_capture.specifications.segmentation3d import Segmentation3DOutputsCreate
-
-from python_sdk.src.reality_capture.specifications.segmentation3d import Segmentation3DOutputsCreate
-
 
 # from reality_capture.specifications.point_cloud_conversion import PCConversionOutputsCreate
 
