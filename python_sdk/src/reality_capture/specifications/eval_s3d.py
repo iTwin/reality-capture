@@ -14,7 +14,7 @@ class EvalS3DOutputs(BaseModel):
     report: Optional[str] = Field(None, description="Path in Bucket of json report with confusion matrix",
                                   pattern=r"^bkt:.+")
     segmented_model_3d: Optional[str] = Field(None, alias="segmentedModel3D",
-                                                 description="Reality data id of segmented point cloud, "
+                                                 description="Reality data id of segmented 3D model, "
                                                              "annotated with confusion matrix index")
     segmentation3d: Optional[str] = Field(None, alias="segmentation3D",
                                           description="Reality data id of ContextScene, "
