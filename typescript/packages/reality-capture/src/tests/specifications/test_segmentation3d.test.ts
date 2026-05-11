@@ -40,11 +40,7 @@ describe("Segmentation3DOutputsSchema", () => {
   it("should validate all outputs as strings", () => {
     const data: Record<string, string> = {
       segmentation3D: "id1",
-      segmentedPointCloud: "id2",
-      segmentation3DAsPOD: "id3",
-      segmentation3DAsLAS: "id4",
-      segmentation3DAsLAZ: "id5",
-      segmentation3DAsPLY: "id6",
+      segmentedModel3D: "id2",
       objects3D: "id7",
       objects3DAs3DTiles: "id8",
       objects3DAsGeoJSON: "id9",
@@ -132,6 +128,7 @@ describe("Segmentation3DSpecificationsSchema", () => {
 describe("Segmentation3DOutputsCreate enum", () => {
   it("should contain expected values", () => {
     expect(Segmentation3DOutputsCreate.SEGMENTATION3D).to.equal("segmentation3D");
+    expect(Segmentation3DOutputsCreate.SEGMENTED_MODEL_3D).to.equal("segmentedModel3D");
     expect(Segmentation3DOutputsCreate.OBJECTS3D_AS_GEOJSON).to.equal("objects3DAsGeoJSON");
     expect(Segmentation3DOutputsCreate.POLYGONS3D_AS_GEOJSON).to.equal("polygons3DAsGeoJSON");
   });
