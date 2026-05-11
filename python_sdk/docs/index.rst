@@ -46,3 +46,14 @@ The :doc:`service/index` section contains all the necessary information about th
     :includehidden:
 
     service/index
+
+Changelog
+=========
+
+The :doc:`changelog` section lists all notable changes across SDK releases.
+
+.. toctree::
+    :titlesonly:
+    :hidden:
+
+    changelog
