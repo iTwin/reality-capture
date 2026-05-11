@@ -234,7 +234,7 @@ class ProjectionMode(Enum):
 
 class OrthoFormat(Enum):
     GEOTIFF = "GeoTIFF"
-    JPG = "JPG"
+    JPEG = "JPEG"
     NONE = "None"
 
 
