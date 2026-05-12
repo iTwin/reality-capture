@@ -101,7 +101,7 @@ jobs:
       - name: Check uncovered lines threshold
         working-directory: ./python_sdk
         run: |
-          $coverage = Get-Content coverage.json | ConvertFrom-Json
+          $coverage = Get-Content coverage.json | ConvertFrom-Json -AsHashtable
           $missingLines = $coverage.totals.missing_lines
           Write-Output "Uncovered lines: $missingLines"
           if ($missingLines -ge 10) {
