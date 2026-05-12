@@ -95,7 +95,7 @@ jobs:
           } else {
             . ./venv_tests/bin/Activate.ps1
           }
-          pytest --cov-report html --cov-report json --cov
+          pytest --cov-report html --cov-fail-under=99.5 --cov --cov-report json
         shell: pwsh
 
       - name: Check uncovered lines threshold
