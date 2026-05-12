@@ -16,7 +16,7 @@ jobs:
 
     outputs:
       wheel_abs_path: ${{ steps.find_wheel.outputs.wheel_abs_path }}
-      
+
     steps:
       - uses: actions/checkout@v3
 
@@ -95,5 +95,17 @@ jobs:
           } else {
             . ./venv_tests/bin/Activate.ps1
           }
-          pytest --cov=reality-capture --cov-report html:cov_html ./tests/
+          pytest --cov-report html --cov-report json --cov
+        shell: pwsh
+
+      - name: Check uncovered lines threshold
+        working-directory: ./python_sdk
+        run: |
+          $coverage = Get-Content coverage.json | ConvertFrom-Json
+          $missingLines = $coverage.totals.missing_lines
+          Write-Output "Uncovered lines: $missingLines"
+          if ($missingLines -ge 10) {
+            Write-Error "Too many uncovered lines: $missingLines (must be less than 10)"
+            exit 1
+          }
         shell: pwsh
