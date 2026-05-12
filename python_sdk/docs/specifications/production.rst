@@ -71,6 +71,12 @@ Classes
 .. autopydantic_model:: OptionsOPC
     :model-show-json: False
 
+.. autopydantic_model:: OptionsI3S
+    :model-show-json: False
+
+.. autopydantic_model:: OptionsOSGB
+    :model-show-json: False
+
 .. autopydantic_model:: OptionsOrthoDSM
     :model-show-json: False
 
