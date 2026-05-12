@@ -363,14 +363,11 @@ class TestJobValidator:
     def test_validation_unsupported_job_type_raises(self):
         j = self.j_base.copy()
         j["specifications"] = {"inputs": {}, "outputs": {}}
-        unsupported = MagicMock(name="UnsupportedJobType")
-        with patch.object(job_module, "JobType", wraps=job_module.JobType) as mock_jt:
-            # Make the type field parse to an unsupported value
-            j["type"] = unsupported
-            mock_jt.return_value = unsupported
-            with pytest.raises(Exception) as exc_info:
-                Job.set_specification_validation_model.__func__(
-                    Job, j["specifications"], MagicMock(data={"type": unsupported})
-                )
-            assert "Unsupported job type" in str(exc_info.value)
+        unsupported = "UnsupportedJobType"
+        j["type"] = unsupported
+        with pytest.raises(Exception) as exc_info:
+            Job.set_specification_validation_model.__func__(
+                Job, j["specifications"], MagicMock(data={"type": unsupported})
+            )
+        assert "Unsupported job type" in str(exc_info.value)
 

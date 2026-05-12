@@ -40,6 +40,6 @@ class TestJob:
 
     def test_get_appropriate_service_unsupported_job_type(self):
         unsupported = MagicMock(name="UnsupportedJobType")
-        with pytest.raises(Exception):
+        with pytest.raises(NotImplementedError):
             _get_appropriate_service(unsupported)
 

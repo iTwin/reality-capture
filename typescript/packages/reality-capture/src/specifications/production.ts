@@ -148,6 +148,7 @@ export const OptionsOSGBSchema = z.object({
   lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
   lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
 });
+export type OptionsOSGB = z.infer<typeof OptionsOSGBSchema>;
 
 export const OptionsI3SSchema = z.object({
   textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),

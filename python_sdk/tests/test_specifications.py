@@ -56,9 +56,6 @@ class TestSpecifications:
         construct_from_object = production.ExportCreate(format=production.Format.OBJ, options=production.OptionsOBJ())
 
     def test_validate_options_unsupported_format_raises_value_error(self):
-        unknown_format = MagicMock()
-        unknown_format.return_value = unknown_format  # make it callable returning itself
-
         with patch.object(production, "Format") as mock_format:
             # Make Format(value) return a sentinel that matches no branch in validate_options
             unsupported = MagicMock(name="UnsupportedFormat")

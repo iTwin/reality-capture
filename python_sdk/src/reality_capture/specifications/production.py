@@ -140,10 +140,12 @@ class OptionsI3S(BaseModel):
                                                         description="Texture color source for the export")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
                                                           description="In case of resolution color source, "
-                                                                      "minimum resolution value to use")
+                                                                      "minimum resolution value to use",
+                                                          ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
                                                           description="In case of resolution color source, "
-                                                                      "maximum resolution value to use")
+                                                                      "maximum resolution value to use",
+                                                          ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="In case of thermal color source, "
                                                                                  "thermal unit to use")
@@ -202,10 +204,10 @@ class OptionsOSGB(BaseModel):
                                                         description="Texture color source for the export")
     texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
                                                           description="In case of resolution color source, "
-                                                                      "minimum resolution value to use")
+                                                                      "minimum resolution value to use", ge=0)
     texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
                                                           description="In case of resolution color source, "
-                                                                      "maximum resolution value to use")
+                                                                      "maximum resolution value to use", ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
                                                                      description="In case of thermal color source, "
                                                                                  "thermal unit to use")
