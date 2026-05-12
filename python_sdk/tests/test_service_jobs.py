@@ -79,7 +79,7 @@ class TestServiceJobs:
 
     def test_get_jobs_unsupported_service(self):
         with patch.object(self.rcs, "_get_correct_url", side_effect=NotImplementedError("unsupported")):
-            response = self.rcs.get_jobs(Service.MODELING)
+            response = self.rcs.get_jobs(Service.MODELING, filters="createdDateTime gt 2024-06-24T13:00:00Z")
         assert response.is_error()
         assert response.status_code == 400
         assert "Could not get jobs" in response.error.error.message
@@ -130,7 +130,7 @@ class TestServiceJobs:
     def test_get_jobs_network_error(self):
         responses.add(responses.GET, "https://api.bentley.com/reality-modeling/jobs",
                       body=requests.exceptions.ConnectionError("network failure"))
-        response = self.rcs.get_jobs(Service.MODELING)
+        response = self.rcs.get_jobs(Service.MODELING, filters="createdDateTime gt 2024-06-24T13:00:00Z")
         assert response.is_error()
         assert response.status_code == 503
         assert response.error.error.code == "NetworkError"
@@ -140,7 +140,7 @@ class TestServiceJobs:
         responses.add(responses.GET, "https://api.bentley.com/reality-modeling/jobs",
                       json={"unexpected": "no jobs key"},
                       status=200)
-        response = self.rcs.get_jobs(Service.MODELING)
+        response = self.rcs.get_jobs(Service.MODELING, filters="createdDateTime gt 2024-06-24T13:00:00Z")
         assert response.is_error()
         assert response.status_code == 502
         assert response.error.error.code == "InvalidResponse"
@@ -150,7 +150,7 @@ class TestServiceJobs:
         responses.add(responses.GET, "https://api.bentley.com/reality-modeling/jobs",
                       body="Internal Server Error",
                       status=500)
-        response = self.rcs.get_jobs(Service.MODELING)
+        response = self.rcs.get_jobs(Service.MODELING, filters="createdDateTime gt 2024-06-24T13:00:00Z")
         assert response.is_error()
         assert response.error.error.code == "UnknownError"
 
