@@ -101,11 +101,12 @@ jobs:
       - name: Check uncovered lines threshold
         working-directory: ./python_sdk
         run: |
-          $coverage = Get-Content coverage.json | ConvertFrom-Json -AsHashtable
-          $missingLines = $coverage.totals.missing_lines
-          Write-Output "Uncovered lines: $missingLines"
-          if ($missingLines -ge 10) {
-            Write-Error "Too many uncovered lines: $missingLines (must be less than 10)"
-            exit 1
-          }
-        shell: pwsh
+          import json, sys
+          with open("coverage.json") as f:
+              data = json.load(f)
+          missing = data["totals"]["missing_lines"]
+          print(f"Uncovered lines: {missing}")
+          if missing >= 10:
+              print(f"Too many uncovered lines: {missing} (must be less than 10)", file=sys.stderr)
+              sys.exit(1)
+        shell: python
