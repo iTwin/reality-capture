@@ -16,7 +16,7 @@ jobs:
 
     outputs:
       wheel_abs_path: ${{ steps.find_wheel.outputs.wheel_abs_path }}
-      
+
     steps:
       - uses: actions/checkout@v3
 
@@ -95,5 +95,18 @@ jobs:
           } else {
             . ./venv_tests/bin/Activate.ps1
           }
-          pytest --cov=reality-capture --cov-report html:cov_html ./tests/
+          pytest --cov-report html --cov-fail-under=99.5 --cov --cov-report json
         shell: pwsh
+
+      - name: Check uncovered lines threshold
+        working-directory: ./python_sdk
+        run: |
+          import json, sys
+          with open("coverage.json") as f:
+              data = json.load(f)
+          missing = data["totals"]["missing_lines"]
+          print(f"Uncovered lines: {missing}")
+          if missing >= 10:
+              print(f"Too many uncovered lines: {missing} (must be less than 10)", file=sys.stderr)
+              sys.exit(1)
+        shell: python

@@ -1,11 +1,15 @@
 from reality_capture.service.service import RealityCaptureService
 from reality_capture.service.reality_data import (RealityDataCreate, RealityDataUpdate, Access,
                                                   RealityDataFilter, get_continuation_token, Prefer,
-                                                  RealityDataMinimal, RealityData, Type)
+                                                  RealityDataMinimal, RealityData, RealityDatas, Type,
+                                                  Extent, Coordinate)
 import responses
 import json
 import os
+import pytest
 from datetime import datetime
+from unittest.mock import patch
+from pydantic import ValidationError
 
 
 class FakeTokenFactory:
@@ -26,6 +30,14 @@ class TestRealityData:
         pass
 
     # Create Data
+    def test_create_data_model_dump_error(self):
+        rdc = RealityDataCreate(iTwinId="1b21484b-8d97-4610-9001-b0b67cd83fbd", displayName="My Data", type=Type.OPC)
+        with patch.object(RealityDataCreate, "model_dump_json", side_effect=NotImplementedError("dump failed")):
+            response = self.rcs.create_reality_data(rdc)
+        assert response.is_error()
+        assert response.status_code == 400
+        assert "Could not create reality data" in response.error.error.message
+
     @responses.activate
     def test_create_data_ill_formed(self):
         rdc = RealityDataCreate(iTwinId="1b21484b-8d97-4610-9001-b0b67cd83fbd", displayName="My Data", type=Type.OPC)
@@ -69,6 +81,21 @@ class TestRealityData:
         assert response.error.error.code == "UnknownError"
 
     @responses.activate
+    def test_get_data_ill_formed_text_response(self):
+        rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        responses.add(
+            responses.GET,
+            f'https://api.bentley.com/reality-management/reality-data/{rd_id}',
+            body="I'm not a JSON response",
+            content_type="text/plain",
+            status=400
+        )
+        response = self.rcs.get_reality_data(rd_id)
+        assert response.is_error()
+        assert response.error.error.code == "UnknownError"
+        assert "I'm not a JSON response" in response.error.error.message
+
+    @responses.activate
     def test_get_data_401(self):
         rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
         responses.add(responses.GET, f'https://api.bentley.com/reality-management/reality-data/{rd_id}',
@@ -106,6 +133,15 @@ class TestRealityData:
         assert response.value.id == rd_id
 
     # Update Data
+    def test_update_data_model_dump_error(self):
+        rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        rdu = RealityDataUpdate(description="New description")
+        with patch.object(RealityDataUpdate, "model_dump_json", side_effect=NotImplementedError("dump failed")):
+            response = self.rcs.update_reality_data(rdu, rd_id)
+        assert response.is_error()
+        assert response.status_code == 400
+        assert "Could not update reality data" in response.error.error.message
+
     @responses.activate
     def test_update_data_ill_formed(self):
         rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
@@ -314,6 +350,56 @@ class TestRealityData:
         assert isinstance(response.value.reality_data[0], RealityData)
         assert get_continuation_token(response.value) is None
 
+    def test_get_continuation_token_with_null_next(self):
+        rd = {
+            "realityData": [{
+                "id": "7799a2a5-a170-4eeb-9dab-c10fecb49618",
+                "displayName": "Images",
+                "type": "CCImageCollection"
+            }],
+            "_links": {
+                "next": None
+            }
+        }
+        with pytest.raises(ValidationError):
+            RealityDatas.model_validate(rd)
+
+    def test_reality_data_filter_serialization_matches_api_doc(self):
+        dt_s = datetime.strptime("2021-05-12T20:03:12Z", "%Y-%m-%dT%H:%M:%SZ")
+        dt_e = datetime.strptime("2022-05-12T20:03:12Z", "%Y-%m-%dT%H:%M:%SZ")
+        rdf = RealityDataFilter(
+            iTwinId="123e4567-e89b-12d3-a456-426614174000",
+            continuationToken="token-123",
+            **{
+                "$top": 25,
+                "$orderBy": "displayName desc",
+                "$search": "Images",
+            },
+            types=[Type.OPC, Type.TERRAIN_3D_TILES],
+            extent=Extent(
+                southWest=Coordinate(longitude=-75.637679, latitude=40.032871),
+                northEast=Coordinate(longitude=-75.633647, latitude=40.032771),
+            ),
+            createdDateTime=(dt_s, dt_e),
+            dataCenter="East US",
+            ownerId="123e4567-e89b-12d3-a456-426614174000",
+            tag="survey"
+        )
+
+        params = rdf.as_dict_for_service_call()
+
+        assert params["iTwinId"] == "123e4567-e89b-12d3-a456-426614174000"
+        assert params["continuationToken"] == "token-123"
+        assert params["$top"] == 25
+        assert params["$orderBy"] == "displayName desc"
+        assert params["$search"] == "Images"
+        assert params["types"] == "OPC,Terrain3DTiles"
+        assert params["extent"] == "-75.637679,40.032871,-75.633647,40.032771"
+        assert params["createdDateTime"] == "2021-05-12T20:03:12Z/2022-05-12T20:03:12Z"
+        assert params["dataCenter"] == "East US"
+        assert params["ownerId"] == "123e4567-e89b-12d3-a456-426614174000"
+        assert params["tag"] == "survey"
+
     @responses.activate
     def test_move_data_ill_formed(self):
         rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
@@ -348,3 +434,4 @@ class TestRealityData:
         response = self.rcs.move_reality_data(rd_id, itwin_id)
         assert not response.is_error()
         assert response.value is None
+        assert json.loads(responses.calls[0].request.body.decode("utf-8")) == {"iTwinId": itwin_id}

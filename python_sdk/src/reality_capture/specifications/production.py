@@ -21,6 +21,8 @@ class Format(Enum):
     THREED_TILES = "3DTiles"
     OBJ = "OBJ"
     THREEMX = "3MX"
+    I3S = "I3S"
+    OSGB = "OSGB"
     LAS = "LAS"
     PLY = "PLY"
     OPC = "OPC"
@@ -133,6 +135,29 @@ class Options3MX(BaseModel):
                                              description="Flag to generate a web application")
 
 
+class OptionsI3S(BaseModel):
+    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
+                                                        description="Texture color source for the export")
+    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
+                                                          description="In case of resolution color source, "
+                                                                      "minimum resolution value to use",
+                                                          ge=0)
+    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
+                                                          description="In case of resolution color source, "
+                                                                      "maximum resolution value to use",
+                                                          ge=0)
+    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
+                                                                     description="In case of thermal color source, "
+                                                                                 "thermal unit to use")
+    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
+                                                              description="In case of thermal color source, "
+                                                                          "minimum temperature value to use")
+    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
+                                                              description="In case of thermal color source, "
+                                                                          "maximum temperature value to use")
+    crs: Optional[str] = Field(None, description="Coordinate reference system definition for the export")
+
+
 class SamplingStrategy(Enum):
     RESOLUTION = "Resolution"
     ABSOLUTE = "Absolute"
@@ -174,6 +199,36 @@ class OptionsOPC(BaseModel):
                                                         description="Source of the texture color")
 
 
+class OptionsOSGB(BaseModel):
+    texture_color_source: Optional[ColorSource] = Field(None, alias="textureColorSource",
+                                                        description="Texture color source for the export")
+    texture_color_source_res_min: Optional[float] = Field(None, alias="textureColorSourceResMin",
+                                                          description="In case of resolution color source, "
+                                                                      "minimum resolution value to use", ge=0)
+    texture_color_source_res_max: Optional[float] = Field(None, alias="textureColorSourceResMax",
+                                                          description="In case of resolution color source, "
+                                                                      "maximum resolution value to use", ge=0)
+    texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
+                                                                     description="In case of thermal color source, "
+                                                                                 "thermal unit to use")
+    texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
+                                                              description="In case of thermal color source, "
+                                                                          "minimum temperature value to use")
+    texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
+                                                              description="In case of thermal color source, "
+                                                                          "maximum temperature value to use")
+    texture_sharpening: Optional[bool] = Field(None, alias="textureSharpening",
+                                               description="Enable/disable texture sharpening")
+    maximum_texture_size: Optional[int] = Field(None, alias="maximumTextureSize",
+                                                description="Maximum texture size")
+    texture_compression: Optional[int] = Field(None, alias="textureCompression",
+                                               description="Texture compression between 0 and 100", ge=0, le=100)
+    crs: Optional[str] = Field(None, description="Coordinate reference system definition for the export")
+    crs_origin: Optional[Point3d] = Field(None, alias="crsOrigin", description="CRS origin")
+    lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of details scope")
+    lod_type: Optional[LODType] = Field(None, alias="lodType", description="Type of level of details")
+
+
 class ProjectionMode(Enum):
     HIGHEST_POINT = "HighestPoint"
     LOWEST_POINT = "LowestPoint"
@@ -181,6 +236,7 @@ class ProjectionMode(Enum):
 
 class OrthoFormat(Enum):
     GEOTIFF = "GeoTIFF"
+    JPEG = "JPEG"
     NONE = "None"
 
 
@@ -197,8 +253,15 @@ class OrthoColorSource(Enum):
     OPTIMIZED_COMPUTATION_THERMAL = "OptimizedComputationThermal"
 
 
+class OverviewType(Enum):
+    NONE = "None"
+    EMBEDDED = "Embedded"
+    OVR_FILE = "OvrFile"
+
+
 class OptionsOrthoDSM(BaseModel):
     crs: Optional[str] = Field(None, description="Coordinate reference system")
+    overviews: Optional[OverviewType] = Field(None, description="Overviews to generate")
     sampling_distance: Optional[float] = Field(None, alias="samplingDistance", description="Sampling distance")
     projection_mode: Optional[ProjectionMode] = Field(None, alias="projectionMode", description="Projection mode")
     merge_parts: Optional[bool] = Field(None, alias="mergeParts", description="Flag to merge parts")
@@ -214,7 +277,7 @@ class ExportCreate(BaseModel):
     format: Format = Field(description="Export format")
     options: Optional[Union[Options3DTiles, OptionsOBJ, Options3MX,
                             OptionsLAS, OptionsPLY, OptionsOPC,
-                            OptionsOrthoDSM,]] = Field(
+                            OptionsOrthoDSM, OptionsI3S, OptionsOSGB]] = Field(
         None, description="Options associated to format")
     name: Optional[str] = Field(None, description="Name used for the reality data.", min_length=3)
 
@@ -233,6 +296,10 @@ class ExportCreate(BaseModel):
             data["options"] = OptionsOBJ(**options)
         elif fmt == Format.THREEMX:
             data["options"] = Options3MX(**options)
+        elif fmt == Format.I3S:
+            data["options"] = OptionsI3S(**options)
+        elif fmt == Format.OSGB:
+            data["options"] = OptionsOSGB(**options)
         elif fmt == Format.LAS:
             data["options"] = OptionsLAS(**options)
         elif fmt == Format.PLY:

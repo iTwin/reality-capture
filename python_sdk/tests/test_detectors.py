@@ -2,6 +2,7 @@ import responses
 import json
 import os
 from datetime import datetime
+from unittest.mock import patch
 
 from reality_capture.service.service import RealityCaptureService
 
@@ -52,6 +53,13 @@ class TestServiceDetector:
         assert not response.is_error()
         assert response.value.detector.name == "@bentley/bentley-city-a-s3d"
 
+    def test_get_detector_unsupported_service(self):
+        with patch.object(self.rcs, "_get_correct_url", side_effect=NotImplementedError("unsupported")):
+            response = self.rcs.get_detector("mydetector")
+        assert response.is_error()
+        assert response.status_code == 400
+        assert "Could not get detector" in response.error.error.message
+
     @responses.activate
     def test_get_detectors_ill_formed(self):
         responses.add(responses.GET, f'https://api.bentley.com/reality-analysis/detectors',
@@ -80,3 +88,19 @@ class TestServiceDetector:
         response = self.rcs.get_detectors()
         assert not response.is_error()
         assert len(response.value.detectors) == 2
+
+    @responses.activate
+    def test_get_detectors_with_filter_200(self):
+        with open(f"{self.data_folder}/detectors_get_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(
+            responses.GET,
+            "https://api.bentley.com/reality-analysis/detectors?$filter=exports+in+%28%27Polygons%27%29",
+            json=payload,
+            status=200,
+        )
+        response = self.rcs.get_detectors("exports in ('Polygons')")
+        assert not response.is_error()
+        assert len(response.value.detectors) == 2
+        assert responses.calls[0].request.url == \
+            "https://api.bentley.com/reality-analysis/detectors?%24filter=exports+in+%28%27Polygons%27%29"

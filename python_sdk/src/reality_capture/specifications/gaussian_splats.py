@@ -14,6 +14,9 @@ class GaussianSplatsInputs(BaseModel):
                                               pattern=r"^bkt:.+")
     crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData",
                                     pattern=r"^bkt:.+")
+    preset: Optional[str] = Field(default=None, description="Path to preset")
+
+
 
 class GaussianSplatsOutputs(BaseModel):
     splats: Optional[str] = Field(default=None, description="Reality data ID of Gaussian Splats.")
@@ -27,9 +30,10 @@ class GaussianSplatsOutputsCreate(Enum):
 
 
 class GSFormat(Enum):
+    PLY = "PLY"
     SPZ = "SPZ"
     THREED_TILES = "3DTiles"
-    PLY = "PLY"
+    THREED_TILES_LOD = "3DTilesLOD"
 
 
 class GSQuality(Enum):

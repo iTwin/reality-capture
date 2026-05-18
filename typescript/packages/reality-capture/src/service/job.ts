@@ -90,7 +90,7 @@ import {
   EvalSOrthoSpecificationsCreateSchema,
   EvalSOrthoSpecificationsSchema,
 } from "../specifications/eval_sortho";
-
+import { ClearanceSpecificationsCreateSchema, ClearanceSpecificationsSchema } from "../specifications/clearance";
 import {
   PointCloudConversionSpecificationsCreateSchema,
   PointCloudConversionSpecificationsSchema,
@@ -141,6 +141,7 @@ export enum JobType {
   TOUCH_UP_IMPORT = "TouchUpImport",
   TOUCH_UP_EXPORT = "TouchUpExport",
   WATER_CONSTRAINTS = "WaterConstraints",
+  CLEARANCE_CALCULATION = "ClearanceCalculation",
   POINT_CLOUD_CONVERSION = "PointCloudConversion",
   MESH_SAMPLING = "MeshSampling",
   POINT_CLOUD_OPTIMIZATION = "PointCloudOptimization",
@@ -188,6 +189,7 @@ export function getAppropriateService(jt: JobType): Service {
       JobType.EVAL_SORTHO,
       JobType.TRAINING_O2D,
       JobType.TRAINING_S3D,
+      JobType.CLEARANCE_CALCULATION,
     ].includes(jt)
   ) {
     return Service.ANALYSIS;
@@ -232,6 +234,7 @@ export const JobCreateSchema = z.object({
       TouchUpImportSpecificationsCreateSchema,
       WaterConstraintsSpecificationsCreateSchema,
       TrainingO2DSpecificationsCreateSchema,
+      ClearanceSpecificationsCreateSchema,
       TrainingS3DSpecificationsCreateSchema,
       PointCloudConversionSpecificationsCreateSchema,
       MeshSamplingSpecificationsCreateSchema,
@@ -397,6 +400,11 @@ export const JobSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     ...CommonFields,
+    type: z.literal("ClearanceCalculation"),
+    specifications: ClearanceSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
     type: z.literal("PointCloudConversion"),
     specifications: PointCloudConversionSpecificationsSchema,
   }),
@@ -436,7 +444,7 @@ export type NextLink = z.infer<typeof NextLinkSchema>;
 export const JobsSchema = z.object({
   jobs: z.array(JobSchema).describe("List of jobs."),
   _links: NextLinkSchema.describe(
-    "Contains the hyperlink to the next page of results, if applicable.",
+  _links: NextLinkSchema.optional().describe("Contains the hyperlink to the next page of results, if applicable."),
   ),
 });
 export type Jobs = z.infer<typeof JobsSchema>;

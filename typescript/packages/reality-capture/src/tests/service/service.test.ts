@@ -245,6 +245,22 @@ describe("RealityCaptureService API calls tests", function () {
     expect(result.value!.detectors).to.have.lengthOf(2);
   });
 
+  it("getDetectors should pass filters as query params", async () => {
+    axiosGetStub.resolves({
+      status: 200,
+      data: {
+        "detectors": []
+      }
+    });
+    const detectorsFilter = "exports in ('Polygons', 'Lines') and labels in ('crack')";
+    const result = await service.getDetectors(detectorsFilter);
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors");
+    expect(axiosGetStub.firstCall.args[1].params).to.deep.equal({ "$filter": detectorsFilter });
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.false;
+  });
+
   it("getDetectors 401 error", async () => {
     axiosGetStub.rejects({
       response: {
@@ -829,8 +845,11 @@ describe("RealityCaptureService API calls tests", function () {
         },
       },
     });
-    const result = await service.getJobs(Service.MODELING);
+    const result = await service.getJobs(Service.MODELING, "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a");
     expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.firstCall.args[1].params).to.deep.include({
+      $filter: "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a",
+    });
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.false;
     expect(result.value!.jobs).to.have.lengthOf(2);
@@ -838,8 +857,8 @@ describe("RealityCaptureService API calls tests", function () {
       "2e8b5984-15b1-45d5-8175-572583d8c3c8"
     );
     expect(result.value!.jobs[1].state).to.equal("Failed");
-    expect(result.value!._links.next).to.not.be.undefined;
-    expect(result.value!._links.next!.href).to.include("continuationToken");
+    expect(result.value!._links).to.not.be.undefined;
+    expect(result.value!._links!.next.href).to.include("continuationToken");
   });
 
   it("getJobs 401 error", async () => {
@@ -855,7 +874,7 @@ describe("RealityCaptureService API calls tests", function () {
         },
       },
     });
-    const result = await service.getJobs(Service.MODELING);
+    const result = await service.getJobs(Service.MODELING, "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a");
     expect(axiosGetStub.calledOnce).to.be.true;
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.true;
@@ -871,7 +890,7 @@ describe("RealityCaptureService API calls tests", function () {
         },
       },
     });
-    const result = await service.getJobs(Service.MODELING);
+    const result = await service.getJobs(Service.MODELING, "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a");
     expect(axiosGetStub.calledOnce).to.be.true;
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.true;

@@ -25,7 +25,10 @@ from reality_capture.specifications.mesh_sampling import MeshSamplingSpecificati
 from reality_capture.specifications.tile_map_optimization import TileMapOptimizationSpecifications
 from reality_capture.specifications.vector_optimization import VectorOptimizationSpecifications
 from reality_capture.specifications.cs_tiler import ContextSceneTilerSpecifications
-
+from reality_capture.specifications.clearance import ClearanceSpecifications
+import pytest
+from unittest.mock import patch, MagicMock
+import reality_capture.service.job as job_module
 
 class TestJobValidator:
     j_base = {
@@ -347,6 +350,32 @@ class TestJobValidator:
         }
         job = Job(**j)
         assert isinstance(job.specifications, WaterConstraintsSpecifications)
+
+    def test_validation_clearance(self):
+        j = self.j_base.copy()
+        j["type"] = "ClearanceCalculation"
+        j["specifications"] = {
+            "inputs": {
+                "model3d": "mfid",
+                "clearanceFootprint": "sid"
+            },
+            "outputs": {
+                "ovfPoints": "rdId"
+            }
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, ClearanceSpecifications)
+
+    def test_validation_unsupported_job_type_raises(self):
+        j = self.j_base.copy()
+        j["specifications"] = {"inputs": {}, "outputs": {}}
+        unsupported = "UnsupportedJobType"
+        j["type"] = unsupported
+        with pytest.raises(Exception) as exc_info:
+            Job.set_specification_validation_model.__func__(
+                Job, j["specifications"], MagicMock(data={"type": unsupported})
+            )
+        assert "Unsupported job type" in str(exc_info.value)
 
     def test_validation_pc_conv(self):
         j = self.j_base.copy()
