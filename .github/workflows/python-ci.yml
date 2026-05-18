@@ -4,10 +4,12 @@ on:
   push:
     paths:
       - "python_sdk/**"
+      - ".github/workflows/python*.yml"
     branches: ["main"]
   pull_request:
     paths:
       - "python_sdk/**"
+      - ".github/workflows/python*.yml"
     branches: ["main"]
   workflow_dispatch:
 
