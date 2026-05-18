@@ -82,7 +82,7 @@ def _get_appropriate_service(jt: JobType):
             JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.CLEARANCE_CALCULATION]:
         return Service.ANALYSIS
     # return Service.CONVERSION
-    raise NotImplemented("Other services not yet implemented")
+    raise NotImplementedError("Other services not yet implemented")
 
 
 class JobState(Enum):
