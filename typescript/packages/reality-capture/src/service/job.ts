@@ -90,7 +90,10 @@ import {
   EvalSOrthoSpecificationsCreateSchema,
   EvalSOrthoSpecificationsSchema,
 } from "../specifications/eval_sortho";
-import { ClearanceSpecificationsCreateSchema, ClearanceSpecificationsSchema } from "../specifications/clearance";
+import {
+  ClearanceSpecificationsCreateSchema,
+  ClearanceSpecificationsSchema,
+} from "../specifications/clearance";
 import {
   PointCloudConversionSpecificationsCreateSchema,
   PointCloudConversionSpecificationsSchema,
@@ -443,8 +446,8 @@ export type NextLink = z.infer<typeof NextLinkSchema>;
 
 export const JobsSchema = z.object({
   jobs: z.array(JobSchema).describe("List of jobs."),
-  _links: NextLinkSchema.describe(
-  _links: NextLinkSchema.optional().describe("Contains the hyperlink to the next page of results, if applicable."),
+  _links: NextLinkSchema.optional().describe(
+    "Contains the hyperlink to the next page of results, if applicable.",
   ),
 });
 export type Jobs = z.infer<typeof JobsSchema>;
