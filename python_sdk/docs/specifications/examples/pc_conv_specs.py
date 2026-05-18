@@ -3,6 +3,6 @@ from reality_capture.specifications.point_cloud_conversion import (PointCloudCon
                                                                    PCConversionFormat)
 
 inputs = PCConversionInputs(pointCloud="e3e12e4f-9fe0-4169-9571-41ecebd8c229")
-options = PCConversionOptions(format=PCConversionFormat.LAS)
+options = PCConversionOptions(outputFormat=PCConversionFormat.LAS)
 
 specs = PointCloudConversionSpecificationsCreate(inputs=inputs, options=options)

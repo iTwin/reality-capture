@@ -129,7 +129,7 @@ class JobCreate(BaseModel):
                         PointCloudConversionSpecificationsCreate, PCOptimizationSpecificationsCreate,
                         MeshSamplingSpecificationsCreate, TileMapOptimizationSpecificationsCreate,
                         VectorOptimizationSpecificationsCreate, ContextSceneTilerSpecificationsCreate,
-						ClearanceSpecificationsCreate] = (
+                        ClearanceSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -177,7 +177,7 @@ class Job(BaseModel):
                         PointCloudConversionSpecifications, PCOptimizationSpecifications,
                         MeshSamplingSpecifications, TileMapOptimizationSpecifications,
                         VectorOptimizationSpecifications, ContextSceneTilerSpecifications,
-						ClearanceSpecifications] = (
+                        ClearanceSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @field_validator("specifications", mode="plain")
