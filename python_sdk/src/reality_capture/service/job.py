@@ -96,7 +96,10 @@ def _get_appropriate_service(jt: JobType):
             JobType.CHANGE_DETECTION, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
             JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.CLEARANCE_CALCULATION]:
         return Service.ANALYSIS
-    return Service.CONVERSION
+    if jt in [JobType.POINT_CLOUD_CONVERSION, JobType.POINT_CLOUD_OPTIMIZATION, JobType.MESH_SAMPLING,
+              JobType.TILE_MAP_OPTIMIZATION, JobType.VECTOR_OPTIMIZATION, JobType.CONTEXTSCENE_TILER]:
+        return Service.CONVERSION
+    raise NotImplementedError("Other services not yet implemented")
 
 
 class JobState(Enum):
