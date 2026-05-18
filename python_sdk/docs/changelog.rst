@@ -8,6 +8,45 @@ This page documents all notable changes to the ``reality_capture`` Python SDK ac
    :local:
    :depth: 1
 
+
+2.5.0
+=====
+
+Additions
+---------
+
+- Added ``I3S`` and ``OSGB`` as new Modeling production export formats
+  (:attr:`~reality_capture.specifications.production.Format.I3S`,
+  :attr:`~reality_capture.specifications.production.Format.OSGB`),
+  with corresponding option models ``OptionsI3S`` and ``OptionsOSGB``.
+  (`#293 <https://github.com/iTwin/reality-capture/pull/293>`_)
+- Added ``JPEG`` as a new ortho export format
+  (:attr:`~reality_capture.specifications.production.OrthoFormat.JPEG`) and the
+  ``OverviewType`` enum; the ``overviews`` field is now available on ``OptionsOrthoDSM``.
+  (`#293 <https://github.com/iTwin/reality-capture/pull/293>`_)
+- Added optional ``preset`` input field to Gaussian Splats job specifications.
+  (`#293 <https://github.com/iTwin/reality-capture/pull/293>`_)
+- Added new reality data types to :class:`~reality_capture.service.reality_data.Type`:
+  ``ORTHOPHOTO``, ``GS_PLY``, ``GS_SPZ``, ``GS_3DT``, ``GEO_JSON``, ``SHP``.
+  (`#293 <https://github.com/iTwin/reality-capture/pull/293>`_)
+- Added optional ``detectors_filter`` parameter to ``get_detectors()`` for server-side
+  filtering by labels and exports.
+  (`#285 <https://github.com/iTwin/reality-capture/pull/285>`_)
+
+Fixes
+-----
+
+- Fixed ``RealityDataFilter`` query serialization: the ``itwin_id`` (``iTwinId``), ``search``
+  (``$search``), ``extent``, and ``types`` fields are now correctly encoded as API query parameters.
+  (`#285 <https://github.com/iTwin/reality-capture/pull/285>`_)
+- Fixed ``move_reality_data()`` so the iTwin ID is sent correctly in the JSON request body.
+  (`#285 <https://github.com/iTwin/reality-capture/pull/285>`_)
+- **Breaking change:** The ``filters`` parameter of ``get_jobs()`` is now required; the API
+  always requires at least one filter criterion.
+  (`#285 <https://github.com/iTwin/reality-capture/pull/285>`_)
+
+----
+
 2.4.2
 =====
 
