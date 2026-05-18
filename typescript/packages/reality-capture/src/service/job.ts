@@ -184,7 +184,6 @@ export function getAppropriateService(jt: JobType): Service {
       JobType.SEGMENTATION_3D,
       JobType.SEGMENTATION_ORTHOPHOTO,
       JobType.CHANGE_DETECTION,
-      JobType.TRAINING_O2D,
       JobType.EVAL_O2D,
       JobType.EVAL_O3D,
       JobType.EVAL_S2D,
@@ -197,7 +196,19 @@ export function getAppropriateService(jt: JobType): Service {
   ) {
     return Service.ANALYSIS;
   }
-  return Service.CONVERSION;
+  if (
+    [
+      JobType.POINT_CLOUD_CONVERSION,
+      JobType.MESH_SAMPLING,
+      JobType.POINT_CLOUD_OPTIMIZATION,
+      JobType.VECTOR_OPTIMIZATION,
+      JobType.TILE_MAP_OPTIMIZATION,
+      JobType.CONTEXTSCENE_TILER,
+    ].includes(jt)
+  ) {
+    return Service.CONVERSION;
+  }
+  throw new Error("Other job types are not implemented yet");
 }
 
 export enum JobState {
