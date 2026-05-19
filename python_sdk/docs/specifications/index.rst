@@ -34,7 +34,11 @@ Specifications regroup all the settings used to create jobs with our APIs.
     eval_s3d
     eval_sortho
     clearance
-
+    pc_conversion
+    pc_optimization
+    mesh_sampling
+    tile_map_optimization
+    vector_optimization
 
 Modeling
 ========
@@ -61,10 +65,14 @@ Analysis
 * :doc:`/specifications/eval_o2d`, :doc:`/specifications/eval_o3d`, :doc:`/specifications/eval_s2d`, :doc:`/specifications/eval_s3d` and :doc:`/specifications/eval_sortho` will compare a prediction to a reference for a specific detection.
 * :doc:`/specifications/clearance` uses a 3D model and a footprint to compute clearance information.
 
-.. Conversion
-.. ==========
+Conversion
+==========
 
-.. * :doc:`/specifications/point_cloud_conversion` will convert point clouds from one format to another.
+* :doc:`/specifications/pc_conversion` will convert a single point cloud from one format to another.
+* :doc:`/specifications/pc_optimization` will consolidate multiple point cloud to a given format.
+* :doc:`/specifications/mesh_sampling` will sample meshes and consolidate them to a given format.
+* :doc:`/specifications/tile_map_optimization` will consolidate tile maps to a given format.
+* :doc:`/specifications/vector_optimization` will consolidate vector data to a given format.
 
 Utilities
 =========
