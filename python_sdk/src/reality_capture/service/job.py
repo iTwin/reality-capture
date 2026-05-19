@@ -35,8 +35,8 @@ from reality_capture.specifications.tile_map_optimization import (TileMapOptimiz
                                                                   TileMapOptimizationSpecifications)
 from reality_capture.specifications.vector_optimization import (VectorOptimizationSpecificationsCreate,
                                                                 VectorOptimizationSpecifications)
-from reality_capture.specifications.cs_tiler import (ContextSceneTilerSpecifications,
-                                                     ContextSceneTilerSpecificationsCreate)
+# from reality_capture.specifications.cs_tiler import (ContextSceneTilerSpecifications,
+#                                                      ContextSceneTilerSpecificationsCreate)
 
 from reality_capture.specifications.gaussian_splats import (GaussianSplatsSpecificationsCreate,
                                                             GaussianSplatsSpecifications)
@@ -78,7 +78,7 @@ class JobType(Enum):
     MESH_SAMPLING = "MeshSampling"
     TILE_MAP_OPTIMIZATION = "TileMapOptimization"
     VECTOR_OPTIMIZATION = "VectorOptimization"
-    CONTEXTSCENE_TILER = "ContextSceneTiler"
+    # CONTEXTSCENE_TILER = "ContextSceneTiler"
 
 
 class Service(Enum):
@@ -97,7 +97,7 @@ def _get_appropriate_service(jt: JobType):
             JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.CLEARANCE_CALCULATION]:
         return Service.ANALYSIS
     if jt in [JobType.POINT_CLOUD_CONVERSION, JobType.POINT_CLOUD_OPTIMIZATION, JobType.MESH_SAMPLING,
-              JobType.TILE_MAP_OPTIMIZATION, JobType.VECTOR_OPTIMIZATION, JobType.CONTEXTSCENE_TILER]:
+              JobType.TILE_MAP_OPTIMIZATION, JobType.VECTOR_OPTIMIZATION]: # JobType.CONTEXTSCENE_TILER
         return Service.CONVERSION
     raise NotImplementedError("Other services not yet implemented")
 
@@ -128,7 +128,7 @@ class JobCreate(BaseModel):
                         TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
                         PointCloudConversionSpecificationsCreate, PCOptimizationSpecificationsCreate,
                         MeshSamplingSpecificationsCreate, TileMapOptimizationSpecificationsCreate,
-                        VectorOptimizationSpecificationsCreate, ContextSceneTilerSpecificationsCreate,
+                        VectorOptimizationSpecificationsCreate, # ContextSceneTilerSpecificationsCreate,
                         ClearanceSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
@@ -176,7 +176,7 @@ class Job(BaseModel):
                         TouchUpImportSpecifications, WaterConstraintsSpecifications,
                         PointCloudConversionSpecifications, PCOptimizationSpecifications,
                         MeshSamplingSpecifications, TileMapOptimizationSpecifications,
-                        VectorOptimizationSpecifications, ContextSceneTilerSpecifications,
+                        VectorOptimizationSpecifications, # ContextSceneTilerSpecifications,
                         ClearanceSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
@@ -241,8 +241,8 @@ class Job(BaseModel):
             specifications = TileMapOptimizationSpecifications(**raw_dict)
         elif job_type == JobType.VECTOR_OPTIMIZATION:
             specifications = VectorOptimizationSpecifications(**raw_dict)
-        elif job_type == JobType.CONTEXTSCENE_TILER:
-            specifications = ContextSceneTilerSpecifications(**raw_dict)
+        # elif job_type == JobType.CONTEXTSCENE_TILER:
+        #     specifications = ContextSceneTilerSpecifications(**raw_dict)
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 

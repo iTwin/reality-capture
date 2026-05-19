@@ -39,7 +39,6 @@ Specifications regroup all the settings used to create jobs with our APIs.
     mesh_sampling
     tile_map_optimization
     vector_optimization
-    cs_tiler
 
 Modeling
 ========
@@ -74,7 +73,6 @@ Conversion
 * :doc:`/specifications/mesh_sampling` will sample meshes and consolidate them to a given format.
 * :doc:`/specifications/tile_map_optimization` will consolidate tile maps to a given format.
 * :doc:`/specifications/vector_optimization` will consolidate vector data to a given format.
-* :doc:`/specifications/cs_tiler` will transform a ContextScene to a 3D Tile tileset.
 
 Utilities
 =========

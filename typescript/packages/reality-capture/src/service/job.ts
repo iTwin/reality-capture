@@ -115,10 +115,10 @@ import {
   TileMapOptimizationSpecificationsSchema,
 } from "../specifications/tile_map_optimization";
 
-import {
-  ContextSceneTilerSpecificationsCreateSchema,
-  ContextSceneTilerSpecificationsSchema,
-} from "../specifications/cs_tiler";
+// import {
+//   ContextSceneTilerSpecificationsCreateSchema,
+//   ContextSceneTilerSpecificationsSchema,
+// } from "../specifications/cs_tiler";
 
 export enum JobType {
   CALIBRATION = "Calibration",
@@ -150,7 +150,7 @@ export enum JobType {
   POINT_CLOUD_OPTIMIZATION = "PointCloudOptimization",
   VECTOR_OPTIMIZATION = "VectorOptimization",
   TILE_MAP_OPTIMIZATION = "TileMapOptimization",
-  CONTEXTSCENE_TILER = "ContextSceneTiler",
+  // CONTEXTSCENE_TILER = "ContextSceneTiler",
 }
 
 export enum Service {
@@ -203,7 +203,7 @@ export function getAppropriateService(jt: JobType): Service {
       JobType.POINT_CLOUD_OPTIMIZATION,
       JobType.VECTOR_OPTIMIZATION,
       JobType.TILE_MAP_OPTIMIZATION,
-      JobType.CONTEXTSCENE_TILER,
+      // JobType.CONTEXTSCENE_TILER,
     ].includes(jt)
   ) {
     return Service.CONVERSION;
@@ -255,7 +255,7 @@ export const JobCreateSchema = z.object({
       PCOptimizationSpecificationsCreateSchema,
       VectorOptimizationSpecificationsCreateSchema,
       TileMapOptimizationSpecificationsCreateSchema,
-      ContextSceneTilerSpecificationsCreateSchema,
+      // ContextSceneTilerSpecificationsCreateSchema,
     ])
     .describe("Specifications aligned with the job type."),
   iTwinId: z
@@ -442,11 +442,11 @@ export const JobSchema = z.discriminatedUnion("type", [
     type: z.literal("TileMapOptimization"),
     specifications: TileMapOptimizationSpecificationsSchema,
   }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("ContextSceneTiler"),
-    specifications: ContextSceneTilerSpecificationsSchema,
-  }),
+  // z.object({
+  //   ...CommonFields,
+  //   type: z.literal("ContextSceneTiler"),
+  //   specifications: ContextSceneTilerSpecificationsSchema,
+  // }),
 ]);
 export type Job = z.infer<typeof JobSchema>;
 
