@@ -5,7 +5,9 @@ import {
   DetectorStatus,
   DetectorType,
   CapabilitiesSchema,
+  DetectorVersionCreateSchema,
   DetectorVersionSchema,
+  DetectorUpdateSchema,
   DetectorBaseSchema,
   DetectorSchema,
   DetectorResponseSchema,
@@ -39,10 +41,21 @@ describe("CapabilitiesSchema", () => {
 });
 
 describe("DetectorVersionSchema", () => {
+  it("should validate correct detector version create payload", () => {
+    const data = {
+      versionNumber: "1.0",
+      capabilities: {
+        labels: ["Car"],
+        exports: [DetectorExport.OBJECTS],
+      },
+    };
+    expect(() => DetectorVersionCreateSchema.parse(data)).to.not.throw();
+  });
+
   it("should validate correct detector version", () => {
     const data = {
       creationDate: new Date().toISOString(),
-      version: "1.0.0",
+      versionNumber: "1.0",
       status: DetectorStatus.READY,
       downloadUrl: "http://example.com",
       creatorId: "user123",
@@ -56,7 +69,7 @@ describe("DetectorVersionSchema", () => {
 
   it("should fail on missing required fields", () => {
     const data = {
-      version: "1.0.0",
+      versionNumber: "1.0",
       status: DetectorStatus.READY,
       capabilities: {
         labels: ["Car"],
@@ -69,7 +82,7 @@ describe("DetectorVersionSchema", () => {
   it("should coerce date string", () => {
     const data = {
       creationDate: "2020-01-01T00:00:00.000Z",
-      version: "1.0.0",
+      versionNumber: "1.0",
       status: DetectorStatus.READY,
       capabilities: {
         labels: ["Car"],
@@ -81,6 +94,15 @@ describe("DetectorVersionSchema", () => {
 });
 
 describe("DetectorBaseSchema", () => {
+  it("should validate detector update payload", () => {
+    const data = {
+      displayName: "Detector A",
+      description: "Updated description",
+      documentationUrl: "https://example.com/docs",
+    };
+    expect(() => DetectorUpdateSchema.parse(data)).to.not.throw();
+  });
+
   it("should validate correct detector base", () => {
     const data = {
       name: "DetectorA",
@@ -105,7 +127,7 @@ describe("DetectorSchema", () => {
       versions: [
         {
           creationDate: new Date().toISOString(),
-          version: "1.0.0",
+          versionNumber: "1.0",
           status: DetectorStatus.READY,
           capabilities: {
             labels: ["Car"],
@@ -134,7 +156,7 @@ describe("DetectorResponseSchema", () => {
         versions: [
           {
             creationDate: new Date().toISOString(),
-            version: "1.0.0",
+            versionNumber: "1.0",
             status: DetectorStatus.READY,
             capabilities: {
               labels: ["Car"],
@@ -153,7 +175,7 @@ describe("DetectorMinimalSchema", () => {
     const data = {
       name: "DetectorA",
       type: DetectorType.PHOTO_OBJECT_DETECTOR,
-      latestVersion: "1.0.0",
+      latestVersion: "1.0",
     };
     expect(() => DetectorMinimalSchema.parse(data)).to.not.throw();
   });
@@ -166,7 +188,7 @@ describe("DetectorsMinimalResponseSchema", () => {
         {
           name: "DetectorA",
           type: DetectorType.PHOTO_OBJECT_DETECTOR,
-          latestVersion: "1.0.0",
+          latestVersion: "1.0",
         },
         {
           name: "DetectorB",

@@ -25,22 +25,30 @@ export const CapabilitiesSchema = z.object({
 });
 export type Capabilities = z.infer<typeof CapabilitiesSchema>;
 
-export const DetectorVersionSchema = z.object({
+export const DetectorVersionCreateSchema = z.object({
+  versionNumber: z.string().describe("Version number."),
+  capabilities: CapabilitiesSchema.describe("Capabilities of the version."),
+});
+export type DetectorVersionCreate = z.infer<typeof DetectorVersionCreateSchema>;
+
+export const DetectorVersionSchema = DetectorVersionCreateSchema.extend({
   creationDate: z.coerce.date().describe("Creation date of the version."),
-  version: z.string().describe("Version number."),
   status: z.nativeEnum(DetectorStatus).describe("Status of the version."),
   downloadUrl: z.string().optional().describe("URL to download the detector version. It is present only if the version status is 'Ready'."),
   creatorId: z.string().optional().describe("User Id of the version creator."),
-  capabilities: CapabilitiesSchema.describe("Capabilities of the version."),
 });
 export type DetectorVersion = z.infer<typeof DetectorVersionSchema>;
 
-export const DetectorBaseSchema = z.object({
-  name: z.string().describe("Name of the detector."),
+export const DetectorUpdateSchema = z.object({
   displayName: z.string().optional().describe("Display name of the detector."),
   description: z.string().optional().describe("Description of the detector."),
-  type: z.nativeEnum(DetectorType).describe("Type of the detector."),
   documentationUrl: z.string().optional().describe("Display name of the detector."),
+});
+export type DetectorUpdate = z.infer<typeof DetectorUpdateSchema>;
+
+export const DetectorBaseSchema = DetectorUpdateSchema.extend({
+  name: z.string().describe("Name of the detector."),
+  type: z.nativeEnum(DetectorType).describe("Type of the detector."),
 });
 export type DetectorBase = z.infer<typeof DetectorBaseSchema>;
 
