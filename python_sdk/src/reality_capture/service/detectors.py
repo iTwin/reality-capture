@@ -21,15 +21,18 @@ class DetectorStatus(Enum):
     READY = "Ready"
 
 
-class DetectorVersion(BaseModel):
-    creation_date: datetime = Field(description="Creation date of the version.", alias="creationDate")
+class DetectorVersionCreate(BaseModel):
     version_number: str = Field(description="Version number.", alias="versionNumber")
+    capabilities: Capabilities = Field(description="Capabilities of the version.")
+
+
+class DetectorVersion(DetectorVersionCreate):
+    creation_date: datetime = Field(description="Creation date of the version.", alias="creationDate")
     status: DetectorStatus = Field(description="Status of the version.")
     download_url: Optional[str] = Field(None, description="URL to download the detector version. "
                                                           "It is present only if the version status is 'Ready'.",
                                         alias="downloadUrl")
     creator_id: Optional[str] = Field(None, description="User Id of the version creator.", alias="creatorId")
-    capabilities: Capabilities = Field(description="Capabilities of the version.")
 
 
 class DetectorType(Enum):
@@ -39,13 +42,16 @@ class DetectorType(Enum):
     POINT_CLOUD_SEGMENTATION_DETECTOR = "PointCloudSegmentationDetector"
 
 
-class DetectorBase(BaseModel):
-    name: str = Field(description="Name of the detector.")
+class DetectorUpdate(BaseModel):
     display_name: Optional[str] = Field(None, description="Display name of the detector.", alias="displayName")
     description: Optional[str] = Field(None, description="Description of the detector.")
-    type: DetectorType = Field(description="Type of the detector.")
     documentation_url: Optional[str] = Field(None, description="Display name of the detector.",
                                              alias="documentationUrl")
+
+
+class DetectorBase(DetectorUpdate):
+    name: str = Field(description="Name of the detector.")
+    type: DetectorType = Field(description="Type of the detector.")
 
 
 class Detector(DetectorBase):
