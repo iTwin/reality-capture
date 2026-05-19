@@ -1,0 +1,75 @@
+name: (PyPublish) Publish Python SDK
+
+on:
+  workflow_call:
+    inputs:
+      prerelease:
+        required: true
+        type: boolean
+
+jobs:
+  build:
+    uses: ./.github/workflows/python-build.yml
+
+  test:
+    needs: build
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+    uses: ./.github/workflows/python-test.yml
+    with:
+      python-version: ${{ matrix.python-version }}
+      os: ${{ matrix.os }}
+
+  create_release:
+    needs: [build, test]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download wheel artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: python-sdk-wheel
+          path: python_sdk/dist
+
+      - name: Download docs artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: python-sdk-docs
+          path: python_sdk/docs
+
+      - name: Find Wheel File
+        id: find_wheel
+        working-directory: ./python_sdk/dist
+        run: |
+          $wheel = Get-ChildItem -Filter "*.whl" | Select-Object -First 1
+          $wheel_abs_path = $wheel.FullName
+          Write-Output "Wheel found: $wheel_abs_path"
+          "wheel_abs_path=$wheel_abs_path" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+
+      - name: Get version from pyproject
+        id: extract_version
+        run: |
+          $content = Get-Content python_sdk/pyproject.toml -Raw
+          $version = [regex]::Match($content, '(?m)^version\s*=\s*"([^"]+)"').Groups[1].Value
+          Write-Host "Version: $version"
+          "version=$version" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.extract_version.outputs.version }}-py
+          name: "Python Version ${{ steps.extract_version.outputs.version }}"
+          draft: true
+          prerelease: ${{ inputs.prerelease }}
+          files: |
+            ${{ steps.find_wheel.outputs.wheel_abs_path }}
+            python_sdk/docs/Documentation.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
