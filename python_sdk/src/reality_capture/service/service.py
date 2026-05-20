@@ -384,7 +384,8 @@ class RealityCaptureService:
                                                    f"{e}")
             return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
 
-        return self._execute_request(method="POST", url=url, headers=self._get_header_v2(), data=json_dump)
+        return self._execute_request(method="POST", url=url, headers=self._get_header_v2(), data=json_dump,
+                                     success_model=DetectorVersion)
 
     def delete_detector_version(self, detector_name: str, detector_version: str) -> Response[None]:
         """
