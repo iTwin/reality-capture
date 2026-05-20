@@ -1,0 +1,56 @@
+name: (PyBuild) Build Python SDK
+
+on:
+  workflow_call:
+
+jobs:
+  build_sdk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+
+      - name: Create venv and build wheel
+        working-directory: ./python_sdk
+        run: |
+          python -m venv venv
+          . ./venv/bin/activate
+          pip install build
+          python -m build
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-sdk-wheel
+          path: python_sdk/dist/*.whl
+
+      - name: Install documentation dependencies
+        working-directory: ./python_sdk
+        run: |
+          . ./venv/bin/activate
+          pip install dist/*.whl
+          pip install .[dev]
+
+      - name: Build documentation
+        working-directory: ./python_sdk/docs
+        run: |
+          . ../venv/bin/activate
+          make html
+
+      - name: Package documentation
+        working-directory: ./python_sdk/docs
+        run: |
+          mkdir -p "User Guide/en"
+          cp -r _build/html "User Guide/en/html5"
+          zip -r Documentation.zip "User Guide"
+
+      - name: Upload docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-sdk-docs
+          path: python_sdk/docs/Documentation.zip
