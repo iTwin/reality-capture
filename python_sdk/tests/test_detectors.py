@@ -190,7 +190,7 @@ class TestServiceDetector:
                       status=201, json=payload)
         response = self.rcs.create_detector(db)
         assert not response.is_error()
-        assert response.value is None
+        assert response.value.detector.name == "mydetector"
 
     @responses.activate
     def test_create_detector_version_ill_formed(self):
@@ -225,7 +225,7 @@ class TestServiceDetector:
                       status=201, json=payload)
         response = self.rcs.create_detector_version("mydetector", dvc)
         assert not response.is_error()
-        assert response.value is None
+        assert response.value.version.versionNumber == "1.0"
 
     @responses.activate
     def test_complete_detector_version_ill_formed(self):
@@ -284,7 +284,7 @@ class TestServiceDetector:
                       status=200, json=payload)
         response = self.rcs.update_detector("mydetector", du)
         assert not response.is_error()
-        assert response.value is None
+        assert response.value.detector.name == "mydetector2"
 
     @responses.activate
     def test_publish_detector_ill_formed(self):
