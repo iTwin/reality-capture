@@ -1,0 +1,10 @@
+{
+    "detector": {
+        "name": "mydetector2",
+        "displayName": "My detector",
+        "description": "desc",
+        "type": "PhotoObjectDetector",
+        "documentationUrl": "https://www.bentley.com",
+        "versions": []
+    }
+}

@@ -3,7 +3,8 @@ import requests
 import certifi
 
 from reality_capture.service.bucket import BucketResponse
-from reality_capture.service.detectors import DetectorsMinimalResponse, DetectorResponse
+from reality_capture.service.detectors import (DetectorBase, DetectorsMinimalResponse, DetectorResponse, DetectorUpdate,
+                                               DetectorVersionCreate, DetectorVersion)
 from reality_capture.service.files import Files
 from reality_capture.service.response import Response
 from reality_capture.service.job import JobCreate, Job, Progress, Messages, Service, Jobs
@@ -308,6 +309,167 @@ class RealityCaptureService:
 
         return self._execute_request(method="GET", url=url, headers=self._get_header_v2(),
                                      success_model=DetectorResponse)
+
+    def create_detector(self, detector_create: DetectorBase) -> Response[DetectorResponse]:
+        """
+        Create a detector.
+
+        :param detector_create: DetectorBase information to create the detector.
+        :return: A Response[DetectorBase] containing either the created detector details or the error from the service.
+        """
+        try:
+            url = self._get_correct_url(Service.ANALYSIS) + f"detectors"
+            json_dump = detector_create.model_dump_json(by_alias=True)
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not create detector, bad request : "
+                                                                        f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="POST", url=url, headers=self._get_header_v2(),
+                                     success_model=DetectorResponse, data=json_dump)
+
+    def update_detector(self, detector_name: str, detector_update: DetectorUpdate) -> Response[DetectorResponse]:
+        """
+        Update a detector.
+
+        :param detector_name: name of the detector.
+        :param detector_update: DetectorBase information to update the detector.
+        :return: A Response[DetectorBase] containing either the created detector details or the error from the service.
+        """
+        try:
+            url_encoded_name = urllib.parse.quote(detector_name, safe="")
+            url = self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}"
+            json_dump = detector_update.model_dump_json(by_alias=True)
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not create detector, bad request : "
+                                                                        f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="PATCH", url=url, headers=self._get_header_v2(),
+                                     success_model=DetectorResponse, data=json_dump)
+
+    def delete_detector(self, detector_name: str) -> Response[None]:
+        """
+        Delete a detector.
+
+        :param detector_name: Name of the detector to delete.
+        :return: A Response[DetectorBase] containing either nothing or the error from the service.
+        """
+        try:
+            url_encoded_name = urllib.parse.quote(detector_name, safe="")
+            url = self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}"
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not delete detector, bad request : "
+                                                                        f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="DELETE", url=url, headers=self._get_header_v2())
+
+    def create_detector_version(self, detector_name: str,
+                                version_create: DetectorVersionCreate) -> Response[DetectorVersion]:
+        """
+        Create a new version for the specified detector.
+
+        :param detector_name: Name of the detector.
+        :param version_create: DetectorVersionCreate information to create the version.
+        :return: A Response[DetectorVersion] containing either the created version or the error from the service.
+        """
+        try:
+            url_encoded_name = urllib.parse.quote(detector_name, safe="")
+            url = (self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}/versions")
+            json_dump = version_create.model_dump_json(by_alias=True)
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError",
+                                           message=f"Could not create detector version, bad request : "
+                                                   f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="POST", url=url, headers=self._get_header_v2(), data=json_dump,
+                                     success_model=DetectorVersion)
+
+    def delete_detector_version(self, detector_name: str, detector_version: str) -> Response[None]:
+        """
+        Delete the specified version of a detector.
+
+        :param detector_name: Name of the detector.
+        :param detector_version: Version of the detector to delete.
+        :return: A Response[DetectorVersion] containing either nothing or the error from the service.
+        """
+        try:
+            url_encoded_name = urllib.parse.quote(detector_name, safe="")
+            url_encoded_version = urllib.parse.quote(detector_version, safe="")
+            url = (self._get_correct_url(Service.ANALYSIS)
+                   + f"detectors/{url_encoded_name}/versions/{url_encoded_version}")
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError",
+                                           message=f"Could not delete detector version, bad request : "
+                                                   f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="DELETE", url=url, headers=self._get_header_v2())
+
+    def publish_detector_version(self, detector_name: str, version_number: str) -> Response[None]:
+        """
+        Publish the specified detector version.
+
+        :param detector_name: Name of the detector.
+        :param version_number: Name of the version.
+        :return: A Response[DetectorVersion] containing either nothing or the error from the service.
+        """
+        try:
+            url_encoded_name = urllib.parse.quote(detector_name, safe="")
+            url_encoded_version = urllib.parse.quote(version_number, safe="")
+            url = (self._get_correct_url(Service.ANALYSIS)
+                   + f"detectors/{url_encoded_name}/versions/{url_encoded_version}/publish")
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError",
+                                           message=f"Could not publish detector version, bad request : "
+                                                   f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="POST", url=url, headers=self._get_header_v2())
+
+    def unpublish_detector_version(self, detector_name: str, version_number: str) -> Response[None]:
+        """
+        Unpublish the specified detector version.
+
+        :param detector_name: Name of the detector.
+        :param version_number: Name of the version.
+        :return: A Response[DetectorVersion] containing either nothing or the error from the service.
+        """
+        try:
+            url_encoded_name = urllib.parse.quote(detector_name, safe="")
+            url_encoded_version = urllib.parse.quote(version_number, safe="")
+            url = (self._get_correct_url(Service.ANALYSIS)
+                   + f"detectors/{url_encoded_name}/versions/{url_encoded_version}/unpublish")
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError",
+                                           message=f"Could not unpublish detector version, bad request : "
+                                                   f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="POST", url=url, headers=self._get_header_v2())
+
+    def complete_detector_version_upload(self, detector_name: str, version_number: str) -> Response[None]:
+        """
+        Complete the upload of the specified detector version.
+
+        :param detector_name: Name of the detector.
+        :param version_number: Name of the version.
+        :return: A Response[DetectorVersion] containing either nothing or the error from the service.
+        """
+        try:
+            url_encoded_name = urllib.parse.quote(detector_name, safe="")
+            url_encoded_version = urllib.parse.quote(version_number, safe="")
+            url = (self._get_correct_url(Service.ANALYSIS)
+                   + f"detectors/{url_encoded_name}/versions/{url_encoded_version}/complete")
+        except (NotImplementedError, ValidationError) as e:
+            detailed_error = DetailedError(code="UnknownError",
+                                           message=f"Could not complete the upload of the detector version, bad request : "
+                                                   f"{e}")
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+
+        return self._execute_request(method="POST", url=url, headers=self._get_header_v2())
 
     def create_reality_data(self, reality_data: RealityDataCreate) -> Response[RealityData]:
         """

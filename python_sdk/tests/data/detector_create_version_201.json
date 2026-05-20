@@ -1,0 +1,24 @@
+{
+    "version": {
+        "creationDate": "2026-05-20T08:06:30.2466033Z",
+        "versionNumber": "1.0",
+        "status": "AwaitingData",
+        "creatorId": "4f2d47ac-e318-46dc-ae53-06d71c9ff79e",
+        "capabilities": {
+            "labels": [
+                "signs"
+            ],
+            "exports": [
+                "Objects"
+            ]
+        }
+    },
+    "_links": {
+        "completeUrl": {
+            "href": "detectors/mydetector/version/1.0/complete"
+        },
+        "uploadUrl": {
+            "href": "https://dev-cccsdetectorsdeveussa01.blob.core.windows.net/c29038eb-207e-430e-bba3-1a1ce48ca9ae/mydetector-1.0.zip?sv=2024-08-04&se=2025-08-08T08%3A26%3A32Z&sr=b&sp=w&sig=***REMOVED***"
+        }
+    }
+}
