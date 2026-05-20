@@ -1,7 +1,6 @@
 import responses
 import json
 import os
-from datetime import datetime
 from unittest.mock import patch
 
 from reality_capture.service.detectors import (DetectorBase, DetectorType, DetectorVersionCreate, Capabilities,
@@ -107,6 +106,7 @@ class TestServiceDetector:
         assert responses.calls[0].request.url == \
             "https://api.bentley.com/reality-analysis/detectors?%24filter=exports+in+%28%27Polygons%27%29"
 
+    @responses.activate
     def test_delete_detector_ill_formed(self):
         responses.add(responses.DELETE, f'https://api.bentley.com/reality-analysis/detectors/mydetector',
                       json={"bad": "response"},
@@ -133,6 +133,7 @@ class TestServiceDetector:
         assert not response.is_error()
         assert response.value is None
 
+    @responses.activate
     def test_delete_detector_version_ill_formed(self):
         responses.add(responses.DELETE, f'https://api.bentley.com/reality-analysis/detectors/mydetector/versions/1.0',
                       json={"bad": "response"},
@@ -190,6 +191,7 @@ class TestServiceDetector:
         assert not response.is_error()
         assert response.value is None
 
+    @responses.activate
     def test_create_detector_version_ill_formed(self):
         responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector/versions',
                       json={"bad": "response"},
@@ -224,6 +226,7 @@ class TestServiceDetector:
         assert not response.is_error()
         assert response.value is None
 
+    @responses.activate
     def test_complete_detector_version_ill_formed(self):
         responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector/versions/1.0/complete',
                       json={"bad": "response"},
@@ -250,6 +253,7 @@ class TestServiceDetector:
         assert not response.is_error()
         assert response.value is None
 
+    @responses.activate
     def test_update_detector_ill_formed(self):
         responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector',
                       json={"bad": "response"},
@@ -281,6 +285,7 @@ class TestServiceDetector:
         assert not response.is_error()
         assert response.value is None
 
+    @responses.activate
     def test_publish_detector_ill_formed(self):
         responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector/versions/1.0/publish',
                       json={"bad": "response"},
@@ -307,6 +312,7 @@ class TestServiceDetector:
         assert not response.is_error()
         assert response.value is None
 
+    @responses.activate
     def test_unpublish_detector_ill_formed(self):
         responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector/versions/1.0/publish',
                       json={"bad": "response"},
