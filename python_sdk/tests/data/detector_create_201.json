@@ -1,6 +1,6 @@
 {
     "detector": {
-        "name": "detector_test",
+        "name": "mydetector",
         "displayName": "",
         "description": "",
         "type": "PhotoObjectDetector",
