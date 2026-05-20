@@ -1,0 +1,10 @@
+{
+    "detector": {
+        "name": "detector_test",
+        "displayName": "",
+        "description": "",
+        "type": "PhotoObjectDetector",
+        "documentationUrl": "",
+        "versions": []
+    }
+}
