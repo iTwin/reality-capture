@@ -160,6 +160,7 @@ class TestServiceDetector:
         assert not response.is_error()
         assert response.value is None
 
+    @responses.activate
     def test_create_detector_ill_formed(self):
         responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors',
                       json={"bad": "response"},
@@ -255,7 +256,7 @@ class TestServiceDetector:
 
     @responses.activate
     def test_update_detector_ill_formed(self):
-        responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector',
+        responses.add(responses.PATCH, f'https://api.bentley.com/reality-analysis/detectors/mydetector',
                       json={"bad": "response"},
                       status=400)
         du = DetectorUpdate(displayName="mydetector2", description="desc", documentationUrl="https://www.bentley.com")
@@ -265,7 +266,7 @@ class TestServiceDetector:
 
     @responses.activate
     def test_update_detector_401(self):
-        responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector',
+        responses.add(responses.PATCH, f'https://api.bentley.com/reality-analysis/detectors/mydetector',
                       json={"error": {"code": "HeaderNotFound",
                                       "message": "Header Authorization was not found in the request. Access denied."}},
                       status=401)
@@ -279,7 +280,7 @@ class TestServiceDetector:
         with open(f"{self.data_folder}/detector_update_200.json", 'r') as payload_data:
             payload = json.load(payload_data)
         du = DetectorUpdate(displayName="mydetector2", description="desc", documentationUrl="https://www.bentley.com")
-        responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector',
+        responses.add(responses.PATCH, f'https://api.bentley.com/reality-analysis/detectors/mydetector',
                       status=200, json=payload)
         response = self.rcs.update_detector("mydetector", du)
         assert not response.is_error()
@@ -314,7 +315,7 @@ class TestServiceDetector:
 
     @responses.activate
     def test_unpublish_detector_ill_formed(self):
-        responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector/versions/1.0/publish',
+        responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector/versions/1.0/unpublish',
                       json={"bad": "response"},
                       status=400)
         response = self.rcs.unpublish_detector_version("mydetector", "1.0")
@@ -323,7 +324,7 @@ class TestServiceDetector:
 
     @responses.activate
     def test_unpublish_detector_401(self):
-        responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector/versions/1.0/publish',
+        responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector/versions/1.0/unpublish',
                       json={"error": {"code": "HeaderNotFound",
                                       "message": "Header Authorization was not found in the request. Access denied."}},
                       status=401)
@@ -333,7 +334,7 @@ class TestServiceDetector:
 
     @responses.activate
     def test_unpublish_detector_204(self):
-        responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector/versions/1.0/publish',
+        responses.add(responses.POST, f'https://api.bentley.com/reality-analysis/detectors/mydetector/versions/1.0/unpublish',
                       status=204)
         response = self.rcs.unpublish_detector_version("mydetector", "1.0")
         assert not response.is_error()
