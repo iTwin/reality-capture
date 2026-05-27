@@ -1,11 +1,10 @@
 import { z } from "zod";
 
 export enum ChangeDetectionOutputsCreate {
-  OBJECTS3D = "objects3D",
   LOCATIONS3D_AS_SHP = "locations3DAsSHP",
   LOCATIONS3D_AS_GEOJSON = "locations3DAsGeoJSON",
-  CHANGES_IN_MODEL_A = "changesInModelA",
-  CHANGES_IN_MODEL_B = "changesInModelB",
+  MODEL_3D_A_CLASSIFIED = "model3dAClassified",
+  MODEL_3D_B_CLASSIFIED = "model3dBClassified",
 }
 
 export const ChangeDetectionInputsSchema = z.object({
@@ -21,8 +20,8 @@ export const ChangeDetectionOutputsSchema = z.object({
   objects3D: z.string().optional().describe("Reality data id of ContextScene, annotated with embedded 3D objects"),
   locations3DAsSHP: z.string().optional().describe("Reality data id of 3D objects locations as SHP format"),
   locations3DAsGeoJSON: z.string().optional().describe("Reality data id of 3D objects locations as GeoJSON file"),
-  changesInModelB: z.string().optional().describe("Points in B not in A as OPC"),
-  changesInModelA: z.string().optional().describe("Points in A not in B as OPC"),
+  model3dBClassified: z.string().optional().describe("Points in B not in A as OPC"),
+  model3dAClassified: z.string().optional().describe("Points in A not in B as OPC"),
 });
 export type ChangeDetectionOutputs = z.infer<typeof ChangeDetectionOutputsSchema>;
 

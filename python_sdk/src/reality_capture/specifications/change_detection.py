@@ -11,24 +11,21 @@ class ChangeDetectionInputs(BaseModel):
 
 
 class ChangeDetectionOutputs(BaseModel):
-    objects3d: Optional[str] = Field(None, alias="objects3D",
-                                     description="Reality data id of ContextScene, annotated with embedded 3D objects")
-    locations3d_as_shp: Optional[str] = Field(None, alias="locations3DAsSHP", 
+    locations3d_as_shp: Optional[str] = Field(None, alias="locations3DAsSHP",
                                               description="Reality data id of 3D objects locations "
                                                           "as SHP format")
     locations3d_as_geojson: Optional[str] = Field(None, alias="locations3DAsGeoJSON", 
                                                   description="Reality data id of 3D objects locations "
                                                               "as GeoJSON file")
-    changes_in_model_b: Optional[str] = Field(None, description="Points in B not in A as OPC", alias="changesInModelB")
-    changes_in_model_a: Optional[str] = Field(None, description="Points in A not in B as OPC", alias="changesInModelA")
+    changes_in_model_b: Optional[str] = Field(None, description="Points in B not in A as OPC", alias="model3dBClassified")
+    changes_in_model_a: Optional[str] = Field(None, description="Points in A not in B as OPC", alias="model3dAClassified")
 
 
 class ChangeDetectionOutputsCreate(Enum):
-    OBJECTS3D = "objects3D"
     LOCATIONS3D_AS_SHP = "locations3DAsSHP"
     LOCATIONS3D_AS_GEOJSON = "locations3DAsGeoJSON"
-    CHANGES_IN_MODEL_A = "changesInModelA"
-    CHANGES_IN_MODEL_B = "changesInModelB"
+    MODEL_3D_A_CLASSIFIED = "model3dAClassified"
+    MODEL_3D_B_CLASSIFIED = "model3dBClassified"
 
 
 class ChangeDetectionOptions(BaseModel):

@@ -70,7 +70,7 @@ class TestJobValidator:
                 "model3dB": "modelb"
             },
             "outputs": {
-                "changesInModelA": "rdid",
+                "model3dAClassified": "rdid",
                 "objects3d": "obj"
             }
         }

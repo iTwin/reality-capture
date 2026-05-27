@@ -33,7 +33,6 @@ describe("change_detection specifications", () => {
   describe("ChangeDetectionOutputsSchema", () => {
     it("should validate with all outputs", () => {
       const valid = {
-        objects3D: "obj3dId",
         locations3DAsSHP: "shpId",
         locations3DAsGeoJSON: "geojsonId",
         added: "addedId",
@@ -75,7 +74,7 @@ describe("change_detection specifications", () => {
     it("should validate valid specification", () => {
       const valid = {
         inputs: { model3dA: "id1", model3dB: "id2" },
-        outputs: [ChangeDetectionOutputsCreate.CHANGES_IN_MODEL_A, ChangeDetectionOutputsCreate.CHANGES_IN_MODEL_B],
+        outputs: [ChangeDetectionOutputsCreate.MODEL_3D_A_CLASSIFIED, ChangeDetectionOutputsCreate.MODEL_3D_B_CLASSIFIED],
         options: { minPointsPerChange: 10 },
       };
       expect(() => ChangeDetectionSpecificationsCreateSchema.parse(valid)).not.to.throw();
@@ -89,13 +88,6 @@ describe("change_detection specifications", () => {
       expect(() => ChangeDetectionSpecificationsCreateSchema.parse(invalid)).to.throw(z.ZodError);
     });
 
-    it("should validate without options", () => {
-      const valid = {
-        inputs: { model3dA: "id1", model3dB: "id2" },
-        outputs: [ChangeDetectionOutputsCreate.OBJECTS3D],
-      };
-      expect(() => ChangeDetectionSpecificationsCreateSchema.parse(valid)).not.to.throw();
-    });
   });
 
   describe("ChangeDetectionSpecificationsSchema", () => {
@@ -103,7 +95,6 @@ describe("change_detection specifications", () => {
       const valid = {
         inputs: { model3dA: "id1", model3dB: "id2" },
         outputs: {
-          objects3D: "objId",
           locations3DAsSHP: "shpId",
         },
         options: { meshSamplingResolution: 0.5 },
@@ -116,16 +107,6 @@ describe("change_detection specifications", () => {
         inputs: { model3dA: "id1", model3dB: "id2" },
       };
       expect(() => ChangeDetectionSpecificationsSchema.parse(invalid)).to.throw(z.ZodError);
-    });
-
-    it("should validate without options", () => {
-      const valid = {
-        inputs: { model3dA: "id1", model3dB: "id2" },
-        outputs: {
-          objects3D: "objId"
-        },
-      };
-      expect(() => ChangeDetectionSpecificationsSchema.parse(valid)).not.to.throw();
     });
   });
 });
