@@ -14,30 +14,32 @@ class ChangeDetectionOutputs(BaseModel):
     locations3d_as_shp: Optional[str] = Field(None, alias="locations3DAsSHP",
                                               description="Reality data id of 3D objects locations "
                                                           "as SHP format")
-    locations3d_as_geojson: Optional[str] = Field(None, alias="locations3DAsGeoJSON", 
+    locations3d_as_geojson: Optional[str] = Field(None, alias="locations3DAsGeoJSON",
                                                   description="Reality data id of 3D objects locations "
                                                               "as GeoJSON file")
-    changes_in_model_b: Optional[str] = Field(None, description="Points in B not in A as OPC", alias="model3dBClassified")
-    changes_in_model_a: Optional[str] = Field(None, description="Points in A not in B as OPC", alias="model3dAClassified")
+    segmented_model_3d_b: Optional[str] = Field(None, description="Points in B not in A as OPC", alias="segmentedModel3DB")
+    segmented_model_3d_a: Optional[str] = Field(None, description="Points in A not in B as OPC", alias="segmentedModel3DA")
+    segmentation_3d_a: Optional[str] = Field(None, description="Scene with annotations of segmented model a", alias="segmentation3DA")
+    segmentation_3d_b: Optional[str] = Field(None, description="Scene with annotations of segmented model b", alias="segmentation3DB")
 
 
 class ChangeDetectionOutputsCreate(Enum):
     LOCATIONS3D_AS_SHP = "locations3DAsSHP"
     LOCATIONS3D_AS_GEOJSON = "locations3DAsGeoJSON"
-    MODEL_3D_A_CLASSIFIED = "model3dAClassified"
-    MODEL_3D_B_CLASSIFIED = "model3dBClassified"
+    SEGMENTED_MODEL_3D_A = "segmentedModel3DA"
+    SEGMENTED_MODEL_3D_B = "segmentedModel3DB"
+    SEGMENTATION_3D_B = "segmentation3DB"
+    SEGMENTATION_3D_A = "segmentation3DA"
 
 
 class ChangeDetectionOptions(BaseModel):
-    output_crs: Optional[str] = Field(None, alias="outputCrs",
-                                      description="CRS used by locations3DAsSHP output")
     min_points_per_change: Optional[int] = Field(None, alias="minPointsPerChange",
                                                  description="Minimum number of points in a region "
                                                              "to be considered as a change")
-    mesh_sampling_resolution: Optional[float] = Field(None, alias="meshSamplingResolution",
-                                                      description="Target point cloud resolution when starting "
-                                                                  "from meshes")
-    threshold: Optional[float] = Field(None, description="High threshold to detect spatial changes "
+    sampling_resolution: Optional[float] = Field(None, alias="meshSamplingResolution",
+                                                 description="Target point cloud resolution when starting from meshes")
+    grow_threshold: Optional[float] = Field(None, alias="growThreshold",
+                                            description="High threshold to detect spatial changes "
                                                          "(hysteresis detection)")
     filter_threshold: Optional[float] = Field(None, alias="filterThreshold",
                                               description="Low threshold to detect spatial changes "
