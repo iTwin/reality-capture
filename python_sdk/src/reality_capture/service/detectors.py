@@ -21,6 +21,16 @@ class DetectorStatus(Enum):
     READY = "Ready"
 
 
+class Link:
+    href: str = Field(description="The URL.")
+
+
+class DetectorVersionCreationLinks(BaseModel):
+    complete_url: Link = Field(description="URL to mark the completion of the detector version creation process.",
+                               alias="completeUrl")
+    upload_url: Link = Field(description="URL to upload the detector zip file.", alias="uploadUrl")
+
+
 class DetectorVersionCreate(BaseModel):
     version_number: str = Field(description="Version number.", alias="versionNumber")
     capabilities: Capabilities = Field(description="Capabilities of the version.")
@@ -33,6 +43,12 @@ class DetectorVersion(DetectorVersionCreate):
                                                           "It is present only if the version status is 'Ready'.",
                                         alias="downloadUrl")
     creator_id: Optional[str] = Field(None, description="User Id of the version creator.", alias="creatorId")
+
+
+class DetectorVersionWithLinks(BaseModel):
+    version: str = Field(description="Detector version details.")
+    links: DetectorVersionCreationLinks = Field(description="Contains the hyperlinks related to the detector version creation.",
+                                                alias="_links")
 
 
 class DetectorType(Enum):
