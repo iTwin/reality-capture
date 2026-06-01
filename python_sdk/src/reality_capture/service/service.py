@@ -352,9 +352,9 @@ class RealityCaptureService:
         """
         Delete a detector.
 
+
         :param detector_name: Name of the detector to delete.
-        :return: A Response[DetectorBase] containing either nothing or the error from the service.
-        """
+        :return: A Response[None] containing either nothing if successful or the error from the service.
         try:
             url_encoded_name = urllib.parse.quote(detector_name, safe="")
             url = self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}"
