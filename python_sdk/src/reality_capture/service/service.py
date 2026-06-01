@@ -368,11 +368,12 @@ class RealityCaptureService:
     def create_detector_version(self, detector_name: str,
                                version_create: DetectorVersionCreate) -> Response[DetectorVersionWithLinks]:
         """
+        """
         Create a new version for the specified detector.
 
         :param detector_name: Name of the detector.
         :param version_create: DetectorVersionCreate information to create the version.
-        :return: A Response[DetectorVersion] containing either the created version or the error from the service.
+        :return: A Response[DetectorVersionWithLinks] containing either the created version (and links) or the error from the service.
         """
         try:
             url_encoded_name = urllib.parse.quote(detector_name, safe="")
