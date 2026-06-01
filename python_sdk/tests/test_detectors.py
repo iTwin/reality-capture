@@ -225,7 +225,7 @@ class TestServiceDetector:
                       status=201, json=payload)
         response = self.rcs.create_detector_version("mydetector", dvc)
         assert not response.is_error()
-        assert response.value.version.versionNumber == "1.0"
+        assert response.value.version.version_number == "1.0"
 
     @responses.activate
     def test_complete_detector_version_ill_formed(self):
