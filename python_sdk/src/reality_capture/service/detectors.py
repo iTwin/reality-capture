@@ -61,7 +61,7 @@ class DetectorType(Enum):
 class DetectorUpdate(BaseModel):
     display_name: Optional[str] = Field(None, description="Display name of the detector.", alias="displayName")
     description: Optional[str] = Field(None, description="Description of the detector.")
-    documentation_url: Optional[str] = Field(None, description="Display name of the detector.",
+    documentation_url: Optional[str] = Field(None, description="Documentation URL for the detector.",
                                              alias="documentationUrl")
 
 

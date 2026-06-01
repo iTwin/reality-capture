@@ -42,7 +42,7 @@ export type DetectorVersion = z.infer<typeof DetectorVersionSchema>;
 export const DetectorUpdateSchema = z.object({
   displayName: z.string().optional().describe("Display name of the detector."),
   description: z.string().optional().describe("Description of the detector."),
-  documentationUrl: z.string().optional().describe("Display name of the detector."),
+  documentationUrl: z.string().optional().describe("Documentation URL for the detector."),
 });
 export type DetectorUpdate = z.infer<typeof DetectorUpdateSchema>;
 
