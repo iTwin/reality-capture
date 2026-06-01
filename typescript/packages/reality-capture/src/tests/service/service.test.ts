@@ -5,7 +5,7 @@ import type { AuthorizationClient } from "@itwin/core-common";
 import { Response } from "../../service/response";
 import { JobCreate, JobType, Service } from "../../service/job";
 import { CostEstimationCreate } from "../../service/estimation";
-import { DetectorBase, DetectorType, DetectorUpdate, DetectorVersionCreate } from "../../service/detectors";
+import { DetectorBase, DetectorExport, DetectorType, DetectorUpdate, DetectorVersionCreate } from "../../service/detectors";
 
 describe("RealityCaptureService tests", function () {
   it("should validate RealityCaptureService urls based on environment", async () => {
