@@ -366,7 +366,7 @@ class RealityCaptureService:
         return self._execute_request(method="DELETE", url=url, headers=self._get_header_v2())
 
     def create_detector_version(self, detector_name: str,
-                                version_create: DetectorVersionCreate) -> Response[DetectorVersion]:
+                               version_create: DetectorVersionCreate) -> Response[DetectorVersionWithLinks]:
         """
         Create a new version for the specified detector.
 
