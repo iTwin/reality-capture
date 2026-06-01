@@ -40,7 +40,7 @@ describe("CapabilitiesSchema", () => {
   });
 });
 
-describe("DetectorVersionSchema", () => {
+describe("DetectorVersionCreateSchema / DetectorVersionSchema", () => {
   it("should validate correct detector version create payload", () => {
     const data = {
       versionNumber: "1.0",
@@ -93,7 +93,7 @@ describe("DetectorVersionSchema", () => {
   });
 });
 
-describe("DetectorBaseSchema", () => {
+describe("DetectorUpdateSchema / DetectorBaseSchema", () => {
   it("should validate detector update payload", () => {
     const data = {
       displayName: "Detector A",
