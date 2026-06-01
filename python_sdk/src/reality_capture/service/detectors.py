@@ -46,7 +46,7 @@ class DetectorVersion(DetectorVersionCreate):
 
 
 class DetectorVersionWithLinks(BaseModel):
-    version: str = Field(description="Detector version details.")
+    version: DetectorVersion = Field(description="Detector version details.")
     links: DetectorVersionCreationLinks = Field(description="Contains the hyperlinks related to the detector version creation.",
                                                 alias="_links")
 
