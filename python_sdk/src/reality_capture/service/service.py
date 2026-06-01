@@ -341,7 +341,7 @@ class RealityCaptureService:
             url = self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}"
             json_dump = detector_update.model_dump_json(by_alias=True)
         except (NotImplementedError, ValidationError) as e:
-            detailed_error = DetailedError(code="UnknownError", message=f"Could not create detector, bad request : "
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not update detector, bad request : "
                                                                         f"{e}")
             return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
 
