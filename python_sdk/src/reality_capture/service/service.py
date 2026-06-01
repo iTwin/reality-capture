@@ -4,7 +4,7 @@ import certifi
 
 from reality_capture.service.bucket import BucketResponse
 from reality_capture.service.detectors import (DetectorBase, DetectorsMinimalResponse, DetectorResponse, DetectorUpdate,
-                                               DetectorVersionCreate, DetectorVersion)
+                                               DetectorVersionCreate, DetectorVersion, DetectorVersionWithLinks)
 from reality_capture.service.files import Files
 from reality_capture.service.response import Response
 from reality_capture.service.job import JobCreate, Job, Progress, Messages, Service, Jobs
@@ -385,7 +385,7 @@ class RealityCaptureService:
             return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
 
         return self._execute_request(method="POST", url=url, headers=self._get_header_v2(), data=json_dump,
-                                     success_model=DetectorVersion)
+                                     success_model=DetectorVersionWithLinks)
 
     def delete_detector_version(self, detector_name: str, detector_version: str) -> Response[None]:
         """
