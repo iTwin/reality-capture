@@ -315,7 +315,7 @@ class RealityCaptureService:
         Create a detector.
 
         :param detector_create: DetectorBase information to create the detector.
-        :return: A Response[DetectorBase] containing either the created detector details or the error from the service.
+        :return: A Response[DetectorResponse] containing either the created detector details or the error from the service.
         """
         try:
             url = self._get_correct_url(Service.ANALYSIS) + f"detectors"
@@ -333,15 +333,15 @@ class RealityCaptureService:
         Update a detector.
 
         :param detector_name: name of the detector.
-        :param detector_update: DetectorBase information to update the detector.
-        :return: A Response[DetectorBase] containing either the created detector details or the error from the service.
+        :param detector_update: DetectorUpdate information to update the detector.
+        :return: A Response[DetectorResponse] containing either the updated detector details or the error from the service.
         """
         try:
             url_encoded_name = urllib.parse.quote(detector_name, safe="")
             url = self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}"
             json_dump = detector_update.model_dump_json(by_alias=True)
         except (NotImplementedError, ValidationError) as e:
-            detailed_error = DetailedError(code="UnknownError", message=f"Could not create detector, bad request : "
+            detailed_error = DetailedError(code="UnknownError", message=f"Could not update detector, bad request : "
                                                                         f"{e}")
             return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
 
@@ -352,9 +352,9 @@ class RealityCaptureService:
         """
         Delete a detector.
 
+
         :param detector_name: Name of the detector to delete.
-        :return: A Response[DetectorBase] containing either nothing or the error from the service.
-        """
+        :return: A Response[None] containing either nothing if successful or the error from the service.
         try:
             url_encoded_name = urllib.parse.quote(detector_name, safe="")
             url = self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}"
@@ -366,13 +366,14 @@ class RealityCaptureService:
         return self._execute_request(method="DELETE", url=url, headers=self._get_header_v2())
 
     def create_detector_version(self, detector_name: str,
-                                version_create: DetectorVersionCreate) -> Response[DetectorVersion]:
+                               version_create: DetectorVersionCreate) -> Response[DetectorVersionWithLinks]:
+        """
         """
         Create a new version for the specified detector.
 
         :param detector_name: Name of the detector.
         :param version_create: DetectorVersionCreate information to create the version.
-        :return: A Response[DetectorVersion] containing either the created version or the error from the service.
+        :return: A Response[DetectorVersionWithLinks] containing either the created version (and links) or the error from the service.
         """
         try:
             url_encoded_name = urllib.parse.quote(detector_name, safe="")
