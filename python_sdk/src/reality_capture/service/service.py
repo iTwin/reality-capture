@@ -315,7 +315,7 @@ class RealityCaptureService:
         Create a detector.
 
         :param detector_create: DetectorBase information to create the detector.
-        :return: A Response[DetectorBase] containing either the created detector details or the error from the service.
+        :return: A Response[DetectorResponse] containing either the created detector details or the error from the service.
         """
         try:
             url = self._get_correct_url(Service.ANALYSIS) + f"detectors"
