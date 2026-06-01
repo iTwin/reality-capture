@@ -476,7 +476,7 @@ describe("RealityCaptureService API calls tests", function () {
       versionNumber: "1.0",
       capabilities: {
         labels: ["crack"],
-        exports: ["Lines" as any]
+        exports: [DetectorExport.LINES]
       }
     };
     const result = await service.createDetectorVersion("@bentley/mydetector", versionCreate);
