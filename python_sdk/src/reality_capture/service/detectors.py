@@ -21,7 +21,7 @@ class DetectorStatus(Enum):
     READY = "Ready"
 
 
-class Link:
+class Link(BaseModel):
     href: str = Field(description="The URL.")
 
 
