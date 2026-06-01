@@ -93,7 +93,7 @@ describe("DetectorVersionCreateSchema / DetectorVersionSchema", () => {
   });
 });
 
-describe("DetectorBaseSchema", () => {
+describe("DetectorUpdateSchema / DetectorBaseSchema", () => {
   it("should validate detector update payload", () => {
     const data = {
       displayName: "Detector A",
