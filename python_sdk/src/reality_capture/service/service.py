@@ -4,7 +4,7 @@ import certifi
 
 from reality_capture.service.bucket import BucketResponse
 from reality_capture.service.detectors import (DetectorBase, DetectorsMinimalResponse, DetectorResponse, DetectorUpdate,
-                                               DetectorVersionCreate, DetectorVersion, DetectorVersionWithLinks)
+                                               DetectorVersionCreate, DetectorVersionWithLinks)
 from reality_capture.service.files import Files
 from reality_capture.service.response import Response
 from reality_capture.service.job import JobCreate, Job, Progress, Messages, Service, Jobs
@@ -352,9 +352,9 @@ class RealityCaptureService:
         """
         Delete a detector.
 
-
         :param detector_name: Name of the detector to delete.
         :return: A Response[None] containing either nothing if successful or the error from the service.
+        """
         try:
             url_encoded_name = urllib.parse.quote(detector_name, safe="")
             url = self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}"
@@ -366,8 +366,7 @@ class RealityCaptureService:
         return self._execute_request(method="DELETE", url=url, headers=self._get_header_v2())
 
     def create_detector_version(self, detector_name: str,
-                               version_create: DetectorVersionCreate) -> Response[DetectorVersionWithLinks]:
-        """
+                                version_create: DetectorVersionCreate) -> Response[DetectorVersionWithLinks]:
         """
         Create a new version for the specified detector.
 
