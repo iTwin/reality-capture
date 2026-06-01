@@ -333,8 +333,8 @@ class RealityCaptureService:
         Update a detector.
 
         :param detector_name: name of the detector.
-        :param detector_update: DetectorBase information to update the detector.
-        :return: A Response[DetectorBase] containing either the created detector details or the error from the service.
+        :param detector_update: DetectorUpdate information to update the detector.
+        :return: A Response[DetectorResponse] containing either the updated detector details or the error from the service.
         """
         try:
             url_encoded_name = urllib.parse.quote(detector_name, safe="")
