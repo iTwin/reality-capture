@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 from datetime import datetime
 
-from src.reality_capture.service.utils import Link
+from reality_capture.service.utils import Link
 
 
 class DetectorExport(Enum):
