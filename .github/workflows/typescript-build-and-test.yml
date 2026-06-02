@@ -34,13 +34,10 @@ on:
 jobs:
   build_and_test_sdk:
     runs-on: ${{ inputs.os }}
-    env:
-      # Isolate Playwright browser cache per OS + Node version to avoid cross-job lock contention. Fix a bug where itwin/certa post install script time out
-      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/ms-playwright-${{ inputs.os }}-${{ inputs.node-version }}
       
     steps:
       - name: Checkout github repo (+ download lfs dependencies)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           lfs: true
 
@@ -48,24 +45,18 @@ jobs:
         run: git lfs checkout
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v6
         with:
           version: 8
 
       - name: Setup Node.js ${{ inputs.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ inputs.node-version }}
 
-      # Remove stale lock left by interrupted installs to prevent Playwright postinstall failures.
-      - name: Cleanup stale Playwright lock
-        shell: bash
-        run: rm -rf "$PLAYWRIGHT_BROWSERS_PATH/__dirlock"
-
       - name: Install dependencies
         working-directory: ./
-        # Serialize lifecycle scripts to reduce parallel postinstall conflicts (notably Playwright).
-        run: pnpm install --frozen-lockfile=true --child-concurrency=1
+        run: pnpm install --frozen-lockfile=true
 
       - name: Build
         working-directory: ./
