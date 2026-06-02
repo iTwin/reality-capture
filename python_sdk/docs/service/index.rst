@@ -20,6 +20,8 @@ Service regroups all the classes used to interact with the APIs.
     service_files
     reality_data
     data_handler
+    detectors
+    utils
 
 * :doc:`/service/service` provides a class to interact with the Reality Capture APIs.
 * :doc:`/service/response` describes the Response object returned by the service.
@@ -29,3 +31,5 @@ Service regroups all the classes used to interact with the APIs.
 * :doc:`/service/service_files` provides classes to describe files usable through the service.
 * :doc:`/service/reality_data` provides classes and enums to describe a reality data.
 * :doc:`/service/data_handler` provide classes for uploading to and downloading from a reality data or a bucket.
+* :doc:`/service/detectors` describes the structures used to interact with detectors.
+* :doc:`/service/utils` describes the utility functions and classes used in the SDK.
