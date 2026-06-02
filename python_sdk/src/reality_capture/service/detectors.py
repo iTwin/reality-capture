@@ -3,6 +3,8 @@ from typing import Optional
 from pydantic import BaseModel, Field
 from datetime import datetime
 
+from src.reality_capture.service.utils import Link
+
 
 class DetectorExport(Enum):
     OBJECTS = "Objects"
@@ -19,10 +21,6 @@ class Capabilities(BaseModel):
 class DetectorStatus(Enum):
     AWAITING_DATA = "AwaitingData"
     READY = "Ready"
-
-
-class Link(BaseModel):
-    href: str = Field(description="The URL.")
 
 
 class DetectorVersionCreationLinks(BaseModel):
