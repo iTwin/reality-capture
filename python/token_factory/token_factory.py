@@ -165,7 +165,7 @@ class BaseTokenFactory(AbstractTokenFactory):
         if self._env == "qa":
             return "qa-api.bentley.com"
         if self._env == "dev":
-            return "dev-api.bentley.com"
+            return "dev-api-eus.bentley.com"
         return "api.bentley.com"
 
     def is_ok(self):
