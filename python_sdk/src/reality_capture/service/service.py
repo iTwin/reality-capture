@@ -3,7 +3,9 @@ import requests
 import certifi
 
 from reality_capture.service.bucket import BucketResponse
-from reality_capture.service.detectors import DetectorsMinimalResponse, DetectorResponse
+from reality_capture.service.detectors import (DetectorsMinimalResponse, DetectorResponse, DetectorMinimal,
+                                               DetectorCreate, DetectorUpdate, DetectorVersionCreate,
+                                               DetectorVersionCreateResponseLinks)
 from reality_capture.service.files import Files
 from reality_capture.service.response import Response
 from reality_capture.service.job import JobCreate, Job, Progress, Messages, Service, Jobs
@@ -308,6 +310,164 @@ class RealityCaptureService:
 
         return self._execute_request(method="GET", url=url, headers=self._get_header_v2(),
                                      success_model=DetectorResponse)
+
+    def create_detector(self, attributes: DetectorCreate) -> Response[DetectorMinimal]:
+        """
+        Create a new detector.
+
+        :param attributes: Attributes of the detector to create.
+        :return: A Response[DetectorMinimal] containing either the created detector or the error from the service.
+        """
+        response = self._session.post(
+            self._get_correct_url(Service.ANALYSIS) + "detectors",
+            attributes.model_dump_json(by_alias=True, exclude_none=True),
+            headers=self._get_header_v2()
+        )
+        try:
+            if response.ok:
+                payload: DetectorResponse = DetectorResponse.model_validate(response.json())
+                return Response(status_code=response.status_code, value=payload.detector, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def create_detector_version(self, detector_name: str,
+                                version_attributes: DetectorVersionCreate) -> Response[DetectorVersionCreateResponseLinks]:
+        """
+        Create a new version for an existing detector.
+
+        :param detector_name: Name of the detector to add a version to.
+        :param version_attributes: Attributes of the detector version to create.
+        :return: A Response[DetectorVersionCreateResponseLinks] containing either the created version with its upload
+                 links or the error from the service.
+        """
+        url_encoded_name = urllib.parse.quote(detector_name, safe="")
+        response = self._session.post(
+            self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}/versions",
+            version_attributes.model_dump_json(by_alias=True, exclude_none=True),
+            headers=self._get_header_v2())
+        try:
+            if response.ok:
+                payload = DetectorVersionCreateResponseLinks.model_validate(response.json())
+                return Response(status_code=response.status_code, value=payload, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def delete_detector(self, detector_name: str) -> Response[None]:
+        """
+        Delete a detector and all of its versions.
+
+        :param detector_name: Name of the detector to delete.
+        :return: A Response[None] containing either nothing if successful or the error from the service.
+        """
+        url_encoded_name = urllib.parse.quote(detector_name, safe="")
+        response = self._session.delete(self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}",
+                                        headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code, value=None, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def delete_detector_version(self, detector_name: str, version_number: str) -> Response[None]:
+        """
+        Delete a specific version of a detector.
+
+        :param detector_name: Name of the detector.
+        :param version_number: Version number to delete.
+        :return: A Response[None] containing either nothing if successful or the error from the service.
+        """
+        url_encoded_name = urllib.parse.quote(detector_name, safe="")
+        response = self._session.delete(
+            self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}/versions/{version_number}",
+            headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code, value=None, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def modify_detector(self, detector_name: str, detector_attrs: DetectorUpdate) -> Response[None]:
+        """
+        Modify the attributes of an existing detector.
+
+        :param detector_name: Name of the detector to modify.
+        :param detector_attrs: Attributes to update on the detector.
+        :return: A Response[None] containing either nothing if successful or the error from the service.
+        """
+        url_encoded_name = urllib.parse.quote(detector_name, safe="")
+        response = self._session.patch(
+            self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}",
+            detector_attrs.model_dump_json(by_alias=True, exclude_none=True),
+            headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code, value=None, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def publish_detector_version(self, detector_name: str, version_number: str) -> Response[None]:
+        """
+        Publish a specific version of a detector.
+
+        :param detector_name: Name of the detector.
+        :param version_number: Version number to publish.
+        :return: A Response[None] containing either nothing if successful or the error from the service.
+        """
+        url_encoded_name = urllib.parse.quote(detector_name, safe="")
+        response = self._session.post(
+            self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}/versions/{version_number}/publish",
+            headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code, value=None, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
+
+    def unpublish_detector_version(self, detector_name: str, version_number: str) -> Response[None]:
+        """
+        Unpublish a specific version of a detector.
+
+        :param detector_name: Name of the detector.
+        :param version_number: Version number to unpublish.
+        :return: A Response[None] containing either nothing if successful or the error from the service.
+        """
+        url_encoded_name = urllib.parse.quote(detector_name, safe="")
+        response = self._session.post(
+            self._get_correct_url(Service.ANALYSIS) + f"detectors/{url_encoded_name}/versions/{version_number}/unpublish",
+            headers=self._get_header_v2())
+        try:
+            if response.ok:
+                return Response(status_code=response.status_code, value=None, error=None)
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse.model_validate(response.json()), value=None)
+        except (ValidationError, KeyError) as exception:
+            error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(response, exception))
+            return Response(status_code=response.status_code,
+                            error=DetailedErrorResponse(error=error), value=None)
 
     def create_reality_data(self, reality_data: RealityDataCreate) -> Response[RealityData]:
         """

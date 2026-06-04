@@ -34,6 +34,8 @@ Specifications regroup all the settings used to create jobs with our APIs.
     eval_s3d
     eval_sortho
     clearance
+    training_o2d
+    training_s3d
 
 
 Modeling
@@ -60,11 +62,14 @@ Analysis
 * :doc:`/specifications/change_detection` will take two point clouds or two meshes to to get 3D regions that capture the changes.
 * :doc:`/specifications/eval_o2d`, :doc:`/specifications/eval_o3d`, :doc:`/specifications/eval_s2d`, :doc:`/specifications/eval_s3d` and :doc:`/specifications/eval_sortho` will compare a prediction to a reference for a specific detection.
 * :doc:`/specifications/clearance` uses a 3D model and a footprint to compute clearance information.
+* :doc:`/specifications/training_o2d` will train an o2d detector from a ContextScene
+* :doc:`/specifications/training_s3d` will train an s3d detector from a ContextScene
 
 .. Conversion
 .. ==========
 
 .. * :doc:`/specifications/point_cloud_conversion` will convert point clouds from one format to another.
+
 
 Utilities
 =========

@@ -1,7 +1,6 @@
 import responses
 import json
 import os
-from datetime import datetime
 
 from reality_capture.service.service import RealityCaptureService
 
