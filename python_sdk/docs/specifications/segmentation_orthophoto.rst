@@ -2,7 +2,7 @@
 Segmentation Orthophoto
 =======================
 
-The Segmentation Orthophoto job uses an orthophoto segmentation detector to classify pixels in orthophotos. It produces segmented orthophotos and a context pointing to these orthophotos. Depending on the detector, it can detect 2D lines and 2D polygons. Optionally, these 2D lines and 2D polygons can be exported as SHP, DGN or GeoJSON files.
+The Segmentation Orthophoto job uses an orthophoto segmentation detector to classify pixels in orthophotos. It produces segmented orthophotos and a context pointing to these orthophotos. Depending on the detector, it can detect 2D lines and 2D polygons. Optionally, these 2D lines and 2D polygons can be exported as SHP or GeoJSON files.
 
 .. contents:: Quick access
    :local:
@@ -27,10 +27,9 @@ Purposes
        | *polygons2d* (optional),
        | *polygons2d_as_shp* (optional),
        | *polygons2d_as_geojson* (optional),
-       | *lines2d* (optional),
-       | *lines2d_as_dgn* (optional),
-       | *lines2d_as_shp* (optional),
-       | *lines2d_as_geojson* (optional)
+        | *lines2d* (optional),
+        | *lines2d_as_shp* (optional),
+        | *lines2d_as_geojson* (optional)
      - |
 
 Examples

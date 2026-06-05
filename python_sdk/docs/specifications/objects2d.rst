@@ -4,7 +4,7 @@ Objects 2D
 
 The *Objects 2D* job uses a photo object detector to detect 2D objects in photos. This job produces a context scene annotated with 2D objects. 
 If the context scene input is oriented, it can turn these 2D objects into 3D objects and produce a context scene annotated with 3D objects. 
-Optionally, these 3D objects that can be exported in another formats, such as 3D Tiles, DGN, SHP, or GeoJSON.
+Optionally, these 3D objects that can be exported in another formats, such as 3D Tiles, SHP, or GeoJSON.
 
 .. contents:: Quick access
    :local:
@@ -35,9 +35,8 @@ This job has three different purposes :
        | *point_clouds* (optional),
        | *meshes* (optional)
      - | *objects2d*,
-       | *objects3d*,
-       | *objects3d_as_dgn* (optional),
-       | *objects3d_as_3d_tiles* (optional),
+        | *objects3d*,
+        | *objects3d_as_3d_tiles* (optional),
        | *objects3d_as_geojson* (optional),
        | *locations3d_as_shp* (optional),
        | *locations3d_as_geojson* (optional)
@@ -52,8 +51,7 @@ This job has three different purposes :
        | *point_clouds* (optional),
        | *meshes* (optional)
      - | *objects3d*,
-       | *objects3d_as_dgn* (optional),
-       | *objects3d_as_3d_tiles* (optional),
+        | *objects3d_as_3d_tiles* (optional),
        | *objects3d_as_geojson* (optional),
        | *locations3d_as_shp* (optional),
        | *locations3d_as_geojson* (optional)

@@ -17,10 +17,10 @@ class ChangeDetectionOutputs(BaseModel):
     locations3d_as_geojson: Optional[str] = Field(None, alias="locations3DAsGeoJSON",
                                                   description="Reality data id of 3D objects locations "
                                                               "as GeoJSON file")
-    segmented_model_3d_b: Optional[str] = Field(None, description="Points in B not in A as OPC", alias="segmentedModel3DB")
-    segmented_model_3d_a: Optional[str] = Field(None, description="Points in A not in B as OPC", alias="segmentedModel3DA")
-    segmentation_3d_a: Optional[str] = Field(None, description="Scene with annotations of segmented model a", alias="segmentation3DA")
-    segmentation_3d_b: Optional[str] = Field(None, description="Scene with annotations of segmented model b", alias="segmentation3DB")
+    segmented_model_3d_b: Optional[str] = Field(None, description="Reality data id of the 3D segmented model in the same format of model 3d B", alias="segmentedModel3DB")
+    segmented_model_3d_a: Optional[str] = Field(None, description="Reality data id of the 3D segmented model in the same format of model 3d A", alias="segmentedModel3DA")
+    segmentation_3d_a: Optional[str] = Field(None, description="Reality data id of ContextScene, pointing to the segmented 3D model A", alias="segmentation3DA")
+    segmentation_3d_b: Optional[str] = Field(None, description="Reality data id of ContextScene, pointing to the segmented 3D model B", alias="segmentation3DB")
 
 
 class ChangeDetectionOutputsCreate(Enum):
