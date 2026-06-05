@@ -27,9 +27,9 @@ Purposes
        | *polygons2d* (optional),
        | *polygons2d_as_shp* (optional),
        | *polygons2d_as_geojson* (optional),
-        | *lines2d* (optional),
-        | *lines2d_as_shp* (optional),
-        | *lines2d_as_geojson* (optional)
+       | *lines2d* (optional),
+       | *lines2d_as_shp* (optional),
+       | *lines2d_as_geojson* (optional)
      - |
 
 Examples

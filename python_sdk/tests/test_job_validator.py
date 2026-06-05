@@ -70,12 +70,23 @@ class TestJobValidator:
                 "model3dB": "modelb"
             },
             "outputs": {
-                "segmentedModel3dA": "rdid",
-                "objects3d": "obj"
+                "segmentedModel3DA": "rdid_seg_a",
+                "segmentedModel3DB": "rdid_seg_b",
+                "segmentation3DA": "rdid_segmentation_a",
+                "segmentation3DB": "rdid_segmentation_b",
+                "locations3DAsGeoJSON": "geojson_rdid",
+                "locations3DAsSHP": "shp_rdid"
             }
         }
         job = Job(**j)
         assert isinstance(job.specifications, ChangeDetectionSpecifications)
+        outputs = job.specifications.outputs
+        assert outputs.segmented_model_3d_a == "rdid_seg_a"
+        assert outputs.segmented_model_3d_b == "rdid_seg_b"
+        assert outputs.segmentation_3d_a == "rdid_segmentation_a"
+        assert outputs.segmentation_3d_b == "rdid_segmentation_b"
+        assert outputs.locations3d_as_geojson == "geojson_rdid"
+        assert outputs.locations3d_as_shp == "shp_rdid"
 
     def test_validation_constraints(self):
         j = self.j_base.copy()
