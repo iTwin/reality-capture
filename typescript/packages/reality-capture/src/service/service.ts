@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import type { AuthorizationClient } from "@itwin/core-common";
 import { BucketResponse } from "./bucket";
-import { DetectorsMinimalResponse, DetectorResponse } from "./detectors";
+import { DetectorBase, DetectorResponse, DetectorsMinimalResponse, DetectorUpdate, DetectorVersionCreate } from "./detectors";
 import { CostEstimationCreate, CostEstimation } from "./estimation";
 import { Files } from "./files";
 import { Response } from "./response";
@@ -230,7 +230,7 @@ export class RealityCaptureService {
   }
 
   async getDetector(detectorName: string): Promise<Response<DetectorResponse>> {
-    const url = this._getAnalysisUrl() + `detectors/${detectorName}`;
+    const url = this._getAnalysisUrl() + `detectors/${encodeURIComponent(detectorName)}`;
     try {
       const resp = await this._axios.get(url, {
         headers: await this._getHeader("v2"),
@@ -238,6 +238,86 @@ export class RealityCaptureService {
       return new Response(resp.status, null, resp.data as DetectorResponse);
     } catch (error: any) {
       return this._handleError<DetectorResponse>(error);
+    }
+  }
+
+  async createDetector(detectorCreate: DetectorBase): Promise<Response<DetectorResponse>> {
+    const url = this._getAnalysisUrl() + "detectors";
+    try {
+      const resp = await this._axios.post(url, detectorCreate, { headers: await this._getHeader("v2") });
+      return new Response(resp.status, null, resp.data as DetectorResponse);
+    } catch (error: any) {
+      return this._handleError<DetectorResponse>(error);
+    }
+  }
+
+  async updateDetector(detectorName: string, detectorUpdate: DetectorUpdate): Promise<Response<DetectorResponse>> {
+    const url = this._getAnalysisUrl() + `detectors/${encodeURIComponent(detectorName)}`;
+    try {
+      const resp = await this._axios.patch(url, detectorUpdate, { headers: await this._getHeader("v2") });
+      return new Response(resp.status, null, resp.data as DetectorResponse);
+    } catch (error: any) {
+      return this._handleError<DetectorResponse>(error);
+    }
+  }
+
+  async deleteDetector(detectorName: string): Promise<Response<void>> {
+    const url = this._getAnalysisUrl() + `detectors/${encodeURIComponent(detectorName)}`;
+    try {
+      const resp = await this._axios.delete(url, { headers: await this._getHeader("v2") });
+      return new Response(resp.status, null, null);
+    } catch (error: any) {
+      return this._handleError<void>(error);
+    }
+  }
+
+  async createDetectorVersion(detectorName: string, versionCreate: DetectorVersionCreate): Promise<Response<void>> {
+    const url = this._getAnalysisUrl() + `detectors/${encodeURIComponent(detectorName)}/versions`;
+    try {
+      const resp = await this._axios.post(url, versionCreate, { headers: await this._getHeader("v2") });
+      return new Response(resp.status, null, null);
+    } catch (error: any) {
+      return this._handleError<void>(error);
+    }
+  }
+
+  async deleteDetectorVersion(detectorName: string, detectorVersion: string): Promise<Response<void>> {
+    const url = this._getAnalysisUrl() + `detectors/${encodeURIComponent(detectorName)}/versions/${encodeURIComponent(detectorVersion)}`;
+    try {
+      const resp = await this._axios.delete(url, { headers: await this._getHeader("v2") });
+      return new Response(resp.status, null, null);
+    } catch (error: any) {
+      return this._handleError<void>(error);
+    }
+  }
+
+  async publishDetectorVersion(detectorName: string, versionNumber: string): Promise<Response<void>> {
+    const url = this._getAnalysisUrl() + `detectors/${encodeURIComponent(detectorName)}/versions/${encodeURIComponent(versionNumber)}/publish`;
+    try {
+      const resp = await this._axios.post(url, undefined, { headers: await this._getHeader("v2") });
+      return new Response(resp.status, null, null);
+    } catch (error: any) {
+      return this._handleError<void>(error);
+    }
+  }
+
+  async unpublishDetectorVersion(detectorName: string, versionNumber: string): Promise<Response<void>> {
+    const url = this._getAnalysisUrl() + `detectors/${encodeURIComponent(detectorName)}/versions/${encodeURIComponent(versionNumber)}/unpublish`;
+    try {
+      const resp = await this._axios.post(url, undefined, { headers: await this._getHeader("v2") });
+      return new Response(resp.status, null, null);
+    } catch (error: any) {
+      return this._handleError<void>(error);
+    }
+  }
+
+  async completeDetectorVersionUpload(detectorName: string, versionNumber: string): Promise<Response<void>> {
+    const url = this._getAnalysisUrl() + `detectors/${encodeURIComponent(detectorName)}/versions/${encodeURIComponent(versionNumber)}/complete`;
+    try {
+      const resp = await this._axios.post(url, undefined, { headers: await this._getHeader("v2") });
+      return new Response(resp.status, null, null);
+    } catch (error: any) {
+      return this._handleError<void>(error);
     }
   }
 
