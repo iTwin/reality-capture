@@ -27,7 +27,7 @@ This job has four different purposes :
        | *point_cloud_segmentation_detector*,
        | *clip_polygon* (optional)
      - | *segmentation3d*,
-       | *segmented_point_cloud*
+       | *segmented_model_3d*
      - | *save_confidence*,
        | *crs*
    * - | Segment a collection
@@ -36,7 +36,7 @@ This job has four different purposes :
        | *point_cloud_segmentation_detector*,
        | *clip_polygon* (optional)
      - | *segmentation3d*,
-       | *segmented_point_cloud*
+       | *segmented_model_3d*
      - | *save_confidence*,
        | *crs*
    * - | Segment a collection
@@ -47,7 +47,7 @@ This job has four different purposes :
        | *point_cloud_segmentation_detector*,
        | *clip_polygon* (optional)
      - | *segmentation3d*,
-       | *segmented_point_cloud*,
+       | *segmented_model_3d*,
        | *objects3d* (optional),
        | *objects3d_as_3d_tiles* (optional),
        | *objects3d_as_geojson* (optional),

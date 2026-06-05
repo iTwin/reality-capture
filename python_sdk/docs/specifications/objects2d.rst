@@ -35,8 +35,8 @@ This job has three different purposes :
        | *point_clouds* (optional),
        | *meshes* (optional)
      - | *objects2d*,
-        | *objects3d*,
-        | *objects3d_as_3d_tiles* (optional),
+       | *objects3d*,
+       | *objects3d_as_3d_tiles* (optional),
        | *objects3d_as_geojson* (optional),
        | *locations3d_as_shp* (optional),
        | *locations3d_as_geojson* (optional)
@@ -51,7 +51,7 @@ This job has three different purposes :
        | *point_clouds* (optional),
        | *meshes* (optional)
      - | *objects3d*,
-        | *objects3d_as_3d_tiles* (optional),
+       | *objects3d_as_3d_tiles* (optional),
        | *objects3d_as_geojson* (optional),
        | *locations3d_as_shp* (optional),
        | *locations3d_as_geojson* (optional)
