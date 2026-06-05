@@ -1,9 +1,7 @@
 import { z } from "zod";
 
 export const PCConversionInputsSchema = z.object({
-  pointCloud: z
-    .string()
-    .describe("Reality data Id of point cloud(s) to convert"),
+  pointCloud: z.string().describe("Reality data Id of point cloud to convert"),
 });
 export type PCConversionInputs = z.infer<typeof PCConversionInputsSchema>;
 

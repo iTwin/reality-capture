@@ -4,7 +4,7 @@ from enum import Enum
 
 
 class PCConversionInputs(BaseModel):
-    point_cloud: str = Field(description="Reality data Id of point cloud(s) to convert", alias="pointCloud")
+    point_cloud: str = Field(description="Reality data Id of point cloud to convert", alias="pointCloud")
 
 
 class PCConversionFormat(Enum):
