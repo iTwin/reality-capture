@@ -39,4 +39,4 @@ export * from "./specifications/mesh_sampling";
 export * from "./specifications/point_cloud_conversion";
 export * from "./specifications/point_cloud_optimization";
 export * from "./specifications/tile_map_optimization";
-export * from "./specifications/vector_optimization"
+export * from "./specifications/vector_optimization";
