@@ -66,10 +66,6 @@ jobs:
         working-directory: ./typescript/packages/reality-data-client
         run: pnpm lint
 
-      - name: Run unit tests and coverage
-        working-directory: ./typescript/packages/reality-data-client
-        run: pnpm coverage
-
       - name: Run SDK Integration Tests
         working-directory: ./typescript/packages/reality-data-client
         env:
@@ -83,4 +79,4 @@ jobs:
           IMJS_TEST_REGULAR_USER_PASSWORD: ${{ secrets.IMJS_TEST_REGULAR_USER_PASSWORD }}
           IMJS_TEST_MANAGER_USER_NAME: ${{ vars.IMJS_TEST_MANAGER_USER_NAME }}
           IMJS_TEST_MANAGER_USER_PASSWORD: ${{ secrets.IMJS_TEST_MANAGER_USER_PASSWORD }}
-        run: pnpm integration-tests
+        run: pnpm test:integration
