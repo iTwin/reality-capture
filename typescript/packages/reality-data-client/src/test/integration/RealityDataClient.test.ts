@@ -476,6 +476,91 @@ describe("RealityServicesClient Normal (#integration)", () => {
     });
   });
 
+  it("should query reality data using the modifiedDateTime parameter", async () => {
+    const realityDataQueryCriteria: RealityDataQueryCriteria = {
+      getFullRepresentation: true,
+      top: 10,
+      modifiedDateTime: {
+        startDateTime: new Date(2021,0,1),
+        endDateTime: new Date(2030,0,1),
+      },
+    };
+
+    const realityDataResponse = await realityDataAccessClientForTest.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
+
+    const realityDatas = realityDataResponse.realityDatas;
+    chai.assert(realityDatas && realityDatas.length > 0, "No reality data found. Please verify test reality data exists with modification dates between 2021-01-01 and 2030-01-01.");
+
+    realityDatas.forEach((value) => {
+      chai.assert(value.iTwinId === iTwinId);
+      chai.assert(value.type);
+      chai.assert(value.id);
+      chai.assert(value.modifiedDateTime);
+      chai.assert(value.modifiedDateTime.getTime() >= new Date(2021,0,1).getTime());
+      chai.assert(value.modifiedDateTime.getTime() <= new Date(2030,0,1).getTime());
+    });
+  });
+
+  it("should query reality data using the lastAccessedDateTime parameter", async () => {
+    const realityDataQueryCriteria: RealityDataQueryCriteria = {
+      getFullRepresentation: true,
+      top: 10,
+      lastAccessedDateTime: {
+        startDateTime: new Date(2021,0,1),
+        endDateTime: new Date(2030,0,1),
+      },
+    };
+
+    const realityDataResponse = await realityDataAccessClientForTest.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
+
+    const realityDatas = realityDataResponse.realityDatas;
+    chai.assert(realityDatas && realityDatas.length > 0, "No reality data found. Please verify test reality data exists with last accessed dates between 2021-01-01 and 2030-01-01.");
+
+    realityDatas.forEach((value) => {
+      chai.assert(value.iTwinId === iTwinId);
+      chai.assert(value.type);
+      chai.assert(value.id);
+    });
+  });
+
+  it("should query reality data using the ownerId parameter", async () => {
+    // Fetch one reality data to get its ownerId, then query by that ownerId
+    const referenceRd = await realityDataAccessClientForTest.getRealityData(accessToken, iTwinId, realityDataId);
+    chai.assert(referenceRd.ownerId, "ownerId must be populated on a fetched reality data");
+
+    const realityDataQueryCriteria: RealityDataQueryCriteria = {
+      top: 10,
+      ownerId: referenceRd.ownerId,
+    };
+
+    const realityDataResponse = await realityDataAccessClientForTest.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
+
+    const realityDatas = realityDataResponse.realityDatas;
+    chai.assert(realityDatas && realityDatas.length > 0, "No reality data found when filtering by ownerId.");
+
+    realityDatas.forEach((value) => {
+      chai.assert(value.id);
+      chai.assert(value.type);
+    });
+  });
+
+  it("should query reality data using the dataCenter parameter", async () => {
+    const realityDataQueryCriteria: RealityDataQueryCriteria = {
+      top: 10,
+      dataCenter: "East US",
+    };
+
+    const realityDataResponse = await realityDataAccessClientForTest.getRealityDatas(accessToken, iTwinId, realityDataQueryCriteria);
+
+    const realityDatas = realityDataResponse.realityDatas;
+    chai.assert(realityDatas && realityDatas.length > 0, "No reality data found in 'East US' data center. Please verify test reality data exists in that data center.");
+
+    realityDatas.forEach((value) => {
+      chai.assert(value.id);
+      chai.assert(value.type);
+    });
+  });
+
   it("should query reality data using the tag parameter", async () => {
     const realityDataQueryCriteria: RealityDataQueryCriteria = {
       getFullRepresentation: true,
@@ -612,6 +697,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     chai.assert(realityDataAdded.lastAccessedDateTime.getTime());
     chai.assert(realityDataAdded.createdDateTime);
     chai.assert(realityDataAdded.createdDateTime.getTime());
+    chai.assert(realityDataAdded.ownerId);
 
     realityDataAdded.displayName = "MODIFIED iTwinjs RealityData Client create and delete test";
     realityDataAdded.group = "MODIFIED Test group";

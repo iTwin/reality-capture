@@ -68,6 +68,18 @@ export interface RealityDataQueryCriteria {
   /** Queries for reality data where the creation date is in given date range.*/
   createdDateTime?: DateRange;
 
+  /** Queries for reality data where the modification date is in given date range.*/
+  modifiedDateTime?: DateRange;
+
+  /** Queries for reality data where the last accessed date is in given date range.*/
+  lastAccessedDateTime?: DateRange;
+
+  /** Queries for reality data owned by a specific user.*/
+  ownerId?: string;
+
+  /** Queries for reality data stored in a specific data center.*/
+  dataCenter?: string;
+
   /** Queries for reality data with exact matching tag.*/
   tag?: string;
 }
@@ -227,7 +239,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
         }
 
         if (criteria.orderBy) {
-          url.searchParams.append("$orderby", criteria.orderBy);
+          url.searchParams.append("$orderBy", criteria.orderBy);
         }
 
         if (criteria.search) {
@@ -248,6 +260,26 @@ export class RealityDataAccessClient implements RealityDataAccess {
           const startDateTime = this.formatIsoString(criteria.createdDateTime.startDateTime);
           const endDateTime = this.formatIsoString(criteria.createdDateTime.endDateTime);
           url.searchParams.append("createdDateTime", `${startDateTime}/${endDateTime}`);
+        }
+
+        if (criteria.modifiedDateTime) {
+          const startDateTime = this.formatIsoString(criteria.modifiedDateTime.startDateTime);
+          const endDateTime = this.formatIsoString(criteria.modifiedDateTime.endDateTime);
+          url.searchParams.append("modifiedDateTime", `${startDateTime}/${endDateTime}`);
+        }
+
+        if (criteria.lastAccessedDateTime) {
+          const startDateTime = this.formatIsoString(criteria.lastAccessedDateTime.startDateTime);
+          const endDateTime = this.formatIsoString(criteria.lastAccessedDateTime.endDateTime);
+          url.searchParams.append("lastAccessedDateTime", `${startDateTime}/${endDateTime}`);
+        }
+
+        if (criteria.ownerId) {
+          url.searchParams.append("ownerId", criteria.ownerId);
+        }
+
+        if (criteria.dataCenter) {
+          url.searchParams.append("dataCenter", criteria.dataCenter);
         }
 
         if(criteria.tag) {
@@ -425,6 +457,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
         crs: iTwinRealityData.crs,
         attribution: iTwinRealityData.attribution,
         termsOfUse: iTwinRealityData.termsOfUse,
+        ownerId: iTwinRealityData.ownerId,
       };
 
       const response = await axios.post(url, realityDataToCreate, options);
@@ -472,6 +505,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
         crs: iTwinRealityData.crs,
         attribution: iTwinRealityData.attribution,
         termsOfUse: iTwinRealityData.termsOfUse,
+        ownerId: iTwinRealityData.ownerId,
       };
 
       const response = await axios.patch(url.href, realityDataToModify, options);
