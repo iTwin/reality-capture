@@ -1,4 +1,4 @@
-name: (TSBuildTest) Build and test Typescript SDK
+name: (RDCBuildTest) Build and test reality-data-client
 
 on:
   workflow_call:
@@ -53,23 +53,23 @@ jobs:
           node-version: ${{ inputs.node-version }}
 
       - name: Install dependencies
-        working-directory: ./
+        working-directory: ./typescript/packages/reality-data-client
         run: pnpm install --frozen-lockfile=true
 
       - name: Build
-        working-directory: ./
+        working-directory: ./typescript/packages/reality-data-client
         run: pnpm build
 
       - name: EsLint
-        working-directory: ./
+        working-directory: ./typescript/packages/reality-data-client
         run: pnpm lint
 
       - name: Run unit tests and coverage
-        working-directory: ./
+        working-directory: ./typescript/packages/reality-data-client
         run: pnpm coverage
 
       - name: Run SDK Integration Tests
-        working-directory: ./
+        working-directory: ./typescript/packages/reality-data-client
         env:
           IMJS_INTEGRATION_TESTS_PROJECT_ID: ${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}
           IMJS_INTEGRATION_TESTS_CLIENT_ID: ${{ secrets.INTEGRATION_TESTS_CLIENT_ID }}

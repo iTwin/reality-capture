@@ -1,4 +1,4 @@
-name: (ReleaseV1) Publish v1 packages
+name: (ReleaseV1) Publish reality-data-client
 
 on: workflow_dispatch
 
@@ -25,12 +25,15 @@ jobs:
         uses: pnpm/action-setup@v6
 
       - name: Install dependencies
+        working-directory: ./typescript/packages/reality-data-client
         run: pnpm install --frozen-lockfile=true
 
       - name: Build
+        working-directory: ./typescript/packages/reality-data-client
         run: pnpm build
 
       - name: Run unit tests
+        working-directory: ./typescript/packages/reality-data-client
         env:
           IMJS_UNIT_TESTS_PROJECT_ID: ${{ secrets.UNIT_TESTS_PROJECT_ID }}
           IMJS_UNIT_TESTS_CLIENT_ID: ${{ secrets.UNIT_TESTS_CLIENT_ID }}
@@ -38,6 +41,7 @@ jobs:
         run: pnpm coverage
 
       - name: Publish packages
+        working-directory: ./typescript/packages/reality-data-client
         run: |
           git config --local user.email imodeljs-admin@users.noreply.github.com
           git config --local user.name imodeljs-admin 
