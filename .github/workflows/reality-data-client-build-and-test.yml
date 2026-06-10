@@ -34,7 +34,7 @@ on:
 jobs:
   build_and_test_sdk:
     runs-on: ${{ inputs.os }}
-      
+
     steps:
       - name: Checkout github repo (+ download lfs dependencies)
         uses: actions/checkout@v5
@@ -68,7 +68,7 @@ jobs:
 
       - name: Install Chromium for integration tests
         working-directory: ./typescript/packages/reality-data-client
-        run: pnpm exec playwright install chromium
+        run: pnpm exec playwright install
 
       - name: Run SDK Integration Tests
         working-directory: ./typescript/packages/reality-data-client
