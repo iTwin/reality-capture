@@ -68,11 +68,18 @@ jobs:
         working-directory: ./typescript/packages/reality-data-client
         run: pnpm lint
 
-      - name: Install Chromium for oidc-signin-tool (playwright 1.48.2)
+      # Two different Playwright versions live in the dependency tree, each needing a
+      # different chromium build, so both must be installed explicitly:
+      #   - @itwin/oidc-signin-tool -> @playwright/test@1.48.2 (chromium build 1140, used for the OIDC signin browser)
+      #   - @itwin/certa@5.x        -> playwright@1.56.1       (chromium_headless_shell build 1194, used by the certa test runner)
+      # Pinning the versions on npx makes resolution deterministic regardless of bin hoisting.
+      - name: Install Chromium for Playwright (1.48.2 + 1.56.1)
         working-directory: ./typescript/packages/reality-data-client
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers-${{ inputs.node-version }}
-        run: npx playwright install chromium
+        run: |
+          npx playwright@1.48.2 install chromium
+          npx playwright@1.56.1 install chromium
 
       - name: Run SDK Integration Tests
         working-directory: ./typescript/packages/reality-data-client
