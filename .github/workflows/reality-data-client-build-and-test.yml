@@ -78,6 +78,9 @@ jobs:
         working-directory: ./typescript/packages/reality-data-client
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers-${{ inputs.node-version }}
+          # Needed on Windows: oidc-signin-tool only adds --no-sandbox on Linux; --disable-gpu prevents Chromium from hanging on Windows Server runners.
+          # Note: the env var name has a typo in the tool source ("ODIC" instead of "OIDC") — use it as-is.
+          ODIC_SIGNIN_TOOL_EXTRA_LAUNCH_OPTS: ${{ runner.os == 'Windows' && '{"args":["--disable-gpu"]}' || '' }}
           IMJS_INTEGRATION_TESTS_PROJECT_ID: ${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}
           IMJS_INTEGRATION_TESTS_CLIENT_ID: ${{ secrets.INTEGRATION_TESTS_CLIENT_ID }}
           IMJS_INTEGRATION_TESTS_SECRET: ${{ secrets.INTEGRATION_TESTS_SECRET }}
