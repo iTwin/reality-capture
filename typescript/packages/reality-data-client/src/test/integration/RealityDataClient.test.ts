@@ -782,6 +782,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
 
   it("should query reality data using the dataCenter parameter", async () => {
     const realityDataQueryCriteria: RealityDataQueryCriteria = {
+      getFullRepresentation: true,
       top: 10,
       dataCenter: "East US",
     };
