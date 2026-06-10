@@ -69,17 +69,36 @@ jobs:
         run: pnpm lint
 
       # Two different Playwright versions live in the dependency tree, each needing a
-      # different chromium build, so both must be installed explicitly:
-      #   - @itwin/oidc-signin-tool -> @playwright/test@1.48.2 (chromium build 1140, used for the OIDC signin browser)
-      #   - @itwin/certa@5.x        -> playwright@1.56.1       (chromium_headless_shell build 1194, used by the certa test runner)
-      # Pinning the versions on npx makes resolution deterministic regardless of bin hoisting.
-      - name: Install Chromium for Playwright (1.48.2 + 1.56.1)
+      # DIFFERENT chromium build, so both must be installed:
+      #   - @itwin/oidc-signin-tool drives the OIDC browser via @playwright/test (1.48.2) -> chromium build 1140
+      #   - @itwin/certa runs the test runner via playwright (1.56.1) -> chromium_headless_shell build 1194
+      #
+      # `npx playwright@<version>` is unreliable here: npx runs the locally-linked `playwright`
+      # bin (which is @playwright/test 1.48.2) regardless of the requested version, so the 1.56.1
+      # headless shell never gets installed. Instead we resolve each tool's REAL playwright CLI via
+      # Node module resolution (starting from the package that actually uses it) and run that exact
+      # binary. This stays correct even if pnpm's layout or the pinned versions change.
+      - name: Install Chromium for Playwright
         working-directory: ./typescript/packages/reality-data-client
+        shell: bash
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers-${{ inputs.node-version }}
         run: |
-          npx playwright@1.48.2 install
-          npx playwright@1.56.1 install
+          set -e
+          install_chromium() {
+            node -e '
+              const path = require("path");
+              const { execFileSync } = require("child_process");
+              const consumer = process.argv[1];
+              const pkg = process.argv[2];
+              const pj = require.resolve(pkg + "/package.json", { paths: [require.resolve(consumer + "/package.json")] });
+              const cli = path.join(path.dirname(pj), require(pj).bin.playwright);
+              console.log("Installing chromium via " + pkg + " (" + require(pj).version + ") resolved from " + consumer);
+              execFileSync(process.execPath, [cli, "install", "chromium"], { stdio: "inherit" });
+            ' "$1" "$2"
+          }
+          install_chromium @itwin/oidc-signin-tool @playwright/test
+          install_chromium @itwin/certa playwright
 
       - name: Run SDK Integration Tests
         working-directory: ./typescript/packages/reality-data-client
