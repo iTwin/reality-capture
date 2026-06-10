@@ -737,8 +737,10 @@ describe("RealityServicesClient Normal (#integration)", () => {
       chai.assert(value.iTwinId === iTwinId);
       chai.assert(value.type);
       chai.assert(value.id);
+      chai.assert(value.lastAccessedDateTime);
+      chai.assert(value.lastAccessedDateTime.getTime() >= new Date(2021,0,1).getTime());
+      chai.assert(value.lastAccessedDateTime.getTime() <= new Date(2030,0,1).getTime());
     });
-  });
 
   it("should query reality data using the ownerId parameter", async () => {
     // Fetch one reality data to get its ownerId, then query by that ownerId
@@ -753,6 +755,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
     );
 
     const realityDataQueryCriteria: RealityDataQueryCriteria = {
+      getFullRepresentation: true,
       top: 10,
       ownerId: referenceRd.ownerId,
     };
@@ -771,10 +774,11 @@ describe("RealityServicesClient Normal (#integration)", () => {
     );
 
     realityDatas.forEach((value) => {
+      chai.assert(value.iTwinId === iTwinId);
       chai.assert(value.id);
       chai.assert(value.type);
+      chai.assert(value.ownerId === referenceRd.ownerId);
     });
-  });
 
   it("should query reality data using the dataCenter parameter", async () => {
     const realityDataQueryCriteria: RealityDataQueryCriteria = {
@@ -796,10 +800,11 @@ describe("RealityServicesClient Normal (#integration)", () => {
     );
 
     realityDatas.forEach((value) => {
+      chai.assert(value.iTwinId === iTwinId);
       chai.assert(value.id);
       chai.assert(value.type);
+      chai.assert(value.dataCenterLocation === "East US");
     });
-  });
 
   it("should query reality data using the tag parameter", async () => {
     const realityDataQueryCriteria: RealityDataQueryCriteria = {
