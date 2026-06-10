@@ -56,10 +56,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./typescript/packages/reality-data-client
-        env:
-          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers-${{ inputs.node-version }}
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-        run: pnpm install --frozen-lockfile=true
+        run: pnpm install --frozen-lockfile=true --ignore-scripts
 
       - name: Build
         working-directory: ./typescript/packages/reality-data-client
