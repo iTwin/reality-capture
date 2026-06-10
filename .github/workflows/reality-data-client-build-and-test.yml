@@ -57,7 +57,7 @@ jobs:
       - name: Install dependencies
         working-directory: ./typescript/packages/reality-data-client
         env:
-          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers-${{ inputs.node-version }}
         run: pnpm install --frozen-lockfile=true
 
       - name: Build
@@ -71,13 +71,13 @@ jobs:
       - name: Install Chromium for oidc-signin-tool (playwright 1.48.2)
         working-directory: ./typescript/packages/reality-data-client
         env:
-          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers-${{ inputs.node-version }}
         run: pnpm exec playwright install chromium
 
       - name: Run SDK Integration Tests
         working-directory: ./typescript/packages/reality-data-client
         env:
-          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers-${{ inputs.node-version }}
           IMJS_INTEGRATION_TESTS_PROJECT_ID: ${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}
           IMJS_INTEGRATION_TESTS_CLIENT_ID: ${{ secrets.INTEGRATION_TESTS_CLIENT_ID }}
           IMJS_INTEGRATION_TESTS_SECRET: ${{ secrets.INTEGRATION_TESTS_SECRET }}
