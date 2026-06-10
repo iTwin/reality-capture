@@ -56,7 +56,9 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./typescript/packages/reality-data-client
-        run: pnpm install --frozen-lockfile=true --ignore-scripts
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
+        run: pnpm install --frozen-lockfile=true
 
       - name: Build
         working-directory: ./typescript/packages/reality-data-client
@@ -66,11 +68,11 @@ jobs:
         working-directory: ./typescript/packages/reality-data-client
         run: pnpm lint
 
-      - name: Install Playwright for integration tests
+      - name: Install Chromium for oidc-signin-tool (playwright 1.48.2)
         working-directory: ./typescript/packages/reality-data-client
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
-        run: pnpm exec playwright install
+        run: pnpm exec playwright install chromium
 
       - name: Run SDK Integration Tests
         working-directory: ./typescript/packages/reality-data-client
