@@ -66,13 +66,16 @@ jobs:
         working-directory: ./typescript/packages/reality-data-client
         run: pnpm lint
 
-      - name: Install Chromium for integration tests
+      - name: Install Playwright for integration tests
         working-directory: ./typescript/packages/reality-data-client
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
         run: pnpm exec playwright install
 
       - name: Run SDK Integration Tests
         working-directory: ./typescript/packages/reality-data-client
         env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
           IMJS_INTEGRATION_TESTS_PROJECT_ID: ${{ secrets.INTEGRATION_TESTS_PROJECT_ID }}
           IMJS_INTEGRATION_TESTS_CLIENT_ID: ${{ secrets.INTEGRATION_TESTS_CLIENT_ID }}
           IMJS_INTEGRATION_TESTS_SECRET: ${{ secrets.INTEGRATION_TESTS_SECRET }}
