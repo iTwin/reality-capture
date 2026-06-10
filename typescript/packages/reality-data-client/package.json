@@ -75,7 +75,4 @@
   "peerDependencies": {
     "@itwin/core-bentley": "^4.0.0 || ^5.0.0"
   },
-  "pnpm": {
-    "ignoredBuiltDependencies": ["@itwin/certa", "@itwin/oidc-signin-tool"]
-  }
 }
