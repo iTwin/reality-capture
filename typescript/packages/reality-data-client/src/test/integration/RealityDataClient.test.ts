@@ -294,12 +294,13 @@ describe("RealityServicesClient Normal (#integration)", () => {
 
     chai.assert(realityData);
     // get all projects information
-    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    /* eslint-disable @typescript-eslint/no-deprecated */
     const projects =
       await realityDataAccessClientForTest.getRealityDataProjects(
         accessToken,
         realityData.id,
       );
+    /* eslint-enable @typescript-eslint/no-deprecated */
     chai.assert(projects);
     chai.assert(projects.length === 2);
     projects.forEach((value) => {
