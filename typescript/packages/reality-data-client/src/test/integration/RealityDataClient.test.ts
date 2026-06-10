@@ -521,8 +521,12 @@ describe("RealityServicesClient Normal (#integration)", () => {
 
     const realityDatas = realityDataResponse.realityDatas;
     chai.assert(realityDatas);
+    chai.assert(
+      realityDatas.length > 1,
+      "Expected at least two reality data results",
+    );
 
-    let lastCreatedTime = Date.now();
+    let lastCreatedTime = Number.MAX_SAFE_INTEGER;
 
     realityDatas.forEach((value) => {
       chai.assert(value.iTwinId === iTwinId);
