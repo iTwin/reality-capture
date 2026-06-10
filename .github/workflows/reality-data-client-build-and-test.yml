@@ -58,7 +58,7 @@ jobs:
         working-directory: ./typescript/packages/reality-data-client
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers-${{ inputs.node-version }}
-        run: pnpm install --frozen-lockfile=true
+        run: pnpm install --frozen-lockfile=true --ignore-scripts
 
       - name: Build
         working-directory: ./typescript/packages/reality-data-client
@@ -72,7 +72,7 @@ jobs:
         working-directory: ./typescript/packages/reality-data-client
         env:
           PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers-${{ inputs.node-version }}
-        run: pnpm exec playwright install chromium
+        run: npx playwright install chromium
 
       - name: Run SDK Integration Tests
         working-directory: ./typescript/packages/reality-data-client
