@@ -70,7 +70,7 @@ jobs:
 
       - name: Install Chromium for integration tests
         working-directory: ./typescript/packages/reality-data-client
-        run: npx playwright install chromium
+        run: pnpm exec playwright install chromium
 
       - name: Run SDK Integration Tests
         working-directory: ./typescript/packages/reality-data-client
