@@ -1,23 +1,27 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 
 /** @packageDocumentation
  * @module RealityDataClient
  */
 
-import { type AccessToken, BentleyError} from "@itwin/core-bentley";
-import type { AuthorizationClient, CartographicRange, RealityDataAccess } from "@itwin/core-common";
+import { type AccessToken, BentleyError } from "@itwin/core-bentley";
+import type {
+  AuthorizationClient,
+  CartographicRange,
+  RealityDataAccess,
+} from "@itwin/core-common";
 import axios, { type AxiosResponse } from "axios";
 import { ITwinRealityData } from "./RealityData";
 import { getRequestConfig } from "./RequestOptions";
-import {Project} from "./Projects";
+import { Project } from "./Projects";
 import { Angle } from "./helper/Angle";
 
 /** Options for initializing Reality Data Client
  * @beta
-*/
+ */
 export interface RealityDataClientOptions {
   /** The authorization client to use to get access token to Context Share API (authority: https://ims.bentley.com )
    *  When define it will ignore accessToken from API parameters and will get an access token from this client.
@@ -31,7 +35,7 @@ export interface RealityDataClientOptions {
 
 /** Available Reality Management API Versions */
 export enum ApiVersion {
-  v1
+  v1,
 }
 
 /** Criteria used to query for reality data associated with an iTwin context.
@@ -39,7 +43,6 @@ export enum ApiVersion {
  * @beta
  */
 export interface RealityDataQueryCriteria {
-
   /** If supplied, only reality data overlapping this range will be included. */
   extent?: CartographicRange;
 
@@ -107,10 +110,11 @@ export interface RealityDataResponse {
  * @beta
  */
 export class RealityDataAccessClient implements RealityDataAccess {
-
-  public readonly baseUrl: string = "https://api.bentley.com/reality-management/reality-data";
+  public readonly baseUrl: string =
+    "https://api.bentley.com/reality-management/reality-data";
   public readonly apiVersion: ApiVersion = ApiVersion.v1;
-  public readonly authorizationClient: AuthorizationClient | undefined = undefined;
+  public readonly authorizationClient: AuthorizationClient | undefined =
+    undefined;
 
   /**
    * Creates an instance of RealityDataAccessClient.
@@ -128,18 +132,18 @@ export class RealityDataAccessClient implements RealityDataAccess {
   }
 
   /**
-  * Ensures the reality data client points to Reality Management API, as many users hardcode the url to the deprecated Reality Data API.
-  * @param baseUrl base url given by users of this client
-  * @returns base url to Reality Management API
-  */
+   * Ensures the reality data client points to Reality Management API, as many users hardcode the url to the deprecated Reality Data API.
+   * @param baseUrl base url given by users of this client
+   * @returns base url to Reality Management API
+   */
   private setBaseUrl(baseUrl: string): string {
     const url = new URL(baseUrl);
-    switch(url.host) {
-      case "dev-api.bentley.com" :
+    switch (url.host) {
+      case "dev-api.bentley.com":
         return "https://dev-api.bentley.com/reality-management/reality-data";
-      case "qa-api.bentley.com" :
+      case "qa-api.bentley.com":
         return "https://qa-api.bentley.com/reality-management/reality-data";
-      case "api.bentley.com" :
+      case "api.bentley.com":
         return "https://api.bentley.com/reality-management/reality-data";
       default:
         throw new Error("invalid host");
@@ -152,7 +156,9 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * This is a workaround to support different authorization client for the reality data client and iTwin-core.
    */
   private async resolveAccessToken(accessToken: AccessToken): Promise<string> {
-    return this.authorizationClient ? this.authorizationClient.getAccessToken() : accessToken;
+    return this.authorizationClient
+      ? this.authorizationClient.getAccessToken()
+      : accessToken;
   }
 
   /**
@@ -164,8 +170,10 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @returns string containing the URL to reality data for indicated tile.
    * @beta
    */
-  public async getRealityDataUrl(iTwinId: string | undefined, realityDataId: string): Promise<string> {
-
+  public async getRealityDataUrl(
+    iTwinId: string | undefined,
+    realityDataId: string,
+  ): Promise<string> {
     if (iTwinId) {
       return `${this.baseUrl}/${realityDataId}?iTwinId=${iTwinId}`;
     }
@@ -183,18 +191,33 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @throws [[BentleyError]] with code 422 when the request is invalid
    * @beta
    */
-  public async getRealityData(accessToken: AccessToken, iTwinId: string | undefined, realityDataId: string): Promise<ITwinRealityData> {
+  public async getRealityData(
+    accessToken: AccessToken,
+    iTwinId: string | undefined,
+    realityDataId: string,
+  ): Promise<ITwinRealityData> {
     const accessTokenResolved = await this.resolveAccessToken(accessToken);
     const url = `${await this.getRealityDataUrl(iTwinId, realityDataId)}`;
     try {
-      const realityDataResponse = await axios.get(url, getRequestConfig(accessTokenResolved, "GET", url, this.apiVersion));
+      const realityDataResponse = await axios.get(
+        url,
+        getRequestConfig(accessTokenResolved, "GET", url, this.apiVersion),
+      );
 
       // Axios throws on 4XX and 5XX; we make sure the response here is 200
       if (realityDataResponse.status !== 200)
-        throw new BentleyError(422, iTwinId ? `Could not fetch reality data: ${realityDataId} with iTwinId ${iTwinId}`
-          : `Could not fetch reality data: ${realityDataId}`);
+        throw new BentleyError(
+          422,
+          iTwinId
+            ? `Could not fetch reality data: ${realityDataId} with iTwinId ${iTwinId}`
+            : `Could not fetch reality data: ${realityDataId}`,
+        );
 
-      const realityData = new ITwinRealityData(this, realityDataResponse.data.realityData, iTwinId);
+      const realityData = new ITwinRealityData(
+        this,
+        realityDataResponse.data.realityData,
+        iTwinId,
+      );
       return realityData;
     } catch (error) {
       return this.handleError(error);
@@ -202,32 +225,41 @@ export class RealityDataAccessClient implements RealityDataAccess {
   }
 
   /**
-  * Gets all reality data associated with the iTwin.
-  * @param accessToken The client request context.
-  * @param iTwinId id of associated iTwin
-  * @param criteria Criteria by which to query.
-  * @returns an array of RealityData that are associated to the iTwin.
-  * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
-  * @throws [[BentleyError]] with code 422 when the request is invalid
-  * @beta
-  */
-  public async getRealityDatas(accessToken: AccessToken, iTwinId: string | undefined, criteria: RealityDataQueryCriteria | undefined): Promise<RealityDataResponse> {
+   * Gets all reality data associated with the iTwin.
+   * @param accessToken The client request context.
+   * @param iTwinId id of associated iTwin
+   * @param criteria Criteria by which to query.
+   * @returns an array of RealityData that are associated to the iTwin.
+   * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
+   * @throws [[BentleyError]] with code 422 when the request is invalid
+   * @beta
+   */
+  public async getRealityDatas(
+    accessToken: AccessToken,
+    iTwinId: string | undefined,
+    criteria: RealityDataQueryCriteria | undefined,
+  ): Promise<RealityDataResponse> {
     try {
       const accessTokenResolved = await this.resolveAccessToken(accessToken);
       const url = new URL(this.baseUrl);
 
-      if(iTwinId)
-        url.searchParams.append("iTwinId", iTwinId);
+      if (iTwinId) url.searchParams.append("iTwinId", iTwinId);
 
       if (criteria) {
         if (criteria.continuationToken) {
-          url.searchParams.append("continuationToken", criteria.continuationToken);
+          url.searchParams.append(
+            "continuationToken",
+            criteria.continuationToken,
+          );
         }
 
         if (criteria.top) {
           const top = criteria.top;
           if (top > 500) {
-            throw new BentleyError(422, "Maximum value for top parameter is 500.");
+            throw new BentleyError(
+              422,
+              "Maximum value for top parameter is 500.",
+            );
           }
           url.searchParams.append("$top", top.toString());
         }
@@ -235,7 +267,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
         if (criteria.extent) {
           const iModelRange = criteria.extent.getLongitudeLatitudeBoundingBox();
           const extent = `${Angle.radiansToDegrees(iModelRange.low.x)},${Angle.radiansToDegrees(iModelRange.low.y)},${Angle.radiansToDegrees(iModelRange.high.x)},${Angle.radiansToDegrees(iModelRange.high.y)}`;
-          url.searchParams.append("extent",extent);
+          url.searchParams.append("extent", extent);
         }
 
         if (criteria.orderBy) {
@@ -251,27 +283,55 @@ export class RealityDataAccessClient implements RealityDataAccess {
         }
 
         if (criteria.acquisitionDates) {
-          const startDateTime = this.formatIsoString(criteria.acquisitionDates.startDateTime);
-          const endDateTime = this.formatIsoString(criteria.acquisitionDates.endDateTime);
-          url.searchParams.append("acquisitionDateTime", `${startDateTime}/${endDateTime}`);
+          const startDateTime = this.formatIsoString(
+            criteria.acquisitionDates.startDateTime,
+          );
+          const endDateTime = this.formatIsoString(
+            criteria.acquisitionDates.endDateTime,
+          );
+          url.searchParams.append(
+            "acquisitionDateTime",
+            `${startDateTime}/${endDateTime}`,
+          );
         }
 
         if (criteria.createdDateTime) {
-          const startDateTime = this.formatIsoString(criteria.createdDateTime.startDateTime);
-          const endDateTime = this.formatIsoString(criteria.createdDateTime.endDateTime);
-          url.searchParams.append("createdDateTime", `${startDateTime}/${endDateTime}`);
+          const startDateTime = this.formatIsoString(
+            criteria.createdDateTime.startDateTime,
+          );
+          const endDateTime = this.formatIsoString(
+            criteria.createdDateTime.endDateTime,
+          );
+          url.searchParams.append(
+            "createdDateTime",
+            `${startDateTime}/${endDateTime}`,
+          );
         }
 
         if (criteria.modifiedDateTime) {
-          const startDateTime = this.formatIsoString(criteria.modifiedDateTime.startDateTime);
-          const endDateTime = this.formatIsoString(criteria.modifiedDateTime.endDateTime);
-          url.searchParams.append("modifiedDateTime", `${startDateTime}/${endDateTime}`);
+          const startDateTime = this.formatIsoString(
+            criteria.modifiedDateTime.startDateTime,
+          );
+          const endDateTime = this.formatIsoString(
+            criteria.modifiedDateTime.endDateTime,
+          );
+          url.searchParams.append(
+            "modifiedDateTime",
+            `${startDateTime}/${endDateTime}`,
+          );
         }
 
         if (criteria.lastAccessedDateTime) {
-          const startDateTime = this.formatIsoString(criteria.lastAccessedDateTime.startDateTime);
-          const endDateTime = this.formatIsoString(criteria.lastAccessedDateTime.endDateTime);
-          url.searchParams.append("lastAccessedDateTime", `${startDateTime}/${endDateTime}`);
+          const startDateTime = this.formatIsoString(
+            criteria.lastAccessedDateTime.startDateTime,
+          );
+          const endDateTime = this.formatIsoString(
+            criteria.lastAccessedDateTime.endDateTime,
+          );
+          url.searchParams.append(
+            "lastAccessedDateTime",
+            `${startDateTime}/${endDateTime}`,
+          );
         }
 
         if (criteria.ownerId) {
@@ -282,29 +342,45 @@ export class RealityDataAccessClient implements RealityDataAccess {
           url.searchParams.append("dataCenter", criteria.dataCenter);
         }
 
-        if(criteria.tag) {
+        if (criteria.tag) {
           url.searchParams.append("tag", criteria.tag);
         }
       }
-      const response = await axios.get(url.href, getRequestConfig(accessTokenResolved, "GET", url.href, this.apiVersion, (criteria?.getFullRepresentation === true ? true : false)));
+      const response = await axios.get(
+        url.href,
+        getRequestConfig(
+          accessTokenResolved,
+          "GET",
+          url.href,
+          this.apiVersion,
+          criteria?.getFullRepresentation === true ? true : false,
+        ),
+      );
       // Axios throws on 4XX and 5XX; we make sure the response here is 200
       if (response.status !== 200)
-        throw new BentleyError(422, iTwinId ? `Could not fetch reality data with iTwinId ${iTwinId}`
-          : "Could not fetch reality data");
+        throw new BentleyError(
+          422,
+          iTwinId
+            ? `Could not fetch reality data with iTwinId ${iTwinId}`
+            : "Could not fetch reality data",
+        );
 
       const realityDatasResponseBody = response.data;
 
       const realityDataResponse: RealityDataResponse = {
         realityDatas: [],
-        continuationToken: this.extractContinuationToken(response.data._links?.next?.href),
+        continuationToken: this.extractContinuationToken(
+          response.data._links?.next?.href,
+        ),
       };
 
       realityDatasResponseBody.realityData.forEach((realityData: any) => {
-        realityDataResponse.realityDatas.push(new ITwinRealityData(this, realityData, iTwinId));
+        realityDataResponse.realityDatas.push(
+          new ITwinRealityData(this, realityData, iTwinId),
+        );
       });
 
       return realityDataResponse;
-
     } catch (error) {
       return this.handleError(error);
     }
@@ -320,7 +396,9 @@ export class RealityDataAccessClient implements RealityDataAccess {
     return `${date.toISOString().slice(0, -5)}Z`;
   }
 
-  private extractContinuationToken(url: string | undefined): string | undefined {
+  private extractContinuationToken(
+    url: string | undefined,
+  ): string | undefined {
     if (url) {
       // API returns some case sensitive parameters e.g. "ContinuationToken". Therefore first, set parameters to lowercase
       const searchParams = new URLSearchParams(url);
@@ -339,19 +417,27 @@ export class RealityDataAccessClient implements RealityDataAccess {
   }
 
   /**
-  * Retrieves the list of Projects associated to the specified realityData.
-  * @deprecated in 1.0.1, getRealityDataProjects is deprecated and no longer used as Projects API is deprecated. Use getRealityDatasITwins method.
-  * @param accessToken The client request context.
-  * @param realityDataId realityData identifier
-  * @returns an array of Projects that are associated to the realityData.
-  * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
-  * @beta
-  */
-  public async getRealityDataProjects(accessToken: AccessToken, realityDataId: string): Promise<Project[]> {
+   * Retrieves the list of Projects associated to the specified realityData.
+   * @deprecated in 1.0.1, getRealityDataProjects is deprecated and no longer used as Projects API is deprecated. Use getRealityDatasITwins method.
+   * @param accessToken The client request context.
+   * @param realityDataId realityData identifier
+   * @returns an array of Projects that are associated to the realityData.
+   * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
+   * @beta
+   */
+  public async getRealityDataProjects(
+    accessToken: AccessToken,
+    realityDataId: string,
+  ): Promise<Project[]> {
     try {
       const accessTokenResolved = await this.resolveAccessToken(accessToken);
       const url = `${this.baseUrl}/${realityDataId}/itwins`;
-      const options = getRequestConfig(accessTokenResolved, "GET", url, this.apiVersion);
+      const options = getRequestConfig(
+        accessTokenResolved,
+        "GET",
+        url,
+        this.apiVersion,
+      );
 
       // execute query
       const response = await axios.get(url, options);
@@ -361,49 +447,56 @@ export class RealityDataAccessClient implements RealityDataAccess {
       const projectsResponse: Project[] = [];
 
       // make up projects details link manually
-      const projectsBaseUrl = this.baseUrl.replace("/reality-management/reality-data", "/projects");
+      const projectsBaseUrl = this.baseUrl.replace(
+        "/reality-management/reality-data",
+        "/projects",
+      );
 
       projectsResponseBody.iTwins.forEach((itwinValue: any) => {
-
         // build Project object with _links.self.href structure
         const href = new URL(`${projectsBaseUrl}/${itwinValue}`);
-        const self =
-        {
+        const self = {
           href,
         };
 
-        const newProject = new Project(
-          {
-            id: itwinValue,
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            _links: {
-              self,
-            },
-          });
+        const newProject = new Project({
+          id: itwinValue,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          _links: {
+            self,
+          },
+        });
 
         projectsResponse.push(newProject);
       });
 
       return projectsResponse;
-
     } catch (error) {
       return this.handleError(error);
     }
   }
 
   /**
-  * Retrieves the list of iTwins associated to the specified realityData.
-  * @param accessToken The client request context.
-  * @param realityDataId realityData identifier
-  * @returns an array of iTwin identifiers that are associated to the realityData.
-  * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
-  * @beta
-  */
-  public async getRealityDataITwins(accessToken: AccessToken, realityDataId: string): Promise<string[]> {
+   * Retrieves the list of iTwins associated to the specified realityData.
+   * @param accessToken The client request context.
+   * @param realityDataId realityData identifier
+   * @returns an array of iTwin identifiers that are associated to the realityData.
+   * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
+   * @beta
+   */
+  public async getRealityDataITwins(
+    accessToken: AccessToken,
+    realityDataId: string,
+  ): Promise<string[]> {
     try {
       const accessTokenResolved = await this.resolveAccessToken(accessToken);
       const url = `${this.baseUrl}/${realityDataId}/itwins`;
-      const options = getRequestConfig(accessTokenResolved, "GET", url, this.apiVersion);
+      const options = getRequestConfig(
+        accessTokenResolved,
+        "GET",
+        url,
+        this.apiVersion,
+      );
 
       // execute query
       const response = await axios.get(url, options);
@@ -417,7 +510,6 @@ export class RealityDataAccessClient implements RealityDataAccess {
       });
 
       return iTwinsResponse;
-
     } catch (error) {
       return this.handleError(error);
     }
@@ -433,11 +525,20 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @throws [[BentleyError]] with code 422 when the request is invalid
    * @beta
    */
-  public async createRealityData(accessToken: AccessToken, iTwinId: string | undefined, iTwinRealityData: ITwinRealityData): Promise<ITwinRealityData> {
+  public async createRealityData(
+    accessToken: AccessToken,
+    iTwinId: string | undefined,
+    iTwinRealityData: ITwinRealityData,
+  ): Promise<ITwinRealityData> {
     try {
       const accessTokenResolved = await this.resolveAccessToken(accessToken);
       const url = this.baseUrl;
-      const options = getRequestConfig(accessTokenResolved, "POST", url, this.apiVersion);
+      const options = getRequestConfig(
+        accessTokenResolved,
+        "POST",
+        url,
+        this.apiVersion,
+      );
 
       // creation payload
 
@@ -457,11 +558,14 @@ export class RealityDataAccessClient implements RealityDataAccess {
         crs: iTwinRealityData.crs,
         attribution: iTwinRealityData.attribution,
         termsOfUse: iTwinRealityData.termsOfUse,
-        ownerId: iTwinRealityData.ownerId,
       };
 
       const response = await axios.post(url, realityDataToCreate, options);
-      iTwinRealityData = new ITwinRealityData(this, response.data.realityData, iTwinId);
+      iTwinRealityData = new ITwinRealityData(
+        this,
+        response.data.realityData,
+        iTwinId,
+      );
     } catch (error) {
       return this.handleError(error);
     }
@@ -470,21 +574,30 @@ export class RealityDataAccessClient implements RealityDataAccess {
   }
 
   /**
-  * Modifies an existing RealityData
-  * @param accessToken The client request context.
-  * @param iTwinId id of associated iTwin
-  * @param iTwinRealityData the realityData to modify
-  * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
-  * @throws [[BentleyError]] with code 404 when the specified reality data was not found
-  * @throws [[BentleyError]] with code 422 when the request is invalid
-  * @beta
-  */
-  public async modifyRealityData(accessToken: AccessToken, iTwinId: string | undefined, iTwinRealityData: ITwinRealityData): Promise<ITwinRealityData> {
+   * Modifies an existing RealityData
+   * @param accessToken The client request context.
+   * @param iTwinId id of associated iTwin
+   * @param iTwinRealityData the realityData to modify
+   * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
+   * @throws [[BentleyError]] with code 404 when the specified reality data was not found
+   * @throws [[BentleyError]] with code 422 when the request is invalid
+   * @beta
+   */
+  public async modifyRealityData(
+    accessToken: AccessToken,
+    iTwinId: string | undefined,
+    iTwinRealityData: ITwinRealityData,
+  ): Promise<ITwinRealityData> {
     try {
       const accessTokenResolved = await this.resolveAccessToken(accessToken);
       const url = new URL(`${this.baseUrl}/${iTwinRealityData.id}`);
 
-      const options = getRequestConfig(accessTokenResolved, "PATCH", url.href, this.apiVersion);
+      const options = getRequestConfig(
+        accessTokenResolved,
+        "PATCH",
+        url.href,
+        this.apiVersion,
+      );
 
       // payload
 
@@ -505,12 +618,19 @@ export class RealityDataAccessClient implements RealityDataAccess {
         crs: iTwinRealityData.crs,
         attribution: iTwinRealityData.attribution,
         termsOfUse: iTwinRealityData.termsOfUse,
-        ownerId: iTwinRealityData.ownerId,
       };
 
-      const response = await axios.patch(url.href, realityDataToModify, options);
+      const response = await axios.patch(
+        url.href,
+        realityDataToModify,
+        options,
+      );
 
-      iTwinRealityData = new ITwinRealityData(this, response.data.realityData, iTwinId);
+      iTwinRealityData = new ITwinRealityData(
+        this,
+        response.data.realityData,
+        iTwinId,
+      );
     } catch (error) {
       return this.handleError(error);
     }
@@ -528,24 +648,28 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @throws [[BentleyError]] with code 422 when the request is invalid
    * @beta
    */
-  public async deleteRealityData(accessToken: AccessToken, realityDataId: string): Promise<boolean> {
-
+  public async deleteRealityData(
+    accessToken: AccessToken,
+    realityDataId: string,
+  ): Promise<boolean> {
     let response: AxiosResponse;
     try {
       const accessTokenResolved = await this.resolveAccessToken(accessToken);
       const url = `${this.baseUrl}/${realityDataId}`;
-      const options = getRequestConfig(accessTokenResolved, "POST", url, this.apiVersion);
+      const options = getRequestConfig(
+        accessTokenResolved,
+        "POST",
+        url,
+        this.apiVersion,
+      );
 
       response = await axios.delete(url, options);
-
     } catch (error) {
       return this.handleError(error);
     }
 
-    if (response.status === 204)
-      return true;
-    else
-      return false;
+    if (response.status === 204) return true;
+    else return false;
   }
 
   /**
@@ -559,92 +683,107 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @throws [[BentleyError]] with code 422 when the request is invalid
    * @beta
    */
-  public async associateRealityData(accessToken: AccessToken, iTwinId: string, realityDataId: string): Promise<boolean> {
-
+  public async associateRealityData(
+    accessToken: AccessToken,
+    iTwinId: string,
+    realityDataId: string,
+  ): Promise<boolean> {
     let response: AxiosResponse;
     try {
       const accessTokenResolved = await this.resolveAccessToken(accessToken);
       const url = `${this.baseUrl}/${realityDataId}/iTwins/${iTwinId}`;
-      const options = getRequestConfig(accessTokenResolved, "POST", url, this.apiVersion);
+      const options = getRequestConfig(
+        accessTokenResolved,
+        "POST",
+        url,
+        this.apiVersion,
+      );
 
       response = await axios.post(url, undefined, options);
-
     } catch (error) {
       return this.handleError(error);
     }
-    if (response.status === 200)
-      return true;
-    else
-      return false;
+    if (response.status === 200) return true;
+    else return false;
   }
 
   /**
-  * Dissociates a RealityData from an iTwin
-  * @param accessToken The client request context.
-  * @param iTwinId id of iTwin to dissociate the realityData from.
-  * @param realityDataId id of the RealityData.
-  * @returns true if successful (204 response) or false if not
-  * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
-  * @throws [[BentleyError]] with code 404 when the association between the reality data and iTwin was not found
-  * @throws [[BentleyError]] with code 422 when the request is invalid
-  * @beta
-  */
-  public async dissociateRealityData(accessToken: AccessToken, iTwinId: string, realityDataId: string): Promise<boolean> {
-
+   * Dissociates a RealityData from an iTwin
+   * @param accessToken The client request context.
+   * @param iTwinId id of iTwin to dissociate the realityData from.
+   * @param realityDataId id of the RealityData.
+   * @returns true if successful (204 response) or false if not
+   * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
+   * @throws [[BentleyError]] with code 404 when the association between the reality data and iTwin was not found
+   * @throws [[BentleyError]] with code 422 when the request is invalid
+   * @beta
+   */
+  public async dissociateRealityData(
+    accessToken: AccessToken,
+    iTwinId: string,
+    realityDataId: string,
+  ): Promise<boolean> {
     let response: AxiosResponse;
     try {
       const accessTokenResolved = await this.resolveAccessToken(accessToken);
       const url = `${this.baseUrl}/${realityDataId}/iTwins/${iTwinId}`;
-      const options = getRequestConfig(accessTokenResolved, "DELETE", url, this.apiVersion);
+      const options = getRequestConfig(
+        accessTokenResolved,
+        "DELETE",
+        url,
+        this.apiVersion,
+      );
 
       response = await axios.delete(url, options);
-
     } catch (error) {
       return this.handleError(error);
     }
-    if (response.status === 204)
-      return true;
-    else
-      return false;
+    if (response.status === 204) return true;
+    else return false;
   }
 
   /**
-  * Moves a RealityData to a different iTwin
-  * @param accessToken The client request context.
-  * @param realityDataId The id of the RealityData to move.
-  * @param iTwinId The id of the iTwin to move the RealityData to.
-  * @returns true if successful (204 response) or false if not
-  * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
-  * @throws [[BentleyError]] with code 404 when the specified reality data or iTwin was not found
-  * @throws [[BentleyError]] with code 422 when the request is invalid
-  * @throws [[BentleyError]] with code 409 when the reality data is already associated with the specified iTwin
-  * @beta
-  */
-  public async moveRealityData(accessToken: AccessToken, realityDataId: string, iTwinId: string): Promise<boolean> {
-
+   * Moves a RealityData to a different iTwin
+   * @param accessToken The client request context.
+   * @param realityDataId The id of the RealityData to move.
+   * @param iTwinId The id of the iTwin to move the RealityData to.
+   * @returns true if successful (204 response) or false if not
+   * @throws [[BentleyError]] with code 401 when the request lacks valid authentication credentials
+   * @throws [[BentleyError]] with code 404 when the specified reality data or iTwin was not found
+   * @throws [[BentleyError]] with code 422 when the request is invalid
+   * @throws [[BentleyError]] with code 409 when the reality data is already associated with the specified iTwin
+   * @beta
+   */
+  public async moveRealityData(
+    accessToken: AccessToken,
+    realityDataId: string,
+    iTwinId: string,
+  ): Promise<boolean> {
     let response: AxiosResponse;
     try {
       const accessTokenResolved = await this.resolveAccessToken(accessToken);
       const url = `${this.baseUrl}/${realityDataId}/move`;
-      const options = getRequestConfig(accessTokenResolved, "PATCH", url, this.apiVersion);
+      const options = getRequestConfig(
+        accessTokenResolved,
+        "PATCH",
+        url,
+        this.apiVersion,
+      );
       const payload = { iTwinId };
 
       response = await axios.patch(url, payload, options);
-
     } catch (error) {
       return this.handleError(error);
     }
-    if (response.status === 204)
-      return true;
-    else
-      return false;
+    if (response.status === 204) return true;
+    else return false;
   }
 
   /**
-  * Handle errors thrown.
-  * Handled errors can be of AxiosError type or BentleyError.
-  * @beta
-  */
+   * Handle errors thrown.
+   * Handled errors can be of AxiosError type or BentleyError.
+   * @beta
+   */
   private handleError(error: any): any {
     // Default error
     let status = 422;
@@ -663,5 +802,4 @@ export class RealityDataAccessClient implements RealityDataAccess {
     }
     return Promise.reject(new BentleyError(status, message));
   }
-
 }
