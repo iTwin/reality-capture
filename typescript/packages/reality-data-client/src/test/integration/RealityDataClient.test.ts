@@ -1025,7 +1025,6 @@ describe("RealityServicesClient Normal (#integration)", () => {
     };
     realityDataAdded.attribution = "MODIFIED Attribution text";
     realityDataAdded.termsOfUse = "MODIFIED Terms of use text";
-    realityDataAdded.ownerId = undefined;
 
     const realityDataModified =
       await realityDataAccessClientForTest.modifyRealityData(
@@ -1148,7 +1147,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
 
     realityDataAdded.displayName =
       "MODIFIED iTwinjs RealityData Client CRUD test without iTwinId";
-    realityDataAdded.ownerId = undefined;
+
     const realityDataModified =
       await realityDataAccessClientForTest.modifyRealityData(
         accessToken,
