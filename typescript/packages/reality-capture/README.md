@@ -38,7 +38,7 @@ In case you need a package for your own project, run the following command :
 - Build the package
 
   ```sh
-  pnpm pack
+  pnpm run pack
   ```
 
 You will find the .tgz file in /lib folder

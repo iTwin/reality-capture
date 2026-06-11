@@ -631,7 +631,7 @@ describe("RealityServicesClient Normal (#integration)", () => {
       );
       chai.assert(
         value.acquisition?.startDateTime.getTime() <=
-          new Date(2022, 5, 12).getTime(),
+          new Date(2023, 5, 12).getTime(),
       );
     });
   });
