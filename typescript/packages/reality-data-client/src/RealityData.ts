@@ -108,6 +108,7 @@ export class ITwinRealityData implements RealityData {
   public modifiedDateTime?: Date;
   public lastAccessedDateTime?: Date;
   public createdDateTime?: Date;
+  public ownerId?: string;
 
   /** Link to client to fetch the blob url */
   public client: undefined | RealityDataAccessClient;
@@ -155,6 +156,7 @@ export class ITwinRealityData implements RealityData {
       this.modifiedDateTime = new Date(realityData.modifiedDateTime);
       this.lastAccessedDateTime = new Date(realityData.lastAccessedDateTime);
       this.createdDateTime = new Date(realityData.createdDateTime);
+      this.ownerId = realityData.ownerId;
     }
 
     if (iTwinId)
