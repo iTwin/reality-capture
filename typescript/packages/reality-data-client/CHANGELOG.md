@@ -1,8 +1,16 @@
 # Change Log - @itwin/reality-data-client
 
-<!-- This log was last generated on Thu, 20 Nov 2025 15:18:53 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 15 Jun 2026 14:39:48 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 1.5.0
+
+Mon, 15 Jun 2026 14:39:48 GMT
+
+### Minor changes
+
+- Update Reality Data models with latest API additions (5690282+cnovel@users.noreply.github.com)
 
 ## 1.4.0
 

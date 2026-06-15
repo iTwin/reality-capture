@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Update Reality Data models with latest API additions",
-  "packageName": "@itwin/reality-data-client",
-  "email": "5690282+cnovel@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

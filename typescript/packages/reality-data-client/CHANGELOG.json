@@ -2,6 +2,21 @@
   "name": "@itwin/reality-data-client",
   "entries": [
     {
+      "date": "Mon, 15 Jun 2026 14:39:48 GMT",
+      "version": "1.5.0",
+      "tag": "@itwin/reality-data-client_v1.5.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "5690282+cnovel@users.noreply.github.com",
+            "package": "@itwin/reality-data-client",
+            "commit": "5e5d4f37ebf10cb5a231a247f2ec34bfed8086f4",
+            "comment": "Update Reality Data models with latest API additions"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 20 Nov 2025 15:18:53 GMT",
       "version": "1.4.0",
       "tag": "@itwin/reality-data-client_v1.4.0",
