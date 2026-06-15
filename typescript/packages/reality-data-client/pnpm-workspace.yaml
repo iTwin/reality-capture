@@ -1,3 +1,6 @@
+packages:
+  - .
+
 allowBuilds:
-  '@itwin/certa': true
-  '@itwin/oidc-signin-tool': true
+  "@itwin/certa": true
+  "@itwin/oidc-signin-tool": true
