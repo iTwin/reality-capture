@@ -1,0 +1,3 @@
+allowBuilds:
+  '@itwin/certa': true
+  '@itwin/oidc-signin-tool': true
