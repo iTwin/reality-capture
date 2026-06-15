@@ -1,15 +1,15 @@
 import reality_capture.specifications.training as training
 
-s3d_inputs = training.TrainingS3DInputs(
+training_s3d_inputs = training.TrainingS3DInputs(
     segmentations3D=["401975b7-0c0a-4498-5896-84987921f4bb"],
     detectorName="example-detector",
 )
 
-s3d_outputs = [
+training_s3d_outputs = [
     training.TrainingS3DOutputsCreate.DETECTOR,
 ]
 
-s3d_options = training.TrainingS3DOptions(
+training_s3d_options = training.TrainingS3DOptions(
     epochs=2,
     spacing=0.2,
     model=training.Segmentation3DTrainingModel.SPLATNET,
@@ -17,6 +17,6 @@ s3d_options = training.TrainingS3DOptions(
     versionNumber="1.0",
 )
 
-s3ds = training.TrainingS3DSpecificationsCreate(
-    inputs=s3d_inputs, outputs=s3d_outputs, options=s3d_options
+training_s3ds = training.TrainingS3DSpecificationsCreate(
+    inputs=training_s3d_inputs, outputs=training_s3d_outputs, options=training_s3d_options
 )
