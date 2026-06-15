@@ -52,7 +52,7 @@ describe("change_detection specifications", () => {
       const valid = {
         outputCrs: "EPSG:4326",
         minPointsPerChange: 10,
-        meshSamplingResolution: 0.5,
+        samplingResolution: 0.5,
         threshold: 0.2,
         filterThreshold: 0.1,
       };
@@ -97,7 +97,7 @@ describe("change_detection specifications", () => {
         outputs: {
           locations3DAsSHP: "shpId",
         },
-        options: { meshSamplingResolution: 0.5 },
+        options: { samplingResolution: 0.5 },
       };
       expect(() => ChangeDetectionSpecificationsSchema.parse(valid)).not.to.throw();
     });

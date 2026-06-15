@@ -28,7 +28,7 @@ export type ChangeDetectionOutputs = z.infer<typeof ChangeDetectionOutputsSchema
 export const ChangeDetectionOptionsSchema = z.object({
   outputCrs: z.string().optional().describe("CRS used by locations3DAsSHP output"),
   minPointsPerChange: z.number().int().optional().describe("Minimum number of points in a region to be considered as a change"),
-  meshSamplingResolution: z.number().optional().describe("Target point cloud resolution when starting from meshes"),
+  samplingResolution: z.number().optional().describe("Target point cloud resolution when starting from meshes"),
   threshold: z.number().optional().describe("High threshold to detect spatial changes (hysteresis detection)"),
   filterThreshold: z.number().optional().describe("Low threshold to detect spatial changes (hysteresis detection)"),
 });

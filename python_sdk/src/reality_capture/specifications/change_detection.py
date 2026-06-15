@@ -36,7 +36,7 @@ class ChangeDetectionOptions(BaseModel):
     min_points_per_change: Optional[int] = Field(None, alias="minPointsPerChange",
                                                  description="Minimum number of points in a region "
                                                              "to be considered as a change")
-    sampling_resolution: Optional[float] = Field(None, alias="meshSamplingResolution",
+    sampling_resolution: Optional[float] = Field(None, alias="samplingResolution",
                                                  description="Target point cloud resolution when starting from meshes")
     grow_threshold: Optional[float] = Field(None, alias="growThreshold",
                                             description="High threshold to detect spatial changes "
