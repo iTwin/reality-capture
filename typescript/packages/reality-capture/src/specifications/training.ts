@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const TrainingS3DInputsSchema = z.object({
   segmentations3D: z.array(z.string()).describe("List of 3D models to train on."),
-  preset: z.string().optional().describe("Path to preset"),
+  preset: z.string().optional().describe("Path to a preset"),
   detectorName: z.string().describe("Name of the detector to train"),
 });
 export type TrainingS3DInputs = z.infer<typeof TrainingS3DInputsSchema>;

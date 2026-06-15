@@ -8,8 +8,7 @@ s3d_inputs = training.TrainingS3DInputs(
 s3d_outputs = [
     training.TrainingS3DOutputsCreate.DETECTOR,
 ]
-s3d_options = training.TrainingS3DOptions(epochs=2, spacing=0.2)
 
 s3ds = training.TrainingS3DSpecificationsCreate(
-    inputs=s3d_inputs, outputs=s3d_outputs, options=s3d_options
+    inputs=s3d_inputs, outputs=s3d_outputs
 )

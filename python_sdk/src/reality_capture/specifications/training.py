@@ -8,7 +8,7 @@ class TrainingS3DInputs(BaseModel):
         description="List of 3D models to train on.",
         alias="segmentations3D"
     )
-    preset: Optional[str] = Field(default=None, description="Path to preset")
+    preset: Optional[str] = Field(default=None, description="Path to a preset")
     detector_name: str = Field(description="Name of the detector to train", alias="detectorName")
 
 
