@@ -41,8 +41,8 @@
     "check": "beachball check",
     "version-bump": "beachball bump",
     "publish-packages": "beachball publish",
-    "version-bump-dev": "beachball bump --config beachball.config.dev.js --keep-change-files",
-    "publish-packages-dev": "beachball publish --config beachball.config.dev.js --keep-change-files"
+    "version-bump-dev": "beachball bump --config typescript/packages/reality-data-client/beachball.config.dev.js --keep-change-files",
+    "publish-packages-dev": "beachball publish --config typescript/packages/reality-data-client/beachball.config.dev.js --keep-change-files"
   },
   "dependencies": {
     "axios": "^1.8.2"
