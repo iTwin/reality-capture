@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 22.14.0
           registry-url: https://registry.npmjs.org/
-      
+
       - name: Install pnpm
         uses: pnpm/action-setup@v6
         with:
@@ -39,6 +39,6 @@ jobs:
         run: |
           git config --local user.email imodeljs-admin@users.noreply.github.com
           git config --local user.name imodeljs-admin 
-          pnpm publish-packages-dev -y --branch ${{ github.ref_name }} --message "Version bump [skip actions]"
+          pnpm publish-packages-dev -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
