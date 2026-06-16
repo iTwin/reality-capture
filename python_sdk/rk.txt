@@ -1,2 +1,0 @@
-lancer l'env virtuel
-python -m build
