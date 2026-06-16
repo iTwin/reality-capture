@@ -4,8 +4,8 @@ from enum import Enum
 
 
 class ChangeDetectionInputs(BaseModel):
-    model_3d_a: str = Field(alias="model3dA", description="Reality data id of ContextScene, point cloud or mesh")
-    model_3d_b: str = Field(alias="model3dB", description="Reality data id of ContextScene, point cloud or mesh")
+    model_3d_a: str = Field(alias="model3DA", description="Reality data id of ContextScene, point cloud or mesh")
+    model_3d_b: str = Field(alias="model3DB", description="Reality data id of ContextScene, point cloud or mesh")
     extent: Optional[str] = Field(None, alias="extent", pattern=r"^bkt:.+",
                                   description="Path in the bucket of the clipping polygon to apply")
 
@@ -39,10 +39,10 @@ class ChangeDetectionOptions(BaseModel):
     sampling_resolution: Optional[float] = Field(None, alias="samplingResolution",
                                                  description="Target point cloud resolution when starting from meshes")
     grow_threshold: Optional[float] = Field(None, alias="growThreshold",
-                                            description="High threshold to detect spatial changes "
+                                            description="Low threshold to detect spatial changes "
                                                          "(hysteresis detection)")
     filter_threshold: Optional[float] = Field(None, alias="filterThreshold",
-                                              description="Low threshold to detect spatial changes "
+                                              description="High threshold to detect spatial changes "
                                                           "(hysteresis detection)")
 
 

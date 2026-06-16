@@ -8,8 +8,8 @@ export enum ChangeDetectionOutputsCreate {
 }
 
 export const ChangeDetectionInputsSchema = z.object({
-  model3dA: z.string().describe("Reality data id of ContextScene, point cloud or mesh"),
-  model3dB: z.string().describe("Reality data id of ContextScene, point cloud or mesh"),
+  model3DA: z.string().describe("Reality data id of ContextScene, point cloud, GS or mesh"),
+  model3DB: z.string().describe("Reality data id of ContextScene, point cloud, GS or mesh"),
   extent: z.string().describe("Path in the bucket of the clipping polygon to apply").regex(/^bkt:.+/, {
     message: "Path in the bucket to the extent file must start with 'bkt:'",
   }).optional(),
@@ -17,20 +17,20 @@ export const ChangeDetectionInputsSchema = z.object({
 export type ChangeDetectionInputs = z.infer<typeof ChangeDetectionInputsSchema>;
 
 export const ChangeDetectionOutputsSchema = z.object({
-  objects3D: z.string().optional().describe("Reality data id of ContextScene, annotated with embedded 3D objects"),
   locations3DAsSHP: z.string().optional().describe("Reality data id of 3D objects locations as SHP format"),
   locations3DAsGeoJSON: z.string().optional().describe("Reality data id of 3D objects locations as GeoJSON file"),
-  model3dBClassified: z.string().optional().describe("Points in B not in A as OPC"),
-  model3dAClassified: z.string().optional().describe("Points in A not in B as OPC"),
+  segmentation3DA: z.string().optional().describe("ContextScene CD on Model3D A"),
+  segmentedModel3DA: z.string().optional().describe("Model3D A with CD segmentation"),
+  segmentation3DB: z.string().optional().describe("ContextScene CD on Model3D B"),
+  segmentedModel3DB: z.string().optional().describe("Model3D B with CD segmentation"),
 });
 export type ChangeDetectionOutputs = z.infer<typeof ChangeDetectionOutputsSchema>;
 
 export const ChangeDetectionOptionsSchema = z.object({
-  outputCrs: z.string().optional().describe("CRS used by locations3DAsSHP output"),
   minPointsPerChange: z.number().int().optional().describe("Minimum number of points in a region to be considered as a change"),
   samplingResolution: z.number().optional().describe("Target point cloud resolution when starting from meshes"),
-  threshold: z.number().optional().describe("High threshold to detect spatial changes (hysteresis detection)"),
-  filterThreshold: z.number().optional().describe("Low threshold to detect spatial changes (hysteresis detection)"),
+  growThreshold: z.number().optional().describe("Low threshold to detect spatial changes (hysteresis detection)"),
+  filterThreshold: z.number().optional().describe("High threshold to detect spatial changes (hysteresis detection)"),
 });
 export type ChangeDetectionOptions = z.infer<typeof ChangeDetectionOptionsSchema>;
 

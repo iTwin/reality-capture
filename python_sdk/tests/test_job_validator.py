@@ -66,8 +66,8 @@ class TestJobValidator:
         j["type"] = "ChangeDetection"
         j["specifications"] = {
             "inputs": {
-                "model3dA": "modela",
-                "model3dB": "modelb"
+                "model3DA": "modela",
+                "model3DB": "modelb"
             },
             "outputs": {
                 "segmentedModel3DA": "rdid_seg_a",
@@ -112,7 +112,7 @@ class TestJobValidator:
                 "prediction": "predid"
             },
             "outputs": {
-                "objects2d": "objid"
+                "objects2D": "objid"
             }
         }
         job = Job(**j)
@@ -127,7 +127,7 @@ class TestJobValidator:
                 "prediction": "predid"
             },
             "outputs": {
-                "objects3d": "objid"
+                "objects3D": "objid"
             }
         }
         job = Job(**j)
@@ -142,7 +142,7 @@ class TestJobValidator:
                 "prediction": "predid"
             },
             "outputs": {
-                "segmentation2d": "sid"
+                "segmentation2D": "sid"
             }
         }
         job = Job(**j)
@@ -157,7 +157,7 @@ class TestJobValidator:
                 "prediction": "predid"
             },
             "outputs": {
-                "segmentation3d": "sid"
+                "segmentation3D": "sid"
             }
         }
         job = Job(**j)
@@ -172,7 +172,7 @@ class TestJobValidator:
                 "prediction": "predid"
             },
             "outputs": {
-                "segmentation2d": "sid"
+                "segmentation2D": "sid"
             }
         }
         job = Job(**j)
@@ -215,7 +215,7 @@ class TestJobValidator:
                 "photos": "mfid"
             },
             "outputs": {
-                "objects2d": "sid"
+                "objects2D": "sid"
             }
         }
         job = Job(**j)
@@ -258,7 +258,7 @@ class TestJobValidator:
                 "photos": "mfid",
             },
             "outputs": {
-                "segmentation2d": "s2did"
+                "segmentation2D": "s2did"
             }
         }
         job = Job(**j)
@@ -269,7 +269,7 @@ class TestJobValidator:
         j["type"] = "Segmentation3D"
         j["specifications"] = {
             "inputs": {
-                "model3d": "mfid",
+                "model3D": "mfid",
             },
             "outputs": {
                 "segmentation3D": "s3did"
@@ -287,7 +287,7 @@ class TestJobValidator:
                 "orthophotoSegmentationDetector": "detector"
             },
             "outputs": {
-                "segmentation2d": "s2did"
+                "segmentation2D": "s2did"
             }
         }
         job = Job(**j)
@@ -358,7 +358,7 @@ class TestJobValidator:
         j["type"] = "ClearanceCalculation"
         j["specifications"] = {
             "inputs": {
-                "model3d": "mfid",
+                "model3D": "mfid",
                 "clearanceFootprint": "sid"
             },
             "outputs": {

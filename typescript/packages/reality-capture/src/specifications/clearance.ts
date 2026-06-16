@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const ClearanceInputsSchema = z.object({
-  model3d: z.string().describe("Reality data id of a point cloud"),
+  model3D: z.string().describe("Reality data id of a point cloud"),
   clearanceFootprint: z.string().describe("Reality data id of Cbuilding footprints."),
 });
 export type ClearanceInputs = z.infer<typeof ClearanceInputsSchema>;

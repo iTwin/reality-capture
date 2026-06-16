@@ -4,7 +4,7 @@ from enum import Enum
 
 
 class ClearanceInputs(BaseModel):
-    model_3d: str = Field(alias="model3d", description="Reality data id of a point cloud.")
+    model_3d: str = Field(alias="model3D", description="Reality data id of a point cloud.")
     clearance_footprint: str = Field(alias="clearanceFootprint", description="Reality data id of building footprints.")
 
 
