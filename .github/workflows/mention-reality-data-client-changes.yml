@@ -1,7 +1,7 @@
 name: Mention reality-data-client maintainers
 
 on:
-  pull_request_target:
+  pull_request:
     types:
       - opened
       - reopened
@@ -15,7 +15,7 @@ on:
 
 jobs:
   mention_maintainers:
-    if: github.event.pull_request.head.repo.fork == false
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
