@@ -2,6 +2,21 @@
   "name": "@itwin/reality-data-client",
   "entries": [
     {
+      "date": "Thu, 18 Jun 2026 15:27:31 GMT",
+      "version": "1.5.1",
+      "tag": "@itwin/reality-data-client_v1.5.1",
+      "comments": {
+        "patch": [
+          {
+            "author": "5690282+cnovel@users.noreply.github.com",
+            "package": "@itwin/reality-data-client",
+            "commit": "12c46cd59dcd9109f5bade79c0611f4c4107c764",
+            "comment": "Update axios"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 15 Jun 2026 14:39:48 GMT",
       "version": "1.5.0",
       "tag": "@itwin/reality-data-client_v1.5.0",

@@ -1,8 +1,16 @@
 # Change Log - @itwin/reality-data-client
 
-<!-- This log was last generated on Mon, 15 Jun 2026 14:39:48 GMT and should not be manually modified. -->
+<!-- This log was last generated on Thu, 18 Jun 2026 15:27:31 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 1.5.1
+
+Thu, 18 Jun 2026 15:27:31 GMT
+
+### Patches
+
+- Update axios (5690282+cnovel@users.noreply.github.com)
 
 ## 1.5.0
 
