@@ -1,0 +1,70 @@
+name: Mention reality-data-client maintainers
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+      - ready_for_review
+    paths:
+      - "typescript/packages/reality-data-client/**"
+    branches:
+      - main
+
+jobs:
+  mention_maintainers:
+    if: ${{ !github.event.pull_request.head.repo.fork }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Check if maintainers are already mentioned
+        id: check_mentioned
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const maintainers = ['MarcBedard8', 'matmarchand', 'BeChaRem'];
+            const pr = context.payload.pull_request;
+            const prBody = pr.body || '';
+
+            // Get all comments on the PR
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+
+            // Check if this workflow has already commented
+            const workflowCommentExists = comments.some(comment =>
+              (comment.body || '').includes('<!-- reality-data-client-mention -->')
+            );
+
+            if (workflowCommentExists) {
+              core.setOutput('should_comment', 'false');
+              return;
+            }
+
+            // Check if maintainers are already mentioned in PR body or comments
+            const allText = prBody + '\n' + comments.map(c => c.body || '').join('\n');
+
+            const toMention = maintainers.filter(user => 
+              !allText.includes(`@${user}`)
+            );
+
+            core.setOutput('to_mention', toMention.join(' @'));
+            core.setOutput('should_comment', toMention.length > 0 ? 'true' : 'false');
+
+      - name: Comment mentioning maintainers
+        if: steps.check_mentioned.outputs.should_comment == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const toMention = '${{ steps.check_mentioned.outputs.to_mention }}';
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `<!-- reality-data-client-mention -->\nFYI: This PR affects \`typescript/packages/reality-data-client/\` @${toMention}`
+            });
