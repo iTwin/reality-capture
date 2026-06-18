@@ -12,8 +12,8 @@ importers:
         specifier: ^12.15.0
         version: 12.32.0
       '@itwin/reality-data-client':
-        specifier: ^1.4.0
-        version: 1.4.0(@itwin/core-bentley@5.10.0)
+        specifier: ^1.5.0
+        version: 1.5.0(@itwin/core-bentley@5.10.0)
       axios:
         specifier: ^1.18.0
         version: 1.18.0
@@ -266,8 +266,8 @@ packages:
   '@itwin/core-geometry@5.10.0':
     resolution: {integrity: sha512-T/lRcONx4QK3RxTatBGyLqXn+H9KGUKIynkZxkxiLFUV4/4q87V8wwBPq8ufuJU4Wnf/xX88RvNe7dLMlYzm+Q==}
 
-  '@itwin/reality-data-client@1.4.0':
-    resolution: {integrity: sha512-0XUBiOz02TcXIdmSPfqKJCAiitdIYzlJxd1ZksvJLfxNBj7Dt9eM5l7RKR3kOv+m81tNIo+KFIKykZO8T/IAOw==}
+  '@itwin/reality-data-client@1.5.0':
+    resolution: {integrity: sha512-VSmUbVeU/xJvwZvYGRkLX4FCCiPZ1/UuJFKDeRAoBOmuOleXvXnLiF3LMoTWAO0a6UihfoRKlBa85TRXjRBESg==}
     peerDependencies:
       '@itwin/core-bentley': ^4.0.0 || ^5.0.0
 
@@ -579,9 +579,6 @@ packages:
 
   asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
-
-  axios@1.17.0:
-    resolution: {integrity: sha512-J8SwNxprqqpbfenehxWYXE7CW+wM1BB4w3+N+g+/Wx40xM4rsLrfPmHHxSWIxJLYDgSY/HqlFPIYb2/S3rxafw==}
 
   axios@1.18.0:
     resolution: {integrity: sha512-E32NzpYKp++W7XRe52rHiXV2ehxmh3wbdgO7MHeFM+vqxLBYHzt0ElkiImtOBxtOmyp0yoC8C6uESVV84Y2/hw==}
@@ -1984,7 +1981,7 @@ snapshots:
       '@babel/code-frame': 7.29.7
       '@babel/generator': 7.29.7
       '@babel/helper-compilation-targets': 7.29.7
-      '@babel/helper-module-transforms': 7.29.7(@babel/core@7.29.7)
+      '@babel/helper-module-transforms': 7.29.7(@babel/core@7.29.7(supports-color@8.1.1))
       '@babel/helpers': 7.29.7
       '@babel/parser': 7.29.7
       '@babel/template': 7.29.7
@@ -2024,7 +2021,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/helper-module-transforms@7.29.7(@babel/core@7.29.7)':
+  '@babel/helper-module-transforms@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))':
     dependencies:
       '@babel/core': 7.29.7(supports-color@8.1.1)
       '@babel/helper-module-imports': 7.29.7
@@ -2172,10 +2169,10 @@ snapshots:
       '@itwin/core-bentley': 5.10.0
       flatbuffers: 1.12.0
 
-  '@itwin/reality-data-client@1.4.0(@itwin/core-bentley@5.10.0)':
+  '@itwin/reality-data-client@1.5.0(@itwin/core-bentley@5.10.0)':
     dependencies:
       '@itwin/core-bentley': 5.10.0
-      axios: 1.17.0
+      axios: 1.18.0
     transitivePeerDependencies:
       - debug
       - supports-color
@@ -2539,16 +2536,6 @@ snapshots:
   assertion-error@2.0.1: {}
 
   asynckit@0.4.0: {}
-
-  axios@1.17.0:
-    dependencies:
-      follow-redirects: 1.16.0
-      form-data: 4.0.5
-      https-proxy-agent: 5.0.1
-      proxy-from-env: 2.1.0
-    transitivePeerDependencies:
-      - debug
-      - supports-color
 
   axios@1.18.0:
     dependencies:
