@@ -1,7 +1,13 @@
 name: Mention reality-data-client maintainers
 
 on:
-  pull_request:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+      - ready_for_review
     paths:
       - "typescript/packages/reality-data-client/**"
     branches:
@@ -11,7 +17,7 @@ jobs:
   mention_maintainers:
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: write
+      issues: write
     steps:
       - name: Check if maintainers are already mentioned
         id: check_mentioned
@@ -23,15 +29,15 @@ jobs:
             const prBody = pr.body || '';
 
             // Get all comments on the PR
-            const comments = await github.rest.issues.listComments({
+            const comments = await github.paginate(github.rest.issues.listComments, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number
             });
 
             // Check if this workflow has already commented
-            const workflowCommentExists = comments.data.some(comment => 
-              comment.body.includes('<!-- reality-data-client-mention -->')
+            const workflowCommentExists = comments.some(comment =>
+              (comment.body || '').includes('<!-- reality-data-client-mention -->')
             );
 
             if (workflowCommentExists) {
@@ -40,7 +46,7 @@ jobs:
             }
 
             // Check if maintainers are already mentioned in PR body or comments
-            const allText = prBody + '\n' + comments.data.map(c => c.body).join('\n');
+            const allText = prBody + '\n' + comments.map(c => c.body || '').join('\n');
 
             const toMention = maintainers.filter(user => 
               !allText.includes(`@${user}`)
