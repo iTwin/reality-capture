@@ -15,23 +15,37 @@ class ChangeDetectionOutputs(BaseModel):
     segmented_model_3d_b: Optional[str] = Field(None, description="Reality data id of the 3D segmented model in the same format of model 3d B", alias="segmentedModel3DB")
     segmentation_3d_b: Optional[str] = Field(None, description="Reality data id of ContextScene, pointing to the segmented 3D model B", alias="segmentation3DB")
     segmented_model_3d_a: Optional[str] = Field(None, description="Reality data id of the 3D segmented model in the same format of model 3d A", alias="segmentedModel3DA")
-    locations3d_as_shp: Optional[str] = Field(None, alias="locations3DAsSHP",
-                                              description="Reality data id of 3D objects locations "
+    locations3d_a: Optional[str] = Field(None, alias="locations3DA",
+                                              description="Reality data id of Contextscne with locations of changes in A")
+    locations3d_a_as_shp: Optional[str] = Field(None, alias="locations3DAAsSHP",
+                                              description="Reality data id of locations of changes in A"
                                                           "as SHP format")
-    locations3d_as_geojson: Optional[str] = Field(None, alias="locations3DAsGeoJSON",
-                                                  description="Reality data id of 3D objects locations "
+    locations3d_a_as_geojson: Optional[str] = Field(None, alias="locations3DAAsGeoJSON",
+                                                  description="Reality data id of locations of changes in A"
+                                                              "as GeoJSON file")
+    locations3d_b: Optional[str] = Field(None, alias="locations3DB",
+                                              description="Reality data id of Contextscne with locations of changes in B")
+    locations3d_b_as_shp: Optional[str] = Field(None, alias="locations3DBAsSHP",
+                                              description="Reality data id of locations of changes in B"
+                                                          "as SHP format")
+    locations3d_b_as_geojson: Optional[str] = Field(None, alias="locations3DBAsGeoJSON",
+                                                  description="Reality data id of locations of changes in B"
                                                               "as GeoJSON file")
     
 
 
 class ChangeDetectionOutputsCreate(Enum):
-    LOCATIONS3D_AS_SHP = "locations3DAsSHP"
-    LOCATIONS3D_AS_GEOJSON = "locations3DAsGeoJSON"
-    SEGMENTED_MODEL_3D_A = "segmentedModel3DA"
-    SEGMENTED_MODEL_3D_B = "segmentedModel3DB"
-    SEGMENTATION_3D_B = "segmentation3DB"
     SEGMENTATION_3D_A = "segmentation3DA"
-
+    SEGMENTED_MODEL_3D_A = "segmentedModel3DA"
+    SEGMENTATION_3D_B = "segmentation3DB"
+    SEGMENTED_MODEL_3D_B = "segmentedModel3DB"
+    LOCATIONS3D_A = "locations3DA"
+    LOCATIONS3D_A_AS_SHP = "locations3DAAsSHP"
+    LOCATIONS3D_A_AS_GEOJSON = "locations3DAAsGeoJSON"
+    LOCATIONS3D_B = "locations3DB"
+    LOCATIONS3D_B_AS_SHP = "locations3DBAsSHP"
+    LOCATIONS3D_B_AS_GEOJSON = "locations3DBAsGeoJSON"
+    
 
 class ChangeDetectionOptions(BaseModel):
     min_points_per_change: Optional[int] = Field(None, alias="minPointsPerChange",
