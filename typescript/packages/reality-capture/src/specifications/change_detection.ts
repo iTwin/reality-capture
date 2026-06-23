@@ -13,16 +13,23 @@ export const ChangeDetectionInputsSchema = z.object({
   extent: z.string().describe("Path in the bucket of the clipping polygon to apply").regex(/^bkt:.+/, {
     message: "Path in the bucket to the extent file must start with 'bkt:'",
   }).optional(),
+  preset: z.string().describe("Path in the bucket of a preset file to use").regex(/^bkt:.+/, {
+    message: "Path in the bucket to the preset file must start with 'bkt:'",
+  }).optional(),
 });
 export type ChangeDetectionInputs = z.infer<typeof ChangeDetectionInputsSchema>;
 
 export const ChangeDetectionOutputsSchema = z.object({
-  locations3DAsSHP: z.string().optional().describe("Reality data id of 3D objects locations as SHP format"),
-  locations3DAsGeoJSON: z.string().optional().describe("Reality data id of 3D objects locations as GeoJSON file"),
   segmentation3DA: z.string().optional().describe("ContextScene CD on Model3D A"),
   segmentedModel3DA: z.string().optional().describe("Model3D A with CD segmentation"),
   segmentation3DB: z.string().optional().describe("ContextScene CD on Model3D B"),
   segmentedModel3DB: z.string().optional().describe("Model3D B with CD segmentation"),
+  locations3DA: z.string().optional().describe("Reality data id of locations of changes A"),
+  locations3DAAsSHP: z.string().optional().describe("Reality data id of locations of changes A as SHP format"),
+  locations3DAAsGeoJSON: z.string().optional().describe("Reality data id of locations of changes A as GeoJSON file"),
+  locations3DB: z.string().optional().describe("Reality data id of locations of changes B"),
+  locations3DBAsSHP: z.string().optional().describe("Reality data id of locations of changes B as SHP format"),
+  locations3DBAsGeoJSON: z.string().optional().describe("Reality data id of locations of changes B as GeoJSON file"),
 });
 export type ChangeDetectionOutputs = z.infer<typeof ChangeDetectionOutputsSchema>;
 

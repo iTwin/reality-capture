@@ -35,10 +35,10 @@ class ChangeDetectionOutputs(BaseModel):
 
 
 class ChangeDetectionOutputsCreate(Enum):
-    SEGMENTATION_3D_A = "segmentation3DA"
-    SEGMENTED_MODEL_3D_A = "segmentedModel3DA"
-    SEGMENTATION_3D_B = "segmentation3DB"
-    SEGMENTED_MODEL_3D_B = "segmentedModel3DB"
+    SEGMENTATION3D_A = "segmentation3DA"
+    SEGMENTED_MODEL3D_A = "segmentedModel3DA"
+    SEGMENTATION3D_B = "segmentation3DB"
+    SEGMENTED_MODEL3D_B = "segmentedModel3DB"
     LOCATIONS3D_A = "locations3DA"
     LOCATIONS3D_A_AS_SHP = "locations3DAAsSHP"
     LOCATIONS3D_A_AS_GEOJSON = "locations3DAAsGeoJSON"

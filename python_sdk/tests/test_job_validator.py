@@ -74,8 +74,12 @@ class TestJobValidator:
                 "segmentedModel3DB": "rdid_seg_b",
                 "segmentation3DA": "rdid_segmentation_a",
                 "segmentation3DB": "rdid_segmentation_b",
-                "locations3DAsGeoJSON": "geojson_rdid",
-                "locations3DAsSHP": "shp_rdid"
+                "locations3DA": "loca_rdid",
+                "locations3DAAsGeoJSON": "geojsona_rdid",
+                "locations3DAAsSHP": "shpa_rdid",
+                "locations3DB": "locb_rdid",
+                "locations3DBAsGeoJSON": "geojsonb_rdid",
+                "locations3DBAsSHP": "shpb_rdid"
             }
         }
         job = Job(**j)
@@ -85,8 +89,12 @@ class TestJobValidator:
         assert outputs.segmented_model_3d_b == "rdid_seg_b"
         assert outputs.segmentation_3d_a == "rdid_segmentation_a"
         assert outputs.segmentation_3d_b == "rdid_segmentation_b"
-        assert outputs.locations3d_as_geojson == "geojson_rdid"
-        assert outputs.locations3d_as_shp == "shp_rdid"
+        assert outputs.locations3d_a == "loca_rdid"
+        assert outputs.locations3d_a_as_geojson == "geojsona_rdid"
+        assert outputs.locations3d_a_as_shp == "shpa_rdid"
+        assert outputs.locations3d_b == "locb_rdid"
+        assert outputs.locations3d_b_as_geojson == "geojsonb_rdid"
+        assert outputs.locations3d_b_as_shp == "shpb_rdid"
 
     def test_validation_constraints(self):
         j = self.j_base.copy()
