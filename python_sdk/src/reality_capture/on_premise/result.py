@@ -1,22 +1,18 @@
 from typing import TypeVar, Generic, Optional
 from enum import Enum
-from reality_capture.service.error import DetailedErrorResponse
 
 
 T = TypeVar("T")
 
 
 class JobDetailsError(Enum):
-    NONE = "None"
-    DB_NOT_INITIALIZED = "DbNotInitialized"
-    EMPTY_JOB_NAME = "EmptyJobName"
-    CANT_FIND_POSITION_IN_QUEUE = "CantFindPositionInQueue"
-    DB_BUSY = "DbBusy"
     JOB_NOT_FOUND = "JobNotFound"
-    MISSING_INFORMATION = "MissingInformation"
-    INVALID_PROPERTY = "InvalidPriority"
-    INVALID_PROGRESS = "InvalidProgress"
-    CANT_GET_WORKER_HOST_NAMES = "CantGetWorkerHostnames"
+    ENGINE_NOT_FOUND = "EngineNotFound"
+    SQLITE_ERROR = "SqliteError"
+    CORRUPTED_SPECIFICATIONS = "CorruptedSpecifications"
+    INVALID_JOB_TYPE_IN_DB = "InvalidJobTypeInDB"
+    EMPTY_SHARED_WORKING_DIRECTORY = "EmptySharedWorkingDirectory"
+    UNSUPPORTED_SPECIFICATIONS = "UnsupportedSpecifications"
 
 
 class Result(tuple, Generic[T]):
@@ -29,7 +25,7 @@ class Result(tuple, Generic[T]):
     value: Optional[T]
     "Optional object if the request succeed."
 
-    def __new__(cls, error: Optional[DetailedErrorResponse], value: Optional[T]):
+    def __new__(cls, error: Optional[JobDetailsError], value: Optional[T]):
         self = tuple.__new__(cls, (error, value))
         self.value = value
         self.error = error
