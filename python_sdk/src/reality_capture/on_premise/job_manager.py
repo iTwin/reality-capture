@@ -40,6 +40,7 @@ from reality_capture.specifications.eval_o3d import EvalO3DSpecifications
 from reality_capture.specifications.eval_s2d import EvalS2DSpecifications
 from reality_capture.specifications.eval_s3d import EvalS3DSpecifications
 from reality_capture.specifications.eval_sortho import EvalSOrthoSpecifications
+from reality_capture.specifications.clearance import ClearanceSpecifications
 
 from reality_capture.common.job import JobState, JobType
 from reality_capture.on_premise.job import (Job, JobPriority, ExecutionOnPrem, Progress, Milestone, JobFilters,
@@ -137,6 +138,7 @@ class JobManager(GenericManager):
         TouchUpExportSpecifications: JobType.TOUCH_UP_EXPORT,
         TouchUpImportSpecifications: JobType.TOUCH_UP_IMPORT,
         WaterConstraintsSpecifications: JobType.WATER_CONSTRAINTS,
+        ClearanceSpecifications: JobType.CLEARANCE_CALCULATION
     }
 
     def _row_to_job_details(self, row) -> Result[Job]:
@@ -172,6 +174,8 @@ class JobManager(GenericManager):
             return Result(ManagerErrorCode.INVALID_JOB_TYPE_IN_DB, None)
 
         real_specs = specs[job_type]
+        if real_specs is None:
+            return Result(ManagerErrorCode.CORRUPTED_SPECIFICATIONS, None)
 
         try:
             j = Job(
@@ -403,7 +407,8 @@ class JobManager(GenericManager):
                                                ReconstructionSpecifications, Segmentation2DSpecifications,
                                                Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                                                TilingSpecifications, TouchUpExportSpecifications,
-                                               TouchUpImportSpecifications, WaterConstraintsSpecifications],
+                                               TouchUpImportSpecifications, WaterConstraintsSpecifications,
+                                               ClearanceSpecifications],
                    shared_working_directory: str,
                    priority: JobPriority = JobPriority.NORMAL, workspace: Optional[str] = None) -> Result[Job]:
         """
@@ -432,6 +437,7 @@ class JobManager(GenericManager):
             # Derive job type from specifications type
             job_type_enum = self._SPECS_TYPE_TO_JOB_TYPE.get(type(specifications))
             if job_type_enum is None:
+                self._connection.rollback()
                 return Result(ManagerErrorCode.UNSUPPORTED_SPECIFICATIONS, None)
             job_type = job_type_enum.value
 
@@ -507,6 +513,7 @@ class JobManager(GenericManager):
                     (self._priority_to_int(job_priority), job_name)
                 )
                 if cursor.rowcount != 1:
+                    self._connection.rollback()
                     return Result(ManagerErrorCode.JOB_NOT_FOUND, None)
                 self._connection.commit()
             except Exception:

@@ -84,7 +84,7 @@ class TestOnPremEngine:
         assert res.value is not None
         engine = res.value
         assert engine.signal is not None
-        assert engine.signal == EngineSignal.PAUSE
+        assert engine.signal == [EngineSignal.PAUSE]
 
         res = em.send_signal("TO8", EngineSignal.PAUSE)
         assert res.is_error()

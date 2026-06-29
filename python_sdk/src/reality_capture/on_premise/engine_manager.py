@@ -34,7 +34,7 @@ class EngineDetails(BaseModel):
     end_time: Optional[datetime] = Field(description="The end time of the engine if it was properly stopped.")
     last_beat_time: Optional[datetime] = Field(description="The last beat time of the engine.")
     status: EngineStatus = Field(description="The status of the engine.")
-    signal: Optional[EngineSignal] = Field(description="The signal of the engine waiting to be processed.")
+    signal: Optional[list[EngineSignal]] = Field(description="The signals of the engine waiting to be processed.")
 
 
 class EngineManager(GenericManager):
@@ -71,7 +71,7 @@ class EngineManager(GenericManager):
         return EngineStatus.UNKNOWN
 
     @staticmethod
-    def _int_to_signal(signal_as_int: int):
+    def _int_to_signal(signal_as_int: int) -> list[EngineSignal]:
         mapping = {
             1: EngineSignal.PAUSE,
             2: EngineSignal.CLOSE,
@@ -81,7 +81,11 @@ class EngineManager(GenericManager):
             32: EngineSignal.SKIP,
             64: EngineSignal.UNPAUSE,
         }
-        return mapping[signal_as_int]
+        signals = []
+        for bit_value, signal in mapping.items():
+            if signal_as_int & bit_value:
+                signals.append(signal)
+        return signals
 
 
     @staticmethod
@@ -143,9 +147,7 @@ class EngineManager(GenericManager):
             start_time = self._parse_datetime(start_time)
             last_beat_time = self._parse_datetime(last_beat_time) if last_beat_time else None
             end_time = self._parse_datetime(end_time) if end_time else None
-            eng_signal = None
-            if signal_int != 0:
-                eng_signal = self._int_to_signal(signal_int)
+            eng_signal = self._int_to_signal(signal_int) if signal_int != 0 else None
 
             # Create EngineDetails, leaving status and signal as defaults
             ed = EngineDetails(
@@ -184,6 +186,7 @@ class EngineManager(GenericManager):
                 )
                 count = cursor.fetchone()[0]
                 if count == 0:
+                    self._connection.rollback()
                     return Result(ManagerErrorCode.ENGINE_NOT_FOUND, None)
 
                 # Bitwise OR the new signal onto the existing signal
