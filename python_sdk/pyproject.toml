@@ -50,4 +50,5 @@ dev = [
 "Reality Management Api reference" = "https://developer.bentley.com/apis/reality-management/"
 
 [tool.coverage.run]
+source = ["reality_capture", "docs"]
 omit = ["tests/*"]
