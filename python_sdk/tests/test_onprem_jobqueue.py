@@ -3,7 +3,6 @@ import shutil
 import pytest
 import os
 
-from babel.plural import value_node
 from pydantic import BaseModel, Field
 
 from reality_capture.common.job import JobState
