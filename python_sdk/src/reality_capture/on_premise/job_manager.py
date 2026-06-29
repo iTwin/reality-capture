@@ -173,7 +173,7 @@ class JobManager(GenericManager):
         except ValueError:
             return Result(ManagerErrorCode.INVALID_JOB_TYPE_IN_DB, None)
 
-        real_specs = specs[job_type]
+        real_specs = specs.get(job_type)
         if real_specs is None:
             return Result(ManagerErrorCode.CORRUPTED_SPECIFICATIONS, None)
 
@@ -298,7 +298,7 @@ class JobManager(GenericManager):
         if job_filters.continuation_token is not None:
             try:
                 last_rowid = int(base64.b64decode(job_filters.continuation_token).decode())
-            except UnicodeDecodeError:
+            except (UnicodeDecodeError, ValueError):
                 return Result(ManagerErrorCode.INVALID_CONTINUATION_TOKEN, None)
             where_clauses.append("ROWID > ?")
             params.append(last_rowid)
