@@ -51,4 +51,4 @@ dev = [
 
 [tool.coverage.run]
 source = ["reality_capture", "docs"]
-omit = ["tests/*"]
+omit = ["tests/*", "docs/conf.py"]
