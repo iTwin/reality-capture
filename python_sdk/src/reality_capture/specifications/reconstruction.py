@@ -8,16 +8,13 @@ class ReconstructionInputs(BaseModel):
     scene: str = Field(description="Reality data id of ContextScene to process")
     region_of_interest: Optional[str] = Field(description="Path in the bucket to region of interest file, "
                                                           "used for tiling region of interest",
-                                              pattern=r"^bkt:.+",
                                               alias="regionOfInterest", default=None)
     extent: Optional[str] = Field(None, description="Path in the bucket to region of interest file, "
-                                                    "used for export extent",
-                                  pattern=r"^bkt:.+")
+                                                    "used for export extent")
     modeling_reference: Optional[str] = Field(None, description="Reality data id of modeling reference to process",
                                               alias="modelingReference")
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
-    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData",
-                                    pattern=r"^bkt:.+")
+    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData")
 
 
 class ReconstructionOutputs(BaseModel):

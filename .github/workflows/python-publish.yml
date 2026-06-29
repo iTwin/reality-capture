@@ -29,6 +29,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          lfs: true
 
       - name: Download wheel artifact
         uses: actions/download-artifact@v8

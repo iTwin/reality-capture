@@ -1,8 +1,9 @@
 import urllib.parse
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
-from datetime import datetime
 from enum import Enum
 from typing import Union, Optional, Any
+
+from reality_capture.common.job import JobType, JobState, BaseProgress, BaseExecution
 from reality_capture.specifications.calibration import CalibrationSpecifications, CalibrationSpecificationsCreate
 from reality_capture.specifications.change_detection import (ChangeDetectionSpecifications,
                                                              ChangeDetectionSpecificationsCreate)
@@ -41,30 +42,6 @@ from reality_capture.specifications.clearance import (ClearanceSpecificationsCre
 
 from reality_capture.service.reality_data import URL
 
-class JobType(Enum):
-    CALIBRATION = "Calibration"
-    CHANGE_DETECTION = "ChangeDetection"
-    CONSTRAINTS = "Constraints"
-    EVAL_O2D = "EvalO2D"
-    EVAL_O3D = "EvalO3D"
-    EVAL_S2D = "EvalS2D"
-    EVAL_S3D = "EvalS3D"
-    EVAL_SORTHO = "EvalSOrtho"
-    FILL_IMAGE_PROPERTIES = "FillImageProperties"
-    GAUSSIAN_SPLATS = "GaussianSplats"
-    IMPORT_POINT_CLOUD = "ImportPointCloud"
-    OBJECTS_2D = "Objects2D"
-    PRODUCTION = "Production"
-    RECONSTRUCTION = "Reconstruction"
-    SEGMENTATION_2D = "Segmentation2D"
-    SEGMENTATION_3D = "Segmentation3D"
-    SEGMENTATION_ORTHOPHOTO = "SegmentationOrthophoto"
-    TILING = "Tiling"
-    TOUCH_UP_IMPORT = "TouchUpImport"
-    TOUCH_UP_EXPORT = "TouchUpExport"
-    WATER_CONSTRAINTS = "WaterConstraints"
-    CLEARANCE_CALCULATION = "ClearanceCalculation"
-    # POINT_CLOUD_CONVERSION = "PointCloudConversion"
 
 class Service(Enum):
     MODELING = "Modeling"
@@ -74,25 +51,15 @@ class Service(Enum):
 
 def _get_appropriate_service(jt: JobType):
     if jt in [JobType.FILL_IMAGE_PROPERTIES, JobType.IMPORT_POINT_CLOUD, JobType.CALIBRATION, JobType.TILING,
-            JobType.PRODUCTION, JobType.RECONSTRUCTION, JobType.CONSTRAINTS, JobType.TOUCH_UP_EXPORT,
-            JobType.TOUCH_UP_IMPORT, JobType.WATER_CONSTRAINTS, JobType.GAUSSIAN_SPLATS]:
+              JobType.PRODUCTION, JobType.RECONSTRUCTION, JobType.CONSTRAINTS, JobType.TOUCH_UP_EXPORT,
+              JobType.TOUCH_UP_IMPORT, JobType.WATER_CONSTRAINTS, JobType.GAUSSIAN_SPLATS]:
         return Service.MODELING
     if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
-            JobType.CHANGE_DETECTION, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
-            JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.CLEARANCE_CALCULATION]:
+              JobType.CHANGE_DETECTION, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
+              JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.CLEARANCE_CALCULATION]:
         return Service.ANALYSIS
     # return Service.CONVERSION
     raise NotImplementedError("Other services not yet implemented")
-
-
-class JobState(Enum):
-    QUEUED = "Queued"
-    ACTIVE = "Active"
-    SUCCESS = "Success"
-    FAILED = "Failed"
-    TERMINATING_ON_CANCEL = "TerminatingOnCancel"
-    TERMINATING_ON_FAILURE = "TerminatingOnFailure"
-    CANCELLED = "Cancelled"
 
 
 class JobCreate(BaseModel):
@@ -100,17 +67,17 @@ class JobCreate(BaseModel):
     type: JobType = Field(description="Type of job.")
     # TODO : PointCloudConversionSpecificationsCreate,
     specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
-                        ConstraintsSpecificationsCreate,
-                        EvalO2DSpecificationsCreate, EvalO3DSpecificationsCreate,
-                        EvalS2DSpecificationsCreate, EvalS3DSpecificationsCreate,
-                        EvalSOrthoSpecificationsCreate, FillImagePropertiesSpecificationsCreate,
-                        GaussianSplatsSpecificationsCreate, ImportPCSpecificationsCreate,
-                        Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
-                        ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
-                        Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
-                        TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
-                        TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
-                        ClearanceSpecificationsCreate] = (
+                          ConstraintsSpecificationsCreate,
+                          EvalO2DSpecificationsCreate, EvalO3DSpecificationsCreate,
+                          EvalS2DSpecificationsCreate, EvalS3DSpecificationsCreate,
+                          EvalSOrthoSpecificationsCreate, FillImagePropertiesSpecificationsCreate,
+                          GaussianSplatsSpecificationsCreate, ImportPCSpecificationsCreate,
+                          Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
+                          ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
+                          Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
+                          TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
+                          TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
+                          ClearanceSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -125,12 +92,9 @@ class JobCreate(BaseModel):
         return _get_appropriate_service(self.type)
 
 
-class Execution(BaseModel):
-    created_date_time: datetime = Field(description="Creation date time for the job.", alias="createdDateTime")
-    started_date_time: Optional[datetime] = Field(None, description="Start date time for the job.", alias="startedDateTime")
-    ended_date_time: Optional[datetime] = Field(None, description="End date time for the job.", alias="endedDateTime")
+class Execution(BaseExecution):
     processing_units: Optional[float] = Field(None, description="Processing units consumed by the job.",
-                                             alias="processingUnits")
+                                              alias="processingUnits")
 
 
 class Job(BaseModel):
@@ -145,17 +109,17 @@ class Job(BaseModel):
     user_id: str = Field(description="Identifier of the user that created the job.", alias="userId")
     # TODO : add PointCloudConversionSpecifications
     specifications: Union[CalibrationSpecifications, ChangeDetectionSpecifications,
-                        ConstraintsSpecifications, 
-                        EvalO2DSpecifications, EvalO3DSpecifications,
-                        EvalS2DSpecifications, EvalS3DSpecifications,
-                        EvalSOrthoSpecifications, FillImagePropertiesSpecifications, 
-                        GaussianSplatsSpecifications, ImportPCSpecifications,
-                        Objects2DSpecifications, ProductionSpecifications,
-                        ReconstructionSpecifications, Segmentation2DSpecifications,
-                        Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
-                        TilingSpecifications, TouchUpExportSpecifications,
-                        TouchUpImportSpecifications, WaterConstraintsSpecifications,
-                        ClearanceSpecifications] = (
+                          ConstraintsSpecifications,
+                          EvalO2DSpecifications, EvalO3DSpecifications,
+                          EvalS2DSpecifications, EvalS3DSpecifications,
+                          EvalSOrthoSpecifications, FillImagePropertiesSpecifications,
+                          GaussianSplatsSpecifications, ImportPCSpecifications,
+                          Objects2DSpecifications, ProductionSpecifications,
+                          ReconstructionSpecifications, Segmentation2DSpecifications,
+                          Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
+                          TilingSpecifications, TouchUpExportSpecifications,
+                          TouchUpImportSpecifications, WaterConstraintsSpecifications,
+                          ClearanceSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @field_validator("specifications", mode="plain")
@@ -172,15 +136,15 @@ class Job(BaseModel):
         elif job_type == JobType.CONSTRAINTS:
             specifications = ConstraintsSpecifications(**raw_dict)
         elif job_type == JobType.EVAL_O2D:
-           specifications = EvalO2DSpecifications(**raw_dict)
+            specifications = EvalO2DSpecifications(**raw_dict)
         elif job_type == JobType.EVAL_O3D:
-           specifications = EvalO3DSpecifications(**raw_dict)
+            specifications = EvalO3DSpecifications(**raw_dict)
         elif job_type == JobType.EVAL_S2D:
-           specifications = EvalS2DSpecifications(**raw_dict)
+            specifications = EvalS2DSpecifications(**raw_dict)
         elif job_type == JobType.EVAL_S3D:
-           specifications = EvalS3DSpecifications(**raw_dict)
+            specifications = EvalS3DSpecifications(**raw_dict)
         elif job_type == JobType.EVAL_SORTHO:
-           specifications = EvalSOrthoSpecifications(**raw_dict)
+            specifications = EvalSOrthoSpecifications(**raw_dict)
         elif job_type == JobType.FILL_IMAGE_PROPERTIES:
             specifications = FillImagePropertiesSpecifications(**raw_dict)
         elif job_type == JobType.GAUSSIAN_SPLATS:
@@ -194,11 +158,11 @@ class Job(BaseModel):
         elif job_type == JobType.RECONSTRUCTION:
             specifications = ReconstructionSpecifications(**raw_dict)
         elif job_type == JobType.SEGMENTATION_2D:
-           specifications = Segmentation2DSpecifications(**raw_dict)
+            specifications = Segmentation2DSpecifications(**raw_dict)
         elif job_type == JobType.SEGMENTATION_3D:
-           specifications = Segmentation3DSpecifications(**raw_dict)
+            specifications = Segmentation3DSpecifications(**raw_dict)
         elif job_type == JobType.SEGMENTATION_ORTHOPHOTO:
-           specifications = SegmentationOrthophotoSpecifications(**raw_dict)
+            specifications = SegmentationOrthophotoSpecifications(**raw_dict)
         elif job_type == JobType.TILING:
             specifications = TilingSpecifications(**raw_dict)
         elif job_type == JobType.TOUCH_UP_EXPORT:
@@ -253,9 +217,8 @@ class Jobs(BaseModel):
         return cts[0]
 
 
-class Progress(BaseModel):
-    state: JobState = Field(description="State of the job.")
-    percentage: float = Field(ge=0, le=100, description="Progress of the job.")
+class Progress(BaseProgress):
+    pass
 
 
 class ProgressResponse(BaseModel):

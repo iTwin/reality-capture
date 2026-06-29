@@ -10,10 +10,8 @@ class GaussianSplatsInputs(BaseModel):
                                             alias="splatsReference")
     region_of_interest: Optional[str] = Field(description="Path in the bucket to region of interest file",
                                               alias="regionOfInterest",
-                                              default=None,
-                                              pattern=r"^bkt:.+")
-    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData",
-                                    pattern=r"^bkt:.+")
+                                              default=None)
+    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData")
     preset: Optional[str] = Field(default=None, description="Path to preset")
 
 
