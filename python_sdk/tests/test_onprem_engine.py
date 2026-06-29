@@ -34,7 +34,7 @@ class TestOnPremEngine:
     def test_faulty_dbs(self):
         # Create a faulty database file
         os.mkdir(self.tmp_dir + "/jq")
-        faulty_db_path = self.tmp_dir + "/jq/engines.db"
+        faulty_db_path = self.tmp_dir + "/jq/Engines.db"
         with open(faulty_db_path, "w") as f:
             f.write("This is not a valid database file.")
 
