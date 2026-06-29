@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field, ValidationInfo, field_validator
 from enum import Enum
 from typing import Union, Optional, Any
 
-from reality_capture.common.job import JobType, JobState, ExecutionOnPrem, BaseProgress
+from reality_capture.common.job import JobType, JobState, BaseProgress, BaseExecution
 from reality_capture.specifications.calibration import CalibrationSpecifications, CalibrationSpecificationsCreate
 from reality_capture.specifications.change_detection import (ChangeDetectionSpecifications,
                                                              ChangeDetectionSpecificationsCreate)
@@ -92,7 +92,7 @@ class JobCreate(BaseModel):
         return _get_appropriate_service(self.type)
 
 
-class Execution(ExecutionOnPrem):
+class Execution(BaseExecution):
     processing_units: Optional[float] = Field(None, description="Processing units consumed by the job.",
                                               alias="processingUnits")
 

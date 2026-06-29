@@ -6,6 +6,7 @@ from typing import Union, Any, Optional
 from reality_capture.common.job import BaseProgress, BaseExecution, JobState, JobType
 from reality_capture.specifications.calibration import CalibrationSpecifications
 from reality_capture.specifications.change_detection import ChangeDetectionSpecifications
+from reality_capture.specifications.clearance import ClearanceSpecifications
 from reality_capture.specifications.constraints import ConstraintsSpecifications
 from reality_capture.specifications.fill_image_properties import FillImagePropertiesSpecifications
 from reality_capture.specifications.import_point_cloud import ImportPCSpecifications
@@ -99,7 +100,8 @@ class Job(BaseModel):
                           ReconstructionSpecifications, Segmentation2DSpecifications,
                           Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                           TilingSpecifications, TouchUpExportSpecifications,
-                          TouchUpImportSpecifications, WaterConstraintsSpecifications] = (
+                          TouchUpImportSpecifications, WaterConstraintsSpecifications,
+                          ClearanceSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @field_validator("specifications", mode="plain")
@@ -151,6 +153,8 @@ class Job(BaseModel):
             specifications = TouchUpImportSpecifications(**raw_dict)
         elif job_type == JobType.WATER_CONSTRAINTS:
             specifications = WaterConstraintsSpecifications(**raw_dict)
+        elif job_type == JobType.CLEARANCE_CALCULATION:
+            specifications = ClearanceSpecifications(**raw_dict)
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 

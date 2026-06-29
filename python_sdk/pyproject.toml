@@ -48,3 +48,6 @@ dev = [
 "Reality Modeling Api reference" = "https://developer.bentley.com/apis/contextcapture/"
 "Reality Conversion Api reference" = "https://developer.bentley.com/apis/realityconversion/"
 "Reality Management Api reference" = "https://developer.bentley.com/apis/reality-management/"
+
+[tool.coverage.run]
+omit = ["tests/*"]

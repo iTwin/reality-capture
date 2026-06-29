@@ -11,8 +11,7 @@ class EvalS3DInputs(BaseModel):
 
 
 class EvalS3DOutputs(BaseModel):
-    report: Optional[str] = Field(None, description="Path in Bucket of json report with confusion matrix",
-                                  pattern=r"^bkt:.+")
+    report: Optional[str] = Field(None, description="Path in Bucket of json report with confusion matrix")
     segmented_point_cloud: Optional[str] = Field(None, alias="segmentedPointCloud",
                                                  description="Reality data id of segmented point cloud, "
                                                              "annotated with confusion matrix index")

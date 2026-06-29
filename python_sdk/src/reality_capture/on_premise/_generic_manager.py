@@ -2,6 +2,9 @@ import os
 import sqlite3
 import time
 from datetime import datetime
+from typing import Optional
+
+from reality_capture.on_premise.result import Result, ManagerErrorCode
 
 # Constants
 
@@ -66,7 +69,10 @@ def init_job_queue_db(job_queue_dir: str):
 def create_new_jq(job_queue_dir: str):
     """Create a brand-new JobQueue.db with the v1.3 schema."""
     db_path = job_queue_dir + "/JobQueue.db"
-    conn = sqlite3.connect(db_path)
+    try:
+        conn = sqlite3.connect(db_path)
+    except sqlite3.OperationalError:
+        raise RuntimeError(f"Failed to create JobQueue database at '{db_path}'")
     try:
         cursor = conn.cursor()
 
@@ -151,7 +157,7 @@ def create_new_jq(job_queue_dir: str):
         conn.commit()
     except Exception as e:
         conn.rollback()
-        raise RuntimeError(f"Failed to create JobQueue database: {e}") from e
+        raise RuntimeError(f"Failed to init JobQueue database: {e}") from e
     finally:
         conn.close()
 
@@ -189,12 +195,14 @@ def init_engine_db(job_queue_dir):
 
 class GenericManager:
     def __init__(self, job_queue_dir: str):
+        self._connection = None
         self._job_queue_dir = job_queue_dir
+        self._timeout_lock_s = 30
         init_job_queue_db(job_queue_dir)
         init_engine_db(job_queue_dir)
 
     @staticmethod
-    def _acquire_lock(db_path: str, timeout: float) -> int:
+    def _acquire_lock(db_path: str, timeout: float) -> Optional[int]:
         """Acquire a file-based lock (analogous to SemaphoreFile in C++)."""
         lock_path = db_path + ".lock"
         deadline = time.monotonic() + timeout
@@ -204,7 +212,7 @@ class GenericManager:
                 return fd
             except FileExistsError:
                 if time.monotonic() >= deadline:
-                    raise TimeoutError(f"Could not acquire lock on '{lock_path}' within {timeout}s")
+                    return None
                 time.sleep(0.05)
 
     @staticmethod

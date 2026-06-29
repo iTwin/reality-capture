@@ -19,7 +19,7 @@ class Segmentation3DInputs(BaseModel):
                                                       "pointing to a segmented point cloud, "
                                                       "this input replaces point_cloud_segmentation_detector, "
                                                       "point_clouds and meshes inputs")
-    extent: Optional[str] = Field(None, alias="extent", pattern=r"^bkt:.+",
+    extent: Optional[str] = Field(None, alias="extent",
                                   description="Path in the bucket of the clipping polygon to apply")
 
 

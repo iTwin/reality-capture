@@ -5,27 +5,31 @@ from enum import Enum
 T = TypeVar("T")
 
 
-class JobDetailsError(Enum):
+class ManagerErrorCode(Enum):
     JOB_NOT_FOUND = "JobNotFound"
     ENGINE_NOT_FOUND = "EngineNotFound"
     SQLITE_ERROR = "SqliteError"
     CORRUPTED_SPECIFICATIONS = "CorruptedSpecifications"
+    MISSING_SPECIFICATIONS = "MissingSpecifications"
     INVALID_JOB_TYPE_IN_DB = "InvalidJobTypeInDB"
     EMPTY_SHARED_WORKING_DIRECTORY = "EmptySharedWorkingDirectory"
     UNSUPPORTED_SPECIFICATIONS = "UnsupportedSpecifications"
+    DB_BUSY = "DBBusy"
+    JOB_NOT_CANCELLABLE = "JobNotCancellable"
+    INVALID_CONTINUATION_TOKEN = "InvalidContinuationToken"
 
 
 class Result(tuple, Generic[T]):
     """
-    A tuple containing a Engine response.
+    A tuple containing a ManagerErrorCode or a value.
     """
 
-    error: Optional[JobDetailsError]
+    error: Optional[ManagerErrorCode]
     "Optional error if the request failed."
     value: Optional[T]
     "Optional object if the request succeed."
 
-    def __new__(cls, error: Optional[JobDetailsError], value: Optional[T]):
+    def __new__(cls, error: Optional[ManagerErrorCode], value: Optional[T]):
         self = tuple.__new__(cls, (error, value))
         self.value = value
         self.error = error
@@ -35,8 +39,7 @@ class Result(tuple, Generic[T]):
         """
         Checks whether the response is an error response.
 
-        Returns:
-            True if the response contains a valid error.
+        :return: True if the response contains a valid error.
         """
         return self.error is not None
 
@@ -44,29 +47,29 @@ class Result(tuple, Generic[T]):
         """
         Get the error message.
 
-        Returns:
-            The error as a string.
+        :return: The error message.
         """
-        if not self.is_error():
-            return ""
         match self.error:
-            case JobDetailsError.NONE:
-                return ""
-            case JobDetailsError.JOB_NOT_FOUND:
-                return "Job not found in database"
-            case JobDetailsError.EMPTY_JOB_NAME:
-                return "Job name is empty"
-            case JobDetailsError.DB_BUSY:
-                return "Database is busy, please try again"
-            case JobDetailsError.CANT_FIND_POSITION_IN_QUEUE:
-                return "Can't find the job position in the queue"
-            case JobDetailsError.CANT_GET_WORKER_HOST_NAMES:
-                return "Can't retrieve worker hostnames from database"
-            case JobDetailsError.DB_NOT_INITIALIZED:
-                return "Database is not initialized, please relaunch jobqueue monitor"
-            case JobDetailsError.INVALID_PROGRESS:
-                return "Invalid progress value in database"
-            case JobDetailsError.INVALID_PROPERTY:
-                return "Invalid priority in database"
-            case JobDetailsError.MISSING_INFORMATION:
-                return "Missing information in database"
+            case ManagerErrorCode.JOB_NOT_FOUND:
+                return "Job not found."
+            case ManagerErrorCode.ENGINE_NOT_FOUND:
+                return "Engine not found."
+            case ManagerErrorCode.SQLITE_ERROR:
+                return "Sqlite error. If the issue persists, raise an issue on the RealityCapture GitHub repository."
+            case ManagerErrorCode.CORRUPTED_SPECIFICATIONS:
+                return "Corrupted specifications. If the issue persists, raise an issue on the RealityCapture GitHub repository."
+            case ManagerErrorCode.MISSING_SPECIFICATIONS:
+                return "Missing specifications in database folder."
+            case ManagerErrorCode.INVALID_JOB_TYPE_IN_DB:
+                return "Invalid job type in the database."
+            case ManagerErrorCode.EMPTY_SHARED_WORKING_DIRECTORY:
+                return "Empty shared working directory."
+            case ManagerErrorCode.UNSUPPORTED_SPECIFICATIONS:
+                return "Unsupported specification."
+            case ManagerErrorCode.DB_BUSY:
+                return "DB is busy, try again later."
+            case ManagerErrorCode.JOB_NOT_CANCELLABLE:
+                return "Job can't be cancelled due to its current state."
+            case ManagerErrorCode.INVALID_CONTINUATION_TOKEN:
+                return "Invalid continuation token."
+        return ""

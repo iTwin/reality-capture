@@ -9,6 +9,8 @@ import getpass
 import base64
 import sqlite3
 
+import pydantic
+
 from reality_capture.on_premise._generic_manager import (
     GenericManager,
     JOBS, JOBNAME, STATUS, PRIORITY, SHARED_WORKING_DIR,
@@ -42,7 +44,7 @@ from reality_capture.specifications.eval_sortho import EvalSOrthoSpecifications
 from reality_capture.common.job import JobState, JobType
 from reality_capture.on_premise.job import (Job, JobPriority, ExecutionOnPrem, Progress, Milestone, JobFilters,
                                             JobPage, QueueSummary, ActiveJob)
-from reality_capture.on_premise.result import Result, JobDetailsError
+from reality_capture.on_premise.result import Result, ManagerErrorCode
 
 class JobManager(GenericManager):
     def __init__(self, job_queue_dir: str):
@@ -74,9 +76,7 @@ class JobManager(GenericManager):
             2: JobPriority.HIGH,
             3: JobPriority.URGENT,
         }
-        if jp in mapping:
-            return mapping[jp]
-        return JobPriority.NORMAL
+        return mapping[jp]
 
     @staticmethod
     def _priority_to_int(jp: JobPriority) -> int:
@@ -101,6 +101,8 @@ class JobManager(GenericManager):
             (0x01, JobState.QUEUED),
         ]
         for flag, state in mapping:
+            if state == JobState.QUEUED:
+                continue
             if si & flag:
                 return state
         return JobState.QUEUED
@@ -152,33 +154,40 @@ class JobManager(GenericManager):
         # Load specifications from disk
         # Format is jobqueue_dir/jobs/job_id/settings.json
         settings_path = os.path.join(self._job_queue_dir, "jobs", name, "settings.json")
+        specs = {}
         if os.path.exists(settings_path):
             try:
                 with open(settings_path, "r", encoding="utf-8") as f:
                     specs = json.load(f)
             except Exception:
-                return Result(JobDetailsError.CORRUPTED_SPECIFICATIONS, None)
-
-
+                return Result(ManagerErrorCode.CORRUPTED_SPECIFICATIONS, None)
+        else:
+            return Result(ManagerErrorCode.MISSING_SPECIFICATIONS, None)
 
         if not job_type:
-            return Result(JobDetailsError.INVALID_JOB_TYPE_IN_DB, None)
+            return Result(ManagerErrorCode.INVALID_JOB_TYPE_IN_DB, None)
         try:
             job_type_enum = JobType(job_type)
         except ValueError:
-            return Result(JobDetailsError.INVALID_JOB_TYPE_IN_DB, None)
+            return Result(ManagerErrorCode.INVALID_JOB_TYPE_IN_DB, None)
 
-        j = Job(
-            name=name,
-            priority=self._int_to_priority(priority),
-            place=0,
-            processingHosts=[],
-            state=self._int_to_state(status),
-            executionInfo=execution_info,
-            type=job_type_enum,
-            sharedWorkingDir=shared_working_dir or "",
-            specifications=specs,
-        )
+        real_specs = specs[job_type]
+
+        try:
+            j = Job(
+                name=name,
+                priority=self._int_to_priority(priority),
+                place=0,
+                processingHosts=[],
+                state=self._int_to_state(status),
+                executionInfo=execution_info,
+                type=job_type_enum,
+                sharedWorkingDir=shared_working_dir or "",
+                specifications=real_specs,
+            )
+        except pydantic.ValidationError:
+            return Result(ManagerErrorCode.CORRUPTED_SPECIFICATIONS, None)
+
         return Result(None, j)
 
     def get_job(self, job_name: str) -> Result[Job]:
@@ -198,7 +207,7 @@ class JobManager(GenericManager):
         )
         row = cursor.fetchone()
         if row is None:
-            raise ValueError(f"Job '{job_name}' not found")
+            return Result(ManagerErrorCode.JOB_NOT_FOUND, None)
 
         return self._row_to_job_details(row)
 
@@ -211,14 +220,14 @@ class JobManager(GenericManager):
         """
         cursor = self._connection.cursor()
 
-        # Retrieve percent and Status from the Jobs table
+        # Retrieve percentage and Status from the Jobs table
         cursor.execute(
             f"SELECT {PERCENT}, {STATUS} FROM {JOBS} WHERE {JOBNAME} = ?;",
             (job_name,)
         )
         job_row = cursor.fetchone()
         if job_row is None:
-            return Result(JobDetailsError.JOB_NOT_FOUND, None)
+            return Result(ManagerErrorCode.JOB_NOT_FOUND, None)
 
         percent, status = job_row
         state = self._int_to_state(status)
@@ -232,14 +241,12 @@ class JobManager(GenericManager):
 
         milestones = []
         for milestone, end_time, ret_val in task_rows:
-            if milestone is None:
+            if milestone is None or "$" not in milestone:
                 continue
 
             # Milestone string is of format Name$Rank$Param1$Param2$...
             # Params are optional and can be empty; Name and Rank are always there
             splits = milestone.split("$")
-            if len(splits) < 2:
-                continue
             m = Milestone(name=splits[0], parameters=splits[2:])
             m.end_time = self._parse_datetime(end_time) if end_time and ret_val == 0 else None
             milestones.append(m)
@@ -287,8 +294,8 @@ class JobManager(GenericManager):
         if job_filters.continuation_token is not None:
             try:
                 last_rowid = int(base64.b64decode(job_filters.continuation_token).decode())
-            except Exception:
-                raise ValueError("Invalid continuation token")
+            except UnicodeDecodeError:
+                return Result(ManagerErrorCode.INVALID_CONTINUATION_TOKEN, None)
             where_clauses.append("ROWID > ?")
             params.append(last_rowid)
 
@@ -409,8 +416,10 @@ class JobManager(GenericManager):
         :return: The job details of the submitted job.
         """
         if not shared_working_directory:
-            return Result(JobDetailsError.EMPTY_SHARED_WORKING_DIRECTORY, None)
-        fd = self._acquire_lock(self._db_path, timeout=30.0)
+            return Result(ManagerErrorCode.EMPTY_SHARED_WORKING_DIRECTORY, None)
+        fd = self._acquire_lock(self._db_path, timeout=self._timeout_lock_s)
+        if fd is None:
+            return Result(ManagerErrorCode.DB_BUSY, None)
         try:
             cursor = self._connection.cursor()
             cursor.execute("BEGIN IMMEDIATE")
@@ -423,14 +432,10 @@ class JobManager(GenericManager):
             # Derive job type from specifications type
             job_type_enum = self._SPECS_TYPE_TO_JOB_TYPE.get(type(specifications))
             if job_type_enum is None:
-                return Result(JobDetailsError.UNSUPPORTED_SPECIFICATIONS, None)
+                return Result(ManagerErrorCode.UNSUPPORTED_SPECIFICATIONS, None)
             job_type = job_type_enum.value
 
-            # Dump specifications as a json {"{jobType}": { specifications }}
-            if hasattr(specifications, "model_dump"):
-                specs_dict = specifications.model_dump(by_alias=True, exclude_none=True)
-            else:
-                specs_dict = dict(specifications)
+            specs_dict = specifications.model_dump(by_alias=True, exclude_none=True)
             specifications_payload = {job_type: specs_dict}
 
             # Save specifications to disk
@@ -472,10 +477,10 @@ class JobManager(GenericManager):
                     )
                 )
                 self._connection.commit()
-            except Exception as e:
+            except Exception:
                 shutil.rmtree(settings_dir, ignore_errors=True)
                 self._connection.rollback()
-                return Result(JobDetailsError.SQLITE_ERROR, None)
+                return Result(ManagerErrorCode.SQLITE_ERROR, None)
         finally:
             self._release_lock(fd, self._db_path)
 
@@ -489,7 +494,9 @@ class JobManager(GenericManager):
         :param job_priority: The priority of the job
         :return: The job details of the updated job
         """
-        fd = self._acquire_lock(self._db_path, timeout=30.0)
+        fd = self._acquire_lock(self._db_path, timeout=self._timeout_lock_s)
+        if fd is None:
+            return Result(ManagerErrorCode.DB_BUSY, None)
         try:
             cursor = self._connection.cursor()
             cursor.execute("BEGIN IMMEDIATE")
@@ -500,11 +507,11 @@ class JobManager(GenericManager):
                     (self._priority_to_int(job_priority), job_name)
                 )
                 if cursor.rowcount != 1:
-                    return Result(JobDetailsError.SQLITE_ERROR, None)
+                    return Result(ManagerErrorCode.JOB_NOT_FOUND, None)
                 self._connection.commit()
-            except Exception as e:
+            except Exception:
                 self._connection.rollback()
-                return Result(JobDetailsError.SQLITE_ERROR, None)
+                return Result(ManagerErrorCode.SQLITE_ERROR, None)
         finally:
             self._release_lock(fd, self._db_path)
 
@@ -520,7 +527,9 @@ class JobManager(GenericManager):
         cancelled_mask = 0x20  # 32
         final_state_mask = 0x38  # 56 = Completed(0x08) | Failed(0x10) | Cancelled(0x20)
 
-        fd = self._acquire_lock(self._db_path, timeout=30.0)
+        fd = self._acquire_lock(self._db_path, timeout=self._timeout_lock_s)
+        if fd is None:
+            return Result(ManagerErrorCode.DB_BUSY, None)
         try:
             cursor = self._connection.cursor()
             cursor.execute("BEGIN IMMEDIATE")
@@ -533,16 +542,16 @@ class JobManager(GenericManager):
                 )
                 row = cursor.fetchone()
                 if row is None:
-                    raise ValueError(f"Job '{job_name}' not found")
+                    self._connection.rollback()
+                    return Result(ManagerErrorCode.JOB_NOT_FOUND, None)
 
                 status, shared_working_dir = row
                 shared_working_dir = shared_working_dir or ""
 
                 # Validate: only pending (0x1) or pending+running (0x5) jobs can be cancelled
                 if status & final_state_mask:
-                    raise RuntimeError(
-                        f"Job '{job_name}' cannot be cancelled (current status: {status})"
-                    )
+                    self._connection.rollback()
+                    return Result(ManagerErrorCode.JOB_NOT_CANCELLABLE, None)
 
                 cancel_time = self._format_datetime(datetime.now(timezone.utc))
 
@@ -572,9 +581,9 @@ class JobManager(GenericManager):
                 )
 
                 self._connection.commit()
-            except Exception as e:
+            except Exception:
                 self._connection.rollback()
-                return Result(JobDetailsError.SQLITE_ERROR, None)
+                return Result(ManagerErrorCode.SQLITE_ERROR, None)
         finally:
             self._release_lock(fd, self._db_path)
 
