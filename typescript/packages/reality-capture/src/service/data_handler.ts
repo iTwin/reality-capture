@@ -1,8 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { ContainerClient } from "@azure/storage-blob";
-import type { AuthorizationClient, RealityData } from "@itwin/core-common";
-import { BentleyError } from "@itwin/core-bentley";
+import type { AuthorizationClient } from "@itwin/core-common";
 //TODO : ThreadPool type does not have native Node.js equivalent. Multi-thread for IO must be readapted (here, ploads and downloads are sequential.
 //import { ThreadPool } from "some-threadpool-lib";
 import { DetailedError } from "./error";

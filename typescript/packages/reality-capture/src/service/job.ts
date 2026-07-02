@@ -193,11 +193,11 @@ export const JobSchema = z.discriminatedUnion("type", [
     type: z.literal("GaussianSplats"),
     specifications: GaussianSplatsSpecificationsSchema,
   }),
-  /*z.object({
+  z.object({
     ...CommonFields,
     type: z.literal("ImportPointCloud"),
     specifications: ImportPCSpecificationsSchema,
-  }),*/
+  }),
   z.object({
     ...CommonFields,
     type: z.literal("Objects2D"),

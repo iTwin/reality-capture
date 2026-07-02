@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import axios, { AxiosInstance } from "axios";
 import type { AuthorizationClient } from "@itwin/core-common";
 import { BucketResponse } from "./bucket";
 import { DetectorBase, DetectorResponse, DetectorsMinimalResponse, DetectorUpdate, DetectorVersionCreate } from "./detectors";
@@ -316,7 +316,7 @@ export class RealityCaptureService {
   }
 
   async createRealityData(realityData: RealityDataCreate): Promise<Response<RealityData>> {
-    let url = this._getManagementUrl() + `reality-data`;
+    const url = this._getManagementUrl() + "reality-data";
     try {
       const resp = await this._axios.post(url, realityData, { headers: await this._getHeader("v1") });
       return new Response(resp.status, null, resp.data.realityData);
@@ -326,7 +326,7 @@ export class RealityCaptureService {
   }
 
   async updateRealityData(realityData: RealityDataUpdate, realityDataId: string): Promise<Response<RealityData>> {
-    let url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}`;
+    const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}`;
     try {
       const resp = await this._axios.patch(url, realityData, { headers: await this._getHeader("v1") });
       return new Response(resp.status, null, resp.data.realityData);
@@ -336,7 +336,7 @@ export class RealityCaptureService {
   }
   
   async getRealityDataList(realityDataFilter?: RealityDataFilter, prefer?: Prefer): Promise<Response<RealityDatas>> {
-    const url = this._getManagementUrl() + `reality-data/`;
+    const url = this._getManagementUrl() + "reality-data";
     const params = realityDataFilter ? RealityDataFilter.asParamsForServiceCall(realityDataFilter) : undefined;
     const headers = {
       ...await this._getHeader("v1"),
