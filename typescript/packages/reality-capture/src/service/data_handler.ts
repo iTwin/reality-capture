@@ -103,7 +103,6 @@ class _DataHandler {
 
   static async uploadData(containerUrl: string, src: string, realityDataDst: string, progressHook: ProgressHook): Promise<Response<null>> {
     const files = _DataHandler._getFilesAndSizes(src);
-    const nbThreads = _DataHandler._getNbThreads(files);
     const totalSize = files.reduce((acc, [, size]) => acc + size, 0);
     let proceed = true;
     const uploadedValues: { [k: string]: number } = {};

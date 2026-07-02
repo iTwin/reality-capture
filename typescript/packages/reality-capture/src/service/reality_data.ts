@@ -190,23 +190,16 @@ export const RealityDataFilterSchema = z.object({
   tag: z.string().optional().describe("Parameter to get reality data with exact matching tags."),
 });
 export type RealityDataFilter = z.infer<typeof RealityDataFilterSchema>;
-export namespace RealityDataFilter {
-  export function asParamsForServiceCall(filter: RealityDataFilter): Record<string, string | number> {
-    const params: Record<string, any> = Object.fromEntries(
-      Object.entries(filter).filter(([, v]) => v !== undefined)
-    );
 
-    for (const key of Object.keys(params).filter(k => k.endsWith("DateTime"))) {
-      const [start, end] = params[key] as [string, string];
-      params[key] = `${start}/${end}`;
-    }
+export function realityDataFilterAsParams(filter: RealityDataFilter): Record<string, string | number> {
+  const params: Record<string, any> = Object.fromEntries(
+    Object.entries(filter).filter(([, v]) => v !== undefined)
+  );
 
-    return params;
+  for (const key of Object.keys(params).filter(k => k.endsWith("DateTime"))) {
+    const [start, end] = params[key] as [string, string];
+    params[key] = `${start}/${end}`;
   }
-}
 
-function getContinuationToken(rd: RealityDatas): string | undefined {
-  if (!rd.links) return undefined;
-  const url = new URL(rd.links.next.href);
-  return url.searchParams.get("continuationToken") ?? undefined;
+  return params;
 }

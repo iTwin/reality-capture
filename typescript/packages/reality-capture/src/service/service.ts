@@ -7,7 +7,7 @@ import { Files } from "./files";
 import { Response } from "./response";
 import { JobCreate, Job, Progress, Messages, Service, getAppropriateService, Jobs } from "./job";
 import { DetailedErrorResponse, DetailedError } from "./error";
-import { ContainerDetails, Prefer, RealityData, RealityDataCreate, RealityDataFilter, RealityDatas, RealityDataUpdate } from "./reality_data";
+import { ContainerDetails, Prefer, RealityData, RealityDataCreate, RealityDataFilter, realityDataFilterAsParams, RealityDatas, RealityDataUpdate } from "./reality_data";
 
 export class RealityCaptureService {
   private _authorizationClient: AuthorizationClient;
@@ -337,7 +337,7 @@ export class RealityCaptureService {
   
   async getRealityDataList(realityDataFilter?: RealityDataFilter, prefer?: Prefer): Promise<Response<RealityDatas>> {
     const url = this._getManagementUrl() + "reality-data";
-    const params = realityDataFilter ? RealityDataFilter.asParamsForServiceCall(realityDataFilter) : undefined;
+    const params = realityDataFilter ? realityDataFilterAsParams(realityDataFilter) : undefined;
     const headers = {
       ...await this._getHeader("v1"),
       "Prefer": prefer === Prefer.REPRESENTATION ? "return=representation" : "return=minimal",

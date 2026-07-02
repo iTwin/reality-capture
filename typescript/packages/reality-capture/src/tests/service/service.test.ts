@@ -110,9 +110,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getBucket(iTwinId);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.bucket.iTwinId).to.equal(iTwinId);
   });
 
@@ -129,9 +129,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getBucket(iTwinId);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
@@ -145,9 +145,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getBucket(iTwinId);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -172,14 +172,14 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getServiceFiles();
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.files).to.have.lengthOf(2);
-    expect(result.value!.files[0].deprecated).to.be.undefined;
+    expect(result.value!.files[0].deprecated).to.equal(undefined);
     expect(result.value!.files[0].description).to.equal("preset file");
-    expect(result.value!.files[1].description).to.be.undefined;
-    expect(result.value!.files[1].deprecated).to.be.true;
+    expect(result.value!.files[1].description).to.equal(undefined);
+    expect(result.value!.files[1].deprecated).to.equal(true);
   });
 
   it("getServiceFiles 401 error", async () => {
@@ -195,9 +195,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getServiceFiles();
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
@@ -211,9 +211,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getServiceFiles();
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -241,9 +241,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getDetectors();
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.detectors).to.have.lengthOf(2);
   });
 
@@ -256,11 +256,11 @@ describe("RealityCaptureService API calls tests", function () {
     });
     const detectorsFilter = "exports in ('Polygons', 'Lines') and labels in ('crack')";
     const result = await service.getDetectors(detectorsFilter);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(axiosGetStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors");
     expect(axiosGetStub.firstCall.args[1].params).to.deep.equal({ "$filter": detectorsFilter });
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
   });
 
   it("getDetectors 401 error", async () => {
@@ -276,9 +276,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getDetectors();
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
@@ -292,9 +292,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getDetectors();
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -358,10 +358,10 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getDetector("@bentley/mydetector");
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(axiosGetStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector");
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.detector.name).to.equal("@bentley/mydetector");
   });
 
@@ -378,9 +378,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getDetector("mydetector");
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
@@ -394,9 +394,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getDetector("mydetector");
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -422,10 +422,10 @@ describe("RealityCaptureService API calls tests", function () {
       documentationUrl: "https://www.bentley.com"
     };
     const result = await service.createDetector(detectorCreate);
-    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.calledOnce).to.equal(true);
     expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors");
     expect(axiosPostStub.firstCall.args[1]).to.deep.equal(detectorCreate);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.detector.name).to.equal("@bentley/new-detector");
   });
 
@@ -449,10 +449,10 @@ describe("RealityCaptureService API calls tests", function () {
       documentationUrl: "https://www.bentley.com/docs"
     };
     const result = await service.updateDetector("@bentley/mydetector", detectorUpdate);
-    expect(axiosPatchStub.calledOnce).to.be.true;
+    expect(axiosPatchStub.calledOnce).to.equal(true);
     expect(axiosPatchStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector");
     expect(axiosPatchStub.firstCall.args[1]).to.deep.equal(detectorUpdate);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.detector.displayName).to.equal("Updated detector");
   });
 
@@ -462,10 +462,10 @@ describe("RealityCaptureService API calls tests", function () {
       data: {}
     });
     const result = await service.deleteDetector("@bentley/mydetector");
-    expect(axiosDeleteStub.calledOnce).to.be.true;
+    expect(axiosDeleteStub.calledOnce).to.equal(true);
     expect(axiosDeleteStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector");
-    expect(result.isError()).to.be.false;
-    expect(result.value).to.be.null;
+    expect(result.isError()).to.equal(false);
+    expect(result.value).to.equal(null);
   });
 
   it("createDetectorVersion should call axios.post with the version payload", async () => {
@@ -481,11 +481,11 @@ describe("RealityCaptureService API calls tests", function () {
       }
     };
     const result = await service.createDetectorVersion("@bentley/mydetector", versionCreate);
-    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.calledOnce).to.equal(true);
     expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector/versions");
     expect(axiosPostStub.firstCall.args[1]).to.deep.equal(versionCreate);
-    expect(result.isError()).to.be.false;
-    expect(result.value).to.be.null;
+    expect(result.isError()).to.equal(false);
+    expect(result.value).to.equal(null);
   });
 
   it("deleteDetectorVersion should call axios.delete with encoded detector and version names", async () => {
@@ -494,9 +494,9 @@ describe("RealityCaptureService API calls tests", function () {
       data: {}
     });
     const result = await service.deleteDetectorVersion("@bentley/mydetector", "1.0-beta/1");
-    expect(axiosDeleteStub.calledOnce).to.be.true;
+    expect(axiosDeleteStub.calledOnce).to.equal(true);
     expect(axiosDeleteStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector/versions/1.0-beta%2F1");
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
   });
 
   it("publishDetectorVersion should call axios.post on the publish endpoint", async () => {
@@ -505,9 +505,9 @@ describe("RealityCaptureService API calls tests", function () {
       data: {}
     });
     const result = await service.publishDetectorVersion("@bentley/mydetector", "1.0");
-    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.calledOnce).to.equal(true);
     expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector/versions/1.0/publish");
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
   });
 
   it("unpublishDetectorVersion should call axios.post on the unpublish endpoint", async () => {
@@ -516,9 +516,9 @@ describe("RealityCaptureService API calls tests", function () {
       data: {}
     });
     const result = await service.unpublishDetectorVersion("@bentley/mydetector", "1.0");
-    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.calledOnce).to.equal(true);
     expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector/versions/1.0/unpublish");
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
   });
 
   it("completeDetectorVersionUpload should call axios.post on the complete endpoint", async () => {
@@ -527,9 +527,9 @@ describe("RealityCaptureService API calls tests", function () {
       data: {}
     });
     const result = await service.completeDetectorVersionUpload("@bentley/mydetector", "1.0");
-    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.calledOnce).to.equal(true);
     expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector/versions/1.0/complete");
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
   });
 
   //estimateCost tests
@@ -546,9 +546,9 @@ describe("RealityCaptureService API calls tests", function () {
     });
     const costCreate: CostEstimationCreate = { type: JobType.CALIBRATION } as any;
     const result = await service.estimateCost(costCreate);
-    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.estimatedUnits).to.equal(8);
   });
 
@@ -566,9 +566,9 @@ describe("RealityCaptureService API calls tests", function () {
     });
     const costCreate: CostEstimationCreate = { type: JobType.CALIBRATION } as any;
     const result = await service.estimateCost(costCreate);
-    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
@@ -583,9 +583,9 @@ describe("RealityCaptureService API calls tests", function () {
     });
     const costCreate: CostEstimationCreate = { type: JobType.CALIBRATION } as any;
     const result = await service.estimateCost(costCreate);
-    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -619,9 +619,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.cancelJob("jobId", Service.MODELING);
-    expect(axiosDeleteStub.calledOnce).to.be.true;
+    expect(axiosDeleteStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.state).to.equal("Terminating");
   });
 
@@ -638,9 +638,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.cancelJob("jobId", Service.MODELING);
-    expect(axiosDeleteStub.calledOnce).to.be.true;
+    expect(axiosDeleteStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
@@ -654,9 +654,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.cancelJob("jobId", Service.MODELING);
-    expect(axiosDeleteStub.calledOnce).to.be.true;
+    expect(axiosDeleteStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -672,9 +672,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getJobProgress("jobId", Service.MODELING);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.percentage).to.equal(5);
   });
 
@@ -691,9 +691,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getJobProgress("jobId", Service.MODELING);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
@@ -707,9 +707,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getJobProgress("jobId", Service.MODELING);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -730,9 +730,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getJobMessages("jobId", Service.MODELING);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.errors).to.have.lengthOf(1);
     expect(result.value!.errors[0].code).to.equal("InputData_Invalid");
   });
@@ -750,9 +750,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getJobMessages("jobId", Service.MODELING);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
@@ -766,9 +766,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getJobMessages("jobId", Service.MODELING);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -799,9 +799,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getJob("jobId", Service.MODELING);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.state).to.equal("Active");
     expect(result.value!.id).to.equal("jobId");
   });
@@ -819,9 +819,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getJob("jobId", Service.MODELING);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
@@ -835,9 +835,9 @@ describe("RealityCaptureService API calls tests", function () {
       }
     });
     const result = await service.getJob("jobId", Service.MODELING);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -871,9 +871,9 @@ describe("RealityCaptureService API calls tests", function () {
     });
     const jobCreate: JobCreate = { type: JobType.RECONSTRUCTION } as any;
     const result = await service.submitJob(jobCreate);
-    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.type).to.equal(JobType.RECONSTRUCTION);
   });
 
@@ -891,9 +891,9 @@ describe("RealityCaptureService API calls tests", function () {
     });
     const jobCreate: JobCreate = { type: JobType.RECONSTRUCTION } as any;
     const result = await service.submitJob(jobCreate);
-    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
@@ -908,9 +908,9 @@ describe("RealityCaptureService API calls tests", function () {
     });
     const jobCreate: JobCreate = { type: JobType.RECONSTRUCTION } as any;
     const result = await service.submitJob(jobCreate);
-    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -981,12 +981,12 @@ describe("RealityCaptureService API calls tests", function () {
       },
     });
     const result = await service.getJobs(Service.MODELING, "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a");
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(axiosGetStub.firstCall.args[1].params).to.deep.include({
       $filter: "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a",
     });
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.jobs).to.have.lengthOf(2);
     expect(result.value!.jobs[0].id).to.equal(
       "2e8b5984-15b1-45d5-8175-572583d8c3c8"
@@ -1010,9 +1010,9 @@ describe("RealityCaptureService API calls tests", function () {
       },
     });
     const result = await service.getJobs(Service.MODELING, "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a");
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
@@ -1026,9 +1026,9 @@ describe("RealityCaptureService API calls tests", function () {
       },
     });
     const result = await service.getJobs(Service.MODELING, "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a");
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -1052,10 +1052,10 @@ describe("RealityCaptureService API calls tests", function () {
   it("getRealityData should return a Response<RealityData> on success", async () => {
     axiosGetStub.resolves({ status: 200, data: { realityData: sampleRealityData } });
     const result = await service.getRealityData(rdId);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(axiosGetStub.firstCall.args[0]).to.equal(`https://dev-api.bentley.com/reality-management/reality-data/${rdId}`);
     expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.id).to.equal(rdId);
   });
 
@@ -1072,15 +1072,15 @@ describe("RealityCaptureService API calls tests", function () {
       response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
     });
     const result = await service.getRealityData(rdId);
-    expect(axiosGetStub.calledOnce).to.be.true;
-    expect(result.isError()).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
   it("getRealityData ill formed error", async () => {
     axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
     const result = await service.getRealityData(rdId);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -1088,10 +1088,10 @@ describe("RealityCaptureService API calls tests", function () {
     axiosPostStub.resolves({ status: 201, data: { realityData: sampleRealityData } });
     const create = { iTwinId, displayName: "Test RD", type: Type.CC_IMAGE_COLLECTION };
     const result = await service.createRealityData(create);
-    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.calledOnce).to.equal(true);
     expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-management/reality-data");
     expect(axiosPostStub.firstCall.args[1]).to.deep.equal(create);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.id).to.equal(rdId);
   });
 
@@ -1100,15 +1100,15 @@ describe("RealityCaptureService API calls tests", function () {
       response: { status: 422, data: { error: { code: "InvalidRealityData", message: "Invalid payload." } } }
     });
     const result = await service.createRealityData({ iTwinId, displayName: "Test", type: Type.LAS });
-    expect(axiosPostStub.calledOnce).to.be.true;
-    expect(result.isError()).to.be.true;
+    expect(axiosPostStub.calledOnce).to.equal(true);
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("InvalidRealityData");
   });
 
   it("createRealityData ill formed error", async () => {
     axiosPostStub.rejects({ response: { status: 500, data: { bad: "response" } } });
     const result = await service.createRealityData({ iTwinId, displayName: "Test", type: Type.LAS });
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -1117,10 +1117,10 @@ describe("RealityCaptureService API calls tests", function () {
     axiosPatchStub.resolves({ status: 200, data: { realityData: updated } });
     const update = { displayName: "Updated RD" };
     const result = await service.updateRealityData(update, rdId);
-    expect(axiosPatchStub.calledOnce).to.be.true;
+    expect(axiosPatchStub.calledOnce).to.equal(true);
     expect(axiosPatchStub.firstCall.args[0]).to.equal(`https://dev-api.bentley.com/reality-management/reality-data/${rdId}`);
     expect(axiosPatchStub.firstCall.args[1]).to.deep.equal(update);
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.displayName).to.equal("Updated RD");
   });
 
@@ -1129,25 +1129,25 @@ describe("RealityCaptureService API calls tests", function () {
       response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
     });
     const result = await service.updateRealityData({ displayName: "New" }, rdId);
-    expect(axiosPatchStub.calledOnce).to.be.true;
-    expect(result.isError()).to.be.true;
+    expect(axiosPatchStub.calledOnce).to.equal(true);
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
   it("updateRealityData ill formed error", async () => {
     axiosPatchStub.rejects({ response: { status: 500, data: { bad: "response" } } });
     const result = await service.updateRealityData({}, rdId);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
   it("deleteRealityData should call axios.delete and return a Response<void>", async () => {
     axiosDeleteStub.resolves({ status: 204, data: {} });
     const result = await service.deleteRealityData(rdId);
-    expect(axiosDeleteStub.calledOnce).to.be.true;
+    expect(axiosDeleteStub.calledOnce).to.equal(true);
     expect(axiosDeleteStub.firstCall.args[0]).to.equal(`https://dev-api.bentley.com/reality-management/reality-data/${rdId}`);
-    expect(result.isError()).to.be.false;
-    expect(result.value).to.be.null;
+    expect(result.isError()).to.equal(false);
+    expect(result.value).to.equal(null);
   });
 
   it("deleteRealityData 404 error", async () => {
@@ -1155,26 +1155,26 @@ describe("RealityCaptureService API calls tests", function () {
       response: { status: 404, data: { error: { code: "RealityDataNotFound", message: "Not found." } } }
     });
     const result = await service.deleteRealityData(rdId);
-    expect(axiosDeleteStub.calledOnce).to.be.true;
-    expect(result.isError()).to.be.true;
+    expect(axiosDeleteStub.calledOnce).to.equal(true);
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("RealityDataNotFound");
   });
 
   it("deleteRealityData ill formed error", async () => {
     axiosDeleteStub.rejects({ response: { status: 500, data: { bad: "response" } } });
     const result = await service.deleteRealityData(rdId);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
   it("getRealityDataReadAccess should return a Response<ContainerDetails>", async () => {
     axiosGetStub.resolves({ status: 200, data: sampleContainerDetails });
     const result = await service.getRealityDataReadAccess(rdId);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(axiosGetStub.firstCall.args[0]).to.equal(
       `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/readaccess`
     );
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.access).to.equal(Access.READ);
     expect(result.value!._links.containerUrl.href).to.equal("https://blob.core.windows.net/container?sas=token");
   });
@@ -1194,15 +1194,15 @@ describe("RealityCaptureService API calls tests", function () {
       response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
     });
     const result = await service.getRealityDataReadAccess(rdId);
-    expect(axiosGetStub.calledOnce).to.be.true;
-    expect(result.isError()).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
   it("getRealityDataReadAccess ill formed error", async () => {
     axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
     const result = await service.getRealityDataReadAccess(rdId);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -1210,11 +1210,11 @@ describe("RealityCaptureService API calls tests", function () {
     const writeDetails = { ...sampleContainerDetails, access: "Write" };
     axiosGetStub.resolves({ status: 200, data: writeDetails });
     const result = await service.getRealityDataWriteAccess(rdId);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(axiosGetStub.firstCall.args[0]).to.equal(
       `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/writeaccess`
     );
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value!.access).to.equal(Access.WRITE);
   });
 
@@ -1233,15 +1233,15 @@ describe("RealityCaptureService API calls tests", function () {
       response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
     });
     const result = await service.getRealityDataWriteAccess(rdId);
-    expect(axiosGetStub.calledOnce).to.be.true;
-    expect(result.isError()).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
   it("getRealityDataWriteAccess ill formed error", async () => {
     axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
     const result = await service.getRealityDataWriteAccess(rdId);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
@@ -1257,8 +1257,8 @@ describe("RealityCaptureService API calls tests", function () {
       },
     });
     const result = await service.getRealityDataList();
-    expect(axiosGetStub.calledOnce).to.be.true;
-    expect(result.isError()).to.be.false;
+    expect(axiosGetStub.calledOnce).to.equal(true);
+    expect(result.isError()).to.equal(false);
     expect(result.value!.realityData).to.have.lengthOf(2);
   });
 
@@ -1304,28 +1304,28 @@ describe("RealityCaptureService API calls tests", function () {
       response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
     });
     const result = await service.getRealityDataList();
-    expect(axiosGetStub.calledOnce).to.be.true;
-    expect(result.isError()).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
   it("getRealityDataList ill formed error", async () => {
     axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
     const result = await service.getRealityDataList();
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
   it("moveRealityData should call axios.patch on the move endpoint", async () => {
     axiosPatchStub.resolves({ status: 200, data: {} });
     const result = await service.moveRealityData(rdId, iTwinId);
-    expect(axiosPatchStub.calledOnce).to.be.true;
+    expect(axiosPatchStub.calledOnce).to.equal(true);
     expect(axiosPatchStub.firstCall.args[0]).to.equal(
       `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/move`
     );
     expect(axiosPatchStub.firstCall.args[1]).to.deep.equal({ iTwinId });
-    expect(result.isError()).to.be.false;
-    expect(result.value).to.be.null;
+    expect(result.isError()).to.equal(false);
+    expect(result.value).to.equal(null);
   });
 
   it("moveRealityData 404 error", async () => {
@@ -1333,26 +1333,26 @@ describe("RealityCaptureService API calls tests", function () {
       response: { status: 404, data: { error: { code: "RealityDataNotFound", message: "Not found." } } }
     });
     const result = await service.moveRealityData(rdId, iTwinId);
-    expect(axiosPatchStub.calledOnce).to.be.true;
-    expect(result.isError()).to.be.true;
+    expect(axiosPatchStub.calledOnce).to.equal(true);
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("RealityDataNotFound");
   });
 
   it("moveRealityData ill formed error", async () => {
     axiosPatchStub.rejects({ response: { status: 500, data: { bad: "response" } } });
     const result = await service.moveRealityData(rdId, iTwinId);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
   it("getRealityDataITwins should return a Response<string[]>", async () => {
     axiosGetStub.resolves({ status: 200, data: { iTwins: ["itwin-001", "itwin-002"] } });
     const result = await service.getRealityDataITwins(rdId);
-    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
     expect(axiosGetStub.firstCall.args[0]).to.equal(
       `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/iTwins`
     );
-    expect(result.isError()).to.be.false;
+    expect(result.isError()).to.equal(false);
     expect(result.value).to.deep.equal(["itwin-001", "itwin-002"]);
   });
 
@@ -1361,15 +1361,15 @@ describe("RealityCaptureService API calls tests", function () {
       response: { status: 404, data: { error: { code: "RealityDataNotFound", message: "Not found." } } }
     });
     const result = await service.getRealityDataITwins(rdId);
-    expect(axiosGetStub.calledOnce).to.be.true;
-    expect(result.isError()).to.be.true;
+    expect(axiosGetStub.calledOnce).to.equal(true);
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("RealityDataNotFound");
   });
 
   it("getRealityDataITwins ill formed error", async () => {
     axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
     const result = await service.getRealityDataITwins(rdId);
-    expect(result.isError()).to.be.true;
+    expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 });
