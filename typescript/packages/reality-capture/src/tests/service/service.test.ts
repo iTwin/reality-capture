@@ -1372,4 +1372,62 @@ describe("RealityCaptureService API calls tests", function () {
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
+
+  // associateRealityData tests
+  it("associateRealityData should call axios.post on the iTwins endpoint", async () => {
+    axiosPostStub.resolves({ status: 200, data: {} });
+    const result = await service.associateRealityData(iTwinId, rdId);
+    expect(axiosPostStub.calledOnce).to.equal(true);
+    expect(axiosPostStub.firstCall.args[0]).to.equal(
+      `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/iTwins/${iTwinId}`
+    );
+    expect(result.isError()).to.equal(false);
+    expect(result.value).to.equal(null);
+  });
+
+  it("associateRealityData 404 error", async () => {
+    axiosPostStub.rejects({
+      response: { status: 404, data: { error: { code: "RealityDataNotFound", message: "Not found." } } }
+    });
+    const result = await service.associateRealityData(iTwinId, rdId);
+    expect(axiosPostStub.calledOnce).to.equal(true);
+    expect(result.isError()).to.equal(true);
+    expect(result.error!.error.code).to.equal("RealityDataNotFound");
+  });
+
+  it("associateRealityData ill formed error", async () => {
+    axiosPostStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    const result = await service.associateRealityData(iTwinId, rdId);
+    expect(result.isError()).to.equal(true);
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  // dissociateRealityData tests
+  it("dissociateRealityData should call axios.delete on the iTwins endpoint", async () => {
+    axiosDeleteStub.resolves({ status: 204, data: {} });
+    const result = await service.dissociateRealityData(iTwinId, rdId);
+    expect(axiosDeleteStub.calledOnce).to.equal(true);
+    expect(axiosDeleteStub.firstCall.args[0]).to.equal(
+      `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/iTwins/${iTwinId}`
+    );
+    expect(result.isError()).to.equal(false);
+    expect(result.value).to.equal(null);
+  });
+
+  it("dissociateRealityData 404 error", async () => {
+    axiosDeleteStub.rejects({
+      response: { status: 404, data: { error: { code: "RealityDataNotFound", message: "Not found." } } }
+    });
+    const result = await service.dissociateRealityData(iTwinId, rdId);
+    expect(axiosDeleteStub.calledOnce).to.equal(true);
+    expect(result.isError()).to.equal(true);
+    expect(result.error!.error.code).to.equal("RealityDataNotFound");
+  });
+
+  it("dissociateRealityData ill formed error", async () => {
+    axiosDeleteStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    const result = await service.dissociateRealityData(iTwinId, rdId);
+    expect(result.isError()).to.equal(true);
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
 });
