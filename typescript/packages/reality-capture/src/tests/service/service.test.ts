@@ -6,6 +6,7 @@ import { Response } from "../../service/response";
 import { JobCreate, JobType, Service } from "../../service/job";
 import { CostEstimationCreate } from "../../service/estimation";
 import { DetectorBase, DetectorExport, DetectorType, DetectorUpdate, DetectorVersionCreate } from "../../service/detectors";
+import { Access, Prefer, RealityDataFilter, Type } from "../../service/reality_data";
 
 describe("RealityCaptureService tests", function () {
   it("should validate RealityCaptureService urls based on environment", async () => {
@@ -1027,6 +1028,347 @@ describe("RealityCaptureService API calls tests", function () {
     const result = await service.getJobs(Service.MODELING, "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a");
     expect(axiosGetStub.calledOnce).to.be.true;
     expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  const rdId = "rd-uuid-001";
+  const sampleRealityData = {
+    id: rdId,
+    displayName: "Test RD",
+    type: "CCImageCollection",
+    createdDateTime: "2024-01-01T00:00:00Z",
+    modifiedDateTime: "2024-01-02T00:00:00Z",
+    lastAccessedDateTime: "2024-01-03T00:00:00Z",
+    dataCenterLocation: "East US",
+    size: 512,
+  };
+  const sampleContainerDetails = {
+    type: "AzureBlobSasUrl",
+    access: "Read",
+    _links: { containerUrl: { href: "https://blob.core.windows.net/container?sas=token" } },
+  };
+
+  it("getRealityData should return a Response<RealityData> on success", async () => {
+    axiosGetStub.resolves({ status: 200, data: { realityData: sampleRealityData } });
+    const result = await service.getRealityData(rdId);
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.firstCall.args[0]).to.equal(`https://dev-api.bentley.com/reality-management/reality-data/${rdId}`);
+    expect(result).to.be.instanceOf(Response);
+    expect(result.isError()).to.be.false;
+    expect(result.value!.id).to.equal(rdId);
+  });
+
+  it("getRealityData with iTwinId should append query param", async () => {
+    axiosGetStub.resolves({ status: 200, data: { realityData: sampleRealityData } });
+    await service.getRealityData(rdId, iTwinId);
+    expect(axiosGetStub.firstCall.args[0]).to.equal(
+      `https://dev-api.bentley.com/reality-management/reality-data/${rdId}?iTwinId=${iTwinId}`
+    );
+  });
+
+  it("getRealityData 401 error", async () => {
+    axiosGetStub.rejects({
+      response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
+    });
+    const result = await service.getRealityData(rdId);
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("HeaderNotFound");
+  });
+
+  it("getRealityData ill formed error", async () => {
+    axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    const result = await service.getRealityData(rdId);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  it("createRealityData should call axios.post and return a Response<RealityData>", async () => {
+    axiosPostStub.resolves({ status: 201, data: { realityData: sampleRealityData } });
+    const create = { iTwinId, displayName: "Test RD", type: Type.CC_IMAGE_COLLECTION };
+    const result = await service.createRealityData(create);
+    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-management/reality-data");
+    expect(axiosPostStub.firstCall.args[1]).to.deep.equal(create);
+    expect(result.isError()).to.be.false;
+    expect(result.value!.id).to.equal(rdId);
+  });
+
+  it("createRealityData 422 error", async () => {
+    axiosPostStub.rejects({
+      response: { status: 422, data: { error: { code: "InvalidRealityData", message: "Invalid payload." } } }
+    });
+    const result = await service.createRealityData({ iTwinId, displayName: "Test", type: Type.LAS });
+    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("InvalidRealityData");
+  });
+
+  it("createRealityData ill formed error", async () => {
+    axiosPostStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    const result = await service.createRealityData({ iTwinId, displayName: "Test", type: Type.LAS });
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  it("updateRealityData should call axios.patch and return a Response<RealityData>", async () => {
+    const updated = { ...sampleRealityData, displayName: "Updated RD" };
+    axiosPatchStub.resolves({ status: 200, data: { realityData: updated } });
+    const update = { displayName: "Updated RD" };
+    const result = await service.updateRealityData(update, rdId);
+    expect(axiosPatchStub.calledOnce).to.be.true;
+    expect(axiosPatchStub.firstCall.args[0]).to.equal(`https://dev-api.bentley.com/reality-management/reality-data/${rdId}`);
+    expect(axiosPatchStub.firstCall.args[1]).to.deep.equal(update);
+    expect(result.isError()).to.be.false;
+    expect(result.value!.displayName).to.equal("Updated RD");
+  });
+
+  it("updateRealityData 401 error", async () => {
+    axiosPatchStub.rejects({
+      response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
+    });
+    const result = await service.updateRealityData({ displayName: "New" }, rdId);
+    expect(axiosPatchStub.calledOnce).to.be.true;
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("HeaderNotFound");
+  });
+
+  it("updateRealityData ill formed error", async () => {
+    axiosPatchStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    const result = await service.updateRealityData({}, rdId);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  it("deleteRealityData should call axios.delete and return a Response<void>", async () => {
+    axiosDeleteStub.resolves({ status: 204, data: {} });
+    const result = await service.deleteRealityData(rdId);
+    expect(axiosDeleteStub.calledOnce).to.be.true;
+    expect(axiosDeleteStub.firstCall.args[0]).to.equal(`https://dev-api.bentley.com/reality-management/reality-data/${rdId}`);
+    expect(result.isError()).to.be.false;
+    expect(result.value).to.be.null;
+  });
+
+  it("deleteRealityData 404 error", async () => {
+    axiosDeleteStub.rejects({
+      response: { status: 404, data: { error: { code: "RealityDataNotFound", message: "Not found." } } }
+    });
+    const result = await service.deleteRealityData(rdId);
+    expect(axiosDeleteStub.calledOnce).to.be.true;
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("RealityDataNotFound");
+  });
+
+  it("deleteRealityData ill formed error", async () => {
+    axiosDeleteStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    const result = await service.deleteRealityData(rdId);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  it("getRealityDataReadAccess should return a Response<ContainerDetails>", async () => {
+    axiosGetStub.resolves({ status: 200, data: sampleContainerDetails });
+    const result = await service.getRealityDataReadAccess(rdId);
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.firstCall.args[0]).to.equal(
+      `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/readaccess`
+    );
+    expect(result.isError()).to.be.false;
+    expect(result.value!.access).to.equal(Access.READ);
+    expect(result.value!._links.containerUrl.href).to.equal("https://blob.core.windows.net/container?sas=token");
+  });
+
+  it("getRealityDataReadAccess with iTwinId should append query param only once", async () => {
+    axiosGetStub.resolves({ status: 200, data: sampleContainerDetails });
+    await service.getRealityDataReadAccess(rdId, iTwinId);
+    const calledUrl: string = axiosGetStub.firstCall.args[0];
+    expect(calledUrl).to.equal(
+      `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/readaccess?iTwinId=${iTwinId}`
+    );
+    expect(calledUrl.split("iTwinId=").length - 1).to.equal(1);
+  });
+
+  it("getRealityDataReadAccess 401 error", async () => {
+    axiosGetStub.rejects({
+      response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
+    });
+    const result = await service.getRealityDataReadAccess(rdId);
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("HeaderNotFound");
+  });
+
+  it("getRealityDataReadAccess ill formed error", async () => {
+    axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    const result = await service.getRealityDataReadAccess(rdId);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  it("getRealityDataWriteAccess should return a Response<ContainerDetails> with WRITE access", async () => {
+    const writeDetails = { ...sampleContainerDetails, access: "Write" };
+    axiosGetStub.resolves({ status: 200, data: writeDetails });
+    const result = await service.getRealityDataWriteAccess(rdId);
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.firstCall.args[0]).to.equal(
+      `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/writeaccess`
+    );
+    expect(result.isError()).to.be.false;
+    expect(result.value!.access).to.equal(Access.WRITE);
+  });
+
+  it("getRealityDataWriteAccess with iTwinId should append query param only once", async () => {
+    axiosGetStub.resolves({ status: 200, data: { ...sampleContainerDetails, access: "Write" } });
+    await service.getRealityDataWriteAccess(rdId, iTwinId);
+    const calledUrl: string = axiosGetStub.firstCall.args[0];
+    expect(calledUrl).to.equal(
+      `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/writeaccess?iTwinId=${iTwinId}`
+    );
+    expect(calledUrl.split("iTwinId=").length - 1).to.equal(1);
+  });
+
+  it("getRealityDataWriteAccess 401 error", async () => {
+    axiosGetStub.rejects({
+      response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
+    });
+    const result = await service.getRealityDataWriteAccess(rdId);
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("HeaderNotFound");
+  });
+
+  it("getRealityDataWriteAccess ill formed error", async () => {
+    axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    const result = await service.getRealityDataWriteAccess(rdId);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  it("getRealityDataList should return a Response<RealityDatas>", async () => {
+    axiosGetStub.resolves({
+      status: 200,
+      data: {
+        realityData: [
+          { id: "rd-001", displayName: "RD1", type: "CCImageCollection" },
+          { id: "rd-002", displayName: "RD2", type: "LAS" },
+        ],
+        links: { next: { href: "https://dev-api.bentley.com/reality-management/reality-data/?continuationToken=token123" } },
+      },
+    });
+    const result = await service.getRealityDataList();
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result.isError()).to.be.false;
+    expect(result.value!.realityData).to.have.lengthOf(2);
+  });
+
+  it("getRealityDataList should send Prefer: return=representation when specified", async () => {
+    axiosGetStub.resolves({
+      status: 200,
+      data: {
+        realityData: [],
+        links: { next: { href: "https://dev-api.bentley.com/reality-management/reality-data/" } },
+      },
+    });
+    await service.getRealityDataList(undefined, Prefer.REPRESENTATION);
+    expect(axiosGetStub.firstCall.args[1].headers["Prefer"]).to.equal("return=representation");
+  });
+
+  it("getRealityDataList should send Prefer: return=minimal by default", async () => {
+    axiosGetStub.resolves({
+      status: 200,
+      data: {
+        realityData: [],
+        links: { next: { href: "https://dev-api.bentley.com/reality-management/reality-data/" } },
+      },
+    });
+    await service.getRealityDataList();
+    expect(axiosGetStub.firstCall.args[1].headers["Prefer"]).to.equal("return=minimal");
+  });
+
+  it("getRealityDataList should pass filter as params", async () => {
+    axiosGetStub.resolves({
+      status: 200,
+      data: {
+        realityData: [],
+        links: { next: { href: "https://dev-api.bentley.com/reality-management/reality-data/" } },
+      },
+    });
+    const filter: RealityDataFilter = { iTwinId, $top: 10 };
+    await service.getRealityDataList(filter);
+    expect(axiosGetStub.firstCall.args[1].params).to.deep.equal({ iTwinId, $top: 10 });
+  });
+
+  it("getRealityDataList 401 error", async () => {
+    axiosGetStub.rejects({
+      response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
+    });
+    const result = await service.getRealityDataList();
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("HeaderNotFound");
+  });
+
+  it("getRealityDataList ill formed error", async () => {
+    axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    const result = await service.getRealityDataList();
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  it("moveRealityData should call axios.patch on the move endpoint", async () => {
+    axiosPatchStub.resolves({ status: 200, data: {} });
+    const result = await service.moveRealityData(rdId, iTwinId);
+    expect(axiosPatchStub.calledOnce).to.be.true;
+    expect(axiosPatchStub.firstCall.args[0]).to.equal(
+      `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/move`
+    );
+    expect(axiosPatchStub.firstCall.args[1]).to.deep.equal({ iTwinId });
+    expect(result.isError()).to.be.false;
+    expect(result.value).to.be.null;
+  });
+
+  it("moveRealityData 404 error", async () => {
+    axiosPatchStub.rejects({
+      response: { status: 404, data: { error: { code: "RealityDataNotFound", message: "Not found." } } }
+    });
+    const result = await service.moveRealityData(rdId, iTwinId);
+    expect(axiosPatchStub.calledOnce).to.be.true;
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("RealityDataNotFound");
+  });
+
+  it("moveRealityData ill formed error", async () => {
+    axiosPatchStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    const result = await service.moveRealityData(rdId, iTwinId);
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  it("getRealityDataITwins should return a Response<string[]>", async () => {
+    axiosGetStub.resolves({ status: 200, data: { iTwins: ["itwin-001", "itwin-002"] } });
+    const result = await service.getRealityDataITwins(rdId);
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.firstCall.args[0]).to.equal(
+      `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/iTwins`
+    );
+    expect(result.isError()).to.be.false;
+    expect(result.value).to.deep.equal(["itwin-001", "itwin-002"]);
+  });
+
+  it("getRealityDataITwins 404 error", async () => {
+    axiosGetStub.rejects({
+      response: { status: 404, data: { error: { code: "RealityDataNotFound", message: "Not found." } } }
+    });
+    const result = await service.getRealityDataITwins(rdId);
+    expect(axiosGetStub.calledOnce).to.be.true;
+    expect(result.isError()).to.be.true;
+    expect(result.error!.error.code).to.equal("RealityDataNotFound");
+  });
+
+  it("getRealityDataITwins ill formed error", async () => {
+    axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    const result = await service.getRealityDataITwins(rdId);
     expect(result.isError()).to.be.true;
     expect(result.error!.error.code).to.equal("UnknownError");
   });

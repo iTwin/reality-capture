@@ -4,6 +4,7 @@ reality-capture is a typescript package that allows any user to interact with Be
 
 - [Reality Modeling](https://developer.bentley.com/apis/contextcapture/)
 - [Reality Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
+- [Reality Management](https://developer.bentley.com/apis/reality-management/)
 <!--- * [Reality Conversion](https://developer.bentley.com/apis/realityconversion/)-->
 
 ## Building locally

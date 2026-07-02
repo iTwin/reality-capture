@@ -7,8 +7,6 @@ import {
   JobState,
   JobCreateSchema,
   ExecutionSchema,
-  JobSchema,
-  JobResponseSchema,
   ProgressSchema,
   ProgressResponseSchema,
   MessageSchema,

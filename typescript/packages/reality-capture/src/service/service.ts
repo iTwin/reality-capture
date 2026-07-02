@@ -7,6 +7,7 @@ import { Files } from "./files";
 import { Response } from "./response";
 import { JobCreate, Job, Progress, Messages, Service, getAppropriateService, Jobs } from "./job";
 import { DetailedErrorResponse, DetailedError } from "./error";
+import { ContainerDetails, Prefer, RealityData, RealityDataCreate, RealityDataFilter, RealityDatas, RealityDataUpdate } from "./reality_data";
 
 export class RealityCaptureService {
   private _authorizationClient: AuthorizationClient;
@@ -47,6 +48,10 @@ export class RealityCaptureService {
 
   private _getAnalysisUrl() {
     return this._serviceUrl + "reality-analysis/";
+  }
+
+  private _getManagementUrl() {
+    return this._serviceUrl + "reality-management/";
   }
 
   private _getCorrectUrl(service: Service): string {
@@ -254,6 +259,124 @@ export class RealityCaptureService {
     const url = this._getAnalysisUrl() + `detectors/${encodeURIComponent(detectorName)}/versions/${encodeURIComponent(versionNumber)}/complete`;
     try {
       const resp = await this._axios.post(url, undefined, { headers: await this._getHeader("v2") });
+      return new Response(resp.status, null, null);
+    } catch (error: any) {
+      return this._handleError<void>(error);
+    }
+  }
+
+  async dissociateRealityData(iTwinId: string, realityDataId: string): Promise<Response<void>> {
+    const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}/iTwins/${encodeURIComponent(iTwinId)}`;
+    try {
+      const resp = await this._axios.delete(url, { headers: await this._getHeader("v1") });
+      return new Response(resp.status, null, null);
+    } catch (error: any) {
+      return this._handleError<void>(error);
+    }
+  }
+
+  async associateRealityData(iTwinId: string, realityDataId: string): Promise<Response<void>> {
+    const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}/iTwins/${encodeURIComponent(iTwinId)}`;
+    try {
+      const resp = await this._axios.post(url, undefined, { headers: await this._getHeader("v1") });
+      return new Response(resp.status, null, null);
+    } catch (error: any) {
+      return this._handleError<void>(error);
+    }
+  }
+
+  async getRealityDataITwins(realityDataId: string): Promise<Response<string[]>> {
+    const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}/iTwins`;
+    try {
+      const resp = await this._axios.get(url, { headers: await this._getHeader("v1") });
+      return new Response(resp.status, null, resp.data.iTwins);
+    } catch (error: any) {
+      return this._handleError<string[]>(error);
+    }
+  }
+
+  async getRealityDataReadAccess(realityDataId: string, itwinId?: string): Promise<Response<ContainerDetails>> {
+    const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}/readaccess` + (itwinId ? `?iTwinId=${encodeURIComponent(itwinId)}` : "");
+    try {
+      const resp = await this._axios.get(url, { headers: await this._getHeader("v1") });
+      return new Response(resp.status, null, resp.data);
+    } catch (error: any) {
+      return this._handleError<ContainerDetails>(error);
+    }
+  }
+
+  async getRealityDataWriteAccess(realityDataId: string, itwinId?: string): Promise<Response<ContainerDetails>> {
+    const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}/writeaccess` + (itwinId ? `?iTwinId=${encodeURIComponent(itwinId)}` : "");
+    try {
+      const resp = await this._axios.get(url, { headers: await this._getHeader("v1") });
+      return new Response(resp.status, null, resp.data);
+    } catch (error: any) {
+      return this._handleError<ContainerDetails>(error);
+    }
+  }
+
+  async createRealityData(realityData: RealityDataCreate): Promise<Response<RealityData>> {
+    let url = this._getManagementUrl() + `reality-data`;
+    try {
+      const resp = await this._axios.post(url, realityData, { headers: await this._getHeader("v1") });
+      return new Response(resp.status, null, resp.data.realityData);
+    } catch (error: any) {
+      return this._handleError<RealityData>(error);
+    }
+  }
+
+  async updateRealityData(realityData: RealityDataUpdate, realityDataId: string): Promise<Response<RealityData>> {
+    let url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}`;
+    try {
+      const resp = await this._axios.patch(url, realityData, { headers: await this._getHeader("v1") });
+      return new Response(resp.status, null, resp.data.realityData);
+    } catch (error: any) {
+      return this._handleError<RealityData>(error);
+    }
+  }
+  
+  async getRealityDataList(realityDataFilter?: RealityDataFilter, prefer?: Prefer): Promise<Response<RealityDatas>> {
+    const url = this._getManagementUrl() + `reality-data/`;
+    const params = realityDataFilter ? RealityDataFilter.asParamsForServiceCall(realityDataFilter) : undefined;
+    const headers = {
+      ...await this._getHeader("v1"),
+      "Prefer": prefer === Prefer.REPRESENTATION ? "return=representation" : "return=minimal",
+    };
+    try {
+      const resp = await this._axios.get(url, { params, headers });
+      return new Response(resp.status, null, resp.data as RealityDatas);
+    } catch (error: any) {
+      return this._handleError<RealityDatas>(error);
+    }
+  }
+
+  async getRealityData(realityDataId: string, iTwinId?: string): Promise<Response<RealityData>> {
+    let url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}`;
+    if(iTwinId) {
+      url += `?iTwinId=${encodeURIComponent(iTwinId)}`;
+    }
+    try {
+      const resp = await this._axios.get(url, { headers: await this._getHeader("v1") });
+      return new Response(resp.status, null, resp.data.realityData);
+    } catch (error: any) {
+      return this._handleError<RealityData>(error);
+    }
+  }
+
+  async moveRealityData(realityDataId: string, iTwinId: string): Promise<Response<void>> {
+    const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}/move`;
+    try {
+      const resp = await this._axios.patch(url, { iTwinId: iTwinId }, { headers: await this._getHeader("v1") });
+      return new Response(resp.status, null, null);
+    } catch (error: any) {
+      return this._handleError<void>(error);
+    }
+  }
+
+  async deleteRealityData(realityDataId: string): Promise<Response<void>> {
+    const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}`;
+    try {
+      const resp = await this._axios.delete(url, { headers: await this._getHeader("v1") });
       return new Response(resp.status, null, null);
     } catch (error: any) {
       return this._handleError<void>(error);

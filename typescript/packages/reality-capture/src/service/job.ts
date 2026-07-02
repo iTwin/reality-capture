@@ -17,13 +17,13 @@ import { WaterConstraintsSpecificationsCreateSchema, WaterConstraintsSpecificati
 import { TrainingO2DSpecificationsCreateSchema, TrainingS3DSpecificationsCreateSchema, TrainingO2DSpecificationsSchema, TrainingS3DSpecificationsSchema } from "../specifications/training";
 //import { PointCloudConversionSpecificationsCreateSchema, PointCloudConversionSpecificationsSchema } from '../specifications/point_cloud_conversion';
 import { GaussianSplatsSpecificationsCreateSchema, GaussianSplatsSpecificationsSchema } from "../specifications/gaussian_splats";
-import { URLSchema } from "./bucket";
 import { EvalO2DSpecificationsCreateSchema, EvalO2DSpecificationsSchema } from "../specifications/eval_o2d";
 import { EvalO3DSpecificationsCreateSchema, EvalO3DSpecificationsSchema } from "../specifications/eval_o3d";
 import { EvalS2DSpecificationsCreateSchema, EvalS2DSpecificationsSchema } from "../specifications/eval_s2d";
 import { EvalS3DSpecificationsCreateSchema, EvalS3DSpecificationsSchema } from "../specifications/eval_s3d";
 import { EvalSOrthoSpecificationsCreateSchema, EvalSOrthoSpecificationsSchema } from "../specifications/eval_sortho";
 import { ClearanceSpecificationsCreateSchema, ClearanceSpecificationsSchema } from "../specifications/clearance";
+import { URLSchema } from "./reality_data";
 
 export enum JobType {
   CALIBRATION = "Calibration",
