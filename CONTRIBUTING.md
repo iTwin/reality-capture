@@ -71,5 +71,6 @@ Example commands below to install, clean, build and test :
 - `pnpm clean`
 - `pnpm build`
 - `pnpm lint`
+- `pnpm integration-tests`
 - `beachball change` to generate a changelog entry.
   - We use [beachball](https://github.com/microsoft/beachball) to manage versioning and changelogs.
