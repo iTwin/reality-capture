@@ -131,7 +131,7 @@ export const RealityDataSchema = RealityDataBaseSchema.extend({
 export type RealityData = z.infer<typeof RealityDataSchema>;
 
 export const RealityDataUpdateSchema = RealityDataBaseSchema.extend({
-  itwinId: z.string().optional().describe("Id of associated iTwin."),
+  iTwinId: z.string().optional().describe("Id of associated iTwin."),
   displayName: z.string().optional().describe("Name of the reality data."),
   type: z.nativeEnum(Type).optional().describe("A key indicating the format of the data."),
 });
