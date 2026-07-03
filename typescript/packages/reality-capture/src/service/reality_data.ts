@@ -190,7 +190,7 @@ export const RealityDataFilterSchema = z.object({
 });
 export type RealityDataFilter = z.infer<typeof RealityDataFilterSchema>;
 
-export function realityDataFilterAsParams(filter: RealityDataFilter): Record<string, string | number> {
+export function realityDataFilterAsParams(filter: RealityDataFilter): Record<string, unknown> {
   const params: Record<string, any> = Object.fromEntries(
     Object.entries(filter).filter(([, v]) => v !== undefined)
   );
