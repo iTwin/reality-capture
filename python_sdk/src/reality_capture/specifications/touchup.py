@@ -54,8 +54,7 @@ class TouchUpImportOutputsCreate(Enum):
 
 class TouchUpImportOutputs(BaseModel):
     import_info: Optional[str] = Field(None, alias="importInfo", description="Folder in bucket containing the "
-                                                                             "information about what was imported",
-                                       pattern=r"^bkt:.+")
+                                                                             "information about what was imported")
 
 
 class TouchUpImportSpecificationsCreate(BaseModel):

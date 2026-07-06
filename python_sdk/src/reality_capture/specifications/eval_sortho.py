@@ -11,8 +11,7 @@ class EvalSOrthoInputs(BaseModel):
 
 
 class EvalSOrthoOutputs(BaseModel):
-    report: Optional[str] = Field(None, description="Path in Bucket of json report with confusion matrix",
-                                  pattern=r"^bkt:.+")
+    report: Optional[str] = Field(None, description="Path in Bucket of json report with confusion matrix")
     segmented_photos: Optional[str] = Field(None, alias="segmentedPhotos",
                                             description="Reality data id of segmented photos, "
                                                         "annotated with confusion matrix index")
