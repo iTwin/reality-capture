@@ -23,11 +23,13 @@ Purpose
      - Possible outputs
      - Useful options
    * - Train new detector on a dataset (ContextScene)
-     - | *scene*,
+     - | *segmentations3D*,
+       | *detectorName*,
+       | *preset* (optional)
      - | *detector*,
      - | *epochs*
-       | *max_train_split*
-
+       | *spacing*
+       | *versionNumber*
 
 Examples
 ========
