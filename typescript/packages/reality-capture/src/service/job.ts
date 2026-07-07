@@ -233,7 +233,7 @@ export const JobSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     ...CommonFields,
-    type: z.literal("TraningS3D"),
+    type: z.literal("TrainingS3D"),
     specifications: TrainingS3DSpecificationsSchema,
   }),
   z.object({

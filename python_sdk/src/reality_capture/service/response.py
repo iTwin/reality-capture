@@ -8,7 +8,7 @@ T = TypeVar("T")
 @dataclass
 class Response(Generic[T]):
     """
-    A tuple containing a Service response.
+    A service response container.
     """
 
     status_code: int

@@ -23,18 +23,20 @@ Purpose
      - Possible outputs
      - Useful options
    * - Train new detector on a dataset (ContextScene)
-     - | *scene*,
+     - | *segmentations3D*,
+       | *detectorName*,
+       | *preset* (optional)
      - | *detector*,
      - | *epochs*
-       | *max_train_split*
-
+       | *spacing*
+       | *versionNumber*
 
 Examples
 ========
 
 In this example, we will create a specification for submitting a Training S3D job to produce a new S3D detector from a ContextScene.
 
-.. literalinclude:: examples/training_s3d_new_default.py
+.. literalinclude:: examples/training_s3d_default.py
   :language: Python
 
 Classes
