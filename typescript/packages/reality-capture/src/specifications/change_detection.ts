@@ -13,9 +13,10 @@ export const ChangeDetectionInputsSchema = z.object({
   extent: z.string().describe("Path in the bucket of the clipping polygon to apply").regex(/^bkt:.+/, {
     message: "Path in the bucket to the extent file must start with 'bkt:'",
   }).optional(),
-  preset: z.string().describe("Path in the bucket of a preset file to use").regex(/^bkt:.+/, {
+  // Add preset in a different release
+  /*preset: z.string().describe("Path in the bucket of a preset file to use").regex(/^bkt:.+/, {
     message: "Path in the bucket to the preset file must start with 'bkt:'",
-  }).optional(),
+  }).optional(),*/
 });
 export type ChangeDetectionInputs = z.infer<typeof ChangeDetectionInputsSchema>;
 

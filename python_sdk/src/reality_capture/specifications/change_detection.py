@@ -8,6 +8,9 @@ class ChangeDetectionInputs(BaseModel):
     model_3d_b: str = Field(alias="model3DB", description="Reality data id of ContextScene, point cloud, Gaussian splats, or mesh")
     extent: Optional[str] = Field(None, alias="extent", pattern=r"^bkt:.+",
                                   description="Path in the bucket of the clipping polygon to apply")
+    # Add preset in adifferent release
+    """preset: Optional[str] = Field(None, alias="preset", pattern=r"^bkt:.+",
+                                  description="Path in the bucket of a preset file to use")"""
 
 
 class ChangeDetectionOutputs(BaseModel):
