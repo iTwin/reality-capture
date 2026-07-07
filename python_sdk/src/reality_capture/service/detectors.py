@@ -56,7 +56,6 @@ class DetectorVersionWithLinks(BaseModel):
                                                 alias="_links")
 
 
-
 class DetectorUpdate(BaseModel):
     display_name: Optional[str] = Field(None, description="Display name of the detector.", alias="displayName")
     description: Optional[str] = Field(None, description="Description of the detector.")

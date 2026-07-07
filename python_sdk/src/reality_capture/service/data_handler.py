@@ -1,16 +1,15 @@
 import os.path
 import io
-import urllib.parse
 from typing import Callable, Optional
 import requests
-import zipfile
 from reality_capture.service.error import DetailedErrorResponse, DetailedError, Error
 from reality_capture.service.response import Response
-from reality_capture.service.service import DetectorMinimal, RealityCaptureService
+from reality_capture.service.service import RealityCaptureService
 from reality_capture.service.reality_data import RealityDataUpdate, RealityData, ContainerDetails
 from reality_capture.service.bucket import BucketResponse
 from azure.storage.blob import ContainerClient
-from reality_capture.service.detectors import Detector, DetectorCreate, DetectorVersion, DetectorType
+from reality_capture.service.detectors import (DetectorBase, DetectorVersion, DetectorType, DetectorResponse,
+                                               DetectorsMinimalResponse)
 from multiprocessing.pool import ThreadPool
 
 
@@ -350,6 +349,7 @@ class BucketDataHandler:
         """
         self._progress_hook = hook
 
+
 class DetectorDataHandler:
     """
     Class for interacting with detectors
@@ -366,7 +366,7 @@ class DetectorDataHandler:
         self._service = RealityCaptureService(token_factory, **kwargs)
         self._progress_hook = None
 
-    def get_detector(self, detector_name: str) -> Response[Detector]:
+    def get_detector(self, detector_name: str) -> Response[DetectorResponse]:
         return self._service.get_detector(detector_name)
 
     def get_specific_detector_version(self, detector_name: str, version_number: str) -> Response[DetectorVersion]:
@@ -379,33 +379,29 @@ class DetectorDataHandler:
 
         return Response(r.status_code, r.error, detector)
     
-    def create_detector(self,
-            name: str, type: DetectorType,
-            display_name: Optional[str] = None,
-            description: Optional[str] = None,
-            documentation_url: Optional[str] = None
-    ) -> Response[DetectorMinimal]:
+    def create_detector(self, name: str, detector_type: DetectorType, display_name: Optional[str] = None,
+                        description: Optional[str] = None, documentation_url: Optional[str] = None
+                        ) -> Response[DetectorResponse]:
 
-        detector_attributes = DetectorCreate(
-            name = name,
-            type = type,
-            displayName = display_name,
-            description = description,
-            documentationUrl = documentation_url
+        detector_attributes = DetectorBase(
+            name=name,
+            type=detector_type,
+            displayName=display_name,
+            description=description,
+            documentationUrl=documentation_url
         )
 
         return self._service.create_detector(detector_attributes)
     
-    def list_available_detectors(self) -> Response[list[DetectorMinimal]]:
+    def list_available_detectors(self) -> Response[DetectorsMinimalResponse]:
         return self._service.get_detectors()
 
     def download_detector_archive(self, detector_name: str, version_number: str) -> Response[io.BytesIO]:
         """
         Download detector archive from a detector version.
 
-        :param dst: Destination path of the downloads.
-        :param detector_src: Source folder to download in the detector, default to root.
-        :return: A Response[io.BytesIO] containing the error from the service if any.
+        :param detector_name: Name of the detector.
+        :param version_number: Version of the detector.
         """
         r = self.get_specific_detector_version(detector_name, version_number)
 
@@ -433,8 +429,8 @@ class DetectorDataHandler:
         """
         Delete a specific version of a detector
 
-        :param itwin_id: iTwin id for finding the detector.
-        :param files_to_delete: List of files to delete.
+        :param detector_name: Name of the detector.
+        :param version_number: Version of the detector.
         :return: A Response[None] containing either the files in the detector or the error from the service.
         """
         return self._service.delete_detector_version(detector_name, version_number)
