@@ -37,7 +37,6 @@ from reality_capture.specifications.eval_s2d import (EvalS2DSpecificationsCreate
 from reality_capture.specifications.eval_s3d import (EvalS3DSpecificationsCreate, EvalS3DSpecifications)
 from reality_capture.specifications.eval_sortho import (EvalSOrthoSpecificationsCreate, EvalSOrthoSpecifications)
 
-from reality_capture.specifications.clearance import (ClearanceSpecificationsCreate, ClearanceSpecifications)
 
 from reality_capture.service.reality_data import URL
 
@@ -63,7 +62,6 @@ class JobType(Enum):
     TOUCH_UP_IMPORT = "TouchUpImport"
     TOUCH_UP_EXPORT = "TouchUpExport"
     WATER_CONSTRAINTS = "WaterConstraints"
-    CLEARANCE_CALCULATION = "ClearanceCalculation"
     TRAINING_S3D = "TrainingS3D"
     # POINT_CLOUD_CONVERSION = "PointCloudConversion"
 
@@ -80,8 +78,7 @@ def _get_appropriate_service(jt: JobType):
         return Service.MODELING
     if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
             JobType.CHANGE_DETECTION, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
-            JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.CLEARANCE_CALCULATION,
-            JobType.TRAINING_S3D]:
+            JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.TRAINING_S3D]:
         return Service.ANALYSIS
     # return Service.CONVERSION
     raise NotImplementedError("Other services not yet implemented")
@@ -112,7 +109,6 @@ class JobCreate(BaseModel):
                         Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                         TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
                         TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
-                        ClearanceSpecificationsCreate,
                         TrainingS3DSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
@@ -158,7 +154,6 @@ class Job(BaseModel):
                         Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                         TilingSpecifications, TouchUpExportSpecifications,
                         TouchUpImportSpecifications, WaterConstraintsSpecifications,
-                        ClearanceSpecifications,
                         TrainingS3DSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
@@ -211,8 +206,6 @@ class Job(BaseModel):
             specifications = TouchUpImportSpecifications(**raw_dict)
         elif job_type == JobType.WATER_CONSTRAINTS:
             specifications = WaterConstraintsSpecifications(**raw_dict)
-        elif job_type == JobType.CLEARANCE_CALCULATION:
-            specifications = ClearanceSpecifications(**raw_dict)
         elif job_type == JobType.TRAINING_S3D:
             specifications = TrainingS3DSpecifications(**raw_dict)
         else:

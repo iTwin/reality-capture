@@ -19,7 +19,6 @@ from reality_capture.specifications.segmentation_orthophoto import SegmentationO
 from reality_capture.specifications.tiling import TilingSpecifications
 from reality_capture.specifications.touchup import TouchUpImportSpecifications, TouchUpExportSpecifications
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecifications
-from reality_capture.specifications.clearance import ClearanceSpecifications
 import pytest
 from unittest.mock import patch, MagicMock
 import reality_capture.service.job as job_module
@@ -363,21 +362,6 @@ class TestJobValidator:
         }
         job = Job(**j)
         assert isinstance(job.specifications, WaterConstraintsSpecifications)
-
-    def test_validation_clearance(self):
-        j = self.j_base.copy()
-        j["type"] = "ClearanceCalculation"
-        j["specifications"] = {
-            "inputs": {
-                "model3D": "mfid",
-                "clearanceFootprint": "sid"
-            },
-            "outputs": {
-                "ovfPoints": "rdId"
-            }
-        }
-        job = Job(**j)
-        assert isinstance(job.specifications, ClearanceSpecifications)
 
     def test_validation_unsupported_job_type_raises(self):
         j = self.j_base.copy()
