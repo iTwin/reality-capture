@@ -1,5 +1,4 @@
 import urllib.parse
-from statistics import correlation
 
 import requests
 import certifi
