@@ -8,6 +8,10 @@ This page documents all notable changes to the ``reality_capture`` Python SDK ac
    :local:
    :depth: 1
 
+Additions
+---------
+
+- Added ``correlation_id`` field to :class:`~reality_capture.service.response.Response` for tracking requests across the service.
 
 2.5.0
 =====
