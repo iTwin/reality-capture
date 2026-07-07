@@ -44,7 +44,7 @@ export const TrainingS3DOptionsSchema = z.object({
     .optional(),
   versionNumber: z
     .string()
-    .regex(/\d+(.\d+)?/)
+    .regex(/^\d+(?:\.\d+)?$/, "Must be a version like '1' or '1.0'")
     .describe("String representing the version number for the newly trained detector.")
     .optional(),
 });
