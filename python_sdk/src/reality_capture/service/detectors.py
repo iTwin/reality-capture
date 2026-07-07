@@ -11,7 +11,8 @@ class DetectorExport(Enum):
     LINES = "Lines"
     POLYGONS = "Polygons"
     LOCATIONS = "Locations"
-	
+
+
 class DetectorType(Enum):
     PHOTO_OBJECT_DETECTOR = "PhotoObjectDetector"
     PHOTO_SEGMENTATION_DETECTOR = "PhotoSegmentationDetector"
