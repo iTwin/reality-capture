@@ -34,10 +34,11 @@ class TestServiceJobCrud:
         jc = JobCreate(name="JCDC", type=JobType.FILL_IMAGE_PROPERTIES, iTwinId="itid", specifications=fips)
         responses.add(responses.POST, f'https://api.bentley.com/reality-modeling/jobs',
                       json={"bad": "response"},
-                      status=400)
+                      status=400, headers={"x-correlation-id": "corr_id"})
         response = self.rcs.submit_job(jc)
         assert response.is_error()
         assert response.error.error.code == "UnknownError"
+        assert response.correlation_id == "corr_id"
 
     @responses.activate
     def test_submit_job_401(self):
@@ -50,10 +51,11 @@ class TestServiceJobCrud:
         responses.add(responses.POST, f'https://api.bentley.com/reality-modeling/jobs',
                       json={"error": {"code": "HeaderNotFound",
                                       "message": "Header Authorization was not found in the request. Access denied."}},
-                      status=401)
+                      status=401, headers={"x-correlation-id": "corr_id"})
         response = self.rcs.submit_job(jc)
         assert response.is_error()
         assert response.error.error.code == "HeaderNotFound"
+        assert response.correlation_id == "corr_id"
 
     @responses.activate
     def test_submit_job_201(self):
@@ -69,19 +71,21 @@ class TestServiceJobCrud:
 
         responses.add(responses.POST, f'https://api.bentley.com/reality-modeling/jobs',
                       json=payload,
-                      status=201)
+                      status=201, headers={"x-correlation-id": "corr_id"})
         response = self.rcs.submit_job(jc)
         assert not response.is_error()
         assert response.value.id == "796715aa-bc5a-4df5-9554-ceed038babc6"
+        assert response.correlation_id == "corr_id"
 
     @responses.activate
     def test_get_job_ill_formed(self):
         responses.add(responses.GET, f'https://api.bentley.com/reality-modeling/jobs/796715aa-bc5a-4df5-9554-ceed038babc6',
                       json={"bad": "response"},
-                      status=400)
+                      status=400, headers={"x-correlation-id": "corr_id"})
         response = self.rcs.get_job("796715aa-bc5a-4df5-9554-ceed038babc6", Service.MODELING)
         assert response.is_error()
         assert response.error.error.code == "UnknownError"
+        assert response.correlation_id == "corr_id"
 
     @responses.activate
     def test_get_job_200(self):
@@ -90,19 +94,21 @@ class TestServiceJobCrud:
 
         responses.add(responses.GET, f'https://api.bentley.com/reality-modeling/jobs/796715aa-bc5a-4df5-9554-ceed038babc6',
                       json=payload,
-                      status=200)
+                      status=200, headers={"x-correlation-id": "corr_id"})
         response = self.rcs.get_job("796715aa-bc5a-4df5-9554-ceed038babc6", Service.MODELING)
         assert not response.is_error()
         assert response.value.id == "796715aa-bc5a-4df5-9554-ceed038babc6"
+        assert response.correlation_id == "corr_id"
 
     @responses.activate
     def test_get_job_progress_ill_formed(self):
         responses.add(responses.GET, f'https://api.bentley.com/reality-modeling/jobs/796715aa-bc5a-4df5-9554-ceed038babc6/progress',
                       json={"bad": "response"},
-                      status=400)
+                      status=400, headers={"x-correlation-id": "corr_id"})
         response = self.rcs.get_job_progress("796715aa-bc5a-4df5-9554-ceed038babc6", Service.MODELING)
         assert response.is_error()
         assert response.error.error.code == "UnknownError"
+        assert response.correlation_id == "corr_id"
 
     @responses.activate
     def test_get_job_progress_200(self):
@@ -111,19 +117,21 @@ class TestServiceJobCrud:
 
         responses.add(responses.GET, f'https://api.bentley.com/reality-modeling/jobs/796715aa-bc5a-4df5-9554-ceed038babc6/progress',
                       json=payload,
-                      status=200)
+                      status=200, headers={"x-correlation-id": "corr_id"})
         response = self.rcs.get_job_progress("796715aa-bc5a-4df5-9554-ceed038babc6", Service.MODELING)
         assert not response.is_error()
         assert response.value.percentage == 5
+        assert response.correlation_id == "corr_id"
 
     @responses.activate
     def test_cancel_job_ill_formed(self):
         responses.add(responses.DELETE, f'https://api.bentley.com/reality-modeling/jobs/796715aa-bc5a-4df5-9554-ceed038babc6',
                       json={"bad": "response"},
-                      status=400)
+                      status=400, headers={"x-correlation-id": "corr_id"})
         response = self.rcs.cancel_job("796715aa-bc5a-4df5-9554-ceed038babc6", Service.MODELING)
         assert response.is_error()
         assert response.error.error.code == "UnknownError"
+        assert response.correlation_id == "corr_id"
 
     @responses.activate
     def test_cancel_job_200(self):
@@ -132,29 +140,32 @@ class TestServiceJobCrud:
             payload = json.load(payload_data)
         responses.add(responses.DELETE, f'https://api.bentley.com/reality-modeling/jobs/796715aa-bc5a-4df5-9554-ceed038babc6',
                       json=payload,
-                      status=200)
+                      status=200, headers={"x-correlation-id": "corr_id"})
         response = self.rcs.cancel_job("796715aa-bc5a-4df5-9554-ceed038babc6", Service.MODELING)
         assert not response.is_error()
         assert response.value.id == "796715aa-bc5a-4df5-9554-ceed038babc6"
+        assert response.correlation_id == "corr_id"
 
     @responses.activate
     def test_get_job_messages_ill_formed(self):
         responses.add(responses.GET, f'https://api.bentley.com/reality-modeling/jobs/796715aa-bc5a-4df5-9554-ceed038babc6/messages',
                       json={"bad": "response"},
-                      status=400)
+                      status=400, headers={"x-correlation-id": "corr_id"})
         response = self.rcs.get_job_messages("796715aa-bc5a-4df5-9554-ceed038babc6", Service.MODELING)
         assert response.is_error()
         assert response.error.error.code == "UnknownError"
+        assert response.correlation_id == "corr_id"
 
     @responses.activate
     def test_get_job_messages_401(self):
         responses.add(responses.GET, f'https://api.bentley.com/reality-modeling/jobs/796715aa-bc5a-4df5-9554-ceed038babc6/messages',
                       json={"error": {"code": "HeaderNotFound",
                                       "message": "Header Authorization was not found in the request. Access denied."}},
-                      status=401)
+                      status=401, headers={"x-correlation-id": "corr_id"})
         response = self.rcs.get_job_messages("796715aa-bc5a-4df5-9554-ceed038babc6", Service.MODELING)
         assert response.is_error()
         assert response.error.error.code == "HeaderNotFound"
+        assert response.correlation_id == "corr_id"
 
     @responses.activate
     def test_get_job_messages_200(self):
@@ -163,7 +174,8 @@ class TestServiceJobCrud:
 
         responses.add(responses.GET, f'https://api.bentley.com/reality-modeling/jobs/796715aa-bc5a-4df5-9554-ceed038babc6/messages',
                       json=payload,
-                      status=200)
+                      status=200, headers={"x-correlation-id": "corr_id"})
         response = self.rcs.get_job_messages("796715aa-bc5a-4df5-9554-ceed038babc6", Service.MODELING)
         assert not response.is_error()
         assert len(response.value.errors) == 1
+        assert response.correlation_id == "corr_id"
