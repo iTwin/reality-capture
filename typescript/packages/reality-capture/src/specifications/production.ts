@@ -5,6 +5,8 @@ import { GeometricPrecision } from "./tiling";
 export enum Format {
   THREED_TILES = "3DTiles",
   OBJ = "OBJ",
+  OSGB = "OSGB",
+  I3S = "I3S",
   LAS = "LAS",
   PLY = "PLY",
   OPC = "OPC",
@@ -65,6 +67,7 @@ export enum ProjectionMode {
 
 export enum OrthoFormat {
   GEOTIFF = "GeoTIFF",
+  JPEG = "JPEG",
   NONE = "None"
 }
 
@@ -79,6 +82,12 @@ export enum OrthoColorSource {
   OPTIMIZED_COMPUTATION_VISIBLE = "OptimizedComputationVisible",
   REFERENCE_3D_MODEL_THERMAL = "Reference3dModelThermal",
   OPTIMIZED_COMPUTATION_THERMAL = "OptimizedComputationThermal"
+}
+
+export enum OverviewType {
+  NONE = "None",
+  EMBEDDED = "Embedded",
+  OVR_FILE = "OvrFile"
 }
 
 export const ProductionInputsSchema = z.object({
@@ -124,6 +133,34 @@ export const OptionsOBJSchema = z.object({
 });
 export type OptionsOBJ = z.infer<typeof OptionsOBJSchema>;
 
+export const OptionsOSGBSchema = z.object({
+  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
+  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
+  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
+  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
+  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
+  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
+  textureSharpening: z.boolean().optional().describe("Enable or disable texture sharpening."),
+  maximumTextureSize: z.number().int().optional().describe("Maximum texture size"),
+  textureCompression: z.number().int().min(0).max(100).optional().describe("JPG compression of texture file"),
+  crs: z.string().optional().describe("Coordinate reference system"),
+  crsOrigin: Point3dSchema.optional().describe("Origin of the coordinate reference system"),
+  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
+  lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
+});
+export type OptionsOSGB = z.infer<typeof OptionsOSGBSchema>;
+
+export const OptionsI3SSchema = z.object({
+  textureColorSource: z.nativeEnum(ColorSource).optional().describe("Source of the texture color"),
+  textureColorSourceResMin: z.number().min(0).optional().describe("Minimum resolution for the texture color source"),
+  textureColorSourceResMax: z.number().min(0).optional().describe("Maximum resolution for the texture color source"),
+  textureColorSourceThermalUnit: z.nativeEnum(ThermalUnit).optional().describe("Thermal unit for the texture color source"),
+  textureColorSourceThermalMin: z.number().optional().describe("Minimum thermal value for the texture color source"),
+  textureColorSourceThermalMax: z.number().optional().describe("Maximum thermal value for the texture color source"),
+  crs: z.string().optional().describe("Coordinate reference system"),
+});
+export type OptionsI3S = z.infer<typeof OptionsI3SSchema>;
+
 export const OptionsLASSchema = z.object({
   crs: z.string().optional().describe("Coordinate reference system"),
   samplingStrategy: z.nativeEnum(SamplingStrategy).optional().describe("Sampling strategy"),
@@ -154,6 +191,7 @@ export type OptionsOPC = z.infer<typeof OptionsOPCSchema>;
 
 export const OptionsOrthoDSMSchema = z.object({
   crs: z.string().optional().describe("Coordinate reference system"),
+  overviews: z.nativeEnum(OverviewType).optional().describe("Overviews to generate"),
   samplingDistance: z.number().optional().describe("Sampling distance"),
   projectionMode: z.nativeEnum(ProjectionMode).optional().describe("Projection mode"),
   mergeParts: z.boolean().optional().describe("Flag to merge parts"),
@@ -171,6 +209,8 @@ export const ExportCreateSchema = z.object({
   options: z.union([
     Options3DTilesSchema,
     OptionsOBJSchema,
+    OptionsOSGBSchema,
+    OptionsI3SSchema,
     OptionsLASSchema,
     OptionsPLYSchema,
     OptionsOPCSchema,

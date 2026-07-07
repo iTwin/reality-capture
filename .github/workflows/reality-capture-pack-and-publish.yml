@@ -1,0 +1,63 @@
+name: (RCPackPublish) Pack and publish reality-capture GitHub release
+
+on:
+  workflow_call:
+    inputs:
+      prerelease:
+        required: true
+        type: boolean
+
+jobs:
+  publish:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout github repo (+ download lfs dependencies)
+        uses: actions/checkout@v5
+        with:
+          lfs: true
+
+      - name: Checkout LFS objects
+        run: git lfs checkout
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 9
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+
+      - name: Install dependencies
+        working-directory: ./typescript/packages/reality-capture
+        run: pnpm install --frozen-lockfile=true
+
+      - name: Build
+        working-directory: ./typescript/packages/reality-capture
+        run: pnpm build
+
+      - name: Pack as tgz
+        working-directory: ./typescript/packages/reality-capture
+        run: pnpm run pack
+
+      - name: Get version
+        id: get_version
+        working-directory: ./typescript/packages/reality-capture
+        shell: pwsh
+        run: |
+          $packageVersion=(Get-Content .\package.json | ConvertFrom-Json).version
+          Write-Output "version=$($packageVersion)" >> $Env:GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}-ts
+          name: "Typescript Version ${{ steps.get_version.outputs.version }}"
+          draft: true
+          prerelease: ${{ inputs.prerelease }}
+          files: |
+            ./typescript/packages/reality-capture/lib/itwin-reality-capture-${{ steps.get_version.outputs.version }}.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

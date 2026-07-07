@@ -1,7 +1,10 @@
 import responses
 import json
 import os
+<<<<<<< HEAD
+=======
 from unittest.mock import patch
+>>>>>>> origin/main
 
 from reality_capture.service.detectors import (DetectorBase, DetectorType, DetectorVersionCreate, Capabilities,
                                                DetectorUpdate)

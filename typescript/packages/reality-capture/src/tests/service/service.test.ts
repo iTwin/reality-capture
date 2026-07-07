@@ -5,6 +5,7 @@ import type { AuthorizationClient } from "@itwin/core-common";
 import { Response } from "../../service/response";
 import { JobCreate, JobType, Service } from "../../service/job";
 import { CostEstimationCreate } from "../../service/estimation";
+import { DetectorBase, DetectorExport, DetectorType, DetectorUpdate, DetectorVersionCreate } from "../../service/detectors";
 
 describe("RealityCaptureService tests", function () {
   it("should validate RealityCaptureService urls based on environment", async () => {
@@ -302,14 +303,14 @@ describe("RealityCaptureService API calls tests", function () {
       status: 200,
       data: {
         "detector": {
-          "name": "mydetector",
+          "name": "@bentley/mydetector",
           "displayName": "Cracks detector",
           "description": "Detects all the cracks within a scene.",
           "type": "PhotoObjectDetector",
           "documentationUrl": "https://www.bentley.com",
           "versions": [{
             "creationDate": "2025-03-18T14:11:15.5325351Z",
-            "version": "2.0",
+            "versionNumber": "2.0",
             "status": "AwaitingData",
             "creatorId": "e8be5445-c76a-41c6-9bfe-6a3d71953624",
             "capabilities": {
@@ -323,7 +324,7 @@ describe("RealityCaptureService API calls tests", function () {
           },
           {
             "creationDate": "2025-03-12T13:32:06.8787916Z",
-            "version": "1.1",
+            "versionNumber": "1.1",
             "status": "Ready",
             "creatorId": "e8be5445-c76a-41c6-9bfe-6a3d71953624",
             "downloadUrl": "https://cicsdetectorsprodeussa01.blob.core.windows.net/bd9bf908-9b82-4fcd-9ab4-ff15286d2ada/cracks-detector-1.1.zip?sv=2024-08-04&se=2025-04-23T11%3A26%3A11Z&sr=b&sp=r&sig=***REMOVED***",
@@ -338,7 +339,7 @@ describe("RealityCaptureService API calls tests", function () {
           },
           {
             "creationDate": "2025-03-11T15:11:24.2712971Z",
-            "version": "1.0",
+            "versionNumber": "1.0",
             "status": "Ready",
             "creatorId": "d2b5b8e7-8248-49a3-94ac-b097a7a67b6d",
             "downloadUrl": "https://cicsdetectorsprodeussa01.blob.core.windows.net/bd9bf908-9b82-4fcd-9ab4-ff15286d2ada/cracks-detector-1.0.zip?sv=2024-08-04&se=2025-04-23T11%3A26%3A11Z&sr=b&sp=r&sig=***REMOVED***",
@@ -355,11 +356,12 @@ describe("RealityCaptureService API calls tests", function () {
         }
       }
     });
-    const result = await service.getDetector("mydetector");
+    const result = await service.getDetector("@bentley/mydetector");
     expect(axiosGetStub.calledOnce).to.be.true;
+    expect(axiosGetStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector");
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.false;
-    expect(result.value!.detector.name).to.equal("mydetector");
+    expect(result.value!.detector.name).to.equal("@bentley/mydetector");
   });
 
   it("getDetector 401 error", async () => {
@@ -395,6 +397,138 @@ describe("RealityCaptureService API calls tests", function () {
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.be.true;
     expect(result.error!.error.code).to.equal("UnknownError");
+  });
+
+  it("createDetector should call axios.post and return a Response<DetectorResponse>", async () => {
+    axiosPostStub.resolves({
+      status: 201,
+      data: {
+        detector: {
+          name: "@bentley/new-detector",
+          displayName: "New detector",
+          description: "Creates a detector.",
+          type: "PhotoObjectDetector",
+          documentationUrl: "https://www.bentley.com",
+          versions: []
+        }
+      }
+    });
+    const detectorCreate: DetectorBase = {
+      name: "@bentley/new-detector",
+      displayName: "New detector",
+      description: "Creates a detector.",
+      type: DetectorType.PHOTO_OBJECT_DETECTOR,
+      documentationUrl: "https://www.bentley.com"
+    };
+    const result = await service.createDetector(detectorCreate);
+    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors");
+    expect(axiosPostStub.firstCall.args[1]).to.deep.equal(detectorCreate);
+    expect(result.isError()).to.be.false;
+    expect(result.value!.detector.name).to.equal("@bentley/new-detector");
+  });
+
+  it("updateDetector should call axios.patch with an encoded detector name", async () => {
+    axiosPatchStub.resolves({
+      status: 200,
+      data: {
+        detector: {
+          name: "@bentley/mydetector",
+          displayName: "Updated detector",
+          description: "Updated description",
+          type: "PhotoObjectDetector",
+          documentationUrl: "https://www.bentley.com/docs",
+          versions: []
+        }
+      }
+    });
+    const detectorUpdate: DetectorUpdate = {
+      displayName: "Updated detector",
+      description: "Updated description",
+      documentationUrl: "https://www.bentley.com/docs"
+    };
+    const result = await service.updateDetector("@bentley/mydetector", detectorUpdate);
+    expect(axiosPatchStub.calledOnce).to.be.true;
+    expect(axiosPatchStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector");
+    expect(axiosPatchStub.firstCall.args[1]).to.deep.equal(detectorUpdate);
+    expect(result.isError()).to.be.false;
+    expect(result.value!.detector.displayName).to.equal("Updated detector");
+  });
+
+  it("deleteDetector should call axios.delete with an encoded detector name", async () => {
+    axiosDeleteStub.resolves({
+      status: 204,
+      data: {}
+    });
+    const result = await service.deleteDetector("@bentley/mydetector");
+    expect(axiosDeleteStub.calledOnce).to.be.true;
+    expect(axiosDeleteStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector");
+    expect(result.isError()).to.be.false;
+    expect(result.value).to.be.null;
+  });
+
+  it("createDetectorVersion should call axios.post with the version payload", async () => {
+    axiosPostStub.resolves({
+      status: 201,
+      data: {}
+    });
+    const versionCreate: DetectorVersionCreate = {
+      versionNumber: "1.0",
+      capabilities: {
+        labels: ["crack"],
+        exports: [DetectorExport.LINES]
+      }
+    };
+    const result = await service.createDetectorVersion("@bentley/mydetector", versionCreate);
+    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector/versions");
+    expect(axiosPostStub.firstCall.args[1]).to.deep.equal(versionCreate);
+    expect(result.isError()).to.be.false;
+    expect(result.value).to.be.null;
+  });
+
+  it("deleteDetectorVersion should call axios.delete with encoded detector and version names", async () => {
+    axiosDeleteStub.resolves({
+      status: 204,
+      data: {}
+    });
+    const result = await service.deleteDetectorVersion("@bentley/mydetector", "1.0-beta/1");
+    expect(axiosDeleteStub.calledOnce).to.be.true;
+    expect(axiosDeleteStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector/versions/1.0-beta%2F1");
+    expect(result.isError()).to.be.false;
+  });
+
+  it("publishDetectorVersion should call axios.post on the publish endpoint", async () => {
+    axiosPostStub.resolves({
+      status: 200,
+      data: {}
+    });
+    const result = await service.publishDetectorVersion("@bentley/mydetector", "1.0");
+    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector/versions/1.0/publish");
+    expect(result.isError()).to.be.false;
+  });
+
+  it("unpublishDetectorVersion should call axios.post on the unpublish endpoint", async () => {
+    axiosPostStub.resolves({
+      status: 200,
+      data: {}
+    });
+    const result = await service.unpublishDetectorVersion("@bentley/mydetector", "1.0");
+    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector/versions/1.0/unpublish");
+    expect(result.isError()).to.be.false;
+  });
+
+  it("completeDetectorVersionUpload should call axios.post on the complete endpoint", async () => {
+    axiosPostStub.resolves({
+      status: 200,
+      data: {}
+    });
+    const result = await service.completeDetectorVersionUpload("@bentley/mydetector", "1.0");
+    expect(axiosPostStub.calledOnce).to.be.true;
+    expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector/versions/1.0/complete");
+    expect(result.isError()).to.be.false;
   });
 
   //estimateCost tests
