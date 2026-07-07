@@ -29,7 +29,6 @@ This job has four different purposes :
      - | *segmentation3d*,
        | *segmented_model_3d*
      - | *save_confidence*,
-       | *crs*
    * - | Segment a collection
        | of meshes
      - | *meshes*,
@@ -38,7 +37,6 @@ This job has four different purposes :
      - | *segmentation3d*,
        | *segmented_model_3d*
      - | *save_confidence*,
-       | *crs*
    * - | Segment a collection
        | of point clouds or meshes
        | and infer 3D objects,
