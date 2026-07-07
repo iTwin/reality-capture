@@ -33,10 +33,16 @@ describe("change_detection specifications", () => {
   describe("ChangeDetectionOutputsSchema", () => {
     it("should validate with all outputs", () => {
       const valid = {
-        locations3DAsSHP: "shpId",
-        locations3DAsGeoJSON: "geojsonId",
-        added: "addedId",
-        removed: "removedId",
+        segmentation3DA: "segmentationAId",
+        segmentedModel3DA: "segmentedModelAId",
+        segmentation3DB: "segmentationBId",
+        segmentedModel3DB: "segmentedModelBId",
+        locations3DA: "locationsAId",
+        locations3DB: "locationsBId",
+        locations3DAAsSHP: "shpAId",
+        locations3DAAsGeoJSON: "geojsonAId",
+        locations3DBAsSHP: "shpBId",
+        locations3DBAsGeoJSON: "geojsonBId",
       };
       expect(() => ChangeDetectionOutputsSchema.parse(valid)).not.to.throw();
     });
@@ -94,7 +100,7 @@ describe("change_detection specifications", () => {
       const valid = {
         inputs: { model3DA: "id1", model3DB: "id2" },
         outputs: {
-          locations3DAsSHP: "shpId",
+          locations3DAAsSHP: "shpId",
         },
         options: { samplingResolution: 0.5 },
       };
