@@ -79,7 +79,7 @@ describe("change_detection specifications", () => {
     it("should validate valid specification", () => {
       const valid = {
         inputs: { model3DA: "id1", model3DB: "id2" },
-        outputs: [ChangeDetectionOutputsCreate.MODEL_3D_A_CLASSIFIED, ChangeDetectionOutputsCreate.MODEL_3D_B_CLASSIFIED],
+        outputs: [ChangeDetectionOutputsCreate.SEGMENTED_MODEL3D_A, ChangeDetectionOutputsCreate.SEGMENTED_MODEL3D_B],
         options: { minPointsPerChange: 10 },
       };
       expect(() => ChangeDetectionSpecificationsCreateSchema.parse(valid)).not.to.throw();
