@@ -27,13 +27,11 @@ class ChangeDetectionOutputs(BaseModel):
                                                   description="Reality data id of locations of changes in A"
                                                               "as GeoJSON file")
     locations3d_b: Optional[str] = Field(None, alias="locations3DB",
-                                              description="Reality data id of Contextscne with locations of changes in B")
+                                         description="Reality data id of ContextScene with locations of changes in B")
     locations3d_b_as_shp: Optional[str] = Field(None, alias="locations3DBAsSHP",
-                                              description="Reality data id of locations of changes in B"
-                                                          "as SHP format")
+                                                description="Reality data id of locations of changes in B as SHP format")
     locations3d_b_as_geojson: Optional[str] = Field(None, alias="locations3DBAsGeoJSON",
-                                                  description="Reality data id of locations of changes in B"
-                                                              "as GeoJSON file")
+                                                    description="Reality data id of locations of changes in B as GeoJSON file")
     
 
 
