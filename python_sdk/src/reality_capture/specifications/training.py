@@ -41,7 +41,7 @@ class TrainingS3DOptions(BaseModel):
         None, 
         description="String representing the version number for the newly trained detector.",
         alias="versionNumber",
-        pattern=r"\d+(.\d+)?"
+        pattern=r"^\d+(?:\.\d+)?$"
     )
 
 
