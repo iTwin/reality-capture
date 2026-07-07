@@ -1,10 +1,16 @@
 import { z } from "zod";
 
 export enum ChangeDetectionOutputsCreate {
-  LOCATIONS3D_AS_SHP = "locations3DAsSHP",
-  LOCATIONS3D_AS_GEOJSON = "locations3DAsGeoJSON",
-  MODEL_3D_A_CLASSIFIED = "model3dAClassified",
-  MODEL_3D_B_CLASSIFIED = "model3dBClassified",
+  SEGMENTATION3D_A = "segmentation3DA",
+  SEGMENTED_MODEL3D_A = "segmentedModel3DA",
+  SEGMENTATION3D_B = "segmentation3DB",
+  SEGMENTED_MODEL3D_B = "segmentedModel3DB",
+  LOCATIONS3D_A = "locations3DA",
+  LOCATIONS3D_A_AS_SHP = "locations3DAAsSHP",
+  LOCATIONS3D_A_AS_GEOJSON = "locations3DAAsGeoJSON",
+  LOCATIONS3D_B = "locations3DB",
+  LOCATIONS3D_B_AS_SHP = "locations3DBAsSHP",
+  LOCATIONS3D_B_AS_GEOJSON = "locations3DBAsGeoJSON"
 }
 
 export const ChangeDetectionInputsSchema = z.object({
