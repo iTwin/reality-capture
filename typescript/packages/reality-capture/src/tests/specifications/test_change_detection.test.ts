@@ -13,19 +13,19 @@ describe("change_detection specifications", () => {
   describe("ChangeDetectionInputsSchema", () => {
     it("should validate valid inputs", () => {
       const valid = {
-        model3dA: "contextSceneId1",
-        model3dB: "contextSceneId2",
+        model3DA: "contextSceneId1",
+        model3DB: "contextSceneId2",
       };
       expect(() => ChangeDetectionInputsSchema.parse(valid)).not.to.throw();
     });
 
     it("should fail when missing reference", () => {
-      const invalid = { model3dB: "contextSceneId2" };
+      const invalid = { model3DB: "contextSceneId2" };
       expect(() => ChangeDetectionInputsSchema.parse(invalid)).to.throw(z.ZodError);
     });
 
     it("should fail when missing toCompare", () => {
-      const invalid = { model3dA: "contextSceneId1" };
+      const invalid = { model3DA: "contextSceneId1" };
       expect(() => ChangeDetectionInputsSchema.parse(invalid)).to.throw(z.ZodError);
     });
   });
@@ -50,11 +50,10 @@ describe("change_detection specifications", () => {
   describe("ChangeDetectionOptionsSchema", () => {
     it("should validate all options", () => {
       const valid = {
-        outputCrs: "EPSG:4326",
-        minPointsPerChange: 10,
+        minPointsPerChange: 100,
         samplingResolution: 0.5,
-        threshold: 0.2,
-        filterThreshold: 0.1,
+        growThreshold: 0.5,
+        filterThreshold: 0.2,
       };
       expect(() => ChangeDetectionOptionsSchema.parse(valid)).not.to.throw();
     });
@@ -73,7 +72,7 @@ describe("change_detection specifications", () => {
   describe("ChangeDetectionSpecificationsCreateSchema", () => {
     it("should validate valid specification", () => {
       const valid = {
-        inputs: { model3dA: "id1", model3dB: "id2" },
+        inputs: { model3DA: "id1", model3DB: "id2" },
         outputs: [ChangeDetectionOutputsCreate.MODEL_3D_A_CLASSIFIED, ChangeDetectionOutputsCreate.MODEL_3D_B_CLASSIFIED],
         options: { minPointsPerChange: 10 },
       };
@@ -82,7 +81,7 @@ describe("change_detection specifications", () => {
 
     it("should fail if outputs contains invalid value", () => {
       const invalid = {
-        inputs: { model3dA: "id1", model3dB: "id2" },
+        inputs: { model3DA: "id1", model3DB: "id2" },
         outputs: ["notValidValue"],
       };
       expect(() => ChangeDetectionSpecificationsCreateSchema.parse(invalid)).to.throw(z.ZodError);
@@ -93,7 +92,7 @@ describe("change_detection specifications", () => {
   describe("ChangeDetectionSpecificationsSchema", () => {
     it("should validate valid specification", () => {
       const valid = {
-        inputs: { model3dA: "id1", model3dB: "id2" },
+        inputs: { model3DA: "id1", model3DB: "id2" },
         outputs: {
           locations3DAsSHP: "shpId",
         },
@@ -104,7 +103,7 @@ describe("change_detection specifications", () => {
 
     it("should fail if outputs is missing", () => {
       const invalid = {
-        inputs: { model3dA: "id1", model3dB: "id2" },
+        inputs: { model3DA: "id1", model3DB: "id2" },
       };
       expect(() => ChangeDetectionSpecificationsSchema.parse(invalid)).to.throw(z.ZodError);
     });
