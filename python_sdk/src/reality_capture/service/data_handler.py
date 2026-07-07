@@ -412,10 +412,16 @@ class DetectorDataHandler:
         detector_version = r.value
         assert detector_version.download_url is not None
 
-        response = requests.get(detector_version.download_url, stream=True)
-        content = io.BytesIO(response.content)
+        response = requests.get(detector_version.download_url, stream=True, timeout=30)
+        if not response.ok:
+            return Response(
+                response.status_code,
+                DetailedErrorResponse(error=DetailedError(code="DownloadFailed", message=f"Failed to download detector archive (HTTP {response.status_code}).")),
+                None,
+            )
 
-        return Response(r.status_code, r.error, content)
+        content = io.BytesIO(response.content)
+        return Response(response.status_code, None, content)
 
     def delete_detector(self, detector_name: str) -> Response[None]:
         """
