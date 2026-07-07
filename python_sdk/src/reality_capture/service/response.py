@@ -16,12 +16,15 @@ class Response(tuple, Generic[T]):
     "Optional error if the request failed."
     value: Optional[T]
     "Optional object if the request succeed."
+    correlation_id: Optional[str]
+    "Correlation ID for the response, if available. Useful when contacting Bentley support."
 
-    def __new__(cls, status_code: int, error: Optional[DetailedErrorResponse], value: Optional[T]):
-        self = tuple.__new__(cls, (status_code, error, value))
+    def __new__(cls, status_code: int, error: Optional[DetailedErrorResponse], value: Optional[T], correlation_id: Optional[str] = None):
+        self = tuple.__new__(cls, (status_code, error, value, correlation_id))
         self.value = value
         self.status_code = status_code
         self.error = error
+        self.correlation_id = correlation_id
         return self
 
     def get_response_status_code(self) -> int:

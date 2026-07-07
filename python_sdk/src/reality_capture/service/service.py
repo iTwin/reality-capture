@@ -1,4 +1,6 @@
 import urllib.parse
+from statistics import correlation
+
 import requests
 import certifi
 
@@ -97,34 +99,38 @@ class RealityCaptureService:
 
     def _execute_request(self, method: str, url: str, headers: dict, success_model: Type[BaseModel] = None,
                          data_key: str = None, **kwargs) -> Response:
+        correlation_id = None
         try:
             response = self._session.request(method, url, headers=headers, **kwargs)
+            correlation_id = response.headers.get("x-correlation-id")
             response.raise_for_status()
         except requests.exceptions.HTTPError as e:
             try:
                 error_details = DetailedErrorResponse.model_validate(e.response.json())
-                return Response(status_code=e.response.status_code, value=None, error=error_details)
+                return Response(status_code=e.response.status_code, value=None,
+                                error=error_details, correlation_id=correlation_id)
             except (ValidationError, KeyError, requests.exceptions.JSONDecodeError):
                 error = DetailedError(code="UnknownError", message=self._get_ill_formed_message(e.response, e))
                 return Response(status_code=e.response.status_code, value=None,
-                                error=DetailedErrorResponse(error=error))
+                                error=DetailedErrorResponse(error=error), correlation_id=correlation_id)
         except requests.exceptions.RequestException as e:
             error = DetailedError(code="NetworkError", message=f"Network error : {e}")
-            return Response(status_code=503, value=None, error=DetailedErrorResponse(error=error))
+            return Response(status_code=503, value=None,
+                            error=DetailedErrorResponse(error=error), correlation_id=correlation_id)
 
         try:
             if not success_model:
-                return Response(status_code=response.status_code, value=None, error=None)
+                return Response(status_code=response.status_code, value=None, error=None, correlation_id=correlation_id)
             json_data = response.json()
             if data_key:
                 data_to_validate = json_data[data_key]
             else:
                 data_to_validate = json_data
             validated_data = success_model.model_validate(data_to_validate)
-            return Response(status_code=response.status_code, value=validated_data, error=None)
+            return Response(status_code=response.status_code, value=validated_data, error=None, correlation_id=correlation_id)
         except (ValidationError, KeyError, requests.exceptions.JSONDecodeError) as e:
             error = DetailedError(code="InvalidResponse", message=self._get_ill_formed_message(response, e))
-            return Response(status_code=502, error=DetailedErrorResponse(error=error), value=None)
+            return Response(status_code=502, error=DetailedErrorResponse(error=error), value=None, correlation_id=correlation_id)
 
     def get_jobs(self, service: Service, filters: str,
                  top: int = None, continuation_token: str = "") -> Response[Jobs]:
@@ -141,7 +147,7 @@ class RealityCaptureService:
         except (NotImplementedError, ValidationError) as e:
             detailed_error = DetailedError(code="UnknownError", message=f"Could not get jobs, bad request : "
                                                                         f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         params = {"$filter": filters}
         if top is not None:
@@ -165,7 +171,7 @@ class RealityCaptureService:
         except (NotImplementedError, ValidationError) as e:
             detailed_error = DetailedError(code="UnknownError", message=f"Could not submit job, bad request : "
                                                                         f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="POST", url=url, headers=self._get_header_v2(), success_model=Job,
                                      data_key="job", data=json_dump)
@@ -183,7 +189,7 @@ class RealityCaptureService:
         except (NotImplementedError, ValidationError) as e:
             detailed_error = DetailedError(code="UnknownError", message=f"Could not get job, bad request : "
                                                                         f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="GET", url=url, headers=self._get_header_v2(),
                                      success_model=Job, data_key="job")
@@ -201,7 +207,7 @@ class RealityCaptureService:
         except (NotImplementedError, ValidationError) as e:
             detailed_error = DetailedError(code="UnknownError", message=f"Could not get job messages, bad request : "
                                                                         f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="GET", url=url, headers=self._get_header_v2(),
                                      success_model=Messages, data_key="messages")
@@ -220,7 +226,7 @@ class RealityCaptureService:
         except (NotImplementedError, ValidationError) as e:
             detailed_error = DetailedError(code="UnknownError", message=f"Could not get job progress, bad request : "
                                                                         f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="GET", url=url, headers=self._get_header_v2(),
                                      success_model=Progress, data_key="progress")
@@ -239,7 +245,7 @@ class RealityCaptureService:
         except (NotImplementedError, ValidationError) as e:
             detailed_error = DetailedError(code="UnknownError", message=f"Could not cancel job, bad request : "
                                                                         f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="DELETE", url=url, headers=self._get_header_v2(),
                                      success_model=Job, data_key="job")
@@ -305,7 +311,7 @@ class RealityCaptureService:
         except (NotImplementedError, ValidationError) as e:
             detailed_error = DetailedError(code="UnknownError", message=f"Could not get detector, bad request : "
                                                                         f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="GET", url=url, headers=self._get_header_v2(),
                                      success_model=DetectorResponse)
@@ -323,7 +329,7 @@ class RealityCaptureService:
         except (NotImplementedError, ValidationError) as e:
             detailed_error = DetailedError(code="UnknownError", message=f"Could not create detector, bad request : "
                                                                         f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="POST", url=url, headers=self._get_header_v2(),
                                      success_model=DetectorResponse, data=json_dump)
@@ -343,7 +349,7 @@ class RealityCaptureService:
         except (NotImplementedError, ValidationError) as e:
             detailed_error = DetailedError(code="UnknownError", message=f"Could not update detector, bad request : "
                                                                         f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="PATCH", url=url, headers=self._get_header_v2(),
                                      success_model=DetectorResponse, data=json_dump)
@@ -361,7 +367,7 @@ class RealityCaptureService:
         except (NotImplementedError, ValidationError) as e:
             detailed_error = DetailedError(code="UnknownError", message=f"Could not delete detector, bad request : "
                                                                         f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="DELETE", url=url, headers=self._get_header_v2())
 
@@ -382,7 +388,7 @@ class RealityCaptureService:
             detailed_error = DetailedError(code="UnknownError",
                                            message=f"Could not create detector version, bad request : "
                                                    f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="POST", url=url, headers=self._get_header_v2(), data=json_dump,
                                      success_model=DetectorVersionWithLinks)
@@ -404,7 +410,7 @@ class RealityCaptureService:
             detailed_error = DetailedError(code="UnknownError",
                                            message=f"Could not delete detector version, bad request : "
                                                    f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="DELETE", url=url, headers=self._get_header_v2())
 
@@ -425,7 +431,7 @@ class RealityCaptureService:
             detailed_error = DetailedError(code="UnknownError",
                                            message=f"Could not publish detector version, bad request : "
                                                    f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="POST", url=url, headers=self._get_header_v2())
 
@@ -446,7 +452,7 @@ class RealityCaptureService:
             detailed_error = DetailedError(code="UnknownError",
                                            message=f"Could not unpublish detector version, bad request : "
                                                    f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="POST", url=url, headers=self._get_header_v2())
 
@@ -467,7 +473,7 @@ class RealityCaptureService:
             detailed_error = DetailedError(code="UnknownError",
                                            message=f"Could not complete the upload of the detector version, bad request : "
                                                    f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="POST", url=url, headers=self._get_header_v2())
 
@@ -484,7 +490,7 @@ class RealityCaptureService:
         except (NotImplementedError, ValidationError) as e:
             detailed_error = DetailedError(code="UnknownError", message=f"Could not create reality data, bad request : "
                                                                         f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="POST", url=self._get_reality_management_rd_url(),
                                      success_model=RealityData, data=json_dump, data_key="realityData",
@@ -520,7 +526,7 @@ class RealityCaptureService:
         except (NotImplementedError, ValidationError) as e:
             detailed_error = DetailedError(code="UnknownError", message=f"Could not update reality data, bad request : "
                                                                         f"{e}")
-            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error))
+            return Response(status_code=400, value=None, error=DetailedErrorResponse(error=detailed_error), correlation_id=None)
 
         return self._execute_request(method="PATCH", url=self._get_reality_management_rd_url() + reality_data_id,
                                      success_model=RealityData, data=json_dump, data_key="realityData",

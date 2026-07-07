@@ -79,12 +79,12 @@ class _DataHandler:
         except InterruptedError as _:
             de = DetailedErrorResponse(error={"code": "DownloadInterrupted",
                                               "message": "Download was interrupted by user."})
-            return Response(499, de, None)
+            return Response(499, de, None, None)
         except Exception as e:
             de = DetailedErrorResponse(error={"code": "DownloadFailure",
                                               "message": f"Download failed: {e}."})
-            return Response(500, de, None)
-        return Response(200, None, None)
+            return Response(500, de, None, None)
+        return Response(200, None, None, None)
 
     @staticmethod
     def upload_data(container_url, src: str, reality_data_dst: str, progress_hook):
@@ -128,18 +128,18 @@ class _DataHandler:
         except InterruptedError as _:
             de = DetailedErrorResponse(error={"code": "UploadInterrupted",
                                               "message": "Upload was interrupted by user."})
-            return Response(499, de, None)
+            return Response(499, de, None, None)
         except Exception as e:
             de = DetailedErrorResponse(error={"code": "UploadFailure",
                                               "message": f"Upload failed: {e}."})
-            return Response(500, de, None)
-        return Response(200, None, None)
+            return Response(500, de, None, None)
+        return Response(200, None, None, None)
 
     @staticmethod
     def list_data(container_url: str) -> Response[list[str]]:
         client = ContainerClient.from_container_url(container_url)
         blob_names = [name for name in client.list_blob_names()]
-        return Response(200, None, blob_names)
+        return Response(200, None, blob_names, None)
 
     @staticmethod
     def delete_data(container_url: str, files_to_delete: list[str]) -> Response[None]:
@@ -151,11 +151,11 @@ class _DataHandler:
             except Exception as _:
                 failed.append(file)
         if not failed:
-            return Response(204, None, None)
+            return Response(204, None, None, None)
         detailed_error = DetailedError(code="DeletionFailed", message="Failed to delete one or multiple files",
                                        details=[Error(code="DeletionFailed", message="Failed to delete a file",
                                                       target=fail) for fail in failed])
-        return Response(400, DetailedErrorResponse(error=detailed_error), None)
+        return Response(400, DetailedErrorResponse(error=detailed_error), None, None)
 
 
 class RealityDataHandler:
@@ -197,15 +197,15 @@ class RealityDataHandler:
 
         rlink = self._get_link(reality_data_id, itwin_id, False)
         if rlink.is_error():
-            return Response(rlink.status_code, rlink.error, None)
+            return Response(rlink.status_code, rlink.error, None, rlink.correlation_id)
         r = self._set_authoring(reality_data_id, True)
         if r.is_error():
-            return Response(r.status_code, r.error, None)
+            return Response(r.status_code, r.error, None, r.correlation_id)
         resp = _DataHandler.upload_data(rlink.value.links.container_url.href,
                                         src, reality_data_dst, self._progress_hook)
         r = self._set_authoring(reality_data_id, False)
         if r.is_error():
-            return Response(r.status_code, r.error, None)
+            return Response(r.status_code, r.error, None, r.correlation_id)
         return resp
 
     def download_data(self, reality_data_id: str, dst: str,
@@ -221,7 +221,7 @@ class RealityDataHandler:
         """
         r = self._get_link(reality_data_id, itwin_id, True)
         if r.is_error():
-            return Response(r.status_code, r.error, None)
+            return Response(r.status_code, r.error, None, r.correlation_id)
         return _DataHandler.download_data(r.value.links.container_url.href, dst, reality_data_src, self._progress_hook)
 
     def list_data(self, reality_data_id, itwin_id: Optional[str] = None) -> Response[list[str]]:
@@ -234,7 +234,7 @@ class RealityDataHandler:
         """
         r = self._get_link(reality_data_id, itwin_id, True)
         if r.is_error():
-            return Response(r.status_code, r.error, None)
+            return Response(r.status_code, r.error, None, r.correlation_id)
         return _DataHandler.list_data(r.value.links.container_url.href)
 
     def delete_data(self, reality_data_id, files_to_delete: list[str],
@@ -249,7 +249,7 @@ class RealityDataHandler:
         """
         r = self._get_link(reality_data_id, itwin_id, False)
         if r.is_error():
-            return Response(r.status_code, r.error, None)
+            return Response(r.status_code, r.error, None, r.correlation_id)
         return _DataHandler.delete_data(r.value.links.container_url.href, files_to_delete)
 
     def set_progress_hook(self, hook: Optional) -> None:
@@ -293,7 +293,7 @@ class BucketDataHandler:
 
         r = self._get_bucket(itwin_id)
         if r.is_error():
-            return Response(r.status_code, r.error, None)
+            return Response(r.status_code, r.error, None, r.correlation_id)
         return _DataHandler.upload_data(r.value.links.container_url.href, src, bucket_dst, self._progress_hook)
 
     def download_data(self, itwin_id: str, dst: str,
@@ -308,7 +308,7 @@ class BucketDataHandler:
         """
         r = self._get_bucket(itwin_id)
         if r.is_error():
-            return Response(r.status_code, r.error, None)
+            return Response(r.status_code, r.error, None, r.correlation_id)
         return _DataHandler.download_data(r.value.links.container_url.href, dst, bucket_src, self._progress_hook)
 
     def list_data(self, itwin_id: str) -> Response[list[str]]:
@@ -320,7 +320,7 @@ class BucketDataHandler:
         """
         r = self._get_bucket(itwin_id)
         if r.is_error():
-            return Response(r.status_code, r.error, None)
+            return Response(r.status_code, r.error, None, r.correlation_id)
         return _DataHandler.list_data(r.value.links.container_url.href)
 
     def delete_data(self, itwin_id, files_to_delete: list[str]) -> Response[None]:
@@ -333,7 +333,7 @@ class BucketDataHandler:
         """
         r = self._get_bucket(itwin_id)
         if r.is_error():
-            return Response(r.status_code, r.error, None)
+            return Response(r.status_code, r.error, None, r.correlation_id)
         return _DataHandler.delete_data(r.value.links.container_url.href, files_to_delete)
 
     def set_progress_hook(self, hook: Optional) -> None:
