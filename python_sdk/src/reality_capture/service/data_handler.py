@@ -1,15 +1,11 @@
 import os.path
-import io
 from typing import Callable, Optional
-import requests
 from reality_capture.service.error import DetailedErrorResponse, DetailedError, Error
 from reality_capture.service.response import Response
 from reality_capture.service.service import RealityCaptureService
 from reality_capture.service.reality_data import RealityDataUpdate, RealityData, ContainerDetails
 from reality_capture.service.bucket import BucketResponse
 from azure.storage.blob import ContainerClient
-from reality_capture.service.detectors import (DetectorBase, DetectorVersion, DetectorType, DetectorResponse,
-                                               DetectorsMinimalResponse)
 from multiprocessing.pool import ThreadPool
 
 
