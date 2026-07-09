@@ -87,8 +87,6 @@ class Segmentation3DOptions(BaseModel):
     remove_small_lines: Optional[float] = Field(None, alias="removeSmallLines",
                                                      description="Remove 3D lines with total length "
                                                                  "smaller than this value")
-    keep_input_resolution: Optional[bool] = Field(None, alias="keepInputResolution",
-                                                  description="To make segmentation 3D output exact same point input ")
 
 
 class Segmentation3DSpecificationsCreate(BaseModel):
