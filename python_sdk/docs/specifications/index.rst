@@ -59,7 +59,7 @@ Analysis
 * :doc:`/specifications/segmentation3d` uses a point cloud segmentation detector to classify each point of a point cloud and create 3D features.
 * :doc:`/specifications/change_detection` will take two point clouds or two meshes to to get 3D regions that capture the changes.
 * :doc:`/specifications/eval_o2d`, :doc:`/specifications/eval_o3d`, :doc:`/specifications/eval_s2d`, :doc:`/specifications/eval_s3d` and :doc:`/specifications/eval_sortho` will compare a prediction to a reference for a specific detection.
-* :doc:`/specifications/training_s3d` will train an s3d detector from ContextScenes
+* :doc:`/specifications/training_s3d` will train a Segmentation 3D detector from ContextScenes
 
 .. Conversion
 .. ==========
