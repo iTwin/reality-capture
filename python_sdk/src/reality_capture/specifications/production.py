@@ -56,6 +56,13 @@ class LODType(Enum):
     BING_MAPS = "BingMaps"
 
 
+class LODSize(Enum):
+    S = "S"
+    M = "M"
+    L = "L"
+    XL = "XL"
+
+
 class CesiumCompression(Enum):
     NO = "None"
     DRACO = "Draco"
@@ -78,7 +85,10 @@ class Options3DTiles(BaseModel):
                                                               description="Maximum thermal value for the texture color source")
     crs: Optional[str] = Field(None, description="Coordinate reference system")
     lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
+    lod_size: Optional[LODSize] = Field(None, alias="lodSize", description="Level of detail size")
     compress: Optional[CesiumCompression] = Field(None, alias="compress", description="Compression type")
+    tile_overlap: Optional[float] = Field(None, alias="tileOverlap", description="Tile overlap in meters", ge=0)
+    skirt_length: Optional[float] = Field(None, alias="skirtLength", description="Skirt length in meters", ge=0)
 
 
 class OptionsOBJ(BaseModel):
@@ -103,10 +113,13 @@ class OptionsOBJ(BaseModel):
                                                description="Enable or disable texture sharpening.")
     lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
     lod_type: Optional[LODType] = Field(None, alias="lodType", description="Level of detail type")
+    lod_size: Optional[LODSize] = Field(None, alias="lodSize", description="Level of detail size")
     crs: Optional[str] = Field(None, description="Coordinate reference system")
     crs_origin: Optional[Point3d] = Field(None, alias="crsOrigin", description="Origin of the coordinate "
                                                                                "reference system")
     double_precision: Optional[bool] = Field(None, alias="doublePrecision", description="Flag for double precision")
+    tile_overlap: Optional[float] = Field(None, alias="tileOverlap", description="Tile overlap in meters", ge=0)
+    skirt_length: Optional[float] = Field(None, alias="skirtLength", description="Skirt length in meters", ge=0)
 
 
 class Options3MX(BaseModel):
@@ -131,8 +144,11 @@ class Options3MX(BaseModel):
     crs_origin: Optional[Point3d] = Field(None, alias="crsOrigin", description="Origin of the coordinate"
                                                                                " reference system")
     lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
+    lod_size: Optional[LODSize] = Field(None, alias="lodSize", description="Level of detail size")
     generate_web_app: Optional[bool] = Field(None, alias="generateWebApp",
                                              description="Flag to generate a web application")
+    tile_overlap: Optional[float] = Field(None, alias="tileOverlap", description="Tile overlap in meters", ge=0)
+    skirt_length: Optional[float] = Field(None, alias="skirtLength", description="Skirt length in meters", ge=0)
 
 
 class OptionsI3S(BaseModel):
@@ -156,6 +172,9 @@ class OptionsI3S(BaseModel):
                                                               description="In case of thermal color source, "
                                                                           "maximum temperature value to use")
     crs: Optional[str] = Field(None, description="Coordinate reference system definition for the export")
+    lod_size: Optional[LODSize] = Field(None, alias="lodSize", description="Level of detail size")
+    tile_overlap: Optional[float] = Field(None, alias="tileOverlap", description="Tile overlap in meters", ge=0)
+    skirt_length: Optional[float] = Field(None, alias="skirtLength", description="Skirt length in meters", ge=0)
 
 
 class SamplingStrategy(Enum):
@@ -227,6 +246,9 @@ class OptionsOSGB(BaseModel):
     crs_origin: Optional[Point3d] = Field(None, alias="crsOrigin", description="CRS origin")
     lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of details scope")
     lod_type: Optional[LODType] = Field(None, alias="lodType", description="Type of level of details")
+    lod_size: Optional[LODSize] = Field(None, alias="lodSize", description="Level of detail size")
+    tile_overlap: Optional[float] = Field(None, alias="tileOverlap", description="Tile overlap in meters", ge=0)
+    skirt_length: Optional[float] = Field(None, alias="skirtLength", description="Skirt length in meters", ge=0)
 
 
 class ProjectionMode(Enum):
