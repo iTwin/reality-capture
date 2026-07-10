@@ -8,9 +8,8 @@ class ChangeDetectionInputs(BaseModel):
     model_3d_b: str = Field(alias="model3DB", description="Reality data id of ContextScene, point cloud, Gaussian splats, or mesh")
     extent: Optional[str] = Field(None, alias="extent", pattern=r"^bkt:.+",
                                   description="Path in the bucket of the clipping polygon to apply")
-    # Add preset in adifferent release
-    """preset: Optional[str] = Field(None, alias="preset", pattern=r"^bkt:.+",
-                                  description="Path in the bucket of a preset file to use")"""
+    preset: Optional[str] = Field(None, alias="preset", pattern=r"^bkt:.+",
+                                  description="Path in the bucket of a preset file to use")
 
 
 class ChangeDetectionOutputs(BaseModel):
@@ -19,7 +18,7 @@ class ChangeDetectionOutputs(BaseModel):
     segmentation_3d_b: Optional[str] = Field(None, description="Reality data id of ContextScene, pointing to the segmented 3D model B", alias="segmentation3DB")
     segmented_model_3d_a: Optional[str] = Field(None, description="Reality data id of the 3D segmented model in the same format of model 3d A", alias="segmentedModel3DA")
     locations3d_a: Optional[str] = Field(None, alias="locations3DA",
-                                              description="Reality data id of Contextscne with locations of changes in A")
+                                              description="Reality data id of ContextScene with locations of changes in A")
     locations3d_a_as_shp: Optional[str] = Field(None, alias="locations3DAAsSHP",
                                               description="Reality data id of locations of changes in A"
                                                           "as SHP format")
