@@ -11,7 +11,7 @@ This page documents all notable changes to the ``reality_capture`` Python SDK ac
 ----
 
 2.6.0
-=============
+=====
 
 Additions
 ---------
