@@ -70,12 +70,12 @@ export class RealityCaptureService {
 
   private _getCorrectUrl(service: Service): string {
     switch (service) {
-      case Service.MODELING:
-        return this._getModelingUrl();
-      case Service.ANALYSIS:
-        return this._getAnalysisUrl();
-      default:
-        throw new Error("Other services not yet implemented");
+    case Service.MODELING:
+      return this._getModelingUrl();
+    case Service.ANALYSIS:
+      return this._getAnalysisUrl();
+    default:
+      throw new Error("Other services not yet implemented");
     }
   }
 
