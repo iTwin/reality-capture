@@ -94,7 +94,7 @@ describe("ExportCreateSchema", () => {
 
   it("should validate with options and name", () => {
     const input = {
-      format: Format.LAS,
+      format: Format.THREEMX,
       options: { generateWebApp: true },
       name: "RealityData",
     };
