@@ -401,15 +401,15 @@ export const ExportCreateSchema = z.object({
   format: z.nativeEnum(Format).describe("Export format"),
   options: z
     .union([
-      Options3DTilesSchema,
-      Options3MXSchema,
-      OptionsOBJSchema,
-      OptionsOSGBSchema,
-      OptionsI3SSchema,
-      OptionsLASSchema,
-      OptionsPLYSchema,
-      OptionsOPCSchema,
-      OptionsOrthoDSMSchema,
+      Options3DTilesSchema.strict(),
+      Options3MXSchema.strict(),
+      OptionsOBJSchema.strict(),
+      OptionsOSGBSchema.strict(),
+      OptionsI3SSchema.strict(),
+      OptionsLASSchema.strict(),
+      OptionsPLYSchema.strict(),
+      OptionsOPCSchema.strict(),
+      OptionsOrthoDSMSchema.strict(),
     ])
     .optional()
     .describe("Options associated to format"),

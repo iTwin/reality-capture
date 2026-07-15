@@ -1,5 +1,5 @@
 ---
-name: sdk_alignement
+name: sdk_alignment
 description: >
   Checks that the TypeScript SDK (typescript/packages/reality-capture) and the
   Python SDK (python_sdk/src/reality_capture) are aligned in their APIs.
