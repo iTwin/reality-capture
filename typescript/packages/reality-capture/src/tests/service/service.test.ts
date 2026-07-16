@@ -471,7 +471,19 @@ describe("RealityCaptureService API calls tests", function () {
   it("createDetectorVersion should call axios.post with the version payload", async () => {
     axiosPostStub.resolves({
       status: 201,
-      data: {}
+      data: {
+        version: {
+          versionNumber: "1.0",
+          capabilities: { labels: ["crack"], exports: ["Lines"] },
+          creationDate: "2025-03-18T14:11:15.5325351Z",
+          status: "AwaitingData",
+          creatorId: "e8be5445-c76a-41c6-9bfe-6a3d71953624"
+        },
+        _links: {
+          completeUrl: { href: "https://example.com/complete" },
+          uploadUrl: { href: "https://example.com/upload" }
+        }
+      }
     });
     const versionCreate: DetectorVersionCreate = {
       versionNumber: "1.0",
@@ -484,8 +496,9 @@ describe("RealityCaptureService API calls tests", function () {
     expect(axiosPostStub.calledOnce).to.equal(true);
     expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-analysis/detectors/%40bentley%2Fmydetector/versions");
     expect(axiosPostStub.firstCall.args[1]).to.deep.equal(versionCreate);
-    expect(result.isError()).to.equal(false);
-    expect(result.value).to.equal(null);
+    expect(result.isError()).to.be.false;
+    expect(result.value!.version.versionNumber).to.equal("1.0");
+    expect(result.value!._links.uploadUrl.href).to.equal("https://example.com/upload");
   });
 
   it("deleteDetectorVersion should call axios.delete with encoded detector and version names", async () => {

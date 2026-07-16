@@ -15,5 +15,9 @@
   "exclude": [
     "lib",
     "src/tests/**/*"
-  ]
+  ],
+  "ts-node": {
+    "esm": false,
+    "transpileOnly": true
+  }
 }

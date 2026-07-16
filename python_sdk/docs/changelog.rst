@@ -8,6 +8,53 @@ This page documents all notable changes to the ``reality_capture`` Python SDK ac
    :local:
    :depth: 1
 
+----
+
+2.6.0
+=====
+
+Additions
+---------
+
+- Analysis jobs (Objects 2D/3D, Segmentation 2D/3D/Orthophoto, Change Detection, Eval O2D/O3D/S2D/S3D/SOrtho,
+  and Training S3D) are now **Generally Available**.
+  (`#306 <https://github.com/iTwin/reality-capture/pull/306>`_)
+- Added a new **Training S3D** job type (:class:`~reality_capture.specifications.training.TrainingS3DSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.TrainingS3DSpecifications`) that trains a new
+  point cloud segmentation (S3D) detector from a set of annotated 3D segmentations, with configurable
+  ``epochs``, ``spacing``, ``model`` architecture, ``features``, and ``versionNumber`` options.
+  (`#306 <https://github.com/iTwin/reality-capture/pull/306>`_)
+- Reworked the **Change Detection** job: inputs/outputs now support Gaussian Splats models and an optional
+  ``preset``; outputs report per-model segmentations (``segmentation3DA``/``segmentedModel3DA``,
+  ``segmentation3DB``/``segmentedModel3DB``) and per-model change locations
+  (``locations3DA``/``locations3DAAsSHP``/``locations3DAAsGeoJSON`` and their ``B`` counterparts) instead of the
+  previous single-sided ``objects3D``/``changesInModelA``/``changesInModelB`` outputs; options were renamed to
+  ``samplingResolution`` and ``growThreshold``/``filterThreshold``.
+  (`#306 <https://github.com/iTwin/reality-capture/pull/306>`_)
+- **Segmentation 3D** and **Eval S3D** outputs now expose a single ``segmentedModel3D`` field (matching the
+  input model's format) instead of the previous OPC/POD/LAS/LAZ/PLY-specific outputs, and the ``crs`` and
+  ``keepInputResolution`` options were removed from ``Segmentation3DOptions``.
+  (`#306 <https://github.com/iTwin/reality-capture/pull/306>`_)
+- Added a ``DetectorType`` enum re-export point and new detector helper docstrings clarifying
+  ``create_detector``, ``delete_detector``, ``publish_detector_version``, and ``unpublish_detector_version``
+  behavior.
+  (`#306 <https://github.com/iTwin/reality-capture/pull/306>`_)
+- ``set_progress_hook()`` on ``RealityDataHandler`` and ``BucketDataHandler`` now has a precise
+  ``Callable[[float], bool]`` type hint for the ``hook`` parameter.
+  (`#306 <https://github.com/iTwin/reality-capture/pull/306>`_)
+
+Fixes
+-----
+
+- **Breaking change:** Removed the **Clearance** job type (``ClearanceSpecificationsCreate``,
+  ``ClearanceSpecifications``, ``JobType.CLEARANCE_CALCULATION``) (were in tech preview)
+  (`#306 <https://github.com/iTwin/reality-capture/pull/306>`_)
+- **Breaking change:** ``Response`` is now a plain dataclass instead of a ``tuple`` subclass; code that
+  relied on unpacking a ``Response`` as a tuple must access ``.status_code``, ``.error``, and ``.value``
+  directly instead.
+  (`#306 <https://github.com/iTwin/reality-capture/pull/306>`_)
+
+----
 
 2.5.0
 =====
