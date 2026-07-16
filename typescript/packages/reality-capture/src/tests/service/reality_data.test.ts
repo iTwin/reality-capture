@@ -14,13 +14,7 @@ import {
   RealityDataCreateSchema, RealityDataFilter, RealityDataFilterSchema, realityDataFilterAsParams,
   RealityDataMinimalSchema, RealityDatasSchema, RealityDataSchema, RealityDataUpdateSchema, Type, URLSchema,
 } from "../../service/reality_data";
-function mockFetchResponse(status: number, data?: any): globalThis.Response {
-  return {
-    ok: status >= 200 && status < 300,
-    status,
-    text: async () => (data === undefined || data === null ? "" : typeof data === "string" ? data : JSON.stringify(data)),
-  } as globalThis.Response;
-}
+import { mockFetchResponse } from "./test_helpers";
 
 
 describe("CoordinateSchema", () => {

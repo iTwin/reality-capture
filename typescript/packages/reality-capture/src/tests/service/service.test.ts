@@ -7,13 +7,7 @@ import { JobCreate, JobType, Service } from "../../service/job";
 import { CostEstimationCreate } from "../../service/estimation";
 import { DetectorBase, DetectorExport, DetectorType, DetectorUpdate, DetectorVersionCreate } from "../../service/detectors";
 import { Access, Prefer, RealityDataFilter, Type } from "../../service/reality_data";
-function mockFetchResponse(status: number, data?: any): globalThis.Response {
-  return {
-    ok: status >= 200 && status < 300,
-    status,
-    text: async () => (data === undefined || data === null ? "" : typeof data === "string" ? data : JSON.stringify(data)),
-  } as globalThis.Response;
-}
+import { mockFetchResponse } from "./test_helpers";
 
 
 describe("RealityCaptureService tests", function () {
