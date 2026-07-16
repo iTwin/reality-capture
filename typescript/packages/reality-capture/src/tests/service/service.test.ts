@@ -872,7 +872,7 @@ describe("RealityCaptureService API calls tests", function () {
     const result = await service.getJobs(Service.MODELING, "iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a");
     const calledUrl = new URL(fetchStub.firstCall.args[0]);
     expect(fetchStub.calledOnce).to.equal(true);
-    expect(calledUrl.origin + calledUrl.pathname).to.equal("https://dev-api.bentley.com/reality-modeling//jobs");
+    expect(calledUrl.origin + calledUrl.pathname).to.equal("https://dev-api.bentley.com/reality-modeling/jobs");
     expect(calledUrl.searchParams.get("$filter")).to.equal("iTwinId eq 2c8e4988-eb9b-4e5f-a903-8c7c18f3030a");
     expect(calledUrl.searchParams.get("$top")).to.equal("100");
     expect(calledUrl.searchParams.get("continuationToken")).to.equal("");

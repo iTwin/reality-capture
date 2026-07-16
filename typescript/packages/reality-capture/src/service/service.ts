@@ -153,7 +153,7 @@ export class RealityCaptureService {
   ): Promise<Response<Jobs>> {
     const url = this._getCorrectUrl(service);
     try {
-      const resp = await this._request("GET", url + "/jobs", {
+      const resp = await this._request("GET", url + "jobs", {
         params: { $filter: filters, $top: top, continuationToken },
         headers: await this._getHeader("v2"),
       });
@@ -166,7 +166,7 @@ export class RealityCaptureService {
   async submitJob(job: JobCreate): Promise<Response<Job>> {
     const url = this._getCorrectUrl(getAppropriateService(job.type));
     try {
-      const resp = await this._request("POST", url + "/jobs", { body: job, headers: await this._getHeader("v2") });
+      const resp = await this._request("POST", url + "jobs", { body: job, headers: await this._getHeader("v2") });
       return new Response(resp.status, null, resp.data.job as Job);
     } catch (error: any) {
       return this._handleError<Job>(error);
@@ -176,7 +176,7 @@ export class RealityCaptureService {
   async getJob(jobId: string, service: Service): Promise<Response<Job>> {
     const url = this._getCorrectUrl(service);
     try {
-      const resp = await this._request("GET", url + "/jobs/" + jobId, {
+      const resp = await this._request("GET", url + "jobs/" + jobId, {
         headers: await this._getHeader("v2"),
       });
       return new Response(resp.status, null, resp.data.job as Job);
@@ -191,7 +191,7 @@ export class RealityCaptureService {
   ): Promise<Response<Messages>> {
     const url = this._getCorrectUrl(service);
     try {
-      const resp = await this._request("GET", url + `/jobs/${jobId}/messages`, {
+      const resp = await this._request("GET", url + `jobs/${jobId}/messages`, {
         headers: await this._getHeader("v2"),
       });
       return new Response(resp.status, null, resp.data.messages as Messages);
@@ -206,7 +206,7 @@ export class RealityCaptureService {
   ): Promise<Response<Progress>> {
     const url = this._getCorrectUrl(service);
     try {
-      const resp = await this._request("GET", url + `/jobs/${jobId}/progress`, {
+      const resp = await this._request("GET", url + `jobs/${jobId}/progress`, {
         headers: await this._getHeader("v2"),
       });
       return new Response(resp.status, null, resp.data.progress as Progress);
@@ -218,7 +218,7 @@ export class RealityCaptureService {
   async cancelJob(jobId: string, service: Service): Promise<Response<Job>> {
     const url = this._getCorrectUrl(service);
     try {
-      const resp = await this._request("DELETE", url + `/jobs/${jobId}`, {
+      const resp = await this._request("DELETE", url + `jobs/${jobId}`, {
         headers: await this._getHeader("v2"),
       });
       return new Response(resp.status, null, resp.data.job as Job);
@@ -234,7 +234,7 @@ export class RealityCaptureService {
       getAppropriateService(estimationCreate.type),
     );
     try {
-      const resp = await this._request("POST", url + "/costs", { body: estimationCreate, headers: await this._getHeader("v2") });
+      const resp = await this._request("POST", url + "costs", { body: estimationCreate, headers: await this._getHeader("v2") });
       return new Response(
         resp.status,
         null,
