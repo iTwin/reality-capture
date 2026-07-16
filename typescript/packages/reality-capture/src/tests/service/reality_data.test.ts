@@ -14,6 +14,14 @@ import {
   RealityDataCreateSchema, RealityDataFilter, RealityDataFilterSchema, realityDataFilterAsParams,
   RealityDataMinimalSchema, RealityDatasSchema, RealityDataSchema, RealityDataUpdateSchema, Type, URLSchema,
 } from "../../service/reality_data";
+function mockFetchResponse(status: number, data?: any): globalThis.Response {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    text: async () => (data === undefined || data === null ? "" : typeof data === "string" ? data : JSON.stringify(data)),
+  } as globalThis.Response;
+}
+
 
 describe("CoordinateSchema", () => {
   it("should validate a correct coordinate", () => {
@@ -310,10 +318,7 @@ describe("RealityDataFilter.asParamsForServiceCall", () => {
 
 describe("RealityCaptureService reality data API calls", function () {
   let service: RealityCaptureService;
-  let axiosGetStub: sinon.SinonStub;
-  let axiosPostStub: sinon.SinonStub;
-  let axiosPatchStub: sinon.SinonStub;
-  let axiosDeleteStub: sinon.SinonStub;
+  let fetchStub: sinon.SinonStub;
 
   const rdId = "rd-uuid-001";
   const iTwinId = "itwin-uuid-001";
@@ -339,17 +344,7 @@ describe("RealityCaptureService reality data API calls", function () {
     const getAccessTokenStub = sinon.stub().resolves("fake-token");
     const mockAuthClient = { getAccessToken: getAccessTokenStub } as AuthorizationClient;
     service = new RealityCaptureService(mockAuthClient, { env: "dev" });
-
-    axiosGetStub = sinon.stub();
-    axiosPostStub = sinon.stub();
-    axiosPatchStub = sinon.stub();
-    axiosDeleteStub = sinon.stub();
-    (service as any)._axios = {
-      get: axiosGetStub,
-      post: axiosPostStub,
-      patch: axiosPatchStub,
-      delete: axiosDeleteStub,
-    };
+    fetchStub = sinon.stub(globalThis, "fetch");
   });
 
   afterEach(() => {
@@ -358,126 +353,118 @@ describe("RealityCaptureService reality data API calls", function () {
 
 
   it("getRealityData should return a Response<RealityData> on success", async () => {
-    axiosGetStub.resolves({ status: 200, data: { realityData: sampleRealityData } });
+    fetchStub.resolves(mockFetchResponse(200, { realityData: sampleRealityData } ));
     const result = await service.getRealityData(rdId);
-    expect(axiosGetStub.calledOnce).to.equal(true);
-    expect(axiosGetStub.firstCall.args[0]).to.equal(`https://dev-api.bentley.com/reality-management/reality-data/${rdId}`);
+    expect(fetchStub.calledOnce).to.equal(true);
+    expect(fetchStub.firstCall.args[0]).to.equal(`https://dev-api.bentley.com/reality-management/reality-data/${rdId}`);
     expect(result).to.be.instanceOf(Response);
     expect(result.isError()).to.equal(false);
     expect(result.value!.id).to.equal(rdId);
   });
 
   it("getRealityData with iTwinId should append query param", async () => {
-    axiosGetStub.resolves({ status: 200, data: { realityData: sampleRealityData } });
+    fetchStub.resolves(mockFetchResponse(200, { realityData: sampleRealityData } ));
     await service.getRealityData(rdId, iTwinId);
-    expect(axiosGetStub.firstCall.args[0]).to.equal(
+    expect(fetchStub.firstCall.args[0]).to.equal(
       `https://dev-api.bentley.com/reality-management/reality-data/${rdId}?iTwinId=${iTwinId}`
     );
   });
 
   it("getRealityData 401 error", async () => {
-    axiosGetStub.rejects({
-      response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
-    });
+    fetchStub.resolves(mockFetchResponse(401, { error: { code: "HeaderNotFound", message: "Access denied." } } ));
     const result = await service.getRealityData(rdId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
   it("getRealityData ill formed error", async () => {
-    axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    fetchStub.resolves(mockFetchResponse(500, { bad: "response" } ));
     const result = await service.getRealityData(rdId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
 
-  it("createRealityData should call axios.post and return a Response<RealityData>", async () => {
-    axiosPostStub.resolves({ status: 201, data: { realityData: sampleRealityData } });
+  it("createRealityData should call fetch and return a Response<RealityData>", async () => {
+    fetchStub.resolves(mockFetchResponse(201, { realityData: sampleRealityData } ));
     const create = { iTwinId, displayName: "Test RD", type: Type.CC_IMAGE_COLLECTION };
     const result = await service.createRealityData(create);
-    expect(axiosPostStub.calledOnce).to.equal(true);
-    expect(axiosPostStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-management/reality-data");
-    expect(axiosPostStub.firstCall.args[1]).to.deep.equal(create);
+    expect(fetchStub.calledOnce).to.equal(true);
+    expect(fetchStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-management/reality-data");
+    expect(JSON.parse(fetchStub.firstCall.args[1].body)).to.deep.equal(create);
     expect(result.isError()).to.equal(false);
     expect(result.value!.id).to.equal(rdId);
   });
 
   it("createRealityData 422 error", async () => {
-    axiosPostStub.rejects({
-      response: { status: 422, data: { error: { code: "InvalidRealityData", message: "Invalid payload." } } }
-    });
+    fetchStub.resolves(mockFetchResponse(422, { error: { code: "InvalidRealityData", message: "Invalid payload." } } ));
     const result = await service.createRealityData({ iTwinId, displayName: "Test", type: Type.LAS });
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("InvalidRealityData");
   });
 
   it("createRealityData ill formed error", async () => {
-    axiosPostStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    fetchStub.resolves(mockFetchResponse(500, { bad: "response" } ));
     const result = await service.createRealityData({ iTwinId, displayName: "Test", type: Type.LAS });
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
 
-  it("updateRealityData should call axios.patch and return a Response<RealityData>", async () => {
+  it("updateRealityData should call fetch and return a Response<RealityData>", async () => {
     const updated = { ...sampleRealityData, displayName: "Updated RD" };
-    axiosPatchStub.resolves({ status: 200, data: { realityData: updated } });
+    fetchStub.resolves(mockFetchResponse(200, { realityData: updated } ));
     const update = { displayName: "Updated RD" };
     const result = await service.updateRealityData(update, rdId);
-    expect(axiosPatchStub.calledOnce).to.equal(true);
-    expect(axiosPatchStub.firstCall.args[0]).to.equal(`https://dev-api.bentley.com/reality-management/reality-data/${rdId}`);
-    expect(axiosPatchStub.firstCall.args[1]).to.deep.equal(update);
+    expect(fetchStub.calledOnce).to.equal(true);
+    expect(fetchStub.firstCall.args[0]).to.equal(`https://dev-api.bentley.com/reality-management/reality-data/${rdId}`);
+    expect(JSON.parse(fetchStub.firstCall.args[1].body)).to.deep.equal(update);
     expect(result.isError()).to.equal(false);
     expect(result.value!.displayName).to.equal("Updated RD");
   });
 
   it("updateRealityData 401 error", async () => {
-    axiosPatchStub.rejects({
-      response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
-    });
+    fetchStub.resolves(mockFetchResponse(401, { error: { code: "HeaderNotFound", message: "Access denied." } } ));
     const result = await service.updateRealityData({ displayName: "New" }, rdId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
   it("updateRealityData ill formed error", async () => {
-    axiosPatchStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    fetchStub.resolves(mockFetchResponse(500, { bad: "response" } ));
     const result = await service.updateRealityData({}, rdId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
-  it("deleteRealityData should call axios.delete and return a Response<void>", async () => {
-    axiosDeleteStub.resolves({ status: 204, data: {} });
+  it("deleteRealityData should call fetch and return a Response<void>", async () => {
+    fetchStub.resolves(mockFetchResponse(204, {} ));
     const result = await service.deleteRealityData(rdId);
-    expect(axiosDeleteStub.calledOnce).to.equal(true);
-    expect(axiosDeleteStub.firstCall.args[0]).to.equal(`https://dev-api.bentley.com/reality-management/reality-data/${rdId}`);
+    expect(fetchStub.calledOnce).to.equal(true);
+    expect(fetchStub.firstCall.args[0]).to.equal(`https://dev-api.bentley.com/reality-management/reality-data/${rdId}`);
     expect(result.isError()).to.equal(false);
     expect(result.value).to.equal(null);
   });
 
   it("deleteRealityData 404 error", async () => {
-    axiosDeleteStub.rejects({
-      response: { status: 404, data: { error: { code: "RealityDataNotFound", message: "Not found." } } }
-    });
+    fetchStub.resolves(mockFetchResponse(404, { error: { code: "RealityDataNotFound", message: "Not found." } } ));
     const result = await service.deleteRealityData(rdId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("RealityDataNotFound");
   });
 
   it("deleteRealityData ill formed error", async () => {
-    axiosDeleteStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    fetchStub.resolves(mockFetchResponse(500, { bad: "response" } ));
     const result = await service.deleteRealityData(rdId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
   it("getRealityDataReadAccess should return a Response<ContainerDetails>", async () => {
-    axiosGetStub.resolves({ status: 200, data: sampleContainerDetails });
+    fetchStub.resolves(mockFetchResponse(200, sampleContainerDetails ));
     const result = await service.getRealityDataReadAccess(rdId);
-    expect(axiosGetStub.calledOnce).to.equal(true);
-    expect(axiosGetStub.firstCall.args[0]).to.equal(
+    expect(fetchStub.calledOnce).to.equal(true);
+    expect(fetchStub.firstCall.args[0]).to.equal(
       `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/readaccess`
     );
     expect(result.isError()).to.equal(false);
@@ -486,9 +473,9 @@ describe("RealityCaptureService reality data API calls", function () {
   });
 
   it("getRealityDataReadAccess with iTwinId should append query param only once", async () => {
-    axiosGetStub.resolves({ status: 200, data: sampleContainerDetails });
+    fetchStub.resolves(mockFetchResponse(200, sampleContainerDetails ));
     await service.getRealityDataReadAccess(rdId, iTwinId);
-    const calledUrl: string = axiosGetStub.firstCall.args[0];
+    const calledUrl: string = fetchStub.firstCall.args[0];
     expect(calledUrl).to.equal(
       `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/readaccess?iTwinId=${iTwinId}`
     );
@@ -496,16 +483,14 @@ describe("RealityCaptureService reality data API calls", function () {
   });
 
   it("getRealityDataReadAccess 401 error", async () => {
-    axiosGetStub.rejects({
-      response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
-    });
+    fetchStub.resolves(mockFetchResponse(401, { error: { code: "HeaderNotFound", message: "Access denied." } } ));
     const result = await service.getRealityDataReadAccess(rdId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
   it("getRealityDataReadAccess ill formed error", async () => {
-    axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    fetchStub.resolves(mockFetchResponse(500, { bad: "response" } ));
     const result = await service.getRealityDataReadAccess(rdId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
@@ -513,10 +498,10 @@ describe("RealityCaptureService reality data API calls", function () {
 
   it("getRealityDataWriteAccess should return a Response<ContainerDetails> with WRITE access", async () => {
     const writeDetails = { ...sampleContainerDetails, access: "Write" };
-    axiosGetStub.resolves({ status: 200, data: writeDetails });
+    fetchStub.resolves(mockFetchResponse(200, writeDetails ));
     const result = await service.getRealityDataWriteAccess(rdId);
-    expect(axiosGetStub.calledOnce).to.equal(true);
-    expect(axiosGetStub.firstCall.args[0]).to.equal(
+    expect(fetchStub.calledOnce).to.equal(true);
+    expect(fetchStub.firstCall.args[0]).to.equal(
       `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/writeaccess`
     );
     expect(result.isError()).to.equal(false);
@@ -524,9 +509,9 @@ describe("RealityCaptureService reality data API calls", function () {
   });
 
   it("getRealityDataWriteAccess with iTwinId should append query param only once", async () => {
-    axiosGetStub.resolves({ status: 200, data: { ...sampleContainerDetails, access: "Write" } });
+    fetchStub.resolves(mockFetchResponse(200, { ...sampleContainerDetails, access: "Write" } ));
     await service.getRealityDataWriteAccess(rdId, iTwinId);
-    const calledUrl: string = axiosGetStub.firstCall.args[0];
+    const calledUrl: string = fetchStub.firstCall.args[0];
     expect(calledUrl).to.equal(
       `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/writeaccess?iTwinId=${iTwinId}`
     );
@@ -534,126 +519,114 @@ describe("RealityCaptureService reality data API calls", function () {
   });
 
   it("getRealityDataWriteAccess 401 error", async () => {
-    axiosGetStub.rejects({
-      response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
-    });
+    fetchStub.resolves(mockFetchResponse(401, { error: { code: "HeaderNotFound", message: "Access denied." } } ));
     const result = await service.getRealityDataWriteAccess(rdId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
   it("getRealityDataWriteAccess ill formed error", async () => {
-    axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    fetchStub.resolves(mockFetchResponse(500, { bad: "response" } ));
     const result = await service.getRealityDataWriteAccess(rdId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
   it("getRealityDataList should return a Response<RealityDatas> with minimal prefer", async () => {
-    axiosGetStub.resolves({
-      status: 200,
-      data: {
-        realityData: [
-          { id: "rd-001", displayName: "RD1", type: "CCImageCollection" },
-          { id: "rd-002", displayName: "RD2", type: "LAS" },
-        ],
-        links: { next: { href: "https://dev-api.bentley.com/reality-management/reality-data/?continuationToken=token123" } },
-      },
-    });
+    fetchStub.resolves(mockFetchResponse(200, {
+      realityData: [
+        { id: "rd-001", displayName: "RD1", type: "CCImageCollection" },
+        { id: "rd-002", displayName: "RD2", type: "LAS" },
+      ],
+      links: { next: { href: "https://dev-api.bentley.com/reality-management/reality-data/?continuationToken=token123" } },
+    },
+    ));
     const result = await service.getRealityDataList();
-    expect(axiosGetStub.calledOnce).to.equal(true);
+    expect(fetchStub.calledOnce).to.equal(true);
     expect(result.isError()).to.equal(false);
     expect(result.value!.realityData).to.have.lengthOf(2);
   });
 
   it("getRealityDataList should send Prefer: return=representation when specified", async () => {
-    axiosGetStub.resolves({
-      status: 200,
-      data: {
-        realityData: [],
-        links: { next: { href: "https://dev-api.bentley.com/reality-management/reality-data/" } },
-      },
-    });
+    fetchStub.resolves(mockFetchResponse(200, {
+      realityData: [],
+      links: { next: { href: "https://dev-api.bentley.com/reality-management/reality-data/" } },
+    },
+    ));
     await service.getRealityDataList(undefined, Prefer.REPRESENTATION);
-    const callArgs = axiosGetStub.firstCall.args[1];
+    const callArgs = fetchStub.firstCall.args[1];
     expect(callArgs.headers["Prefer"]).to.equal("return=representation");
   });
 
   it("getRealityDataList should send Prefer: return=minimal by default", async () => {
-    axiosGetStub.resolves({
-      status: 200,
-      data: {
-        realityData: [],
-        links: { next: { href: "https://dev-api.bentley.com/reality-management/reality-data/" } },
-      },
-    });
+    fetchStub.resolves(mockFetchResponse(200, {
+      realityData: [],
+      links: { next: { href: "https://dev-api.bentley.com/reality-management/reality-data/" } },
+    },
+    ));
     await service.getRealityDataList();
-    const callArgs = axiosGetStub.firstCall.args[1];
+    const callArgs = fetchStub.firstCall.args[1];
     expect(callArgs.headers["Prefer"]).to.equal("return=minimal");
   });
 
   it("getRealityDataList should pass filter as params", async () => {
-    axiosGetStub.resolves({
-      status: 200,
-      data: {
-        realityData: [],
-        links: { next: { href: "https://dev-api.bentley.com/reality-management/reality-data/" } },
-      },
-    });
+    fetchStub.resolves(mockFetchResponse(200, {
+      realityData: [],
+      links: { next: { href: "https://dev-api.bentley.com/reality-management/reality-data/" } },
+    },
+    ));
     await service.getRealityDataList({ iTwinId, $top: 10 });
-    const callArgs = axiosGetStub.firstCall.args[1];
-    expect(callArgs.params).to.deep.equal({ iTwinId, $top: 10 });
+    const calledUrl = new URL(fetchStub.firstCall.args[0]);
+    expect(calledUrl.origin + calledUrl.pathname).to.equal("https://dev-api.bentley.com/reality-management/reality-data");
+    expect(calledUrl.searchParams.get("iTwinId")).to.equal(iTwinId);
+    expect(calledUrl.searchParams.get("$top")).to.equal("10");
   });
 
   it("getRealityDataList 401 error", async () => {
-    axiosGetStub.rejects({
-      response: { status: 401, data: { error: { code: "HeaderNotFound", message: "Access denied." } } }
-    });
+    fetchStub.resolves(mockFetchResponse(401, { error: { code: "HeaderNotFound", message: "Access denied." } } ));
     const result = await service.getRealityDataList();
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("HeaderNotFound");
   });
 
   it("getRealityDataList ill formed error", async () => {
-    axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    fetchStub.resolves(mockFetchResponse(500, { bad: "response" } ));
     const result = await service.getRealityDataList();
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
-  it("moveRealityData should call axios.patch on the move endpoint", async () => {
-    axiosPatchStub.resolves({ status: 200, data: {} });
+  it("moveRealityData should call fetch on the move endpoint", async () => {
+    fetchStub.resolves(mockFetchResponse(200, {} ));
     const result = await service.moveRealityData(rdId, iTwinId);
-    expect(axiosPatchStub.calledOnce).to.equal(true);
-    expect(axiosPatchStub.firstCall.args[0]).to.equal(
+    expect(fetchStub.calledOnce).to.equal(true);
+    expect(fetchStub.firstCall.args[0]).to.equal(
       `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/move`
     );
-    expect(axiosPatchStub.firstCall.args[1]).to.deep.equal({ iTwinId });
+    expect(JSON.parse(fetchStub.firstCall.args[1].body)).to.deep.equal({ iTwinId });
     expect(result.isError()).to.equal(false);
     expect(result.value).to.equal(null);
   });
 
   it("moveRealityData 404 error", async () => {
-    axiosPatchStub.rejects({
-      response: { status: 404, data: { error: { code: "RealityDataNotFound", message: "Not found." } } }
-    });
+    fetchStub.resolves(mockFetchResponse(404, { error: { code: "RealityDataNotFound", message: "Not found." } } ));
     const result = await service.moveRealityData(rdId, iTwinId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("RealityDataNotFound");
   });
 
   it("moveRealityData ill formed error", async () => {
-    axiosPatchStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    fetchStub.resolves(mockFetchResponse(500, { bad: "response" } ));
     const result = await service.moveRealityData(rdId, iTwinId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
   it("getRealityDataITwins should return a Response<string[]>", async () => {
-    axiosGetStub.resolves({ status: 200, data: { iTwins: ["itwin-001", "itwin-002"] } });
+    fetchStub.resolves(mockFetchResponse(200, { iTwins: ["itwin-001", "itwin-002"] } ));
     const result = await service.getRealityDataITwins(rdId);
-    expect(axiosGetStub.calledOnce).to.equal(true);
-    expect(axiosGetStub.firstCall.args[0]).to.equal(
+    expect(fetchStub.calledOnce).to.equal(true);
+    expect(fetchStub.firstCall.args[0]).to.equal(
       `https://dev-api.bentley.com/reality-management/reality-data/${rdId}/iTwins`
     );
     expect(result.isError()).to.equal(false);
@@ -661,32 +634,30 @@ describe("RealityCaptureService reality data API calls", function () {
   });
 
   it("getRealityDataITwins 404 error", async () => {
-    axiosGetStub.rejects({
-      response: { status: 404, data: { error: { code: "RealityDataNotFound", message: "Not found." } } }
-    });
+    fetchStub.resolves(mockFetchResponse(404, { error: { code: "RealityDataNotFound", message: "Not found." } } ));
     const result = await service.getRealityDataITwins(rdId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("RealityDataNotFound");
   });
 
   it("getRealityDataITwins ill formed error", async () => {
-    axiosGetStub.rejects({ response: { status: 500, data: { bad: "response" } } });
+    fetchStub.resolves(mockFetchResponse(500, { bad: "response" } ));
     const result = await service.getRealityDataITwins(rdId);
     expect(result.isError()).to.equal(true);
     expect(result.error!.error.code).to.equal("UnknownError");
   });
 
   it("getRealityData should encode the realityDataId in the URL", async () => {
-    axiosGetStub.resolves({ status: 200, data: { realityData: sampleRealityData } });
+    fetchStub.resolves(mockFetchResponse(200, { realityData: sampleRealityData } ));
     const specialId = "rd/with special&chars";
     await service.getRealityData(specialId);
-    expect(axiosGetStub.firstCall.args[0]).to.include(encodeURIComponent(specialId));
+    expect(fetchStub.firstCall.args[0]).to.include(encodeURIComponent(specialId));
   });
 
   it("deleteRealityData should encode the realityDataId in the URL", async () => {
-    axiosDeleteStub.resolves({ status: 204, data: {} });
+    fetchStub.resolves(mockFetchResponse(204, {} ));
     const specialId = "rd/with special&chars";
     await service.deleteRealityData(specialId);
-    expect(axiosDeleteStub.firstCall.args[0]).to.include(encodeURIComponent(specialId));
+    expect(fetchStub.firstCall.args[0]).to.include(encodeURIComponent(specialId));
   });
 });

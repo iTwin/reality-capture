@@ -1,4 +1,3 @@
-import axios, { AxiosInstance } from "axios";
 import type { AuthorizationClient } from "@itwin/core-common";
 import { BucketResponse } from "./bucket";
 import {
@@ -26,7 +25,6 @@ import { ContainerDetails, Prefer, RealityData, RealityDataCreate, RealityDataFi
 
 export class RealityCaptureService {
   private _authorizationClient: AuthorizationClient;
-  private _axios: AxiosInstance;
   private _serviceUrl: string;
   private _additionalUserAgent: string;
 
@@ -35,7 +33,6 @@ export class RealityCaptureService {
     kwargs?: { env?: string; user_agent?: string },
   ) {
     this._authorizationClient = authorizationClient;
-    this._axios = axios.create();
     const env = kwargs?.env;
     if (env === "qa") {
       this._serviceUrl = "https://qa-api.bentley.com/";
@@ -88,6 +85,66 @@ export class RealityCaptureService {
     return `Service response is ill-formed: ${JSON.stringify(response.data)}. Exception: ${exception}`;
   }
 
+  private _buildUrl(url: string, params?: Record<string, any>): string {
+    if (!params) {
+      return url;
+    }
+    const searchParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== undefined && value !== null) {
+        searchParams.append(key, String(value));
+      }
+    }
+    const queryString = searchParams.toString();
+    if (!queryString) {
+      return url;
+    }
+    return url + (url.includes("?") ? "&" : "?") + queryString;
+  }
+
+  private async _parseBody(response: globalThis.Response): Promise<any> {
+    const text = await response.text();
+    if (!text) {
+      return null;
+    }
+    try {
+      return JSON.parse(text);
+    } catch {
+      return text;
+    }
+  }
+
+  /**
+   * Thin wrapper around the native fetch API used by every service call.
+   * Mirrors the shape previously relied upon from HTTP client responses/errors so
+   * that `_handleError` can stay unchanged: on success it returns
+   * `{ status, data }`; on a non-2xx HTTP response it throws
+   * `{ response: { status, data } }`.
+   */
+  private async _request(
+    method: "GET" | "POST" | "PATCH" | "DELETE",
+    url: string,
+    options?: { params?: Record<string, any>; headers?: Record<string, string>; body?: any },
+  ): Promise<{ status: number; data: any }> {
+    const finalUrl = this._buildUrl(url, options?.params);
+    const init: RequestInit = {
+      method,
+      headers: options?.headers,
+    };
+    if (options?.body !== undefined) {
+      init.body = JSON.stringify(options.body);
+    }
+
+    const response = await fetch(finalUrl, init);
+    const data = await this._parseBody(response);
+
+    if (!response.ok) {
+      throw { response: { status: response.status, data } };
+    }
+
+    return { status: response.status, data };
+  }
+
   async getJobs(
     service: Service,
     filters: string,
@@ -96,7 +153,7 @@ export class RealityCaptureService {
   ): Promise<Response<Jobs>> {
     const url = this._getCorrectUrl(service);
     try {
-      const resp = await this._axios.get(url + "/jobs", {
+      const resp = await this._request("GET", url + "/jobs", {
         params: { $filter: filters, $top: top, continuationToken },
         headers: await this._getHeader("v2"),
       });
@@ -109,9 +166,7 @@ export class RealityCaptureService {
   async submitJob(job: JobCreate): Promise<Response<Job>> {
     const url = this._getCorrectUrl(getAppropriateService(job.type));
     try {
-      const resp = await this._axios.post(url + "/jobs", job, {
-        headers: await this._getHeader("v2"),
-      });
+      const resp = await this._request("POST", url + "/jobs", { body: job, headers: await this._getHeader("v2") });
       return new Response(resp.status, null, resp.data.job as Job);
     } catch (error: any) {
       return this._handleError<Job>(error);
@@ -121,7 +176,7 @@ export class RealityCaptureService {
   async getJob(jobId: string, service: Service): Promise<Response<Job>> {
     const url = this._getCorrectUrl(service);
     try {
-      const resp = await this._axios.get(url + "/jobs/" + jobId, {
+      const resp = await this._request("GET", url + "/jobs/" + jobId, {
         headers: await this._getHeader("v2"),
       });
       return new Response(resp.status, null, resp.data.job as Job);
@@ -136,7 +191,7 @@ export class RealityCaptureService {
   ): Promise<Response<Messages>> {
     const url = this._getCorrectUrl(service);
     try {
-      const resp = await this._axios.get(url + `/jobs/${jobId}/messages`, {
+      const resp = await this._request("GET", url + `/jobs/${jobId}/messages`, {
         headers: await this._getHeader("v2"),
       });
       return new Response(resp.status, null, resp.data.messages as Messages);
@@ -151,7 +206,7 @@ export class RealityCaptureService {
   ): Promise<Response<Progress>> {
     const url = this._getCorrectUrl(service);
     try {
-      const resp = await this._axios.get(url + `/jobs/${jobId}/progress`, {
+      const resp = await this._request("GET", url + `/jobs/${jobId}/progress`, {
         headers: await this._getHeader("v2"),
       });
       return new Response(resp.status, null, resp.data.progress as Progress);
@@ -163,7 +218,7 @@ export class RealityCaptureService {
   async cancelJob(jobId: string, service: Service): Promise<Response<Job>> {
     const url = this._getCorrectUrl(service);
     try {
-      const resp = await this._axios.delete(url + `/jobs/${jobId}`, {
+      const resp = await this._request("DELETE", url + `/jobs/${jobId}`, {
         headers: await this._getHeader("v2"),
       });
       return new Response(resp.status, null, resp.data.job as Job);
@@ -179,9 +234,7 @@ export class RealityCaptureService {
       getAppropriateService(estimationCreate.type),
     );
     try {
-      const resp = await this._axios.post(url + "/costs", estimationCreate, {
-        headers: await this._getHeader("v2"),
-      });
+      const resp = await this._request("POST", url + "/costs", { body: estimationCreate, headers: await this._getHeader("v2") });
       return new Response(
         resp.status,
         null,
@@ -195,7 +248,7 @@ export class RealityCaptureService {
   async getBucket(itwinId: string): Promise<Response<BucketResponse>> {
     const url = this._getModelingUrl() + `itwins/${itwinId}/bucket`;
     try {
-      const resp = await this._axios.get(url, {
+      const resp = await this._request("GET", url, {
         headers: await this._getHeader("v2"),
       });
       return new Response(resp.status, null, resp.data as BucketResponse);
@@ -207,7 +260,7 @@ export class RealityCaptureService {
   async getServiceFiles(): Promise<Response<Files>> {
     const url = this._getModelingUrl() + "files";
     try {
-      const resp = await this._axios.get(url, {
+      const resp = await this._request("GET", url, {
         headers: await this._getHeader("v2"),
       });
       return new Response(resp.status, null, resp.data as Files);
@@ -221,7 +274,7 @@ export class RealityCaptureService {
   ): Promise<Response<DetectorsMinimalResponse>> {
     const url = this._getAnalysisUrl() + "detectors";
     try {
-      const resp = await this._axios.get(url, {
+      const resp = await this._request("GET", url, {
         params: detectorsFilter ? { $filter: detectorsFilter } : undefined,
         headers: await this._getHeader("v2"),
       });
@@ -239,7 +292,7 @@ export class RealityCaptureService {
     const url =
       this._getAnalysisUrl() + `detectors/${encodeURIComponent(detectorName)}`;
     try {
-      const resp = await this._axios.get(url, {
+      const resp = await this._request("GET", url, {
         headers: await this._getHeader("v2"),
       });
       return new Response(resp.status, null, resp.data as DetectorResponse);
@@ -253,9 +306,7 @@ export class RealityCaptureService {
   ): Promise<Response<DetectorResponse>> {
     const url = this._getAnalysisUrl() + "detectors";
     try {
-      const resp = await this._axios.post(url, detectorCreate, {
-        headers: await this._getHeader("v2"),
-      });
+      const resp = await this._request("POST", url, { body: detectorCreate, headers: await this._getHeader("v2") });
       return new Response(resp.status, null, resp.data as DetectorResponse);
     } catch (error: any) {
       return this._handleError<DetectorResponse>(error);
@@ -269,9 +320,7 @@ export class RealityCaptureService {
     const url =
       this._getAnalysisUrl() + `detectors/${encodeURIComponent(detectorName)}`;
     try {
-      const resp = await this._axios.patch(url, detectorUpdate, {
-        headers: await this._getHeader("v2"),
-      });
+      const resp = await this._request("PATCH", url, { body: detectorUpdate, headers: await this._getHeader("v2") });
       return new Response(resp.status, null, resp.data as DetectorResponse);
     } catch (error: any) {
       return this._handleError<DetectorResponse>(error);
@@ -282,7 +331,7 @@ export class RealityCaptureService {
     const url =
       this._getAnalysisUrl() + `detectors/${encodeURIComponent(detectorName)}`;
     try {
-      const resp = await this._axios.delete(url, {
+      const resp = await this._request("DELETE", url, {
         headers: await this._getHeader("v2"),
       });
       return new Response(resp.status, null, null);
@@ -299,9 +348,7 @@ export class RealityCaptureService {
       this._getAnalysisUrl() +
       `detectors/${encodeURIComponent(detectorName)}/versions`;
     try {
-      const resp = await this._axios.post(url, versionCreate, {
-        headers: await this._getHeader("v2"),
-      });
+      const resp = await this._request("POST", url, { body: versionCreate, headers: await this._getHeader("v2") });
       return new Response(
         resp.status,
         null,
@@ -320,7 +367,7 @@ export class RealityCaptureService {
       this._getAnalysisUrl() +
       `detectors/${encodeURIComponent(detectorName)}/versions/${encodeURIComponent(detectorVersion)}`;
     try {
-      const resp = await this._axios.delete(url, {
+      const resp = await this._request("DELETE", url, {
         headers: await this._getHeader("v2"),
       });
       return new Response(resp.status, null, null);
@@ -337,9 +384,7 @@ export class RealityCaptureService {
       this._getAnalysisUrl() +
       `detectors/${encodeURIComponent(detectorName)}/versions/${encodeURIComponent(versionNumber)}/publish`;
     try {
-      const resp = await this._axios.post(url, undefined, {
-        headers: await this._getHeader("v2"),
-      });
+      const resp = await this._request("POST", url, { headers: await this._getHeader("v2") });
       return new Response(resp.status, null, null);
     } catch (error: any) {
       return this._handleError<void>(error);
@@ -354,9 +399,7 @@ export class RealityCaptureService {
       this._getAnalysisUrl() +
       `detectors/${encodeURIComponent(detectorName)}/versions/${encodeURIComponent(versionNumber)}/unpublish`;
     try {
-      const resp = await this._axios.post(url, undefined, {
-        headers: await this._getHeader("v2"),
-      });
+      const resp = await this._request("POST", url, { headers: await this._getHeader("v2") });
       return new Response(resp.status, null, null);
     } catch (error: any) {
       return this._handleError<void>(error);
@@ -371,9 +414,7 @@ export class RealityCaptureService {
       this._getAnalysisUrl() +
       `detectors/${encodeURIComponent(detectorName)}/versions/${encodeURIComponent(versionNumber)}/complete`;
     try {
-      const resp = await this._axios.post(url, undefined, {
-        headers: await this._getHeader("v2"),
-      });
+      const resp = await this._request("POST", url, { headers: await this._getHeader("v2") });
       return new Response(resp.status, null, null);
     } catch (error: any) {
       return this._handleError<void>(error);
@@ -383,7 +424,7 @@ export class RealityCaptureService {
   async dissociateRealityData(iTwinId: string, realityDataId: string): Promise<Response<void>> {
     const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}/iTwins/${encodeURIComponent(iTwinId)}`;
     try {
-      const resp = await this._axios.delete(url, { headers: await this._getHeader("v1") });
+      const resp = await this._request("DELETE", url, { headers: await this._getHeader("v1") });
       return new Response(resp.status, null, null);
     } catch (error: any) {
       return this._handleError<void>(error);
@@ -393,7 +434,7 @@ export class RealityCaptureService {
   async associateRealityData(iTwinId: string, realityDataId: string): Promise<Response<void>> {
     const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}/iTwins/${encodeURIComponent(iTwinId)}`;
     try {
-      const resp = await this._axios.post(url, undefined, { headers: await this._getHeader("v1") });
+      const resp = await this._request("POST", url, { headers: await this._getHeader("v1") });
       return new Response(resp.status, null, null);
     } catch (error: any) {
       return this._handleError<void>(error);
@@ -403,7 +444,7 @@ export class RealityCaptureService {
   async getRealityDataITwins(realityDataId: string): Promise<Response<string[]>> {
     const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}/iTwins`;
     try {
-      const resp = await this._axios.get(url, { headers: await this._getHeader("v1") });
+      const resp = await this._request("GET", url, { headers: await this._getHeader("v1") });
       return new Response(resp.status, null, resp.data.iTwins);
     } catch (error: any) {
       return this._handleError<string[]>(error);
@@ -413,7 +454,7 @@ export class RealityCaptureService {
   async getRealityDataReadAccess(realityDataId: string, itwinId?: string): Promise<Response<ContainerDetails>> {
     const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}/readaccess` + (itwinId ? `?iTwinId=${encodeURIComponent(itwinId)}` : "");
     try {
-      const resp = await this._axios.get(url, { headers: await this._getHeader("v1") });
+      const resp = await this._request("GET", url, { headers: await this._getHeader("v1") });
       return new Response(resp.status, null, resp.data);
     } catch (error: any) {
       return this._handleError<ContainerDetails>(error);
@@ -423,7 +464,7 @@ export class RealityCaptureService {
   async getRealityDataWriteAccess(realityDataId: string, itwinId?: string): Promise<Response<ContainerDetails>> {
     const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}/writeaccess` + (itwinId ? `?iTwinId=${encodeURIComponent(itwinId)}` : "");
     try {
-      const resp = await this._axios.get(url, { headers: await this._getHeader("v1") });
+      const resp = await this._request("GET", url, { headers: await this._getHeader("v1") });
       return new Response(resp.status, null, resp.data);
     } catch (error: any) {
       return this._handleError<ContainerDetails>(error);
@@ -433,7 +474,7 @@ export class RealityCaptureService {
   async createRealityData(realityData: RealityDataCreate): Promise<Response<RealityData>> {
     const url = this._getManagementUrl() + "reality-data";
     try {
-      const resp = await this._axios.post(url, realityData, { headers: await this._getHeader("v1") });
+      const resp = await this._request("POST", url, { body: realityData, headers: await this._getHeader("v1") });
       return new Response(resp.status, null, resp.data.realityData);
     } catch (error: any) {
       return this._handleError<RealityData>(error);
@@ -443,7 +484,7 @@ export class RealityCaptureService {
   async updateRealityData(realityData: RealityDataUpdate, realityDataId: string): Promise<Response<RealityData>> {
     const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}`;
     try {
-      const resp = await this._axios.patch(url, realityData, { headers: await this._getHeader("v1") });
+      const resp = await this._request("PATCH", url, { body: realityData, headers: await this._getHeader("v1") });
       return new Response(resp.status, null, resp.data.realityData);
     } catch (error: any) {
       return this._handleError<RealityData>(error);
@@ -458,7 +499,7 @@ export class RealityCaptureService {
       "Prefer": prefer === Prefer.REPRESENTATION ? "return=representation" : "return=minimal",
     };
     try {
-      const resp = await this._axios.get(url, { params, headers });
+      const resp = await this._request("GET", url, { params, headers });
       return new Response(resp.status, null, resp.data as RealityDatas);
     } catch (error: any) {
       return this._handleError<RealityDatas>(error);
@@ -471,7 +512,7 @@ export class RealityCaptureService {
       url += `?iTwinId=${encodeURIComponent(iTwinId)}`;
     }
     try {
-      const resp = await this._axios.get(url, { headers: await this._getHeader("v1") });
+      const resp = await this._request("GET", url, { headers: await this._getHeader("v1") });
       return new Response(resp.status, null, resp.data.realityData);
     } catch (error: any) {
       return this._handleError<RealityData>(error);
@@ -481,7 +522,7 @@ export class RealityCaptureService {
   async moveRealityData(realityDataId: string, iTwinId: string): Promise<Response<void>> {
     const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}/move`;
     try {
-      const resp = await this._axios.patch(url, { iTwinId: iTwinId }, { headers: await this._getHeader("v1") });
+      const resp = await this._request("PATCH", url, { body: { iTwinId: iTwinId }, headers: await this._getHeader("v1") });
       return new Response(resp.status, null, null);
     } catch (error: any) {
       return this._handleError<void>(error);
@@ -491,7 +532,7 @@ export class RealityCaptureService {
   async deleteRealityData(realityDataId: string): Promise<Response<void>> {
     const url = this._getManagementUrl() + `reality-data/${encodeURIComponent(realityDataId)}`;
     try {
-      const resp = await this._axios.delete(url, { headers: await this._getHeader("v1") });
+      const resp = await this._request("DELETE", url, { headers: await this._getHeader("v1") });
       return new Response(resp.status, null, null);
     } catch (error: any) {
       return this._handleError<void>(error);
