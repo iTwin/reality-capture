@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { URLSchema } from "./bucket";
+import { URLSchema } from "./reality_data";
 
 export enum DetectorExport {
   OBJECTS = "Objects",

@@ -2,10 +2,9 @@ import { expect } from "chai";
 import { z } from "zod";
 import {
   BucketSchema,
-  URLSchema,
-  ContainerLinksSchema,
   BucketResponseSchema
 } from "../../service/bucket";
+import { ContainerLinksSchema, URLSchema } from "../../service/reality_data";
 
 describe("BucketSchema", () => {
   it("should validate a correct bucket object", () => {

@@ -2,14 +2,13 @@ import * as fs from "fs";
 import * as path from "path";
 import { ContainerClient } from "@azure/storage-blob";
 import type { AuthorizationClient } from "@itwin/core-common";
-import { BentleyError } from "@itwin/core-bentley";
 //TODO : ThreadPool type does not have native Node.js equivalent. Multi-thread for IO must be readapted (here, ploads and downloads are sequential.
 //import { ThreadPool } from "some-threadpool-lib";
 import { DetailedError } from "./error";
-import { ITwinRealityData, RealityDataAccessClient, type RealityDataClientOptions } from "@itwin/reality-data-client";
 import { Response } from "./response";
 import { RealityCaptureService } from "./service";
 import { BucketResponse } from "./bucket";
+import { ContainerDetails } from "./reality_data";
 
 
 type ProgressHook = ((percent: number) => boolean) | null;
@@ -104,7 +103,6 @@ class _DataHandler {
 
   static async uploadData(containerUrl: string, src: string, realityDataDst: string, progressHook: ProgressHook): Promise<Response<null>> {
     const files = _DataHandler._getFilesAndSizes(src);
-    const nbThreads = _DataHandler._getNbThreads(files);
     const totalSize = files.reduce((acc, [, size]) => acc + size, 0);
     let proceed = true;
     const uploadedValues: { [k: string]: number } = {};
@@ -190,63 +188,45 @@ class _DataHandler {
 }
 
 export class RealityDataHandler {
-  private _realityDataClient: RealityDataAccessClient;
+  private _realityCaptureService: RealityCaptureService;
   private _progressHook: ProgressHook;
 
   constructor(authorizationClient: AuthorizationClient, kwargs?: any) {
     const env = kwargs?.env;
-    let url = "";
-    if (env === "dev" || env === "qa")
-      url = "https://" + env + "-api.bentley.com/reality-management/reality-data";
-    else
-      url = "https://api.bentley.com/reality-management/reality-data";
-    const realityDataClientOptions: RealityDataClientOptions = {
-      authorizationClient: authorizationClient,
-      baseUrl: url,
-    };
-    this._realityDataClient = new RealityDataAccessClient(realityDataClientOptions);
+    this._realityCaptureService = new RealityCaptureService(authorizationClient, { env });
     this._progressHook = null;
   }
 
-  private async _getContainerUrlFromRealityDataId(realityDataId: string, iTwinId?: string, writeAccess: boolean = false): Promise<Response<string>> {
-    let realityData: ITwinRealityData;
-    try {
-      realityData = await this._realityDataClient.getRealityData("", iTwinId, realityDataId);
+  private async _getContainerUrlFromRealityDataId(realitydataId: string, iTwinId?: string, readOnly: boolean = true): Promise<Response<ContainerDetails>> {
+    if (!readOnly) {
+      return this._realityCaptureService.getRealityDataWriteAccess(realitydataId, iTwinId);
     }
-    catch (error: any) {
-      console.log("Cannot find reality data id " + realityDataId + " in iTwin " + iTwinId);
-      if (error instanceof BentleyError)
-        return new Response(error.errorNumber, { error: { code: error.name, message: error.message } }, "");
-      else
-        return new Response(520, { error: { code: "UnknownError", message: "Unknown error" } }, "");
-    }
-    const url = await realityData.getBlobUrl("", "", writeAccess);
-    return new Response(200, null, url.toString());
+    return this._realityCaptureService.getRealityDataReadAccess(realitydataId, iTwinId);
   }
 
   async uploadData(realityDataId: string, src: string, realityDataDst = "", iTwinId?: string): Promise<Response<null>> {
-    const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, true);
+    const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, false);
     if (urlResponse.isError()) {
       return new Response<null>(urlResponse.status_code, urlResponse.error);
     }
-    const resp = await _DataHandler.uploadData(urlResponse.value!, src, realityDataDst, this._progressHook);
+    const resp = await _DataHandler.uploadData(urlResponse.value!._links.containerUrl.href, src, realityDataDst, this._progressHook);
     return resp;
   }
 
   async downloadData(realityDataId: string, dst: string, realityDataSrc = "", iTwinId?: string): Promise<Response<null>> {
-    const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, false);
+    const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, true);
     if (urlResponse.isError()) {
       return new Response<null>(urlResponse.status_code, urlResponse.error);
     }
-    return await _DataHandler.downloadData(urlResponse.value!, dst, realityDataSrc, this._progressHook);
+    return await _DataHandler.downloadData(urlResponse.value!._links.containerUrl.href, dst, realityDataSrc, this._progressHook);
   }
 
   async listData(realityDataId: string, iTwinId?: string): Promise<Response<string[]>> {
-    const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, false);
+    const urlResponse = await this._getContainerUrlFromRealityDataId(realityDataId, iTwinId, true);
     if (urlResponse.isError()) {
       return new Response<string[]>(urlResponse.status_code, urlResponse.error, []);
     }
-    return await _DataHandler.listData(urlResponse.value!);
+    return await _DataHandler.listData(urlResponse.value!._links.containerUrl.href);
   }
 
   async deleteData(realityDataId: string, filesToDelete: string[], iTwinId?: string): Promise<Response<null>> {
@@ -254,7 +234,7 @@ export class RealityDataHandler {
     if (urlResponse.isError()) {
       return new Response<null>(urlResponse.status_code, urlResponse.error);
     }
-    return await _DataHandler.deleteData(urlResponse.value!, filesToDelete);
+    return await _DataHandler.deleteData(urlResponse.value!._links.containerUrl.href, filesToDelete);
   }
 
   setProgressHook(hook: ProgressHook): void {
