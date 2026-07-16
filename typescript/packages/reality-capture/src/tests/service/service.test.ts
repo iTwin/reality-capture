@@ -1163,6 +1163,19 @@ describe("RealityCaptureService API calls tests", function () {
     expect(calledUrl.searchParams.get("$top")).to.equal("10");
   });
 
+  it("getRealityDataList should serialize array-valued params as repeated keys", async () => {
+    fetchStub.resolves(mockFetchResponse(200, {
+      realityData: [],
+      links: { next: { href: "https://dev-api.bentley.com/reality-management/reality-data/" } },
+    },
+    ));
+    const filter: RealityDataFilter = { types: [Type.LAS, Type.E57] };
+    await service.getRealityDataList(filter);
+    const calledUrl = new URL(fetchStub.firstCall.args[0]);
+    expect(calledUrl.searchParams.getAll("types")).to.deep.equal(["LAS", "E57"]);
+    expect(calledUrl.search).to.not.include(",");
+  });
+
   it("getRealityDataList 401 error", async () => {
     fetchStub.resolves(mockFetchResponse(401, { error: { code: "HeaderNotFound", message: "Access denied." } } ));
     const result = await service.getRealityDataList();

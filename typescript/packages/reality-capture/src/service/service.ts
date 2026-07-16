@@ -91,7 +91,18 @@ export class RealityCaptureService {
     }
     const searchParams = new URLSearchParams();
     for (const [key, value] of Object.entries(params)) {
-      if (value !== undefined && value !== null) {
+      if (value === undefined || value === null) {
+        continue;
+      }
+      if (Array.isArray(value)) {
+        // Match axios' default params serialization: repeat the key for each
+        // array element (e.g. types=LAS&types=E57) instead of comma-joining.
+        for (const item of value) {
+          if (item !== undefined && item !== null) {
+            searchParams.append(key, String(item));
+          }
+        }
+      } else {
         searchParams.append(key, String(value));
       }
     }
