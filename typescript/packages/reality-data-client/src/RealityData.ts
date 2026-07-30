@@ -6,9 +6,6 @@ import type { RealityData } from "@itwin/core-common";
 import {type AccessToken, BentleyError, type GuidString } from "@itwin/core-bentley";
 import type { RealityDataAccessClient } from "./RealityDataClient";
 
-import { getRequestConfig } from "./RequestOptions";
-import axios from "axios";
-
 /**
  * Extent of a reality data, delimited by southwest and northeast coordinates.
  */
@@ -212,22 +209,11 @@ export class ITwinRealityData implements RealityData {
 
       if (undefined === containerCache?.url || blobUrlRequiresRefresh) {
 
-        const url = new URL(`${this.client.baseUrl}/${this.id}/${ writeAccess === true ? "writeAccess" : "readAccess"}`);
-
-        if(this.iTwinId)
-          url.searchParams.append("iTwinId", this.iTwinId);
-
-        const requestOptions = getRequestConfig(accessTokenResolved, "GET", url.href, this.client.apiVersion);
-
-        const response = await axios.get(url.href, requestOptions);
-
-        if (!response.data) {
-          throw new BentleyError(422, "Invalid container request (API returned an unexpected response).");
-        }
+        const containerUrlString = await this.client.getContainerUrl(accessTokenResolved, this.id, writeAccess, this.iTwinId);
 
         // update cache
         const newContainerCacheValue: ContainerCacheValue = {
-          url: new URL(response.data._links.containerUrl.href),
+          url: new URL(containerUrlString),
           timeStamp: new Date(Date.now()),
         };
 

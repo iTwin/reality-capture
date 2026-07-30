@@ -2,11 +2,10 @@ import * as fs from "fs";
 import * as path from "path";
 import { ContainerClient } from "@azure/storage-blob";
 import type { AuthorizationClient } from "@itwin/core-common";
-import { BentleyError } from "@itwin/core-bentley";
 //TODO : ThreadPool type does not have native Node.js equivalent. Multi-thread for IO must be readapted (here, ploads and downloads are sequential.
 //import { ThreadPool } from "some-threadpool-lib";
 import { DetailedError } from "./error";
-import { ITwinRealityData, RealityDataAccessClient, type RealityDataClientOptions } from "@itwin/reality-data-client";
+import { RealityDataService } from "./reality_data";
 import { Response } from "./response";
 import { RealityCaptureService } from "./service";
 import { BucketResponse } from "./bucket";
@@ -190,38 +189,21 @@ class _DataHandler {
 }
 
 export class RealityDataHandler {
-  private _realityDataClient: RealityDataAccessClient;
+  private _realityDataService: RealityDataService;
   private _progressHook: ProgressHook;
 
   constructor(authorizationClient: AuthorizationClient, kwargs?: any) {
-    const env = kwargs?.env;
-    let url = "";
-    if (env === "dev" || env === "qa")
-      url = "https://" + env + "-api.bentley.com/reality-management/reality-data";
-    else
-      url = "https://api.bentley.com/reality-management/reality-data";
-    const realityDataClientOptions: RealityDataClientOptions = {
-      authorizationClient: authorizationClient,
-      baseUrl: url,
-    };
-    this._realityDataClient = new RealityDataAccessClient(realityDataClientOptions);
+    this._realityDataService = new RealityDataService(authorizationClient, kwargs);
     this._progressHook = null;
   }
 
   private async _getContainerUrlFromRealityDataId(realityDataId: string, iTwinId?: string, writeAccess: boolean = false): Promise<Response<string>> {
-    let realityData: ITwinRealityData;
-    try {
-      realityData = await this._realityDataClient.getRealityData("", iTwinId, realityDataId);
-    }
-    catch (error: any) {
+    const urlResponse = await this._realityDataService.getContainerUrl(realityDataId, writeAccess, iTwinId);
+    if (urlResponse.isError()) {
       console.log("Cannot find reality data id " + realityDataId + " in iTwin " + iTwinId);
-      if (error instanceof BentleyError)
-        return new Response(error.errorNumber, { error: { code: error.name, message: error.message } }, "");
-      else
-        return new Response(520, { error: { code: "UnknownError", message: "Unknown error" } }, "");
+      return new Response(urlResponse.status_code, urlResponse.error, "");
     }
-    const url = await realityData.getBlobUrl("", "", writeAccess);
-    return new Response(200, null, url.toString());
+    return new Response(200, null, urlResponse.value!);
   }
 
   async uploadData(realityDataId: string, src: string, realityDataDst = "", iTwinId?: string): Promise<Response<null>> {
