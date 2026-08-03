@@ -13,11 +13,29 @@ import type {
   CartographicRange,
   RealityDataAccess,
 } from "@itwin/core-common";
-import axios, { type AxiosResponse } from "axios";
+import axios from "axios";
 import { ITwinRealityData } from "./RealityData";
 import { getRequestConfig } from "./RequestOptions";
 import { Project } from "./Projects";
 import { Angle } from "./helper/Angle";
+import {
+  RealityCaptureService,
+  Response as RCResponse,
+  type RealityDataCreate as RCRealityDataCreate,
+  type RealityDataUpdate as RCRealityDataUpdate,
+  Type as RCType,
+} from "@itwin/reality-capture";
+
+/**
+ * A mutable AuthorizationClient that holds an access token.
+ * Used internally to bridge the per-call accessToken pattern of RealityDataAccessClient
+ * to the constructor-injected AuthorizationClient of RealityCaptureService.
+ */
+class TokenHolder implements AuthorizationClient {
+  private _token: string = "";
+  setToken(token: string) { this._token = token; }
+  async getAccessToken(): Promise<string> { return this._token; }
+}
 
 /** Options for initializing Reality Data Client
  * @beta
@@ -116,6 +134,9 @@ export class RealityDataAccessClient implements RealityDataAccess {
   public readonly authorizationClient: AuthorizationClient | undefined =
     undefined;
 
+  private readonly _tokenHolder: TokenHolder;
+  private readonly _rcService: RealityCaptureService;
+
   /**
    * Creates an instance of RealityDataAccessClient.
    */
@@ -129,6 +150,9 @@ export class RealityDataAccessClient implements RealityDataAccess {
       if (realityDataClientOptions.authorizationClient)
         this.authorizationClient = realityDataClientOptions.authorizationClient;
     }
+
+    this._tokenHolder = new TokenHolder();
+    this._rcService = new RealityCaptureService(this._tokenHolder, { env: this._getEnv() });
   }
 
   /**
@@ -147,6 +171,39 @@ export class RealityDataAccessClient implements RealityDataAccess {
         return "https://api.bentley.com/reality-management/reality-data";
       default:
         throw new Error("invalid host");
+    }
+  }
+
+  /**
+   * Derives the environment identifier from the baseUrl so that
+   * RealityCaptureService targets the same API environment.
+   */
+  private _getEnv(): string | undefined {
+    if (this.baseUrl.includes("dev-api")) return "dev";
+    if (this.baseUrl.includes("qa-api")) return "qa";
+    return undefined;
+  }
+
+  /**
+   * Resolves the access token (using the authorizationClient if available)
+   * and injects it into the internal TokenHolder so that the RealityCaptureService
+   * can consume it transparently.
+   */
+  private async _prepareToken(accessToken: AccessToken): Promise<void> {
+    const resolved = await this.resolveAccessToken(accessToken);
+    this._tokenHolder.setToken(resolved);
+  }
+
+  /**
+   * Checks a RealityCaptureService response and throws a BentleyError
+   * when the response indicates an error.
+   */
+  private _throwIfError<T>(response: RCResponse<T>): void {
+    if (response.isError()) {
+      throw new BentleyError(
+        response.status_code,
+        response.error?.error?.message ?? "Unknown error",
+      );
     }
   }
 
@@ -196,29 +253,11 @@ export class RealityDataAccessClient implements RealityDataAccess {
     iTwinId: string | undefined,
     realityDataId: string,
   ): Promise<ITwinRealityData> {
-    const accessTokenResolved = await this.resolveAccessToken(accessToken);
-    const url = `${await this.getRealityDataUrl(iTwinId, realityDataId)}`;
+    await this._prepareToken(accessToken);
     try {
-      const realityDataResponse = await axios.get(
-        url,
-        getRequestConfig(accessTokenResolved, "GET", url, this.apiVersion),
-      );
-
-      // Axios throws on 4XX and 5XX; we make sure the response here is 200
-      if (realityDataResponse.status !== 200)
-        throw new BentleyError(
-          422,
-          iTwinId
-            ? `Could not fetch reality data: ${realityDataId} with iTwinId ${iTwinId}`
-            : `Could not fetch reality data: ${realityDataId}`,
-        );
-
-      const realityData = new ITwinRealityData(
-        this,
-        realityDataResponse.data.realityData,
-        iTwinId,
-      );
-      return realityData;
+      const response = await this._rcService.getRealityData(realityDataId, iTwinId);
+      this._throwIfError(response);
+      return new ITwinRealityData(this, response.value, iTwinId);
     } catch (error) {
       return this.handleError(error);
     }
@@ -488,28 +527,11 @@ export class RealityDataAccessClient implements RealityDataAccess {
     accessToken: AccessToken,
     realityDataId: string,
   ): Promise<string[]> {
+    await this._prepareToken(accessToken);
     try {
-      const accessTokenResolved = await this.resolveAccessToken(accessToken);
-      const url = `${this.baseUrl}/${realityDataId}/itwins`;
-      const options = getRequestConfig(
-        accessTokenResolved,
-        "GET",
-        url,
-        this.apiVersion,
-      );
-
-      // execute query
-      const response = await axios.get(url, options);
-
-      const iTwinsResponseBody = response.data;
-
-      const iTwinsResponse: string[] = [];
-
-      iTwinsResponseBody.iTwins.forEach((itwinValue: any) => {
-        iTwinsResponse.push(itwinValue);
-      });
-
-      return iTwinsResponse;
+      const response = await this._rcService.getRealityDataITwins(realityDataId);
+      this._throwIfError(response);
+      return response.value!;
     } catch (error) {
       return this.handleError(error);
     }
@@ -530,23 +552,13 @@ export class RealityDataAccessClient implements RealityDataAccess {
     iTwinId: string | undefined,
     iTwinRealityData: ITwinRealityData,
   ): Promise<ITwinRealityData> {
+    await this._prepareToken(accessToken);
     try {
-      const accessTokenResolved = await this.resolveAccessToken(accessToken);
-      const url = this.baseUrl;
-      const options = getRequestConfig(
-        accessTokenResolved,
-        "POST",
-        url,
-        this.apiVersion,
-      );
-
-      // creation payload
-
-      const realityDataToCreate = {
-        displayName: iTwinRealityData.displayName,
-        classification: iTwinRealityData.classification,
-        type: iTwinRealityData.type,
-        iTwinId,
+      const realityDataToCreate: RCRealityDataCreate = {
+        iTwinId: iTwinId ?? "",
+        displayName: iTwinRealityData.displayName ?? "",
+        type: (iTwinRealityData.type ?? "") as RCType,
+        classification: iTwinRealityData.classification as any,
         dataset: iTwinRealityData.dataset,
         group: iTwinRealityData.group,
         description: iTwinRealityData.description,
@@ -560,17 +572,12 @@ export class RealityDataAccessClient implements RealityDataAccess {
         termsOfUse: iTwinRealityData.termsOfUse,
       };
 
-      const response = await axios.post(url, realityDataToCreate, options);
-      iTwinRealityData = new ITwinRealityData(
-        this,
-        response.data.realityData,
-        iTwinId,
-      );
+      const response = await this._rcService.createRealityData(realityDataToCreate);
+      this._throwIfError(response);
+      return new ITwinRealityData(this, response.value, iTwinId);
     } catch (error) {
       return this.handleError(error);
     }
-
-    return iTwinRealityData;
   }
 
   /**
@@ -588,24 +595,12 @@ export class RealityDataAccessClient implements RealityDataAccess {
     iTwinId: string | undefined,
     iTwinRealityData: ITwinRealityData,
   ): Promise<ITwinRealityData> {
+    await this._prepareToken(accessToken);
     try {
-      const accessTokenResolved = await this.resolveAccessToken(accessToken);
-      const url = new URL(`${this.baseUrl}/${iTwinRealityData.id}`);
-
-      const options = getRequestConfig(
-        accessTokenResolved,
-        "PATCH",
-        url.href,
-        this.apiVersion,
-      );
-
-      // payload
-
-      const realityDataToModify = {
-        id: iTwinRealityData.id,
+      const realityDataToModify: RCRealityDataUpdate = {
         displayName: iTwinRealityData.displayName,
-        classification: iTwinRealityData.classification,
-        type: iTwinRealityData.type,
+        classification: iTwinRealityData.classification as any,
+        type: iTwinRealityData.type as RCType | undefined,
         iTwinId,
         dataset: iTwinRealityData.dataset,
         group: iTwinRealityData.group,
@@ -620,22 +615,12 @@ export class RealityDataAccessClient implements RealityDataAccess {
         termsOfUse: iTwinRealityData.termsOfUse,
       };
 
-      const response = await axios.patch(
-        url.href,
-        realityDataToModify,
-        options,
-      );
-
-      iTwinRealityData = new ITwinRealityData(
-        this,
-        response.data.realityData,
-        iTwinId,
-      );
+      const response = await this._rcService.updateRealityData(realityDataToModify, iTwinRealityData.id);
+      this._throwIfError(response);
+      return new ITwinRealityData(this, response.value, iTwinId);
     } catch (error) {
       return this.handleError(error);
     }
-
-    return iTwinRealityData;
   }
 
   /**
@@ -652,24 +637,14 @@ export class RealityDataAccessClient implements RealityDataAccess {
     accessToken: AccessToken,
     realityDataId: string,
   ): Promise<boolean> {
-    let response: AxiosResponse;
+    await this._prepareToken(accessToken);
     try {
-      const accessTokenResolved = await this.resolveAccessToken(accessToken);
-      const url = `${this.baseUrl}/${realityDataId}`;
-      const options = getRequestConfig(
-        accessTokenResolved,
-        "POST",
-        url,
-        this.apiVersion,
-      );
-
-      response = await axios.delete(url, options);
+      const response = await this._rcService.deleteRealityData(realityDataId);
+      this._throwIfError(response);
+      return true;
     } catch (error) {
       return this.handleError(error);
     }
-
-    if (response.status === 204) return true;
-    else return false;
   }
 
   /**
@@ -688,23 +663,14 @@ export class RealityDataAccessClient implements RealityDataAccess {
     iTwinId: string,
     realityDataId: string,
   ): Promise<boolean> {
-    let response: AxiosResponse;
+    await this._prepareToken(accessToken);
     try {
-      const accessTokenResolved = await this.resolveAccessToken(accessToken);
-      const url = `${this.baseUrl}/${realityDataId}/iTwins/${iTwinId}`;
-      const options = getRequestConfig(
-        accessTokenResolved,
-        "POST",
-        url,
-        this.apiVersion,
-      );
-
-      response = await axios.post(url, undefined, options);
+      const response = await this._rcService.associateRealityData(iTwinId, realityDataId);
+      this._throwIfError(response);
+      return true;
     } catch (error) {
       return this.handleError(error);
     }
-    if (response.status === 200) return true;
-    else return false;
   }
 
   /**
@@ -723,23 +689,14 @@ export class RealityDataAccessClient implements RealityDataAccess {
     iTwinId: string,
     realityDataId: string,
   ): Promise<boolean> {
-    let response: AxiosResponse;
+    await this._prepareToken(accessToken);
     try {
-      const accessTokenResolved = await this.resolveAccessToken(accessToken);
-      const url = `${this.baseUrl}/${realityDataId}/iTwins/${iTwinId}`;
-      const options = getRequestConfig(
-        accessTokenResolved,
-        "DELETE",
-        url,
-        this.apiVersion,
-      );
-
-      response = await axios.delete(url, options);
+      const response = await this._rcService.dissociateRealityData(iTwinId, realityDataId);
+      this._throwIfError(response);
+      return true;
     } catch (error) {
       return this.handleError(error);
     }
-    if (response.status === 204) return true;
-    else return false;
   }
 
   /**
@@ -759,24 +716,14 @@ export class RealityDataAccessClient implements RealityDataAccess {
     realityDataId: string,
     iTwinId: string,
   ): Promise<boolean> {
-    let response: AxiosResponse;
+    await this._prepareToken(accessToken);
     try {
-      const accessTokenResolved = await this.resolveAccessToken(accessToken);
-      const url = `${this.baseUrl}/${realityDataId}/move`;
-      const options = getRequestConfig(
-        accessTokenResolved,
-        "PATCH",
-        url,
-        this.apiVersion,
-      );
-      const payload = { iTwinId };
-
-      response = await axios.patch(url, payload, options);
+      const response = await this._rcService.moveRealityData(realityDataId, iTwinId);
+      this._throwIfError(response);
+      return true;
     } catch (error) {
       return this.handleError(error);
     }
-    if (response.status === 204) return true;
-    else return false;
   }
 
   /**

@@ -45,6 +45,7 @@
     "publish-packages-dev": "beachball publish --config beachball.config.dev.js --keep-change-files"
   },
   "dependencies": {
+    "@itwin/reality-capture": "file:../reality-capture",
     "axios": "^1.18.0"
   },
   "devDependencies": {
