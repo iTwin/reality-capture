@@ -19,11 +19,11 @@ import { getRequestConfig } from "./RequestOptions";
 import { Project } from "./Projects";
 import { Angle } from "./helper/Angle";
 import {
-  RealityCaptureService,
-  Response as RCResponse,
   type RealityDataCreate as RCRealityDataCreate,
   type RealityDataUpdate as RCRealityDataUpdate,
-  Type as RCType,
+  type Response as RCResponse,
+  type Type as RCType,
+  RealityCaptureService,
 } from "@itwin/reality-capture";
 
 /**
@@ -33,8 +33,8 @@ import {
  */
 class TokenHolder implements AuthorizationClient {
   private _token: string = "";
-  setToken(token: string) { this._token = token; }
-  async getAccessToken(): Promise<string> { return this._token; }
+  public setToken(token: string) { this._token = token; }
+  public async getAccessToken(): Promise<string> { return this._token; }
 }
 
 /** Options for initializing Reality Data Client
@@ -531,7 +531,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
     try {
       const response = await this._rcService.getRealityDataITwins(realityDataId);
       this._throwIfError(response);
-      return response.value!;
+      return response.value as string[];
     } catch (error) {
       return this.handleError(error);
     }
