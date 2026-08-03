@@ -11,11 +11,10 @@ import {
   FillImagePropertiesOutputsCreate, FillImagePropertiesOptions, FillImagePropertiesOutputs,
   RealityCaptureService, ReconstructionSpecificationsCreate, ReconstructionInputs, ReconstructionOutputsCreate,
   ReconstructionOutputs, ExportCreate, Format, OptionsLAS, SamplingStrategy, TilingOptions, GeometricPrecision,
-  JobCreate, JobType, JobState, Progress, getAppropriateService, RealityDataHandler,
+  JobCreate, JobType, JobState, Progress, getAppropriateService, RealityDataHandler, RealityDataService,
   Options3DTiles, BucketDataHandler, AdjustmentConstraints,
   LODScope
 } from "@itwin/reality-capture";
-import { RealityDataClientOptions, RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
 import path from "path";
 
 
@@ -41,9 +40,9 @@ async function monitorJob(realityCaptureService: RealityCaptureService, jobId: s
   }
 }
 
-async function runFillImageProperties(realityCaptureService: RealityCaptureService, imagesRealityData: ITwinRealityData, fipJobName: string, iTwinId: string): Promise<string> {
+async function runFillImageProperties(realityCaptureService: RealityCaptureService, imagesRealityDataId: string, fipJobName: string, iTwinId: string): Promise<string> {
   // Submit FillImageProperties job to get a context scene from the images
-  let fipInputs: FillImagePropertiesInputs = { imageCollections: [imagesRealityData.id] };
+  let fipInputs: FillImagePropertiesInputs = { imageCollections: [imagesRealityDataId] };
   let fipOutputs = [FillImagePropertiesOutputsCreate.SCENE];
   let fipOptions: FillImagePropertiesOptions = {};
   let fipSpecs: FillImagePropertiesSpecificationsCreate = { inputs: fipInputs, outputs: fipOutputs, options: fipOptions };
@@ -179,26 +178,27 @@ async function runModelingExample() {
   const bucketDataHandler = new BucketDataHandler(authorizationClient);
   console.log("Bucket Data handler initialized");
 
-  const realityDataClientOptions: RealityDataClientOptions = {
-    authorizationClient: authorizationClient,
-    baseUrl: "https://api.bentley.com/reality-management/reality-data",
-  };
-  const realityDataClient = new RealityDataAccessClient(realityDataClientOptions);
-  console.log("Reality Data Client initialized");
+  const realityDataService = new RealityDataService(authorizationClient);
+  console.log("Reality Data Service initialized");
 
   try {
     console.log("Upload images in ", iTwinId);
-    const realityData = new ITwinRealityData(realityDataClient, undefined, iTwinId);
-    realityData.displayName = imagesRealityDataName;
-    realityData.type = "CCImageCollection";
-    const createdRealityData = await realityDataClient.createRealityData("", iTwinId, realityData);
+    const createResponse = await realityDataService.createRealityData({
+      displayName: imagesRealityDataName,
+      type: "CCImageCollection",
+      iTwinId,
+    });
+    if (createResponse.isError()) {
+      throw new Error("Failed to create reality data : " + createResponse.error!.error.message);
+    }
+    const createdRealityData = createResponse.value!;
     const uploadResponse = await realityDataHandler.uploadData(createdRealityData.id, imagesPath, "", iTwinId);
     if (uploadResponse.isError()) {
       throw new Error("Failed to upload reality data : " + uploadResponse.error!.error.message);
     }
     console.log("Successfully uploaded images");
 
-    const fipOutputContextScene = await runFillImageProperties(realityCaptureService, createdRealityData, fipJobName, iTwinId);
+    const fipOutputContextScene = await runFillImageProperties(realityCaptureService, createdRealityData.id, fipJobName, iTwinId);
 
     const calibOutputContextScene = await runCalibration(realityCaptureService, bucketDataHandler, fipOutputContextScene, calibJobName, outputPath, iTwinId, calibOptions);
 

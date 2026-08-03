@@ -5,8 +5,7 @@
 
 import * as dotenv from "dotenv";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
-import { RealityDataHandler } from "@itwin/reality-capture";
-import { RealityDataClientOptions, RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
+import { RealityDataHandler, RealityDataService } from "@itwin/reality-capture";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -39,19 +38,21 @@ async function runUploadExample() {
   const realityDataHandler = new RealityDataHandler(authorizationClient);
   console.log("Reality Data handler initialized");
 
-  const realityDataClientOptions: RealityDataClientOptions = {
-    authorizationClient: authorizationClient,
-    baseUrl: "https://api.bentley.com/reality-management/reality-data",
-  };
-  const realityDataClient = new RealityDataAccessClient(realityDataClientOptions);
-  console.log("Reality Data Client initialized");
+  const realityDataService = new RealityDataService(authorizationClient);
+  console.log("Reality Data Service initialized");
 
   try {
     console.log("Upload images in ", iTwinId);
-    const realityData = new ITwinRealityData(realityDataClient, undefined, iTwinId);
-    realityData.displayName = imagesName;
-    realityData.type = "CCImageCollection";
-    const createdRealityData = await realityDataClient.createRealityData("", iTwinId, realityData);
+    const createResponse = await realityDataService.createRealityData({
+      displayName: imagesName,
+      type: "CCImageCollection",
+      iTwinId,
+    });
+    if (createResponse.isError()) {
+      console.log("Failed to create reality data : " + createResponse.error!.error.message);
+      return;
+    }
+    const createdRealityData = createResponse.value!;
     const response = await realityDataHandler.uploadData(createdRealityData.id, imagesPath, "", iTwinId);
     if (response.isError()) {
       console.log("Failed to upload reality data : " + response.error!.error.message);
