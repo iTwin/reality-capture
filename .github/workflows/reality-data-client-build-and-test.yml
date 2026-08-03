@@ -60,6 +60,14 @@ jobs:
           PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers-${{ inputs.node-version }}
         run: pnpm install --frozen-lockfile=true --ignore-scripts
 
+      - name: Install reality-capture dependencies
+        working-directory: ./typescript/packages/reality-capture
+        run: pnpm install --frozen-lockfile=true
+
+      - name: Build reality-capture
+        working-directory: ./typescript/packages/reality-capture
+        run: pnpm build
+
       - name: Build
         working-directory: ./typescript/packages/reality-data-client
         run: pnpm build
