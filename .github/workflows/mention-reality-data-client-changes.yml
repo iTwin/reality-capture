@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
+      pull-requests: read
     steps:
       - name: Check if maintainers are already mentioned
         id: check_mentioned
