@@ -13,7 +13,8 @@ export const TrainingS3DOutputsSchema = z.object({
 export type TrainingS3DOutputs = z.infer<typeof TrainingS3DOutputsSchema>;
 
 export enum Segmentation3DTrainingModel {
-  SPLATNET = "SPLATNet"
+  SPLATNET = "SPLATNet",
+  POINT_TRANSFORMER_V3 = "PointTransformerV3"
 }
 
 export enum PointCloudFeature {
