@@ -6,7 +6,6 @@
 export * from "./service/bucket";
 export * from "./service/detectors";
 export * from "./service/error";
-export * from "./service/estimation";
 export * from "./service/files";
 export * from "./service/job";
 export * from "./service/response";
