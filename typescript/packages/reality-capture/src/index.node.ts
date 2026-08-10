@@ -5,6 +5,7 @@
 
 export * from "./service/bucket";
 export * from "./service/data_handler";
+export * from "./service/detectors";
 export * from "./service/error";
 export * from "./service/files";
 export * from "./service/job";
@@ -17,6 +18,7 @@ export * from "./specifications/constraints";
 export * from "./specifications/eval_o2d";
 export * from "./specifications/eval_o3d";
 export * from "./specifications/eval_s2d";
+export * from "./specifications/eval_s3d";
 export * from "./specifications/eval_sortho";
 export * from "./specifications/fill_image_properties";
 export * from "./specifications/gaussian_splats";
