@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import type { AuthorizationClient } from "@itwin/core-common";
+import { SDK_VERSION } from "../version";
 import { BucketResponse } from "./bucket";
 import {
   DetectorBase,
@@ -53,7 +54,7 @@ export class RealityCaptureService {
     return {
       Authorization: await this._authorizationClient.getAccessToken(),
       "User-Agent":
-        "Reality Capture TypeScript SDK/" + this._additionalUserAgent,
+        "Reality Capture TypeScript SDK/" + SDK_VERSION + this._additionalUserAgent,
       "Content-type": "application/json",
       Accept: `application/vnd.bentley.itwin-platform.${version}+json`,
     };
