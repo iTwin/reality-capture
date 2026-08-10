@@ -26,8 +26,6 @@ from reality_capture.specifications.touchup import (TouchUpImportSpecifications,
                                                     TouchUpExportSpecifications, TouchUpExportSpecificationsCreate)
 from reality_capture.specifications.water_constraints import (WaterConstraintsSpecifications,
                                                               WaterConstraintsSpecificationsCreate)
-"""from reality_capture.specifications.point_cloud_conversion import (PointCloudConversionSpecificationsCreate,
-                                                                   PointCloudConversionSpecifications)"""
 from reality_capture.specifications.training import (TrainingS3DSpecificationsCreate, TrainingS3DSpecifications)
 from reality_capture.specifications.gaussian_splats import (GaussianSplatsSpecificationsCreate,
                                                             GaussianSplatsSpecifications)
@@ -63,12 +61,10 @@ class JobType(Enum):
     TOUCH_UP_EXPORT = "TouchUpExport"
     WATER_CONSTRAINTS = "WaterConstraints"
     TRAINING_S3D = "TrainingS3D"
-    # POINT_CLOUD_CONVERSION = "PointCloudConversion"
 
 class Service(Enum):
     MODELING = "Modeling"
     ANALYSIS = "Analysis"
-    # CONVERSION = "Conversion"
 
 
 def _get_appropriate_service(jt: JobType):
@@ -80,7 +76,6 @@ def _get_appropriate_service(jt: JobType):
             JobType.CHANGE_DETECTION, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
             JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.TRAINING_S3D]:
         return Service.ANALYSIS
-    # return Service.CONVERSION
     raise NotImplementedError("Other services not yet implemented")
 
 
@@ -97,9 +92,8 @@ class JobState(Enum):
 class JobCreate(BaseModel):
     name: Optional[str] = Field(None, description="Displayable job name.", min_length=3)
     type: JobType = Field(description="Type of job.")
-    # TODO : PointCloudConversionSpecificationsCreate,
     specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
-                        ConstraintsSpecificationsCreate, # PointCloudConversionSpecifications,
+                        ConstraintsSpecificationsCreate,
                         EvalO2DSpecificationsCreate, EvalO3DSpecificationsCreate,
                         EvalS2DSpecificationsCreate, EvalS3DSpecificationsCreate,
                         EvalSOrthoSpecificationsCreate, FillImagePropertiesSpecificationsCreate,
@@ -142,9 +136,8 @@ class Job(BaseModel):
     state: JobState = Field(description="State of the job.")
     execution_info: Execution = Field(description="Known execution information for the job.", alias="executionInfo")
     user_id: str = Field(description="Identifier of the user that created the job.", alias="userId")
-    # TODO : add PointCloudConversionSpecifications
     specifications: Union[CalibrationSpecifications, ChangeDetectionSpecifications,
-                        ConstraintsSpecifications, # PointCloudConversionSpecifications,
+                        ConstraintsSpecifications,
                         EvalO2DSpecifications, EvalO3DSpecifications,
                         EvalS2DSpecifications, EvalS3DSpecifications,
                         EvalSOrthoSpecifications, FillImagePropertiesSpecifications, 

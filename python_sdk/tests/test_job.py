@@ -5,7 +5,6 @@ from reality_capture.service.job import Service, JobCreate, Job, JobType, JobSta
 from reality_capture.specifications.eval_o2d import EvalO2DSpecifications
 from reality_capture.specifications.tiling import TilingOutputsCreate
 from reality_capture.specifications.segmentation3d import Segmentation3DOutputsCreate
-# from reality_capture.specifications.point_cloud_conversion import PCConversionOutputsCreate
 
 
 class TestJob:
@@ -20,10 +19,6 @@ class TestJob:
         j = Job(id="id", type=JobType.EVAL_O2D, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
                 userId="claude@example.org", specifications=specs)
         assert j.get_appropriate_service() == Service.ANALYSIS
-        # pc_conversion_specs = {"inputs": {"pointClouds": ["point_cloud"]}, "outputs": {"opc": "opc"}}
-        # j = Job(id="id", type=JobType.POINT_CLOUD_CONVERSION, iTwinId="itwin", state=JobState.SUCCESS,
-        #         executionInfo=cdt, userId="claude@example.org", specifications=pc_conversion_specs, bucketId="bucket")
-        # assert j.get_appropriate_service() == Service.CONVERSION
 
     def test_appropriate_service_job_create(self):
         tiling_specs = {"inputs": {"scene": "scene"}, "outputs": [TilingOutputsCreate.MODELING_REFERENCE]}
@@ -34,9 +29,6 @@ class TestJob:
                                 Segmentation3DOutputsCreate.SEGMENTED_MODEL_3D]}
         j = JobCreate(**{"type": JobType.SEGMENTATION_3D, "iTwinId": "itwin", "specifications": eg_specs})
         assert j.get_appropriate_service() == Service.ANALYSIS
-        # pc_conversion_specs = {"inputs": {"pointClouds": ["point_cloud"]}, "outputs": PCConversionOutputsCreate.OPC}
-        # j = JobCreate(**{"type": JobType.POINT_CLOUD_CONVERSION, "iTwinId": "itwin", "specifications": pc_conversion_specs})
-        # assert j.get_appropriate_service() == Service.CONVERSION
 
     def test_get_appropriate_service_unsupported_job_type(self):
         unsupported = MagicMock(name="UnsupportedJobType")

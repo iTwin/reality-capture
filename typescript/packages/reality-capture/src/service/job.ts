@@ -15,7 +15,6 @@ import { TilingSpecificationsCreateSchema, TilingSpecificationsSchema } from "..
 import { TouchUpExportSpecificationsCreateSchema, TouchUpImportSpecificationsCreateSchema, TouchUpExportSpecificationsSchema, TouchUpImportSpecificationsSchema } from "../specifications/touchup";
 import { WaterConstraintsSpecificationsCreateSchema, WaterConstraintsSpecificationsSchema } from "../specifications/water_constraints";
 import { TrainingS3DSpecificationsCreateSchema, TrainingS3DSpecificationsSchema } from "../specifications/training";
-//import { PointCloudConversionSpecificationsCreateSchema, PointCloudConversionSpecificationsSchema } from '../specifications/point_cloud_conversion';
 import { GaussianSplatsSpecificationsCreateSchema, GaussianSplatsSpecificationsSchema } from "../specifications/gaussian_splats";
 import { URLSchema } from "./bucket";
 import { EvalO2DSpecificationsCreateSchema, EvalO2DSpecificationsSchema } from "../specifications/eval_o2d";
@@ -47,13 +46,11 @@ export enum JobType {
   TOUCH_UP_IMPORT = "TouchUpImport",
   TOUCH_UP_EXPORT = "TouchUpExport",
   WATER_CONSTRAINTS = "WaterConstraints",
-  //POINT_CLOUD_CONVERSION = "PointCloudConversion",
 }
 
 export enum Service {
   MODELING = "Modeling",
   ANALYSIS = "Analysis",
-  // CONVERSION = "Conversion"
 }
 
 export function getAppropriateService(jt: JobType): Service {
@@ -73,7 +70,6 @@ export function getAppropriateService(jt: JobType): Service {
   ].includes(jt)) {
     return Service.ANALYSIS;
   }
-  // return Service.CONVERSION;
   throw new Error("Other job types are not implemented yet");
 }
 
@@ -112,7 +108,6 @@ export const JobCreateSchema = z.object({
     TouchUpExportSpecificationsCreateSchema,
     TouchUpImportSpecificationsCreateSchema,
     WaterConstraintsSpecificationsCreateSchema,
-    //PointCloudConversionSpecificationsCreateSchema,
     TrainingS3DSpecificationsCreateSchema,
   ]).describe("Specifications aligned with the job type."),
   iTwinId: z.string().describe("iTwin ID, used by the service for finding input reality data and uploading output data."),

@@ -23,7 +23,6 @@ export * from "./specifications/gaussian_splats";
 export * from "./specifications/geometry";
 export * from "./specifications/import_point_cloud";
 export * from "./specifications/objects2d";
-//export * from "./specifications/point_cloud_conversion";
 export * from "./specifications/production";
 export * from "./specifications/reconstruction";
 export * from "./specifications/segmentation2d";

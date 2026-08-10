@@ -6,7 +6,6 @@ reality-capture is a Python package that allows any user to interact with Bentle
  * [Reality Management](https://developer.bentley.com/apis/reality-management/)
  * [Reality Modeling](https://developer.bentley.com/apis/contextcapture/)
  * [Reality Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
-  <!-- * [Reality Conversion](https://developer.bentley.com/apis/realityconversion/)-->
 
 ## Getting started
 
