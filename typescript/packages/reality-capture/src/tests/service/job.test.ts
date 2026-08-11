@@ -16,7 +16,6 @@ import {
   MessagesResponseSchema,
   NextLinkSchema,
 } from "../../service/job";
-import { ImportPCOutputsCreate } from "../../specifications/import_point_cloud"; // TODO : mock?
 
 function getCommonFields(type: JobType) {
   return {
@@ -34,7 +33,7 @@ function getCommonFields(type: JobType) {
     type,
     specifications: {
       inputs: { scene: "scene" },
-      outputs: [ImportPCOutputsCreate.SCAN_COLLECTION]
+      outputs: { scene: "output" }
     }
   };
 }
@@ -62,8 +61,8 @@ describe("JobCreateSchema", () => {
       name: "JobName",
       type: JobType.PRODUCTION,
       specifications: {
-        inputs: { scene: "scene" },
-        outputs: [ImportPCOutputsCreate.SCAN_COLLECTION]
+        inputs: { scene: "scene", modelingReference: "ref" },
+        outputs: { exports: [{ format: "3DTiles" }] }
       },
       iTwinId: "itwin123"
     };
@@ -74,8 +73,8 @@ describe("JobCreateSchema", () => {
     const data = {
       name: "JobName",
       specifications: {
-        inputs: { scene: "scene" },
-        outputs: [ImportPCOutputsCreate.SCAN_COLLECTION]
+        inputs: { scene: "scene", modelingReference: "ref" },
+        outputs: { exports: [{ format: "3DTiles" }] }
       },
       iTwinId: "itwin123"
     };
@@ -87,8 +86,8 @@ describe("JobCreateSchema", () => {
       name: "JobName",
       type: JobType.PRODUCTION,
       specifications: {
-        inputs: { scene: "scene" },
-        outputs: [ImportPCOutputsCreate.SCAN_COLLECTION]
+        inputs: { scene: "scene", modelingReference: "ref" },
+        outputs: { exports: [{ format: "3DTiles" }] }
       },
     };
     expect(() => JobCreateSchema.parse(data)).to.throw(z.ZodError);
@@ -99,8 +98,8 @@ describe("JobCreateSchema", () => {
       name: "ab",
       type: JobType.PRODUCTION,
       specifications: {
-        inputs: { scene: "scene" },
-        outputs: [ImportPCOutputsCreate.SCAN_COLLECTION]
+        inputs: { scene: "scene", modelingReference: "ref" },
+        outputs: { exports: [{ format: "3DTiles" }] }
       },
       iTwinId: "itwin123"
     };
@@ -276,5 +275,67 @@ describe("NextLinkSchema", () => {
 
   it ("should fail if empty", () => {
     expect(() => NextLinkSchema.parse({})).to.throw(z.ZodError);
+  });
+});
+
+describe("JobSchema — type literal regression", () => {
+  const activeJobTypes = Object.values(JobType);
+
+  function makeServerPayload(type: string) {
+    return {
+      id: "job-regression-test",
+      name: "Regression test",
+      itwinId: "itwin-regression",
+      state: JobState.QUEUED,
+      executionInfo: {
+        createdDateTime: new Date().toISOString(),
+        processingUnits: null,
+      },
+      userId: "user-test",
+      type,
+      specifications: getSpecificationsForType(type),
+    };
+  }
+
+  function getSpecificationsForType(type: string): Record<string, unknown> {
+    const specs: Record<string, Record<string, unknown>> = {
+      Calibration:              { inputs: { scene: "s1" }, outputs: { scene: "s2" } },
+      ChangeDetection:          { inputs: { model3DA: "a1", model3DB: "b1" }, outputs: {} },
+      Constraints:              { inputs: { modelingReference: "ref1" }, outputs: { addedConstraintsInfo: "bkt:info" } },
+      EvalO2D:                  { inputs: { reference: "r1", prediction: "p1" }, outputs: {} },
+      EvalO3D:                  { inputs: { reference: "r1", prediction: "p1" }, outputs: {} },
+      EvalS2D:                  { inputs: { reference: "r1", prediction: "p1" }, outputs: {} },
+      EvalS3D:                  { inputs: { reference: "r1", prediction: "p1" }, outputs: {} },
+      EvalSOrtho:               { inputs: { reference: "r1", prediction: "p1" }, outputs: {} },
+      FillImageProperties:      { inputs: {}, outputs: { scene: "s1" } },
+      GaussianSplats:           { inputs: { scene: "s1" }, outputs: {} },
+      ImportPointCloud:          { inputs: { scene: "s1" }, outputs: { scanCollection: "sc1" } },
+      Objects2D:                { inputs: { photos: "p1", photoObjectDetector: "d1" }, outputs: { objects2D: "o1" } },
+      Production:               { inputs: { scene: "s1", modelingReference: "ref1" }, outputs: { exports: [{ format: "3DTiles", location: "loc1" }] } },
+      Reconstruction:           { inputs: { scene: "s1" }, outputs: {} },
+      Segmentation2D:           { inputs: { photos: "p1", photoSegmentationDetector: "d1" }, outputs: { segmentation2D: "s1" } },
+      Segmentation3D:           { inputs: { pointClouds: ["pc1"], pointCloudSegmentationDetector: "d1" }, outputs: { segmentation3D: "s1" } },
+      SegmentationOrthophoto:   { inputs: { orthophoto: "o1", orthophotoSegmentationDetector: "d1" }, outputs: { segmentationOrthophoto: "s1" } },
+      Tiling:                   { inputs: { scene: "s1" }, outputs: { modelingReference: { location: "loc1" } } },
+      TrainingS3D:              { inputs: { segmentations3D: ["s1"], detectorName: "Det" }, outputs: { detector: "Det/1" } },
+      TouchUpExport:            { inputs: { modelingReference: "ref1" }, outputs: { touchUpData: "t1" } },
+      TouchUpImport:            { inputs: { modelingReference: "ref1", touchUpData: "t1" }, outputs: {} },
+      WaterConstraints:         { inputs: { scene: "s1", modelingReference: "ref1" }, outputs: { constraints: "bkt:w1" } },
+    };
+    return specs[type] ?? {};
+  }
+
+  for (const jobType of activeJobTypes) {
+    it(`should parse a server payload with type="${jobType}"`, () => {
+      const payload = makeServerPayload(jobType);
+      const result = JobSchema.parse(payload);
+      expect(result.type).to.equal(jobType);
+    });
+  }
+
+  it("should reject a misspelled type literal (e.g. 'TraningS3D')", () => {
+    const payload = makeServerPayload("TrainingS3D");
+    payload.type = "TraningS3D";
+    expect(() => JobSchema.parse(payload)).to.throw(z.ZodError);
   });
 });
