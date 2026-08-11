@@ -1,4 +1,4 @@
-import type { AuthorizationClient } from "@itwin/core-common";
+import type { AuthorizationClient } from "./auth";
 import { BucketResponse } from "./bucket";
 import {
   DetectorBase,

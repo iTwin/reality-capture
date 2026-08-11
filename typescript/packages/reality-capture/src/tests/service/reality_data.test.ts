@@ -5,7 +5,7 @@
 import { expect } from "chai";
 import { z } from "zod";
 import sinon from "sinon";
-import type { AuthorizationClient } from "@itwin/core-common";
+import type { AuthorizationClient } from "../../service/auth";
 import { Response } from "../../service/response";
 import { RealityCaptureService } from "../../service/service";
 import {
