@@ -4,7 +4,6 @@
 *--------------------------------------------------------------------------------------------*/
 
 export * from "./service/bucket";
-export * from "./service/data_handler";
 export * from "./service/detectors";
 export * from "./service/error";
 export * from "./service/files";
