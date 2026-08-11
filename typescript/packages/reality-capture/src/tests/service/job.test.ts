@@ -47,7 +47,7 @@ describe("getAppropriateService", () => {
   it("should return Service.ANALYSIS for OBJECTS_2D", () => {
     expect(getAppropriateService(JobType.OBJECTS_2D)).to.equal(Service.ANALYSIS);
   });
-  
+
 });
 
 describe("JobState Enum", () => {
@@ -143,7 +143,7 @@ describe("ExecutionSchema", () => {
   });
 });
 
-/*describe("JobResponseSchema", () => {
+describe("JobResponseSchema", () => {
   it("should validate correct job response", () => {
     const data = {
       job: {
@@ -152,22 +152,25 @@ describe("ExecutionSchema", () => {
         itwinId: "itwin123",
         state: JobState.QUEUED,
         executionInfo: {
-          createdDateTime: new Date(),
-          startedDateTime: new Date(),
-          endedDateTime: new Date(),
+          createdDateTime: new Date().toISOString(),
+          startedDateTime: new Date().toISOString(),
+          endedDateTime: new Date().toISOString(),
           processingUnits: 5
         },
         userId: "user42",
-        type: JobType.IMPORT_POINT_CLOUD,
+        type: "TrainingS3D",
         specifications: {
-          inputs: { scene: "scene" },
-          outputs: { scanCollection: "outputId" }
+          inputs: {
+            segmentations3D: ["rd-001", "rd-002"],
+            detectorName: "MyDetector",
+          },
+          outputs: { detector: "MyDetector/1.0" }
         }
       }
     };
     expect(() => JobResponseSchema.parse(data)).to.not.throw();
   });
-});*/
+});
 
 describe("ProgressSchema", () => {
   it("should validate correct progress info", () => {
