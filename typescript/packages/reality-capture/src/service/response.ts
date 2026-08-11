@@ -29,7 +29,7 @@ export class Response<T> {
    * Checks whether the response is an error response.
    * @returns True if the response contains a valid error.
    */
-  isError(): boolean {
+  isError(): this is Response<T> & { error: DetailedErrorResponse; value: null } {
     return this.error !== null && this.error !== undefined;
   }
 }
