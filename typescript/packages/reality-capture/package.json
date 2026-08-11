@@ -51,7 +51,6 @@
     "@azure/storage-blob": "^12.15.0",
     "@itwin/reality-data-client": "^1.5.0",
     "axios": "^1.18.0",
-    "class-validator": "^0.14.0",
     "zod": "^3.22.2"
   },
   "devDependencies": {
