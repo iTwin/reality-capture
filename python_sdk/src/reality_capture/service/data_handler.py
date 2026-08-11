@@ -15,7 +15,7 @@ class _DataHandler:
         if os.path.isdir(path):
             files_tuple = [
                 (
-                    os.path.relpath(os.path.join(dp, f), path),
+                    os.path.relpath(os.path.join(dp, f), path).replace("\\", "/"),
                     os.path.getsize(os.path.join(dp, f)),
                 )
                 for dp, dn, filenames in os.walk(path)
@@ -110,7 +110,7 @@ class _DataHandler:
             file_path = os.path.join(src, file_tuple[0]) if os.path.isdir(src) else src
             with open(file_path, "rb") as data:
                 client.upload_blob(
-                    os.path.join(reality_data_dst, file_tuple[0]),
+                    "/".join(filter(None, [reality_data_dst, file_tuple[0]])),
                     data,
                     connection_timeout=60,
                     max_concurrency=16,

@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import type { AuthorizationClient } from "@itwin/core-common";
+import { SDK_VERSION } from "../version";
 import { BucketResponse } from "./bucket";
 import {
   DetectorBase,
@@ -9,7 +10,6 @@ import {
   DetectorVersionCreate,
   DetectorVersionWithLinks,
 } from "./detectors";
-import { CostEstimationCreate, CostEstimation } from "./estimation";
 import { Files } from "./files";
 import { Response } from "./response";
 import {
@@ -54,7 +54,7 @@ export class RealityCaptureService {
     return {
       Authorization: await this._authorizationClient.getAccessToken(),
       "User-Agent":
-        "Reality Capture TypeScript SDK/" + this._additionalUserAgent,
+        "Reality Capture TypeScript SDK/" + SDK_VERSION + this._additionalUserAgent,
       "Content-type": "application/json",
       Accept: `application/vnd.bentley.itwin-platform.${version}+json`,
     };
@@ -164,26 +164,6 @@ export class RealityCaptureService {
       return new Response(resp.status, null, resp.data.job as Job);
     } catch (error: any) {
       return this._handleError<Job>(error);
-    }
-  }
-
-  async estimateCost(
-    estimationCreate: CostEstimationCreate,
-  ): Promise<Response<CostEstimation>> {
-    const url = this._getCorrectUrl(
-      getAppropriateService(estimationCreate.type),
-    );
-    try {
-      const resp = await this._axios.post(url + "/costs", estimationCreate, {
-        headers: await this._getHeader("v2"),
-      });
-      return new Response(
-        resp.status,
-        null,
-        resp.data.costEstimation as CostEstimation,
-      );
-    } catch (error: any) {
-      return this._handleError<CostEstimation>(error);
     }
   }
 
