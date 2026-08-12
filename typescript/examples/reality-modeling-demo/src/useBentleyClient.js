@@ -119,13 +119,13 @@ export default function useBentleyClient() {
     }
   }, [token]);
 
-  // Load Reality Data for the selected Project
-  const loadRealityData = useCallback(async (projectId) => {
-    if (!token || !projectId) return;
+  // Load Reality Data for the selected iTwin
+  const loadRealityData = useCallback(async (iTwinId) => {
+    if (!token || !iTwinId) return;
     setApiLoading(true);
     setApiError(null);
     try {
-      const response = await fetch(`${AUTH_CONFIG.apiBase}/reality-management/reality-data?iTwinId=${projectId}`, {
+      const response = await fetch(`${AUTH_CONFIG.apiBase}/reality-management/reality-data?iTwinId=${iTwinId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/vnd.bentley.itwin-platform.v1+json",
@@ -254,9 +254,13 @@ export default function useBentleyClient() {
   };
 
   // Upload files to selected Reality Data
-  const uploadFiles = async (realityDataId, files) => {
+  const uploadFiles = async (realityDataId, files, iTwinId) => {
     if (!token || !realityDataId) {
       setUploadError("Missing token or selected Reality Data container.");
+      return;
+    }
+    if (!iTwinId) {
+      setUploadError("Missing required iTwinId parameter.");
       return;
     }
     if (!files || files.length === 0) {
@@ -275,7 +279,9 @@ export default function useBentleyClient() {
     try {
       // --- LIVE REAL UPLOAD FLOW ---
       log(`[INFO] Requesting Azure SAS write credentials from Reality Management API...`);
-      const authRes = await fetch(`${AUTH_CONFIG.apiBase}/reality-management/reality-data/${realityDataId}/writeaccess`, {
+      const writeAccessUrl = `${AUTH_CONFIG.apiBase}/reality-management/reality-data/${realityDataId}/writeaccess?iTwinId=${iTwinId}`;
+
+      const authRes = await fetch(writeAccessUrl, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/vnd.bentley.itwin-platform.v1+json"
@@ -338,9 +344,13 @@ export default function useBentleyClient() {
   };
 
   // Complete Authoring (equivalent to Step 3 - Commit Scan in PDF)
-  const completeAuthoring = async (realityDataId) => {
+  const completeAuthoring = async (realityDataId, iTwinId) => {
     if (!token || !realityDataId) {
       setUploadError("Missing token or selected Reality Data container.");
+      return false;
+    }
+    if (!iTwinId) {
+      setUploadError("Missing required iTwinId parameter.");
       return false;
     }
 
@@ -355,6 +365,7 @@ export default function useBentleyClient() {
 
     try {
       log(`[INFO] Committing upload session (PATCH authoring: false)...`);
+      
       const commitRes = await fetch(`${AUTH_CONFIG.apiBase}/reality-management/reality-data/${realityDataId}`, {
         method: "PATCH",
         headers: {
@@ -362,7 +373,10 @@ export default function useBentleyClient() {
           Accept: "application/vnd.bentley.itwin-platform.v1+json",
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ authoring: false })
+        body: JSON.stringify({ 
+          authoring: false,
+          iTwinId: iTwinId
+        })
       });
 
       if (!commitRes.ok) {
@@ -385,13 +399,18 @@ export default function useBentleyClient() {
   };
 
   // Get Read SAS key & container URL (equivalent to requesting read access credentials)
-  const getReadSasUrl = async (realityDataId) => {
+  const getReadSasUrl = async (realityDataId, iTwinId) => {
     if (!token || !realityDataId) {
       throw new Error("Missing token or selected Reality Data container.");
     }
+    if (!iTwinId) {
+      throw new Error("Missing required iTwinId parameter.");
+    }
 
     try {
-      const response = await fetch(`${AUTH_CONFIG.apiBase}/reality-management/reality-data/${realityDataId}/readaccess`, {
+      const readAccessUrl = `${AUTH_CONFIG.apiBase}/reality-management/reality-data/${realityDataId}/readaccess?iTwinId=${iTwinId}`;
+
+      const response = await fetch(readAccessUrl, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/vnd.bentley.itwin-platform.v1+json"

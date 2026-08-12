@@ -241,7 +241,7 @@ export default function App() {
     setGalleryError(null);
     setSelectedImage(null);
     try {
-      const containerUrl = await getReadSasUrl(selectedRealityDataId);
+      const containerUrl = await getReadSasUrl(selectedRealityDataId, selectedProjectId);
       setReadSasUrl(containerUrl);
 
       // List blobs using REST API
@@ -396,7 +396,7 @@ export default function App() {
 
   const handleStartUpload = async () => {
     if (!selectedRealityDataId) return;
-    await uploadFiles(selectedRealityDataId, selectedFiles);
+    await uploadFiles(selectedRealityDataId, selectedFiles, selectedProjectId);
   };
 
   const handleBackToStep0 = () => {
@@ -1178,7 +1178,7 @@ export default function App() {
                     className="btn btn-primary"
                     onClick={async () => {
                       if (selectedRealityDataId) {
-                        await completeAuthoring(selectedRealityDataId);
+                        await completeAuthoring(selectedRealityDataId, selectedProjectId);
                       }
                     }}
                     disabled={uploadLoading || !selectedRealityDataId}
