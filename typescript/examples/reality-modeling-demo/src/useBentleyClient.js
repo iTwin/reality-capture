@@ -10,6 +10,42 @@ import {
 
 let liveCallbackHandled = false;
 
+export const REALITY_DATA_ACCESS = {
+  NO_PERMISSION: "NO_PERMISSION",
+  REALITYDATA_USE_ONLY: "REALITYDATA_USE_ONLY",
+  REALITYDATA_CREATE: "REALITYDATA_CREATE",
+};
+
+/**
+ * Classifies raw permission strings into user access context.
+ */
+export function evaluateUserITwinContext(iTwin, myAccountId, permissions = []) {
+  // External vs Internal check using iTwinAccountId / accountId / parentId
+  const iTwinAccId = iTwin?.iTwinAccountId || iTwin?.accountId || iTwin?.parentId;
+  const isExternal = Boolean(
+    myAccountId && iTwinAccId && iTwinAccId !== myAccountId
+  );
+
+  // Reality Data RBAC permissions check
+  const hasCreate =
+    permissions.includes("realitydata_create");
+  const hasUse =
+    permissions.includes("realitydata_use");
+
+  let realityDataLevel = REALITY_DATA_ACCESS.NO_PERMISSION;
+  if (hasCreate) {
+    realityDataLevel = REALITY_DATA_ACCESS.REALITYDATA_CREATE;
+  } else if (hasUse) {
+    realityDataLevel = REALITY_DATA_ACCESS.REALITYDATA_USE_ONLY;
+  }
+
+  return {
+    isExternal,
+    realityDataLevel,
+    permissions,
+  };
+}
+
 export default function useBentleyClient() {
   // --- AUTHENTICATION STATE ---
   const [token, setToken] = useState(() => localStorage.getItem("client_access_token"));
@@ -24,7 +60,17 @@ export default function useBentleyClient() {
   const [authError, setAuthError] = useState(null);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
+  // --- ACCOUNT & PERMISSION STATE ---
+  const [myAccountId, setMyAccountId] = useState(null);
+  const [itwinPermissionsMap, setItwinPermissionsMap] = useState({});
+  const [selectedITwinContext, setSelectedITwinContext] = useState({
+    isExternal: false,
+    realityDataLevel: REALITY_DATA_ACCESS.NO_PERMISSION,
+    permissions: [],
+  });
+
   // --- API DATA STATE ---
+  const [filterRealityOnly, setFilterRealityOnly] = useState(true);
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [realityDataList, setRealityDataList] = useState([]);
@@ -63,6 +109,13 @@ export default function useBentleyClient() {
     setRealityDataList([]);
     setSelectedProjectId("");
     setSelectedRealityDataId("");
+    setMyAccountId(null);
+    setItwinPermissionsMap({});
+    setSelectedITwinContext({
+      isExternal: false,
+      realityDataLevel: REALITY_DATA_ACCESS.NO_PERMISSION,
+      permissions: [],
+    });
     resetUploadState();
   };
 
@@ -85,7 +138,67 @@ export default function useBentleyClient() {
 
   // --- API METHODS ---
 
-  // Load iTwin Projects (filtered to REALITY related or all)
+  // Load Primary Organization Account
+  const loadMyPrimaryAccount = useCallback(async () => {
+    if (!token) return null;
+    try {
+      const response = await fetch(`${AUTH_CONFIG.apiBase}/itwins/myprimaryaccount`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.bentley.itwin-platform.v1+json",
+        },
+      });
+      if (!response.ok) return null;
+      const data = await response.json();
+      const accountId = data.iTwin?.id || null;
+      setMyAccountId(accountId);
+      return accountId;
+    } catch (err) {
+      console.error("Error fetching my primary account:", err);
+      return null;
+    }
+  }, [token]);
+
+  // Fetch Permissions for a specific iTwin
+  const fetchPermissionsForITwin = useCallback(async (iTwinId, targetITwin = null) => {
+    if (!token || !iTwinId) return null;
+
+    try {
+      const response = await fetch(
+        `${AUTH_CONFIG.apiBase}/accesscontrol/itwins/${iTwinId}/permissions`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.bentley.itwin-platform.v2+json",
+          },
+        }
+      );
+
+      const permissions = response.ok
+        ? (await response.json()).permissions || []
+        : [];
+
+      const twinObj = targetITwin || projects.find((p) => p.id === iTwinId);
+      const context = {
+        ...evaluateUserITwinContext(twinObj, myAccountId, permissions),
+        permissionsFetched: true,
+      };
+
+      setItwinPermissionsMap((prev) => ({
+        ...prev,
+        [iTwinId]: context,
+      }));
+
+      return context;
+    } catch (err) {
+      console.error(`Failed to fetch permissions for iTwin ${iTwinId}:`, err);
+      return null;
+    }
+  }, [token, myAccountId, projects]);
+
+
+
+  // Load iTwin Projects
   const loadProjects = useCallback(async () => {
     if (!token) return;
     setApiLoading(true);
@@ -100,17 +213,32 @@ export default function useBentleyClient() {
       });
       if (!response.ok) throw new Error(`API error: ${response.status} ${response.statusText}`);
       const data = await response.json();
-      const allTwins = data.iTwins || [];
-      
-      // Filter project names with REALITY for development consistency, or allow fallback
-      const filtered = allTwins.filter(
-        (twin) =>
-          (twin.displayName && twin.displayName.toUpperCase().includes("REALITY")) ||
-          (twin.number && twin.number.toUpperCase().includes("REALITY"))
+      const rawTwins = data.iTwins || [];
+
+      // Fetch full details for each iTwin to obtain iTwinAccountId
+      const enrichedTwins = await Promise.all(
+        rawTwins.map(async (twin) => {
+          try {
+            const detailRes = await fetch(`${AUTH_CONFIG.apiBase}/itwins/${twin.id}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/vnd.bentley.itwin-platform.v1+json"
+              }
+            });
+            if (detailRes.ok) {
+              const detailData = await detailRes.json();
+              if (detailData.iTwin) {
+                return { ...twin, ...detailData.iTwin };
+              }
+            }
+          } catch (e) {
+            console.warn(`Could not fetch details for iTwin ${twin.id}:`, e);
+          }
+          return twin;
+        })
       );
-      
-      const finalProjects = filtered.length > 0 ? filtered : allTwins;
-      setProjects(finalProjects);
+
+      setProjects(enrichedTwins);
     } catch (err) {
       console.error(err);
       setApiError(`Failed to retrieve iTwins: ${err.message}`);
@@ -118,6 +246,7 @@ export default function useBentleyClient() {
       setApiLoading(false);
     }
   }, [token]);
+
 
   // Load Reality Data for the selected iTwin
   const loadRealityData = useCallback(async (iTwinId) => {
@@ -560,25 +689,91 @@ export default function useBentleyClient() {
     return () => clearInterval(interval);
   }, [token, tokenExpiry, refreshToken]);
 
-  // Load User Profile & Projects on token change
+  // Load User Profile, Primary Account & Projects on token change
   useEffect(() => {
     if (token) {
       setUserProfile(getUserProfile(token));
+      loadMyPrimaryAccount();
       loadProjects();
     } else {
       setUserProfile(null);
     }
-  }, [token, loadProjects]);
+  }, [token, loadMyPrimaryAccount, loadProjects]);
 
-  // Load reality data automatically when active project changes
+  // Pre-fill initial external/internal context for all projects as soon as projects & myAccountId load
+  useEffect(() => {
+    if (projects.length > 0 && myAccountId) {
+      setItwinPermissionsMap((prev) => {
+        const nextMap = { ...prev };
+        let updated = false;
+        projects.forEach((proj) => {
+          const iTwinAccId = proj?.iTwinAccountId || proj?.accountId || proj?.parentId;
+          const isExternal = Boolean(
+            myAccountId && iTwinAccId && iTwinAccId !== myAccountId
+          );
+
+          if (!nextMap[proj.id]) {
+            nextMap[proj.id] = {
+              isExternal,
+              realityDataLevel: REALITY_DATA_ACCESS.NO_PERMISSION,
+              permissions: [],
+              permissionsFetched: false,
+            };
+            updated = true;
+          } else if (nextMap[proj.id].isExternal !== isExternal) {
+            nextMap[proj.id] = { ...nextMap[proj.id], isExternal };
+            updated = true;
+          }
+        });
+        return updated ? nextMap : prev;
+      });
+    }
+  }, [projects, myAccountId]);
+
+  // Background fetch permissions for projects listed on screen (throttled to avoid hitting RBAC rate limits)
+  useEffect(() => {
+    if (!token || projects.length === 0 || !myAccountId) return;
+
+    let isMounted = true;
+    const pendingProjects = projects.filter(
+      (proj) => !itwinPermissionsMap[proj.id]?.permissionsFetched
+    );
+
+    if (pendingProjects.length === 0) return;
+
+    const fetchThrottledPermissions = async () => {
+      for (const proj of pendingProjects) {
+        if (!isMounted) break;
+        await fetchPermissionsForITwin(proj.id, proj);
+        // Throttle 150ms delay between consecutive RBAC permission calls
+        await new Promise((resolve) => setTimeout(resolve, 150));
+      }
+    };
+
+    fetchThrottledPermissions();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [token, projects, myAccountId, fetchPermissionsForITwin, itwinPermissionsMap]);
+
+  // Load reality data and fetch permissions automatically when active project changes
   useEffect(() => {
     if (selectedProjectId) {
       loadRealityData(selectedProjectId);
+      fetchPermissionsForITwin(selectedProjectId).then((ctx) => {
+        if (ctx) setSelectedITwinContext(ctx);
+      });
     } else {
       setRealityDataList([]);
       setSelectedRealityDataId("");
+      setSelectedITwinContext({
+        isExternal: false,
+        realityDataLevel: REALITY_DATA_ACCESS.NO_PERMISSION,
+        permissions: [],
+      });
     }
-  }, [selectedProjectId, loadRealityData]);
+  }, [selectedProjectId, loadRealityData, fetchPermissionsForITwin]);
 
   return {
     // Auth State & Actions
@@ -592,6 +787,16 @@ export default function useBentleyClient() {
     logout,
     reauthenticate,
     setAuthError,
+
+    // Account & Permission State & Actions
+    myAccountId,
+    itwinPermissionsMap,
+    selectedITwinContext,
+    fetchPermissionsForITwin,
+    loadMyPrimaryAccount,
+    filterRealityOnly,
+    setFilterRealityOnly,
+
 
     // API State & Actions
     projects,
@@ -624,3 +829,4 @@ export default function useBentleyClient() {
     resetUploadState
   };
 }
+

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import useBentleyClient from "./useBentleyClient";
+import useBentleyClient, { REALITY_DATA_ACCESS } from "./useBentleyClient";
 import "./App.css";
 
 // --- URL ROUTING HELPERS ---
@@ -56,6 +56,14 @@ export default function App() {
     logout,
     reauthenticate,
 
+    // Account & Permission State & Actions
+    myAccountId,
+    itwinPermissionsMap,
+    selectedITwinContext,
+    fetchPermissionsForITwin,
+    filterRealityOnly,
+    setFilterRealityOnly,
+
     // API State & Actions
     projects,
     selectedProjectId,
@@ -85,6 +93,9 @@ export default function App() {
     getReadSasUrl,
     resetUploadState
   } = useBentleyClient();
+
+  const canCreateRealityData =
+    selectedITwinContext.realityDataLevel === REALITY_DATA_ACCESS.REALITYDATA_CREATE;
 
   const [step, setStep] = useState(() => parseHashRoute().step);
 
@@ -221,12 +232,28 @@ export default function App() {
   const activeProject = projects.find((p) => p.id === selectedProjectId);
   const activeRealityData = realityDataList.find((r) => r.id === selectedRealityDataId);
 
-  // Search filter
-  const filteredProjects = projects.filter(
-    (p) =>
-      (p.displayName && p.displayName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (p.number && p.number.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  // Search & Reality prefix filter
+  const filteredProjects = projects.filter((p) => {
+    const name = (p.displayName || "").toLowerCase();
+    const num = (p.number || "").toLowerCase();
+    const query = searchQuery.toLowerCase();
+
+    const matchesSearch = !query || name.includes(query) || num.includes(query);
+    if (!matchesSearch) return false;
+
+    if (filterRealityOnly) {
+      return (
+        name.startsWith("realitydata-") ||
+        name.startsWith("reality-") ||
+        name.includes("reality") ||
+        num.startsWith("realitydata-") ||
+        num.startsWith("reality-") ||
+        num.includes("reality")
+      );
+    }
+
+    return true;
+  });
 
   // --- GALLERY STATES AND ACTIONS (STEP 4) ---
   const [galleryLoading, setGalleryLoading] = useState(false);
@@ -568,7 +595,7 @@ export default function App() {
               <span>Upload</span>
             </div>
             <span className="wizard-separator">→</span>
-            <div className={`wizard-step ${step === 3 ? "active" : step > 3 ? "completed" : ""}`}>
+            <div className={`wizard-step ${step === 3 ? "active" : typeof step === "number" && step > 3 ? "completed" : ""}`}>
               <div className="wizard-number">3</div>
               <span>Complete</span>
             </div>
@@ -585,9 +612,9 @@ export default function App() {
           <section className="fade-in">
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
               
-              {/* Top Controls: Search and Refresh */}
-              <div className="search-controls" style={{ marginBottom: 0 }}>
-                <div className="search-input-wrapper" style={{ flex: 1 }}>
+              {/* Top Controls: Search, Filter Toggle, and Refresh */}
+              <div className="search-controls" style={{ marginBottom: 0, display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+                <div className="search-input-wrapper" style={{ flex: "1 1 240px" }}>
                   <span className="search-icon">🔍</span>
                   <input
                     type="text"
@@ -598,7 +625,17 @@ export default function App() {
                     id="project-search-input"
                   />
                 </div>
-                <button className="btn btn-secondary" onClick={loadProjects} disabled={apiLoading}>
+                <button
+                  type="button"
+                  className={`btn ${filterRealityOnly ? "btn-primary" : "btn-secondary"}`}
+                  onClick={() => setFilterRealityOnly((prev) => !prev)}
+                  id="toggle-reality-filter-btn"
+                  title="Enable or disable frontend filtering for 'REALITYDATA-' / 'REALITY-' iTwins"
+                  style={{ display: "flex", alignItems: "center", gap: "6px", whiteSpace: "nowrap" }}
+                >
+                  {filterRealityOnly ? "⚡ Filter: REALITYDATA-* (ON)" : "🌐 Filter: Show All iTwins (OFF)"}
+                </button>
+                <button className="btn btn-secondary" onClick={loadProjects} disabled={apiLoading} id="refresh-projects-btn">
                   {apiLoading ? <div className="spinner"></div> : "🔄 Refresh List"}
                 </button>
               </div>
@@ -619,8 +656,13 @@ export default function App() {
 
               <div className="alert-box alert-info" style={{ margin: 0 }}>
                 <span>ℹ️</span>
-                <span>For the onboarding demo, the iTwin listing is filtered to display iTwins with the prefix <strong>"REALITY-"</strong> for development and testing consistency.</span>
+                <span>
+                  {filterRealityOnly
+                    ? 'Frontend filter is ENABLED: Displaying iTwins starting with "REALITYDATA-" / "REALITY-". Click "Filter: REALITYDATA-* (ON)" above to toggle off.'
+                    : 'Frontend filter is DISABLED: Displaying all iTwins retrieved from the Bentley platform.'}
+                </span>
               </div>
+
 
               {apiLoading && projects.length === 0 ? (
                 <div style={{ padding: "80px 0", textAlign: "center" }}>
@@ -656,25 +698,41 @@ export default function App() {
                     </p>
                   </div>
 
-                  {filteredProjects.map((proj) => (
-                    <div
-                      key={proj.id}
-                      className={`glass-panel project-card ${proj.id === selectedProjectId ? "selected" : ""}`}
-                      onClick={() => handleSelectProject(proj.id)}
-                      id={`project-card-${proj.id}`}
-                      style={{ minHeight: "160px" }}
-                    >
-                      <div className="project-meta-header">
-                        <span className="project-folder-icon">📁</span>
-                        <span className="project-number-badge">{proj.number || "No ID"}</span>
+                  {filteredProjects.map((proj) => {
+                    const ctx = itwinPermissionsMap[proj.id];
+                    return (
+                      <div
+                        key={proj.id}
+                        className={`glass-panel project-card ${proj.id === selectedProjectId ? "selected" : ""}`}
+                        onClick={() => handleSelectProject(proj.id)}
+                        id={`project-card-${proj.id}`}
+                        style={{ minHeight: "160px" }}
+                      >
+                        <div className="project-meta-header">
+                          <span className="project-folder-icon">📁</span>
+                          <span className="project-number-badge">{proj.number || "No ID"}</span>
+                        </div>
+                        <h3 className="project-card-title">{proj.displayName || "Unnamed iTwin"}</h3>
+                        <p className="project-card-desc">
+                          Location: {proj.dataCenterLocation || "East US"}<br />
+                          Status: <span style={{ color: "var(--color-success)" }}>● {proj.status || "Active"}</span>
+                        </p>
+                        {ctx && (
+                          <div className="badge-group" style={{ marginTop: "12px" }}>
+                            {ctx.isExternal && (
+                              <span className="badge badge-external">External Guest</span>
+                            )}
+                            <span className={`badge badge-permission ${ctx.realityDataLevel === REALITY_DATA_ACCESS.NO_PERMISSION ? "no-access" : ""}`}>
+                              {ctx.realityDataLevel === REALITY_DATA_ACCESS.REALITYDATA_CREATE && "Create Access"}
+                              {ctx.realityDataLevel === REALITY_DATA_ACCESS.REALITYDATA_USE_ONLY && "Read Only"}
+                              {ctx.realityDataLevel === REALITY_DATA_ACCESS.NO_PERMISSION && "No Reality Access"}
+                            </span>
+                          </div>
+                        )}
                       </div>
-                      <h3 className="project-card-title">{proj.displayName || "Unnamed iTwin"}</h3>
-                      <p className="project-card-desc">
-                        Location: {proj.dataCenterLocation || "East US"}<br />
-                        Status: <span style={{ color: "var(--color-success)" }}>● {proj.status || "Active"}</span>
-                      </p>
-                    </div>
-                  ))}
+                    );
+                  })}
+
                 </div>
               )}
             </div>
@@ -755,9 +813,21 @@ export default function App() {
                 ⬅️ Select Different iTwin
               </button>
               {activeProject && (
-                <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-                  Target iTwin: <strong style={{ color: "#fff" }}>{activeProject.displayName}</strong> <span style={{ color: "var(--text-muted)", marginLeft: "6px" }}>({activeProject.dataCenterLocation || "East US"})</span>
-                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                  <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
+                    Target iTwin: <strong style={{ color: "#fff" }}>{activeProject.displayName}</strong> <span style={{ color: "var(--text-muted)", marginLeft: "6px" }}>({activeProject.dataCenterLocation || "East US"})</span>
+                  </span>
+                  <div className="badge-group" style={{ marginTop: 0 }}>
+                    {selectedITwinContext.isExternal && (
+                      <span className="badge badge-external">External Guest</span>
+                    )}
+                    <span className={`badge badge-permission ${selectedITwinContext.realityDataLevel === REALITY_DATA_ACCESS.NO_PERMISSION ? "no-access" : ""}`}>
+                      {selectedITwinContext.realityDataLevel === REALITY_DATA_ACCESS.REALITYDATA_CREATE && "Create Access"}
+                      {selectedITwinContext.realityDataLevel === REALITY_DATA_ACCESS.REALITYDATA_USE_ONLY && "Read Only"}
+                      {selectedITwinContext.realityDataLevel === REALITY_DATA_ACCESS.NO_PERMISSION && "No Reality Access"}
+                    </span>
+                  </div>
+                </div>
               )}
             </div>
 
@@ -774,6 +844,15 @@ export default function App() {
                   </a>.
                 </p>
 
+                {!canCreateRealityData && (
+                  <div className="alert-box alert-warning" style={{ marginBottom: "16px", fontSize: "0.85rem" }}>
+                    <span>⚠️</span>
+                    <span>
+                      You have <strong>{selectedITwinContext.realityDataLevel === REALITY_DATA_ACCESS.REALITYDATA_USE_ONLY ? "Read-Only (Use)" : "No"}</strong> permission on this iTwin. Creating new Reality Data requires <code>realitydata_create</code> permission.
+                    </span>
+                  </div>
+                )}
+
                 <form onSubmit={handleCreateRd}>
                   <div className="form-group">
                     <label className="form-label" htmlFor="rd-name-input">Display Name</label>
@@ -784,6 +863,7 @@ export default function App() {
                       onChange={(e) => setNewRealityDataName(e.target.value)}
                       required
                       id="rd-name-input"
+                      disabled={!canCreateRealityData}
                     />
                   </div>
                   <div className="form-group">
@@ -794,6 +874,7 @@ export default function App() {
                       value={newRdDesc}
                       onChange={(e) => setNewRealityDataDesc(e.target.value)}
                       id="rd-desc-input"
+                      disabled={!canCreateRealityData}
                     />
                   </div>
                   <div className="form-group">
@@ -803,6 +884,7 @@ export default function App() {
                       value={newRdType}
                       onChange={(e) => setNewRealityDataType(e.target.value)}
                       id="rd-type-select"
+                      disabled={!canCreateRealityData}
                     >
                       <option value="CCImageCollection">CCImageCollection (ContextCapture Images)</option>
                     </select>
@@ -810,14 +892,15 @@ export default function App() {
                   <button
                     type="submit"
                     className="btn btn-secondary"
-                    disabled={uploadLoading || apiLoading}
-                    style={{ width: "100%", justifyContent: "center" }}
+                    disabled={uploadLoading || apiLoading || !canCreateRealityData}
+                    style={{ width: "100%", justifyContent: "center", opacity: !canCreateRealityData ? 0.5 : 1 }}
                     id="create-rd-btn"
                   >
                     {uploadLoading ? <div className="spinner"></div> : "Create Reality Data"}
                   </button>
                 </form>
               </div>
+
 
               {/* RIGHT COLUMN: EXISTING CONTAINERS LIST */}
               <div className="glass-panel" style={{ padding: 24, display: "flex", flexDirection: "column" }}>
@@ -1129,6 +1212,16 @@ export default function App() {
                         <strong style={{ color: "#fff" }}>{activeProject?.displayName}</strong>
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span style={{ color: "var(--text-muted)" }}>Membership Status:</span>
+                        <span style={{ color: "#fff" }}>
+                          {selectedITwinContext.isExternal ? "External Guest" : "Internal Member"}
+                        </span>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <span style={{ color: "var(--text-muted)" }}>Permission Level:</span>
+                        <span style={{ color: "#fff" }}>{selectedITwinContext.realityDataLevel}</span>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
                         <span style={{ color: "var(--text-muted)" }}>Reality Data:</span>
                         <strong style={{ color: "#fff" }}>{activeRealityData?.displayName}</strong>
                       </div>
@@ -1148,6 +1241,7 @@ export default function App() {
                           <span style={{ color: "var(--color-primary)", fontWeight: 600 }}>authoring: true (Uploading)</span>
                         )}
                       </div>
+
                     </div>
                   </div>
                 </div>
