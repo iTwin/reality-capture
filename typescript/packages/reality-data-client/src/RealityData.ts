@@ -148,7 +148,6 @@ export class ITwinRealityData {
       this.type = realityData.type;
       this.extent = realityData.extent;
       this.crs = realityData.crs;
-      // eslint-disable-next-line @typescript-eslint/no-deprecated
       this.accessControl = realityData.accessControl;
       this.modifiedDateTime = new Date(realityData.modifiedDateTime);
       this.lastAccessedDateTime = new Date(realityData.lastAccessedDateTime);

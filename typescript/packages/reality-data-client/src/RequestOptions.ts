@@ -22,7 +22,7 @@ export function getRequestConfig(accessTokenString: string, method: string, apiV
 
 function getApiVersionHeader(apiVersion: ApiVersion): string {
   switch (apiVersion) {
-    case ApiVersion.v1:
-    default: return "application/vnd.bentley.itwin-platform.v1+json";
+  case ApiVersion.v1:
+  default: return "application/vnd.bentley.itwin-platform.v1+json";
   }
 }

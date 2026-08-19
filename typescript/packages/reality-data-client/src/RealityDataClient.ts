@@ -175,14 +175,14 @@ export class RealityDataAccessClient implements RealityDataAccess {
   private setBaseUrl(baseUrl: string): string {
     const url = new URL(baseUrl);
     switch (url.host) {
-      case "dev-api.bentley.com":
-        return "https://dev-api.bentley.com/reality-management/reality-data";
-      case "qa-api.bentley.com":
-        return "https://qa-api.bentley.com/reality-management/reality-data";
-      case "api.bentley.com":
-        return "https://api.bentley.com/reality-management/reality-data";
-      default:
-        throw new Error("invalid host");
+    case "dev-api.bentley.com":
+      return "https://dev-api.bentley.com/reality-management/reality-data";
+    case "qa-api.bentley.com":
+      return "https://qa-api.bentley.com/reality-management/reality-data";
+    case "api.bentley.com":
+      return "https://api.bentley.com/reality-management/reality-data";
+    default:
+      throw new Error("invalid host");
     }
   }
 
