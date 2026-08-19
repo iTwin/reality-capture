@@ -28,9 +28,8 @@ from reality_capture.specifications.water_constraints import (WaterConstraintsSp
                                                               WaterConstraintsSpecificationsCreate)
 """from reality_capture.specifications.point_cloud_conversion import (PointCloudConversionSpecificationsCreate,
                                                                    PointCloudConversionSpecifications)"""
-from reality_capture.specifications.training import (TrainingS3DSpecificationsCreate, TrainingS3DSpecifications)
-from reality_capture.specifications.training_cd3d import (TrainingCD3DSpecificationsCreate,
-                                                          TrainingCD3DSpecifications)
+from reality_capture.specifications.training import (TrainingS3DSpecificationsCreate, TrainingS3DSpecifications,
+                                                     TrainingCD3DSpecificationsCreate, TrainingCD3DSpecifications)
 from reality_capture.specifications.gaussian_splats import (GaussianSplatsSpecificationsCreate,
                                                             GaussianSplatsSpecifications)
 from reality_capture.specifications.eval_o2d import (EvalO2DSpecificationsCreate, EvalO2DSpecifications)
