@@ -33,5 +33,13 @@
         "@typescript-eslint/no-duplicate-enum-values": "warn",
         "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/no-explicit-any": "off"
-    }
+    },
+    "overrides": [
+        {
+            "files": ["src/tests/**/*.ts"],
+            "rules": {
+                "@typescript-eslint/no-unused-expressions": "off"
+            }
+        }
+    ]
 }
