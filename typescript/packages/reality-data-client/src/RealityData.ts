@@ -2,12 +2,9 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-import type { RealityData } from "@itwin/core-common";
-import {type AccessToken, BentleyError, type GuidString } from "@itwin/core-bentley";
+import { RealityDataClientError } from "./RealityDataClientError";
 import type { RealityDataAccessClient } from "./RealityDataClient";
-
 import { getRequestConfig } from "./RequestOptions";
-import axios from "axios";
 
 /**
  * Extent of a reality data, delimited by southwest and northeast coordinates.
@@ -84,9 +81,9 @@ interface ContainerCacheValue {
  * may contain a RealityDataClient to obtain the specialization to communicate with Reality Management API (to obtain the Azure blob URL).
  * @beta
  */
-export class ITwinRealityData implements RealityData {
+export class ITwinRealityData {
 
-  public id: GuidString;
+  public id: string;
   public displayName?: string;
   public dataset?: string;
   public group?: string;
@@ -114,7 +111,7 @@ export class ITwinRealityData implements RealityData {
   public client: undefined | RealityDataAccessClient;
 
   /** The GUID identifier of the iTwin used when using the client. */
-  public iTwinId: GuidString;
+  public iTwinId: string;
 
   /** Cache parameters for reality data access. Contains the blob url, the timestamp to refresh (every 50 minutes) the url and the root document path. */
   private _containerCache: ContainerCache;
@@ -123,7 +120,7 @@ export class ITwinRealityData implements RealityData {
    * Creates an instance of RealityData.
    * @beta
    */
-  public constructor(client: RealityDataAccessClient, realityData?: any, iTwinId?: GuidString) {
+  public constructor(client: RealityDataAccessClient, realityData?: any, iTwinId?: string) {
 
     this.client = client;
     this._containerCache = new ContainerCache();
@@ -171,7 +168,7 @@ export class ITwinRealityData implements RealityData {
      * @returns string url for blob data
      * @beta
      */
-  public async getBlobUrl(accessToken: AccessToken, blobPath: string, writeAccess = false): Promise<URL> {
+  public async getBlobUrl(accessToken: string, blobPath: string, writeAccess = false): Promise<URL> {
     const accessTokenResolved = await this.resolveAccessToken(accessToken);
     const url = await this.getContainerUrl(accessTokenResolved, writeAccess);
     if (blobPath === undefined)
@@ -186,7 +183,7 @@ export class ITwinRealityData implements RealityData {
    * otherwise, will return the input token
    * This is a workaround to support different authorization client for the reality data client and iTwin-core.
    */
-  private async resolveAccessToken(accessToken: AccessToken): Promise<string> {
+  private async resolveAccessToken(accessToken: string): Promise<string> {
     return this.client?.authorizationClient ? this.client.authorizationClient.getAccessToken() : accessToken;
   }
 
@@ -197,10 +194,10 @@ export class ITwinRealityData implements RealityData {
      * @returns app URL object for blob url
      * @beta
      */
-  private async getContainerUrl(accessToken: AccessToken, writeAccess = false): Promise<URL> {
+  private async getContainerUrl(accessToken: string, writeAccess = false): Promise<URL> {
 
     if (!this.client)
-      throw new BentleyError(422, "Invalid container request (RealityDataAccessClient is not set).");
+      throw new RealityDataClientError(422, "Invalid container request (RealityDataAccessClient is not set).");
 
     const access = (writeAccess === true ? "Write" : "Read");
     const accessTokenResolved = await this.resolveAccessToken(accessToken);
@@ -217,17 +214,23 @@ export class ITwinRealityData implements RealityData {
         if(this.iTwinId)
           url.searchParams.append("iTwinId", this.iTwinId);
 
-        const requestOptions = getRequestConfig(accessTokenResolved, "GET", url.href, this.client.apiVersion);
+        const requestOptions = getRequestConfig(accessTokenResolved, "GET", this.client.apiVersion);
 
-        const response = await axios.get(url.href, requestOptions);
+        const response = await fetch(url.href, requestOptions);
 
-        if (!response.data) {
-          throw new BentleyError(422, "Invalid container request (API returned an unexpected response).");
+        if (!response.ok) {
+          throw new RealityDataClientError(response.status, "Invalid container request.");
+        }
+
+        const responseData = await response.json();
+
+        if (!responseData?._links?.containerUrl?.href) {
+          throw new RealityDataClientError(422, "Invalid container request (API returned an unexpected response).");
         }
 
         // update cache
         const newContainerCacheValue: ContainerCacheValue = {
-          url: new URL(response.data._links.containerUrl.href),
+          url: new URL(responseData._links.containerUrl.href),
           timeStamp: new Date(Date.now()),
         };
 
@@ -236,7 +239,7 @@ export class ITwinRealityData implements RealityData {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return this._containerCache.getCache(access)!.url;
     } catch {
-      throw new BentleyError(422, "Invalid container request.");
+      throw new RealityDataClientError(422, "Invalid container request.");
     }
   }
 }

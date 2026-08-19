@@ -7,17 +7,11 @@
  * @module RealityDataClient
  */
 
-import { type AccessToken, BentleyError } from "@itwin/core-bentley";
-import type {
-  AuthorizationClient,
-  CartographicRange,
-  RealityDataAccess,
-} from "@itwin/core-common";
-import axios from "axios";
+import { RealityDataClientError } from "./RealityDataClientError";
+import type { AuthorizationClient } from "./auth";
 import { ITwinRealityData } from "./RealityData";
 import { getRequestConfig } from "./RequestOptions";
 import { Project } from "./Projects";
-import { Angle } from "./helper/Angle";
 import {
   type RealityDataCreate as RCRealityDataCreate,
   type RealityDataUpdate as RCRealityDataUpdate,
@@ -112,11 +106,29 @@ export interface DateRange {
 }
 
 /**
+ * Minimal interface for a cartographic range that provides a longitude/latitude bounding box.
+ * Compatible with CartographicRange from @itwin/core-geometry.
+ * @beta
+ */
+export interface CartographicRange {
+  getLongitudeLatitudeBoundingBox(): { low: { x: number; y: number }; high: { x: number; y: number } };
+}
+
+/**
  * Response object containing RealityData and continuation token
  */
 export interface RealityDataResponse {
   realityDatas: ITwinRealityData[];
   continuationToken?: string;
+}
+
+/**
+ * Interface for accessing reality data from the Reality Management API.
+ * @beta
+ */
+export interface RealityDataAccess {
+  getRealityData: (accessToken: string, iTwinId: string | undefined, realityDataId: string) => Promise<ITwinRealityData>;
+  getRealityDataUrl: (iTwinId: string | undefined, realityDataId: string) => Promise<string>;
 }
 
 /**
@@ -189,7 +201,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * and injects it into the internal TokenHolder so that the RealityCaptureService
    * can consume it transparently.
    */
-  private async _prepareToken(accessToken: AccessToken): Promise<void> {
+  private async _prepareToken(accessToken: string): Promise<void> {
     const resolved = await this.resolveAccessToken(accessToken);
     this._tokenHolder.setToken(resolved);
   }
@@ -200,7 +212,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
    */
   private _throwIfError<T>(response: RCResponse<T>): void {
     if (response.isError()) {
-      throw new BentleyError(
+      throw new RealityDataClientError(
         response.status_code,
         response.error?.error?.message ?? "Unknown error",
       );
@@ -212,7 +224,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * otherwise, will return the input token
    * This is a workaround to support different authorization client for the reality data client and iTwin-core.
    */
-  private async resolveAccessToken(accessToken: AccessToken): Promise<string> {
+  private async resolveAccessToken(accessToken: string): Promise<string> {
     return this.authorizationClient
       ? this.authorizationClient.getAccessToken()
       : accessToken;
@@ -249,7 +261,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @beta
    */
   public async getRealityData(
-    accessToken: AccessToken,
+    accessToken: string,
     iTwinId: string | undefined,
     realityDataId: string,
   ): Promise<ITwinRealityData> {
@@ -274,7 +286,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @beta
    */
   public async getRealityDatas(
-    accessToken: AccessToken,
+    accessToken: string,
     iTwinId: string | undefined,
     criteria: RealityDataQueryCriteria | undefined,
   ): Promise<RealityDataResponse> {
@@ -295,7 +307,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
         if (criteria.top) {
           const top = criteria.top;
           if (top > 500) {
-            throw new BentleyError(
+            throw new RealityDataClientError(
               422,
               "Maximum value for top parameter is 500.",
             );
@@ -305,7 +317,8 @@ export class RealityDataAccessClient implements RealityDataAccess {
 
         if (criteria.extent) {
           const iModelRange = criteria.extent.getLongitudeLatitudeBoundingBox();
-          const extent = `${Angle.radiansToDegrees(iModelRange.low.x)},${Angle.radiansToDegrees(iModelRange.low.y)},${Angle.radiansToDegrees(iModelRange.high.x)},${Angle.radiansToDegrees(iModelRange.high.y)}`;
+          const toDeg = (r: number) => r * (180 / Math.PI);
+          const extent = `${toDeg(iModelRange.low.x)},${toDeg(iModelRange.low.y)},${toDeg(iModelRange.high.x)},${toDeg(iModelRange.high.y)}`;
           url.searchParams.append("extent", extent);
         }
 
@@ -385,31 +398,30 @@ export class RealityDataAccessClient implements RealityDataAccess {
           url.searchParams.append("tag", criteria.tag);
         }
       }
-      const response = await axios.get(
+      const response = await fetch(
         url.href,
         getRequestConfig(
           accessTokenResolved,
           "GET",
-          url.href,
           this.apiVersion,
-          criteria?.getFullRepresentation === true ? true : false,
+          criteria?.getFullRepresentation === true,
         ),
       );
-      // Axios throws on 4XX and 5XX; we make sure the response here is 200
-      if (response.status !== 200)
-        throw new BentleyError(
+      // fetch does not throw on 4XX/5XX; check status explicitly
+      if (!response.ok)
+        throw new RealityDataClientError(
           422,
           iTwinId
             ? `Could not fetch reality data with iTwinId ${iTwinId}`
             : "Could not fetch reality data",
         );
 
-      const realityDatasResponseBody = response.data;
+      const realityDatasResponseBody = await response.json();
 
       const realityDataResponse: RealityDataResponse = {
         realityDatas: [],
         continuationToken: this.extractContinuationToken(
-          response.data._links?.next?.href,
+          realityDatasResponseBody._links?.next?.href,
         ),
       };
 
@@ -439,18 +451,21 @@ export class RealityDataAccessClient implements RealityDataAccess {
     url: string | undefined,
   ): string | undefined {
     if (url) {
-      // API returns some case sensitive parameters e.g. "ContinuationToken". Therefore first, set parameters to lowercase
-      const searchParams = new URLSearchParams(url);
-      const newParams = new URLSearchParams();
+      try {
+        // Parse as a full URL to correctly extract query parameters
+        const searchParams = new URL(url).searchParams;
+        const newParams = new URLSearchParams();
 
-      for (const [name, value] of searchParams) {
-        newParams.append(name.toLowerCase(), value);
+        // Normalize to lowercase to handle case-sensitive API parameters (e.g. "ContinuationToken")
+        for (const [name, value] of searchParams) {
+          newParams.append(name.toLowerCase(), value);
+        }
+
+        const token = newParams.get("continuationtoken");
+        return token ?? undefined;
+      } catch {
+        return undefined;
       }
-
-      // Then get continuation token value in case insensitive manner.
-      const token = newParams.get("continuationtoken");
-
-      return token ? token : undefined;
     }
     return undefined;
   }
@@ -465,23 +480,19 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @beta
    */
   public async getRealityDataProjects(
-    accessToken: AccessToken,
+    accessToken: string,
     realityDataId: string,
   ): Promise<Project[]> {
     try {
       const accessTokenResolved = await this.resolveAccessToken(accessToken);
       const url = `${this.baseUrl}/${realityDataId}/itwins`;
-      const options = getRequestConfig(
-        accessTokenResolved,
-        "GET",
-        url,
-        this.apiVersion,
-      );
 
       // execute query
-      const response = await axios.get(url, options);
+      const response = await fetch(url, getRequestConfig(accessTokenResolved, "GET", this.apiVersion));
+      if (!response.ok)
+        throw new RealityDataClientError(response.status, "Could not fetch reality data iTwins.");
 
-      const projectsResponseBody = response.data;
+      const projectsResponseBody = await response.json();
 
       const projectsResponse: Project[] = [];
 
@@ -524,7 +535,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @beta
    */
   public async getRealityDataITwins(
-    accessToken: AccessToken,
+    accessToken: string,
     realityDataId: string,
   ): Promise<string[]> {
     await this._prepareToken(accessToken);
@@ -548,7 +559,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @beta
    */
   public async createRealityData(
-    accessToken: AccessToken,
+    accessToken: string,
     iTwinId: string | undefined,
     iTwinRealityData: ITwinRealityData,
   ): Promise<ITwinRealityData> {
@@ -591,7 +602,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @beta
    */
   public async modifyRealityData(
-    accessToken: AccessToken,
+    accessToken: string,
     iTwinId: string | undefined,
     iTwinRealityData: ITwinRealityData,
   ): Promise<ITwinRealityData> {
@@ -634,7 +645,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @beta
    */
   public async deleteRealityData(
-    accessToken: AccessToken,
+    accessToken: string,
     realityDataId: string,
   ): Promise<boolean> {
     await this._prepareToken(accessToken);
@@ -659,7 +670,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @beta
    */
   public async associateRealityData(
-    accessToken: AccessToken,
+    accessToken: string,
     iTwinId: string,
     realityDataId: string,
   ): Promise<boolean> {
@@ -685,7 +696,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @beta
    */
   public async dissociateRealityData(
-    accessToken: AccessToken,
+    accessToken: string,
     iTwinId: string,
     realityDataId: string,
   ): Promise<boolean> {
@@ -712,7 +723,7 @@ export class RealityDataAccessClient implements RealityDataAccess {
    * @beta
    */
   public async moveRealityData(
-    accessToken: AccessToken,
+    accessToken: string,
     realityDataId: string,
     iTwinId: string,
   ): Promise<boolean> {
@@ -728,7 +739,6 @@ export class RealityDataAccessClient implements RealityDataAccess {
 
   /**
    * Handle errors thrown.
-   * Handled errors can be of AxiosError type or BentleyError.
    * @beta
    */
   private handleError(error: any): any {
@@ -736,17 +746,11 @@ export class RealityDataAccessClient implements RealityDataAccess {
     let status = 422;
     let message = "Unknown error. Please ensure that the request is valid.";
 
-    if (axios.isAxiosError(error) && error.response) {
-      const axiosResponse = error.response;
-      status = axiosResponse.status;
-      message = axiosResponse.data?.error?.message;
-    } else {
-      const bentleyError = error as BentleyError;
-      if (bentleyError !== undefined) {
-        status = bentleyError.errorNumber;
-        message = bentleyError.message;
-      }
+    const clientError = error as RealityDataClientError;
+    if (clientError?.errorNumber !== undefined) {
+      status = clientError.errorNumber;
+      message = clientError.message;
     }
-    return Promise.reject(new BentleyError(status, message));
+    return Promise.reject(new RealityDataClientError(status, message));
   }
 }

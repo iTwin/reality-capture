@@ -2,22 +2,20 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-import type { AxiosRequestConfig, Method } from "axios";
 import { ApiVersion } from "./RealityDataClient";
 
 /**
- * Build the request methods, headers, and other options
+ * Build the request headers and options for a fetch call.
  * @param accessTokenString The client access token string
  */
-export function getRequestConfig(accessTokenString: string, method: Method, url: string, apiVersion: ApiVersion, returnFullRepresentation: boolean = false): AxiosRequestConfig {
+export function getRequestConfig(accessTokenString: string, method: string, apiVersion: ApiVersion, returnFullRepresentation = false): RequestInit {
   return {
-    url,
     method,
     headers: {
       "authorization": accessTokenString,
       "content-type": "application/json",
       "accept": getApiVersionHeader(apiVersion),
-      "prefer": returnFullRepresentation === true ? "return=representation" : "return=minimal",
+      "prefer": returnFullRepresentation ? "return=representation" : "return=minimal",
     },
   };
 }
