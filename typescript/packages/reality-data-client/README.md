@@ -22,21 +22,17 @@ To use the Reality Management API you will need to have an access to an iTwin. I
 
 To build and run the Reality Data Client, you will need [Node.js](https://nodejs.org/en/) v22 (must be greater than 22.14.x).
 
-## Authorization
-
-This client uses the `AccessToken` class from  __@iTwin/core-bentley__ to represent the authorization token. It may be used as a string. The `AccessToken` may be passed into method parameters whenever called.
-
 ## Key Types and Methods
 
 ### ITwinRealityData
 
-Implements the `RealityData` interface from  __@itwin/core-common__ and represents a single reality data. This class contains properties representing the descriptive data related to a reality data, as well as an access point to the data stored in a blob container. `ITwinRealityData` are bound to an `iTwinId`, which is the identifier of an iTwin. [More information about the iTwin API here.](https://developer.bentley.com/apis/itwins/)
+This class contains properties representing the descriptive data related to a reality data, as well as an access point to the data stored in a blob container. `ITwinRealityData` are bound to an `iTwinId`, which is the identifier of an iTwin. [More information about the iTwin API here.](https://developer.bentley.com/apis/itwins/)
 
 ITwinRealityData implements a `getBlobUrl()` method that returns the location of the reality data's blob content. This resource is also cached, as to limit the amount of API calls and SAS keys keys to generate.
 
 ### RealityDataAccessClient
 
-Implements the `RealityDataAccess` interface from  __@itwin/core-common__ and serves a client wrapper to the Reality Management API. It contains all the necessary methods to fulfill any workflow related to creating and consuming reality data. Key methods are listed below, and **keep in mind the terms Project and iTwin are used interchangeably.**
+It contains all the necessary methods to fulfill any workflow related to creating and consuming reality data. Key methods are listed below, and **keep in mind the terms Project and iTwin are used interchangeably.**
 
 - `getRealityData` : returns the specified reality data with all of its properties
 - `getRealityDataUrl` :  returns the URL to obtain the Reality Data details.
