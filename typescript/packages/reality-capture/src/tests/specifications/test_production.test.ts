@@ -6,21 +6,12 @@ import {
   ThermalUnit,
   LODScope,
   LODType,
-  CesiumCompression,
-  I3SVersion,
-  SamplingStrategy,
-  LasCompression,
-  ProjectionMode,
-  OrthoFormat,
-  DSMFormat,
-  OrthoColorSource,
   ProductionInputsSchema,
-  OptionsLASSchema,
   OptionsOBJSchema,
   ExportCreateSchema,
   ProductionOutputsSchema,
   ProductionSpecificationsSchema,
-  ProductionCostSchema
+  ProductionCostSchema,
 } from "../../specifications/production";
 
 describe("ProductionInputsSchema", () => {
@@ -88,16 +79,16 @@ describe("OptionsOBJSchema", () => {
 describe("ExportCreateSchema", () => {
   it("should validate minimal valid input", () => {
     const input = {
-      format: Format.LAS
+      format: Format.LAS,
     };
     expect(() => ExportCreateSchema.parse(input)).to.not.throw();
   });
 
   it("should validate with options and name", () => {
     const input = {
-      format: Format.LAS,
+      format: Format.THREEMX,
       options: { generateWebApp: true },
-      name: "RealityData"
+      name: "RealityData",
     };
     expect(() => ExportCreateSchema.parse(input)).to.not.throw();
   });
@@ -105,7 +96,7 @@ describe("ExportCreateSchema", () => {
   it("should fail if name is too short", () => {
     const input = {
       format: Format.LAS,
-      name: "ab"
+      name: "ab",
     };
     expect(() => ExportCreateSchema.parse(input)).to.throw(z.ZodError);
   });
@@ -117,9 +108,9 @@ describe("ProductionOutputsSchema", () => {
       exports: [
         {
           format: Format.LAS,
-          location: "export-location"
-        }
-      ]
+          location: "export-location",
+        },
+      ],
     };
     expect(() => ProductionOutputsSchema.parse(input)).to.not.throw();
   });
@@ -128,9 +119,9 @@ describe("ProductionOutputsSchema", () => {
     const input = {
       exports: [
         {
-          format: Format.LAS
-        }
-      ]
+          format: Format.LAS,
+        },
+      ],
     };
     expect(() => ProductionOutputsSchema.parse(input)).to.throw(z.ZodError);
   });
@@ -141,16 +132,16 @@ describe("ProductionSpecificationsSchema", () => {
     const input = {
       inputs: {
         scene: "scene-id",
-        modelingReference: "ref-id"
+        modelingReference: "ref-id",
       },
       outputs: {
         exports: [
           {
             format: Format.LAS,
-            location: "export-location"
-          }
-        ]
-      }
+            location: "export-location",
+          },
+        ],
+      },
     };
     expect(() => ProductionSpecificationsSchema.parse(input)).to.not.throw();
   });
@@ -160,7 +151,7 @@ describe("ProductionCostSchema", () => {
   it("should validate minimal valid input", () => {
     const input = {
       gpix: 0,
-      mpoints: 0
+      mpoints: 0,
     };
     expect(() => ProductionCostSchema.parse(input)).to.not.throw();
   });
@@ -168,7 +159,7 @@ describe("ProductionCostSchema", () => {
   it("should fail if gpix negative", () => {
     const input = {
       gpix: -1,
-      mpoints: 0
+      mpoints: 0,
     };
     expect(() => ProductionCostSchema.parse(input)).to.throw(z.ZodError);
   });
@@ -177,7 +168,7 @@ describe("ProductionCostSchema", () => {
     const input = {
       gpix: 10,
       mpoints: 20,
-      geometricPrecision: "High"
+      geometricPrecision: "High",
     };
     expect(() => ProductionCostSchema.parse(input)).to.not.throw();
   });

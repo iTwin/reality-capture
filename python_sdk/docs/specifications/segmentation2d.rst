@@ -2,7 +2,7 @@
 Segmentation 2D
 ===============
 
-The Segmentation 2D job uses a photo segmentation detector to classify pixels in photos. If photos are oriented, it can project the segmentation on meshes or point clouds, and detect 3D lines and 3D polygons. This job produces segmented photos and a context scene pointing to these photos. Optionally, it can also produce context scenes annotated with 3D polygons and 3D lines. Those can be exported in another formats, such as 3D Tiles, DGN, or GeoJSON.
+The Segmentation 2D job uses a photo segmentation detector to classify pixels in photos. If photos are oriented, it can project the segmentation on meshes or point clouds, and detect 3D lines and 3D polygons. This job produces segmented photos and a context scene pointing to these photos. Optionally, it can also produce context scenes annotated with 3D polygons and 3D lines. Those can be exported in another formats, such as 3D Tiles, or GeoJSON.
 
 .. contents:: Quick access
    :local:
@@ -38,11 +38,9 @@ This job has three different purposes :
      - | *segmentation2d*,
        | *segmented_photos*,
        | *lines3d* (optional),
-       | *lines3d_as_dgn* (optional),
        | *lines3d_as_3d_tiles* (optional),
        | *lines3d_as_geojson* (optional),
        | *polygons3d* (optional),
-       | *polygons3d_as_dgn* (optional),
        | *polygons3d_as_3d_tiles* (optional),
        | *polygons3d_as_geojson* (optional)
      - | *min_photos*,
@@ -58,11 +56,9 @@ This job has three different purposes :
        | *segmentation2d*,
        | *point_clouds*/*meshes*
      - | *lines3d* (optional),
-       | *lines3d_as_dgn* (optional),
        | *lines3d_as_3d_tiles* (optional),
        | *lines3d_as_geojson* (optional),
        | *polygons3d* (optional),
-       | *polygons3d_as_dgn* (optional),
        | *polygons3d_as_3d_tiles* (optional),
        | *polygons3d_as_geojson* (optional)
      - | *min_photos*,

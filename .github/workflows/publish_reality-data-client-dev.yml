@@ -26,6 +26,14 @@ jobs:
         with:
           version: 9
 
+      - name: Install reality-capture dependencies
+        working-directory: ./typescript/packages/reality-capture
+        run: pnpm install --frozen-lockfile=true
+
+      - name: Build reality-capture
+        working-directory: ./typescript/packages/reality-capture
+        run: pnpm build
+
       - name: Install dependencies
         working-directory: ./typescript/packages/reality-data-client
         run: pnpm install --frozen-lockfile=true

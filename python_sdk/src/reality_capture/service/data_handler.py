@@ -1,5 +1,5 @@
 import os.path
-from typing import Optional
+from typing import Callable, Optional
 from reality_capture.service.error import DetailedErrorResponse, DetailedError, Error
 from reality_capture.service.response import Response
 from reality_capture.service.service import RealityCaptureService
@@ -169,7 +169,7 @@ class RealityDataHandler:
 
         :param token_factory: An object that implements a ``get_token() -> str`` method.
         :type token_factory: Object
-        :param \**kwargs: Internal parameters used only for development purposes.
+        :param \\**kwargs: Internal parameters used only for development purposes.
         """
         self._service = RealityCaptureService(token_factory, **kwargs)
         self._progress_hook = None
@@ -252,7 +252,7 @@ class RealityDataHandler:
             return Response(r.status_code, r.error, None)
         return _DataHandler.delete_data(r.value.links.container_url.href, files_to_delete)
 
-    def set_progress_hook(self, hook: Optional) -> None:
+    def set_progress_hook(self, hook: Optional[Callable[[float], bool]]) -> None:
         """
         Set the progress hook.
 
@@ -273,7 +273,7 @@ class BucketDataHandler:
 
         :param token_factory: An object that implements a ``get_token() -> str`` method.
         :type token_factory: Object
-        :param \**kwargs: Internal parameters used only for development purposes.
+        :param \\**kwargs: Internal parameters used only for development purposes.
         """
         self._service = RealityCaptureService(token_factory, **kwargs)
         self._progress_hook = None
@@ -336,7 +336,7 @@ class BucketDataHandler:
             return Response(r.status_code, r.error, None)
         return _DataHandler.delete_data(r.value.links.container_url.href, files_to_delete)
 
-    def set_progress_hook(self, hook: Optional) -> None:
+    def set_progress_hook(self, hook: Optional[Callable[[float], bool]]) -> None:
         """
         Set the progress hook.
 
