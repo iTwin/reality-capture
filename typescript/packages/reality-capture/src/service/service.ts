@@ -70,12 +70,18 @@ export class RealityCaptureService {
     return this._serviceUrl + "reality-management/";
   }
 
+  private _getConversionUrl() {
+    return this._serviceUrl + "reality-conversion/";
+  }
+
   private _getCorrectUrl(service: Service): string {
     switch (service) {
     case Service.MODELING:
       return this._getModelingUrl();
     case Service.ANALYSIS:
       return this._getAnalysisUrl();
+    case Service.CONVERSION:
+      return this._getConversionUrl();
     default:
       throw new Error("Other services not yet implemented");
     }
@@ -135,7 +141,7 @@ export class RealityCaptureService {
   private async _request(
     method: "GET" | "POST" | "PATCH" | "DELETE",
     url: string,
-    options?: { params?: Record<string, any>; headers?: Record<string, string>; body?: any },
+  async getJobs(service: Service, filters: string, top: number = 100, continuationToken: string = ""): Promise<Response<Jobs>> {
   ): Promise<{ status: number; data: any }> {
     const finalUrl = this._buildUrl(url, options?.params);
     const init: RequestInit = {
