@@ -317,7 +317,7 @@ class RealityCaptureService:
 
     def create_detector(self, detector_create: DetectorBase) -> Response[DetectorResponse]:
         """
-        Create a detector.
+        Create a new detector.
 
         :param detector_create: DetectorBase information to create the detector.
         :return: A Response[DetectorResponse] containing either the created detector details or the error from the service.
@@ -355,7 +355,7 @@ class RealityCaptureService:
 
     def delete_detector(self, detector_name: str) -> Response[None]:
         """
-        Delete a detector.
+        Delete a detector and all of its versions.
 
         :param detector_name: Name of the detector to delete.
         :return: A Response[None] containing either nothing if successful or the error from the service.
@@ -415,7 +415,7 @@ class RealityCaptureService:
 
     def publish_detector_version(self, detector_name: str, version_number: str) -> Response[None]:
         """
-        Publish the specified detector version.
+        Publish a specific version of a detector.
 
         :param detector_name: Name of the detector.
         :param version_number: Name of the version.
@@ -436,7 +436,7 @@ class RealityCaptureService:
 
     def unpublish_detector_version(self, detector_name: str, version_number: str) -> Response[None]:
         """
-        Unpublish the specified detector version.
+        Unpublish a specific version of a detector.
 
         :param detector_name: Name of the detector.
         :param version_number: Name of the version.

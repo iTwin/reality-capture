@@ -13,6 +13,13 @@ class DetectorExport(Enum):
     LOCATIONS = "Locations"
 
 
+class DetectorType(Enum):
+    PHOTO_OBJECT_DETECTOR = "PhotoObjectDetector"
+    PHOTO_SEGMENTATION_DETECTOR = "PhotoSegmentationDetector"
+    ORTHOPHOTO_SEGMENTATION_DETECTOR = "OrthophotoSegmentationDetector"
+    POINT_CLOUD_SEGMENTATION_DETECTOR = "PointCloudSegmentationDetector"
+
+
 class Capabilities(BaseModel):
     labels: list[str] = Field(description="Labels of the detector version.")
     exports: list[DetectorExport] = Field(description="Exports of the detector version.")
@@ -47,13 +54,6 @@ class DetectorVersionWithLinks(BaseModel):
     version: DetectorVersion = Field(description="Detector version details.")
     links: DetectorVersionCreationLinks = Field(description="Contains the hyperlinks related to the detector version creation.",
                                                 alias="_links")
-
-
-class DetectorType(Enum):
-    PHOTO_OBJECT_DETECTOR = "PhotoObjectDetector"
-    PHOTO_SEGMENTATION_DETECTOR = "PhotoSegmentationDetector"
-    ORTHOPHOTO_SEGMENTATION_DETECTOR = "OrthophotoSegmentationDetector"
-    POINT_CLOUD_SEGMENTATION_DETECTOR = "PointCloudSegmentationDetector"
 
 
 class DetectorUpdate(BaseModel):

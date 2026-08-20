@@ -37,7 +37,7 @@ from reality_capture.specifications.vector_optimization import (VectorOptimizati
                                                                 VectorOptimizationSpecifications)
 # from reality_capture.specifications.cs_tiler import (ContextSceneTilerSpecifications,
 #                                                      ContextSceneTilerSpecificationsCreate)
-
+from reality_capture.specifications.training import (TrainingS3DSpecificationsCreate, TrainingS3DSpecifications)
 from reality_capture.specifications.gaussian_splats import (GaussianSplatsSpecificationsCreate,
                                                             GaussianSplatsSpecifications)
 from reality_capture.specifications.eval_o2d import (EvalO2DSpecificationsCreate, EvalO2DSpecifications)
@@ -46,7 +46,6 @@ from reality_capture.specifications.eval_s2d import (EvalS2DSpecificationsCreate
 from reality_capture.specifications.eval_s3d import (EvalS3DSpecificationsCreate, EvalS3DSpecifications)
 from reality_capture.specifications.eval_sortho import (EvalSOrthoSpecificationsCreate, EvalSOrthoSpecifications)
 
-from reality_capture.specifications.clearance import (ClearanceSpecificationsCreate, ClearanceSpecifications)
 
 from reality_capture.service.reality_data import URL
 
@@ -72,7 +71,7 @@ class JobType(Enum):
     TOUCH_UP_IMPORT = "TouchUpImport"
     TOUCH_UP_EXPORT = "TouchUpExport"
     WATER_CONSTRAINTS = "WaterConstraints"
-    CLEARANCE_CALCULATION = "ClearanceCalculation"
+    TRAINING_S3D = "TrainingS3D"
     POINT_CLOUD_CONVERSION = "PointCloudConversion"
     POINT_CLOUD_OPTIMIZATION = "PointCloudOptimization"
     MESH_SAMPLING = "MeshSampling"
@@ -94,7 +93,7 @@ def _get_appropriate_service(jt: JobType):
         return Service.MODELING
     if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
             JobType.CHANGE_DETECTION, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
-            JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.CLEARANCE_CALCULATION]:
+            JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.TRAINING_S3D]:
         return Service.ANALYSIS
     if jt in [JobType.POINT_CLOUD_CONVERSION, JobType.POINT_CLOUD_OPTIMIZATION, JobType.MESH_SAMPLING,
               JobType.TILE_MAP_OPTIMIZATION, JobType.VECTOR_OPTIMIZATION]: # JobType.CONTEXTSCENE_TILER
@@ -129,7 +128,7 @@ class JobCreate(BaseModel):
                         PointCloudConversionSpecificationsCreate, PCOptimizationSpecificationsCreate,
                         MeshSamplingSpecificationsCreate, TileMapOptimizationSpecificationsCreate,
                         VectorOptimizationSpecificationsCreate, # ContextSceneTilerSpecificationsCreate,
-                        ClearanceSpecificationsCreate] = (
+                        TrainingS3DSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -164,7 +163,7 @@ class Job(BaseModel):
     user_id: str = Field(description="Identifier of the user that created the job.", alias="userId")
     # TODO : add PointCloudConversionSpecifications
     specifications: Union[CalibrationSpecifications, ChangeDetectionSpecifications,
-                        ConstraintsSpecifications, 
+                        ConstraintsSpecifications,
                         EvalO2DSpecifications, EvalO3DSpecifications,
                         EvalS2DSpecifications, EvalS3DSpecifications,
                         EvalSOrthoSpecifications, FillImagePropertiesSpecifications, 
@@ -177,7 +176,7 @@ class Job(BaseModel):
                         PointCloudConversionSpecifications, PCOptimizationSpecifications,
                         MeshSamplingSpecifications, TileMapOptimizationSpecifications,
                         VectorOptimizationSpecifications, # ContextSceneTilerSpecifications,
-                        ClearanceSpecifications] = (
+                        TrainingS3DSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @field_validator("specifications", mode="plain")
@@ -229,8 +228,8 @@ class Job(BaseModel):
             specifications = TouchUpImportSpecifications(**raw_dict)
         elif job_type == JobType.WATER_CONSTRAINTS:
             specifications = WaterConstraintsSpecifications(**raw_dict)
-        elif job_type == JobType.CLEARANCE_CALCULATION:
-            specifications = ClearanceSpecifications(**raw_dict)
+        elif job_type == JobType.TRAINING_S3D:
+            specifications = TrainingS3DSpecifications(**raw_dict)
         elif job_type == JobType.POINT_CLOUD_CONVERSION:
             specifications = PointCloudConversionSpecifications(**raw_dict)
         elif job_type == JobType.POINT_CLOUD_OPTIMIZATION:

@@ -44,7 +44,7 @@ import {
   SegmentationOrthophotoSpecificationsCreateSchema,
   SegmentationOrthophotoSpecificationsSchema,
 } from "../specifications/segmentation_orthophoto";
-import {
+import { TrainingO2DSpecificationsCreateSchema, TrainingS3DSpecificationsCreateSchema, TrainingO2DSpecificationsSchema, TrainingS3DSpecificationsSchema } from "../specifications/training";
   TilingSpecificationsCreateSchema,
   TilingSpecificationsSchema,
 } from "../specifications/tiling";
@@ -69,7 +69,6 @@ import {
   GaussianSplatsSpecificationsCreateSchema,
   GaussianSplatsSpecificationsSchema,
 } from "../specifications/gaussian_splats";
-import { URLSchema } from "./bucket";
 import {
   EvalO2DSpecificationsCreateSchema,
   EvalO2DSpecificationsSchema,
@@ -115,6 +114,8 @@ import {
   TileMapOptimizationSpecificationsSchema,
 } from "../specifications/tile_map_optimization";
 
+import { URLSchema } from "./reality_data";
+
 // import {
 //   ContextSceneTilerSpecificationsCreateSchema,
 //   ContextSceneTilerSpecificationsSchema,
@@ -139,12 +140,10 @@ export enum JobType {
   SEGMENTATION_3D = "Segmentation3D",
   SEGMENTATION_ORTHOPHOTO = "SegmentationOrthophoto",
   TILING = "Tiling",
-  TRAINING_O2D = "TrainingO2D",
   TRAINING_S3D = "TrainingS3D",
   TOUCH_UP_IMPORT = "TouchUpImport",
   TOUCH_UP_EXPORT = "TouchUpExport",
   WATER_CONSTRAINTS = "WaterConstraints",
-  CLEARANCE_CALCULATION = "ClearanceCalculation",
   POINT_CLOUD_CONVERSION = "PointCloudConversion",
   MESH_SAMPLING = "MeshSampling",
   POINT_CLOUD_OPTIMIZATION = "PointCloudOptimization",
@@ -179,9 +178,9 @@ export function getAppropriateService(jt: JobType): Service {
   }
   if (
     [
-      JobType.OBJECTS_2D,
+      JobType.SEGMENTATION_ORTHOPHOTO, JobType.CHANGE_DETECTION, JobType.TRAINING_O2D,
       JobType.SEGMENTATION_2D,
-      JobType.SEGMENTATION_3D,
+      JobType.EVAL_SORTHO, JobType.TRAINING_O2D, JobType.TRAINING_S3D,
       JobType.SEGMENTATION_ORTHOPHOTO,
       JobType.CHANGE_DETECTION,
       JobType.EVAL_O2D,
@@ -190,8 +189,7 @@ export function getAppropriateService(jt: JobType): Service {
       JobType.EVAL_S3D,
       JobType.EVAL_SORTHO,
       JobType.TRAINING_O2D,
-      JobType.TRAINING_S3D,
-      JobType.CLEARANCE_CALCULATION,
+      JobType.TRAINING_S3D
     ].includes(jt)
   ) {
     return Service.ANALYSIS;
@@ -247,7 +245,6 @@ export const JobCreateSchema = z.object({
       TouchUpExportSpecificationsCreateSchema,
       TouchUpImportSpecificationsCreateSchema,
       WaterConstraintsSpecificationsCreateSchema,
-      TrainingO2DSpecificationsCreateSchema,
       ClearanceSpecificationsCreateSchema,
       TrainingS3DSpecificationsCreateSchema,
       PointCloudConversionSpecificationsCreateSchema,
@@ -354,6 +351,11 @@ export const JobSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     ...CommonFields,
+    type: z.literal("ImportPointCloud"),
+    specifications: ImportPCSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
     type: z.literal("Objects2D"),
     specifications: Objects2DSpecificationsSchema,
   }),
@@ -389,12 +391,7 @@ export const JobSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     ...CommonFields,
-    type: z.literal("TraningO2D"),
-    specifications: TrainingO2DSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("TraningS3D"),
+    type: z.literal("TrainingS3D"),
     specifications: TrainingS3DSpecificationsSchema,
   }),
   z.object({
@@ -411,11 +408,6 @@ export const JobSchema = z.discriminatedUnion("type", [
     ...CommonFields,
     type: z.literal("WaterConstraints"),
     specifications: WaterConstraintsSpecificationsSchema,
-  }),
-  z.object({
-    ...CommonFields,
-    type: z.literal("ClearanceCalculation"),
-    specifications: ClearanceSpecificationsSchema,
   }),
   z.object({
     ...CommonFields,

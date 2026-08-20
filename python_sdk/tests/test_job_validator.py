@@ -25,7 +25,6 @@ from reality_capture.specifications.mesh_sampling import MeshSamplingSpecificati
 from reality_capture.specifications.tile_map_optimization import TileMapOptimizationSpecifications
 from reality_capture.specifications.vector_optimization import VectorOptimizationSpecifications
 #from reality_capture.specifications.cs_tiler import ContextSceneTilerSpecifications
-from reality_capture.specifications.clearance import ClearanceSpecifications
 import pytest
 from unittest.mock import patch, MagicMock
 import reality_capture.service.job as job_module
@@ -75,16 +74,35 @@ class TestJobValidator:
         j["type"] = "ChangeDetection"
         j["specifications"] = {
             "inputs": {
-                "model3dA": "modela",
-                "model3dB": "modelb"
+                "model3DA": "modela",
+                "model3DB": "modelb"
             },
             "outputs": {
-                "changesInModelA": "rdid",
-                "objects3d": "obj"
+                "segmentedModel3DA": "rdid_seg_a",
+                "segmentedModel3DB": "rdid_seg_b",
+                "segmentation3DA": "rdid_segmentation_a",
+                "segmentation3DB": "rdid_segmentation_b",
+                "locations3DA": "loca_rdid",
+                "locations3DAAsGeoJSON": "geojsona_rdid",
+                "locations3DAAsSHP": "shpa_rdid",
+                "locations3DB": "locb_rdid",
+                "locations3DBAsGeoJSON": "geojsonb_rdid",
+                "locations3DBAsSHP": "shpb_rdid"
             }
         }
         job = Job(**j)
         assert isinstance(job.specifications, ChangeDetectionSpecifications)
+        outputs = job.specifications.outputs
+        assert outputs.segmented_model_3d_a == "rdid_seg_a"
+        assert outputs.segmented_model_3d_b == "rdid_seg_b"
+        assert outputs.segmentation_3d_a == "rdid_segmentation_a"
+        assert outputs.segmentation_3d_b == "rdid_segmentation_b"
+        assert outputs.locations3d_a == "loca_rdid"
+        assert outputs.locations3d_a_as_geojson == "geojsona_rdid"
+        assert outputs.locations3d_a_as_shp == "shpa_rdid"
+        assert outputs.locations3d_b == "locb_rdid"
+        assert outputs.locations3d_b_as_geojson == "geojsonb_rdid"
+        assert outputs.locations3d_b_as_shp == "shpb_rdid"
 
     def test_validation_constraints(self):
         j = self.j_base.copy()
@@ -110,7 +128,7 @@ class TestJobValidator:
                 "prediction": "predid"
             },
             "outputs": {
-                "objects2d": "objid"
+                "objects2D": "objid"
             }
         }
         job = Job(**j)
@@ -125,7 +143,7 @@ class TestJobValidator:
                 "prediction": "predid"
             },
             "outputs": {
-                "objects3d": "objid"
+                "objects3D": "objid"
             }
         }
         job = Job(**j)
@@ -140,7 +158,7 @@ class TestJobValidator:
                 "prediction": "predid"
             },
             "outputs": {
-                "segmentation2d": "sid"
+                "segmentation2D": "sid"
             }
         }
         job = Job(**j)
@@ -155,7 +173,7 @@ class TestJobValidator:
                 "prediction": "predid"
             },
             "outputs": {
-                "segmentation3d": "sid"
+                "segmentation3D": "sid"
             }
         }
         job = Job(**j)
@@ -170,7 +188,7 @@ class TestJobValidator:
                 "prediction": "predid"
             },
             "outputs": {
-                "segmentation2d": "sid"
+                "segmentation2D": "sid"
             }
         }
         job = Job(**j)
@@ -213,7 +231,7 @@ class TestJobValidator:
                 "photos": "mfid"
             },
             "outputs": {
-                "objects2d": "sid"
+                "objects2D": "sid"
             }
         }
         job = Job(**j)
@@ -256,7 +274,7 @@ class TestJobValidator:
                 "photos": "mfid",
             },
             "outputs": {
-                "segmentation2d": "s2did"
+                "segmentation2D": "s2did"
             }
         }
         job = Job(**j)
@@ -267,7 +285,7 @@ class TestJobValidator:
         j["type"] = "Segmentation3D"
         j["specifications"] = {
             "inputs": {
-                "model3d": "mfid",
+                "model3D": "mfid",
             },
             "outputs": {
                 "segmentation3D": "s3did"
@@ -285,7 +303,7 @@ class TestJobValidator:
                 "orthophotoSegmentationDetector": "detector"
             },
             "outputs": {
-                "segmentation2d": "s2did"
+                "segmentation2D": "s2did"
             }
         }
         job = Job(**j)
@@ -350,21 +368,6 @@ class TestJobValidator:
         }
         job = Job(**j)
         assert isinstance(job.specifications, WaterConstraintsSpecifications)
-
-    def test_validation_clearance(self):
-        j = self.j_base.copy()
-        j["type"] = "ClearanceCalculation"
-        j["specifications"] = {
-            "inputs": {
-                "model3d": "mfid",
-                "clearanceFootprint": "sid"
-            },
-            "outputs": {
-                "ovfPoints": "rdId"
-            }
-        }
-        job = Job(**j)
-        assert isinstance(job.specifications, ClearanceSpecifications)
 
     def test_validation_unsupported_job_type_raises(self):
         j = self.j_base.copy()

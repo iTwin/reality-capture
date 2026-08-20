@@ -50,9 +50,9 @@ describe("EvalS3DOutputsSchema", () => {
     ).to.throw(z.ZodError);
   });
 
-  it("should validate correct segmentedPointCloud output", () => {
+  it("should validate correct segmentedModel3D output", () => {
     expect(() =>
-      EvalS3DOutputsSchema.parse({ segmentedPointCloud: "cloud-id" })
+      EvalS3DOutputsSchema.parse({ segmentedModel3D: "cloud-id" })
     ).to.not.throw();
   });
 
@@ -66,7 +66,7 @@ describe("EvalS3DOutputsSchema", () => {
     expect(() =>
       EvalS3DOutputsSchema.parse({
         report: "bkt:my/report.json",
-        segmentedPointCloud: "cloud-id",
+        segmentedModel3D: "cloud-id",
         segmentation3D: "scene-id",
       })
     ).to.not.throw();
@@ -76,7 +76,7 @@ describe("EvalS3DOutputsSchema", () => {
 describe("EvalS3DOutputsCreate enum", () => {
   it("should have the right values", () => {
     expect(EvalS3DOutputsCreate.REPORT).to.equal("report");
-    expect(EvalS3DOutputsCreate.SEGMENTED_POINT_CLOUD).to.equal("segmentedPointCloud");
+    expect(EvalS3DOutputsCreate.SEGMENTED_MODEL_3D).to.equal("segmentedModel3D");
     expect(EvalS3DOutputsCreate.SEGMENTATION3D).to.equal("segmentation3D");
   });
 });
@@ -90,7 +90,7 @@ describe("EvalS3DSpecificationsCreateSchema", () => {
       },
       outputs: [
         EvalS3DOutputsCreate.REPORT,
-        EvalS3DOutputsCreate.SEGMENTED_POINT_CLOUD,
+        EvalS3DOutputsCreate.SEGMENTED_MODEL_3D,
       ],
     };
     expect(() => EvalS3DSpecificationsCreateSchema.parse(input)).to.not.throw();
@@ -127,7 +127,7 @@ describe("EvalS3DSpecificationsSchema", () => {
       },
       outputs: {
         report: "bkt:my/report.json",
-        segmentedPointCloud: "cloud-id",
+        segmentedModel3D: "cloud-id",
         segmentation3D: "scene-id",
       },
     };

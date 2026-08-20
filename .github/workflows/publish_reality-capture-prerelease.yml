@@ -1,0 +1,24 @@
+name: (RCPreRelease) Publish reality-capture Pre-Release
+
+on: workflow_dispatch
+
+# Creates a pre-release in GitHub repo. Does not publish to npm.
+# Does not create pre release for reality-data-client.
+jobs:
+  build_and_test_sdk:
+    strategy:
+      matrix:
+        node-version: [22.x, 24.15.0]
+        os: [windows-latest, ubuntu-latest, macos-latest]
+      fail-fast: false
+
+    uses: ./.github/workflows/reality-capture-build-and-test.yml
+    with:
+      node-version: ${{ matrix.node-version }}
+      os: ${{ matrix.os }}
+
+  create_pre_release:
+    needs: build_and_test_sdk
+    uses: ./.github/workflows/reality-capture-pack-and-publish.yml
+    with:
+      prerelease: true

@@ -38,14 +38,12 @@ import {
   BucketDataHandler,
   AdjustmentConstraints,
   LODScope,
-  ReconstructionSpecifications,
+  RealityDataCreate,
+  Type,
+  RealityData
 } from "@itwin/reality-capture";
-import {
-  RealityDataClientOptions,
-  RealityDataAccessClient,
-  ITwinRealityData,
-} from "@itwin/reality-data-client";
 import path from "path";
+import * as fs from "fs";
 
 export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -83,7 +81,7 @@ async function monitorJob(
   }
 }
 
-async function runFillImageProperties(
+async function runFillImageProperties(realityCaptureService: RealityCaptureService, imagesRealityData: ITwinRealityData, fipJobName: string, iTwinId: string): Promise<string> {
   realityCaptureService: RealityCaptureService,
   imagesRealityData: ITwinRealityData,
   fipJobName: string,
@@ -335,29 +333,17 @@ async function runModelingExample() {
   const bucketDataHandler = new BucketDataHandler(authorizationClient);
   console.log("Bucket Data handler initialized");
 
-  const realityDataClientOptions: RealityDataClientOptions = {
-    authorizationClient: authorizationClient,
-    baseUrl: "https://api.bentley.com/reality-management/reality-data",
-  };
-  const realityDataClient = new RealityDataAccessClient(
-    realityDataClientOptions,
-  );
-  console.log("Reality Data Client initialized");
-
   try {
+    if (!fs.existsSync(imagesPath)) {
+      throw new Error(imagesPath + " does not exist");
+    }
     console.log("Upload images in ", iTwinId);
-    const realityData = new ITwinRealityData(
-      realityDataClient,
-      undefined,
-      iTwinId,
-    );
-    realityData.displayName = imagesRealityDataName;
-    realityData.type = "CCImageCollection";
-    const createdRealityData = await realityDataClient.createRealityData(
-      "",
-      iTwinId,
-      realityData,
-    );
+    const realityDataCreate: RealityDataCreate = { iTwinId: iTwinId, displayName: imagesRealityDataName, type: Type.CC_IMAGE_COLLECTION };
+    const response = await realityCaptureService.createRealityData(realityDataCreate);
+    if(response.isError()) {
+      throw new Error("Failed to create reality data : " + response.error!.error.message);
+    }
+    const createdRealityData = response.value!;
     const uploadResponse = await realityDataHandler.uploadData(
       createdRealityData.id,
       imagesPath,

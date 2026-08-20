@@ -31,7 +31,7 @@ class TestJob:
         assert j.get_appropriate_service() == Service.MODELING
         eg_specs = {"inputs": {"model3D": "pointClouds"},
                     "outputs": [Segmentation3DOutputsCreate.SEGMENTATION3D,
-                                Segmentation3DOutputsCreate.SEGMENTED_POINT_CLOUD]}
+                                Segmentation3DOutputsCreate.SEGMENTED_MODEL_3D]}
         j = JobCreate(**{"type": JobType.SEGMENTATION_3D, "iTwinId": "itwin", "specifications": eg_specs})
         assert j.get_appropriate_service() == Service.ANALYSIS
         pc_conversion_specs = {"inputs": {"pointCloud": "point_cloud"}}
