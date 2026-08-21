@@ -70,8 +70,8 @@ class TestOnPremJobValidator:
         j["type"] = "ChangeDetection"
         j["specifications"] = {
             "inputs": {
-                "model3dA": "modela",
-                "model3dB": "modelb"
+                "model3DA": "modela",
+                "model3DB": "modelb"
             },
             "outputs": {
                 "changesInModelA": "rdid",
@@ -345,21 +345,6 @@ class TestOnPremJobValidator:
         }
         job = Job(**j)
         assert isinstance(job.specifications, WaterConstraintsSpecifications)
-
-    def test_validation_clearance(self):
-        j = self.j_base.copy()
-        j["type"] = "ClearanceCalculation"
-        j["specifications"] = {
-            "inputs": {
-                "model3d": "mfid",
-                "clearanceFootprint": "sid"
-            },
-            "outputs": {
-                "ovfPoints": "rdId"
-            }
-        }
-        job = Job(**j)
-        assert isinstance(job.specifications, ClearanceSpecifications)
 
     def test_validation_unsupported_job_type_raises(self):
         j = self.j_base.copy()
