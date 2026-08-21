@@ -75,7 +75,7 @@ class JobCreate(BaseModel):
                           ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
                           Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                           TilingSpecificationsCreate, TrainingS3DSpecificationsCreate, 
-						  TouchUpExportSpecificationsCreate, TouchUpImportSpecificationsCreate
+						  TouchUpExportSpecificationsCreate, TouchUpImportSpecificationsCreate,
 						  WaterConstraintsSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
@@ -106,7 +106,6 @@ class Job(BaseModel):
     state: JobState = Field(description="State of the job.")
     execution_info: Execution = Field(description="Known execution information for the job.", alias="executionInfo")
     user_id: str = Field(description="Identifier of the user that created the job.", alias="userId")
-    # TODO : add PointCloudConversionSpecifications
     specifications: Union[CalibrationSpecifications, ChangeDetectionSpecifications,
                           ConstraintsSpecifications,
                           EvalO2DSpecifications, EvalO3DSpecifications,
@@ -116,9 +115,9 @@ class Job(BaseModel):
                           Objects2DSpecifications, ProductionSpecifications,
                           ReconstructionSpecifications, Segmentation2DSpecifications,
                           Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
-                          TilingSpecifications, TrainingS3DSpecifications, 
-						  TouchUpExportSpecifications, TouchUpImportSpecifications
-						  WaterConstraintsSpecifications] = (
+                          TilingSpecifications, TouchUpExportSpecifications, 
+                          TouchUpImportSpecifications, TrainingS3DSpecifications,
+                          WaterConstraintsSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @field_validator("specifications", mode="plain")
@@ -164,7 +163,7 @@ class Job(BaseModel):
             specifications = SegmentationOrthophotoSpecifications(**raw_dict)
         elif job_type == JobType.TILING:
             specifications = TilingSpecifications(**raw_dict)
-		elif job_type == JobType.TRAINING_S3D:
+        elif job_type == JobType.TRAINING_S3D:
             specifications = TrainingS3DSpecifications(**raw_dict)
         elif job_type == JobType.TOUCH_UP_EXPORT:
             specifications = TouchUpExportSpecifications(**raw_dict)

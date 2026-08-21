@@ -25,9 +25,8 @@ class JobType(Enum):
     TILING = "Tiling"
     TOUCH_UP_IMPORT = "TouchUpImport"
     TOUCH_UP_EXPORT = "TouchUpExport"
+    TRAINING_S3D = "TrainingS3D"
     WATER_CONSTRAINTS = "WaterConstraints"
-    CLEARANCE_CALCULATION = "ClearanceCalculation"
-    # POINT_CLOUD_CONVERSION = "PointCloudConversion"
 
 
 class JobState(Enum):

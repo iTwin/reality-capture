@@ -6,7 +6,6 @@ from typing import Union, Any, Optional
 from reality_capture.common.job import BaseProgress, BaseExecution, JobState, JobType
 from reality_capture.specifications.calibration import CalibrationSpecifications
 from reality_capture.specifications.change_detection import ChangeDetectionSpecifications
-from reality_capture.specifications.clearance import ClearanceSpecifications
 from reality_capture.specifications.constraints import ConstraintsSpecifications
 from reality_capture.specifications.fill_image_properties import FillImagePropertiesSpecifications
 from reality_capture.specifications.import_point_cloud import ImportPCSpecifications
@@ -25,6 +24,7 @@ from reality_capture.specifications.eval_o3d import EvalO3DSpecifications
 from reality_capture.specifications.eval_s2d import EvalS2DSpecifications
 from reality_capture.specifications.eval_s3d import EvalS3DSpecifications
 from reality_capture.specifications.eval_sortho import EvalSOrthoSpecifications
+from reality_capture.specifications.training import TrainingS3DSpecifications
 
 
 class ActiveJob(BaseModel):
@@ -100,8 +100,8 @@ class Job(BaseModel):
                           ReconstructionSpecifications, Segmentation2DSpecifications,
                           Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                           TilingSpecifications, TouchUpExportSpecifications,
-                          TouchUpImportSpecifications, WaterConstraintsSpecifications,
-                          ClearanceSpecifications] = (
+                          TouchUpImportSpecifications, TrainingS3DSpecifications,
+                          WaterConstraintsSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @field_validator("specifications", mode="plain")
@@ -151,10 +151,10 @@ class Job(BaseModel):
             specifications = TouchUpExportSpecifications(**raw_dict)
         elif job_type == JobType.TOUCH_UP_IMPORT:
             specifications = TouchUpImportSpecifications(**raw_dict)
+        elif job_type == JobType.TRAINING_S3D:
+            specifications = TrainingS3DSpecifications(**raw_dict)
         elif job_type == JobType.WATER_CONSTRAINTS:
             specifications = WaterConstraintsSpecifications(**raw_dict)
-        elif job_type == JobType.CLEARANCE_CALCULATION:
-            specifications = ClearanceSpecifications(**raw_dict)
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 

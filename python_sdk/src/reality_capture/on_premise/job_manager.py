@@ -40,7 +40,7 @@ from reality_capture.specifications.eval_o3d import EvalO3DSpecifications
 from reality_capture.specifications.eval_s2d import EvalS2DSpecifications
 from reality_capture.specifications.eval_s3d import EvalS3DSpecifications
 from reality_capture.specifications.eval_sortho import EvalSOrthoSpecifications
-from reality_capture.specifications.clearance import ClearanceSpecifications
+from reality_capture.specifications.training import TrainingS3DSpecifications
 
 from reality_capture.common.job import JobState, JobType
 from reality_capture.on_premise.job import (Job, JobPriority, ExecutionOnPrem, Progress, Milestone, JobFilters,
@@ -138,7 +138,7 @@ class JobManager(GenericManager):
         TouchUpExportSpecifications: JobType.TOUCH_UP_EXPORT,
         TouchUpImportSpecifications: JobType.TOUCH_UP_IMPORT,
         WaterConstraintsSpecifications: JobType.WATER_CONSTRAINTS,
-        ClearanceSpecifications: JobType.CLEARANCE_CALCULATION
+        TrainingS3DSpecifications: JobType.TRAINING_S3D,
     }
 
     def _row_to_job_details(self, row) -> Result[Job]:
@@ -407,8 +407,8 @@ class JobManager(GenericManager):
                                                ReconstructionSpecifications, Segmentation2DSpecifications,
                                                Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                                                TilingSpecifications, TouchUpExportSpecifications,
-                                               TouchUpImportSpecifications, WaterConstraintsSpecifications,
-                                               ClearanceSpecifications],
+                                               TouchUpImportSpecifications, TrainingS3DSpecifications,
+                                               WaterConstraintsSpecifications],
                    shared_working_directory: str,
                    priority: JobPriority = JobPriority.NORMAL, workspace: Optional[str] = None) -> Result[Job]:
         """
