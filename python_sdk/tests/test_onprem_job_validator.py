@@ -19,7 +19,6 @@ from reality_capture.specifications.segmentation_orthophoto import SegmentationO
 from reality_capture.specifications.tiling import TilingSpecifications
 from reality_capture.specifications.touchup import TouchUpImportSpecifications, TouchUpExportSpecifications
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecifications
-from reality_capture.specifications.clearance import ClearanceSpecifications
 import pytest
 from unittest.mock import patch, MagicMock
 
