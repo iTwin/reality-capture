@@ -15,6 +15,7 @@ import { TilingSpecificationsCreateSchema, TilingSpecificationsSchema } from "..
 import { TouchUpExportSpecificationsCreateSchema, TouchUpImportSpecificationsCreateSchema, TouchUpExportSpecificationsSchema, TouchUpImportSpecificationsSchema } from "../specifications/touchup";
 import { WaterConstraintsSpecificationsCreateSchema, WaterConstraintsSpecificationsSchema } from "../specifications/water_constraints";
 import { TrainingS3DSpecificationsCreateSchema, TrainingS3DSpecificationsSchema } from "../specifications/training";
+import { TrainingCD3DSpecificationsCreateSchema, TrainingCD3DSpecificationsSchema } from "../specifications/training";
 //import { PointCloudConversionSpecificationsCreateSchema, PointCloudConversionSpecificationsSchema } from '../specifications/point_cloud_conversion';
 import { GaussianSplatsSpecificationsCreateSchema, GaussianSplatsSpecificationsSchema } from "../specifications/gaussian_splats";
 import { EvalO2DSpecificationsCreateSchema, EvalO2DSpecificationsSchema } from "../specifications/eval_o2d";
@@ -44,6 +45,7 @@ export enum JobType {
   SEGMENTATION_ORTHOPHOTO = "SegmentationOrthophoto",
   TILING = "Tiling",
   TRAINING_S3D = "TrainingS3D",
+  TRAINING_CD3D = "TrainingCD3D",
   TOUCH_UP_IMPORT = "TouchUpImport",
   TOUCH_UP_EXPORT = "TouchUpExport",
   WATER_CONSTRAINTS = "WaterConstraints",
@@ -69,7 +71,7 @@ export function getAppropriateService(jt: JobType): Service {
     JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D,
     JobType.SEGMENTATION_ORTHOPHOTO, JobType.CHANGE_DETECTION,
     JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D, JobType.EVAL_S3D,
-    JobType.EVAL_SORTHO, JobType.TRAINING_S3D,
+    JobType.EVAL_SORTHO, JobType.TRAINING_S3D, JobType.TRAINING_CD3D,
   ].includes(jt)) {
     return Service.ANALYSIS;
   }
@@ -114,6 +116,7 @@ export const JobCreateSchema = z.object({
     WaterConstraintsSpecificationsCreateSchema,
     //PointCloudConversionSpecificationsCreateSchema,
     TrainingS3DSpecificationsCreateSchema,
+    TrainingCD3DSpecificationsCreateSchema,
   ]).describe("Specifications aligned with the job type."),
   iTwinId: z.string().describe("iTwin ID, used by the service for finding input reality data and uploading output data."),
 });
@@ -231,6 +234,11 @@ export const JobSchema = z.discriminatedUnion("type", [
     ...CommonFields,
     type: z.literal("TrainingS3D"),
     specifications: TrainingS3DSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("TrainingCD3D"),
+    specifications: TrainingCD3DSpecificationsSchema,
   }),
   z.object({
     ...CommonFields,

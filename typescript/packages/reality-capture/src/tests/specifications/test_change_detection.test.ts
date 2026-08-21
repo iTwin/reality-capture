@@ -19,6 +19,15 @@ describe("change_detection specifications", () => {
       expect(() => ChangeDetectionInputsSchema.parse(valid)).not.to.throw();
     });
 
+    it("should validate valid inputs with pointCloudChangeDetector", () => {
+      const valid = {
+        model3DA: "contextSceneId1",
+        model3DB: "contextSceneId2",
+        pointCloudChangeDetector: "detectorId",
+      };
+      expect(() => ChangeDetectionInputsSchema.parse(valid)).not.to.throw();
+    });
+
     it("should fail when missing reference", () => {
       const invalid = { model3DB: "contextSceneId2" };
       expect(() => ChangeDetectionInputsSchema.parse(invalid)).to.throw(z.ZodError);
