@@ -10,8 +10,7 @@ class EvalO2DInputs(BaseModel):
 
 
 class EvalO2DOutputs(BaseModel):
-    report: Optional[str] = Field(None, description="Path in Bucket of json report with binary classification.",
-                                  pattern=r"^bkt:.+")
+    report: Optional[str] = Field(None, description="Path in Bucket of json report with binary classification.")
     objects2d: Optional[str] = Field(None, alias="objects2D",
                                      description="Reality data id of ContextScene, "
                                                  "annotated with classified embedded 2D objects")

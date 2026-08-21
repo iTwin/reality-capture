@@ -10,8 +10,7 @@ class EvalO3DInputs(BaseModel):
 
 
 class EvalO3DOutputs(BaseModel):
-    report: Optional[str] = Field(None, description="Path in Bucket of json report with binary classification",
-                                  pattern=r"^bkt:.+")
+    report: Optional[str] = Field(None, description="Path in Bucket of json report with binary classification")
     objects3d: Optional[str] = Field(None, alias="objects3D",
                                      description="Reality data id of ContextScene, "
                                                  "annotated with classified embedded 3D objects")

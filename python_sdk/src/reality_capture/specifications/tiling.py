@@ -8,11 +8,9 @@ class TilingInputs(BaseModel):
     scene: str = Field(description="Reality data id of ContextScene to process")
     region_of_interest: Optional[str] = Field(description="Path in the bucket to region of interest file",
                                               alias="regionOfInterest",
-                                              default=None,
-                                              pattern=r"^bkt:.+")
+                                              default=None)
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
-    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData",
-                                    pattern=r"^bkt:.+")
+    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData")
 
 
 class ModelingReferenceType(Enum):
