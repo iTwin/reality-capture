@@ -2,7 +2,8 @@ node_modules/
 lib/
 *.nyc_output/
 coverage/
-.env
+*.env
 .idea/
 *.configStore/
 dist/
+*.tsbuildinfo
