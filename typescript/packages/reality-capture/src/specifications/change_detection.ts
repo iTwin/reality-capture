@@ -20,6 +20,12 @@ export const ChangeDetectionInputsSchema = z.object({
   model3DB: z
     .string()
     .describe("Reality data id of ContextScene, point cloud, GS or mesh"),
+  pointCloudChangeDetector: z
+    .string()
+    .optional()
+    .describe(
+      "Reality data id of change detection detector OR identifier from AI Detectors library",
+    ),
   extent: z
     .string()
     .describe("Path in the bucket of the clipping polygon to apply")

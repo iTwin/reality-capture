@@ -69,3 +69,91 @@ export const TrainingS3DSpecificationsSchema = z.object({
   options: TrainingS3DOptionsSchema.describe("Options").optional(),
 });
 export type TrainingS3DSpecifications = z.infer<typeof TrainingS3DSpecificationsSchema>;
+
+export const Segmentation3DPairSchema = z.object({
+  segmentation3DA: z
+    .string()
+    .describe(
+      "Reality data id of ContextScene pointing to a segmented 3D model (time A)",
+    ),
+  segmentation3DB: z
+    .string()
+    .describe(
+      "Reality data id of ContextScene pointing to a segmented 3D model (time B)",
+    ),
+});
+export type Segmentation3DPair = z.infer<typeof Segmentation3DPairSchema>;
+
+export const TrainingCD3DInputsSchema = z.object({
+  segmentation3DPairs: z
+    .array(Segmentation3DPairSchema)
+    .describe(
+      "List of paired segmented 3D scenes for change detection training.",
+    ),
+  preset: z.string().optional().describe("Path to a preset"),
+  detectorName: z.string().describe("Name of the detector to train"),
+});
+export type TrainingCD3DInputs = z.infer<typeof TrainingCD3DInputsSchema>;
+
+export const TrainingCD3DOutputsSchema = z.object({
+  detector: z.string().describe("Full detector information (name/version)"),
+});
+export type TrainingCD3DOutputs = z.infer<typeof TrainingCD3DOutputsSchema>;
+
+export enum TrainingCD3DOutputsCreate {
+  DETECTOR = "detector",
+}
+
+export const TrainingCD3DOptionsSchema = z.object({
+  epochs: z
+    .number()
+    .int()
+    .gte(1, { message: "Must be greater than or equal to 1" })
+    .lte(100, { message: "Must be less than or equal to 100" })
+    .describe("Number of times to iterate over the entire dataset")
+    .optional(),
+  spacing: z
+    .number()
+    .gt(0, { message: "Must be greater than 0" })
+    .describe(
+      "Spacing of the point cloud seen by the detector (in meters).",
+    )
+    .optional(),
+  features: z
+    .array(z.nativeEnum(PointCloudFeature))
+    .describe("Features to use for the training.")
+    .optional(),
+  ignoreClass: z
+    .number()
+    .int()
+    .describe("Class index to ignore during training.")
+    .optional(),
+  versionNumber: z
+    .string()
+    .regex(/^\d+(?:\.\d+)?$/, "Must be a version like '1' or '1.0'")
+    .describe(
+      "String representing the version number for the newly trained detector.",
+    )
+    .optional(),
+});
+export type TrainingCD3DOptions = z.infer<typeof TrainingCD3DOptionsSchema>;
+
+export const TrainingCD3DSpecificationsCreateSchema = z.object({
+  inputs: TrainingCD3DInputsSchema.describe("Inputs"),
+  outputs: z
+    .array(z.nativeEnum(TrainingCD3DOutputsCreate))
+    .describe("Outputs"),
+  options: TrainingCD3DOptionsSchema.describe("Options").optional(),
+});
+export type TrainingCD3DSpecificationsCreate = z.infer<
+  typeof TrainingCD3DSpecificationsCreateSchema
+>;
+
+export const TrainingCD3DSpecificationsSchema = z.object({
+  inputs: TrainingCD3DInputsSchema.describe("Inputs"),
+  outputs: TrainingCD3DOutputsSchema.describe("Outputs"),
+  options: TrainingCD3DOptionsSchema.describe("Options").optional(),
+});
+export type TrainingCD3DSpecifications = z.infer<
+  typeof TrainingCD3DSpecificationsSchema
+>;
