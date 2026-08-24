@@ -4,6 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 export * from "./RealityDataClient";
 export * from "./RealityData";
+export * from "./RealityDataClientError";
+export * from "./auth";
 export * from "./Projects";
 
 /** @docs-package-description
