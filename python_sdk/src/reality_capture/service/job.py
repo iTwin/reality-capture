@@ -28,7 +28,8 @@ from reality_capture.specifications.water_constraints import (WaterConstraintsSp
                                                               WaterConstraintsSpecificationsCreate)
 """from reality_capture.specifications.point_cloud_conversion import (PointCloudConversionSpecificationsCreate,
                                                                    PointCloudConversionSpecifications)"""
-from reality_capture.specifications.training import (TrainingS3DSpecificationsCreate, TrainingS3DSpecifications)
+from reality_capture.specifications.training import (TrainingS3DSpecificationsCreate, TrainingS3DSpecifications,
+                                                     TrainingCD3DSpecificationsCreate, TrainingCD3DSpecifications)
 from reality_capture.specifications.gaussian_splats import (GaussianSplatsSpecificationsCreate,
                                                             GaussianSplatsSpecifications)
 from reality_capture.specifications.eval_o2d import (EvalO2DSpecificationsCreate, EvalO2DSpecifications)
@@ -63,6 +64,7 @@ class JobType(Enum):
     TOUCH_UP_EXPORT = "TouchUpExport"
     WATER_CONSTRAINTS = "WaterConstraints"
     TRAINING_S3D = "TrainingS3D"
+    TRAINING_CD3D = "TrainingCD3D"
     # POINT_CLOUD_CONVERSION = "PointCloudConversion"
 
 class Service(Enum):
@@ -78,7 +80,7 @@ def _get_appropriate_service(jt: JobType):
         return Service.MODELING
     if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
             JobType.CHANGE_DETECTION, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
-            JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.TRAINING_S3D]:
+            JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.TRAINING_S3D, JobType.TRAINING_CD3D]:
         return Service.ANALYSIS
     # return Service.CONVERSION
     raise NotImplementedError("Other services not yet implemented")
@@ -109,7 +111,7 @@ class JobCreate(BaseModel):
                         Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                         TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
                         TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
-                        TrainingS3DSpecificationsCreate] = (
+                        TrainingS3DSpecificationsCreate, TrainingCD3DSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -154,7 +156,7 @@ class Job(BaseModel):
                         Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                         TilingSpecifications, TouchUpExportSpecifications,
                         TouchUpImportSpecifications, WaterConstraintsSpecifications,
-                        TrainingS3DSpecifications] = (
+                        TrainingS3DSpecifications, TrainingCD3DSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @field_validator("specifications", mode="plain")
@@ -208,6 +210,8 @@ class Job(BaseModel):
             specifications = WaterConstraintsSpecifications(**raw_dict)
         elif job_type == JobType.TRAINING_S3D:
             specifications = TrainingS3DSpecifications(**raw_dict)
+        elif job_type == JobType.TRAINING_CD3D:
+            specifications = TrainingCD3DSpecifications(**raw_dict)
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 
