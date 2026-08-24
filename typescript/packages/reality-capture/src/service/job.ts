@@ -14,8 +14,7 @@ import { SegmentationOrthophotoSpecificationsCreateSchema, SegmentationOrthophot
 import { TilingSpecificationsCreateSchema, TilingSpecificationsSchema } from "../specifications/tiling";
 import { TouchUpExportSpecificationsCreateSchema, TouchUpImportSpecificationsCreateSchema, TouchUpExportSpecificationsSchema, TouchUpImportSpecificationsSchema } from "../specifications/touchup";
 import { WaterConstraintsSpecificationsCreateSchema, WaterConstraintsSpecificationsSchema } from "../specifications/water_constraints";
-import { TrainingS3DSpecificationsCreateSchema, TrainingS3DSpecificationsSchema } from "../specifications/training";
-import { TrainingCD3DSpecificationsCreateSchema, TrainingCD3DSpecificationsSchema } from "../specifications/training";
+import { TrainingS3DSpecificationsCreateSchema, TrainingS3DSpecificationsSchema, TrainingCD3DSpecificationsCreateSchema, TrainingCD3DSpecificationsSchema } from "../specifications/training";
 //import { PointCloudConversionSpecificationsCreateSchema, PointCloudConversionSpecificationsSchema } from '../specifications/point_cloud_conversion';
 import { GaussianSplatsSpecificationsCreateSchema, GaussianSplatsSpecificationsSchema } from "../specifications/gaussian_splats";
 import { EvalO2DSpecificationsCreateSchema, EvalO2DSpecificationsSchema } from "../specifications/eval_o2d";
