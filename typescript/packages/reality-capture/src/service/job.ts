@@ -44,7 +44,7 @@ import {
   SegmentationOrthophotoSpecificationsCreateSchema,
   SegmentationOrthophotoSpecificationsSchema,
 } from "../specifications/segmentation_orthophoto";
-import { TrainingO2DSpecificationsCreateSchema, TrainingS3DSpecificationsCreateSchema, TrainingO2DSpecificationsSchema, TrainingS3DSpecificationsSchema } from "../specifications/training";
+import {
   TilingSpecificationsCreateSchema,
   TilingSpecificationsSchema,
 } from "../specifications/tiling";
@@ -59,9 +59,7 @@ import {
   WaterConstraintsSpecificationsSchema,
 } from "../specifications/water_constraints";
 import {
-  TrainingO2DSpecificationsCreateSchema,
   TrainingS3DSpecificationsCreateSchema,
-  TrainingO2DSpecificationsSchema,
   TrainingS3DSpecificationsSchema,
 } from "../specifications/training";
 
@@ -89,10 +87,6 @@ import {
   EvalSOrthoSpecificationsCreateSchema,
   EvalSOrthoSpecificationsSchema,
 } from "../specifications/eval_sortho";
-import {
-  ClearanceSpecificationsCreateSchema,
-  ClearanceSpecificationsSchema,
-} from "../specifications/clearance";
 import {
   PointCloudConversionSpecificationsCreateSchema,
   PointCloudConversionSpecificationsSchema,
@@ -173,18 +167,17 @@ export function getAppropriateService(jt: JobType): Service {
   }
   if (
     [
-      JobType.SEGMENTATION_ORTHOPHOTO, JobType.CHANGE_DETECTION, JobType.TRAINING_O2D,
+      JobType.OBJECTS_2D,
       JobType.SEGMENTATION_2D,
-      JobType.EVAL_SORTHO, JobType.TRAINING_O2D, JobType.TRAINING_S3D,
+      JobType.SEGMENTATION_3D,
       JobType.SEGMENTATION_ORTHOPHOTO,
       JobType.CHANGE_DETECTION,
+      JobType.EVAL_SORTHO,
       JobType.EVAL_O2D,
       JobType.EVAL_O3D,
       JobType.EVAL_S2D,
       JobType.EVAL_S3D,
-      JobType.EVAL_SORTHO,
-      JobType.TRAINING_O2D,
-      JobType.TRAINING_S3D
+      JobType.TRAINING_S3D,
     ].includes(jt)
   ) {
     return Service.ANALYSIS;
@@ -240,7 +233,6 @@ export const JobCreateSchema = z.object({
       TouchUpExportSpecificationsCreateSchema,
       TouchUpImportSpecificationsCreateSchema,
       WaterConstraintsSpecificationsCreateSchema,
-      ClearanceSpecificationsCreateSchema,
       TrainingS3DSpecificationsCreateSchema,
       PointCloudConversionSpecificationsCreateSchema,
       MeshSamplingSpecificationsCreateSchema,

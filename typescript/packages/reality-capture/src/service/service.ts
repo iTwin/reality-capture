@@ -141,7 +141,7 @@ export class RealityCaptureService {
   private async _request(
     method: "GET" | "POST" | "PATCH" | "DELETE",
     url: string,
-  async getJobs(service: Service, filters: string, top: number = 100, continuationToken: string = ""): Promise<Response<Jobs>> {
+    options?: { params?: Record<string, any>; headers?: Record<string, string>; body?: any },
   ): Promise<{ status: number; data: any }> {
     const finalUrl = this._buildUrl(url, options?.params);
     const init: RequestInit = {
