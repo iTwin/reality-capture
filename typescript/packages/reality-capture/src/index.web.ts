@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 
 export * from "./service/bucket";
 export * from "./service/detectors";
@@ -25,7 +25,6 @@ export * from "./specifications/gaussian_splats";
 export * from "./specifications/geometry";
 export * from "./specifications/import_point_cloud";
 export * from "./specifications/objects2d";
-//export * from "./specifications/point_cloud_conversion";
 export * from "./specifications/production";
 export * from "./specifications/reconstruction";
 export * from "./specifications/segmentation2d";
@@ -35,7 +34,6 @@ export * from "./specifications/tiling";
 export * from "./specifications/training";
 export * from "./specifications/touchup";
 export * from "./specifications/water_constraints";
-//export * from "./specifications/cs_tiler";
 export * from "./specifications/mesh_sampling";
 export * from "./specifications/point_cloud_conversion";
 export * from "./specifications/point_cloud_optimization";

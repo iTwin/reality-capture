@@ -27,10 +27,12 @@ export const TileMapOptimizationOptionsSchema = z.object({
   outputCrs: z.string().describe("CRS for the output data").optional(),
   topLevel: z
     .number()
+    .int()
     .describe("Top level of the tile map to generate.")
     .optional(),
   bottomLevel: z
     .number()
+    .int()
     .describe("Bottom level of the tile map to generate.")
     .optional(),
   imageFormat: z
@@ -39,6 +41,7 @@ export const TileMapOptimizationOptionsSchema = z.object({
     .optional(),
   jpgQuality: z
     .number()
+    .int()
     .min(10)
     .max(99)
     .describe("Quality of JPG tiles to generate")

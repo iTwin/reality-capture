@@ -116,11 +116,6 @@ import {
 
 import { URLSchema } from "./reality_data";
 
-// import {
-//   ContextSceneTilerSpecificationsCreateSchema,
-//   ContextSceneTilerSpecificationsSchema,
-// } from "../specifications/cs_tiler";
-
 export enum JobType {
   CALIBRATION = "Calibration",
   CHANGE_DETECTION = "ChangeDetection",
