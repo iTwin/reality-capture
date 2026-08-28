@@ -26,7 +26,7 @@ class FillImagePropertiesOutputs(BaseModel):
     scene: str = Field(description="Output reality data id of ContextScene with image properties filled.")
 
 
-class AltitudeReference(Enum):
+class AltitudeReference(str, Enum):
     """
     Values for Altitude Reference when filling image properties.
     """

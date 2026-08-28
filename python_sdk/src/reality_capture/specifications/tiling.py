@@ -13,49 +13,49 @@ class TilingInputs(BaseModel):
     crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData")
 
 
-class ModelingReferenceType(Enum):
+class ModelingReferenceType(str, Enum):
     ORTHOPHOTO = "Orthophoto"
     COMPLETE = "Complete"
 
 
-class TilingMode(Enum):
+class TilingMode(str, Enum):
     NO_TILING = "NoTiling"
     REGULAR_PLANAR_GRID = "RegularPlanarGrid"
     REGULAR_VOLUMETRIC_GRID = "RegularVolumetricGrid"
     ADAPTIVE = "Adaptive"
 
 
-class GeometricPrecision(Enum):
+class GeometricPrecision(str, Enum):
     MEDIUM = "Medium"
     HIGH = "High"
     EXTRA = "Extra"
     ULTRA = "Ultra"
 
 
-class TilingPairSelection(Enum):
+class TilingPairSelection(str, Enum):
     GENERIC = "Generic"
     STRUCTURED_AERIAL = "StructuredAerial"
     REGION_OF_INTEREST = "RegionOfInterest"
 
 
-class PhotoUsedForGeometry(Enum):
+class PhotoUsedForGeometry(str, Enum):
     EXCLUDE_THERMAL = "ExcludeThermal"
     INCLUDE_THERMAL = "IncludeThermal"
     NO = "None"
 
 
-class HoleFilling(Enum):
+class HoleFilling(str, Enum):
     SMALL_HOLES = "SmallHoles"
     ALL_HOLES = "AllHoles"
 
 
-class Simplification(Enum):
+class Simplification(str, Enum):
     STANDARD = "Standard"
     PLANAR_RELATIVE = "PlanarRelative"
     PLANAR_ABSOLUTE = "PlanarAbsolute"
 
 
-class ColorCorrection(Enum):
+class ColorCorrection(str, Enum):
     NO = "None"
     STANDARD = "Standard"
     STANDARD_WITH_THERMAL = "StandardWithThermal"
@@ -63,19 +63,19 @@ class ColorCorrection(Enum):
     BLOCK_WISE_WITH_THERMAL = "BlockWiseWithThermal"
 
 
-class UntexturedRepresentation(Enum):
+class UntexturedRepresentation(str, Enum):
     INPAINTING_COMPLETION = "InpaintingCompletion"
     UNIFORM_COLOR = "UniformColor"
 
 
-class PointCloudColorSource(Enum):
+class PointCloudColorSource(str, Enum):
     NO = "None"
     COLOR = "Color"
     INTENSITY = "Intensity"
     SCALED_INTENSITY = "ScaledIntensity"
 
 
-class TextureSource(Enum):
+class TextureSource(str, Enum):
     PHOTOS_FIRST = "PhotosFirst"
     POINT_CLOUDS_FIRST = "PointCloudsFirst"
     SMART = "Smart"

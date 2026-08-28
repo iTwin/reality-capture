@@ -59,7 +59,7 @@ class Segmentation2DOptions(BaseModel):
                                                description="Estimation 3D line width at each vertex")
     remove_small_lines: Optional[float] = Field(None, alias="removeSmallLines",
                                                 description="Remove 3D lines with total length "
-                                                                "smaller than this value")
+                                                            "smaller than this value")
     min_photos: Optional[int] = Field(None, alias="minPhotos",
                                       description="Minimum number of 2D detection to generate a 3D detection")
 

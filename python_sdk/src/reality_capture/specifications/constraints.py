@@ -3,7 +3,7 @@ from typing import Optional
 from enum import Enum
 
 
-class ConstraintType(Enum):
+class ConstraintType(str, Enum):
     MESH = "Mesh"
     POLYGON = "Polygon"
 

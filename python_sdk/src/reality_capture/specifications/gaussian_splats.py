@@ -15,10 +15,10 @@ class GaussianSplatsInputs(BaseModel):
     preset: Optional[str] = Field(default=None, description="Path to preset")
 
 
-
 class GaussianSplatsOutputs(BaseModel):
     splats: Optional[str] = Field(default=None, description="Reality data ID of Gaussian Splats.")
-    splats_reference: Optional[str] = Field(default=None, description="Reality data ID of the Gaussian Splats Reference.",
+    splats_reference: Optional[str] = Field(default=None,
+                                            description="Reality data ID of the Gaussian Splats Reference.",
                                             alias="splatsReference")
 
 
@@ -27,14 +27,14 @@ class GaussianSplatsOutputsCreate(Enum):
     SPLATS_REFERENCE = "splatsReference"
 
 
-class GSFormat(Enum):
+class GSFormat(str, Enum):
     PLY = "PLY"
     SPZ = "SPZ"
     THREED_TILES = "3DTiles"
     THREED_TILES_LOD = "3DTilesLOD"
 
 
-class GSQuality(Enum):
+class GSQuality(str, Enum):
     MEDIUM = "Medium"
     STANDARD = "Standard"
     HIGH = "High"
@@ -46,9 +46,9 @@ class GaussianSplatsOptions(BaseModel):
     export_format: Optional[GSFormat] = Field(default=None, description="Format of the exported Gaussian Splats",
                                               alias="exportFormat")
     reference_quality: Optional[GSQuality] = Field(default=None,
-                                                              description="Quality to use to "
-                                                                          "generate the Splats Reference",
-                                                              alias="referenceQuality")
+                                                   description="Quality to use to "
+                                                               "generate the Splats Reference",
+                                                   alias="referenceQuality")
     reference_tile_size: Optional[float] = Field(default=None, description="Tile size for the Splats Reference",
                                                  alias="referenceTileSize")
 

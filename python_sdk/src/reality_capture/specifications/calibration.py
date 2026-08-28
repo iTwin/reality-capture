@@ -22,20 +22,20 @@ class CalibrationOutputsCreate(Enum):
     TEXTURED_TIE_POINTS = "texturedTiePoints"
 
 
-class RigSynchro(Enum):
+class RigSynchro(str, Enum):
     NO = "None"
     STRICT = "Strict"
     LOOSE = "Loose"
 
 
-class RotationPolicy(Enum):
+class RotationPolicy(str, Enum):
     COMPUTE = "Compute"
     ADJUST = "Adjust"
     KEEP = "Keep"
     EXTEND = "Extend"
 
 
-class CenterPolicy(Enum):
+class CenterPolicy(str, Enum):
     COMPUTE = "Compute"
     ADJUST = "Adjust"
     ADJUST_WITHIN_TOLERANCE = "AdjustWithinTolerance"
@@ -43,55 +43,55 @@ class CenterPolicy(Enum):
     EXTEND = "Extend"
 
 
-class FocalPolicy(Enum):
+class FocalPolicy(str, Enum):
     ADJUST = "Adjust"
     KEEP = "Keep"
 
 
-class PrincipalPolicy(Enum):
+class PrincipalPolicy(str, Enum):
     ADJUST = "Adjust"
     KEEP = "Keep"
 
 
-class RadialPolicy(Enum):
+class RadialPolicy(str, Enum):
     ADJUST = "Adjust"
     KEEP = "Keep"
 
 
-class TangentialPolicy(Enum):
+class TangentialPolicy(str, Enum):
     ADJUST = "Adjust"
     KEEP = "Keep"
 
 
-class FisheyeFocalPolicy(Enum):
+class FisheyeFocalPolicy(str, Enum):
     ADJUST_SYMMETRIC = "AdjustSymmetric"
     ADJUST_ASYMMETRIC = "AdjustAsymmetric"
     KEEP = "Keep"
 
 
-class FisheyeDistortionPolicy(Enum):
+class FisheyeDistortionPolicy(str, Enum):
     ADJUST_01XX0 = "Adjust_01xx0"
     ADJUST_X1XX0 = "Adjust_x1xx0"
     ADJUST_X1XXX = "Adjust_x1xxx"
     KEEP = "Keep"
 
 
-class AspectRatioPolicy(Enum):
+class AspectRatioPolicy(str, Enum):
     ADJUST = "Adjust"
     KEEP = "Keep"
 
 
-class SkewPolicy(Enum):
+class SkewPolicy(str, Enum):
     ADJUST = "Adjust"
     KEEP = "Keep"
 
 
-class TiepointsPolicy(Enum):
+class TiepointsPolicy(str, Enum):
     COMPUTE = "Compute"
     KEEP = "Keep"
 
 
-class PairSelection(Enum):
+class PairSelection(str, Enum):
     DEFAULT = "Default"
     SEQUENCE = "Sequence"
     LOOP = "Loop"
@@ -99,25 +99,25 @@ class PairSelection(Enum):
     SIMILARONLY = "SimilarOnly"
 
 
-class KeypointsDensity(Enum):
+class KeypointsDensity(str, Enum):
     NORMAL = "Normal"
     HIGH = "High"
 
 
-class Tag(Enum):
+class Tag(str, Enum):
     QR = "QR"
     APRIL = "April"
     CHILI = "Chili"
     CHECKERBOARDS = "Checkerboards"
 
 
-class ColorEqualization(Enum):
+class ColorEqualization(str, Enum):
     NO = "None"
     BLOCK_WISE = "BlockWise"
     MACHINE_LEARNING = "MachineLearning"
 
 
-class AdjustmentConstraints(Enum):
+class AdjustmentConstraints(str, Enum):
     NO = "None"
     CONTROL_POINTS = "ControlPoints"
     POSITION_METADATA = "PositionMetadata"
@@ -125,7 +125,7 @@ class AdjustmentConstraints(Enum):
     AUTOMATIC = "Automatic"
 
 
-class RigidRegistrationPosition(Enum):
+class RigidRegistrationPosition(str, Enum):
     NO = "None"
     USER_CONSTRAINTS = "UserConstraints"
     CONTROL_POINTS = "ControlPoints"
@@ -134,7 +134,7 @@ class RigidRegistrationPosition(Enum):
     AUTOMATIC = "Automatic"
 
 
-class RigidRegistrationRotation(Enum):
+class RigidRegistrationRotation(str, Enum):
     NO = "None"
     USER_CONSTRAINTS = "UserConstraints"
     CONTROL_POINTS = "ControlPoints"
@@ -144,7 +144,7 @@ class RigidRegistrationRotation(Enum):
     ROTATION_METADATA = "RotationMetadata"
 
 
-class RigidRegistrationScale(Enum):
+class RigidRegistrationScale(str, Enum):
     NO = "None"
     USER_CONSTRAINTS = "UserConstraints"
     CONTROL_POINTS = "ControlPoints"

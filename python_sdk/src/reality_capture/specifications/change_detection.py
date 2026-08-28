@@ -33,7 +33,6 @@ class ChangeDetectionOutputs(BaseModel):
                                                     description="Reality data id of locations of changes in B as GeoJSON file")
     
 
-
 class ChangeDetectionOutputsCreate(Enum):
     SEGMENTATION3D_A = "segmentation3DA"
     SEGMENTED_MODEL3D_A = "segmentedModel3DA"

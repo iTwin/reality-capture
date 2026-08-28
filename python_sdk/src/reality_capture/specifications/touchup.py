@@ -9,7 +9,7 @@ class TouchUpExportInputs(BaseModel):
                                                    description="List of tiles to export for touch up")
 
 
-class TouchLevel(Enum):
+class TouchLevel(str, Enum):
     GEOMETRY = "Geometry"
     GEOMETRY_AND_TEXTURE = "GeometryAndTexture"
 

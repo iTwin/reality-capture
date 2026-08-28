@@ -15,7 +15,7 @@ class ProductionInputs(BaseModel):
     crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData")
 
 
-class Format(Enum):
+class Format(str, Enum):
     THREED_TILES = "3DTiles"
     OBJ = "OBJ"
     THREEMX = "3MX"
@@ -27,25 +27,25 @@ class Format(Enum):
     ORTHOPHOTO_DSM = "OrthophotoDSM"
 
 
-class ColorSource(Enum):
+class ColorSource(str, Enum):
     NO = "None"
     VISIBLE = "Visible"
     THERMAL = "Thermal"
     RESOLUTION = "Resolution"
 
 
-class ThermalUnit(Enum):
+class ThermalUnit(str, Enum):
     ABSOLUTE = "Absolute"
     CELSIUS = "Celsius"
     FAHRENHEIT = "Fahrenheit"
 
 
-class LODScope(Enum):
+class LODScope(str, Enum):
     TILE_WISE = "TileWise"
     ACROSS_TILES = "AcrossTiles"
 
 
-class LODType(Enum):
+class LODType(str, Enum):
     NONE = "None"
     UNARY = "Unary"
     QUADTREE = "Quadtree"
@@ -54,7 +54,7 @@ class LODType(Enum):
     BING_MAPS = "BingMaps"
 
 
-class CesiumCompression(Enum):
+class CesiumCompression(str, Enum):
     NO = "None"
     DRACO = "Draco"
 
@@ -156,12 +156,12 @@ class OptionsI3S(BaseModel):
     crs: Optional[str] = Field(None, description="Coordinate reference system definition for the export")
 
 
-class SamplingStrategy(Enum):
+class SamplingStrategy(str, Enum):
     RESOLUTION = "Resolution"
     ABSOLUTE = "Absolute"
 
 
-class LasCompression(Enum):
+class LasCompression(str, Enum):
     NONE = "None"
     LAZ = "LAZ"
 
@@ -227,31 +227,31 @@ class OptionsOSGB(BaseModel):
     lod_type: Optional[LODType] = Field(None, alias="lodType", description="Type of level of details")
 
 
-class ProjectionMode(Enum):
+class ProjectionMode(str, Enum):
     HIGHEST_POINT = "HighestPoint"
     LOWEST_POINT = "LowestPoint"
 
 
-class OrthoFormat(Enum):
+class OrthoFormat(str, Enum):
     GEOTIFF = "GeoTIFF"
     JPEG = "JPEG"
     NONE = "None"
 
 
-class DSMFormat(Enum):
+class DSMFormat(str, Enum):
     GEOTIFF = "GeoTIFF"
     ASC = "ASC"
     NONE = "None"
 
 
-class OrthoColorSource(Enum):
+class OrthoColorSource(str, Enum):
     REFERENCE_3D_MODEL_VISIBLE = "Reference3dModelVisible"
     OPTIMIZED_COMPUTATION_VISIBLE = "OptimizedComputationVisible"
     REFERENCE_3D_MODEL_THERMAL = "Reference3dModelThermal"
     OPTIMIZED_COMPUTATION_THERMAL = "OptimizedComputationThermal"
 
 
-class OverviewType(Enum):
+class OverviewType(str, Enum):
     NONE = "None"
     EMBEDDED = "Embedded"
     OVR_FILE = "OvrFile"
