@@ -53,11 +53,6 @@ export enum CesiumCompression {
   DRACO = "Draco",
 }
 
-export enum I3SVersion {
-  V1_6 = "v1_6",
-  V1_8 = "v1_8",
-}
-
 export enum SamplingStrategy {
   RESOLUTION = "Resolution",
   ABSOLUTE = "Absolute",
@@ -269,6 +264,45 @@ export const OptionsOSGBSchema = z.object({
 });
 export type OptionsOSGB = z.infer<typeof OptionsOSGBSchema>;
 
+export const Options3MXSchema = z.object({
+  textureColorSource: z
+    .nativeEnum(ColorSource)
+    .optional()
+    .describe("Source of the texture color"),
+  textureColorSourceResMin: z
+    .number()
+    .min(0)
+    .optional()
+    .describe("Minimum resolution for the texture color source"),
+  textureColorSourceResMax: z
+    .number()
+    .min(0)
+    .optional()
+    .describe("Maximum resolution for the texture color source"),
+  textureColorSourceThermalUnit: z
+    .nativeEnum(ThermalUnit)
+    .optional()
+    .describe("Thermal unit for the texture color source"),
+  textureColorSourceThermalMin: z
+    .number()
+    .optional()
+    .describe("Minimum thermal value for the texture color source"),
+  textureColorSourceThermalMax: z
+    .number()
+    .optional()
+    .describe("Maximum thermal value for the texture color source"),
+  crs: z.string().optional().describe("Coordinate reference system"),
+  crsOrigin: Point3dSchema.optional().describe(
+    "Origin of the coordinate reference system",
+  ),
+  lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
+  generateWebApp: z
+    .boolean()
+    .optional()
+    .describe("Flag to generate a web application"),
+});
+export type Options3MX = z.infer<typeof Options3MXSchema>;
+
 export const OptionsI3SSchema = z.object({
   textureColorSource: z
     .nativeEnum(ColorSource)
@@ -428,15 +462,16 @@ export const ExportCreateSchema = z.object({
   format: z.nativeEnum(Format).describe("Export format"),
   options: z
     .union([
-      Options3DTilesSchema,
-      OptionsOBJSchema,
-      OptionsOSGBSchema,
-      OptionsI3SSchema,
-      Options3MXSchema,
-      OptionsLASSchema,
-      OptionsPLYSchema,
-      OptionsOPCSchema,
-      OptionsOrthoDSMSchema,
+      Options3DTilesSchema.strict(),
+      Options3MXSchema.strict(),
+      OptionsOBJSchema.strict(),
+      OptionsOSGBSchema.strict(),
+      OptionsI3SSchema.strict(),
+      Options3MXSchema.strict(),
+      OptionsLASSchema.strict(),
+      OptionsPLYSchema.strict(),
+      OptionsOPCSchema.strict(),
+      OptionsOrthoDSMSchema.strict()
     ])
     .optional()
     .describe("Options associated to format"),

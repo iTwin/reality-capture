@@ -2,54 +2,87 @@ import { z } from "zod";
 
 export const GaussianSplatsInputsSchema = z.object({
   scene: z.string().describe("Reality data ID of ContextScene to process."),
-  splatsReference: z.string().optional().describe("Reality data ID of the Gaussian Splats Reference."),
-  crsData: z.string().regex(/^bkt:.+/).optional().describe("Path in the bucket for CRS data."),
+  splatsReference: z
+    .string()
+    .optional()
+    .describe("Reality data ID of the Gaussian Splats Reference."),
+  crsData: z
+    .string()
+    .regex(/^bkt:.+/)
+    .optional()
+    .describe("Path in the bucket for CRS data."),
   preset: z.string().optional().describe("Path to preset"),
-  regionOfInterest: z.string().regex(/^bkt:.+/).optional().describe("Path in the bucket to region of interest file")
+  regionOfInterest: z
+    .string()
+    .regex(/^bkt:.+/)
+    .optional()
+    .describe("Path in the bucket to region of interest file"),
 });
 export type GaussianSplatsInputs = z.infer<typeof GaussianSplatsInputsSchema>;
 
 export const GaussianSplatsOutputsSchema = z.object({
   splats: z.string().optional().describe("Reality data ID of Gaussian Splats."),
-  splatsReference: z.string().optional().describe("Reality data ID of the Gaussian Splats Reference.")
+  splatsReference: z
+    .string()
+    .optional()
+    .describe("Reality data ID of the Gaussian Splats Reference."),
 });
 export type GaussianSplatsOutputs = z.infer<typeof GaussianSplatsOutputsSchema>;
 
 export enum GaussianSplatsOutputsCreate {
-  SPLATS = "Splats",
-  SPLATS_REFERENCE = "SplatsReference"
+  SPLATS = "splats",
+  SPLATS_REFERENCE = "splatsReference",
 }
 
 export enum GSFormat {
   PLY = "PLY",
   SPZ = "SPZ",
   THREED_TILES = "3DTiles",
-  THREED_TILES_LOD = "3DTilesLOD"
+  THREED_TILES_LOD = "3DTilesLOD",
 }
 
 export enum GSQuality {
   MEDIUM = "Medium",
   STANDARD = "Standard",
-  HIGH = "High"
+  HIGH = "High",
 }
 
 export const GaussianSplatsOptionsSchema = z.object({
-  exportFormat: z.nativeEnum(GSFormat).optional().describe("Format of the Gaussian Splats"),
-  referenceQuality: z.nativeEnum(GSQuality).optional().describe("Quality to use to generate the Splats Reference"),
-  referenceTileSize: z.number().optional().describe("Tile size for the Splats Reference")
+  exportCrs: z
+    .string()
+    .optional()
+    .describe("CRS for the exported gaussian splats"),
+  exportFormat: z
+    .nativeEnum(GSFormat)
+    .optional()
+    .describe("Format of the Gaussian Splats"),
+  referenceQuality: z
+    .nativeEnum(GSQuality)
+    .optional()
+    .describe("Quality to use to generate the Splats Reference"),
+  referenceTileSize: z
+    .number()
+    .optional()
+    .describe("Tile size for the Splats Reference"),
 });
 export type GaussianSplatsOptions = z.infer<typeof GaussianSplatsOptionsSchema>;
 
 export const GaussianSplatsSpecificationsSchema = z.object({
   inputs: GaussianSplatsInputsSchema.describe("Inputs"),
   outputs: GaussianSplatsOutputsSchema.describe("Outputs"),
-  options: GaussianSplatsOptionsSchema.optional().describe("Options")
+  options: GaussianSplatsOptionsSchema.optional().describe("Options"),
 });
-export type GaussianSplatsSpecifications = z.infer<typeof GaussianSplatsSpecificationsSchema>;
+export type GaussianSplatsSpecifications = z.infer<
+  typeof GaussianSplatsSpecificationsSchema
+>;
 
 export const GaussianSplatsSpecificationsCreateSchema = z.object({
   inputs: GaussianSplatsInputsSchema.describe("Inputs"),
-  outputs: z.array(z.nativeEnum(GaussianSplatsOutputsCreate)).describe("Outputs"),
-  options: GaussianSplatsOptionsSchema.optional().describe("Options")
+  outputs: z
+    .array(z.nativeEnum(GaussianSplatsOutputsCreate))
+    .describe("Outputs"),
+  options: GaussianSplatsOptionsSchema.optional().describe("Options"),
 });
-export type GaussianSplatsSpecificationsCreate = z.infer<typeof GaussianSplatsSpecificationsCreateSchema>;
+export type GaussianSplatsSpecificationsCreate = z.infer<
+  typeof GaussianSplatsSpecificationsCreateSchema
+>;

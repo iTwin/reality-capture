@@ -2,7 +2,7 @@
 Segmentation 3D
 ===============
 
-The Segmentation 3D job uses a point cloud segmentation detector to classify each point of a point cloud. It produces a segmented point cloud (in OPC format) and a context scene pointing to this point cloud. The segmented point cloud can be exported as LAS, LAZ, POD or PLY. Optionally, it can also produce context scenes annotated with 3D objects, 3D polygons and/or 3D lines. Those can be exported in another format, such as 3D Tiles, SHP, DGN, or GeoJSON.
+The Segmentation 3D job uses a point cloud segmentation detector to classify each point of a point cloud. It produces a segmented point cloud (in OPC format) and a context scene pointing to this point cloud. Optionally, it can also produce context scenes annotated with 3D objects, 3D polygons and/or 3D lines. Those can be exported in another format, such as 3D Tiles, SHP, or GeoJSON.
 
 .. contents:: Quick access
    :local:
@@ -27,26 +27,16 @@ This job has four different purposes :
        | *point_cloud_segmentation_detector*,
        | *clip_polygon* (optional)
      - | *segmentation3d*,
-       | *segmented_point_cloud*,
-       | *segmentation3d_as_las* (optional),
-       | *segmentation3d_as_laz* (optional),
-       | *segmentation3d_as_pod* (optional),
-       | *segmentation3d_as_ply* (optional)
+       | *segmented_model_3d*
      - | *save_confidence*,
-       | *crs*
    * - | Segment a collection
        | of meshes
      - | *meshes*,
        | *point_cloud_segmentation_detector*,
        | *clip_polygon* (optional)
      - | *segmentation3d*,
-       | *segmented_point_cloud*,
-       | *segmentation3d_as_las* (optional),
-       | *segmentation3d_as_laz* (optional),
-       | *segmentation3d_as_pod* (optional),
-       | *segmentation3d_as_ply* (optional)
+       | *segmented_model_3d*
      - | *save_confidence*,
-       | *crs*
    * - | Segment a collection
        | of point clouds or meshes
        | and infer 3D objects,
@@ -55,23 +45,16 @@ This job has four different purposes :
        | *point_cloud_segmentation_detector*,
        | *clip_polygon* (optional)
      - | *segmentation3d*,
-       | *segmented_point_cloud*,
-       | *segmentation3d_as_las* (optional),
-       | *segmentation3d_as_laz* (optional),
-       | *segmentation3d_as_pod* (optional),
-       | *segmentation3d_as_ply* (optional),
+       | *segmented_model_3d*,
        | *objects3d* (optional),
-       | *objects3d_as_dgn* (optional),
        | *objects3d_as_3d_tiles* (optional),
        | *objects3d_as_geojson* (optional),
        | *locations3d_as_shp* (optional),
        | *locations3d_as_geojson* (optional),
        | *lines3d* (optional),
-       | *lines3d_as_dgn* (optional),
        | *lines3d_as_3d_tiles* (optional),
        | *lines3d_as_geojson* (optional),
        | *polygons3d* (optional),
-       | *polygons3d_as_dgn* (optional),
        | *polygons3d_as_3d_tiles* (optional),
        | *polygons3d_as_geojson* (optional)
      - | *remove_small_components*,
@@ -83,22 +66,15 @@ This job has four different purposes :
        | lines and 3D polygons
      - | *segmentation3d*,
        | *clip_polygon* (optional)
-     - | *segmentation3d_as_las* (optional),
-       | *segmentation3d_as_laz* (optional),
-       | *segmentation3d_as_pod* (optional),
-       | *segmentation3d_as_ply* (optional),
-       | *objects3d* (optional),
-       | *objects3d_as_dgn* (optional),
+     - | *objects3d* (optional),
        | *objects3d_as_3d_tiles* (optional),
        | *objects3d_as_geojson* (optional),
        | *locations3d_as_shp* (optional),
        | *locations3d_as_geojson* (optional),
        | *lines3d* (optional),
-       | *lines3d_as_dgn* (optional),
        | *lines3d_as_3d_tiles* (optional),
        | *lines3d_as_geojson* (optional),
        | *polygons3d* (optional),
-       | *polygons3d_as_dgn* (optional),
        | *polygons3d_as_3d_tiles* (optional),
        | *polygons3d_as_geojson* (optional)
      - | *remove_small_components*,

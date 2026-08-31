@@ -1,11 +1,12 @@
-* @dbiguenet @cnovel @lr06 @RenaudKeriven @arianacarnielli @mcote01 @MarcBedard8
- 
+* @dbiguenet @cnovel @lr06 @RenaudKeriven @arianacarnielli @MarcBedard8
+
 .github/workflows/typescript/typescript-publish-release.yml @aruniverse @itwin/oss-admins
- 
+
 python_sdk/ @dbiguenet @cnovel @RenaudKeriven
- 
+
 # https://developer.bentley.com/apis/reality-management/overview/
-typescript/packages/reality-data-client/ @mcote01 @MarcBedard8 @matmarchand @BeChaRem
+
+typescript/packages/reality-data-client/ @dbiguenet @cnovel @RenaudKeriven
 
 typescript/packages/reality-capture/ @dbiguenet @cnovel @RenaudKeriven
 

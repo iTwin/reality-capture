@@ -1,87 +1,51 @@
 import { z } from "zod";
 
-export const TrainingO2DInputsSchema = z.object({
-  scene: z.string().describe(
-    "Reality data id of a ContextScene pointing to photos with annotations (in the contextscene file)."
-  ),
-});
-export type TrainingO2DInputs = z.infer<typeof TrainingO2DInputsSchema>;
-
-export const TrainingO2DOutputsSchema = z.object({
-  detector: z.string().describe("Reality data id of the detector."),
-  metrics: z
-    .string()
-    .regex(/^bkt:.+/, "Must start with 'bkt:'")
-    .describe("Path in the bucket of the training metrics")
-    .optional(),
-});
-export type TrainingO2DOutputs = z.infer<typeof TrainingO2DOutputsSchema>;
-
-export const TrainingO2DOptionsSchema = z.object({
-  epochs: z
-    .number().int()
-    .describe("Number of time to iterate over the entire dataset")
-    .optional(),
-  maxTrainingSplit: z
-    .number()
-    .gt(0.0, { message: "Must be greater than 0.0" })
-    .lte(1.0, { message: "Must be less than or equal to 1.0" })
-    .describe(
-      "Ratio (between 0.0 excluded and 1.0 included) of training data used to train the detector, the rest will be used to evaluate the model after each epoch and compute extra evaluation metrics"
-    )
-    .optional(),
-});
-export type TrainingO2DOptions = z.infer<typeof TrainingO2DOptionsSchema>;
-
-export enum TrainingO2DOutputsCreate {
-  DETECTOR = "detector",
-  METRICS = "metrics"
-}
-
-export const TrainingO2DSpecificationsCreateSchema = z.object({
-  inputs: TrainingO2DInputsSchema.describe("Inputs"),
-  outputs: z
-    .array(z.nativeEnum(TrainingO2DOutputsCreate))
-    .describe("Outputs"),
-  options: TrainingO2DOptionsSchema.describe("Options").optional(),
-});
-export type TrainingO2DSpecificationsCreate = z.infer<typeof TrainingO2DSpecificationsCreateSchema>;
-
-export const TrainingO2DSpecificationsSchema = z.object({
-  inputs: TrainingO2DInputsSchema.describe("Inputs"),
-  outputs: TrainingO2DOutputsSchema.describe("Outputs"),
-  options: TrainingO2DOptionsSchema.describe("Options").optional(),
-});
-export type TrainingO2DSpecifications = z.infer<typeof TrainingO2DSpecificationsSchema>;
-
 export const TrainingS3DInputsSchema = z.object({
-  scene: z.string().describe(
-    "Reality data id of a ContextScene pointing to photos with annotations (in the contextscene file)."
-  ),
+  segmentations3D: z.array(z.string()).describe("List of 3D models to train on."),
+  preset: z.string().optional().describe("Path to a preset"),
+  detectorName: z.string().describe("Name of the detector to train"),
 });
 export type TrainingS3DInputs = z.infer<typeof TrainingS3DInputsSchema>;
 
 export const TrainingS3DOutputsSchema = z.object({
-  detector: z.string().describe("Reality data id of the detector."),
+  detector: z.string().describe("Full detector information (name/version)"),
 });
 export type TrainingS3DOutputs = z.infer<typeof TrainingS3DOutputsSchema>;
 
+export enum Segmentation3DTrainingModel {
+  SPLATNET = "SPLATNet"
+}
+
+export enum PointCloudFeature {
+  RGB = "RGB",
+  NORMAL = "NORMAL",
+  INTENSITY = "INTENSITY"
+}
+
 export const TrainingS3DOptionsSchema = z.object({
   epochs: z
-    .number()
+    .number().int()
+    .gte(1, { message: "Must be greater than or equal to 1" })
+    .lte(100, { message: "Must be less than or equal to 100" })
     .describe("Number of time to iterate over the entire dataset")
     .optional(),
   spacing: z
     .number()
-    .describe("Spacing of the pointcloud seen by the detector")
+    .gt(0, { message: "Must be greater than 0" })
+    .describe("Spacing of the pointcloud seen by the detector (in meters).")
     .optional(),
-  maxTrainingSplit: z
-    .number()
-    .gt(0.0, { message: "Must be greater than 0.0" })
-    .lte(1.0, { message: "Must be less than or equal to 1.0" })
-    .describe(
-      "Ratio (between 0.0 excluded and 1.0 included) of training data used to train the detector, the rest will be used to evaluate the model after each epoch and compute extra evaluation metrics"
-    )
+  model: z
+    .nativeEnum(Segmentation3DTrainingModel)
+    .describe("Training Model architecture to use.")
+    .optional(),
+  features: z
+    .array(z.nativeEnum(PointCloudFeature))
+    .describe("Features to use for the training.")
+    .optional(),
+  versionNumber: z
+    .string()
+    .regex(/^\d+(?:\.\d+)?$/, "Must be a version like '1' or '1.0'")
+    .describe("String representing the version number for the newly trained detector.")
     .optional(),
 });
 export type TrainingS3DOptions = z.infer<typeof TrainingS3DOptionsSchema>;

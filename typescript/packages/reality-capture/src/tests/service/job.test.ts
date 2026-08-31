@@ -7,8 +7,6 @@ import {
   JobState,
   JobCreateSchema,
   ExecutionSchema,
-  JobSchema,
-  JobResponseSchema,
   ProgressSchema,
   ProgressResponseSchema,
   MessageSchema,
@@ -17,27 +15,6 @@ import {
   NextLinkSchema,
 } from "../../service/job";
 import { ImportPCOutputsCreate } from "../../specifications/import_point_cloud"; // TODO : mock?
-
-function getCommonFields(type: JobType) {
-  return {
-    id: "job1",
-    name: "MyJob",
-    itwinId: "itwin123",
-    state: JobState.QUEUED,
-    executionInfo: {
-      createdDateTime: new Date(),
-      startedDateTime: new Date(),
-      endedDateTime: new Date(),
-      processingUnits: 5
-    },
-    userId: "user42",
-    type,
-    specifications: {
-      inputs: { scene: "scene" },
-      outputs: [ImportPCOutputsCreate.SCAN_COLLECTION]
-    }
-  };
-}
 
 describe("getAppropriateService", () => {
   it("should return Service.MODELING for PRODUCTION", () => {

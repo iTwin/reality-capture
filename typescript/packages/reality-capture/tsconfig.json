@@ -1,13 +1,31 @@
 {
-  "extends": "./node_modules/@itwin/build-tools/tsconfig-base.json",
   "compilerOptions": {
-    "module": "CommonJS",
-    "target": "ES2020",
-    "moduleResolution": "node",
+    "alwaysStrict": true,
+    "declaration": true,
+    "declarationMap": true,
     "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "inlineSources": true,
+    "jsx": "react",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": false,
+    "noImplicitAny": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
     "strict": true,
-    "types": ["node", "mocha"],
-    "sourceMap": true
+    "strictNullChecks": true,
+    "stripInternal": false,
+    "target": "ES2020",
+    "lib": ["ES2023", "DOM", "DOM.Iterable", "ESNext.Disposable"],
+    "types": ["node", "mocha"]
   },
   "include": [
     "src"
@@ -15,5 +33,9 @@
   "exclude": [
     "lib",
     "src/tests/**/*"
-  ]
+  ],
+  "ts-node": {
+    "esm": false,
+    "transpileOnly": true
+  }
 }
