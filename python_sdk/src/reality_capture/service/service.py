@@ -28,7 +28,7 @@ class RealityCaptureService:
 
         :param token_factory: An object that implements a ``get_token() -> str`` method.
         :type token_factory: Object
-        :param \**kwargs: See below.
+        :param \\*\\*kwargs: See below.
 
         :Keyword Arguments:
             * *user_agent* (``str``) --
@@ -80,11 +80,16 @@ class RealityCaptureService:
     def _get_analysis_url(self) -> str:
         return self._service_url + "reality-analysis/"
 
+    def _get_conversion_url(self) -> str:
+        return self._service_url + "reality-conversion/"
+
     def _get_correct_url(self, service: Service) -> str:
         if service == Service.MODELING:
             return self._get_modeling_url()
         if service == Service.ANALYSIS:
             return self._get_analysis_url()
+        if service == Service.CONVERSION:
+            return self._get_conversion_url()
         raise NotImplementedError("Other services not yet implemented")
 
     @staticmethod
