@@ -9,8 +9,8 @@ class PCOptimizationInputs(BaseModel):
 
 class PCOptimizationFormat(Enum):
     OPC = "OPC"
-    THREE_D_TILES_PNTS = "3DTilesPnts"
-    THREE_D_TILES_GLBC = "3DTilesGlbc"
+    THREE_D_TILES_PNTS = "3DTilesPNTS"
+    THREE_D_TILES_GLBC = "3DTilesGLBC"
     LAS = "LAS"
     LAZ = "LAZ"
     E57 = "E57"
