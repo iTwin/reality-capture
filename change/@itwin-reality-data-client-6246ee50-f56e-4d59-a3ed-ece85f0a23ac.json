@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "Update Reality Data Client (use Reality Capture SDK endpoints)",
+  "packageName": "@itwin/reality-data-client",
+  "email": "110406974+dbiguenet@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
