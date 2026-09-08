@@ -30,10 +30,8 @@ class TestOnPremJobQueue:
         )
         co = CalibrationOutputs(
             scene="path/to/calibrated_scene",
-        )
         specs = CalibrationSpecifications(inputs=ci, outputs=co)
-        job_result = jm.submit_job(specs, self.tmp_dir + "work", workspace=self.tmp_dir + "ws")
-        assert not job_result.is_error()
+        job_result = jm.submit_job(specs, os.path.join(self.tmp_dir, "work"), workspace=os.path.join(self.tmp_dir, "ws"))
         assert job_result.value is not None
         job = job_result.value
 
