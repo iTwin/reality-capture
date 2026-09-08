@@ -73,7 +73,7 @@ class JobFilters(BaseModel):
                                                                        alias="endedDateTimeRange")
     started_date_time_range: Optional[tuple[datetime, datetime]] = Field(None, description="Select jobs started during this time range.",
                                                                          alias="startedDateTimeRange")
-    limit: Optional[int] = Field(default=50, description="Number of jobs per page")
+    limit: int = Field(default=50, ge=1, description="Number of jobs per page")
     continuation_token: Optional[str] = Field(default=None, description="Continuation token to get the next page",
                                               alias="continuationToken")
 
