@@ -25,9 +25,11 @@ class Segmentation3DInputs(BaseModel):
 
 class Segmentation3DOutputs(BaseModel):
     segmentation3d: Optional[str] = Field(None, alias="segmentation3D",
-                                          description="Reality data id of ContextScene, pointing to the segmented 3D model")
+                                          description="Reality data id of ContextScene, "
+                                                      "pointing to the segmented 3D model")
     segmented_model_3d: Optional[str] = Field(None, alias="segmentedModel3D",
-                                              description="Reality data id of the 3D segmentation model follows the same format as the model3D file")
+                                              description="Reality data id of the 3D segmentation model follows "
+                                                          "the same format as the model3D file")
     objects3d: Optional[str] = Field(None, alias="objects3D",
                                      description="Reality data id of ContextScene, "
                                                  "annotated with embedded 3D objects")
@@ -85,8 +87,8 @@ class Segmentation3DOptions(BaseModel):
     compute_line_width: Optional[bool] = Field(None, alias="computeLineWidth",
                                                description="Estimation 3D line width at each vertex")
     remove_small_lines: Optional[float] = Field(None, alias="removeSmallLines",
-                                                     description="Remove 3D lines with total length "
-                                                                 "smaller than this value")
+                                                description="Remove 3D lines with total length "
+                                                            "smaller than this value")
 
 
 class Segmentation3DSpecificationsCreate(BaseModel):

@@ -69,11 +69,14 @@ class Options3DTiles(BaseModel):
                                                           description="Maximum resolution for the texture color source",
                                                           ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
+                                                                     description="Thermal unit for the "
+                                                                                 "texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
+                                                              description="Minimum thermal value for the "
+                                                                          "texture color source")
     texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
+                                                              description="Maximum thermal value for "
+                                                                          "the texture color source")
     crs: Optional[str] = Field(None, description="Coordinate reference system")
     lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
     compress: Optional[CesiumCompression] = Field(None, alias="compress", description="Compression type")
@@ -89,11 +92,14 @@ class OptionsOBJ(BaseModel):
                                                           description="Maximum resolution for the texture color source",
                                                           ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
+                                                                     description="Thermal unit for "
+                                                                                 "the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
+                                                              description="Minimum thermal value for "
+                                                                          "the texture color source")
     texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
+                                                              description="Maximum thermal value for "
+                                                                          "the texture color source")
     maximum_texture_size: Optional[int] = Field(None, alias="maximumTextureSize", description="Maximum texture size")
     texture_compression: Optional[int] = Field(None, alias="textureCompression", ge=0, le=100,
                                                description="JPG compression of texture file")

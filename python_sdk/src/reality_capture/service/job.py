@@ -55,7 +55,7 @@ def _get_appropriate_service(jt: JobType):
         return Service.MODELING
     if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
               JobType.CHANGE_DETECTION, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
-              JobType.EVAL_S3D, JobType.EVAL_SORTHO]:
+              JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.TRAINING_S3D]:
         return Service.ANALYSIS
     # return Service.CONVERSION
     raise NotImplementedError("Other services not yet implemented")
@@ -74,9 +74,9 @@ class JobCreate(BaseModel):
                           Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
                           ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
                           Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
-                          TilingSpecificationsCreate, TrainingS3DSpecificationsCreate, 
-						  TouchUpExportSpecificationsCreate, TouchUpImportSpecificationsCreate,
-						  WaterConstraintsSpecificationsCreate] = (
+                          TilingSpecificationsCreate, TrainingS3DSpecificationsCreate,
+                          TouchUpExportSpecificationsCreate, TouchUpImportSpecificationsCreate,
+                          WaterConstraintsSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -124,9 +124,6 @@ class Job(BaseModel):
     @classmethod
     def set_specification_validation_model(cls, raw_dict: dict[str, Any], validation_info: ValidationInfo):
         job_type = validation_info.data['type']
-
-        specifications = None
-
         if job_type == JobType.CALIBRATION:
             specifications = CalibrationSpecifications(**raw_dict)
         elif job_type == JobType.CHANGE_DETECTION:
