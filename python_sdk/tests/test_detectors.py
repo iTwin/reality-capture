@@ -61,6 +61,54 @@ class TestServiceDetector:
         assert response.status_code == 400
         assert "Could not get detector" in response.error.error.message
 
+    def test_detector_methods_unsupported_service(self):
+        db = DetectorBase(name="mydetector", type=DetectorType.PHOTO_OBJECT_DETECTOR)
+        du = DetectorUpdate(displayName="mydetector2", description="desc", documentationUrl="https://www.bentley.com")
+        dvc = DetectorVersionCreate(versionNumber="1.0",
+                                    capabilities=Capabilities(labels=["signs"], exports=["Objects"]))
+
+        with patch.object(self.rcs, "_get_correct_url", side_effect=NotImplementedError("unsupported")):
+            create_response = self.rcs.create_detector(db)
+            update_response = self.rcs.update_detector("mydetector", du)
+            delete_response = self.rcs.delete_detector("mydetector")
+            create_version_response = self.rcs.create_detector_version("mydetector", dvc)
+            delete_version_response = self.rcs.delete_detector_version("mydetector", "1.0")
+            publish_response = self.rcs.publish_detector_version("mydetector", "1.0")
+            unpublish_response = self.rcs.unpublish_detector_version("mydetector", "1.0")
+            complete_response = self.rcs.complete_detector_version_upload("mydetector", "1.0")
+
+        assert create_response.is_error()
+        assert create_response.status_code == 400
+        assert "Could not create detector" in create_response.error.error.message
+
+        assert update_response.is_error()
+        assert update_response.status_code == 400
+        assert "Could not update detector" in update_response.error.error.message
+
+        assert delete_response.is_error()
+        assert delete_response.status_code == 400
+        assert "Could not delete detector" in delete_response.error.error.message
+
+        assert create_version_response.is_error()
+        assert create_version_response.status_code == 400
+        assert "Could not create detector version" in create_version_response.error.error.message
+
+        assert delete_version_response.is_error()
+        assert delete_version_response.status_code == 400
+        assert "Could not delete detector version" in delete_version_response.error.error.message
+
+        assert publish_response.is_error()
+        assert publish_response.status_code == 400
+        assert "Could not publish detector version" in publish_response.error.error.message
+
+        assert unpublish_response.is_error()
+        assert unpublish_response.status_code == 400
+        assert "Could not unpublish detector version" in unpublish_response.error.error.message
+
+        assert complete_response.is_error()
+        assert complete_response.status_code == 400
+        assert "Could not complete the upload of the detector version" in complete_response.error.error.message
+
     @responses.activate
     def test_get_detectors_ill_formed(self):
         responses.add(responses.GET, f'https://api.bentley.com/reality-analysis/detectors',

@@ -223,6 +223,19 @@ class TestOnPremJobQueue:
         assert res.is_error()
         assert res.error == ManagerErrorCode.CORRUPTED_SPECIFICATIONS
 
+    def test_missing_job_type_in_settings(self, existing_db):
+        jq_dir = self.tmp_dir + "/jq"
+        job_name = "job_d4fc6fa0-8c99-4dff-a7cd-4deb930c4d78"
+        settings_path = os.path.join(jq_dir, "jobs", job_name, "settings.json")
+
+        with open(settings_path, "w", encoding="utf-8") as settings_file:
+            settings_file.write("{}")
+
+        jm = JobManager(jq_dir)
+        res = jm.get_job(job_name)
+        assert res.is_error()
+        assert res.error == ManagerErrorCode.CORRUPTED_SPECIFICATIONS
+
     def test_invalid_continuation_token(self, existing_db):
         jm = JobManager(self.tmp_dir + "/jq")
         jf = JobFilters(limit=2, continuationToken="invalid_token")
