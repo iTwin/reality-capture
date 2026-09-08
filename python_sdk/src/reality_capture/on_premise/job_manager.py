@@ -296,8 +296,8 @@ class JobManager(GenericManager):
         # Continuation token (keyset pagination via ROWID)
         if job_filters.continuation_token is not None:
             try:
-                last_rowid = int(base64.b64decode(job_filters.continuation_token).decode())
-            except (UnicodeDecodeError, ValueError):
+                last_rowid = int(base64.b64decode(job_filters.continuation_token, validate=True).decode())
+            except Exception:
                 return Result(ManagerErrorCode.INVALID_CONTINUATION_TOKEN, None)
             where_clauses.append("ROWID > ?")
             params.append(last_rowid)
