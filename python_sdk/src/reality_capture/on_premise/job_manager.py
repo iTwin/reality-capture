@@ -77,8 +77,7 @@ class JobManager(GenericManager):
             2: JobPriority.HIGH,
             3: JobPriority.URGENT,
         }
-        return mapping[jp]
-
+        return mapping.get(jp, JobPriority.NORMAL)
     @staticmethod
     def _priority_to_int(jp: JobPriority) -> int:
         mapping = {
