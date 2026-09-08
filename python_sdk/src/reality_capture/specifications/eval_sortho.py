@@ -4,19 +4,20 @@ from enum import Enum
 
 
 class EvalSOrthoInputs(BaseModel):
-    reference: str = Field(description="Reality data id of ContextScene, "
+    reference: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                        "pointing to segmented photos reference")
-    prediction: str = Field(description="Reality data id of ContextScene, "
+    prediction: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                         "pointing to segmented photos prediction")
 
 
 class EvalSOrthoOutputs(BaseModel):
-    report: Optional[str] = Field(None, description="Path in Bucket of json report with confusion matrix")
+    report: Optional[str] = Field(None,
+                                  description="Path to JSON report file with confusion matrix (bucket path in cloud, local path on-premise)")
     segmented_photos: Optional[str] = Field(None, alias="segmentedPhotos",
-                                            description="Reality data id of segmented photos, "
+                                            description="Reality data ID (cloud) or local path (on-premise) of segmented photos, "
                                                         "annotated with confusion matrix index")
     segmentation2d: Optional[str] = Field(None, alias="segmentation2D",
-                                          description="Reality data id of ContextScene, "
+                                          description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                                       "pointing to segmented photos")
 
 
@@ -34,3 +35,4 @@ class EvalSOrthoSpecificationsCreate(BaseModel):
 class EvalSOrthoSpecifications(BaseModel):
     inputs: EvalSOrthoInputs = Field(description="Inputs")
     outputs: EvalSOrthoOutputs = Field(description="Outputs")
+

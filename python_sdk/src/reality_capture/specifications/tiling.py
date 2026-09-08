@@ -5,12 +5,14 @@ from reality_capture.specifications.geometry import BoundingBox, Point3d, Region
 
 
 class TilingInputs(BaseModel):
-    scene: str = Field(description="Reality data id of ContextScene to process")
-    region_of_interest: Optional[str] = Field(description="Path in the bucket to region of interest file",
+    scene: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene to process")
+    region_of_interest: Optional[str] = Field(description="Path to region of interest file (bucket path in cloud, local path on-premise)",
                                               alias="regionOfInterest",
                                               default=None)
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
-    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData")
+    crs_data: Optional[str] = Field(default=None,
+                                    description="Path to CRS data file (bucket path in cloud, local path on-premise).",
+                                    alias="crsData")
 
 
 class ModelingReferenceType(str, Enum):
@@ -119,7 +121,7 @@ class TilingOptions(BaseModel):
 
 
 class ModelingReference(BaseModel):
-    location: str = Field(description="Reality data id of modeling reference")
+    location: str = Field(description="Reality data ID (cloud) or local path (on-premise) of modeling reference")
 
 
 class TilingOutputs(BaseModel):
@@ -160,3 +162,4 @@ class Layout(BaseModel):
     enu_definition: str = Field(description="Definition of the Internal Coordinate System", alias="enuDefinition")
     crs_definition: str = Field(description="Definition of the Layout Coordinate System", alias="crsDefinition")
     roi: RegionOfInterest = Field(description="Region of interest of the layout")
+

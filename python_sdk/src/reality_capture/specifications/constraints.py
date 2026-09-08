@@ -9,11 +9,13 @@ class ConstraintType(str, Enum):
 
 
 class ConstraintToAdd(BaseModel):
-    constraint_path: str = Field(alias="constraintPath", description="Path in the bucket to the constraint file")
+    constraint_path: str = Field(alias="constraintPath",
+                                 description="Path to constraint file (bucket path in cloud, local path on-premise)")
     crs: str = Field(description="Coordinate reference system")
     type: Optional[ConstraintType] = Field(None, description="Type of the constraint")
     resolution: Optional[float] = Field(None, description="Resolution of the constraint")
-    texture_path: Optional[str] = Field(None, alias="texturePath", description="Path in the bucket to the texture file")
+    texture_path: Optional[str] = Field(None, alias="texturePath",
+                                        description="Path to texture file (bucket path in cloud, local path on-premise)")
     texture_size: Optional[int] = Field(None, alias="textureSize", description="Size of the texture")
     fill_color: Optional[str] = Field(None, alias="fillColor", description="Fill color for the constraint")
     name: Optional[str] = Field(None, description="Name of the constraint")
@@ -36,12 +38,14 @@ class ConstraintsInputs(BaseModel):
                                                          description="IDs of constraints to delete")
     constraints_to_add: Optional[list[ConstraintToAdd]] = Field(None, alias="constraintsToAdd",
                                                                 description="Constraints to add")
-    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData")
+    crs_data: Optional[str] = Field(default=None,
+                                    description="Path to CRS data file (bucket path in cloud, local path on-premise).",
+                                    alias="crsData")
 
 
 class ConstraintsOutputs(BaseModel):
     added_constraints_info: str = Field(alias="addedConstraintsInfo",
-                                        description="Path in the bucket for added ConstraintsInfo",)
+                                        description="Path to added ConstraintsInfo file (bucket path in cloud, local path on-premise)",)
 
 
 class ConstraintsOutputsCreate(Enum):

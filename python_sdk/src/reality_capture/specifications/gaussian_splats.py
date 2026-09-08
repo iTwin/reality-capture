@@ -4,21 +4,23 @@ from enum import Enum
 
 
 class GaussianSplatsInputs(BaseModel):
-    scene: str = Field(description="Reality data ID of ContextScene to process.")
+    scene: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene to process.")
     splats_reference: Optional[str] = Field(default=None,
-                                            description="Reality data ID of the Gaussian Splats Reference.",
+                                            description="Reality data ID (cloud) or local path (on-premise) of the Gaussian Splats Reference.",
                                             alias="splatsReference")
-    region_of_interest: Optional[str] = Field(description="Path in the bucket to region of interest file",
+    region_of_interest: Optional[str] = Field(description="Path to region of interest file (bucket path in cloud, local path on-premise)",
                                               alias="regionOfInterest",
                                               default=None)
-    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData")
+    crs_data: Optional[str] = Field(default=None,
+                                    description="Path to CRS data file (bucket path in cloud, local path on-premise).",
+                                    alias="crsData")
     preset: Optional[str] = Field(default=None, description="Path to preset")
 
 
 class GaussianSplatsOutputs(BaseModel):
-    splats: Optional[str] = Field(default=None, description="Reality data ID of Gaussian Splats.")
+    splats: Optional[str] = Field(default=None, description="Reality data ID (cloud) or local path (on-premise) of Gaussian Splats.")
     splats_reference: Optional[str] = Field(default=None,
-                                            description="Reality data ID of the Gaussian Splats Reference.",
+                                            description="Reality data ID (cloud) or local path (on-premise) of the Gaussian Splats Reference.",
                                             alias="splatsReference")
 
 
@@ -63,3 +65,4 @@ class GaussianSplatsSpecificationsCreate(BaseModel):
     inputs: GaussianSplatsInputs = Field(description="Inputs")
     outputs: list[GaussianSplatsOutputsCreate] = Field(description="Outputs")
     options: Optional[GaussianSplatsOptions] = Field(default=None, description="Options")
+

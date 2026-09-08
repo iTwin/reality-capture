@@ -4,15 +4,18 @@ from enum import Enum
 
 
 class CalibrationInputs(BaseModel):
-    scene: str = Field(description="Reality data ID of ContextScene to process")
+    scene: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene to process")
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
-    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData")
+    crs_data: Optional[str] = Field(default=None,
+                                    description="Path to CRS data file (bucket path in cloud, local path on-premise).",
+                                    alias="crsData")
 
 
 class CalibrationOutputs(BaseModel):
-    scene: str = Field(description="Reality data ID of calibrated ContextScene")
-    report: Optional[str] = Field(default=None, description="Path in the bucket of Calibration report")
-    textured_tie_points: Optional[str] = Field(default=None, description="Reality data ID of textured tie points",
+    scene: str = Field(description="Reality data ID (cloud) or local path (on-premise) of calibrated ContextScene")
+    report: Optional[str] = Field(default=None,
+                                  description="Path to calibration report file (bucket path in cloud, local path on-premise)")
+    textured_tie_points: Optional[str] = Field(default=None, description="Reality data ID (cloud) or local path (on-premise) of textured tie points",
                                                alias="texturedTiePoints")
 
 
@@ -222,3 +225,4 @@ class CalibrationSpecificationsCreate(BaseModel):
 class CalibrationCost(BaseModel):
     gpix: float = Field(description="Number of GigaPixels in the overall inputs, after applying downsampling.", ge=0)
     mpoints: float = Field(description="Number of MegaPoints in the overall inputs.", ge=0)
+

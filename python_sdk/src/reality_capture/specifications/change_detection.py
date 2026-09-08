@@ -4,45 +4,45 @@ from enum import Enum
 
 
 class ChangeDetectionInputs(BaseModel):
-    model_3d_a: str = Field(alias="model3DA", description="Reality data id of ContextScene, point cloud, "
+    model_3d_a: str = Field(alias="model3DA", description="Reality data ID (cloud) or local path (on-premise) of ContextScene, point cloud, "
                                                           "Gaussian splats, or mesh")
-    model_3d_b: str = Field(alias="model3DB", description="Reality data id of ContextScene, point cloud, "
+    model_3d_b: str = Field(alias="model3DB", description="Reality data ID (cloud) or local path (on-premise) of ContextScene, point cloud, "
                                                           "Gaussian splats, or mesh")
     extent: Optional[str] = Field(None, alias="extent",
-                                  description="Path in the bucket of the clipping polygon to apply")
+                                  description="Path to clipping polygon file to apply (bucket path in cloud, local path on-premise)")
     preset: Optional[str] = Field(None, alias="preset",
-                                  description="Path in the bucket of a preset file to use")
+                                  description="Path to preset file to use (bucket path in cloud, local path on-premise)")
 
 
 class ChangeDetectionOutputs(BaseModel):
-    segmentation_3d_a: Optional[str] = Field(None, description="Reality data id of ContextScene, "
+    segmentation_3d_a: Optional[str] = Field(None, description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                                                "pointing to the segmented 3D model A",
                                              alias="segmentation3DA")
-    segmented_model_3d_b: Optional[str] = Field(None, description="Reality data id of the 3D segmented model "
+    segmented_model_3d_b: Optional[str] = Field(None, description="Reality data ID (cloud) or local path (on-premise) of the 3D segmented model "
                                                                   "in the same format of model 3d B",
                                                 alias="segmentedModel3DB")
-    segmentation_3d_b: Optional[str] = Field(None, description="Reality data id of ContextScene, "
+    segmentation_3d_b: Optional[str] = Field(None, description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                                                "pointing to the segmented 3D model B",
                                              alias="segmentation3DB")
-    segmented_model_3d_a: Optional[str] = Field(None, description="Reality data id of the 3D segmented model "
+    segmented_model_3d_a: Optional[str] = Field(None, description="Reality data ID (cloud) or local path (on-premise) of the 3D segmented model "
                                                                   "in the same format of model 3d A",
                                                 alias="segmentedModel3DA")
     locations3d_a: Optional[str] = Field(None, alias="locations3DA",
-                                         description="Reality data id of ContextScene with "
+                                         description="Reality data ID (cloud) or local path (on-premise) of ContextScene with "
                                                      "locations of changes in A")
     locations3d_a_as_shp: Optional[str] = Field(None, alias="locations3DAAsSHP",
-                                                description="Reality data id of locations of changes in A "
+                                                description="Reality data ID (cloud) or local path (on-premise) of locations of changes in A "
                                                             "as SHP format")
     locations3d_a_as_geojson: Optional[str] = Field(None, alias="locations3DAAsGeoJSON",
-                                                    description="Reality data id of locations of changes in A"
+                                                    description="Reality data ID (cloud) or local path (on-premise) of locations of changes in A"
                                                                 "as GeoJSON file")
     locations3d_b: Optional[str] = Field(None, alias="locations3DB",
-                                         description="Reality data id of ContextScene with locations of changes in B")
+                                         description="Reality data ID (cloud) or local path (on-premise) of ContextScene with locations of changes in B")
     locations3d_b_as_shp: Optional[str] = Field(None, alias="locations3DBAsSHP",
-                                                description="Reality data id of locations "
+                                                description="Reality data ID (cloud) or local path (on-premise) of locations "
                                                             "of changes in B as SHP format")
     locations3d_b_as_geojson: Optional[str] = Field(None, alias="locations3DBAsGeoJSON",
-                                                    description="Reality data id of locations of changes "
+                                                    description="Reality data ID (cloud) or local path (on-premise) of locations of changes "
                                                                 "in B as GeoJSON file")
     
 
@@ -83,3 +83,4 @@ class ChangeDetectionSpecifications(BaseModel):
     inputs: ChangeDetectionInputs = Field(description="Inputs")
     outputs: ChangeDetectionOutputs = Field(description="Outputs")
     options: Optional[ChangeDetectionOptions] = Field(None, description="Options")
+

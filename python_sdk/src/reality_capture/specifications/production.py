@@ -6,13 +6,15 @@ from reality_capture.specifications.tiling import GeometricPrecision
 
 
 class ProductionInputs(BaseModel):
-    scene: str = Field(description="Reality data id of ContextScene to process")
-    modeling_reference: str = Field(description="Reality data id of modeling reference to process",
+    scene: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene to process")
+    modeling_reference: str = Field(description="Reality data ID (cloud) or local path (on-premise) of modeling reference to process",
                                     alias="modelingReference")
-    extent: Optional[str] = Field(None, description="Path in the bucket to region of interest file, "
-                                                    "used for export extent")
+    extent: Optional[str] = Field(None,
+                                  description="Path to region of interest file (bucket path in cloud, local path on-premise), used for export extent")
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
-    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData")
+    crs_data: Optional[str] = Field(default=None,
+                                    description="Path to CRS data file (bucket path in cloud, local path on-premise).",
+                                    alias="crsData")
 
 
 class Format(str, Enum):
@@ -319,7 +321,7 @@ class ExportCreate(BaseModel):
 
 
 class Export(ExportCreate):
-    location: str = Field(description="Reality data id of the export")
+    location: str = Field(description="Reality data ID (cloud) or local path (on-premise) of the export")
 
 
 class ProductionOutputs(BaseModel):
@@ -345,3 +347,4 @@ class ProductionCost(BaseModel):
     mpoints: float = Field(description="Number of MegaPoints in the overall inputs.", ge=0)
     geometric_precision: Optional[GeometricPrecision] = Field(None, description="Geometric precision used in Tiling",
                                                               alias="geometricPrecision")
+

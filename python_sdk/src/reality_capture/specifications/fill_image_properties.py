@@ -8,13 +8,13 @@ class FillImagePropertiesInputs(BaseModel):
     List of possible inputs for a Fill Image Properties job.
     """
     image_collections: Optional[list[str]] = Field(default=None,
-                                                   description="List of image collection reality data ids.",
+                                                   description="List of image collection reality data IDs (cloud) or local path(s) (on-premise).",
                                                    alias="imageCollections")
     scene_to_process: Optional[str] = Field(default=None,
-                                            description="Reality data id of ContextScene to process.",
+                                            description="Reality data ID (cloud) or local path (on-premise) of ContextScene to process.",
                                             alias="sceneToProcess")
     scene_to_complete: Optional[str] = Field(default=None,
-                                             description="Reality data id of ContextScene to complete.",
+                                             description="Reality data ID (cloud) or local path (on-premise) of ContextScene to complete.",
                                              alias="sceneToComplete")
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
 
@@ -23,7 +23,7 @@ class FillImagePropertiesOutputs(BaseModel):
     """
     List of possible outputs for a Fill Image Properties job.
     """
-    scene: str = Field(description="Output reality data id of ContextScene with image properties filled.")
+    scene: str = Field(description="Output reality data ID (cloud) or local path (on-premise) of ContextScene with image properties filled.")
 
 
 class AltitudeReference(str, Enum):
@@ -75,3 +75,4 @@ class FillImagePropertiesSpecificationsCreate(BaseModel):
 
 class FillImagePropertiesCost(BaseModel):
     image_count: int = Field(description="Number of images to import.", alias="imageCount")
+

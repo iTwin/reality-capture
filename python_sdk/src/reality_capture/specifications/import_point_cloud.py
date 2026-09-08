@@ -5,14 +5,18 @@ from reality_capture.specifications.geometry import BoundingBox, Point3d
 
 
 class ImportPCInputs(BaseModel):
-    scene: str = Field(description="Reality data id of ContextScene to process")
-    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData")
+    scene: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene to process")
+    crs_data: Optional[str] = Field(default=None,
+                                    description="Path to CRS data file (bucket path in cloud, local path on-premise).",
+                                    alias="crsData")
 
 
 class ImportPCOutputs(BaseModel):
-    scan_collection: str = Field(description="Output reality data id for scan collection", alias="scanCollection")
+    scan_collection: str = Field(
+        description="Output reality data ID (cloud) or local path (on-premise) for scan collection",
+        alias="scanCollection")
     scene: Optional[str] = Field(default=None,
-                                 description="Output reality data id for context scene referencing scan collection")
+                                 description="Output reality data ID (cloud) or local path (on-premise) for context scene referencing scan collection")
 
 
 class ImportPCSpecifications(BaseModel):
@@ -60,3 +64,4 @@ class PodMetadata(BaseModel):
     crs: str = Field(description="Coordinate Reference System definition")
     bounding: BoundingBox = Field(description="Bounding box of the PointCloud")
     scans: list[Scan] = Field(description="List of scans")
+
