@@ -12,17 +12,24 @@ from multiprocessing.pool import ThreadPool
 class _DataHandler:
     @staticmethod
     def _get_files_and_sizes(path: str) -> list[(str, int)]:
-        if not os.path.isdir(path):
-            if os.path.islink(path):
+        if not os.path.exists(path):
+            return []
+        if os.path.islink(path):
                 return []
+        if not os.path.isfile(path) and not os.path.isdir(path):
+            return []
+
+        if os.path.isfile(path):
             return [(os.path.basename(path), os.path.getsize(path))]
 
+        # We are handling a directory, we will return all the files in the directory recursively
         resolved_root = os.path.realpath(path)
         files_tuple = []
         for dp, _, filenames in os.walk(path):
             for filename in filenames:
                 file_path = os.path.join(dp, filename)
                 size_path = file_path
+                # Check symlinks are not pointing outside the root directory and are pointing to a file
                 if os.path.islink(file_path):
                     size_path = os.path.realpath(file_path)
                     try:
