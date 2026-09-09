@@ -26,14 +26,16 @@ class _DataHandler {
         for (const item of fs.readdirSync(dir)) {
           const fullPath = path.join(dir, item);
           if (fs.lstatSync(fullPath).isSymbolicLink()) {
+            const resolvedTarget = fs.realpathSync(fullPath);
             const relativeTarget = path.relative(
               resolvedSrcPath,
-              fs.realpathSync(fullPath),
+              resolvedTarget,
             );
             if (
               relativeTarget === ".." ||
               relativeTarget.startsWith(`..${path.sep}`) ||
-              path.isAbsolute(relativeTarget)
+              path.isAbsolute(relativeTarget) ||
+              fs.statSync(resolvedTarget).isDirectory()
             )
               continue;
           }
