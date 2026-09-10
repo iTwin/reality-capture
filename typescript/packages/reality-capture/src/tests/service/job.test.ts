@@ -6,6 +6,7 @@ import {
   getAppropriateService,
   JobState,
   JobCreateSchema,
+  JobResponseSchema,
   ExecutionSchema,
   ProgressSchema,
   ProgressResponseSchema,
