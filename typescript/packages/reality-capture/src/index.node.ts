@@ -9,6 +9,7 @@ export * from "./service/detectors";
 export * from "./service/error";
 export * from "./service/files";
 export * from "./service/job";
+export * from "./service/reality_data";
 export * from "./service/response";
 export * from "./service/service";
 

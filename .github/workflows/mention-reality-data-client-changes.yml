@@ -19,11 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
-      pull-requests: read
+      pull-requests: write
     steps:
       - name: Check if maintainers are already mentioned
         id: check_mentioned
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const maintainers = ['MarcBedard8', 'matmarchand', 'BeChaRem'];
@@ -59,7 +59,7 @@ jobs:
 
       - name: Comment mentioning maintainers
         if: steps.check_mentioned.outputs.should_comment == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const toMention = '${{ steps.check_mentioned.outputs.to_mention }}';

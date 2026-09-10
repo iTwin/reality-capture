@@ -7,13 +7,13 @@ describe("Response", () => {
     const res = new Response<string>(200);
 
     expect(res.status_code).to.equal(200);
-    expect(res.error).to.be.null;
-    expect(res.value).to.be.null;
+    expect(res.error).to.equal(null);
+    expect(res.value).to.equal(null);
     expect(res.getResponseStatusCode()).to.equal(200);
-    expect(res.isError()).to.be.false;
+    expect(res.isError()).to.equal(false);
     expect(res.status_code).to.equal(200);
-    expect(res.error).to.be.null;
-    expect(res.value).to.be.null;
+    expect(res.error).to.equal(null);
+    expect(res.value).to.equal(null);
   });
 
   it("should create a Response with status_code and error", () => {
@@ -22,24 +22,24 @@ describe("Response", () => {
 
     expect(res.status_code).to.equal(400);
     expect(res.error).to.deep.equal(error);
-    expect(res.value).to.be.null;
+    expect(res.value).to.equal(null);
     expect(res.getResponseStatusCode()).to.equal(400);
-    expect(res.isError()).to.be.true;
+    expect(res.isError()).to.equal(true);
     expect(res.status_code).to.equal(400);
     expect(res.error).to.deep.equal(error);
-    expect(res.value).to.be.null;
+    expect(res.value).to.equal(null);
   });
 
   it("should create a Response with status_code and value", () => {
     const res = new Response<string>(201, null, "created");
 
     expect(res.status_code).to.equal(201);
-    expect(res.error).to.be.null;
+    expect(res.error).to.equal(null);
     expect(res.value).to.equal("created");
     expect(res.getResponseStatusCode()).to.equal(201);
-    expect(res.isError()).to.be.false;
+    expect(res.isError()).to.equal(false);
     expect(res.status_code).to.equal(201);
-    expect(res.error).to.be.null;
+    expect(res.error).to.equal(null);
     expect(res.value).to.equal("created");
   });
 
@@ -47,8 +47,8 @@ describe("Response", () => {
     const res = new Response<string>(204, undefined, undefined);
 
     expect(res.status_code).to.equal(204);
-    expect(res.error).to.be.null;
-    expect(res.value).to.be.null;
-    expect(res.isError()).to.be.false;
+    expect(res.error).to.equal(null);
+    expect(res.value).to.equal(null);
+    expect(res.isError()).to.equal(false);
   });
 });

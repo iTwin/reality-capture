@@ -17,7 +17,6 @@
   "license": "MIT",
   "dependencies": {
     "@itwin/reality-capture": "link:../packages/reality-capture",
-    "@itwin/reality-data-client": "link:../packages/reality-data-client",
     "@itwin/service-authorization": "^2.0.0",
     "dotenv": "^16.0.3"
   },

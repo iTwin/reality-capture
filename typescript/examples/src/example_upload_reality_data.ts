@@ -4,9 +4,9 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as dotenv from "dotenv";
+import * as fs from "fs";
 import { ServiceAuthorizationClient } from "@itwin/service-authorization";
-import { RealityDataHandler } from "@itwin/reality-capture";
-import { RealityDataClientOptions, RealityDataAccessClient, ITwinRealityData } from "@itwin/reality-data-client";
+import { RealityCaptureService, RealityDataCreate, RealityDataHandler, Type } from "@itwin/reality-capture";
 
 export async function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
@@ -39,31 +39,31 @@ async function runUploadExample() {
   const realityDataHandler = new RealityDataHandler(authorizationClient);
   console.log("Reality Data handler initialized");
 
-  const realityDataClientOptions: RealityDataClientOptions = {
-    authorizationClient: authorizationClient,
-    baseUrl: "https://api.bentley.com/reality-management/reality-data",
-  };
-  const realityDataClient = new RealityDataAccessClient(realityDataClientOptions);
-  console.log("Reality Data Client initialized");
+  const realityCaptureService = new RealityCaptureService(authorizationClient);
+  console.log("Reality Capture service initialized");
 
   try {
+    if(!fs.existsSync(imagesPath)) {
+      throw new Error(imagesPath + " does not exist");
+    }
+
     console.log("Upload images in ", iTwinId);
-    const realityData = new ITwinRealityData(realityDataClient, undefined, iTwinId);
-    realityData.displayName = imagesName;
-    realityData.type = "CCImageCollection";
-    const createdRealityData = await realityDataClient.createRealityData("", iTwinId, realityData);
+    const realityDataCreate: RealityDataCreate = { iTwinId: iTwinId, displayName: imagesName, type: Type.CC_IMAGE_COLLECTION };
+    const createdRealityDataResponse = await realityCaptureService.createRealityData(realityDataCreate);
+    if (createdRealityDataResponse.isError()) {
+      throw new Error("Failed to create reality data : " + createdRealityDataResponse.error!.error.message);
+    }
+    const createdRealityData = createdRealityDataResponse.value!;
     const response = await realityDataHandler.uploadData(createdRealityData.id, imagesPath, "", iTwinId);
     if (response.isError()) {
-      console.log("Failed to upload reality data : " + response.error!.error.message);
-      return;
+      throw new Error("Failed to upload reality data : " + response.error!.error.message);
     }
     console.log("Successfully uploaded images")
 
     console.log("Downloading images in ", outputPath);
     const responseDownload = await realityDataHandler.downloadData(createdRealityData.id, outputPath, "", iTwinId);
     if (responseDownload.isError()) {
-      console.log("Failed to download reality data : " + responseDownload.error!.error.message);
-      return;
+      throw new Error("Failed to download reality data : " + responseDownload.error!.error.message);
     }
     console.log("Successfully downloaded images");
   }
