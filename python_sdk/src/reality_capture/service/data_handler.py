@@ -18,26 +18,17 @@ class _DataHandler:
                 return []
         if not os.path.isfile(path) and not os.path.isdir(path):
             return []
-
         if os.path.isfile(path):
             return [(os.path.basename(path), os.path.getsize(path))]
 
         # We are handling a directory, we will return all the files in the directory recursively
-        resolved_root = os.path.realpath(path)
         files_tuple = []
         for dp, _, filenames in os.walk(path):
             for filename in filenames:
                 file_path = os.path.join(dp, filename)
                 size_path = file_path
-                # Check symlinks are not pointing outside the root directory and are pointing to a file
                 if os.path.islink(file_path):
-                    size_path = os.path.realpath(file_path)
-                    try:
-                        is_inside_root = os.path.commonpath((resolved_root, size_path)) == resolved_root
-                    except ValueError:
-                        is_inside_root = False
-                    if not is_inside_root or not os.path.isfile(size_path):
-                        continue
+                    continue  # Discard symlinks for security reasons
                 files_tuple.append((os.path.relpath(file_path, path), os.path.getsize(size_path)))
         return files_tuple
 

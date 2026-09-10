@@ -21,31 +21,16 @@ class _DataHandler {
 
     if (srcStats.isDirectory()) {
       const filesTuple: Array<[string, number]> = [];
-      const resolvedSrcPath = fs.realpathSync(srcPath);
       const walk = (dir: string) => {
         for (const item of fs.readdirSync(dir)) {
           const fullPath = path.join(dir, item);
-          if (fs.lstatSync(fullPath).isSymbolicLink()) {
-            const resolvedTarget = fs.realpathSync(fullPath);
-            const relativeTarget = path.relative(
-              resolvedSrcPath,
-              resolvedTarget,
-            );
-            if (
-              relativeTarget === ".." ||
-              relativeTarget.startsWith(`..${path.sep}`) ||
-              path.isAbsolute(relativeTarget) ||
-              fs.statSync(resolvedTarget).isDirectory()
-            )
-              continue;
-          }
-          if (fs.statSync(fullPath).isDirectory()) {
+          const itemStats = fs.lstatSync(fullPath);
+          if (itemStats.isSymbolicLink()) continue; // Discard symbolic links for security reasons
+
+          if (itemStats.isDirectory()) {
             walk(fullPath);
-          } else {
-            filesTuple.push([
-              path.relative(srcPath, fullPath),
-              fs.statSync(fullPath).size,
-            ]);
+          } else if (itemStats.isFile()) {
+            filesTuple.push([path.relative(srcPath, fullPath), itemStats.size]);
           }
         }
       };
