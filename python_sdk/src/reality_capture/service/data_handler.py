@@ -110,7 +110,7 @@ class _DataHandler:
             file_path = os.path.join(src, file_tuple[0]) if os.path.isdir(src) else src
             with open(file_path, "rb") as data:
                 client.upload_blob(
-                    "/".join(filter(None, [reality_data_dst, file_tuple[0]])),
+                    "/".join(filter(None, [reality_data_dst.replace("\\", "/").strip("/"), file_tuple[0].replace("\\", "/").strip("/")]))
                     data,
                     connection_timeout=60,
                     max_concurrency=16,

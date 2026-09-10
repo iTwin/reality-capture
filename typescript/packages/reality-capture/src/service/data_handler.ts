@@ -111,7 +111,7 @@ class _DataHandler {
     const uploadFile = async (fileTuple: [string, number]) => {
       const [fileName, fileSize] = fileTuple;
       const filePath = fs.statSync(src).isDirectory() ? path.join(src, fileName) : src;
-      const blockBlobClient = client.getBlockBlobClient([realityDataDst, fileName].filter(Boolean).join("/"));
+      const blockBlobClient = client.getBlockBlobClient([realityDataDst, fileName].filter(Boolean).join("/").replace(/\\/g, "/").replace(/\/+/g, "/"));
       let loaded = 0;
       const data = fs.readFileSync(filePath);
       // Simulate progress with one chunk for demo (implement chunked upload for real progress)
