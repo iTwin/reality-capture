@@ -61,11 +61,6 @@ Analysis
 * :doc:`/specifications/eval_o2d`, :doc:`/specifications/eval_o3d`, :doc:`/specifications/eval_s2d`, :doc:`/specifications/eval_s3d` and :doc:`/specifications/eval_sortho` will compare a prediction to a reference for a specific detection.
 * :doc:`/specifications/training_s3d` will train a Segmentation 3D detector from ContextScenes
 
-.. Conversion
-.. ==========
-
-.. * :doc:`/specifications/point_cloud_conversion` will convert point clouds from one format to another.
-
 
 Utilities
 =========

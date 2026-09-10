@@ -4,7 +4,6 @@ import { RealityCaptureService } from "../../service/service";
 import type { AuthorizationClient } from "../../service/auth";
 import { Response } from "../../service/response";
 import { JobCreate, JobType, Service } from "../../service/job";
-import { CostEstimationCreate } from "../../service/estimation";
 import { DetectorBase, DetectorExport, DetectorType, DetectorUpdate, DetectorVersionCreate } from "../../service/detectors";
 import { Access, Prefer, RealityDataFilter, Type } from "../../service/reality_data";
 import { mockFetchResponse } from "./test_helpers";
@@ -477,52 +476,6 @@ describe("RealityCaptureService API calls tests", function () {
     expect(result.isError()).to.equal(false);
   });
 
-  //estimateCost tests
-  it("estimateCost should call fetch and return a Response<CostEstimation>", async () => {
-    fetchStub.resolves(mockFetchResponse(200, {
-      "costEstimation": {
-        "id": "jobId",
-        "estimatedUnits": 8,
-        "unitType": "Modeling"
-      }
-    }
-    ));
-    const costCreate: CostEstimationCreate = { type: JobType.CALIBRATION } as any;
-    const result = await service.estimateCost(costCreate);
-    expect(fetchStub.calledOnce).to.equal(true);
-    expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.equal(false);
-    expect(result.value!.estimatedUnits).to.equal(8);
-  });
-
-  it("estimateCost 401 error", async () => {
-    fetchStub.resolves(mockFetchResponse(401, {
-      error: {
-        code: "HeaderNotFound",
-        message: "Header Authorization was not found in the request. Access denied."
-      }
-    }
-    ));
-    const costCreate: CostEstimationCreate = { type: JobType.CALIBRATION } as any;
-    const result = await service.estimateCost(costCreate);
-    expect(fetchStub.calledOnce).to.equal(true);
-    expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.equal(true);
-    expect(result.error!.error.code).to.equal("HeaderNotFound");
-  });
-
-  it("estimateCost ill formed error", async () => {
-    fetchStub.resolves(mockFetchResponse(400, {
-      bad: "response"
-    }
-    ));
-    const costCreate: CostEstimationCreate = { type: JobType.CALIBRATION } as any;
-    const result = await service.estimateCost(costCreate);
-    expect(fetchStub.calledOnce).to.equal(true);
-    expect(result).to.be.instanceOf(Response);
-    expect(result.isError()).to.equal(true);
-    expect(result.error!.error.code).to.equal("UnknownError");
-  });
 
   // cancelJob tests
   it("cancelJob should call fetch and return a Response<Job>", async () => {
