@@ -33,7 +33,7 @@
     "src/specifications/**/*.ts",
     "src/tests/**/*.ts",
     "src/service/bucket.ts",
-    "src/service/detector.ts",
+    "src/service/detectors.ts",
     "src/service/error.ts",
     "src/service/files.ts",
     "src/service/job.ts",
