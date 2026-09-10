@@ -4,4 +4,4 @@
 *--------------------------------------------------------------------------------------------*/
 
 /** SDK version, kept in sync with package.json */
-export const SDK_VERSION = "1.6.0";
+export const SDK_VERSION = "2.0.0";
