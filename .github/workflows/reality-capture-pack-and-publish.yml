@@ -44,11 +44,15 @@ jobs:
         run: |
           git config --local user.email imodeljs-admin@users.noreply.github.com
           git config --local user.name imodeljs-admin
+          # beachball resolves --config from the git root, not the current directory,
+          # so an absolute path is required to load the package-local config.
+          $configName = if ("${{ inputs.prerelease }}" -eq "true") { "beachball.config.dev.js" } else { "beachball.config.js" }
+          $configPath = Join-Path "${{ github.workspace }}" "typescript/packages/reality-capture/$configName"
           if ("${{ inputs.prerelease }}" -eq "true") {
-            pnpm exec beachball publish --config ./beachball.config.dev.js --keep-change-files -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+            pnpm exec beachball publish --config "$configPath" --keep-change-files -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
           }
           else {
-            pnpm exec beachball publish --config ./beachball.config.js -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+            pnpm exec beachball publish --config "$configPath" -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
           }
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
