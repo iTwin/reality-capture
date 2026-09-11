@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "Initial Reality Capture release",
+  "packageName": "@itwin/reality-capture",
+  "email": "110406974+dbiguenet@users.noreply.github.com",
+  "dependentChangeType": "none"
+}
