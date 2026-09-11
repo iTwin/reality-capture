@@ -6,8 +6,8 @@ import os
 from pydantic import BaseModel, Field
 
 from reality_capture.common.job import JobState
-from reality_capture.on_premise.job import JobPriority, JobFilters
-from reality_capture.on_premise.job_manager import JobManager
+from reality_capture.on_premise.job import JobPriority
+from reality_capture.on_premise.job_manager import JobManager, JobFilters
 from reality_capture.on_premise.result import ManagerErrorCode
 from reality_capture.specifications.calibration import CalibrationSpecifications, CalibrationInputs, CalibrationOutputs
 

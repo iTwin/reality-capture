@@ -8,8 +8,10 @@ import socket
 import getpass
 import base64
 import sqlite3
+import threading
 
 import pydantic
+from pydantic import BaseModel, Field
 
 from reality_capture.on_premise._generic_manager import (
     GenericManager,
@@ -43,9 +45,45 @@ from reality_capture.specifications.eval_sortho import EvalSOrthoSpecifications
 from reality_capture.specifications.training import TrainingS3DSpecifications
 
 from reality_capture.common.job import JobState, JobType
-from reality_capture.on_premise.job import (Job, JobPriority, ExecutionOnPrem, Progress, Milestone, JobFilters,
-                                            JobPage, QueueSummary, ActiveJob)
+from reality_capture.on_premise.job import (Job, JobPriority, Execution, Progress, Milestone)
 from reality_capture.on_premise.result import Result, ManagerErrorCode
+
+
+class ActiveJob(BaseModel):
+    job_name: str = Field(description="Name of the job", alias="jobName")
+    running_tasks: int = Field(description="Number of running tasks", alias="runningTasks")
+    ready_tasks: int = Field(description="Number of tasks ready to be executed", alias="readyTasks")
+
+
+class QueueSummary(BaseModel):
+    jobs_failed: int = Field(description="Number of failed jobs", alias="jobsFailed")
+    jobs_success: int = Field(description="Number of successful jobs", alias="jobsSuccess")
+    jobs_cancelled: int = Field(description="Number of cancelled jobs", alias="jobsCancelled")
+    jobs_active: list[ActiveJob] = Field(description="List of active jobs", alias="jobsActive")
+    jobs_queued: int = Field(description="Number of queued jobs", alias="jobsQueued")
+
+
+class JobFilters(BaseModel):
+    include_state: Optional[list[JobState]] = Field(default=None, description="Include job state",
+                                                    alias="includeState")
+    created_date_time_range: Optional[tuple[datetime, datetime]] = Field(None,
+                                                                         description="Select jobs created during this time range.",
+                                                                         alias="createdDateTimeRange")
+    ended_date_time_range: Optional[tuple[datetime, datetime]] = Field(None,
+                                                                       description="Select jobs ended during this time range.",
+                                                                       alias="endedDateTimeRange")
+    started_date_time_range: Optional[tuple[datetime, datetime]] = Field(None,
+                                                                         description="Select jobs started during this time range.",
+                                                                         alias="startedDateTimeRange")
+    limit: int = Field(default=50, ge=1, description="Number of jobs per page")
+    continuation_token: Optional[str] = Field(default=None, description="Continuation token to get the next page",
+                                              alias="continuationToken")
+
+
+class JobPage(BaseModel):
+    jobs: list[Job]
+    next_continuation_token: Optional[str] = None
+
 
 class JobManager(GenericManager):
     def __init__(self, job_queue_dir: str):
@@ -69,6 +107,24 @@ class JobManager(GenericManager):
         self._close()
 
     @staticmethod
+    def _delete_shared_working_directory(shared_working_dir: str) -> None:
+        try:
+            shutil.rmtree(shared_working_dir, ignore_errors=True)
+        except Exception:
+            # Cleanup is best effort and must not affect the completed cancellation.
+            pass
+
+    @classmethod
+    def _start_shared_working_directory_cleanup(cls, shared_working_dir: str) -> None:
+        cleanup_thread = threading.Thread(
+            target=cls._delete_shared_working_directory,
+            args=(shared_working_dir,),
+            name="job-manager-directory-cleanup",
+            daemon=True,
+        )
+        cleanup_thread.start()
+
+    @staticmethod
     def _int_to_priority(jp: int) -> JobPriority:
         mapping = {
             -1: JobPriority.PAUSED,
@@ -78,6 +134,7 @@ class JobManager(GenericManager):
             3: JobPriority.URGENT,
         }
         return mapping.get(jp, JobPriority.NORMAL)
+
     @staticmethod
     def _priority_to_int(jp: JobPriority) -> int:
         mapping = {
@@ -108,10 +165,10 @@ class JobManager(GenericManager):
         return JobState.QUEUED
 
     _STATE_SQL_MAP = {
-        JobState.QUEUED:    f"({STATUS} & 1) AND NOT ({STATUS} & 60)",
-        JobState.ACTIVE:    f"({STATUS} & 4) AND NOT ({STATUS} & 56)",
-        JobState.SUCCESS:   f"({STATUS} & 8) AND NOT ({STATUS} & 48)",
-        JobState.FAILED:    f"({STATUS} & 16) AND NOT ({STATUS} & 32)",
+        JobState.QUEUED: f"({STATUS} & 1) AND NOT ({STATUS} & 60)",
+        JobState.ACTIVE: f"({STATUS} & 4) AND NOT ({STATUS} & 56)",
+        JobState.SUCCESS: f"({STATUS} & 8) AND NOT ({STATUS} & 48)",
+        JobState.FAILED: f"({STATUS} & 16) AND NOT ({STATUS} & 32)",
         JobState.CANCELLED: f"({STATUS} & 32)",
     }
 
@@ -144,7 +201,7 @@ class JobManager(GenericManager):
         (name, status, priority, shared_working_dir, job_type,
          submit_user, submit_host, submit_time, start_time, end_time) = row
 
-        execution_info = ExecutionOnPrem(
+        execution_info = Execution(
             submitUser=submit_user,
             submitHost=submit_host or "",
             createdDateTime=self._parse_datetime(submit_time),
@@ -397,17 +454,18 @@ class JobManager(GenericManager):
 
         return Result(None, qs)
 
-    def submit_job(self, specifications: Union[CalibrationSpecifications, ChangeDetectionSpecifications, ConstraintsSpecifications,
-                                               EvalO2DSpecifications, EvalO3DSpecifications,
-                                               EvalS2DSpecifications, EvalS3DSpecifications,
-                                               EvalSOrthoSpecifications, FillImagePropertiesSpecifications,
-                                               GaussianSplatsSpecifications, ImportPCSpecifications,
-                                               Objects2DSpecifications, ProductionSpecifications,
-                                               ReconstructionSpecifications, Segmentation2DSpecifications,
-                                               Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
-                                               TilingSpecifications, TouchUpExportSpecifications,
-                                               TouchUpImportSpecifications, TrainingS3DSpecifications,
-                                               WaterConstraintsSpecifications],
+    def submit_job(self, specifications: Union[
+        CalibrationSpecifications, ChangeDetectionSpecifications, ConstraintsSpecifications,
+        EvalO2DSpecifications, EvalO3DSpecifications,
+        EvalS2DSpecifications, EvalS3DSpecifications,
+        EvalSOrthoSpecifications, FillImagePropertiesSpecifications,
+        GaussianSplatsSpecifications, ImportPCSpecifications,
+        Objects2DSpecifications, ProductionSpecifications,
+        ReconstructionSpecifications, Segmentation2DSpecifications,
+        Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
+        TilingSpecifications, TouchUpExportSpecifications,
+        TouchUpImportSpecifications, TrainingS3DSpecifications,
+        WaterConstraintsSpecifications],
                    shared_working_directory: str,
                    priority: JobPriority = JobPriority.NORMAL, workspace: Optional[str] = None) -> Result[Job]:
         """
@@ -593,8 +651,8 @@ class JobManager(GenericManager):
         finally:
             self._release_lock(fd, self._db_path)
 
-        # Delete shared working directory (after lock release, non-reversible)
+        # Delete shared working directory after lock release without blocking cancellation.
         if shared_working_dir:
-            shutil.rmtree(shared_working_dir, ignore_errors=True)
+            self._start_shared_working_directory_cleanup(shared_working_dir)
 
         return self.get_job(job_name)

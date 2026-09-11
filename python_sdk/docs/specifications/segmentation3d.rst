@@ -116,6 +116,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.segmentation3d
 
 .. autopydantic_model:: Segmentation3DSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: Segmentation3DOutputsCreate
     :show-inheritance:
@@ -123,12 +124,16 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: Segmentation3DSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: Segmentation3DInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Segmentation3DOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Segmentation3DOptions
+    :inherited-members: BaseModel
     :model-show-json: False

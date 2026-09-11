@@ -10,7 +10,7 @@ from reality_capture.on_premise.result import Result, ManagerErrorCode
 
 ## Version
 DB_CURRENT_VERSION = "1.3"
-JOB_CURRENT_VERSION = "2.0"
+JOB_CURRENT_VERSION = "2.2"
 
 ## Table names
 JOBS = "Jobs"

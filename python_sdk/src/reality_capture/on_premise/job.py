@@ -27,20 +27,6 @@ from reality_capture.specifications.eval_sortho import EvalSOrthoSpecifications
 from reality_capture.specifications.training import TrainingS3DSpecifications
 
 
-class ActiveJob(BaseModel):
-    job_name: str = Field(description="Name of the job", alias="jobName")
-    running_tasks: int = Field(description="Number of running tasks", alias="runningTasks")
-    ready_tasks: int = Field(description="Number of tasks ready to be executed", alias="readyTasks")
-
-
-class QueueSummary(BaseModel):
-    jobs_failed: int = Field(description="Number of failed jobs", alias="jobsFailed")
-    jobs_success: int = Field(description="Number of successful jobs", alias="jobsSuccess")
-    jobs_cancelled: int = Field(description="Number of cancelled jobs", alias="jobsCancelled")
-    jobs_active: list[ActiveJob] = Field(description="List of active jobs", alias="jobsActive")
-    jobs_queued: int = Field(description="Number of queued jobs", alias="jobsQueued")
-
-
 class Milestone(BaseModel):
     name: str = Field(description="Name of the milestone.")
     parameters: list[str] = Field(default_factory=list, description="List of parameters.")
@@ -48,10 +34,10 @@ class Milestone(BaseModel):
 
 
 class Progress(BaseProgress):
-    milestones: list[Milestone] = Field(description="State of the job.")
+    milestones: list[Milestone] = Field(description="List of milestones.")
 
 
-class ExecutionOnPrem(BaseExecution):
+class Execution(BaseExecution):
     submit_host: str = Field(description="Computer who submitted the job.", alias="submitHost")
     submit_user: str = Field(description="User who submitted the job.", alias="submitUser")
 
@@ -64,19 +50,6 @@ class JobPriority(Enum):
     URGENT = "Urgent"
 
 
-class JobFilters(BaseModel):
-    include_state: Optional[list[JobState]] = Field(default=None, description="Include job state",
-                                                    alias="includeState")
-    created_date_time_range: Optional[tuple[datetime, datetime]] = Field(None, description="Select jobs created during this time range.",
-                                                                         alias="createdDateTimeRange")
-    ended_date_time_range: Optional[tuple[datetime, datetime]] = Field(None, description="Select jobs ended during this time range.",
-                                                                       alias="endedDateTimeRange")
-    started_date_time_range: Optional[tuple[datetime, datetime]] = Field(None, description="Select jobs started during this time range.",
-                                                                         alias="startedDateTimeRange")
-    limit: int = Field(default=50, ge=1, description="Number of jobs per page")
-    continuation_token: Optional[str] = Field(default=None, description="Continuation token to get the next page",
-                                              alias="continuationToken")
-
 class Job(BaseModel):
     name: str = Field(description="Job name.")
     priority: JobPriority = Field(description="Job priority.")
@@ -86,8 +59,8 @@ class Job(BaseModel):
                                                     "If ended, these are the hosts that executed at least one task for this job.",
                                         alias="processingHosts")
     state: JobState = Field(description="State of the job.")
-    execution_info: ExecutionOnPrem = Field(description="Known execution information for the job.",
-                                            alias="executionInfo")
+    execution_info: Execution = Field(description="Known execution information for the job.",
+                                      alias="executionInfo")
     type: JobType = Field(description="Type of the job.")
     shared_working_dir: str = Field(description="Shared working directory for the job.",
                                    alias="sharedWorkingDir")
@@ -160,6 +133,3 @@ class Job(BaseModel):
 
         return specifications
 
-class JobPage(BaseModel):
-    jobs: list[Job]
-    next_continuation_token: Optional[str] = None

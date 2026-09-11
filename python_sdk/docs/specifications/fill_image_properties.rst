@@ -24,6 +24,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.fill_image_properties
 
 .. autopydantic_model:: FillImagePropertiesSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: FillImagePropertiesOutputsCreate
     :show-inheritance:
@@ -31,14 +32,18 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: FillImagePropertiesSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: FillImagePropertiesInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: FillImagePropertiesOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: FillImagePropertiesOptions
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autoclass:: AltitudeReference

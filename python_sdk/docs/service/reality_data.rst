@@ -20,12 +20,15 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: Acquisition
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Coordinate
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Extent
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: RealityData
@@ -51,12 +54,15 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: URL
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ContainerLinks
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ContainerDetails
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autoclass:: Prefer
@@ -65,13 +71,17 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: RealityDataFilter
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: RealityDataMinimal
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: NextPageLink
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: RealityDatas
+    :inherited-members: BaseModel
     :model-show-json: False
