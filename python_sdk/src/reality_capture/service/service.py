@@ -28,7 +28,7 @@ class RealityCaptureService:
 
         :param token_factory: An object that implements a ``get_token() -> str`` method.
         :type token_factory: Object
-        :param \**kwargs: See below.
+        :param \\**kwargs: See below.
 
         :Keyword Arguments:
             * *user_agent* (``str``) --

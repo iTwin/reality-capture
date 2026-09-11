@@ -4,16 +4,16 @@ from enum import Enum
 
 
 class EvalO3DInputs(BaseModel):
-    reference: str = Field(description="Reality data id of ContextScene, annotated with embedded 3D object references")
-    prediction: str = Field(description="Reality data id of ContextScene, "
+    reference: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene, annotated with embedded 3D object references")
+    prediction: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                         "annotated with embedded 3D object predictions")
 
 
 class EvalO3DOutputs(BaseModel):
-    report: Optional[str] = Field(None, description="Path in Bucket of json report with binary classification",
-                                  pattern=r"^bkt:.+")
+    report: Optional[str] = Field(None,
+                                  description="Path to JSON report file with binary classification (bucket path in cloud, local path on-premise)")
     objects3d: Optional[str] = Field(None, alias="objects3D",
-                                     description="Reality data id of ContextScene, "
+                                     description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                                  "annotated with classified embedded 3D objects")
 
 
@@ -36,3 +36,4 @@ class EvalO3DSpecifications(BaseModel):
     inputs: EvalO3DInputs = Field(description="Inputs")
     outputs: EvalO3DOutputs = Field(description="Outputs")
     options: Optional[EvalO3DOptions] = Field(None, description="Options")
+

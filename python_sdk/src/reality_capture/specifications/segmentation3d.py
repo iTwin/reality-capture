@@ -5,61 +5,63 @@ from enum import Enum
 
 class Segmentation3DInputs(BaseModel):
     model_3d: Optional[str] = Field(None, alias="model3D",
-                                    description="Reality data id of ContextScene, "
+                                    description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                                 "pointing to a collection of point clouds/meshes to process, "
                                                 "or a point cloud, or a mesh.")
     point_cloud_segmentation_detector: Optional[str] = Field(None, alias="pointCloudSegmentationDetector",
-                                                             description="Either reality data id "
+                                                             description="Either reality data ID (cloud) or local path (on-premise) "
                                                                          "of point cloud segmentation object "
                                                                          "detector or point cloud "
                                                                          "segmentation detector identifier "
                                                                          "from the AI Detectors library")
     segmentation3d: Optional[str] = Field(None, alias="segmentation3D",
-                                          description="Reality data id of ContextScene, "
+                                          description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                                       "pointing to a segmented point cloud, "
                                                       "this input replaces point_cloud_segmentation_detector, "
                                                       "point_clouds and meshes inputs")
-    extent: Optional[str] = Field(None, alias="extent", pattern=r"^bkt:.+",
-                                  description="Path in the bucket of the clipping polygon to apply")
+    extent: Optional[str] = Field(None, alias="extent",
+                                  description="Path to clipping polygon file to apply (bucket path in cloud, local path on-premise)")
 
 
 class Segmentation3DOutputs(BaseModel):
     segmentation3d: Optional[str] = Field(None, alias="segmentation3D",
-                                          description="Reality data id of ContextScene, pointing to the segmented 3D model")
+                                          description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
+                                                      "pointing to the segmented 3D model")
     segmented_model_3d: Optional[str] = Field(None, alias="segmentedModel3D",
-                                              description="Reality data id of the 3D segmentation model follows the same format as the model3D file")
+                                              description="Reality data ID (cloud) or local path (on-premise) of the 3D segmentation model follows "
+                                                          "the same format as the model3D file")
     objects3d: Optional[str] = Field(None, alias="objects3D",
-                                     description="Reality data id of ContextScene, "
+                                     description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                                  "annotated with embedded 3D objects")
     objects3d_as_3d_tiles: Optional[str] = Field(None, alias="objects3DAs3DTiles",
-                                                 description="Reality data id of 3D objects "
+                                                 description="Reality data ID (cloud) or local path (on-premise) of 3D objects "
                                                              "as 3D Tiles file, objects3d output must be defined")
     objects3d_as_geojson: Optional[str] = Field(None, alias="objects3DAsGeoJSON",
-                                                description="Reality data id of 3D objects "
+                                                description="Reality data ID (cloud) or local path (on-premise) of 3D objects "
                                                             "as GeoJSON file, objects3d output must be defined")
     locations3d_as_shp: Optional[str] = Field(None, alias="locations3DAsSHP",
-                                              description="Reality data id of 3D objects locations "
+                                              description="Reality data ID (cloud) or local path (on-premise) of 3D objects locations "
                                                           "as SHP file, objects3d output must be defined")
     locations3d_as_geojson: Optional[str] = Field(None, alias="locations3DAsGeoJSON",
-                                                  description="Reality data id of 3D objects locations "
+                                                  description="Reality data ID (cloud) or local path (on-premise) of 3D objects locations "
                                                               "as GeoJSON file, objects3d output must be defined")
     lines3d: Optional[str] = Field(None, alias="lines3D",
-                                   description="Reality data id of ContextScene, "
+                                   description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                                "annotated with embedded 3D lines")
     lines3d_as_3d_tiles: Optional[str] = Field(None, alias="lines3DAs3DTiles",
-                                               description="Reality data id of 3D lines "
+                                               description="Reality data ID (cloud) or local path (on-premise) of 3D lines "
                                                            "as 3D Tiles file, lines3d output must be defined")
     lines3d_as_geojson: Optional[str] = Field(None, alias="lines3DAsGeoJSON",
-                                              description="Reality data id of 3D lines as GeoJSON file, "
+                                              description="Reality data ID (cloud) or local path (on-premise) of 3D lines as GeoJSON file, "
                                                           "lines3d output must be defined")
     polygons3d: Optional[str] = Field(None, alias="polygons3D",
-                                      description="Reality data id of ContextScene, "
+                                      description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                                   "annotated with embedded 3D polygons")
     polygons3d_as_3d_tiles: Optional[str] = Field(None, alias="polygons3DAs3DTiles", 
-                                                  description="Reality data id of 3D polygons "
+                                                  description="Reality data ID (cloud) or local path (on-premise) of 3D polygons "
                                                               "as 3D Tiles file, polygons3d output must be defined")
     polygons3d_as_geojson: Optional[str] = Field(None, alias="polygons3DAsGeoJSON",
-                                                 description="Reality data id of 3D polygons "
+                                                 description="Reality data ID (cloud) or local path (on-premise) of 3D polygons "
                                                              "as GeoJSON file, polygons3d output must be defined")
 
 
@@ -85,8 +87,8 @@ class Segmentation3DOptions(BaseModel):
     compute_line_width: Optional[bool] = Field(None, alias="computeLineWidth",
                                                description="Estimation 3D line width at each vertex")
     remove_small_lines: Optional[float] = Field(None, alias="removeSmallLines",
-                                                     description="Remove 3D lines with total length "
-                                                                 "smaller than this value")
+                                                description="Remove 3D lines with total length "
+                                                            "smaller than this value")
 
 
 class Segmentation3DSpecificationsCreate(BaseModel):
@@ -99,3 +101,4 @@ class Segmentation3DSpecifications(BaseModel):
     inputs: Segmentation3DInputs = Field(description="Inputs")
     outputs: Segmentation3DOutputs = Field(description="Outputs")
     options: Optional[Segmentation3DOptions] = Field(None, description="Options")
+

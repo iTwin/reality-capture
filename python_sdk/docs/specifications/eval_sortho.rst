@@ -25,6 +25,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.eval_sortho
 
 .. autopydantic_model:: EvalSOrthoSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: EvalSOrthoOutputsCreate
     :show-inheritance:
@@ -32,9 +33,12 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: EvalSOrthoSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: EvalSOrthoInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: EvalSOrthoOutputs
+    :inherited-members: BaseModel
     :model-show-json: False

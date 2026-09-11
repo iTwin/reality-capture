@@ -1,0 +1,31 @@
+{
+    "Production" : {
+        "inputs" : {
+            "modelingReference" : "D:/Projects/TestDB/Project files/Block_2/Reconstruction_1",
+            "scene" : "D:/Projects/TestDB/Project files/Block_2/Reconstructions-Internal/Reconstruction_1/Production_1/tmp_inputs/blockScene",
+            "crsData" : "D:/Projects/TestDB/Project files/CRSData"
+        },
+        "outputs" : {
+            "exports" : [
+                {
+                    "format" : "3DTiles",
+                    "location" : "D:/Projects/TestDB/Productions/Production_1",
+                    "name" : "Production_1",
+                    "options" : {
+                        "textureColorSource" : "Visible",
+                        "textureColorSourceResMin" : 0.0761929999999999968,
+                        "textureColorSourceResMax" : 0.118620000000000003,
+                        "textureColorSourceThermalUnit" : "Celsius",
+                        "textureColorSourceThermalMin" : -1,
+                        "textureColorSourceThermalMax" : -1,
+                        "crs" : "EPSG:4978",
+                        "lodScope" : "AcrossTiles"
+                    }
+                }
+            ]
+        },
+        "options" : {
+            "workspace" : "D:/Projects/TestDB/Project files/Block_2/ProductionWorkspace"
+        }
+    }
+}

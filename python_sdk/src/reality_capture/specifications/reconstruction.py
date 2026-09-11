@@ -5,19 +5,17 @@ from reality_capture.specifications.production import Export, ExportCreate
 
 
 class ReconstructionInputs(BaseModel):
-    scene: str = Field(description="Reality data id of ContextScene to process")
-    region_of_interest: Optional[str] = Field(description="Path in the bucket to region of interest file, "
-                                                          "used for tiling region of interest",
-                                              pattern=r"^bkt:.+",
+    scene: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene to process")
+    region_of_interest: Optional[str] = Field(description="Path to region of interest file (bucket path in cloud, local path on-premise), used for tiling region of interest",
                                               alias="regionOfInterest", default=None)
-    extent: Optional[str] = Field(None, description="Path in the bucket to region of interest file, "
-                                                    "used for export extent",
-                                  pattern=r"^bkt:.+")
-    modeling_reference: Optional[str] = Field(None, description="Reality data id of modeling reference to process",
+    extent: Optional[str] = Field(None,
+                                  description="Path to region of interest file (bucket path in cloud, local path on-premise), used for export extent")
+    modeling_reference: Optional[str] = Field(None, description="Reality data ID (cloud) or local path (on-premise) of modeling reference to process",
                                               alias="modelingReference")
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
-    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData",
-                                    pattern=r"^bkt:.+")
+    crs_data: Optional[str] = Field(default=None,
+                                    description="Path to CRS data file (bucket path in cloud, local path on-premise).",
+                                    alias="crsData")
 
 
 class ReconstructionOutputs(BaseModel):
@@ -46,3 +44,4 @@ class ReconstructionSpecifications(BaseModel):
 class ReconstructionCost(BaseModel):
     gpix: float = Field(description="Number of GigaPixels in the overall inputs.", ge=0)
     mpoints: float = Field(description="Number of MegaPoints in the overall inputs.", ge=0)
+
