@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "Use reality-capture to send requests to Reality Management API",
+  "packageName": "@itwin/reality-data-client",
+  "email": "110406974+dbiguenet@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
