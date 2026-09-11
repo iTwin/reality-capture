@@ -29,6 +29,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22.x
+          registry-url: https://registry.npmjs.org/
 
       - name: Install dependencies
         working-directory: ./typescript/packages/reality-capture
@@ -38,41 +39,21 @@ jobs:
         working-directory: ./typescript/packages/reality-capture
         run: pnpm build
 
-      - name: Pack as tgz
-        working-directory: ./typescript/packages/reality-capture
-        run: pnpm run pack
-
-      - name: Get version
-        id: get_version
-        working-directory: ./typescript/packages/reality-capture
-        shell: pwsh
-        run: |
-          $packageVersion=(Get-Content .\package.json | ConvertFrom-Json).version
-          Write-Output "version=$($packageVersion)" >> $Env:GITHUB_OUTPUT
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.get_version.outputs.version }}-ts
-          name: "Typescript Version ${{ steps.get_version.outputs.version }}"
-          draft: true
-          prerelease: ${{ inputs.prerelease }}
-          files: |
-            ./typescript/packages/reality-capture/lib/itwin-reality-capture-${{ steps.get_version.outputs.version }}.tgz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Publish packages in npm
         working-directory: ./typescript/packages/reality-capture
         shell: pwsh
         run: |
           git config --local user.email imodeljs-admin@users.noreply.github.com
           git config --local user.name imodeljs-admin
+          # beachball resolves --config from the git root, not the current directory,
+          # so an absolute path is required to load the package-local config.
+          $configName = if ("${{ inputs.prerelease }}" -eq "true") { "beachball.config.dev.js" } else { "beachball.config.js" }
+          $configPath = Join-Path "${{ github.workspace }}" "typescript/packages/reality-capture/$configName"
           if ("${{ inputs.prerelease }}" -eq "true") {
-            pnpm publish-packages-dev -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+            pnpm exec beachball publish --config "$configPath" --keep-change-files -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
           }
           else {
-            pnpm publish-packages -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+            pnpm exec beachball publish --config "$configPath" -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
           }
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
