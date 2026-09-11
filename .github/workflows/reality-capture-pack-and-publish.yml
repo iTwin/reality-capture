@@ -61,3 +61,18 @@ jobs:
             ./typescript/packages/reality-capture/lib/itwin-reality-capture-${{ steps.get_version.outputs.version }}.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish packages in npm
+        working-directory: ./typescript/packages/reality-capture
+        shell: pwsh
+        run: |
+          git config --local user.email imodeljs-admin@users.noreply.github.com
+          git config --local user.name imodeljs-admin
+          if ("${{ inputs.prerelease }}" -eq "true") {
+            pnpm publish-packages-dev -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+          }
+          else {
+            pnpm publish-packages -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+          }
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
