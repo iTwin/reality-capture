@@ -45,10 +45,10 @@ jobs:
           git config --local user.email imodeljs-admin@users.noreply.github.com
           git config --local user.name imodeljs-admin
           if ("${{ inputs.prerelease }}" -eq "true") {
-            pnpm publish-packages-dev -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+            pnpm exec beachball publish --config ./beachball.config.dev.js --keep-change-files -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
           }
           else {
-            pnpm publish-packages -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+            pnpm exec beachball publish --config ./beachball.config.js -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
           }
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
