@@ -41,7 +41,7 @@
     "publish-packages-dev": "beachball publish --config beachball.config.dev.js --keep-change-files"
   },
   "dependencies": {
-    "@itwin/reality-capture": "file:../reality-capture"
+    "@itwin/reality-capture": "1.6.1-dev.0"
   },
   "devDependencies": {
     "@playwright/test": "~1.56.1",
