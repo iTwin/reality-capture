@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@itwin/reality-capture':
-        specifier: file:../reality-capture
-        version: file:../reality-capture
+        specifier: 1.7.0
+        version: 1.7.0
     devDependencies:
       '@playwright/test':
         specifier: ~1.56.1
@@ -162,8 +162,8 @@ packages:
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
 
-  '@itwin/reality-capture@file:../reality-capture':
-    resolution: {directory: ../reality-capture, type: directory}
+  '@itwin/reality-capture@1.7.0':
+    resolution: {integrity: sha512-un+DmZ7ukvPMXL5bZGBRr8c5XLYGZ/RAFb0Gqvt9rTAKUSV+o7FrfX4HSSKHFDUMzZQ6akvtNObNc2Ft3UTZMw==}
 
   '@jridgewell/resolve-uri@3.1.2':
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
@@ -1363,7 +1363,7 @@ snapshots:
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
 
-  '@itwin/reality-capture@file:../reality-capture':
+  '@itwin/reality-capture@1.7.0':
     dependencies:
       '@azure/storage-blob': 12.33.0
       class-validator: 0.14.4
