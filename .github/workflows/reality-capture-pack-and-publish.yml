@@ -50,18 +50,6 @@ jobs:
           $packageVersion=(Get-Content .\package.json | ConvertFrom-Json).version
           Write-Output "version=$($packageVersion)" >> $Env:GITHUB_OUTPUT
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.get_version.outputs.version }}-ts
-          name: "Typescript Version ${{ steps.get_version.outputs.version }}"
-          draft: true
-          prerelease: ${{ inputs.prerelease }}
-          files: |
-            ./typescript/packages/reality-capture/lib/itwin-reality-capture-${{ steps.get_version.outputs.version }}.tgz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Publish packages in npm
         working-directory: ./typescript/packages/reality-capture
         shell: pwsh
