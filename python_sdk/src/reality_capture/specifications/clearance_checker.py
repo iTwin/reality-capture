@@ -10,20 +10,20 @@ class ClearanceCheckerInput(BaseModel):
                             description="Reality data id of ContextScene, annotated with embedded 3D footprints")
 
 
-class ClearanceOutputs(BaseModel):
+class ClearanceCheckerOutputs(BaseModel):
     clearance: Optional[str] = Field(None, alias="clearance",
-                                      description="Reality data id of ContextScene, annotated with embedded 3D clearance")
+                                     description="Reality data id of ContextScene, annotated with embedded 3D clearance")
 
 
-class ClearanceOutputsCreate(Enum):
+class ClearanceCheckerOutputsCreate(Enum):
     CLEARANCE = "clearance"
 
 
-class ClearanceSpecificationsCreate(BaseModel):
-    inputs: ClearanceInput = Field(description="Inputs")
-    outputs: list[ClearanceOutputsCreate] = Field(description="Outputs")
+class ClearanceCheckerSpecificationsCreate(BaseModel):
+    inputs: ClearanceCheckerInput = Field(description="Inputs")
+    outputs: list[ClearanceCheckerOutputsCreate] = Field(description="Outputs")
 
 
-class ClearanceSpecifications(BaseModel):
-    inputs: ClearanceInput = Field(description="Inputs")
-    outputs: ClearanceOutputs = Field(description="Outputs")
+class ClearanceCheckerSpecifications(BaseModel):
+    inputs: ClearanceCheckerInput = Field(description="Inputs")
+    outputs: ClearanceCheckerOutputs = Field(description="Outputs")

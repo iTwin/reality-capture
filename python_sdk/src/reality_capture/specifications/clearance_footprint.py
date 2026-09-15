@@ -26,11 +26,11 @@ class ClearanceFootprintOptions(BaseModel):
 class ClearanceFootprintSpecificationsCreate(BaseModel):
     inputs: ClearanceFootprintInput = Field(description="Inputs")
     outputs: list[ClearanceFootprintOutputsCreate] = Field(description="Outputs")
-    options: Optional[ClearanceFootprintOptions] = Field(description="Options")
+    options: Optional[ClearanceFootprintOptions] = Field(None, description="Options")
 
 
 class ClearanceFootprintSpecifications(BaseModel):
     inputs: ClearanceFootprintInput = Field(description="Inputs")
     outputs: ClearanceFootprintOutputs = Field(description="Outputs")
-    options: Optional[ClearanceFootprintOptions] = Field(description="Options")
+    options: Optional[ClearanceFootprintOptions] = Field(None, description="Options")
 
