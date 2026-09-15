@@ -3,7 +3,7 @@ from typing import Optional
 from enum import Enum
 
 
-class ClearanceCheckerInput(BaseModel):
+class ClearanceCheckerInputs(BaseModel):
     model_3d: str = Field(alias="model3D",
                           description="Reality data id of a 3D model (mesh, point cloud, a ContextScene with embedded 3D model) to process")
     footprints: str = Field(alias="footprints",
@@ -20,10 +20,10 @@ class ClearanceCheckerOutputsCreate(Enum):
 
 
 class ClearanceCheckerSpecificationsCreate(BaseModel):
-    inputs: ClearanceCheckerInput = Field(description="Inputs")
+    inputs: ClearanceCheckerInputs = Field(description="Inputs")
     outputs: list[ClearanceCheckerOutputsCreate] = Field(description="Outputs")
 
 
 class ClearanceCheckerSpecifications(BaseModel):
-    inputs: ClearanceCheckerInput = Field(description="Inputs")
+    inputs: ClearanceCheckerInputs = Field(description="Inputs")
     outputs: ClearanceCheckerOutputs = Field(description="Outputs")

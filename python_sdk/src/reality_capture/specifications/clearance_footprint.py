@@ -3,7 +3,7 @@ from typing import Optional
 from enum import Enum
 
 
-class ClearanceFootprintInput(BaseModel):
+class ClearanceFootprintInputs(BaseModel):
     segmentation3d: str = Field(alias="segmentation3D",
                                 description="Reality data id of ContextScene")
     objects3d: str = Field(alias="objects3D",
@@ -24,13 +24,13 @@ class ClearanceFootprintOptions(BaseModel):
 
 
 class ClearanceFootprintSpecificationsCreate(BaseModel):
-    inputs: ClearanceFootprintInput = Field(description="Inputs")
+    inputs: ClearanceFootprintInputs = Field(description="Inputs")
     outputs: list[ClearanceFootprintOutputsCreate] = Field(description="Outputs")
     options: Optional[ClearanceFootprintOptions] = Field(None, description="Options")
 
 
 class ClearanceFootprintSpecifications(BaseModel):
-    inputs: ClearanceFootprintInput = Field(description="Inputs")
+    inputs: ClearanceFootprintInputs = Field(description="Inputs")
     outputs: ClearanceFootprintOutputs = Field(description="Outputs")
     options: Optional[ClearanceFootprintOptions] = Field(None, description="Options")
 
