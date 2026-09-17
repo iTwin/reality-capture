@@ -44,6 +44,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.tiling
 
 .. autopydantic_model:: TilingSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: TilingOutputsCreate
     :show-inheritance:
@@ -51,17 +52,22 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: TilingSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: TilingInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: TilingOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ModelingReference
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: TilingOptions
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autoclass:: ModelingReferenceType
@@ -120,6 +126,8 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: Layout
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: LayoutTile
+    :inherited-members: BaseModel
     :model-show-json: False

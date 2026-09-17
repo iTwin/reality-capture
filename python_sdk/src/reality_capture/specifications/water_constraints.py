@@ -4,10 +4,11 @@ from enum import Enum
 
 
 class WaterConstraintsInputs(BaseModel):
-    scene: str = Field(description="Reality data id of ContextScene")
-    modeling_reference: str = Field(alias="modelingReference", description="Reality data id of Modeling Reference")
-    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData",
-                                    pattern=r"^bkt:.+")
+    scene: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene")
+    modeling_reference: str = Field(alias="modelingReference", description="Reality data ID (cloud) or local path (on-premise) of Modeling Reference")
+    crs_data: Optional[str] = Field(default=None,
+                                    description="Path to CRS data file (bucket path in cloud, local path on-premise).",
+                                    alias="crsData")
 
 
 class WaterConstraintsOptions(BaseModel):
@@ -20,8 +21,7 @@ class WaterConstraintsOutputsCreate(Enum):
 
 
 class WaterConstraintsOutputs(BaseModel):
-    constraints: str = Field(description="Path in the bucket of output constraints",
-                             pattern=r"^bkt:.+")
+    constraints: str = Field(description="Path to output constraints file (bucket path in cloud, local path on-premise)")
 
 
 class WaterConstraintsSpecificationsCreate(BaseModel):
@@ -38,3 +38,4 @@ class WaterConstraintsSpecifications(BaseModel):
 
 class WaterConstraintsCost(BaseModel):
     gpix: float = Field(description="Number of GigaPixels in the overall inputs.", ge=0)
+

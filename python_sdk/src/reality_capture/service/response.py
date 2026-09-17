@@ -5,6 +5,7 @@ from reality_capture.service.error import DetailedErrorResponse
 
 T = TypeVar("T")
 
+
 @dataclass
 class Response(Generic[T]):
     """

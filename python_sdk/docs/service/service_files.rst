@@ -16,6 +16,8 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: File
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Files
+    :inherited-members: BaseModel

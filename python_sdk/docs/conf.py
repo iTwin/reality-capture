@@ -7,9 +7,10 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 import reality_capture
+import datetime
 
 project = 'Reality Capture'
-copyright = '2025, Bentley Systems'
+copyright = f'{datetime.datetime.now().year}, Bentley Systems'
 author = 'Bentley Systems'
 release = reality_capture.__version__
 
@@ -42,7 +43,7 @@ html_context = {
     "display_github": True,  # Integrate GitHub
     "github_user": "iTwin",  # Username
     "github_repo": "reality-capture",  # Repo name
-    "github_version": "feature/2.0.0",  # Version
+    "github_version": "main",  # Version
     "conf_py_path": "/python_sdk/docs/",  # Path in the checkout to the docs root
     "current_version": release,
     "versions": ["latest", "2.0.0"],

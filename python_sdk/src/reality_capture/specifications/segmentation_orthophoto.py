@@ -4,10 +4,10 @@ from enum import Enum
 
 
 class SegmentationOrthophotoInputs(BaseModel):
-    orthophoto: str = Field(description="Reality data id of ContextScene, "
+    orthophoto: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                         "pointing to orthophotos to process")
     orthophoto_segmentation_detector: str = Field(alias="orthophotoSegmentationDetector",
-                                                  description="Either reality data id "
+                                                  description="Either reality data ID (cloud) or local path (on-premise) "
                                                               "of orthophoto segmentation detector "
                                                               "or orthophoto segmentation detector identifier "
                                                               "from the AI Detectors library")
@@ -15,27 +15,27 @@ class SegmentationOrthophotoInputs(BaseModel):
 
 class SegmentationOrthophotoOutputs(BaseModel):
     segmentation2d: Optional[str] = Field(None, alias="segmentation2D",
-                                          description="Reality data id of ContextScene, "
+                                          description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                                       "pointing to segmented orthophotos")
     segmented_photos: Optional[str] = Field(None, alias="segmentedPhotos",
-                                            description="Reality data id of segmented orthophotos")
+                                            description="Reality data ID (cloud) or local path (on-premise) of segmented orthophotos")
     polygons2d: Optional[str] = Field(None, alias="polygons2D",
-                                      description="Reality data id of ContextScene, "
+                                      description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                                   "annotated with embedded 2D polygons")
     polygons2d_as_shp: Optional[str] = Field(None, alias="polygons2DAsSHP",
-                                             description="Reality data id of 2D polygons as SHP file, "
+                                             description="Reality data ID (cloud) or local path (on-premise) of 2D polygons as SHP file, "
                                                          "polygons2d output must be defined")
     polygons2d_as_geojson: Optional[str] = Field(None, alias="polygons2DAsGeoJSON",
-                                                 description="Reality data id of 2D polygons "
+                                                 description="Reality data ID (cloud) or local path (on-premise) of 2D polygons "
                                                              "as GeoJSON file, polygons2d output must be defined")
     lines2d: Optional[str] = Field(None, alias="lines2D",
-                                   description="Reality data id of ContextScene, "
+                                   description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                                "annotated with embedded 2D lines")
     lines2d_as_shp: Optional[str] = Field(None, alias="lines2DAsSHP",
-                                          description="Reality data id of 2D lines as SHP file, "
+                                          description="Reality data ID (cloud) or local path (on-premise) of 2D lines as SHP file, "
                                                       "lines2d output must be defined")
     lines2d_as_geojson: Optional[str] = Field(None, alias="lines2DAsGeoJSON",
-                                              description="Reality data id of 2D lines as GeoJSON file, "
+                                              description="Reality data ID (cloud) or local path (on-premise) of 2D lines as GeoJSON file, "
                                                           "lines2d output must be defined")
 
 
@@ -58,3 +58,4 @@ class SegmentationOrthophotoSpecificationsCreate(BaseModel):
 class SegmentationOrthophotoSpecifications(BaseModel):
     inputs: SegmentationOrthophotoInputs = Field(description="Inputs")
     outputs: SegmentationOrthophotoOutputs = Field(description="Outputs")
+

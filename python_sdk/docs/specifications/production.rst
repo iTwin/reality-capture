@@ -29,19 +29,25 @@ Classes
 .. currentmodule:: reality_capture.specifications.production
 
 .. autopydantic_model:: ProductionSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: ProductionOutputsCreate
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ExportCreate
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ProductionSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: ProductionInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ProductionOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Export
@@ -54,30 +60,39 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: Options3DTiles
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: OptionsOBJ
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Options3MX
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: OptionsLAS
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: OptionsPLY
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: OptionsOPC
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: OptionsI3S
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: OptionsOSGB
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: OptionsOrthoDSM
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autoclass:: ColorSource

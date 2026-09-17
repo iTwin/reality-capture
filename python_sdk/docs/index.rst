@@ -39,13 +39,24 @@ The :doc:`specifications/index` section contains all the necessary information a
 Services
 ========
 
-The :doc:`service/index` section contains all the necessary information about the send payload and responses from the Reality Capture APIs ;
+The :doc:`service/index` section contains all the necessary information about the sent payloads and responses from the Reality Capture APIs ;
 
 .. toctree::
     :titlesonly:
     :includehidden:
 
     service/index
+
+OnPremise
+=========
+
+The :doc:`onpremise/index` section contains all the necessary information regarding the submission of jobs and job queue management leveraging the OnPremise iTwin Capture Engine.
+
+.. toctree::
+    :titlesonly:
+    :includehidden:
+
+    onpremise/index
 
 Changelog
 =========

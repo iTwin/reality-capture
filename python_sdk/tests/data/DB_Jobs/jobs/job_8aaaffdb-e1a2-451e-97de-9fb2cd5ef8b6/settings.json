@@ -1,0 +1,39 @@
+{
+    "Calibration" : {
+        "inputs" : {
+            "scene" : "D:/Projects/TestDB/Project files/Block_6/AT-Internal/Scene0",
+            "crsData" : "D:/Projects/TestDB/Project files/CRSData"
+        },
+        "outputs" : {
+            "report" : "D:/Projects/TestDB/Project files/Block_6/QualityReport",
+            "scene" : "D:/Projects/TestDB/Project files/Block_6",
+            "texturedTiePoints" : "D:/Projects/TestDB/Project files/Block_6/Splats"
+        },
+        "options" : {
+            "rigSynchro" : "None",
+            "rotationPolicy" : "Compute",
+            "centerPolicy" : "Compute",
+            "focalPolicy" : "Adjust",
+            "principalPolicy" : "Adjust",
+            "radialPolicy" : "Adjust",
+            "tangentialPolicy" : "Adjust",
+            "fisheyeFocalPolicy" : "Keep",
+            "fisheyeDistortionPolicy" : "Keep",
+            "aspectRatioPolicy" : "Keep",
+            "skewPolicy" : "Keep",
+            "tiepointsPolicy" : "Compute",
+            "pairSelection" : "Default",
+            "pairSelectionDistance" : 3,
+            "keypointsDensity" : "Normal",
+            "precalibration" : true,
+            "colorEqualization" : "BlockWise",
+            "adjustmentConstraints" : [
+                "None"
+            ],
+            "rigidRegistrationPosition" : "None",
+            "rigidRegistrationRotation" : "None",
+            "rigidRegistrationScale" : "None",
+            "workspace" : "D:/Projects/TestDB/Project files"
+        }
+    }
+}

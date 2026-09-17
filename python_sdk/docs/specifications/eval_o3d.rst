@@ -24,6 +24,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.eval_o3d
 
 .. autopydantic_model:: EvalO3DSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: EvalO3DOutputsCreate
     :show-inheritance:
@@ -31,12 +32,16 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: EvalO3DSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: EvalO3DInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: EvalO3DOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: EvalO3DOptions
+    :inherited-members: BaseModel
     :model-show-json: False
