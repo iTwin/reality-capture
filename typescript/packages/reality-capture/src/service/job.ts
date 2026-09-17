@@ -2,6 +2,8 @@ import { z } from "zod";
 
 import { CalibrationSpecificationsCreateSchema, CalibrationSpecificationsSchema } from "../specifications/calibration";
 import { ChangeDetectionSpecificationsCreateSchema, ChangeDetectionSpecificationsSchema } from "../specifications/change_detection";
+import { ClearanceCheckerSpecificationsCreateSchema, ClearanceCheckerSpecificationsSchema } from "../specifications/clearance_checker";
+import { ClearanceFootprintSpecificationsCreateSchema, ClearanceFootprintSpecificationsSchema } from "../specifications/clearance_footprint";
 import { ConstraintsSpecificationsCreateSchema, ConstraintsSpecificationsSchema } from "../specifications/constraints";
 import { FillImagePropertiesSpecificationsCreateSchema, FillImagePropertiesSpecificationsSchema } from "../specifications/fill_image_properties";
 import { ImportPCSpecificationsCreateSchema, ImportPCSpecificationsSchema } from "../specifications/import_point_cloud";
@@ -27,6 +29,8 @@ import { URLSchema } from "./reality_data";
 export enum JobType {
   CALIBRATION = "Calibration",
   CHANGE_DETECTION = "ChangeDetection",
+  CLEARANCE_CHECKER = "ClearanceChecker",
+  CLEARANCE_FOOTPRINT = "ClearanceFootprint",
   CONSTRAINTS = "Constraints",
   EVAL_O2D = "EvalO2D",
   EVAL_O3D = "EvalO3D",
@@ -69,7 +73,8 @@ export function getAppropriateService(jt: JobType): Service {
     JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D,
     JobType.SEGMENTATION_ORTHOPHOTO, JobType.CHANGE_DETECTION,
     JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D, JobType.EVAL_S3D,
-    JobType.EVAL_SORTHO, JobType.TRAINING_S3D,
+    JobType.EVAL_SORTHO, JobType.TRAINING_S3D, JobType.CLEARANCE_CHECKER,
+    JobType.CLEARANCE_FOOTPRINT,
   ].includes(jt)) {
     return Service.ANALYSIS;
   }
@@ -93,6 +98,8 @@ export const JobCreateSchema = z.object({
   specifications: z.union([
     CalibrationSpecificationsCreateSchema,
     ChangeDetectionSpecificationsCreateSchema,
+    ClearanceCheckerSpecificationsCreateSchema,
+    ClearanceFootprintSpecificationsCreateSchema,
     ConstraintsSpecificationsCreateSchema,
     EvalO2DSpecificationsCreateSchema,
     EvalO3DSpecificationsCreateSchema,
@@ -146,6 +153,16 @@ export const JobSchema = z.discriminatedUnion("type", [
     ...CommonFields,
     type: z.literal("ChangeDetection"),
     specifications: ChangeDetectionSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("ClearanceChecker"),
+    specifications: ClearanceCheckerSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("ClearanceFootprint"),
+    specifications: ClearanceFootprintSpecificationsSchema,
   }),
   z.object({
     ...CommonFields,
