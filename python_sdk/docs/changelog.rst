@@ -10,14 +10,36 @@ This page documents all notable changes to the ``reality_capture`` Python SDK ac
 
 ----
 
-Next Release
+Next release
 ============
+
+Additions
+---------
+
+- Added a new **Mesh Sampling** job type (:class:`~reality_capture.specifications.mesh_sampling.MeshSamplingSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.MeshSamplingSpecifications`) that converts a collection of meshes in a point cloud.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+- Added a new **Point Cloud Conversion** job type (:class:`~reality_capture.specifications.mesh_sampling.PointCloudConversionSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.PointCloudConversionSpecifications`) that converts point clouds from one format to another.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+- Added a new **Point Cloud Conversion** job type (:class:`~reality_capture.specifications.mesh_sampling.PCOptimizationSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.PCOptimizationSpecifications`) that optimizes a collection of point clouds from one format
+  to a single point cloud.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+- Added a new **Tile Map Optimization** job type (:class:`~reality_capture.specifications.mesh_sampling.TileMapOptimizationSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.TileMapOptimizationSpecifications`) that optimizes Tile Maps from one format to another.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+- Added a new **Vector Optimization** job type (:class:`~reality_capture.specifications.mesh_sampling.VectorOptimizationSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.VectorOptimizationSpecifications`) that optimizes vector data from one format to another.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
 
 Fixes
 -----
 
 - **Security**: DataHandlers don't upload symlinked data anymore.
   (`#334 <https://github.com/iTwin/reality-capture/pull/334>`_)
+
+----
 
 2.6.0
 =====

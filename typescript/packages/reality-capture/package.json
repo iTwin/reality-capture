@@ -1,6 +1,6 @@
 {
   "name": "@itwin/reality-capture",
-  "version": "2.0.0",
+  "version": "1.6.1-dev.0",
   "description": "This package contains a SDK for Reality Modeling, Reality Analysis, Reality Conversion and Reality Management iTwin APIs as well as Reality Management API utils. It provides classes, functions and examples to upload local data to Reality Management, run jobs and download the results.",
   "main": "lib/cjs/index.node.js",
   "module": "lib/esm/index.web.js",
@@ -33,7 +33,13 @@
     "lint-fix": "eslint ./src --fix --ext .ts",
     "test:unit": "mocha --require ts-node/register ./src/tests/**/*.test.ts --slow 0",
     "coverage": "nyc npm run test:unit",
-    "pack": "npm pack --pack-destination ./lib"
+    "pack": "npm pack --pack-destination ./lib",
+    "change": "beachball change --no-commit",
+    "check": "beachball check",
+    "version-bump": "beachball bump",
+    "publish-packages": "beachball publish",
+    "version-bump-dev": "beachball bump --config beachball.config.dev.js --keep-change-files",
+    "publish-packages-dev": "beachball publish --config beachball.config.dev.js --keep-change-files"
   },
   "keywords": [
     "azure",
@@ -63,6 +69,7 @@
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.8.0",
     "@types/sinon": "^17.0.0",
+    "beachball": "^2.31.12",
     "chai": "^6.0.0",
     "eslint": "^8.52.0",
     "mocha": "^11.0.0",
