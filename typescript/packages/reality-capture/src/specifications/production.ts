@@ -41,6 +41,13 @@ export enum LODType {
   BING_MAPS = "BingMaps",
 }
 
+export enum LODSize {
+  S = "S",
+  M = "M",
+  L = "L",
+  XL = "XL",
+}
+
 export enum CesiumCompression {
   NO = "None",
   DRACO = "Draco",
@@ -136,10 +143,13 @@ export const Options3DTilesSchema = z.object({
     .describe("Maximum thermal value for the texture color source"),
   crs: z.string().optional().describe("Coordinate reference system"),
   lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
+  lodSize: z.nativeEnum(LODSize).optional().describe("Level of detail size"),
   compress: z
     .nativeEnum(CesiumCompression)
     .optional()
     .describe("Compression type"),
+  tileOverlap: z.number().min(0).optional().describe("Tile overlap in meters"),
+  skirtLength: z.number().min(0).optional().describe("Skirt length in meters"),
 });
 export type Options3DTiles = z.infer<typeof Options3DTilesSchema>;
 
@@ -188,11 +198,14 @@ export const OptionsOBJSchema = z.object({
     .describe("Enable or disable texture sharpening."),
   lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
   lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
+  lodSize: z.nativeEnum(LODSize).optional().describe("Level of detail size"),
   crs: z.string().optional().describe("Coordinate reference system"),
   crsOrigin: Point3dSchema.optional().describe(
     "Origin of the coordinate reference system",
   ),
   doublePrecision: z.boolean().optional().describe("Flag for double precision"),
+  tileOverlap: z.number().min(0).optional().describe("Tile overlap in meters"),
+  skirtLength: z.number().min(0).optional().describe("Skirt length in meters"),
 });
 export type OptionsOBJ = z.infer<typeof OptionsOBJSchema>;
 
@@ -245,8 +258,45 @@ export const OptionsOSGBSchema = z.object({
   ),
   lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
   lodType: z.nativeEnum(LODType).optional().describe("Level of detail type"),
+  lodSize: z.nativeEnum(LODSize).optional().describe("Level of detail size"),
+  tileOverlap: z.number().min(0).optional().describe("Tile overlap in meters"),
+  skirtLength: z.number().min(0).optional().describe("Skirt length in meters"),
 });
 export type OptionsOSGB = z.infer<typeof OptionsOSGBSchema>;
+
+export const OptionsI3SSchema = z.object({
+  textureColorSource: z
+    .nativeEnum(ColorSource)
+    .optional()
+    .describe("Source of the texture color"),
+  textureColorSourceResMin: z
+    .number()
+    .min(0)
+    .optional()
+    .describe("Minimum resolution for the texture color source"),
+  textureColorSourceResMax: z
+    .number()
+    .min(0)
+    .optional()
+    .describe("Maximum resolution for the texture color source"),
+  textureColorSourceThermalUnit: z
+    .nativeEnum(ThermalUnit)
+    .optional()
+    .describe("Thermal unit for the texture color source"),
+  textureColorSourceThermalMin: z
+    .number()
+    .optional()
+    .describe("Minimum thermal value for the texture color source"),
+  textureColorSourceThermalMax: z
+    .number()
+    .optional()
+    .describe("Maximum thermal value for the texture color source"),
+  crs: z.string().optional().describe("Coordinate reference system"),
+  lodSize: z.nativeEnum(LODSize).optional().describe("Level of detail size"),
+  tileOverlap: z.number().min(0).optional().describe("Tile overlap in meters"),
+  skirtLength: z.number().min(0).optional().describe("Skirt length in meters"),
+});
+export type OptionsI3S = z.infer<typeof OptionsI3SSchema>;
 
 export const Options3MXSchema = z.object({
   textureColorSource: z
@@ -280,43 +330,15 @@ export const Options3MXSchema = z.object({
     "Origin of the coordinate reference system",
   ),
   lodScope: z.nativeEnum(LODScope).optional().describe("Level of detail scope"),
+  lodSize: z.nativeEnum(LODSize).optional().describe("Level of detail size"),
   generateWebApp: z
     .boolean()
     .optional()
     .describe("Flag to generate a web application"),
+  tileOverlap: z.number().min(0).optional().describe("Tile overlap in meters"),
+  skirtLength: z.number().min(0).optional().describe("Skirt length in meters"),
 });
 export type Options3MX = z.infer<typeof Options3MXSchema>;
-
-export const OptionsI3SSchema = z.object({
-  textureColorSource: z
-    .nativeEnum(ColorSource)
-    .optional()
-    .describe("Source of the texture color"),
-  textureColorSourceResMin: z
-    .number()
-    .min(0)
-    .optional()
-    .describe("Minimum resolution for the texture color source"),
-  textureColorSourceResMax: z
-    .number()
-    .min(0)
-    .optional()
-    .describe("Maximum resolution for the texture color source"),
-  textureColorSourceThermalUnit: z
-    .nativeEnum(ThermalUnit)
-    .optional()
-    .describe("Thermal unit for the texture color source"),
-  textureColorSourceThermalMin: z
-    .number()
-    .optional()
-    .describe("Minimum thermal value for the texture color source"),
-  textureColorSourceThermalMax: z
-    .number()
-    .optional()
-    .describe("Maximum thermal value for the texture color source"),
-  crs: z.string().optional().describe("Coordinate reference system"),
-});
-export type OptionsI3S = z.infer<typeof OptionsI3SSchema>;
 
 export const OptionsLASSchema = z.object({
   crs: z.string().optional().describe("Coordinate reference system"),
@@ -406,6 +428,7 @@ export const ExportCreateSchema = z.object({
       OptionsOBJSchema.strict(),
       OptionsOSGBSchema.strict(),
       OptionsI3SSchema.strict(),
+      Options3MXSchema.strict(),
       OptionsLASSchema.strict(),
       OptionsPLYSchema.strict(),
       OptionsOPCSchema.strict(),

@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "Add new mesh options",
+  "packageName": "@itwin/reality-capture",
+  "email": "5690282+cnovel@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
