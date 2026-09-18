@@ -10,6 +10,15 @@ This page documents all notable changes to the ``reality_capture`` Python SDK ac
 
 ----
 
+Next Release
+============
+
+Fixes
+-----
+
+- **Security**: DataHandlers don't upload symlinked data anymore.
+  (`#334 <https://github.com/iTwin/reality-capture/pull/334>`_)
+
 2.6.0
 =====
 
