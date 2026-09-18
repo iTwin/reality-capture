@@ -33,6 +33,14 @@ Additions
   :class:`~reality_capture.specifications.training.VectorOptimizationSpecifications`) that optimizes vector data from one format to another.
   (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
 
+Fixes
+-----
+
+- **Security**: DataHandlers don't upload symlinked data anymore.
+  (`#334 <https://github.com/iTwin/reality-capture/pull/334>`_)
+
+----
+
 2.6.0
 =====
 
