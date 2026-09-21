@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Change files",
-  "packageName": "@itwin/reality-data-client",
-  "email": "110406974+dbiguenet@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
