@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Add Conversion jobs (#277)",
-  "packageName": "@itwin/reality-capture",
-  "email": "110406974+dbiguenet@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
