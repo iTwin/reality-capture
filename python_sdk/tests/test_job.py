@@ -20,10 +20,10 @@ class TestJob:
         j = Job(id="id", type=JobType.EVAL_O2D, iTwinId="itwin", state=JobState.SUCCESS, executionInfo=cdt,
                 userId="claude@example.org", specifications=specs)
         assert j.get_appropriate_service() == Service.ANALYSIS
-        # pc_conversion_specs = {"inputs": {"pointClouds": ["point_cloud"]}, "outputs": {"opc": "opc"}}
-        # j = Job(id="id", type=JobType.POINT_CLOUD_CONVERSION, iTwinId="itwin", state=JobState.SUCCESS,
-        #         executionInfo=cdt, userId="claude@example.org", specifications=pc_conversion_specs, bucketId="bucket")
-        # assert j.get_appropriate_service() == Service.CONVERSION
+        pc_conversion_specs = {"inputs": {"pointCloud": "point_cloud"}, "output": "pcId"}
+        j = Job(id="id", type=JobType.POINT_CLOUD_CONVERSION, iTwinId="itwin", state=JobState.SUCCESS,
+                executionInfo=cdt, userId="claude@example.org", specifications=pc_conversion_specs)
+        assert j.get_appropriate_service() == Service.CONVERSION
 
     def test_appropriate_service_job_create(self):
         tiling_specs = {"inputs": {"scene": "scene"}, "outputs": [TilingOutputsCreate.MODELING_REFERENCE]}
@@ -34,9 +34,9 @@ class TestJob:
                                 Segmentation3DOutputsCreate.SEGMENTED_MODEL_3D]}
         j = JobCreate(**{"type": JobType.SEGMENTATION_3D, "iTwinId": "itwin", "specifications": eg_specs})
         assert j.get_appropriate_service() == Service.ANALYSIS
-        # pc_conversion_specs = {"inputs": {"pointClouds": ["point_cloud"]}, "outputs": PCConversionOutputsCreate.OPC}
-        # j = JobCreate(**{"type": JobType.POINT_CLOUD_CONVERSION, "iTwinId": "itwin", "specifications": pc_conversion_specs})
-        # assert j.get_appropriate_service() == Service.CONVERSION
+        pc_conversion_specs = {"inputs": {"pointCloud": "point_cloud"}}
+        j = JobCreate(**{"type": JobType.POINT_CLOUD_CONVERSION, "iTwinId": "itwin", "specifications": pc_conversion_specs})
+        assert j.get_appropriate_service() == Service.CONVERSION
 
     def test_get_appropriate_service_unsupported_job_type(self):
         unsupported = MagicMock(name="UnsupportedJobType")
