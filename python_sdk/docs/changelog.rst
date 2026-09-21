@@ -10,8 +10,8 @@ This page documents all notable changes to the ``reality_capture`` Python SDK ac
 
 ----
 
-Next release
-============
+2.7.0
+=====
 
 Additions
 ---------
