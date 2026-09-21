@@ -1,0 +1,2 @@
+minimumReleaseAgeExclude:
+  - '@itwin/reality-capture@1.7.0'
