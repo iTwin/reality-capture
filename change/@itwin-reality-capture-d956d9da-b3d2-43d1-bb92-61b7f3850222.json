@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Fix security issue in data upload with symlinks",
-  "packageName": "@itwin/reality-capture",
-  "email": "5690282+cnovel@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
