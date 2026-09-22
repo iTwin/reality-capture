@@ -9,7 +9,6 @@ New features are not accepted. Before starting work, contact the project maintai
 Run the following commands from the `typescript/packages/reality-data-client` directory before submitting an approved fix:
 
 ```sh
-```sh
 pnpm install
 pnpm build
 pnpm lint
