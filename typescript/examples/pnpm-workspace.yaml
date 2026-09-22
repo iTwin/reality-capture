@@ -1,2 +1,3 @@
 minimumReleaseAgeExclude:
   - '@itwin/reality-capture@1.6.1-dev.0'
+  - '@itwin/reality-capture@1.8.0'
