@@ -2,6 +2,8 @@
 
 Copyright © Bentley Systems, Incorporated. All rights reserved. See LICENSE.md for license terms and full copyright notice.
 
+> **Deprecated:** This package is maintained only for approved critical fixes. New features are not accepted.
+
 ## Description
 
 The __@iTwin/reality-data-client__ package contains client wrappers for sending requests to the Reality Management API, part of the iTwin platform.
