@@ -4,7 +4,7 @@ These examples demonstrate authentication, data uploads, and Reality Capture job
 
 ## Prerequisites
 
-- Python 3.8 or later.
+- Python 3.10 or later.
 - An iTwin where input and output data can be stored.
 - A Bentley service application with access to the iTwin.
 
