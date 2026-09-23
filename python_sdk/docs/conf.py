@@ -42,7 +42,7 @@ html_context = {
     "display_github": True,  # Integrate GitHub
     "github_user": "iTwin",  # Username
     "github_repo": "reality-capture",  # Repo name
-    "github_version": "feature/2.0.0",  # Version
+    "github_version": "main",  # Version
     "conf_py_path": "/python_sdk/docs/",  # Path in the checkout to the docs root
     "current_version": release,
     "versions": ["latest", "2.0.0"],
