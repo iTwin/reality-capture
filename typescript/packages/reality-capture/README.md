@@ -12,6 +12,7 @@ Reality Capture is a TypeScript package for interacting with Bentley Reality Cap
 - **[Reality Modeling](https://developer.bentley.com/apis/contextcapture/):** Create and run reality modeling workflows.
 - **[Reality Analysis](https://developer.bentley.com/apis/realitydataanalysis/):** Run analysis workflows on reality data.
 - **[Reality Management](https://developer.bentley.com/apis/reality-management/):** Upload, manage, and download reality data.
+- **[Reality Conversion](https://developer.bentley.com/apis/reality-conversion/):** Convert and optimize reality data.
 
 ## Get started
 
