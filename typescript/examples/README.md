@@ -1,66 +1,58 @@
-# reality-capture-examples
+# Reality Capture TypeScript Examples
 
-reality-capture-examples contains many examples you can run locally to show how to :
- * Upload local data in an iTwin, and how to download data from an iTwin
- * Configure and submit a Modeling Reconstruction job
+This project contains examples that demonstrate how to:
 
-## Building locally
+- Upload and download data in an iTwin.
+- Configure and submit a modeling reconstruction job.
 
-### Pre-reqs
+## Prerequisites
 
-To build and run the source code locally you will need a few things:
+- [Node.js](https://nodejs.org/en/) 22 or later.
+- pnpm.
+- An iTwin where input and output data can be stored.
+- A Bentley service application with permission to access the iTwin, manage data, and submit Reality Capture jobs.
 
-- Install [Node.js](https://nodejs.org/en/) v22 (must be greater than 22.x).
-- Install [VS Code](https://code.visualstudio.com/).
+## Build
 
-### Build
+From the `typescript/examples` directory, install the dependencies and build the examples:
 
-Then, open a new terminal in the current location and run the following commands : 
+```sh
+pnpm install
+pnpm build
+```
 
-- Install dependencies
-
-  ```sh
-  npm install
-  ```
-
-- Build the project
-
-  ```sh
-  npm run build
-  ```
-
-## Create an iTwin
+## Create or Select an iTwin
 
 Input or output data are stored in iTwins. If you don't have one yet, go [here](https://connect.bentley.com/SelectProject/Index) and select "Register new project".
 
-## Create a client application
+## Create a Service Application
 
 To run the examples, you will also need a client application. To create one, go [here](https://developer.bentley.com/my-apps/) and select "Register new".
 Select "Service" application type and register the application.
 
-## Configure environment
+## Configure the Environment
 
-Once you have created the iTwin and the application, you must configure the environment for the examples.
-Copy the [template.env](./template.env) file, rename it to ".env" and fill in the environment variables.
+After creating the iTwin and the application, change to the `typescript/examples` directory and configure the environment for the examples.
+Copy [template.env](./template.env) to `.env`, then provide values for `IMJS_ITWIN_ID`, `IMJS_CLIENT_ID`, and `IMJS_CLIENT_SECRET`.
 
-## Run examples
+## Run Examples
 
-You can now run the examples
+From the `typescript/examples` directory, run one of the following commands:
 
 - Upload & download reality data example
 
   ```sh
-  npm run start-upload-reality-data-example
+  pnpm start-upload-reality-data-example
   ```
 
 - Upload & download bucket data example
 
   ```sh
-  npm run start-upload-bucket-data-example
+  pnpm start-upload-bucket-data-example
   ```
 
 - Modeling Reconstruction example
 
   ```sh
-  npm run start-modeling-example
+  pnpm start-modeling-example
   ```

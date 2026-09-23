@@ -1,61 +1,82 @@
-# reality-capture
+<table>
+  <tr>
+    <td><img src="https://github.com/iTwin/reality-capture/raw/main/logos/iTwinCaptureIcon.png" alt="iTwin Capture logo" width="96" /></td>
+    <td><h1>Reality Capture<sup>&reg;</sup></h1></td>
+  </tr>
+</table>
 
-reality-capture is a typescript package that allows any user to interact with Bentley Reality Capture services including:
+Reality Capture is a TypeScript package for interacting with Bentley Reality Capture services.
 
-- [Reality Modeling](https://developer.bentley.com/apis/contextcapture/)
-- [Reality Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
-- [Reality Management](https://developer.bentley.com/apis/reality-management/)
-<!--- * [Reality Conversion](https://developer.bentley.com/apis/realityconversion/)-->
+## Available Services
 
-## Building locally
+- **[Reality Modeling](https://developer.bentley.com/apis/contextcapture/):** Create and run reality modeling workflows.
+- **[Reality Analysis](https://developer.bentley.com/apis/realitydataanalysis/):** Run analysis workflows on reality data.
+- **[Reality Management](https://developer.bentley.com/apis/reality-management/):** Upload, manage, and download reality data.
+- **[Reality Conversion](https://developer.bentley.com/apis/reality-conversion/):** Convert and optimize reality data.
 
-### Pre-reqs
+## Get started
 
-To build and run the source code locally you will need a few things:
+### npm
 
-- Install [Node.js](https://nodejs.org/en/) v22 (must be greater than 22.x).
-- Install [VS Code](https://code.visualstudio.com/).
+Install Reality Capture from the [`reality-capture` npm package](https://www.npmjs.com/package/@itwin/reality-capture):
 
-### Build
+```sh
+# Using npm
+npm install @itwin/reality-capture --save
 
-To build the reality-capture locally, open a new terminal in the current location and run the following commands :
+# Using yarn
+yarn add @itwin/reality-capture
 
-- Install dependencies
-
-  ```sh
-  pnpm install
-  ```
-
-- Build the project
-
-  ```sh
-  pnpm build
-  ```
-
-### Build package
-
-In case you need a package for your own project, run the following command :
-
-- Build the package
-
-  ```sh
-  pnpm run pack
-  ```
-
-You will find the .tgz file in /lib folder
-Add this line in your project package.json:
-
-```
-"reality-capture" : "<path_to_tgz>/reality-capture-1.0.0.tgz",
+# Using pnpm
+pnpm add @itwin/reality-capture
 ```
 
-### Unit tests
+Then import the types and APIs you need in your application code:
 
-Run the following command for the unit tests :
+```ts
+import {
+  FillImagePropertiesInputs,
+} from "@itwin/reality-capture";
 
-- Build the unit tests
-  ```sh
-  pnpm coverage
-  ```
+const fipInputs: FillImagePropertiesInputs = { imageCollections: ["reality_data_id"] };
+```
 
-It will generate a report for each source file: covered lines, branches, statements and functions. Each file should be at least 90% covered.
+## Authentication
+
+Create an application that can obtain an iTwin Platform access token, then provide an `AuthorizationClient` implementation when creating `RealityCaptureService`. The client must return a valid Bearer token for each API request. See the [iTwin Platform authentication guide](https://developer.bentley.com/tutorials/create-and-query-itwins-guide/#1-register-an-application) for application registration and authentication setup.
+
+For a service application, install `@itwin/service-authorization` and initialize the SDK as follows:
+
+```sh
+npm install @itwin/service-authorization
+```
+
+```ts
+import { ServiceAuthorizationClient } from "@itwin/service-authorization";
+import { RealityCaptureService } from "@itwin/reality-capture";
+
+const authorizationClient = new ServiceAuthorizationClient({
+  clientId: process.env.IMJS_CLIENT_ID ?? "",
+  clientSecret: process.env.IMJS_CLIENT_SECRET ?? "",
+  scope: "itwin-platform",
+  authority: "https://ims.bentley.com",
+});
+
+const realityCaptureService = new RealityCaptureService(authorizationClient);
+```
+
+## Examples
+
+Explore the [examples](https://github.com/iTwin/reality-capture/tree/main/typescript/examples) for complete Reality Capture usage scenarios.
+
+## Support
+
+Report bugs and request features through the [GitHub issue tracker](https://github.com/iTwin/reality-capture/issues).
+
+## License
+
+This project is licensed under the [MIT License](https://github.com/iTwin/reality-capture/blob/main/LICENSE.md).
+
+## Contributing
+
+See the [contribution guide](https://github.com/iTwin/reality-capture/blob/main/CONTRIBUTING.md).

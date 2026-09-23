@@ -2,11 +2,11 @@
 
 ![Python Badge](https://img.shields.io/badge/python-3.10_|_3.11_|_3.12_|_3.13-blue)
 
-reality-capture is a Python package that allows any user to interact with Bentley Reality Capture services including:
+The Reality Capture Python SDK provides APIs for interacting with Bentley Reality Capture services, including:
  * [Reality Management](https://developer.bentley.com/apis/reality-management/)
  * [Reality Modeling](https://developer.bentley.com/apis/contextcapture/)
  * [Reality Analysis](https://developer.bentley.com/apis/realitydataanalysis/)
-  <!-- * [Reality Conversion](https://developer.bentley.com/apis/realityconversion/)-->
+ * [Reality Conversion](https://developer.bentley.com/apis/realityconversion/)
 
 ## Getting started
 
@@ -14,7 +14,7 @@ To install the package, head to the [releases page](https://github.com/iTwin/rea
 Then install it with this command:
 
 ```bash
-pip install path/to/reality_capture-X.Y.0-py3-none-any.whl 
+pip install path/to/reality_capture-X.Y.0-py3-none-any.whl
 ```
 
 In order to use this package, an iTwin platform account and a registered application are required.
@@ -25,12 +25,5 @@ Documentation for the package is available on the [Bentley Product Documentation
 
 ## Contributing
 
-In order to contribute, you'll need to clone the repository, install the package locally and install the dev dependencies
+See the [contribution guide](./CONTRIBUTING.md) for local setup, tests, documentation, and pull request requirements.
 
-```bash
-pip install . -e
-pip install .[dev]
-```
-
-Tests are located in the `tests` subfolder and can be run with `pytest`.
-Documentation is created with Sphinx and can be built by calling `make html` from within the `docs` folder.
