@@ -1,7 +1,7 @@
 from reality_capture.service.job import Service
 from reality_capture.service.service import RealityCaptureService
 from urllib.parse import urlparse
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import pytest
 
 
@@ -84,4 +84,25 @@ class TestServiceBase:
 
         assert proxies == {}
         assert rcs._proxies is proxies
+
+    def test_configured_proxy_is_used_for_api_call(self):
+        token_factory = MagicMock()
+        token_factory.get_token.return_value = "Bearer token"
+        rcs = RealityCaptureService(token_factory)
+        rcs.set_proxy("user", "password", "proxy.example.com:8080")
+        response = MagicMock(status_code=204)
+
+        with patch.object(rcs._session, "request", return_value=response) as request:
+            result = rcs.delete_reality_data("reality-data-id")
+
+        assert not result.is_error()
+        request.assert_called_once()
+        request_args = request.call_args
+        assert request_args.args[:2] == (
+            "DELETE",
+            "https://api.bentley.com/reality-management/reality-data/reality-data-id",
+        )
+        assert request_args.kwargs["proxies"] == {
+            "https": "http://user:password@proxy.example.com:8080"
+        }
 
