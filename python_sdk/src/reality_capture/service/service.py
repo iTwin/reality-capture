@@ -60,6 +60,44 @@ class RealityCaptureService:
         else:
             self._service_url = "https://api.bentley.com/"
 
+        self._proxies = {}
+
+    def set_proxy(self, username: str, password: str, proxy: str) -> None:
+        """
+        Set proxy server info.
+
+        :param username: Username for proxy server
+        :param password: Password for proxy server
+        :param proxy: Proxy server URL or host and port
+        :raises ValueError: If the proxy URL is invalid or unsupported
+        """
+        proxy = proxy.strip()
+        if "://" not in proxy:
+            proxy = f"http://{proxy}"
+
+        parsed_proxy = urllib.parse.urlsplit(proxy)
+        if parsed_proxy.scheme not in ("http", "https") or parsed_proxy.hostname is None:
+            raise ValueError("Proxy must be a valid HTTP or HTTPS URL")
+        if parsed_proxy.path not in ("", "/") or parsed_proxy.query or parsed_proxy.fragment:
+            raise ValueError("Proxy URL must not contain a path, query, or fragment")
+
+        try:
+            port = f":{parsed_proxy.port}" if parsed_proxy.port is not None else ""
+        except ValueError as e:
+            raise ValueError("Proxy URL contains an invalid port") from e
+
+        hostname = parsed_proxy.hostname
+        if ":" in hostname:
+            hostname = f"[{hostname}]"
+
+        encoded_username = urllib.parse.quote(username, safe="")
+        encoded_password = urllib.parse.quote(password, safe="")
+        netloc = f"{encoded_username}:{encoded_password}@{hostname}{port}"
+        self._proxies["https"] = urllib.parse.urlunsplit((parsed_proxy.scheme, netloc, "", "", ""))
+
+    def unset_proxy(self) -> None:
+        self._proxies.clear()
+
     def _get_header(self, version) -> dict:
         self._header["Authorization"] = self._token_factory.get_token()
         self._header["Accept"] = f"application/vnd.bentley.itwin-platform.{version}+json"
@@ -103,7 +141,7 @@ class RealityCaptureService:
     def _execute_request(self, method: str, url: str, headers: dict, success_model: Type[BaseModel] = None,
                          data_key: str = None, **kwargs) -> Response:
         try:
-            response = self._session.request(method, url, headers=headers, **kwargs)
+            response = self._session.request(method, url, headers=headers, proxies=self._proxies, **kwargs)
             response.raise_for_status()
         except requests.exceptions.HTTPError as e:
             try:

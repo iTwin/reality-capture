@@ -31,3 +31,57 @@ class TestServiceBase:
         with pytest.raises(NotImplementedError):
             rcs._get_correct_url(unsupported)
 
+    @pytest.mark.parametrize(
+        ("proxy", "expected"),
+        [
+            ("proxy.example.com:8080", "http://user:password@proxy.example.com:8080"),
+            ("http://proxy.example.com:8080", "http://user:password@proxy.example.com:8080"),
+            ("https://proxy.example.com:8443/", "https://user:password@proxy.example.com:8443"),
+            ("http://[2001:db8::1]:8080", "http://user:password@[2001:db8::1]:8080"),
+        ],
+    )
+    def test_set_proxy_normalizes_proxy_url(self, proxy, expected):
+        rcs = RealityCaptureService(None)
+
+        rcs.set_proxy("user", "password", proxy)
+
+        assert rcs._proxies == {"https": expected}
+
+    def test_set_proxy_encodes_credentials(self):
+        rcs = RealityCaptureService(None)
+
+        rcs.set_proxy("domain\\user@example.com", "p@ss:w/rd#%", "proxy.example.com:8080")
+
+        assert rcs._proxies == {
+            "https": "http://domain%5Cuser%40example.com:p%40ss%3Aw%2Frd%23%25@proxy.example.com:8080"
+        }
+
+    @pytest.mark.parametrize(
+        "proxy",
+        [
+            "",
+            "ftp://proxy.example.com:21",
+            "http://proxy.example.com:not-a-port",
+            "http://proxy.example.com:8080/path",
+            "http://proxy.example.com:8080?option=value",
+            "http://proxy.example.com:8080#fragment",
+        ],
+    )
+    def test_set_proxy_rejects_invalid_proxy_url(self, proxy):
+        rcs = RealityCaptureService(None)
+
+        with pytest.raises(ValueError):
+            rcs.set_proxy("user", "password", proxy)
+
+        assert rcs._proxies == {}
+
+    def test_unset_proxy_clears_existing_mapping(self):
+        rcs = RealityCaptureService(None)
+        proxies = rcs._proxies
+        rcs.set_proxy("user", "password", "proxy.example.com:8080")
+
+        rcs.unset_proxy()
+
+        assert proxies == {}
+        assert rcs._proxies is proxies
+
