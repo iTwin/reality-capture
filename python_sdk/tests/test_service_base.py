@@ -106,3 +106,18 @@ class TestServiceBase:
             "https": "http://user:password@proxy.example.com:8080"
         }
 
+
+    def test_unset_proxy_sends_empty_mapping_for_api_call(self):
+        token_factory = MagicMock()
+        token_factory.get_token.return_value = "******"
+        rcs = RealityCaptureService(token_factory)
+        rcs.set_proxy("user", "password", "proxy.example.com:8080")
+        rcs.unset_proxy()
+        response = MagicMock(status_code=204)
+
+        with patch.object(rcs._session, "request", return_value=response) as request:
+            result = rcs.delete_reality_data("reality-data-id")
+
+        assert not result.is_error()
+        request.assert_called_once()
+        assert request.call_args.kwargs["proxies"] == {}
