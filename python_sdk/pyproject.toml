@@ -39,12 +39,20 @@ dev = [
     "pytest >= 8.3.4",
     "pytest-cov >= 6.0.0",
     "responses >= 0.25.6",
-    "python-dotenv >= 1.1.0"
+    "python-dotenv >= 1.1.0",
+    "towncrier >= 26.9.0"
 ]
 
 [project.urls]
-"Homepage" = "https://https://github.com/iTwin/reality-apis-samples/tree/main/python"
+"Homepage" = "https://github.com/iTwin/reality-capture/tree/main/python_sdk"
 "Reality Analysis Api reference" = "https://developer.bentley.com/apis/realitydataanalysis/"
 "Reality Modeling Api reference" = "https://developer.bentley.com/apis/contextcapture/"
 "Reality Conversion Api reference" = "https://developer.bentley.com/apis/realityconversion/"
 "Reality Management Api reference" = "https://developer.bentley.com/apis/reality-management/"
+
+[tool.towncrier]
+directory = "py_changes"
+filename = "docs/changelog.rst"
+package = "reality_capture"
+issue_format = "`#{issue} <https://github.com/iTwin/reality-capture/pull/{issue}>`_"
+title_format = "----\n\n{version}"
