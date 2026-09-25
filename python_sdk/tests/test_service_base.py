@@ -1,7 +1,7 @@
 from reality_capture.service.job import Service
 from reality_capture.service.service import RealityCaptureService
 from urllib.parse import urlparse
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import pytest
 
 
@@ -31,3 +31,93 @@ class TestServiceBase:
         with pytest.raises(NotImplementedError):
             rcs._get_correct_url(unsupported)
 
+    @pytest.mark.parametrize(
+        ("proxy", "expected"),
+        [
+            ("proxy.example.com:8080", "http://user:password@proxy.example.com:8080"),
+            ("http://proxy.example.com:8080", "http://user:password@proxy.example.com:8080"),
+            ("https://proxy.example.com:8443/", "https://user:password@proxy.example.com:8443"),
+            ("http://[2001:db8::1]:8080", "http://user:password@[2001:db8::1]:8080"),
+        ],
+    )
+    def test_set_proxy_normalizes_proxy_url(self, proxy, expected):
+        rcs = RealityCaptureService(None)
+
+        rcs.set_proxy("user", "password", proxy)
+
+        assert rcs._proxies == {"https": expected}
+
+    def test_set_proxy_encodes_credentials(self):
+        rcs = RealityCaptureService(None)
+
+        rcs.set_proxy("domain\\user@example.com", "p@ss:w/rd#%", "proxy.example.com:8080")
+
+        assert rcs._proxies == {
+            "https": "http://domain%5Cuser%40example.com:p%40ss%3Aw%2Frd%23%25@proxy.example.com:8080"
+        }
+
+    @pytest.mark.parametrize(
+        "proxy",
+        [
+            "",
+            "ftp://proxy.example.com:21",
+            "http://proxy.example.com:not-a-port",
+            "http://proxy.example.com:8080/path",
+            "http://proxy.example.com:8080?option=value",
+            "http://proxy.example.com:8080#fragment",
+        ],
+    )
+    def test_set_proxy_rejects_invalid_proxy_url(self, proxy):
+        rcs = RealityCaptureService(None)
+
+        with pytest.raises(ValueError):
+            rcs.set_proxy("user", "password", proxy)
+
+        assert rcs._proxies == {}
+
+    def test_unset_proxy_clears_existing_mapping(self):
+        rcs = RealityCaptureService(None)
+        proxies = rcs._proxies
+        rcs.set_proxy("user", "password", "proxy.example.com:8080")
+
+        rcs.unset_proxy()
+
+        assert proxies == {}
+        assert rcs._proxies is proxies
+
+    def test_configured_proxy_is_used_for_api_call(self):
+        token_factory = MagicMock()
+        token_factory.get_token.return_value = "Bearer token"
+        rcs = RealityCaptureService(token_factory)
+        rcs.set_proxy("user", "password", "proxy.example.com:8080")
+        response = MagicMock(status_code=204)
+
+        with patch.object(rcs._session, "request", return_value=response) as request:
+            result = rcs.delete_reality_data("reality-data-id")
+
+        assert not result.is_error()
+        request.assert_called_once()
+        request_args = request.call_args
+        assert request_args.args[:2] == (
+            "DELETE",
+            "https://api.bentley.com/reality-management/reality-data/reality-data-id",
+        )
+        assert request_args.kwargs["proxies"] == {
+            "https": "http://user:password@proxy.example.com:8080"
+        }
+
+
+    def test_unset_proxy_sends_empty_mapping_for_api_call(self):
+        token_factory = MagicMock()
+        token_factory.get_token.return_value = "******"
+        rcs = RealityCaptureService(token_factory)
+        rcs.set_proxy("user", "password", "proxy.example.com:8080")
+        rcs.unset_proxy()
+        response = MagicMock(status_code=204)
+
+        with patch.object(rcs._session, "request", return_value=response) as request:
+            result = rcs.delete_reality_data("reality-data-id")
+
+        assert not result.is_error()
+        request.assert_called_once()
+        assert request.call_args.kwargs["proxies"] == {}
