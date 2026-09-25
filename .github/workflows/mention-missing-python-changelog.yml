@@ -1,0 +1,82 @@
+name: Check Python SDK changelog fragment
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+    paths:
+      - "python_sdk/**"
+    branches:
+      - main
+      - upcoming
+
+jobs:
+  check_changelog_fragment:
+    if: ${{ !github.event.pull_request.head.repo.fork }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Check for a towncrier fragment
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const marker = '<!-- python-sdk-changelog-check -->';
+            // towncrier fragments are named <issue>.<type>.rst, see python_sdk/pyproject.toml
+            const fragmentPattern = /^python_sdk\/py_changes\/[^\/]+\.(feature|bugfix|doc|removal|misc)\.rst$/;
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            const hasFragment = files.some(file =>
+              file.status === 'added' && fragmentPattern.test(file.filename)
+            );
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            const existingComment = comments.find(comment =>
+              (comment.body || '').includes(marker)
+            );
+
+            if (hasFragment) {
+              if (existingComment) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existingComment.id
+                });
+              }
+              return;
+            }
+
+            if (existingComment) {
+              return;
+            }
+
+            const body = [
+              marker,
+              'This PR modifies `python_sdk/` but does not add a changelog fragment in `python_sdk/py_changes/`.',
+              '',
+              'Please add one with `towncrier`, from the `python_sdk` folder:',
+              '',
+              '```bash',
+              'towncrier create',
+              '```'
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
