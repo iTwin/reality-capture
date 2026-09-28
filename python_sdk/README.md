@@ -1,6 +1,6 @@
 # reality-capture
 
-![Python Badge](https://img.shields.io/badge/python-3.10_|_3.11_|_3.12_|_3.13-blue)
+![Python Badge](https://img.shields.io/badge/python-3.10_|_3.11_|_3.12_|_3.13_|_3.14-blue)
 
 The Reality Capture Python SDK provides APIs for interacting with Bentley Reality Capture services, including:
  * [Reality Management](https://developer.bentley.com/apis/reality-management/)
