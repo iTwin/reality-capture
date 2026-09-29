@@ -11,7 +11,7 @@ on:
       - "python_sdk/**"
     branches:
       - main
-      - upcoming
+      - upcoming/*
 
 jobs:
   check_changelog_fragment:
