@@ -8,6 +8,10 @@ This page documents all notable changes to the ``reality_capture`` Python SDK ac
    :local:
    :depth: 1
 
+.. You should not modify this page manually, you should use towncrier create command to add to the changelog
+
+.. towncrier release notes start
+
 ----
 
 2.7.0
@@ -110,8 +114,8 @@ Additions
 - Added optional ``detectors_filter`` parameter to ``get_detectors()`` for server-side
   filtering by labels and exports.
   (`#285 <https://github.com/iTwin/reality-capture/pull/285>`_)
-- Added ``create_detector``, ``update_detector``, ``delete_detector``, ``create_detector_version``, 
-  ``delete_detector_version``, ``publish_detector_version``, ``unpublish_detector_version`` and 
+- Added ``create_detector``, ``update_detector``, ``delete_detector``, ``create_detector_version``,
+  ``delete_detector_version``, ``publish_detector_version``, ``unpublish_detector_version`` and
   ``complete_detector_version_upload`` methods to manage Detectors through the service.
   (`#296 <https://github.com/iTwin/reality-capture/pull/296>`_)
 
@@ -252,3 +256,4 @@ Fixes
   (`#266 <https://github.com/iTwin/reality-capture/pull/266>`_)
 - Removed discontinued Training job types (``TrainingO2D``, ``TrainingS3D``).
   (`#266 <https://github.com/iTwin/reality-capture/pull/266>`_)
+
