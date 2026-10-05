@@ -5,12 +5,12 @@ on:
     paths:
       - "python_sdk/**"
       - ".github/workflows/python*.yml"
-    branches: ["main"]
+    branches: ["main", "upcoming/*"]
   pull_request:
     paths:
       - "python_sdk/**"
       - ".github/workflows/python*.yml"
-    branches: ["main"]
+    branches: ["main", "upcoming/*"]
   workflow_dispatch:
 
 jobs:

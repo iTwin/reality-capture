@@ -2,6 +2,12 @@ name: (PyBuild) Build Python SDK
 
 on:
   workflow_call:
+    inputs:
+      version-patch-artifact:
+        description: "Optional artifact holding a git patch to apply before building (used by the publish pipeline)."
+        required: false
+        type: string
+        default: ""
 
 jobs:
   build_sdk:
@@ -9,6 +15,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+
+      - name: Download version patch
+        if: inputs.version-patch-artifact != ''
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ inputs.version-patch-artifact }}
+
+      - name: Apply version patch
+        if: inputs.version-patch-artifact != ''
+        run: |
+          git apply --binary version-bump.patch
+          rm -f version-bump.patch
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -28,6 +46,7 @@ jobs:
         with:
           name: python-sdk-wheel
           path: python_sdk/dist/*.whl
+          overwrite: true
 
       - name: Install documentation dependencies
         working-directory: ./python_sdk
@@ -54,3 +73,4 @@ jobs:
         with:
           name: python-sdk-docs
           path: python_sdk/docs/Documentation.zip
+          overwrite: true
