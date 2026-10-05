@@ -36,6 +36,7 @@ class GSFormat(Enum):
     THREED_TILES_LOD = "3DTilesLOD"
     SOG = "SOG"
     LCC2 = "LCC2"
+    RAD = "RAD"
 
 
 class GSQuality(Enum):
