@@ -2,6 +2,21 @@
   "name": "@itwin/reality-data-client",
   "entries": [
     {
+      "date": "Fri, 11 Sep 2026 16:17:08 GMT",
+      "version": "1.6.0",
+      "tag": "@itwin/reality-data-client_v1.6.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-data-client",
+            "commit": "8472fe747045849944128a364430a72bf6c3a6a7",
+            "comment": "Use reality-capture to send requests to Reality Management API"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 18 Jun 2026 15:27:31 GMT",
       "version": "1.5.1",
       "tag": "@itwin/reality-data-client_v1.5.1",

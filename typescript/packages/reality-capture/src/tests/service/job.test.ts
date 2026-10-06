@@ -18,21 +18,31 @@ import { ImportPCOutputsCreate } from "../../specifications/import_point_cloud";
 
 describe("getAppropriateService", () => {
   it("should return Service.MODELING for PRODUCTION", () => {
-    expect(getAppropriateService(JobType.PRODUCTION)).to.equal(Service.MODELING);
+    expect(getAppropriateService(JobType.PRODUCTION)).to.equal(
+      Service.MODELING,
+    );
   });
 
   it("should return Service.ANALYSIS for OBJECTS_2D", () => {
-    expect(getAppropriateService(JobType.OBJECTS_2D)).to.equal(Service.ANALYSIS);
+    expect(getAppropriateService(JobType.OBJECTS_2D)).to.equal(
+      Service.ANALYSIS,
+    );
   });
 
   it("should return Service.ANALYSIS for Clearance jobs", () => {
-    expect(getAppropriateService(JobType.CLEARANCE_CHECKER)).to.equal(Service.ANALYSIS);
-    expect(getAppropriateService(JobType.CLEARANCE_FOOTPRINT)).to.equal(Service.ANALYSIS);
+    expect(getAppropriateService(JobType.CLEARANCE_CHECKER)).to.equal(
+      Service.ANALYSIS,
+    );
+    expect(getAppropriateService(JobType.CLEARANCE_FOOTPRINT)).to.equal(
+      Service.ANALYSIS,
+    );
   });
 
-  /*it("should return Service.CONVERSION for POINT_CLOUD_CONVERSION", () => {
-    expect(getAppropriateService(JobType.POINT_CLOUD_CONVERSION)).to.equal(Service.CONVERSION);
-  });*/
+  it("should return Service.CONVERSION for POINT_CLOUD_CONVERSION", () => {
+    expect(getAppropriateService(JobType.POINT_CLOUD_CONVERSION)).to.equal(
+      Service.CONVERSION,
+    );
+  });
 });
 
 describe("JobState Enum", () => {
@@ -48,9 +58,9 @@ describe("JobCreateSchema", () => {
       type: JobType.PRODUCTION,
       specifications: {
         inputs: { scene: "scene" },
-        outputs: [ImportPCOutputsCreate.SCAN_COLLECTION]
+        outputs: [ImportPCOutputsCreate.SCAN_COLLECTION],
       },
-      iTwinId: "itwin123"
+      iTwinId: "itwin123",
     };
     expect(() => JobCreateSchema.parse(data)).to.not.throw();
   });
@@ -60,9 +70,9 @@ describe("JobCreateSchema", () => {
       name: "JobName",
       specifications: {
         inputs: { scene: "scene" },
-        outputs: [ImportPCOutputsCreate.SCAN_COLLECTION]
+        outputs: [ImportPCOutputsCreate.SCAN_COLLECTION],
       },
-      iTwinId: "itwin123"
+      iTwinId: "itwin123",
     };
     expect(() => JobCreateSchema.parse(data)).to.throw(z.ZodError);
   });
@@ -73,7 +83,7 @@ describe("JobCreateSchema", () => {
       type: JobType.PRODUCTION,
       specifications: {
         inputs: { scene: "scene" },
-        outputs: [ImportPCOutputsCreate.SCAN_COLLECTION]
+        outputs: [ImportPCOutputsCreate.SCAN_COLLECTION],
       },
     };
     expect(() => JobCreateSchema.parse(data)).to.throw(z.ZodError);
@@ -85,9 +95,9 @@ describe("JobCreateSchema", () => {
       type: JobType.PRODUCTION,
       specifications: {
         inputs: { scene: "scene" },
-        outputs: [ImportPCOutputsCreate.SCAN_COLLECTION]
+        outputs: [ImportPCOutputsCreate.SCAN_COLLECTION],
       },
-      iTwinId: "itwin123"
+      iTwinId: "itwin123",
     };
     expect(() => JobCreateSchema.parse(data)).to.throw(z.ZodError);
   });
@@ -99,7 +109,7 @@ describe("ExecutionSchema", () => {
       createdDateTime: new Date().toISOString(),
       startedDateTime: new Date().toISOString(),
       endedDateTime: new Date().toISOString(),
-      processingUnits: 9
+      processingUnits: 9,
     };
     expect(() => ExecutionSchema.parse(data)).to.not.throw();
   });
@@ -107,7 +117,7 @@ describe("ExecutionSchema", () => {
   it("should allow missing startedDateTime and endedDateTime", () => {
     const data = {
       createdDateTime: new Date().toISOString(),
-      processingUnits: 4
+      processingUnits: 4,
     };
     expect(() => ExecutionSchema.parse(data)).to.not.throw();
   });
@@ -115,14 +125,14 @@ describe("ExecutionSchema", () => {
   it("should allow nullable processingUnits", () => {
     const data = {
       createdDateTime: new Date().toISOString(),
-      processingUnits: null
+      processingUnits: null,
     };
     expect(() => ExecutionSchema.parse(data)).to.not.throw();
   });
 
   it("should fail if createdDateTime is missing", () => {
     const data = {
-      processingUnits: 3
+      processingUnits: 3,
     };
     expect(() => ExecutionSchema.parse(data)).to.throw(z.ZodError);
   });
@@ -158,7 +168,7 @@ describe("ProgressSchema", () => {
   it("should validate correct progress info", () => {
     const data = {
       state: JobState.ACTIVE,
-      percentage: 55
+      percentage: 55,
     };
     expect(() => ProgressSchema.parse(data)).to.not.throw();
   });
@@ -166,7 +176,7 @@ describe("ProgressSchema", () => {
   it("should fail if percentage is out of range", () => {
     const data = {
       state: JobState.ACTIVE,
-      percentage: 120
+      percentage: 120,
     };
     expect(() => ProgressSchema.parse(data)).to.throw(z.ZodError);
   });
@@ -177,8 +187,8 @@ describe("ProgressResponseSchema", () => {
     const data = {
       progress: {
         state: JobState.SUCCESS,
-        percentage: 100
-      }
+        percentage: 100,
+      },
     };
     expect(() => ProgressResponseSchema.parse(data)).to.not.throw();
   });
@@ -194,7 +204,7 @@ describe("MessageSchema", () => {
       code: "ERR1",
       title: "Error title",
       message: "Error message",
-      params: ["param1", "param2"]
+      params: ["param1", "param2"],
     };
     expect(() => MessageSchema.parse(msg)).to.not.throw();
   });
@@ -203,7 +213,7 @@ describe("MessageSchema", () => {
     const msg = {
       code: "ERR1",
       title: "Error title",
-      message: "Error message"
+      message: "Error message",
     };
     expect(() => MessageSchema.parse(msg)).to.throw(z.ZodError);
   });
@@ -212,19 +222,29 @@ describe("MessageSchema", () => {
 describe("MessagesSchema", () => {
   it("should validate correct messages", () => {
     const data = {
-      errors: [{
-        code: "E1", title: "t1", message: "m1", params: []
-      }],
-      warnings: [{
-        code: "W1", title: "t2", message: "m2", params: ["p"]
-      }]
+      errors: [
+        {
+          code: "E1",
+          title: "t1",
+          message: "m1",
+          params: [],
+        },
+      ],
+      warnings: [
+        {
+          code: "W1",
+          title: "t2",
+          message: "m2",
+          params: ["p"],
+        },
+      ],
     };
     expect(() => MessagesSchema.parse(data)).to.not.throw();
   });
 
   it("should fail if errors field is missing", () => {
     const data = {
-      warnings: []
+      warnings: [],
     };
     expect(() => MessagesSchema.parse(data)).to.throw(z.ZodError);
   });
@@ -235,8 +255,8 @@ describe("MessagesResponseSchema", () => {
     const data = {
       messages: {
         errors: [{ code: "E1", title: "t1", message: "m1", params: [] }],
-        warnings: []
-      }
+        warnings: [],
+      },
     };
     expect(() => MessagesResponseSchema.parse(data)).to.not.throw();
   });
@@ -247,16 +267,16 @@ describe("MessagesResponseSchema", () => {
 });
 
 describe("NextLinkSchema", () => {
-  it ("should validate correct next link", () => {
+  it("should validate correct next link", () => {
     const data = {
       next: {
-        href: "https://api.bentley.com/reality-modeling/jobs?$filter=iTwinId%20eq%202c8e4988-eb9b-4e5f-a903-8c7c18f3030a&$top=2&continuationToken=MTRmZDkwOGYtNWEzOS00YzY3LWFmMGYtMGMxMWQxYWNkMDhl"
-      }
+        href: "https://api.bentley.com/reality-modeling/jobs?$filter=iTwinId%20eq%202c8e4988-eb9b-4e5f-a903-8c7c18f3030a&$top=2&continuationToken=MTRmZDkwOGYtNWEzOS00YzY3LWFmMGYtMGMxMWQxYWNkMDhl",
+      },
     };
     expect(() => NextLinkSchema.parse(data)).to.not.throw();
   });
 
-  it ("should fail if empty", () => {
+  it("should fail if empty", () => {
     expect(() => NextLinkSchema.parse({})).to.throw(z.ZodError);
   });
 });

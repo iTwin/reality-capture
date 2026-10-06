@@ -16,14 +16,47 @@ Next Release
 Additions
 ---------
 
-- Added new **ClearanceFootprint** job type (:class:`~reality_capture.specifications.clearance_fooprint.ClearanceFootprintSpecificationsCreate`,
-  :class:`~reality_capture.specifications.clearance_fooprint.ClearanceFootprintSpecifications`) that computes the projected footprint of one class
+- Added new **ClearanceFootprint** job type (:class:`~reality_capture.specifications.clearance_footprint.ClearanceFootprintSpecificationsCreate`,
+  :class:`~reality_capture.specifications.clearance_footprint.ClearanceFootprintSpecifications`) that computes the projected footprint of one class
   on another for further clearance checks.
   (`#341 <https://github.com/iTwin/reality-capture/pull/341>`_)
-- Added new **ClearanceChecker** job type (:class:`~reality_capture.specifications.clearance_fooprint.ClearanceCheckerSpecificationsCreate`,
-  :class:`~reality_capture.specifications.clearance_fooprint.ClearanceCheckerSpecifications`) that computes clearance information on a 3D model
+- Added new **ClearanceChecker** job type (:class:`~reality_capture.specifications.clearance_checker.ClearanceCheckerSpecificationsCreate`,
+  :class:`~reality_capture.specifications.clearance_checker.ClearanceCheckerSpecifications`) that computes clearance information on a 3D model
   based on footprints.
   (`#341 <https://github.com/iTwin/reality-capture/pull/341>`_)
+
+----
+
+2.7.0
+=====
+
+Additions
+---------
+
+- Added a new **Mesh Sampling** job type (:class:`~reality_capture.specifications.mesh_sampling.MeshSamplingSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.MeshSamplingSpecifications`) that converts a collection of meshes in a point cloud.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+- Added a new **Point Cloud Conversion** job type (:class:`~reality_capture.specifications.mesh_sampling.PointCloudConversionSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.PointCloudConversionSpecifications`) that converts point clouds from one format to another.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+- Added a new **Point Cloud Conversion** job type (:class:`~reality_capture.specifications.mesh_sampling.PCOptimizationSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.PCOptimizationSpecifications`) that optimizes a collection of point clouds from one format
+  to a single point cloud.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+- Added a new **Tile Map Optimization** job type (:class:`~reality_capture.specifications.mesh_sampling.TileMapOptimizationSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.TileMapOptimizationSpecifications`) that optimizes Tile Maps from one format to another.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+- Added a new **Vector Optimization** job type (:class:`~reality_capture.specifications.mesh_sampling.VectorOptimizationSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.VectorOptimizationSpecifications`) that optimizes vector data from one format to another.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+
+Fixes
+-----
+
+- **Security**: DataHandlers don't upload symlinked data anymore.
+  (`#334 <https://github.com/iTwin/reality-capture/pull/334>`_)
+
+----
 
 2.6.0
 =====

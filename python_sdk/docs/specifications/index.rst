@@ -36,7 +36,11 @@ Specifications regroup all the settings used to create jobs with our APIs.
     training_s3d
     clearance_footprint
     clearance_checker
-
+    pc_conversion
+    pc_optimization
+    mesh_sampling
+    tile_map_optimization
+    vector_optimization
 
 Modeling
 ========
@@ -65,10 +69,14 @@ Analysis
 * :doc:`/specifications/clearance_footprint` will use a Segmentation 3D and Objects 3D to project the footprints of one class on another one
 * :doc:`/specifications/clearance_checker` will compute clearance information given a 3D model and footprints.
 
-.. Conversion
-.. ==========
+Conversion
+==========
 
-.. * :doc:`/specifications/point_cloud_conversion` will convert point clouds from one format to another.
+* :doc:`/specifications/pc_conversion` will convert a single point cloud from one format to another.
+* :doc:`/specifications/pc_optimization` will consolidate multiple point cloud to a given format.
+* :doc:`/specifications/mesh_sampling` will sample meshes and consolidate them to a given format.
+* :doc:`/specifications/tile_map_optimization` will consolidate tile maps to a given format.
+* :doc:`/specifications/vector_optimization` will consolidate vector data to a given format.
 
 
 Utilities

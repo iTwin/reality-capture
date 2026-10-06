@@ -18,5 +18,6 @@ jobs:
   publish_release:
     needs: build_and_test_sdk
     uses: ./.github/workflows/reality-capture-pack-and-publish.yml
+    secrets: inherit
     with:
       prerelease: false

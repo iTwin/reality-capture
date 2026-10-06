@@ -30,7 +30,17 @@ from reality_capture.specifications.touchup import (TouchUpImportSpecifications,
                                                     TouchUpExportSpecifications, TouchUpExportSpecificationsCreate)
 from reality_capture.specifications.water_constraints import (WaterConstraintsSpecifications,
                                                               WaterConstraintsSpecificationsCreate)
-
+from reality_capture.specifications.point_cloud_conversion import (PointCloudConversionSpecificationsCreate,
+                                                                   PointCloudConversionSpecifications)
+from reality_capture.specifications.point_cloud_optimization import (PCOptimizationSpecificationsCreate,
+                                                                     PCOptimizationSpecifications)
+from reality_capture.specifications.mesh_sampling import MeshSamplingSpecificationsCreate, MeshSamplingSpecifications
+from reality_capture.specifications.tile_map_optimization import (TileMapOptimizationSpecificationsCreate,
+                                                                  TileMapOptimizationSpecifications)
+from reality_capture.specifications.vector_optimization import (VectorOptimizationSpecificationsCreate,
+                                                                VectorOptimizationSpecifications)
+# from reality_capture.specifications.cs_tiler import (ContextSceneTilerSpecifications,
+#                                                      ContextSceneTilerSpecificationsCreate)
 from reality_capture.specifications.training import (TrainingS3DSpecificationsCreate, TrainingS3DSpecifications)
 from reality_capture.specifications.gaussian_splats import (GaussianSplatsSpecificationsCreate,
                                                             GaussianSplatsSpecifications)
@@ -68,12 +78,18 @@ class JobType(Enum):
     TRAINING_S3D = "TrainingS3D"
     CLEARANCE_CHECKER = "ClearanceChecker"
     CLEARANCE_FOOTPRINT = "ClearanceFootprint"
+    POINT_CLOUD_CONVERSION = "PointCloudConversion"
+    POINT_CLOUD_OPTIMIZATION = "PointCloudOptimization"
+    MESH_SAMPLING = "MeshSampling"
+    TILE_MAP_OPTIMIZATION = "TileMapOptimization"
+    VECTOR_OPTIMIZATION = "VectorOptimization"
+    # CONTEXTSCENE_TILER = "ContextSceneTiler"
 
 
 class Service(Enum):
     MODELING = "Modeling"
     ANALYSIS = "Analysis"
-    # CONVERSION = "Conversion"
+    CONVERSION = "Conversion"
 
 
 def _get_appropriate_service(jt: JobType):
@@ -86,7 +102,9 @@ def _get_appropriate_service(jt: JobType):
               JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.TRAINING_S3D, JobType.CLEARANCE_CHECKER,
               JobType.CLEARANCE_FOOTPRINT]:
         return Service.ANALYSIS
-    # return Service.CONVERSION
+    if jt in [JobType.POINT_CLOUD_CONVERSION, JobType.POINT_CLOUD_OPTIMIZATION, JobType.MESH_SAMPLING,
+              JobType.TILE_MAP_OPTIMIZATION, JobType.VECTOR_OPTIMIZATION]: # JobType.CONTEXTSCENE_TILER
+        return Service.CONVERSION
     raise NotImplementedError("Other services not yet implemented")
 
 
@@ -103,19 +121,22 @@ class JobState(Enum):
 class JobCreate(BaseModel):
     name: Optional[str] = Field(None, description="Displayable job name.", min_length=3)
     type: JobType = Field(description="Type of job.")
-    # TODO : PointCloudConversionSpecificationsCreate,
     specifications: Union[CalibrationSpecificationsCreate, ChangeDetectionSpecificationsCreate,
-    ConstraintsSpecificationsCreate,  # PointCloudConversionSpecifications,
-    EvalO2DSpecificationsCreate, EvalO3DSpecificationsCreate,
-    EvalS2DSpecificationsCreate, EvalS3DSpecificationsCreate,
-    EvalSOrthoSpecificationsCreate, FillImagePropertiesSpecificationsCreate,
-    GaussianSplatsSpecificationsCreate, ImportPCSpecificationsCreate,
-    Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
-    ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
-    Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
-    TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
-    TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
-    TrainingS3DSpecificationsCreate, ClearanceCheckerSpecificationsCreate, ClearanceFootprintSpecificationsCreate] = (
+                        ConstraintsSpecificationsCreate,
+                        ClearanceCheckerSpecificationsCreate, ClearanceFootprintSpecificationsCreate,
+                        EvalO2DSpecificationsCreate, EvalO3DSpecificationsCreate,
+                        EvalS2DSpecificationsCreate, EvalS3DSpecificationsCreate,
+                        EvalSOrthoSpecificationsCreate, FillImagePropertiesSpecificationsCreate,
+                        GaussianSplatsSpecificationsCreate, ImportPCSpecificationsCreate,
+                        Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
+                        ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
+                        Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
+                        TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
+                        TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
+                        PointCloudConversionSpecificationsCreate, PCOptimizationSpecificationsCreate,
+                        MeshSamplingSpecificationsCreate, TileMapOptimizationSpecificationsCreate,
+                        VectorOptimizationSpecificationsCreate, # ContextSceneTilerSpecificationsCreate,
+                        TrainingS3DSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -151,17 +172,21 @@ class Job(BaseModel):
     user_id: str = Field(description="Identifier of the user that created the job.", alias="userId")
     # TODO : add PointCloudConversionSpecifications
     specifications: Union[CalibrationSpecifications, ChangeDetectionSpecifications,
-    ConstraintsSpecifications,  # PointCloudConversionSpecifications,
-    EvalO2DSpecifications, EvalO3DSpecifications,
-    EvalS2DSpecifications, EvalS3DSpecifications,
-    EvalSOrthoSpecifications, FillImagePropertiesSpecifications,
-    GaussianSplatsSpecifications, ImportPCSpecifications,
-    Objects2DSpecifications, ProductionSpecifications,
-    ReconstructionSpecifications, Segmentation2DSpecifications,
-    Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
-    TilingSpecifications, TouchUpExportSpecifications,
-    TouchUpImportSpecifications, WaterConstraintsSpecifications,
-    TrainingS3DSpecifications, ClearanceCheckerSpecifications, ClearanceFootprintSpecifications] = (
+                        ConstraintsSpecifications,
+                        ClearanceCheckerSpecifications, ClearanceFootprintSpecifications,
+                        EvalO2DSpecifications, EvalO3DSpecifications,
+                        EvalS2DSpecifications, EvalS3DSpecifications,
+                        EvalSOrthoSpecifications, FillImagePropertiesSpecifications,
+                        GaussianSplatsSpecifications, ImportPCSpecifications,
+                        Objects2DSpecifications, ProductionSpecifications,
+                        ReconstructionSpecifications, Segmentation2DSpecifications,
+                        Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
+                        TilingSpecifications, TouchUpExportSpecifications,
+                        TouchUpImportSpecifications, WaterConstraintsSpecifications,
+                        PointCloudConversionSpecifications, PCOptimizationSpecifications,
+                        MeshSamplingSpecifications, TileMapOptimizationSpecifications,
+                        VectorOptimizationSpecifications, # ContextSceneTilerSpecifications,
+                        TrainingS3DSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @field_validator("specifications", mode="plain")
@@ -219,6 +244,18 @@ class Job(BaseModel):
             specifications = ClearanceCheckerSpecifications(**raw_dict)
         elif job_type == JobType.CLEARANCE_FOOTPRINT:
             specifications = ClearanceFootprintSpecifications(**raw_dict)
+        elif job_type == JobType.POINT_CLOUD_CONVERSION:
+            specifications = PointCloudConversionSpecifications(**raw_dict)
+        elif job_type == JobType.POINT_CLOUD_OPTIMIZATION:
+            specifications = PCOptimizationSpecifications(**raw_dict)
+        elif job_type == JobType.MESH_SAMPLING:
+            specifications = MeshSamplingSpecifications(**raw_dict)
+        elif job_type == JobType.TILE_MAP_OPTIMIZATION:
+            specifications = TileMapOptimizationSpecifications(**raw_dict)
+        elif job_type == JobType.VECTOR_OPTIMIZATION:
+            specifications = VectorOptimizationSpecifications(**raw_dict)
+        # elif job_type == JobType.CONTEXTSCENE_TILER:
+        #     specifications = ContextSceneTilerSpecifications(**raw_dict)
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 
