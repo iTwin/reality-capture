@@ -5,4 +5,4 @@ cc_inputs = clearance_checker.ClearanceCheckerInputs(model3D="b75a8227-cac2-4e7e
 
 cc_outputs = [clearance_checker.ClearanceCheckerOutputsCreate.CLEARANCE]
 
-clearance_footprint_specs = clearance_checker.ClearanceCheckerSpecificationsCreate(inputs=cc_inputs, outputs=cc_outputs)
+clearance_checker_specs = clearance_checker.ClearanceCheckerSpecificationsCreate(inputs=cc_inputs, outputs=cc_outputs)
