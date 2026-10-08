@@ -6,10 +6,134 @@ on:
       prerelease:
         required: true
         type: boolean
+    secrets:
+      RELEASE_PAT:
+        required: false
 
+# Failure recovery notes:
+# - If a job fails BEFORE commit_version_bump has pushed, the branch is untouched:
+#   re-run the workflow only if the branch head is unchanged. If the branch advanced
+#   (including a fix), start a NEW workflow-dispatch run; re-runs keep the original SHA.
+# - If a job fails AFTER commit_version_bump has pushed (i.e. create_release), do NOT
+#   "re-run all jobs": it rebuilds the original SHA, then commit_version_bump rejects
+#   the advanced branch head.
+#   Use "Re-run failed jobs" instead, which reuses the outputs of the completed jobs.
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ inputs.prerelease && steps.bump_prerelease.outputs.new_version || steps.bump_release.outputs.new_version }}
+      bump_type: ${{ steps.bump_type.outputs.bump_type }}
+      # The commit this whole pipeline builds, tests and (for releases) pushes on top of.
+      base_sha: ${{ github.sha }}
+
+    steps:
+      # Fail fast: without RELEASE_PAT the pipeline would only fail at the final push,
+      # after the whole test matrix has run.
+      - name: Verify release credentials
+        if: ${{ !inputs.prerelease }}
+        env:
+          HAS_RELEASE_PAT: ${{ secrets.RELEASE_PAT != '' }}
+        run: |
+          if [ "$HAS_RELEASE_PAT" != "true" ]; then
+            echo "::error::The RELEASE_PAT secret is not configured. It is required to push the version bump commit and must belong to an identity allowed to bypass branch protection."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+
+      - name: Install release tooling
+        run: python -m pip install "towncrier >= 26.9.0" "bump-my-version >= 1.5.1"
+
+      - name: Determine version bump type
+        id: bump_type
+        working-directory: ./python_sdk
+        run: |
+          # Only count files matching towncrier fragment naming (<issue>.<type>[.ext]),
+          # so stray files (templates, READMEs, ...) cannot trigger a release.
+          $fragments = Get-ChildItem -Path "py_changes" -File -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match '\.(feature|bugfix|doc|removal|misc)(\.\w+)?$' }
+          if (-not $fragments) {
+            Write-Error "No changelog fragment found in python_sdk/py_changes. Add one with 'towncrier create' before publishing."
+            exit 1
+          }
+          Write-Host "Changelog fragments found:"
+          $fragments | ForEach-Object { Write-Host " - $($_.Name)" }
+          $minorFragments = $fragments | Where-Object { $_.Name -match '\.(feature|removal)(\.\w+)?$' }
+          if ($minorFragments) { $bumpType = "minor" } else { $bumpType = "patch" }
+          Write-Host "Version bump type: $bumpType"
+          "bump_type=$bumpType" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+
+      - name: Bump version (release)
+        if: ${{ !inputs.prerelease }}
+        id: bump_release
+        working-directory: ./python_sdk
+        run: |
+          bump-my-version bump ${{ steps.bump_type.outputs.bump_type }}
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $newVersion = bump-my-version show current_version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $newVersion = $newVersion.Trim()
+          Write-Host "New version: $newVersion"
+          "new_version=$newVersion" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+
+      - name: Build changelog (release)
+        if: ${{ !inputs.prerelease }}
+        working-directory: ./python_sdk
+        run: towncrier build --yes --version ${{ steps.bump_release.outputs.new_version }}
+
+      # Pre-releases use an rc-suffixed version (e.g. 2.8.0rc12) so they neither burn
+      # a real version number nor consume the changelog fragments. Only the built wheel
+      # gets the rc version; nothing is pushed back to the branch.
+      - name: Set pre-release version
+        if: inputs.prerelease
+        id: bump_prerelease
+        working-directory: ./python_sdk
+        run: |
+          $base = bump-my-version show new_version --increment ${{ steps.bump_type.outputs.bump_type }}
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $base = $base.Trim()
+          $newVersion = "${base}rc${{ github.run_number }}"
+          Write-Host "Pre-release version: $newVersion"
+          $content = Get-Content pyproject.toml -Raw
+          $updated = $content -replace '(?m)^version\s*=\s*"[^"]+"', ('version = "' + $newVersion + '"')
+          if ($updated -eq $content) {
+            Write-Error "Failed to update the project version in pyproject.toml"
+            exit 1
+          }
+          Set-Content pyproject.toml -Value $updated -NoNewline
+          "new_version=$newVersion" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+
+      - name: Create version bump patch
+        run: |
+          git add -A
+          git diff --cached --stat
+          git diff --cached --binary > version-bump.patch
+
+      - name: Upload version bump patch
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-sdk-version-bump
+          path: version-bump.patch
+          # Allow "Re-run all jobs" on a failed attempt (v4 artifact names are otherwise
+          # immutable across attempts of the same run).
+          overwrite: true
+
   build:
+    needs: prepare
     uses: ./.github/workflows/python-build.yml
+    with:
+      version-patch-artifact: python-sdk-version-bump
 
   test:
     needs: build
@@ -23,12 +147,67 @@ jobs:
       python-version: ${{ matrix.python-version }}
       os: ${{ matrix.os }}
 
+  commit_version_bump:
+    needs: [prepare, build, test]
+    if: ${{ !inputs.prerelease }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      commit_sha: ${{ steps.commit.outputs.commit_sha }}
+
+    steps:
+      # RELEASE_PAT must belong to an identity allowed to bypass branch protection:
+      # the default GITHUB_TOKEN cannot push to a protected branch.
+      # Check out the exact commit the wheel was built from, so the pushed commit is
+      # guaranteed to contain the code that was built and tested.
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prepare.outputs.base_sha }}
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_PAT }}
+
+      - name: Download version bump patch
+        uses: actions/download-artifact@v8
+        with:
+          name: python-sdk-version-bump
+
+      - name: Apply, commit and push version bump
+        id: commit
+        run: |
+          git fetch origin ${{ github.ref_name }}
+          remote_sha="$(git rev-parse "origin/${{ github.ref_name }}")"
+          if [ "$remote_sha" != "${{ needs.prepare.outputs.base_sha }}" ]; then
+            echo "::error::Branch '${{ github.ref_name }}' has advanced since this publish run started (expected ${{ needs.prepare.outputs.base_sha }}, found $remote_sha). The built artifacts no longer match the branch head. Start a NEW workflow-dispatch run on this branch; re-running this run keeps the original SHA and will fail again."
+            exit 1
+          fi
+          git apply --binary --index version-bump.patch
+          rm -f version-bump.patch
+          git config --local user.email imodeljs-admin@users.noreply.github.com
+          git config --local user.name imodeljs-admin
+          git commit -m "Published reality-capture version ${{ needs.prepare.outputs.new_version }}"
+          # A plain push is still non-fast-forward-safe: if the branch moved in the tiny
+          # window since the check above, the push is rejected instead of overwriting.
+          git push origin HEAD:${{ github.ref_name }}
+          echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
   create_release:
-    needs: [build, test]
+    needs: [prepare, build, test, commit_version_bump]
+    # commit_version_bump is skipped for pre-releases; still require everything else.
+    if: >-
+      ${{ !cancelled() &&
+          needs.prepare.result == 'success' &&
+          needs.build.result == 'success' &&
+          needs.test.result == 'success' &&
+          (needs.commit_version_bump.result == 'success' ||
+           (inputs.prerelease && needs.commit_version_bump.result == 'skipped')) }}
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          # Releases tag the version bump commit; pre-releases tag the commit they were built from.
+          ref: ${{ inputs.prerelease && needs.prepare.outputs.base_sha || needs.commit_version_bump.outputs.commit_sha }}
 
       - name: Download wheel artifact
         uses: actions/download-artifact@v8
@@ -52,20 +231,12 @@ jobs:
           "wheel_abs_path=$wheel_abs_path" >> $env:GITHUB_OUTPUT
         shell: pwsh
 
-      - name: Get version from pyproject
-        id: extract_version
-        run: |
-          $content = Get-Content python_sdk/pyproject.toml -Raw
-          $version = [regex]::Match($content, '(?m)^version\s*=\s*"([^"]+)"').Groups[1].Value
-          Write-Host "Version: $version"
-          "version=$version" >> $env:GITHUB_OUTPUT
-        shell: pwsh
-
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.extract_version.outputs.version }}-py
-          name: "Python Version ${{ steps.extract_version.outputs.version }}"
+          tag_name: ${{ needs.prepare.outputs.new_version }}-py
+          target_commitish: ${{ inputs.prerelease && needs.prepare.outputs.base_sha || needs.commit_version_bump.outputs.commit_sha }}
+          name: "Python Version ${{ needs.prepare.outputs.new_version }}"
           draft: true
           prerelease: ${{ inputs.prerelease }}
           files: |

@@ -2,6 +2,12 @@ name: (PyPreRelease) Publish Python SDK Pre-Release
 
 on: workflow_dispatch
 
+# Only one publish (release or pre-release) at a time: the pipeline pushes a version
+# bump commit and must not race with another publish run.
+concurrency:
+  group: python-publish
+  cancel-in-progress: false
+
 # Creates a pre-release in Github repo. Does not publish package to Pypi
 # Delegates all logic to python-publish.yml
 jobs:
@@ -9,3 +15,4 @@ jobs:
     uses: ./.github/workflows/python-publish.yml
     with:
       prerelease: true
+    secrets: inherit

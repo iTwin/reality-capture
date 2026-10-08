@@ -8,6 +8,41 @@ This page documents all notable changes to the ``reality_capture`` Python SDK ac
    :local:
    :depth: 1
 
+.. You should not modify this page manually, you should use towncrier create command to add to the changelog
+
+.. towncrier release notes start
+
+----
+
+2.7.0
+=====
+
+Additions
+---------
+
+- Added a new **Mesh Sampling** job type (:class:`~reality_capture.specifications.mesh_sampling.MeshSamplingSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.MeshSamplingSpecifications`) that converts a collection of meshes in a point cloud.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+- Added a new **Point Cloud Conversion** job type (:class:`~reality_capture.specifications.mesh_sampling.PointCloudConversionSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.PointCloudConversionSpecifications`) that converts point clouds from one format to another.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+- Added a new **Point Cloud Conversion** job type (:class:`~reality_capture.specifications.mesh_sampling.PCOptimizationSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.PCOptimizationSpecifications`) that optimizes a collection of point clouds from one format
+  to a single point cloud.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+- Added a new **Tile Map Optimization** job type (:class:`~reality_capture.specifications.mesh_sampling.TileMapOptimizationSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.TileMapOptimizationSpecifications`) that optimizes Tile Maps from one format to another.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+- Added a new **Vector Optimization** job type (:class:`~reality_capture.specifications.mesh_sampling.VectorOptimizationSpecificationsCreate`,
+  :class:`~reality_capture.specifications.training.VectorOptimizationSpecifications`) that optimizes vector data from one format to another.
+  (`#277 <https://github.com/iTwin/reality-capture/pull/277>`_)
+
+Fixes
+-----
+
+- **Security**: DataHandlers don't upload symlinked data anymore.
+  (`#334 <https://github.com/iTwin/reality-capture/pull/334>`_)
+
 ----
 
 Next Release
@@ -127,8 +162,8 @@ Additions
 - Added optional ``detectors_filter`` parameter to ``get_detectors()`` for server-side
   filtering by labels and exports.
   (`#285 <https://github.com/iTwin/reality-capture/pull/285>`_)
-- Added ``create_detector``, ``update_detector``, ``delete_detector``, ``create_detector_version``, 
-  ``delete_detector_version``, ``publish_detector_version``, ``unpublish_detector_version`` and 
+- Added ``create_detector``, ``update_detector``, ``delete_detector``, ``create_detector_version``,
+  ``delete_detector_version``, ``publish_detector_version``, ``unpublish_detector_version`` and
   ``complete_detector_version_upload`` methods to manage Detectors through the service.
   (`#296 <https://github.com/iTwin/reality-capture/pull/296>`_)
 
@@ -269,3 +304,4 @@ Fixes
   (`#266 <https://github.com/iTwin/reality-capture/pull/266>`_)
 - Removed discontinued Training job types (``TrainingO2D``, ``TrainingS3D``).
   (`#266 <https://github.com/iTwin/reality-capture/pull/266>`_)
+
