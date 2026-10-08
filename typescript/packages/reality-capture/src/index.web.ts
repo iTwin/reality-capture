@@ -15,6 +15,8 @@ export * from "./service/service";
 
 export * from "./specifications/calibration";
 export * from "./specifications/change_detection";
+export * from "./specifications/clearance_checker";
+export * from "./specifications/clearance_footprint";
 export * from "./specifications/constraints";
 export * from "./specifications/eval_o2d";
 export * from "./specifications/eval_o3d";

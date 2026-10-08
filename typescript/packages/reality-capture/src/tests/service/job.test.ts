@@ -29,6 +29,15 @@ describe("getAppropriateService", () => {
     );
   });
 
+  it("should return Service.ANALYSIS for Clearance jobs", () => {
+    expect(getAppropriateService(JobType.CLEARANCE_CHECKER)).to.equal(
+      Service.ANALYSIS,
+    );
+    expect(getAppropriateService(JobType.CLEARANCE_FOOTPRINT)).to.equal(
+      Service.ANALYSIS,
+    );
+  });
+
   it("should return Service.CONVERSION for POINT_CLOUD_CONVERSION", () => {
     expect(getAppropriateService(JobType.POINT_CLOUD_CONVERSION)).to.equal(
       Service.CONVERSION,
