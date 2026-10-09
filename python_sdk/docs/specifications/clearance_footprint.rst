@@ -2,7 +2,7 @@
 Clearance Footprint
 ===================
 
-The *Clearance Footprint* job allows you to project one class footprint onto another one.
+The *Clearance Footprint* job allows you to calculate footprints from a segmentation and corresponding 3D objects.
 
 .. contents:: Quick access
    :local:
@@ -34,7 +34,4 @@ Classes
     :model-show-json: False
 
 .. autopydantic_model:: ClearanceFootprintOutputs
-    :model-show-json: False
-
-.. autopydantic_model:: ClearanceFootprintOptions
     :model-show-json: False
