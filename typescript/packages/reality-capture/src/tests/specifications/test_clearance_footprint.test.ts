@@ -20,7 +20,7 @@ describe("ClearanceFootprintInputsSchema", () => {
 });
 
 describe("ClearanceFootprint specifications", () => {
-  it("should allow empty outputs and omitted options", () => {
+  it("should allow empty outputs", () => {
     expect(() => ClearanceFootprintOutputsSchema.parse({})).to.not.throw();
     expect(() => ClearanceFootprintSpecificationsSchema.parse({
       inputs: { segmentation3D: "segmentation-id", objects3D: "objects-id" },
@@ -28,11 +28,19 @@ describe("ClearanceFootprint specifications", () => {
     })).to.not.throw();
   });
 
-  it("should validate create specifications with options", () => {
-    expect(() => ClearanceFootprintSpecificationsCreateSchema.parse({
+  it("should validate create specifications", () => {
+    const specifications = {
       inputs: { segmentation3D: "segmentation-id", objects3D: "objects-id" },
       outputs: [ClearanceFootprintOutputsCreate.FOOTPRINTS],
-      options: { sourceLabel: "track", targetLabel: "structure" },
-    })).to.not.throw();
+    };
+    expect(ClearanceFootprintSpecificationsCreateSchema.parse(specifications)).to.deep.equal(specifications);
+  });
+
+  it("should validate result specifications", () => {
+    const specifications = {
+      inputs: { segmentation3D: "segmentation-id", objects3D: "objects-id" },
+      outputs: { footprints: "footprints-id" },
+    };
+    expect(ClearanceFootprintSpecificationsSchema.parse(specifications)).to.deep.equal(specifications);
   });
 });
