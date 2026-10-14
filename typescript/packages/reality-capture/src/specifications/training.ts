@@ -113,6 +113,13 @@ export enum ChangeDetectionTrainingModel {
   POINT_TRANSFORMER_V3 = "PointTransformerV3",
 }
 
+// Kept separate from PointCloudFeature (S3D): supported features may diverge.
+export enum ChangeDetectionPointCloudFeature {
+  RGB = "RGB",
+  NORMAL = "NORMAL",
+  INTENSITY = "INTENSITY",
+}
+
 export const TrainingChangeDetectionOptionsSchema = z.object({
   epochs: z
     .number()
@@ -133,7 +140,7 @@ export const TrainingChangeDetectionOptionsSchema = z.object({
     .describe("Training Model architecture to use.")
     .optional(),
   features: z
-    .array(z.nativeEnum(PointCloudFeature))
+    .array(z.nativeEnum(ChangeDetectionPointCloudFeature))
     .describe("Features to use for the training.")
     .optional(),
   ignoreClass: z

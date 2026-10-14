@@ -9,7 +9,7 @@ import {
   TrainingChangeDetectionSpecificationsCreateSchema,
   TrainingChangeDetectionSpecificationsSchema,
   ChangeDetectionTrainingModel,
-  PointCloudFeature,
+  ChangeDetectionPointCloudFeature,
 } from "../../specifications/training";
 
 describe("Segmentation3DPairSchema", () => {
@@ -95,7 +95,7 @@ describe("TrainingChangeDetectionOptionsSchema", () => {
       epochs: 10,
       spacing: 0.5,
       model: ChangeDetectionTrainingModel.POINT_TRANSFORMER_V3,
-      features: [PointCloudFeature.RGB, PointCloudFeature.NORMAL],
+      features: [ChangeDetectionPointCloudFeature.RGB, ChangeDetectionPointCloudFeature.NORMAL],
       ignoreClass: 0,
       versionNumber: "1.0",
     };
@@ -166,7 +166,7 @@ describe("TrainingChangeDetectionSpecificationsCreateSchema", () => {
         epochs: 5,
         spacing: 1.0,
         model: ChangeDetectionTrainingModel.POINT_TRANSFORMER_V3,
-        features: [PointCloudFeature.INTENSITY],
+        features: [ChangeDetectionPointCloudFeature.INTENSITY],
         ignoreClass: 2,
         versionNumber: "3.1",
       },

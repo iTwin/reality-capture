@@ -19,7 +19,8 @@ from reality_capture.specifications.segmentation_orthophoto import SegmentationO
 from reality_capture.specifications.tiling import TilingSpecifications
 from reality_capture.specifications.touchup import TouchUpImportSpecifications, TouchUpExportSpecifications
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecifications
-from reality_capture.specifications.training import TrainingChangeDetectionSpecifications, ChangeDetectionTrainingModel
+from reality_capture.specifications.training import (TrainingChangeDetectionSpecifications, ChangeDetectionTrainingModel,
+                                                     ChangeDetectionPointCloudFeature)
 from reality_capture.specifications.point_cloud_conversion import PointCloudConversionSpecifications
 from reality_capture.specifications.point_cloud_optimization import PCOptimizationSpecifications
 from reality_capture.specifications.mesh_sampling import MeshSamplingSpecifications
@@ -413,6 +414,7 @@ class TestJobValidator:
         assert job.specifications.options.epochs == 5
         assert job.specifications.options.spacing == 0.2
         assert job.specifications.options.model == ChangeDetectionTrainingModel.POINT_TRANSFORMER_V3
+        assert job.specifications.options.features == [ChangeDetectionPointCloudFeature.RGB, ChangeDetectionPointCloudFeature.INTENSITY]
         assert job.specifications.options.version_number == "1.0"
 
         # Verify camelCase serialization round-trip

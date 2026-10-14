@@ -94,6 +94,13 @@ class ChangeDetectionTrainingModel(Enum):
     POINT_TRANSFORMER_V3 = "PointTransformerV3"
 
 
+# Kept separate from PointCloudFeature (S3D): supported features may diverge.
+class ChangeDetectionPointCloudFeature(Enum):
+    RGB = "RGB"
+    NORMAL = "NORMAL"
+    INTENSITY = "INTENSITY"
+
+
 class TrainingChangeDetectionOptions(BaseModel):
     epochs: Optional[int] = Field(
         None, description="Number of times to iterate over the entire dataset", ge=1, le=100
@@ -104,7 +111,7 @@ class TrainingChangeDetectionOptions(BaseModel):
         gt=0
     )
     model: Optional[ChangeDetectionTrainingModel] = Field(None, description="Training Model architecture to use.")
-    features: Optional[list[PointCloudFeature]] = Field(None, description="Features to use for the training.")
+    features: Optional[list[ChangeDetectionPointCloudFeature]] = Field(None, description="Features to use for the training.")
     version_number: Optional[str] = Field(
         None,
         description="String representing the version number for the newly trained detector.",
