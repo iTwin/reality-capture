@@ -143,11 +143,6 @@ export const TrainingChangeDetectionOptionsSchema = z.object({
     .array(z.nativeEnum(ChangeDetectionPointCloudFeature))
     .describe("Features to use for the training.")
     .optional(),
-  ignoreClass: z
-    .number()
-    .int()
-    .describe("Class index to ignore during training.")
-    .optional(),
   versionNumber: z
     .string()
     .regex(/^\d+(?:\.\d+)?$/, "Must be a version like '1' or '1.0'")

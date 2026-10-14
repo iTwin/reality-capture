@@ -96,7 +96,6 @@ describe("TrainingChangeDetectionOptionsSchema", () => {
       spacing: 0.5,
       model: ChangeDetectionTrainingModel.POINT_TRANSFORMER_V3,
       features: [ChangeDetectionPointCloudFeature.RGB, ChangeDetectionPointCloudFeature.NORMAL],
-      ignoreClass: 0,
       versionNumber: "1.0",
     };
     expect(() => TrainingChangeDetectionOptionsSchema.parse(data)).not.to.throw();
@@ -167,7 +166,6 @@ describe("TrainingChangeDetectionSpecificationsCreateSchema", () => {
         spacing: 1.0,
         model: ChangeDetectionTrainingModel.POINT_TRANSFORMER_V3,
         features: [ChangeDetectionPointCloudFeature.INTENSITY],
-        ignoreClass: 2,
         versionNumber: "3.1",
       },
     };
