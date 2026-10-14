@@ -90,6 +90,10 @@ class TrainingChangeDetectionOutputsCreate(Enum):
     DETECTOR = "detector"
 
 
+class ChangeDetectionTrainingModel(Enum):
+    POINT_TRANSFORMER_V3 = "PointTransformerV3"
+
+
 class TrainingChangeDetectionOptions(BaseModel):
     epochs: Optional[int] = Field(
         None, description="Number of times to iterate over the entire dataset", ge=1, le=100
@@ -99,6 +103,7 @@ class TrainingChangeDetectionOptions(BaseModel):
         description="Spacing of the point cloud seen by the detector (in meters).",
         gt=0
     )
+    model: Optional[ChangeDetectionTrainingModel] = Field(None, description="Training Model architecture to use.")
     features: Optional[list[PointCloudFeature]] = Field(None, description="Features to use for the training.")
     version_number: Optional[str] = Field(
         None,

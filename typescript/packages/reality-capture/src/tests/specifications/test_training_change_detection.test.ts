@@ -8,6 +8,7 @@ import {
   TrainingChangeDetectionOutputsCreate,
   TrainingChangeDetectionSpecificationsCreateSchema,
   TrainingChangeDetectionSpecificationsSchema,
+  ChangeDetectionTrainingModel,
   PointCloudFeature,
 } from "../../specifications/training";
 
@@ -93,6 +94,7 @@ describe("TrainingChangeDetectionOptionsSchema", () => {
     const data = {
       epochs: 10,
       spacing: 0.5,
+      model: ChangeDetectionTrainingModel.POINT_TRANSFORMER_V3,
       features: [PointCloudFeature.RGB, PointCloudFeature.NORMAL],
       ignoreClass: 0,
       versionNumber: "1.0",
@@ -163,6 +165,7 @@ describe("TrainingChangeDetectionSpecificationsCreateSchema", () => {
       options: {
         epochs: 5,
         spacing: 1.0,
+        model: ChangeDetectionTrainingModel.POINT_TRANSFORMER_V3,
         features: [PointCloudFeature.INTENSITY],
         ignoreClass: 2,
         versionNumber: "3.1",

@@ -109,6 +109,10 @@ export enum TrainingChangeDetectionOutputsCreate {
   DETECTOR = "detector",
 }
 
+export enum ChangeDetectionTrainingModel {
+  POINT_TRANSFORMER_V3 = "PointTransformerV3",
+}
+
 export const TrainingChangeDetectionOptionsSchema = z.object({
   epochs: z
     .number()
@@ -123,6 +127,10 @@ export const TrainingChangeDetectionOptionsSchema = z.object({
     .describe(
       "Spacing of the point cloud seen by the detector (in meters).",
     )
+    .optional(),
+  model: z
+    .nativeEnum(ChangeDetectionTrainingModel)
+    .describe("Training Model architecture to use.")
     .optional(),
   features: z
     .array(z.nativeEnum(PointCloudFeature))
