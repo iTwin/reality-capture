@@ -106,6 +106,29 @@ class TestJobValidator:
         assert outputs.locations3d_b_as_geojson == "geojsonb_rdid"
         assert outputs.locations3d_b_as_shp == "shpb_rdid"
 
+    def test_validation_change_detection_with_detector(self):
+        j = self.j_base.copy()
+        j["type"] = "ChangeDetection"
+        j["specifications"] = {
+            "inputs": {
+                "model3DA": "modela",
+                "model3DB": "modelb",
+                "pointCloudChangeDetector": "detector_rdid"
+            },
+            "outputs": {
+                "segmentation3DA": "rdid_segmentation_a",
+                "segmentation3DB": "rdid_segmentation_b"
+            }
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, ChangeDetectionSpecifications)
+        assert job.specifications.inputs.point_cloud_change_detector == "detector_rdid"
+        assert job.specifications.outputs.segmentation_3d_a == "rdid_segmentation_a"
+        assert job.specifications.outputs.segmentation_3d_b == "rdid_segmentation_b"
+
+        dumped = job.specifications.model_dump(by_alias=True)
+        assert dumped["inputs"]["pointCloudChangeDetector"] == "detector_rdid"
+
     def test_validation_constraints(self):
         j = self.j_base.copy()
         j["type"] = "Constraints"
