@@ -2,12 +2,12 @@ import { expect } from "chai";
 import { z } from "zod";
 import {
   Segmentation3DPairSchema,
-  TrainingCD3DInputsSchema,
-  TrainingCD3DOutputsSchema,
-  TrainingCD3DOptionsSchema,
-  TrainingCD3DOutputsCreate,
-  TrainingCD3DSpecificationsCreateSchema,
-  TrainingCD3DSpecificationsSchema,
+  TrainingChangeDetectionInputsSchema,
+  TrainingChangeDetectionOutputsSchema,
+  TrainingChangeDetectionOptionsSchema,
+  TrainingChangeDetectionOutputsCreate,
+  TrainingChangeDetectionSpecificationsCreateSchema,
+  TrainingChangeDetectionSpecificationsSchema,
   PointCloudFeature,
 } from "../../specifications/training";
 
@@ -28,7 +28,7 @@ describe("Segmentation3DPairSchema", () => {
   });
 });
 
-describe("TrainingCD3DInputsSchema", () => {
+describe("TrainingChangeDetectionInputsSchema", () => {
   it("should validate a correct input", () => {
     const data = {
       segmentation3DPairs: [
@@ -36,7 +36,7 @@ describe("TrainingCD3DInputsSchema", () => {
       ],
       detectorName: "my-cd-detector",
     };
-    expect(() => TrainingCD3DInputsSchema.parse(data)).not.to.throw();
+    expect(() => TrainingChangeDetectionInputsSchema.parse(data)).not.to.throw();
   });
 
   it("should validate a correct input with preset", () => {
@@ -47,7 +47,7 @@ describe("TrainingCD3DInputsSchema", () => {
       preset: "path/to/preset",
       detectorName: "my-cd-detector",
     };
-    expect(() => TrainingCD3DInputsSchema.parse(data)).not.to.throw();
+    expect(() => TrainingChangeDetectionInputsSchema.parse(data)).not.to.throw();
   });
 
   it("should validate with multiple pairs", () => {
@@ -58,12 +58,12 @@ describe("TrainingCD3DInputsSchema", () => {
       ],
       detectorName: "my-cd-detector",
     };
-    expect(() => TrainingCD3DInputsSchema.parse(data)).not.to.throw();
+    expect(() => TrainingChangeDetectionInputsSchema.parse(data)).not.to.throw();
   });
 
   it("should fail if segmentation3DPairs is missing", () => {
     const data = { detectorName: "my-cd-detector" };
-    expect(() => TrainingCD3DInputsSchema.parse(data)).to.throw(z.ZodError);
+    expect(() => TrainingChangeDetectionInputsSchema.parse(data)).to.throw(z.ZodError);
   });
 
   it("should fail if detectorName is missing", () => {
@@ -72,23 +72,23 @@ describe("TrainingCD3DInputsSchema", () => {
         { segmentation3DA: "csA-id", segmentation3DB: "csB-id" },
       ],
     };
-    expect(() => TrainingCD3DInputsSchema.parse(data)).to.throw(z.ZodError);
+    expect(() => TrainingChangeDetectionInputsSchema.parse(data)).to.throw(z.ZodError);
   });
 });
 
-describe("TrainingCD3DOutputsSchema", () => {
+describe("TrainingChangeDetectionOutputsSchema", () => {
   it("should validate a correct output", () => {
     const data = { detector: "det-id" };
-    expect(() => TrainingCD3DOutputsSchema.parse(data)).not.to.throw();
+    expect(() => TrainingChangeDetectionOutputsSchema.parse(data)).not.to.throw();
   });
 
   it("should fail if detector is missing", () => {
     const data = {};
-    expect(() => TrainingCD3DOutputsSchema.parse(data)).to.throw(z.ZodError);
+    expect(() => TrainingChangeDetectionOutputsSchema.parse(data)).to.throw(z.ZodError);
   });
 });
 
-describe("TrainingCD3DOptionsSchema", () => {
+describe("TrainingChangeDetectionOptionsSchema", () => {
   it("should validate correct options", () => {
     const data = {
       epochs: 10,
@@ -97,46 +97,46 @@ describe("TrainingCD3DOptionsSchema", () => {
       ignoreClass: 0,
       versionNumber: "1.0",
     };
-    expect(() => TrainingCD3DOptionsSchema.parse(data)).not.to.throw();
+    expect(() => TrainingChangeDetectionOptionsSchema.parse(data)).not.to.throw();
   });
 
   it("should accept partial data", () => {
     const data = {};
-    expect(() => TrainingCD3DOptionsSchema.parse(data)).not.to.throw();
+    expect(() => TrainingChangeDetectionOptionsSchema.parse(data)).not.to.throw();
   });
 
   it("should fail if epochs is not an int", () => {
     const data = { epochs: 3.5 };
-    expect(() => TrainingCD3DOptionsSchema.parse(data)).to.throw(z.ZodError);
+    expect(() => TrainingChangeDetectionOptionsSchema.parse(data)).to.throw(z.ZodError);
   });
 
   it("should fail if epochs is < 1", () => {
     const data = { epochs: 0 };
-    expect(() => TrainingCD3DOptionsSchema.parse(data)).to.throw(z.ZodError);
+    expect(() => TrainingChangeDetectionOptionsSchema.parse(data)).to.throw(z.ZodError);
   });
 
   it("should fail if epochs is > 100", () => {
     const data = { epochs: 101 };
-    expect(() => TrainingCD3DOptionsSchema.parse(data)).to.throw(z.ZodError);
+    expect(() => TrainingChangeDetectionOptionsSchema.parse(data)).to.throw(z.ZodError);
   });
 
   it("should fail if spacing is <= 0", () => {
     const data = { spacing: 0 };
-    expect(() => TrainingCD3DOptionsSchema.parse(data)).to.throw(z.ZodError);
+    expect(() => TrainingChangeDetectionOptionsSchema.parse(data)).to.throw(z.ZodError);
   });
 
   it("should fail if versionNumber has invalid format", () => {
     const data = { versionNumber: "abc" };
-    expect(() => TrainingCD3DOptionsSchema.parse(data)).to.throw(z.ZodError);
+    expect(() => TrainingChangeDetectionOptionsSchema.parse(data)).to.throw(z.ZodError);
   });
 
   it("should accept valid versionNumber formats", () => {
-    expect(() => TrainingCD3DOptionsSchema.parse({ versionNumber: "1" })).not.to.throw();
-    expect(() => TrainingCD3DOptionsSchema.parse({ versionNumber: "2.3" })).not.to.throw();
+    expect(() => TrainingChangeDetectionOptionsSchema.parse({ versionNumber: "1" })).not.to.throw();
+    expect(() => TrainingChangeDetectionOptionsSchema.parse({ versionNumber: "2.3" })).not.to.throw();
   });
 });
 
-describe("TrainingCD3DSpecificationsCreateSchema", () => {
+describe("TrainingChangeDetectionSpecificationsCreateSchema", () => {
   it("should validate a minimal spec", () => {
     const data = {
       inputs: {
@@ -145,9 +145,9 @@ describe("TrainingCD3DSpecificationsCreateSchema", () => {
         ],
         detectorName: "my-cd-detector",
       },
-      outputs: [TrainingCD3DOutputsCreate.DETECTOR],
+      outputs: [TrainingChangeDetectionOutputsCreate.DETECTOR],
     };
-    expect(() => TrainingCD3DSpecificationsCreateSchema.parse(data)).not.to.throw();
+    expect(() => TrainingChangeDetectionSpecificationsCreateSchema.parse(data)).not.to.throw();
   });
 
   it("should validate a full spec", () => {
@@ -159,7 +159,7 @@ describe("TrainingCD3DSpecificationsCreateSchema", () => {
         preset: "path/to/preset",
         detectorName: "my-cd-detector",
       },
-      outputs: [TrainingCD3DOutputsCreate.DETECTOR],
+      outputs: [TrainingChangeDetectionOutputsCreate.DETECTOR],
       options: {
         epochs: 5,
         spacing: 1.0,
@@ -168,7 +168,7 @@ describe("TrainingCD3DSpecificationsCreateSchema", () => {
         versionNumber: "3.1",
       },
     };
-    expect(() => TrainingCD3DSpecificationsCreateSchema.parse(data)).not.to.throw();
+    expect(() => TrainingChangeDetectionSpecificationsCreateSchema.parse(data)).not.to.throw();
   });
 
   it("should fail if outputs contains invalid value", () => {
@@ -181,11 +181,11 @@ describe("TrainingCD3DSpecificationsCreateSchema", () => {
       },
       outputs: ["notValidValue"],
     };
-    expect(() => TrainingCD3DSpecificationsCreateSchema.parse(data)).to.throw(z.ZodError);
+    expect(() => TrainingChangeDetectionSpecificationsCreateSchema.parse(data)).to.throw(z.ZodError);
   });
 });
 
-describe("TrainingCD3DSpecificationsSchema", () => {
+describe("TrainingChangeDetectionSpecificationsSchema", () => {
   it("should validate a full specification", () => {
     const data = {
       inputs: {
@@ -197,7 +197,7 @@ describe("TrainingCD3DSpecificationsSchema", () => {
       outputs: { detector: "det-id" },
       options: { epochs: 2, spacing: 0.1 },
     };
-    expect(() => TrainingCD3DSpecificationsSchema.parse(data)).not.to.throw();
+    expect(() => TrainingChangeDetectionSpecificationsSchema.parse(data)).not.to.throw();
   });
 
   it("should fail if outputs is invalid", () => {
@@ -210,6 +210,6 @@ describe("TrainingCD3DSpecificationsSchema", () => {
       },
       outputs: {},
     };
-    expect(() => TrainingCD3DSpecificationsSchema.parse(data)).to.throw(z.ZodError);
+    expect(() => TrainingChangeDetectionSpecificationsSchema.parse(data)).to.throw(z.ZodError);
   });
 });

@@ -85,7 +85,7 @@ export const Segmentation3DPairSchema = z.object({
 });
 export type Segmentation3DPair = z.infer<typeof Segmentation3DPairSchema>;
 
-export const TrainingCD3DInputsSchema = z.object({
+export const TrainingChangeDetectionInputsSchema = z.object({
   segmentation3DPairs: z
     .array(Segmentation3DPairSchema)
     .describe(
@@ -94,18 +94,22 @@ export const TrainingCD3DInputsSchema = z.object({
   preset: z.string().optional().describe("Path to a preset"),
   detectorName: z.string().describe("Name of the detector to train"),
 });
-export type TrainingCD3DInputs = z.infer<typeof TrainingCD3DInputsSchema>;
+export type TrainingChangeDetectionInputs = z.infer<
+  typeof TrainingChangeDetectionInputsSchema
+>;
 
-export const TrainingCD3DOutputsSchema = z.object({
+export const TrainingChangeDetectionOutputsSchema = z.object({
   detector: z.string().describe("Full detector information (name/version)"),
 });
-export type TrainingCD3DOutputs = z.infer<typeof TrainingCD3DOutputsSchema>;
+export type TrainingChangeDetectionOutputs = z.infer<
+  typeof TrainingChangeDetectionOutputsSchema
+>;
 
-export enum TrainingCD3DOutputsCreate {
+export enum TrainingChangeDetectionOutputsCreate {
   DETECTOR = "detector",
 }
 
-export const TrainingCD3DOptionsSchema = z.object({
+export const TrainingChangeDetectionOptionsSchema = z.object({
   epochs: z
     .number()
     .int()
@@ -137,24 +141,26 @@ export const TrainingCD3DOptionsSchema = z.object({
     )
     .optional(),
 });
-export type TrainingCD3DOptions = z.infer<typeof TrainingCD3DOptionsSchema>;
-
-export const TrainingCD3DSpecificationsCreateSchema = z.object({
-  inputs: TrainingCD3DInputsSchema.describe("Inputs"),
-  outputs: z
-    .array(z.nativeEnum(TrainingCD3DOutputsCreate))
-    .describe("Outputs"),
-  options: TrainingCD3DOptionsSchema.describe("Options").optional(),
-});
-export type TrainingCD3DSpecificationsCreate = z.infer<
-  typeof TrainingCD3DSpecificationsCreateSchema
+export type TrainingChangeDetectionOptions = z.infer<
+  typeof TrainingChangeDetectionOptionsSchema
 >;
 
-export const TrainingCD3DSpecificationsSchema = z.object({
-  inputs: TrainingCD3DInputsSchema.describe("Inputs"),
-  outputs: TrainingCD3DOutputsSchema.describe("Outputs"),
-  options: TrainingCD3DOptionsSchema.describe("Options").optional(),
+export const TrainingChangeDetectionSpecificationsCreateSchema = z.object({
+  inputs: TrainingChangeDetectionInputsSchema.describe("Inputs"),
+  outputs: z
+    .array(z.nativeEnum(TrainingChangeDetectionOutputsCreate))
+    .describe("Outputs"),
+  options: TrainingChangeDetectionOptionsSchema.describe("Options").optional(),
 });
-export type TrainingCD3DSpecifications = z.infer<
-  typeof TrainingCD3DSpecificationsSchema
+export type TrainingChangeDetectionSpecificationsCreate = z.infer<
+  typeof TrainingChangeDetectionSpecificationsCreateSchema
+>;
+
+export const TrainingChangeDetectionSpecificationsSchema = z.object({
+  inputs: TrainingChangeDetectionInputsSchema.describe("Inputs"),
+  outputs: TrainingChangeDetectionOutputsSchema.describe("Outputs"),
+  options: TrainingChangeDetectionOptionsSchema.describe("Options").optional(),
+});
+export type TrainingChangeDetectionSpecifications = z.infer<
+  typeof TrainingChangeDetectionSpecificationsSchema
 >;

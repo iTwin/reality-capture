@@ -61,8 +61,8 @@ import {
 import {
   TrainingS3DSpecificationsCreateSchema,
   TrainingS3DSpecificationsSchema,
-  TrainingCD3DSpecificationsCreateSchema,
-  TrainingCD3DSpecificationsSchema,
+  TrainingChangeDetectionSpecificationsCreateSchema,
+  TrainingChangeDetectionSpecificationsSchema,
 } from "../specifications/training";
 
 import {
@@ -132,7 +132,7 @@ export enum JobType {
   SEGMENTATION_ORTHOPHOTO = "SegmentationOrthophoto",
   TILING = "Tiling",
   TRAINING_S3D = "TrainingS3D",
-  TRAINING_CD3D = "TrainingCD3D",
+  TRAINING_CHANGE_DETECTION = "TrainingChangeDetection",
   TOUCH_UP_IMPORT = "TouchUpImport",
   TOUCH_UP_EXPORT = "TouchUpExport",
   WATER_CONSTRAINTS = "WaterConstraints",
@@ -181,7 +181,7 @@ export function getAppropriateService(jt: JobType): Service {
       JobType.EVAL_S2D,
       JobType.EVAL_S3D,
       JobType.TRAINING_S3D,
-      JobType.TRAINING_CD3D,
+      JobType.TRAINING_CHANGE_DETECTION,
     ].includes(jt)
   ) {
     return Service.ANALYSIS;
@@ -238,7 +238,7 @@ export const JobCreateSchema = z.object({
       TouchUpImportSpecificationsCreateSchema,
       WaterConstraintsSpecificationsCreateSchema,
       TrainingS3DSpecificationsCreateSchema,
-      TrainingCD3DSpecificationsCreateSchema,
+      TrainingChangeDetectionSpecificationsCreateSchema,
       PointCloudConversionSpecificationsCreateSchema,
       MeshSamplingSpecificationsCreateSchema,
       PCOptimizationSpecificationsCreateSchema,
@@ -388,8 +388,8 @@ export const JobSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     ...CommonFields,
-    type: z.literal("TrainingCD3D"),
-    specifications: TrainingCD3DSpecificationsSchema,
+    type: z.literal("TrainingChangeDetection"),
+    specifications: TrainingChangeDetectionSpecificationsSchema,
   }),
   z.object({
     ...CommonFields,

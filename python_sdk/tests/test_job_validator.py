@@ -19,7 +19,7 @@ from reality_capture.specifications.segmentation_orthophoto import SegmentationO
 from reality_capture.specifications.tiling import TilingSpecifications
 from reality_capture.specifications.touchup import TouchUpImportSpecifications, TouchUpExportSpecifications
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecifications
-from reality_capture.specifications.training import TrainingCD3DSpecifications
+from reality_capture.specifications.training import TrainingChangeDetectionSpecifications
 from reality_capture.specifications.point_cloud_conversion import PointCloudConversionSpecifications
 from reality_capture.specifications.point_cloud_optimization import PCOptimizationSpecifications
 from reality_capture.specifications.mesh_sampling import MeshSamplingSpecifications
@@ -381,9 +381,9 @@ class TestJobValidator:
             )
         assert "Unsupported job type" in str(exc_info.value)
 
-    def test_validation_training_cd3d(self):
+    def test_validation_training_change_detection(self):
         j = self.j_base.copy()
-        j["type"] = "TrainingCD3D"
+        j["type"] = "TrainingChangeDetection"
         j["specifications"] = {
             "inputs": {
                 "segmentation3DPairs": [
@@ -404,7 +404,7 @@ class TestJobValidator:
             }
         }
         job = Job(**j)
-        assert isinstance(job.specifications, TrainingCD3DSpecifications)
+        assert isinstance(job.specifications, TrainingChangeDetectionSpecifications)
         assert len(job.specifications.inputs.segmentation_3d_pairs) == 2
         assert job.specifications.inputs.segmentation_3d_pairs[0].segmentation_3d_a == "rdid_t0_a"
         assert job.specifications.inputs.segmentation_3d_pairs[0].segmentation_3d_b == "rdid_t1_a"

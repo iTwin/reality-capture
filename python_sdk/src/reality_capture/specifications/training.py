@@ -73,7 +73,7 @@ class Segmentation3DPair(BaseModel):
     )
 
 
-class TrainingCD3DInputs(BaseModel):
+class TrainingChangeDetectionInputs(BaseModel):
     segmentation_3d_pairs: list[Segmentation3DPair] = Field(
         alias="segmentation3DPairs",
         description="List of paired segmented 3D scenes for change detection training."
@@ -82,15 +82,15 @@ class TrainingCD3DInputs(BaseModel):
     detector_name: str = Field(description="Name of the detector to train", alias="detectorName")
 
 
-class TrainingCD3DOutputs(BaseModel):
+class TrainingChangeDetectionOutputs(BaseModel):
     detector: str = Field(description="Full detector information (name/version)")
 
 
-class TrainingCD3DOutputsCreate(Enum):
+class TrainingChangeDetectionOutputsCreate(Enum):
     DETECTOR = "detector"
 
 
-class TrainingCD3DOptions(BaseModel):
+class TrainingChangeDetectionOptions(BaseModel):
     epochs: Optional[int] = Field(
         None, description="Number of times to iterate over the entire dataset", ge=1, le=100
     )
@@ -112,13 +112,13 @@ class TrainingCD3DOptions(BaseModel):
     )
 
 
-class TrainingCD3DSpecificationsCreate(BaseModel):
-    inputs: TrainingCD3DInputs = Field(description="Inputs")
-    outputs: list[TrainingCD3DOutputsCreate] = Field(description="Outputs")
-    options: Optional[TrainingCD3DOptions] = Field(None, description="Options")
+class TrainingChangeDetectionSpecificationsCreate(BaseModel):
+    inputs: TrainingChangeDetectionInputs = Field(description="Inputs")
+    outputs: list[TrainingChangeDetectionOutputsCreate] = Field(description="Outputs")
+    options: Optional[TrainingChangeDetectionOptions] = Field(None, description="Options")
 
 
-class TrainingCD3DSpecifications(BaseModel):
-    inputs: TrainingCD3DInputs = Field(description="Inputs")
-    outputs: TrainingCD3DOutputs = Field(description="Outputs")
-    options: Optional[TrainingCD3DOptions] = Field(None, description="Options")
+class TrainingChangeDetectionSpecifications(BaseModel):
+    inputs: TrainingChangeDetectionInputs = Field(description="Inputs")
+    outputs: TrainingChangeDetectionOutputs = Field(description="Outputs")
+    options: Optional[TrainingChangeDetectionOptions] = Field(None, description="Options")
