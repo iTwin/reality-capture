@@ -100,10 +100,6 @@ class TrainingChangeDetectionOptions(BaseModel):
         gt=0
     )
     features: Optional[list[PointCloudFeature]] = Field(None, description="Features to use for the training.")
-    ignore_class: Optional[int] = Field(
-        None, alias="ignoreClass",
-        description="Class index to ignore during training."
-    )
     version_number: Optional[str] = Field(
         None,
         description="String representing the version number for the newly trained detector.",

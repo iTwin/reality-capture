@@ -399,7 +399,6 @@ class TestJobValidator:
                 "epochs": 5,
                 "spacing": 0.2,
                 "features": ["RGB", "INTENSITY"],
-                "ignoreClass": -100,
                 "versionNumber": "1.0"
             }
         }
@@ -412,7 +411,6 @@ class TestJobValidator:
         assert job.specifications.outputs.detector == "detector_rdid"
         assert job.specifications.options.epochs == 5
         assert job.specifications.options.spacing == 0.2
-        assert job.specifications.options.ignore_class == -100
         assert job.specifications.options.version_number == "1.0"
 
         # Verify camelCase serialization round-trip
@@ -421,7 +419,6 @@ class TestJobValidator:
         assert "segmentation3DA" in dumped["inputs"]["segmentation3DPairs"][0]
         assert "segmentation3DB" in dumped["inputs"]["segmentation3DPairs"][0]
         assert "detectorName" in dumped["inputs"]
-        assert "ignoreClass" in dumped["options"]
         assert "versionNumber" in dumped["options"]
 
     def test_validation_pc_conv(self):
