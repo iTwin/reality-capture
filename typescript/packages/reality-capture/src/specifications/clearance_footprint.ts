@@ -15,22 +15,14 @@ export enum ClearanceFootprintOutputsCreate {
   FOOTPRINTS = "footprints",
 }
 
-export const ClearanceFootprintOptionsSchema = z.object({
-  sourceLabel: z.string().optional().describe("Name of the label of the class to be projected."),
-  targetLabel: z.string().optional().describe("Name of the label of the class where the projection will be applied."),
-});
-export type ClearanceFootprintOptions = z.infer<typeof ClearanceFootprintOptionsSchema>;
-
 export const ClearanceFootprintSpecificationsCreateSchema = z.object({
   inputs: ClearanceFootprintInputsSchema.describe("Inputs"),
   outputs: z.array(z.nativeEnum(ClearanceFootprintOutputsCreate)).describe("Outputs"),
-  options: ClearanceFootprintOptionsSchema.optional().describe("Options"),
 });
 export type ClearanceFootprintSpecificationsCreate = z.infer<typeof ClearanceFootprintSpecificationsCreateSchema>;
 
 export const ClearanceFootprintSpecificationsSchema = z.object({
   inputs: ClearanceFootprintInputsSchema.describe("Inputs"),
   outputs: ClearanceFootprintOutputsSchema.describe("Outputs"),
-  options: ClearanceFootprintOptionsSchema.optional().describe("Options"),
 });
 export type ClearanceFootprintSpecifications = z.infer<typeof ClearanceFootprintSpecificationsSchema>;

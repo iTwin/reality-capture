@@ -18,19 +18,12 @@ class ClearanceFootprintOutputsCreate(Enum):
     FOOTPRINTS = "footprints"
 
 
-class ClearanceFootprintOptions(BaseModel):
-    source_label: Optional[str] = Field(None, alias="sourceLabel", description="Name of the label of the class to be projected.")
-    target_label: Optional[str] = Field(None, alias="targetLabel", description="Name of the label of the class where the projection will be applied.")
-
-
 class ClearanceFootprintSpecificationsCreate(BaseModel):
     inputs: ClearanceFootprintInputs = Field(description="Inputs")
     outputs: list[ClearanceFootprintOutputsCreate] = Field(description="Outputs")
-    options: Optional[ClearanceFootprintOptions] = Field(None, description="Options")
 
 
 class ClearanceFootprintSpecifications(BaseModel):
     inputs: ClearanceFootprintInputs = Field(description="Inputs")
     outputs: ClearanceFootprintOutputs = Field(description="Outputs")
-    options: Optional[ClearanceFootprintOptions] = Field(None, description="Options")
 
