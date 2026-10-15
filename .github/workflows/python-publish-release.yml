@@ -12,6 +12,8 @@ concurrency:
 # Delegates all logic to python-publish.yml
 jobs:
   publish:
+    permissions:
+      contents: write
     uses: ./.github/workflows/python-publish.yml
     with:
       prerelease: false

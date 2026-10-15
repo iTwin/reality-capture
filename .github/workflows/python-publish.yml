@@ -10,6 +10,9 @@ on:
       RELEASE_PAT:
         required: false
 
+permissions:
+  contents: read
+
 # Failure recovery notes:
 # - If a job fails BEFORE commit_version_bump has pushed, the branch is untouched:
 #   re-run the workflow only if the branch head is unchanged. If the branch advanced
@@ -202,6 +205,8 @@ jobs:
           (needs.commit_version_bump.result == 'success' ||
            (inputs.prerelease && needs.commit_version_bump.result == 'skipped')) }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v5
@@ -232,7 +237,7 @@ jobs:
         shell: pwsh
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.prepare.outputs.new_version }}-py
           target_commitish: ${{ inputs.prerelease && needs.prepare.outputs.base_sha || needs.commit_version_bump.outputs.commit_sha }}
