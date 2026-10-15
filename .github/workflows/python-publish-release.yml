@@ -15,4 +15,5 @@ jobs:
     uses: ./.github/workflows/python-publish.yml
     with:
       prerelease: false
-    secrets: inherit
+    secrets:
+      RELEASE_PAT: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
