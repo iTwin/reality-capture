@@ -1,1 +1,0 @@
-Add new gaussian splats formats (LCC2 and SOG)

@@ -14,6 +14,30 @@ This page documents all notable changes to the ``reality_capture`` Python SDK ac
 
 ----
 
+2.8.0
+===========
+
+Features
+--------
+
+- Added a new **Clearance Footprint** job type (:class:`~reality_capture.specifications.clearance_footprint.ClearanceFootprintSpecificationsCreate`, :class:`~reality_capture.specifications.clearance_footprint.ClearanceFootprintSpecifications`) that projects a class footprint onto another and a new **Clearance checker** job type (:class:`~reality_capture.specifications.clearance_checker.ClearanceCheckerSpecificationsCreate`, :class:`~reality_capture.specifications.clearance_checker.ClearanceCheckerSpecifications`) that computes clearance information given a 3D model and footprints. (`#352 <https://github.com/iTwin/reality-capture/pull/352>`_)
+- Add new gaussian splats formats (LCC2 and SOG) (`#356 <https://github.com/iTwin/reality-capture/pull/356>`_)
+
+
+Improved Documentation
+----------------------
+
+- Fix Homepage URL (`#353 <https://github.com/iTwin/reality-capture/pull/353>`_)
+
+
+Misc
+----
+
+- `#369 <https://github.com/iTwin/reality-capture/pull/369>`_
+
+
+----
+
 2.7.0
 =====
 

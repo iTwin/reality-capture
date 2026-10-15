@@ -44,5 +44,5 @@ html_context = {
     "github_version": "main",  # Version
     "conf_py_path": "/python_sdk/docs/",  # Path in the checkout to the docs root
     "current_version": release,
-    "versions": ["latest", "2.7.0"],
+    "versions": ["latest", "2.8.0", "2.7.0"],
 }
