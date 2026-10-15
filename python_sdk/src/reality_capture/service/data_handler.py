@@ -12,17 +12,24 @@ from multiprocessing.pool import ThreadPool
 class _DataHandler:
     @staticmethod
     def _get_files_and_sizes(path: str) -> list[(str, int)]:
-        if os.path.isdir(path):
-            files_tuple = [
-                (
-                    os.path.relpath(os.path.join(dp, f), path),
-                    os.path.getsize(os.path.join(dp, f)),
-                )
-                for dp, dn, filenames in os.walk(path)
-                for f in filenames
-            ]
-        else:
-            files_tuple = [(os.path.basename(path), os.path.getsize(path))]
+        if not os.path.exists(path):
+            return []
+        if os.path.islink(path):
+                return []
+        if not os.path.isfile(path) and not os.path.isdir(path):
+            return []
+        if os.path.isfile(path):
+            return [(os.path.basename(path), os.path.getsize(path))]
+
+        # We are handling a directory, we will return all the files in the directory recursively
+        files_tuple = []
+        for dp, _, filenames in os.walk(path):
+            for filename in filenames:
+                file_path = os.path.join(dp, filename)
+                size_path = file_path
+                if os.path.islink(file_path):
+                    continue  # Discard symlinks for security reasons
+                files_tuple.append((os.path.relpath(file_path, path), os.path.getsize(size_path)))
         return files_tuple
 
     @staticmethod

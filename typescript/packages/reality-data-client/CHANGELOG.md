@@ -1,8 +1,16 @@
 # Change Log - @itwin/reality-data-client
 
-<!-- This log was last generated on Thu, 18 Jun 2026 15:27:31 GMT and should not be manually modified. -->
+<!-- This log was last generated on Fri, 11 Sep 2026 16:17:08 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 1.6.0
+
+Fri, 11 Sep 2026 16:17:08 GMT
+
+### Minor changes
+
+- Use reality-capture to send requests to Reality Management API (110406974+dbiguenet@users.noreply.github.com)
 
 ## 1.5.1
 

@@ -70,12 +70,18 @@ export class RealityCaptureService {
     return this._serviceUrl + "reality-management/";
   }
 
+  private _getConversionUrl() {
+    return this._serviceUrl + "reality-conversion/";
+  }
+
   private _getCorrectUrl(service: Service): string {
     switch (service) {
     case Service.MODELING:
       return this._getModelingUrl();
     case Service.ANALYSIS:
       return this._getAnalysisUrl();
+    case Service.CONVERSION:
+      return this._getConversionUrl();
     default:
       throw new Error("Other services not yet implemented");
     }
