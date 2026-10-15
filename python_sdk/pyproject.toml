@@ -14,11 +14,10 @@ authors = [
 ]
 description = "This package contains a SDK for Reality Modeling, Reality Analysis and Reality Conversion iTwin APIs as well as Reality Management API utils. It provides classes, functions and examples to upload local data to ContextShare, run jobs and download the results."
 readme = "README.md"
-license =  {text = "MIT"}
+license = "MIT"
 requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3.10", 
-    "License :: OSI Approved :: MIT License",
     "Operating System :: Microsoft :: Windows",
 ]
 dependencies = [
@@ -86,4 +85,3 @@ allow_shell_hooks = false
 filename = "docs/conf.py"
 search = '"versions": ["latest", "{current_version}"'
 replace = '"versions": ["latest", "{new_version}", "{current_version}"'
-
