@@ -199,6 +199,14 @@ describe("DetectorsMinimalResponseSchema", () => {
     expect(() => DetectorsMinimalResponseSchema.parse(data)).to.not.throw();
   });
 
+  it("should validate a point cloud change detector", () => {
+    const data = {
+      detectors: [{ name: "my-cd-detector", type: "PointCloudChangeDetector" }],
+    };
+    const parsed = DetectorsMinimalResponseSchema.parse(data);
+    expect(parsed.detectors[0].type).to.equal(DetectorType.POINT_CLOUD_CHANGE_DETECTOR);
+  });
+
   it("should fail if detectors field is missing", () => {
     const data = {};
     expect(() => DetectorsMinimalResponseSchema.parse(data)).to.throw(z.ZodError);
