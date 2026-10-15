@@ -1,8 +1,17 @@
 # Change Log - @itwin/reality-capture
 
-<!-- This log was last generated on Mon, 21 Sep 2026 13:23:38 GMT and should not be manually modified. -->
+<!-- This log was last generated on Thu, 15 Oct 2026 12:13:29 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 1.9.0
+
+Thu, 15 Oct 2026 12:13:29 GMT
+
+### Minor changes
+
+- Add new gaussian splats formats (LCC2 and SOG) (5690282+cnovel@users.noreply.github.com)
+- Add support for jobs ClearanceFootprint and ClearanceChecker (5690282+cnovel@users.noreply.github.com)
 
 ## 1.8.0
 
