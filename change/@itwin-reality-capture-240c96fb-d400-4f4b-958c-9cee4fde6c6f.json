@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "Add new gaussian splats formats (LCC2 and SOG)",
+  "packageName": "@itwin/reality-capture",
+  "email": "5690282+cnovel@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
