@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           lfs: true
+          token: ${{ secrets.RELEASE_PAT || secrets.IMJS_ADMIN_GH_TOKEN }}
 
       - name: Checkout LFS objects
         run: git lfs checkout
@@ -39,21 +40,44 @@ jobs:
         working-directory: ./typescript/packages/reality-capture
         run: pnpm build
 
-      - name: Publish packages in npm
+      - name: Bump version, tag and push to git (no npm publish)
         working-directory: ./typescript/packages/reality-capture
         shell: pwsh
         run: |
           git config --local user.email imodeljs-admin@users.noreply.github.com
           git config --local user.name imodeljs-admin
+          # Without change files there is nothing to bump: this happens when a previous run
+          # already pushed the bump and only the npm publish is missing.
+          $changeFiles = Get-ChildItem -Path "${{ github.workspace }}/change" -Filter "*.json" -ErrorAction SilentlyContinue
+          if (-not $changeFiles) {
+            Write-Host "No change files found: skipping version bump and push."
+            exit 0
+          }
           # beachball resolves --config from the git root, not the current directory,
           # so an absolute path is required to load the package-local config.
           $configName = if ("${{ inputs.prerelease }}" -eq "true") { "beachball.config.dev.js" } else { "beachball.config.js" }
           $configPath = Join-Path "${{ github.workspace }}" "typescript/packages/reality-capture/$configName"
-          if ("${{ inputs.prerelease }}" -eq "true") {
-            pnpm exec beachball publish --config "$configPath" --keep-change-files -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+          $extraArgs = @()
+          if ("${{ inputs.prerelease }}" -eq "true") { $extraArgs += "--keep-change-files" }
+          pnpm exec beachball publish --no-publish --config "$configPath" @extraArgs -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Publish package in npm
+        working-directory: ./typescript/packages/reality-capture
+        shell: pwsh
+        run: |
+          # beachball pushed a commit on top of the checked out one: use the version it wrote.
+          $package = Get-Content package.json -Raw | ConvertFrom-Json
+          $name = $package.name
+          $version = $package.version
+          $tag = if ("${{ inputs.prerelease }}" -eq "true") { "nightly" } else { "latest" }
+          $published = npm view "$name@$version" version 2>$null
+          if ($published) {
+            Write-Host "$name@$version is already published on npm: nothing to do."
+            exit 0
           }
-          else {
-            pnpm exec beachball publish --config "$configPath" -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
-          }
+          Write-Host "Publishing $name@$version with tag '$tag'"
+          pnpm publish --access public --tag $tag --no-git-checks
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
