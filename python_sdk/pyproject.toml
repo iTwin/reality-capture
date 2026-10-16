@@ -8,17 +8,16 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "reality_capture"
 # PEP440, see https://peps.python.org/pep-0440/
-version = "2.7.0"
+version = "2.8.0"
 authors = [
   { name="Bentley Systems" },
 ]
 description = "This package contains a SDK for Reality Modeling, Reality Analysis and Reality Conversion iTwin APIs as well as Reality Management API utils. It provides classes, functions and examples to upload local data to ContextShare, run jobs and download the results."
 readme = "README.md"
-license =  {text = "MIT"}
+license = "MIT"
 requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3.10", 
-    "License :: OSI Approved :: MIT License",
     "Operating System :: Microsoft :: Windows",
 ]
 dependencies = [
@@ -59,7 +58,7 @@ issue_format = "`#{issue} <https://github.com/iTwin/reality-capture/pull/{issue}
 title_format = "----\n\n{version}"
 
 [tool.bumpversion]
-current_version = "2.7.0"
+current_version = "2.8.0"
 parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
 serialize = ["{major}.{minor}.{patch}"]
 search = "{current_version}"
@@ -86,4 +85,3 @@ allow_shell_hooks = false
 filename = "docs/conf.py"
 search = '"versions": ["latest", "{current_version}"'
 replace = '"versions": ["latest", "{new_version}", "{current_version}"'
-

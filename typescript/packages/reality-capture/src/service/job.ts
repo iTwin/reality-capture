@@ -90,6 +90,14 @@ import {
   EvalSOrthoSpecificationsSchema,
 } from "../specifications/eval_sortho";
 import {
+  ClearanceCheckerSpecificationsCreateSchema,
+  ClearanceCheckerSpecificationsSchema,
+} from "../specifications/clearance_checker";
+import {
+  ClearanceFootprintSpecificationsCreateSchema,
+  ClearanceFootprintSpecificationsSchema,
+} from "../specifications/clearance_footprint";
+import {
   PointCloudConversionSpecificationsCreateSchema,
   PointCloudConversionSpecificationsSchema,
 } from "../specifications/point_cloud_conversion";
@@ -115,6 +123,8 @@ import { URLSchema } from "./reality_data";
 export enum JobType {
   CALIBRATION = "Calibration",
   CHANGE_DETECTION = "ChangeDetection",
+  CLEARANCE_CHECKER = "ClearanceChecker",
+  CLEARANCE_FOOTPRINT = "ClearanceFootprint",
   CONSTRAINTS = "Constraints",
   EVAL_O2D = "EvalO2D",
   EVAL_O3D = "EvalO3D",
@@ -182,6 +192,8 @@ export function getAppropriateService(jt: JobType): Service {
       JobType.EVAL_S3D,
       JobType.TRAINING_S3D,
       JobType.TRAINING_CHANGE_DETECTION,
+      JobType.CLEARANCE_CHECKER,
+      JobType.CLEARANCE_FOOTPRINT,
     ].includes(jt)
   ) {
     return Service.ANALYSIS;
@@ -218,6 +230,8 @@ export const JobCreateSchema = z.object({
     .union([
       CalibrationSpecificationsCreateSchema,
       ChangeDetectionSpecificationsCreateSchema,
+      ClearanceCheckerSpecificationsCreateSchema,
+      ClearanceFootprintSpecificationsCreateSchema,
       ConstraintsSpecificationsCreateSchema,
       EvalO2DSpecificationsCreateSchema,
       EvalO3DSpecificationsCreateSchema,
@@ -300,6 +314,16 @@ export const JobSchema = z.discriminatedUnion("type", [
     ...CommonFields,
     type: z.literal("ChangeDetection"),
     specifications: ChangeDetectionSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("ClearanceChecker"),
+    specifications: ClearanceCheckerSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("ClearanceFootprint"),
+    specifications: ClearanceFootprintSpecificationsSchema,
   }),
   z.object({
     ...CommonFields,
