@@ -19,6 +19,8 @@ from reality_capture.specifications.segmentation_orthophoto import SegmentationO
 from reality_capture.specifications.tiling import TilingSpecifications
 from reality_capture.specifications.touchup import TouchUpImportSpecifications, TouchUpExportSpecifications
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecifications
+from reality_capture.specifications.clearance_checker import ClearanceCheckerSpecifications
+from reality_capture.specifications.clearance_footprint import ClearanceFootprintSpecifications
 from reality_capture.specifications.point_cloud_conversion import PointCloudConversionSpecifications
 from reality_capture.specifications.point_cloud_optimization import PCOptimizationSpecifications
 from reality_capture.specifications.mesh_sampling import MeshSamplingSpecifications
@@ -368,6 +370,36 @@ class TestJobValidator:
         }
         job = Job(**j)
         assert isinstance(job.specifications, WaterConstraintsSpecifications)
+
+    def test_validation_clearance_checker(self):
+        j = self.j_base.copy()
+        j["type"] = "ClearanceChecker"
+        j["specifications"] = {
+            "inputs": {
+                "model3D": "mfid",
+                "footprints": "fid"
+            },
+            "outputs": {
+                "clearance": "cid"
+            }
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, ClearanceCheckerSpecifications)
+
+    def test_validation_clearance_footprint(self):
+        j = self.j_base.copy()
+        j["type"] = "ClearanceFootprint"
+        j["specifications"] = {
+            "inputs": {
+                "segmentation3D": "mfid",
+                "objects3D": "fid"
+            },
+            "outputs": {
+                "footprints": "cid"
+            }
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, ClearanceFootprintSpecifications)
 
     def test_validation_unsupported_job_type_raises(self):
         j = self.j_base.copy()
