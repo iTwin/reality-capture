@@ -7,8 +7,7 @@ class ChangeDetectionInputs(BaseModel):
     model_3d_a: str = Field(alias="model3DA", description="Reality data id of ContextScene, point cloud, Gaussian splats, or mesh")
     model_3d_b: str = Field(alias="model3DB", description="Reality data id of ContextScene, point cloud, Gaussian splats, or mesh")
     point_cloud_change_detector: Optional[str] = Field(None, alias="pointCloudChangeDetector",
-                                                       description="Reality data id of change detection detector "
-                                                                   "OR identifier from AI Detectors library")
+                                                       description="Identifier from AI Library")
     extent: Optional[str] = Field(None, alias="extent", pattern=r"^bkt:.+",
                                   description="Path in the bucket of the clipping polygon to apply")
     preset: Optional[str] = Field(None, alias="preset", pattern=r"^bkt:.+",
