@@ -8,6 +8,34 @@ This page documents all notable changes to the ``reality_capture`` Python SDK ac
    :local:
    :depth: 1
 
+.. You should not modify this page manually, you should use towncrier create command to add to the changelog
+
+.. towncrier release notes start
+
+----
+
+2.8.0
+===========
+
+Features
+--------
+
+- Added a new **Clearance Footprint** job type (:class:`~reality_capture.specifications.clearance_footprint.ClearanceFootprintSpecificationsCreate`, :class:`~reality_capture.specifications.clearance_footprint.ClearanceFootprintSpecifications`) that projects a class footprint onto another and a new **Clearance checker** job type (:class:`~reality_capture.specifications.clearance_checker.ClearanceCheckerSpecificationsCreate`, :class:`~reality_capture.specifications.clearance_checker.ClearanceCheckerSpecifications`) that computes clearance information given a 3D model and footprints. (`#352 <https://github.com/iTwin/reality-capture/pull/352>`_)
+- Add new gaussian splats formats (LCC2 and SOG) (`#356 <https://github.com/iTwin/reality-capture/pull/356>`_)
+
+
+Improved Documentation
+----------------------
+
+- Fix Homepage URL (`#353 <https://github.com/iTwin/reality-capture/pull/353>`_)
+
+
+Misc
+----
+
+- `#369 <https://github.com/iTwin/reality-capture/pull/369>`_
+
+
 ----
 
 2.7.0
@@ -110,8 +138,8 @@ Additions
 - Added optional ``detectors_filter`` parameter to ``get_detectors()`` for server-side
   filtering by labels and exports.
   (`#285 <https://github.com/iTwin/reality-capture/pull/285>`_)
-- Added ``create_detector``, ``update_detector``, ``delete_detector``, ``create_detector_version``, 
-  ``delete_detector_version``, ``publish_detector_version``, ``unpublish_detector_version`` and 
+- Added ``create_detector``, ``update_detector``, ``delete_detector``, ``create_detector_version``,
+  ``delete_detector_version``, ``publish_detector_version``, ``unpublish_detector_version`` and
   ``complete_detector_version_upload`` methods to manage Detectors through the service.
   (`#296 <https://github.com/iTwin/reality-capture/pull/296>`_)
 
@@ -252,3 +280,4 @@ Fixes
   (`#266 <https://github.com/iTwin/reality-capture/pull/266>`_)
 - Removed discontinued Training job types (``TrainingO2D``, ``TrainingS3D``).
   (`#266 <https://github.com/iTwin/reality-capture/pull/266>`_)
+

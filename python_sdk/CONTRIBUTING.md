@@ -13,6 +13,7 @@ This guide describes how to set up the SDK locally, run tests, and build the doc
     - [Unit tests](#unit-tests)
     - [Documentation](#documentation)
     - [Before Submitting a Pull Request](#before-submitting-a-pull-request)
+    - [Update the changelog](#update-the-changelog)
 
 ## Source Code Edit Workflow
 
@@ -100,3 +101,8 @@ Before submitting a pull request, run the test suite and build the documentation
 python -m pytest
 ```
 
+### Update the changelog
+
+`reality_capture` uses `towncrier` to generate its changelog.
+Once your PR is created, use `towncrier create` to generate the relevant changelog for your feature or fix. 
+Be sure to include the PR or issue number.
