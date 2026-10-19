@@ -25,7 +25,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'specifications/point_cl
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
 
 # Pydantic
 autodoc_pydantic_settings_show_json = True
@@ -42,8 +41,8 @@ html_context = {
     "display_github": True,  # Integrate GitHub
     "github_user": "iTwin",  # Username
     "github_repo": "reality-capture",  # Repo name
-    "github_version": "feature/2.0.0",  # Version
+    "github_version": "main",  # Version
     "conf_py_path": "/python_sdk/docs/",  # Path in the checkout to the docs root
     "current_version": release,
-    "versions": ["latest", "2.0.0"],
+    "versions": ["latest", "2.8.0", "2.7.0"],
 }

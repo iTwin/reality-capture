@@ -24,7 +24,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v6
         with:
-          version: 9
+          version: 11
 
       - name: Install reality-capture dependencies
         working-directory: ./typescript/packages/reality-capture
