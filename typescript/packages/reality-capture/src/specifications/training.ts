@@ -1,5 +1,59 @@
 import { z } from "zod";
 
+export const TrainingO2DInputsSchema = z.object({
+  scenes: z.array(z.string()).describe("List of scenes to train on."),
+  preset: z.string().optional().describe("Path to a preset"),
+  detectorName: z.string().describe("Name of the detector to train"),
+});
+export type TrainingO2DInputs = z.infer<typeof TrainingO2DInputsSchema>;
+
+export const TrainingO2DOutputsSchema = z.object({
+  detector: z.string().describe("Full detector information (name/version)"),
+});
+export type TrainingO2DOutputs = z.infer<typeof TrainingO2DOutputsSchema>;
+
+export enum ImageFeature {
+  RGB = "RGB"
+}
+
+export const TrainingO2DOptionsSchema = z.object({
+  epochs: z
+    .number().int()
+    .gte(1, { message: "Must be greater than or equal to 1" })
+    .describe("Number of times to iterate over the entire dataset")
+    .optional(),
+  versionNumber: z
+    .string()
+    .regex(/^\d+(?:\.\d+)?$/, "Must be a version like '1' or '1.0'")
+    .describe("String representing the version number for the newly trained detector.")
+    .optional(),
+  features: z
+    .array(z.nativeEnum(ImageFeature))
+    .describe("Features to use for the training.")
+    .optional(),
+});
+export type TrainingO2DOptions = z.infer<typeof TrainingO2DOptionsSchema>;
+
+export enum TrainingO2DOutputsCreate {
+  DETECTOR = "detector"
+}
+
+export const TrainingO2DSpecificationsCreateSchema = z.object({
+  inputs: TrainingO2DInputsSchema.describe("Inputs"),
+  outputs: z
+    .array(z.nativeEnum(TrainingO2DOutputsCreate))
+    .describe("Outputs"),
+  options: TrainingO2DOptionsSchema.describe("Options").optional(),
+});
+export type TrainingO2DSpecificationsCreate = z.infer<typeof TrainingO2DSpecificationsCreateSchema>;
+
+export const TrainingO2DSpecificationsSchema = z.object({
+  inputs: TrainingO2DInputsSchema.describe("Inputs"),
+  outputs: TrainingO2DOutputsSchema.describe("Outputs"),
+  options: TrainingO2DOptionsSchema.describe("Options").optional(),
+});
+export type TrainingO2DSpecifications = z.infer<typeof TrainingO2DSpecificationsSchema>;
+
 export const TrainingS3DInputsSchema = z.object({
   segmentations3D: z.array(z.string()).describe("List of 3D models to train on."),
   preset: z.string().optional().describe("Path to a preset"),
