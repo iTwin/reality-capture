@@ -69,18 +69,6 @@ Fixes
 
 ----
 
-Next Release
-============
-
-Additions
----------
-
-- Added new options ``lodSize``, ``tileOverlap`` and ``skirtLength`` to :class:`~reality_capture.specifications.production.Options3DTiles`,
-  :class:`~reality_capture.specifications.production.OptionsOBJ`, :class:`~reality_capture.specifications.production.Options3MX`,
-  :class:`~reality_capture.specifications.production.OptionsI3S` and :class:`~reality_capture.specifications.production.OptionsOSGB`.
-  (`#332 <https://github.com/iTwin/reality-capture/pull/332>`_)
-
-
 2.6.0
 =====
 
