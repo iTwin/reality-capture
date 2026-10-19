@@ -428,7 +428,6 @@ export const ExportCreateSchema = z.object({
       OptionsOBJSchema.strict(),
       OptionsOSGBSchema.strict(),
       OptionsI3SSchema.strict(),
-      Options3MXSchema.strict(),
       OptionsLASSchema.strict(),
       OptionsPLYSchema.strict(),
       OptionsOPCSchema.strict(),
