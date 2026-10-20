@@ -75,6 +75,25 @@ class TestRealityDataHandler:
         assert r.value == ['file1.txt', 'file2.txt']
 
     @responses.activate
+    def test_list_data_uses_proxy(self, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        mock_client_instance.list_blob_names.return_value = []
+
+        rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        with open(f"{self.data_folder}/reality_data_read_access_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-management/reality-data/{rd_id}/readaccess',
+                      json=payload, status=200)
+
+        self.rdh.set_proxy("proxy.example.com:8080", "user", "password")
+        r = self.rdh.list_data(rd_id)
+        assert not r.is_error()
+        assert mock_client_class.call_args.kwargs["proxies"] == {
+            "https": "http://user:password@proxy.example.com:8080"
+        }
+
+    @responses.activate
     def test_upload_data_link_error(self):
         rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
         responses.add(responses.GET,
@@ -364,6 +383,29 @@ class TestBucketDataHandler:
         assert not r.is_error()
         assert r.get_response_status_code() == 200
         assert r.value == ['file1.txt', 'file2.txt']
+
+    @responses.activate
+    def test_upload_bucket_uses_proxy(self, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        mock_client_instance.upload_blob.side_effect = mock_blob
+
+        itwin_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        with open(f"{self.data_folder}/bucket_get_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-modeling/itwins/{itwin_id}/bucket',
+                      json=payload, status=200)
+
+        self.bdh.set_proxy("proxy.example.com:8080", "user", "password")
+        r = self.bdh.upload_data(itwin_id, os.path.join(self.data_folder, "bucket_get_200.json"))
+        assert not r.is_error()
+        assert mock_client_class.call_args.kwargs["proxies"] == {
+            "https": "http://user:password@proxy.example.com:8080"
+        }
+
+        self.bdh.unset_proxy()
+        self.bdh.list_data(itwin_id)
+        assert mock_client_class.call_args.kwargs["proxies"] == {}
 
     @responses.activate
     def test_upload_bucket_link_error(self):
