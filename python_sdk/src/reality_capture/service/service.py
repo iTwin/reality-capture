@@ -62,15 +62,18 @@ class RealityCaptureService:
 
         self._proxies = {}
 
-    def set_proxy(self, username: str, password: str, proxy: str) -> None:
+    def set_proxy(self, proxy: str, username: Optional[str] = None, password: Optional[str] = None) -> None:
         """
         Set proxy server info.
 
-        :param username: Username for proxy server
-        :param password: Password for proxy server
         :param proxy: Proxy server URL or host and port
-        :raises ValueError: If the proxy URL is invalid or unsupported
+        :param username: Optional username for proxy server
+        :param password: Optional password for proxy server, requires a username
+        :raises ValueError: If the proxy URL is invalid or unsupported, or if a password is given without a username
         """
+        if password is not None and username is None:
+            raise ValueError("Proxy password requires a username")
+
         proxy = proxy.strip()
         if "://" not in proxy:
             proxy = f"http://{proxy}"
@@ -90,12 +93,19 @@ class RealityCaptureService:
         if ":" in hostname:
             hostname = f"[{hostname}]"
 
-        encoded_username = urllib.parse.quote(username, safe="")
-        encoded_password = urllib.parse.quote(password, safe="")
-        netloc = f"{encoded_username}:{encoded_password}@{hostname}{port}"
+        credentials = ""
+        if username is not None:
+            credentials = urllib.parse.quote(username, safe="")
+            if password is not None:
+                credentials += ":" + urllib.parse.quote(password, safe="")
+            credentials += "@"
+        netloc = f"{credentials}{hostname}{port}"
         self._proxies["https"] = urllib.parse.urlunsplit((parsed_proxy.scheme, netloc, "", "", ""))
 
     def unset_proxy(self) -> None:
+        """
+        Remove proxy server info.
+        """
         self._proxies.clear()
 
     def _get_header(self, version) -> dict:

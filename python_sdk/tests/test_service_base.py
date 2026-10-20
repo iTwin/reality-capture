@@ -43,18 +43,40 @@ class TestServiceBase:
     def test_set_proxy_normalizes_proxy_url(self, proxy, expected):
         rcs = RealityCaptureService(None)
 
-        rcs.set_proxy("user", "password", proxy)
+        rcs.set_proxy(proxy, "user", "password")
 
         assert rcs._proxies == {"https": expected}
 
     def test_set_proxy_encodes_credentials(self):
         rcs = RealityCaptureService(None)
 
-        rcs.set_proxy("domain\\user@example.com", "p@ss:w/rd#%", "proxy.example.com:8080")
+        rcs.set_proxy("proxy.example.com:8080", "domain\\user@example.com", "p@ss:w/rd#%")
 
         assert rcs._proxies == {
             "https": "http://domain%5Cuser%40example.com:p%40ss%3Aw%2Frd%23%25@proxy.example.com:8080"
         }
+
+    @pytest.mark.parametrize(
+        ("username", "password", "expected"),
+        [
+            (None, None, "http://proxy.example.com:8080"),
+            ("user", None, "http://user@proxy.example.com:8080"),
+        ],
+    )
+    def test_set_proxy_with_optional_credentials(self, username, password, expected):
+        rcs = RealityCaptureService(None)
+
+        rcs.set_proxy("proxy.example.com:8080", username, password)
+
+        assert rcs._proxies == {"https": expected}
+
+    def test_set_proxy_rejects_password_without_username(self):
+        rcs = RealityCaptureService(None)
+
+        with pytest.raises(ValueError):
+            rcs.set_proxy("proxy.example.com:8080", password="password")
+
+        assert rcs._proxies == {}
 
     @pytest.mark.parametrize(
         "proxy",
@@ -71,14 +93,14 @@ class TestServiceBase:
         rcs = RealityCaptureService(None)
 
         with pytest.raises(ValueError):
-            rcs.set_proxy("user", "password", proxy)
+            rcs.set_proxy(proxy, "user", "password")
 
         assert rcs._proxies == {}
 
     def test_unset_proxy_clears_existing_mapping(self):
         rcs = RealityCaptureService(None)
         proxies = rcs._proxies
-        rcs.set_proxy("user", "password", "proxy.example.com:8080")
+        rcs.set_proxy("proxy.example.com:8080", "user", "password")
 
         rcs.unset_proxy()
 
@@ -89,7 +111,7 @@ class TestServiceBase:
         token_factory = MagicMock()
         token_factory.get_token.return_value = "Bearer token"
         rcs = RealityCaptureService(token_factory)
-        rcs.set_proxy("user", "password", "proxy.example.com:8080")
+        rcs.set_proxy("proxy.example.com:8080", "user", "password")
         response = MagicMock(status_code=204)
 
         with patch.object(rcs._session, "request", return_value=response) as request:
@@ -106,12 +128,11 @@ class TestServiceBase:
             "https": "http://user:password@proxy.example.com:8080"
         }
 
-
     def test_unset_proxy_sends_empty_mapping_for_api_call(self):
         token_factory = MagicMock()
         token_factory.get_token.return_value = "******"
         rcs = RealityCaptureService(token_factory)
-        rcs.set_proxy("user", "password", "proxy.example.com:8080")
+        rcs.set_proxy("proxy.example.com:8080", "user", "password")
         rcs.unset_proxy()
         response = MagicMock(status_code=204)
 
