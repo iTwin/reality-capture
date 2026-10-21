@@ -41,6 +41,7 @@ export enum GSFormat {
   THREED_TILES_LOD = "3DTilesLOD",
   SOG = "SOG",
   LCC2 = "LCC2",
+  RAD = "RAD",
 }
 
 export enum GSQuality {
