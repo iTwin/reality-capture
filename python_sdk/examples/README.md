@@ -1,54 +1,70 @@
 # Reality Capture SDK examples
 
-## Create an iTwin
+These examples demonstrate authentication, data uploads, and Reality Capture job submission with the Python SDK.
+
+## Prerequisites
+
+- Python 3.10 or later.
+- An iTwin where input and output data can be stored.
+- A Bentley service application with access to the iTwin.
+
+## Create or Select an iTwin
 
 Input or output data are stored in iTwins. If you don't have one yet, go [here](https://connect.bentley.com/SelectProject/Index) and select "Register new project".
 
-## Create a client application
+## Create a Service Application
 
 To run the examples, you will also need a client application. To create one, go [here](https://developer.bentley.com/my-apps/) and select "Register new".
 Select "Service" application type and register the application.
 
-## Configure environment
+## Configure the Environment
 
-Once you have created the iTwin and the application, you must configure the environment for the examples.
-Copy the [template.env](./template.env) file, rename it to ".env" and fill in the environment variables.
+After creating the iTwin and the application, change to the `python_sdk/examples` directory and configure the environment for the examples.
+Copy [template.env](./template.env) to `.env`, then provide values for `ITWIN_ID`, `CLIENT_ID`, and `CLIENT_SECRET`.
 
-## Create python virtual environment
+## Set Up a Python Virtual Environment
 
-- Create a new virtual environment
-
-  ```sh
-  python -m venv virtual_env_name
-  ```
-
-- Then, to activate the environment, run this command in virtual_env_name/Scripts
+- From the `python_sdk` directory, create a new virtual environment.
 
   ```sh
-  activate.bat
+  python -m venv .venv
   ```
 
-- Install Reality Capture SDK. Run this command in 'python_sdk' folder.
+- Activate the environment.
+
+  Windows Command Prompt:
+
+  ```bat
+  .venv\Scripts\activate.bat
+  ```
+
+  Windows PowerShell:
+
+  ```powershell
+  .venv\Scripts\Activate.ps1
+  ```
+
+  Linux or macOS:
 
   ```sh
-  pip install . -e
+  source .venv/bin/activate
   ```
 
-- Alternatively, you can install Reality Capture SDK from an existing wheel. You can find the wheel in the GitHub repo : [Releases](https://github.com/iTwin/reality-capture/releases)
+- From the `python_sdk` directory, install the SDK and the dependencies required by the examples.
 
   ```sh
-  pip install <reality_capture_sdk.whl>
+  python -m pip install -e ".[dev]"
   ```
 
-- Install dev dependencies. Run this command in 'python_sdk' folder.
+- Alternatively, install a wheel from the [GitHub releases](https://github.com/iTwin/reality-capture/releases) page together with the dependency required by the examples.
 
   ```sh
-  pip install .[dev]
+  python -m pip install <path-to-reality_capture_sdk.whl> python-dotenv
   ```
 
-## Run examples
+## Run Examples
 
-Run these commands in 'python_sdk/examples' folder.
+From the `python_sdk/examples` directory, run one of the following commands:
 
 - Upload & download reality data example
 

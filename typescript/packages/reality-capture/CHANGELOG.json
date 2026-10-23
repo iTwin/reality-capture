@@ -1,0 +1,56 @@
+{
+  "name": "@itwin/reality-capture",
+  "entries": [
+    {
+      "date": "Thu, 15 Oct 2026 13:36:23 GMT",
+      "version": "1.9.0",
+      "tag": "@itwin/reality-capture_v1.9.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "5690282+cnovel@users.noreply.github.com",
+            "package": "@itwin/reality-capture",
+            "commit": "c42ecf871ccccd9205e2f38b8ebd27490b76939c",
+            "comment": "Add new gaussian splats formats (LCC2 and SOG)"
+          },
+          {
+            "author": "5690282+cnovel@users.noreply.github.com",
+            "package": "@itwin/reality-capture",
+            "commit": "a61becf480429e1b62ce3777506e2727612be067",
+            "comment": "Add support for jobs ClearanceFootprint and ClearanceChecker"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Mon, 21 Sep 2026 13:23:38 GMT",
+      "version": "1.8.0",
+      "tag": "@itwin/reality-capture_v1.8.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-capture",
+            "commit": "6464a34cef5c5ea095fa9b0d30e3c21de99206d9",
+            "comment": "Add Conversion jobs (#277)"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Fri, 11 Sep 2026 15:28:46 GMT",
+      "version": "1.7.0",
+      "tag": "@itwin/reality-capture_v1.7.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-capture",
+            "commit": "69d7f3f943d7ea5030b0a4de790435d1f73dc5df",
+            "comment": "Initial Reality Capture release"
+          }
+        ]
+      }
+    }
+  ]
+}
