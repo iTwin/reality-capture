@@ -24,6 +24,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.eval_o2d
 
 .. autopydantic_model:: EvalO2DSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: EvalO2DOutputsCreate
     :show-inheritance:
@@ -31,12 +32,16 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: EvalO2DSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: EvalO2DInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: EvalO2DOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: EvalO2DOptions
+    :inherited-members: BaseModel
     :model-show-json: False

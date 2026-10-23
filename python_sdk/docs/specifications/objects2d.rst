@@ -89,6 +89,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.objects2d
 
 .. autopydantic_model:: Objects2DSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: Objects2DOutputsCreate
     :show-inheritance:
@@ -96,12 +97,16 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: Objects2DSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: Objects2DInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Objects2DOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Objects2DOptions
+    :inherited-members: BaseModel
     :model-show-json: False

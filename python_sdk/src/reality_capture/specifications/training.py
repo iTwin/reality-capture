@@ -16,11 +16,11 @@ class TrainingS3DOutputs(BaseModel):
     detector: str = Field(description="Full detector information (name/version)")
 
 
-class Segmentation3DTrainingModel(Enum):
+class Segmentation3DTrainingModel(str, Enum):
     SPLATNET = "SPLATNet"
 
 
-class PointCloudFeature(Enum):
+class PointCloudFeature(str, Enum):
     RGB = "RGB"
     NORMAL = "NORMAL"
     INTENSITY = "INTENSITY"

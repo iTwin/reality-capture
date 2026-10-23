@@ -211,8 +211,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          # Releases tag the version bump commit; pre-releases tag the commit they were built from.
+	  # Releases tag the version bump commit; pre-releases tag the commit they were built from.
           ref: ${{ inputs.prerelease && needs.prepare.outputs.base_sha || needs.commit_version_bump.outputs.commit_sha }}
+	  lfs: true
 
       - name: Download wheel artifact
         uses: actions/download-artifact@v8

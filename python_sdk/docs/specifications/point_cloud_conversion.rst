@@ -44,6 +44,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.point_cloud_conversion
 
 .. autopydantic_model:: PointCloudConversionSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: PCConversionOutputsCreate
     :show-inheritance:
@@ -51,12 +52,16 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: PointCloudConversionSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: PCConversionInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: PCConversionOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: PCConversionOptions
+    :inherited-members: BaseModel
     :model-show-json: False

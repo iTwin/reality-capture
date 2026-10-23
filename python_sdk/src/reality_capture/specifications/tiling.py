@@ -5,59 +5,59 @@ from reality_capture.specifications.geometry import BoundingBox, Point3d, Region
 
 
 class TilingInputs(BaseModel):
-    scene: str = Field(description="Reality data id of ContextScene to process")
-    region_of_interest: Optional[str] = Field(description="Path in the bucket to region of interest file",
+    scene: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene to process")
+    region_of_interest: Optional[str] = Field(description="Path to region of interest file (bucket path in cloud, local path on-premise)",
                                               alias="regionOfInterest",
-                                              default=None,
-                                              pattern=r"^bkt:.+")
+                                              default=None)
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
-    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData",
-                                    pattern=r"^bkt:.+")
+    crs_data: Optional[str] = Field(default=None,
+                                    description="Path to CRS data file (bucket path in cloud, local path on-premise).",
+                                    alias="crsData")
 
 
-class ModelingReferenceType(Enum):
+class ModelingReferenceType(str, Enum):
     ORTHOPHOTO = "Orthophoto"
     COMPLETE = "Complete"
 
 
-class TilingMode(Enum):
+class TilingMode(str, Enum):
     NO_TILING = "NoTiling"
     REGULAR_PLANAR_GRID = "RegularPlanarGrid"
     REGULAR_VOLUMETRIC_GRID = "RegularVolumetricGrid"
     ADAPTIVE = "Adaptive"
 
 
-class GeometricPrecision(Enum):
+class GeometricPrecision(str, Enum):
     MEDIUM = "Medium"
     HIGH = "High"
     EXTRA = "Extra"
     ULTRA = "Ultra"
 
 
-class TilingPairSelection(Enum):
+class TilingPairSelection(str, Enum):
     GENERIC = "Generic"
     STRUCTURED_AERIAL = "StructuredAerial"
     REGION_OF_INTEREST = "RegionOfInterest"
 
 
-class PhotoUsedForGeometry(Enum):
+class PhotoUsedForGeometry(str, Enum):
     EXCLUDE_THERMAL = "ExcludeThermal"
     INCLUDE_THERMAL = "IncludeThermal"
     NO = "None"
 
 
-class HoleFilling(Enum):
+class HoleFilling(str, Enum):
     SMALL_HOLES = "SmallHoles"
     ALL_HOLES = "AllHoles"
 
 
-class Simplification(Enum):
+class Simplification(str, Enum):
     STANDARD = "Standard"
     PLANAR_RELATIVE = "PlanarRelative"
     PLANAR_ABSOLUTE = "PlanarAbsolute"
 
 
-class ColorCorrection(Enum):
+class ColorCorrection(str, Enum):
     NO = "None"
     STANDARD = "Standard"
     STANDARD_WITH_THERMAL = "StandardWithThermal"
@@ -65,19 +65,19 @@ class ColorCorrection(Enum):
     BLOCK_WISE_WITH_THERMAL = "BlockWiseWithThermal"
 
 
-class UntexturedRepresentation(Enum):
+class UntexturedRepresentation(str, Enum):
     INPAINTING_COMPLETION = "InpaintingCompletion"
     UNIFORM_COLOR = "UniformColor"
 
 
-class PointCloudColorSource(Enum):
+class PointCloudColorSource(str, Enum):
     NO = "None"
     COLOR = "Color"
     INTENSITY = "Intensity"
     SCALED_INTENSITY = "ScaledIntensity"
 
 
-class TextureSource(Enum):
+class TextureSource(str, Enum):
     PHOTOS_FIRST = "PhotosFirst"
     POINT_CLOUDS_FIRST = "PointCloudsFirst"
     SMART = "Smart"
@@ -121,7 +121,7 @@ class TilingOptions(BaseModel):
 
 
 class ModelingReference(BaseModel):
-    location: str = Field(description="Reality data id of modeling reference")
+    location: str = Field(description="Reality data ID (cloud) or local path (on-premise) of modeling reference")
 
 
 class TilingOutputs(BaseModel):
@@ -162,3 +162,4 @@ class Layout(BaseModel):
     enu_definition: str = Field(description="Definition of the Internal Coordinate System", alias="enuDefinition")
     crs_definition: str = Field(description="Definition of the Layout Coordinate System", alias="crsDefinition")
     roi: RegionOfInterest = Field(description="Region of interest of the layout")
+

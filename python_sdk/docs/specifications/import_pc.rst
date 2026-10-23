@@ -83,6 +83,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.import_point_cloud
 
 .. autopydantic_model:: ImportPCSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: ImportPCOutputsCreate
     :show-inheritance:
@@ -90,11 +91,14 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: ImportPCSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: ImportPCInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ImportPCOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Point3dTime
@@ -102,6 +106,8 @@ Classes
     :inherited-members: BaseModel
 
 .. autopydantic_model:: Scan
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: PodMetadata
+    :inherited-members: BaseModel

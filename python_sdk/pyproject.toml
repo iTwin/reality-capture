@@ -17,7 +17,7 @@ readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 classifiers = [
-    "Programming Language :: Python :: 3.10", 
+    "Programming Language :: Python :: 3.10",
     "Operating System :: Microsoft :: Windows",
 ]
 dependencies = [
@@ -49,6 +49,10 @@ dev = [
 "Reality Modeling Api reference" = "https://developer.bentley.com/apis/contextcapture/"
 "Reality Conversion Api reference" = "https://developer.bentley.com/apis/realityconversion/"
 "Reality Management Api reference" = "https://developer.bentley.com/apis/reality-management/"
+
+[tool.coverage.run]
+source = ["reality_capture", "docs"]
+omit = ["tests/*", "docs/conf.py"]
 
 [tool.towncrier]
 directory = "py_changes"
