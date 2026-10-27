@@ -60,6 +60,54 @@ class RealityCaptureService:
         else:
             self._service_url = "https://api.bentley.com/"
 
+        self._proxies = {}
+
+    def set_proxy(self, proxy: str, username: Optional[str] = None, password: Optional[str] = None) -> None:
+        """
+        Set proxy server info.
+
+        :param proxy: Proxy server URL or host and port
+        :param username: Optional username for proxy server
+        :param password: Optional password for proxy server, requires a username
+        :raises ValueError: If the proxy URL is invalid or unsupported, or if a password is given without a username
+        """
+        if password is not None and username is None:
+            raise ValueError("Proxy password requires a username")
+
+        proxy = proxy.strip()
+        if "://" not in proxy:
+            proxy = f"http://{proxy}"
+
+        parsed_proxy = urllib.parse.urlsplit(proxy)
+        if parsed_proxy.scheme not in ("http", "https") or parsed_proxy.hostname is None:
+            raise ValueError("Proxy must be a valid HTTP or HTTPS URL")
+        if parsed_proxy.path not in ("", "/") or parsed_proxy.query or parsed_proxy.fragment:
+            raise ValueError("Proxy URL must not contain a path, query, or fragment")
+
+        try:
+            port = f":{parsed_proxy.port}" if parsed_proxy.port is not None else ""
+        except ValueError as e:
+            raise ValueError("Proxy URL contains an invalid port") from e
+
+        hostname = parsed_proxy.hostname
+        if ":" in hostname:
+            hostname = f"[{hostname}]"
+
+        credentials = ""
+        if username is not None:
+            credentials = urllib.parse.quote(username, safe="")
+            if password is not None:
+                credentials += ":" + urllib.parse.quote(password, safe="")
+            credentials += "@"
+        netloc = f"{credentials}{hostname}{port}"
+        self._proxies["https"] = urllib.parse.urlunsplit((parsed_proxy.scheme, netloc, "", "", ""))
+
+    def unset_proxy(self) -> None:
+        """
+        Remove proxy server info.
+        """
+        self._proxies.clear()
+
     def _get_header(self, version) -> dict:
         self._header["Authorization"] = self._token_factory.get_token()
         self._header["Accept"] = f"application/vnd.bentley.itwin-platform.{version}+json"
@@ -103,7 +151,7 @@ class RealityCaptureService:
     def _execute_request(self, method: str, url: str, headers: dict, success_model: Type[BaseModel] = None,
                          data_key: str = None, **kwargs) -> Response:
         try:
-            response = self._session.request(method, url, headers=headers, **kwargs)
+            response = self._session.request(method, url, headers=headers, proxies=self._proxies, **kwargs)
             response.raise_for_status()
         except requests.exceptions.HTTPError as e:
             try:
