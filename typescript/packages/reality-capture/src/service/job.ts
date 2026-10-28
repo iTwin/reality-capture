@@ -59,6 +59,8 @@ import {
   WaterConstraintsSpecificationsSchema,
 } from "../specifications/water_constraints";
 import {
+  TrainingO2DSpecificationsCreateSchema,
+  TrainingO2DSpecificationsSchema,
   TrainingS3DSpecificationsCreateSchema,
   TrainingS3DSpecificationsSchema,
 } from "../specifications/training";
@@ -139,6 +141,7 @@ export enum JobType {
   SEGMENTATION_3D = "Segmentation3D",
   SEGMENTATION_ORTHOPHOTO = "SegmentationOrthophoto",
   TILING = "Tiling",
+  TRAINING_O2D = "TrainingO2D",
   TRAINING_S3D = "TrainingS3D",
   TOUCH_UP_IMPORT = "TouchUpImport",
   TOUCH_UP_EXPORT = "TouchUpExport",
@@ -187,6 +190,7 @@ export function getAppropriateService(jt: JobType): Service {
       JobType.EVAL_O3D,
       JobType.EVAL_S2D,
       JobType.EVAL_S3D,
+      JobType.TRAINING_O2D,
       JobType.TRAINING_S3D,
       JobType.CLEARANCE_CHECKER,
       JobType.CLEARANCE_FOOTPRINT,
@@ -247,6 +251,7 @@ export const JobCreateSchema = z.object({
       TouchUpExportSpecificationsCreateSchema,
       TouchUpImportSpecificationsCreateSchema,
       WaterConstraintsSpecificationsCreateSchema,
+      TrainingO2DSpecificationsCreateSchema,
       TrainingS3DSpecificationsCreateSchema,
       PointCloudConversionSpecificationsCreateSchema,
       MeshSamplingSpecificationsCreateSchema,
@@ -399,6 +404,11 @@ export const JobSchema = z.discriminatedUnion("type", [
     ...CommonFields,
     type: z.literal("Tiling"),
     specifications: TilingSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("TrainingO2D"),
+    specifications: TrainingO2DSpecificationsSchema,
   }),
   z.object({
     ...CommonFields,

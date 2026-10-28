@@ -3,6 +3,49 @@ from typing import Optional
 from enum import Enum
 
 
+class TrainingO2DInputs(BaseModel):
+    scenes: list[str] = Field(description="List of scenes to train on.")
+    preset: Optional[str] = Field(default=None, description="Path to a preset")
+    detector_name: str = Field(description="Name of the detector to train", alias="detectorName")
+
+
+class TrainingO2DOutputs(BaseModel):
+    detector: str = Field(description="Full detector information (name/version)")
+
+
+class ImageFeature(Enum):
+    RGB = "RGB"
+
+
+class TrainingO2DOptions(BaseModel):
+    epochs: Optional[int] = Field(
+        None, description="Number of times to iterate over the entire dataset", ge=1
+    )
+    version_number: Optional[str] = Field(
+        None,
+        description="String representing the version number for the newly trained detector.",
+        alias="versionNumber",
+        pattern=r"^\d+(?:\.\d+)?$"
+    )
+    features: Optional[list[ImageFeature]] = Field(None, description="Features to use for the training.")
+
+
+class TrainingO2DOutputsCreate(Enum):
+    DETECTOR = "detector"
+
+
+class TrainingO2DSpecificationsCreate(BaseModel):
+    inputs: TrainingO2DInputs = Field(description="Inputs")
+    outputs: list[TrainingO2DOutputsCreate] = Field(description="Outputs")
+    options: Optional[TrainingO2DOptions] = Field(None, description="Options")
+
+
+class TrainingO2DSpecifications(BaseModel):
+    inputs: TrainingO2DInputs = Field(description="Inputs")
+    outputs: TrainingO2DOutputs = Field(description="Outputs")
+    options: Optional[TrainingO2DOptions] = Field(None, description="Options")
+
+
 class TrainingS3DInputs(BaseModel):
     segmentations_3d: list[str] = Field(
         description="List of 3D models to train on.",

@@ -1,4 +1,4 @@
-from reality_capture.service.job import Job
+from reality_capture.service.job import Job, JobType, Service
 from reality_capture.specifications.calibration import CalibrationSpecifications
 from reality_capture.specifications.change_detection import ChangeDetectionSpecifications
 from reality_capture.specifications.constraints import ConstraintsSpecifications
@@ -17,6 +17,7 @@ from reality_capture.specifications.segmentation2d import Segmentation2DSpecific
 from reality_capture.specifications.segmentation3d import Segmentation3DSpecifications
 from reality_capture.specifications.segmentation_orthophoto import SegmentationOrthophotoSpecifications
 from reality_capture.specifications.tiling import TilingSpecifications
+from reality_capture.specifications.training import TrainingO2DSpecifications
 from reality_capture.specifications.touchup import TouchUpImportSpecifications, TouchUpExportSpecifications
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecifications
 from reality_capture.specifications.clearance_checker import ClearanceCheckerSpecifications
@@ -400,6 +401,30 @@ class TestJobValidator:
         }
         job = Job(**j)
         assert isinstance(job.specifications, ClearanceFootprintSpecifications)
+
+    def test_validation_training_o2d(self):
+        j = self.j_base.copy()
+        j["type"] = "TrainingO2D"
+        j["specifications"] = {
+            "inputs": {
+                "scenes": ["scene_id"],
+                "detectorName": "detector"
+            },
+            "outputs": {
+                "detector": "detector/1.0"
+            },
+            "options": {
+                "epochs": 10,
+                "versionNumber": "1.0",
+                "features": ["RGB"]
+            }
+        }
+        job = Job(**j)
+        assert job.type == JobType.TRAINING_O2D
+        assert isinstance(job.specifications, TrainingO2DSpecifications)
+        assert job.specifications.outputs.detector == "detector/1.0"
+        assert job.get_appropriate_service() == Service.ANALYSIS
+        assert job.model_dump(mode="json", by_alias=True, exclude_none=True)["specifications"] == j["specifications"]
 
     def test_validation_unsupported_job_type_raises(self):
         j = self.j_base.copy()
