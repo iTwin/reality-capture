@@ -60,7 +60,7 @@
   "dependencies": {
     "@azure/storage-blob": "^12.15.0",
     "class-validator": "^0.14.0",
-    "zod": "^3.22.2"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
