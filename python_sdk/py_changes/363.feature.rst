@@ -1,0 +1,1 @@
+Added a new model type for S3D Training with PointTransformerV3
