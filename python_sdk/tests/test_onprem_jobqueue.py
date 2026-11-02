@@ -255,6 +255,20 @@ class TestOnPremJobQueue:
         assert job_result.is_error()
         assert job_result.error == ManagerErrorCode.EMPTY_SHARED_WORKING_DIRECTORY
 
+    def test_delete_shared_working_directory_suppresses_rmtree_exception(self, monkeypatch):
+        shared_working_dir = os.path.join(self.tmp_dir, "work")
+        calls = []
+
+        def raise_rmtree_error(path, ignore_errors):
+            calls.append((path, ignore_errors))
+            raise OSError("Unable to delete shared working directory")
+
+        monkeypatch.setattr(shutil, "rmtree", raise_rmtree_error)
+
+        JobManager._delete_shared_working_directory(shared_working_dir)
+
+        assert calls == [(shared_working_dir, True)]
+
     def test_db_is_locked(self):
         jm = JobManager(self.tmp_dir + "/jq")
         jm2 = JobManager(self.tmp_dir + "/jq")

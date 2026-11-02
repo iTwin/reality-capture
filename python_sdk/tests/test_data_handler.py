@@ -3,7 +3,7 @@ import os
 from collections import namedtuple
 
 import responses
-from reality_capture.service.data_handler import RealityDataHandler, BucketDataHandler
+from reality_capture.service.data_handler import RealityDataHandler, BucketDataHandler, _DataHandler
 from unittest.mock import patch, MagicMock
 import pytest
 import tempfile
@@ -30,6 +30,67 @@ def mock_container_client_default():
         mock_instance = MagicMock()
         mock_client.return_value = mock_instance
         yield mock_client, mock_instance
+
+
+class TestDataHandler:
+    container_url = "https://example.blob.core.windows.net/container"
+
+    def test_upload_nonexistent_folder_succeeds_without_uploading(self, tmp_path, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        missing_folder = tmp_path / "missing"
+
+        r = _DataHandler.upload_data(self.container_url, str(missing_folder), "", None)
+
+        assert not r.is_error()
+        assert r.get_response_status_code() == 200
+        mock_client_class.assert_not_called()
+        mock_client_instance.upload_blob.assert_not_called()
+
+    def test_upload_symlink_succeeds_without_uploading(self, tmp_path, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        symlink = tmp_path / "symlink"
+        symlink.write_text("target", encoding="utf-8")
+
+        with patch("reality_capture.service.data_handler.os.path.islink", return_value=True):
+            r = _DataHandler.upload_data(self.container_url, str(symlink), "", None)
+
+        assert not r.is_error()
+        assert r.get_response_status_code() == 200
+        mock_client_class.assert_not_called()
+        mock_client_instance.upload_blob.assert_not_called()
+
+    def test_upload_unsupported_path_succeeds_without_uploading(self, tmp_path, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        unsupported_path = tmp_path / "unsupported"
+        unsupported_path.touch()
+
+        with patch("reality_capture.service.data_handler.os.path.isfile", return_value=False), \
+                patch("reality_capture.service.data_handler.os.path.isdir", return_value=False):
+            r = _DataHandler.upload_data(self.container_url, str(unsupported_path), "", None)
+
+        assert not r.is_error()
+        assert r.get_response_status_code() == 200
+        mock_client_class.assert_not_called()
+        mock_client_instance.upload_blob.assert_not_called()
+
+    def test_upload_folder_skips_symlink(self, tmp_path, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        file_path = tmp_path / "file.txt"
+        file_path.write_text("file", encoding="utf-8")
+        symlink_path = tmp_path / "symlink.txt"
+        symlink_path.write_text("target", encoding="utf-8")
+
+        def is_symlink(path):
+            return os.path.abspath(path) == os.path.abspath(symlink_path)
+
+        with patch("reality_capture.service.data_handler.os.path.islink", side_effect=is_symlink):
+            r = _DataHandler.upload_data(self.container_url, str(tmp_path), "", None)
+
+        assert not r.is_error()
+        assert r.get_response_status_code() == 200
+        mock_client_class.assert_called_once()
+        mock_client_instance.upload_blob.assert_called_once()
+        assert mock_client_instance.upload_blob.call_args.args[0] == "file.txt"
 
 
 class TestRealityDataHandler:
@@ -92,6 +153,7 @@ class TestRealityDataHandler:
         assert mock_client_class.call_args.kwargs["proxies"] == {
             "https": "http://user:password@proxy.example.com:8080"
         }
+        self.rdh.unset_proxy()
 
     @responses.activate
     def test_upload_data_link_error(self):
