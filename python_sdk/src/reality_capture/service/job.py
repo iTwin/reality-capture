@@ -141,8 +141,7 @@ class Job(BaseModel):
                         PointCloudConversionSpecifications, PCOptimizationSpecifications,
                         MeshSamplingSpecifications, TileMapOptimizationSpecifications,
                         VectorOptimizationSpecifications, # ContextSceneTilerSpecifications,
-                        TrainingS3DSpecifications] = (
-        Field(description="Specifications aligned with the job type.")
+                        TrainingS3DSpecifications] = Field(description="Specifications aligned with the job type.")
 
 
     @field_validator("specifications", mode="plain")
