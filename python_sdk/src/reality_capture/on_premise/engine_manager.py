@@ -177,8 +177,8 @@ class EngineManager(GenericManager):
             return Result(ManagerErrorCode.DB_BUSY, None)
         try:
             cursor = self._connection.cursor()
-            cursor.execute("BEGIN IMMEDIATE")
             try:
+                cursor.execute("BEGIN IMMEDIATE")
                 # Check engine exists and is running
                 cursor.execute(
                     "SELECT COUNT(*) FROM Engines WHERE Hostname = ? AND (EndTime IS NULL OR EndTime = '')",

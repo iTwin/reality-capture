@@ -483,9 +483,6 @@ class JobManager(GenericManager):
         if fd is None:
             return Result(ManagerErrorCode.DB_BUSY, None)
         try:
-            cursor = self._connection.cursor()
-            cursor.execute("BEGIN IMMEDIATE")
-
             job_name = f"job_{uuid.uuid4()}"
             submit_time = self._format_datetime(datetime.now(timezone.utc))
             submit_user = getpass.getuser()
@@ -512,6 +509,8 @@ class JobManager(GenericManager):
 
             # Insert job into database
             try:
+                cursor = self._connection.cursor()
+                cursor.execute("BEGIN IMMEDIATE")
                 cursor.execute(
                     f"INSERT INTO {JOBS} ("
                     f"{JOBNAME}, {STATUS}, {PRIORITY}, {PERCENT}, {DESCR}, "
@@ -562,9 +561,8 @@ class JobManager(GenericManager):
             return Result(ManagerErrorCode.DB_BUSY, None)
         try:
             cursor = self._connection.cursor()
-            cursor.execute("BEGIN IMMEDIATE")
-
             try:
+                cursor.execute("BEGIN IMMEDIATE")
                 cursor.execute(
                     f"UPDATE {JOBS} SET {PRIORITY} = ? WHERE {JOBNAME} = ?;",
                     (self._priority_to_int(job_priority), job_name)
@@ -596,9 +594,9 @@ class JobManager(GenericManager):
             return Result(ManagerErrorCode.DB_BUSY, None)
         try:
             cursor = self._connection.cursor()
-            cursor.execute("BEGIN IMMEDIATE")
 
             try:
+                cursor.execute("BEGIN IMMEDIATE")
                 # Fetch current status and shared working directory
                 cursor.execute(
                     f"SELECT {STATUS}, {SHARED_WORKING_DIR} FROM {JOBS} WHERE {JOBNAME} = ?;",
