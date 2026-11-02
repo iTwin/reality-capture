@@ -1,3 +1,4 @@
+import contextlib
 import os.path
 from typing import Callable, Optional
 from reality_capture.service.error import DetailedErrorResponse, DetailedError, Error
@@ -61,22 +62,27 @@ class _DataHandler:
                 if not proceed:
                     raise InterruptedError("Download interrupted by callback function")
 
-            data = client.download_blob(
+            downloader = client.download_blob(
                 blob_tuple[0],
                 connection_timeout=60,
                 max_concurrency=16,
                 retry_total=20,
                 retry_connect=10,
                 progress_hook=_download_callback,
-            ).readall()
+            )
 
             rel_path = blob_tuple[0].removeprefix(src) if src != blob_tuple[0] else os.path.basename(src)
             rel_path = rel_path.strip('/')
             download_file_path = os.path.join(dst, rel_path)
             os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
 
-            with open(download_file_path, "wb") as file:
-                file.write(data)
+            try:
+                with open(download_file_path, "wb") as file:
+                    downloader.readinto(file)
+            except Exception:
+                with contextlib.suppress(OSError):
+                    os.remove(download_file_path)
+                raise
             nonlocal downloaded_values
             downloaded_values[blob_tuple[0]] = blob_tuple[1]
 
