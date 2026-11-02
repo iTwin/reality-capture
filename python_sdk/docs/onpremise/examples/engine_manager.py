@@ -3,6 +3,6 @@ import tempfile
 import os
 
 with tempfile.TemporaryDirectory() as temp_folder:
-    em = engine_manager.EngineManager(os.path.join(temp_folder, "engine_manager"))
-    hosts = em.get_engine_hostnames()
-    print(hosts)
+    with engine_manager.EngineManager(os.path.join(temp_folder, "engine_manager")) as em:
+        hosts = em.get_engine_hostnames()
+        print(hosts)
