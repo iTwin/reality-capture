@@ -495,7 +495,7 @@ class JobManager(GenericManager):
                 return Result(ManagerErrorCode.UNSUPPORTED_SPECIFICATIONS, None)
             job_type = job_type_enum.value
 
-            specs_dict = specifications.model_dump(by_alias=True, exclude_none=True)
+            specs_dict = specifications.model_dump(mode="json", by_alias=True, exclude_none=True)
             specifications_payload = {job_type: specs_dict}
 
             # Save specifications to disk
