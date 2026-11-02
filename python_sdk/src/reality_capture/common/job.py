@@ -27,7 +27,13 @@ class JobType(Enum):
     TOUCH_UP_EXPORT = "TouchUpExport"
     TRAINING_S3D = "TrainingS3D"
     WATER_CONSTRAINTS = "WaterConstraints"
-
+    CLEARANCE_CHECKER = "ClearanceChecker"
+    CLEARANCE_FOOTPRINT = "ClearanceFootprint"
+    POINT_CLOUD_CONVERSION = "PointCloudConversion"
+    POINT_CLOUD_OPTIMIZATION = "PointCloudOptimization"
+    MESH_SAMPLING = "MeshSampling"
+    TILE_MAP_OPTIMIZATION = "TileMapOptimization"
+    VECTOR_OPTIMIZATION = "VectorOptimization"
 
 class JobState(Enum):
     QUEUED = "Queued"

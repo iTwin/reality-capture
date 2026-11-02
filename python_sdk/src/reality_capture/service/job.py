@@ -53,17 +53,6 @@ from reality_capture.specifications.eval_sortho import (EvalSOrthoSpecifications
 
 from reality_capture.service.reality_data import URL
 
-
-    CLEARANCE_CHECKER = "ClearanceChecker"
-    CLEARANCE_FOOTPRINT = "ClearanceFootprint"
-    POINT_CLOUD_CONVERSION = "PointCloudConversion"
-    POINT_CLOUD_OPTIMIZATION = "PointCloudOptimization"
-    MESH_SAMPLING = "MeshSampling"
-    TILE_MAP_OPTIMIZATION = "TileMapOptimization"
-    VECTOR_OPTIMIZATION = "VectorOptimization"
-    # CONTEXTSCENE_TILER = "ContextSceneTiler"
-
-
 class Service(Enum):
     MODELING = "Modeling"
     ANALYSIS = "Analysis"
