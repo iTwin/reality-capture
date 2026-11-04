@@ -14,6 +14,26 @@ This page documents all notable changes to the ``reality_capture`` Python SDK ac
 
 ----
 
+2.9.0
+===========
+
+Features
+--------
+
+- Add support for proxies. (`#346 <https://github.com/iTwin/reality-capture/pull/346>`_)
+- Add support for new Spark RAD Gaussian Splats format (`#358 <https://github.com/iTwin/reality-capture/pull/358>`_)
+- Added a new model type for S3D Training with PointTransformerV3 (`#363 <https://github.com/iTwin/reality-capture/pull/363>`_)
+- Added new options ``lodSize``, ``tileOverlap`` and ``skirtLength`` to :class:`~reality_capture.specifications.production.Options3DTiles`, :class:`~reality_capture.specifications.production.OptionsOBJ`, :class:`~reality_capture.specifications.production.Options3MX`, :class:`~reality_capture.specifications.production.OptionsI3S` and :class:`~reality_capture.specifications.production.OptionsOSGB`. (`#376 <https://github.com/iTwin/reality-capture/pull/376>`_)
+
+
+Bugfixes
+--------
+
+- Fix crash when the downloaded file is too large (`#385 <https://github.com/iTwin/reality-capture/pull/385>`_)
+
+
+----
+
 2.8.0
 ===========
 
