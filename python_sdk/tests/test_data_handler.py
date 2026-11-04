@@ -24,6 +24,15 @@ def mock_blob_except(*args, **kwargs):
     raise Exception("this is a test")
 
 
+def mock_readinto_ok(stream):
+    return stream.write(b"mocked file content")
+
+
+def mock_readinto_partial_except(stream):
+    stream.write(b"partial")
+    raise Exception("connection lost")
+
+
 @pytest.fixture
 def mock_container_client_default():
     with patch("azure.storage.blob.ContainerClient.from_container_url") as mock_client:
@@ -73,6 +82,25 @@ class TestRealityDataHandler:
         assert not r.is_error()
         assert r.get_response_status_code() == 200
         assert r.value == ['file1.txt', 'file2.txt']
+
+    @responses.activate
+    def test_list_data_uses_proxy(self, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        mock_client_instance.list_blob_names.return_value = []
+
+        rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        with open(f"{self.data_folder}/reality_data_read_access_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-management/reality-data/{rd_id}/readaccess',
+                      json=payload, status=200)
+
+        self.rdh.set_proxy("proxy.example.com:8080", "user", "password")
+        r = self.rdh.list_data(rd_id)
+        assert not r.is_error()
+        assert mock_client_class.call_args.kwargs["proxies"] == {
+            "https": "http://user:password@proxy.example.com:8080"
+        }
 
     @responses.activate
     def test_upload_data_link_error(self):
@@ -260,7 +288,7 @@ class TestRealityDataHandler:
         MyBlob = namedtuple("MyBlob", ["name", "size"])
         mock_client_instance.list_blobs.return_value = [MyBlob("a.txt", 100)]
         mock_stream = MagicMock()
-        mock_stream.readall.return_value = b"mocked file content"
+        mock_stream.readinto.side_effect = mock_readinto_ok
         mock_client_instance.download_blob.return_value = mock_stream
 
         rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
@@ -274,7 +302,31 @@ class TestRealityDataHandler:
             r = self.rdh.download_data(rd_id, tmp_dir)
             assert not r.is_error()
             assert r.get_response_status_code() == 200
-            assert os.path.exists(os.path.join(tmp_dir, "a.txt"))
+            with open(os.path.join(tmp_dir, "a.txt"), "rb") as f:
+                assert f.read() == b"mocked file content"
+
+    @responses.activate
+    def test_download_data_partial_file_removed(self, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        MyBlob = namedtuple("MyBlob", ["name", "size"])
+        mock_client_instance.list_blobs.return_value = [MyBlob("a.txt", 100)]
+        mock_stream = MagicMock()
+        mock_stream.readinto.side_effect = mock_readinto_partial_except
+        mock_client_instance.download_blob.return_value = mock_stream
+
+        rd_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        with open(f"{self.data_folder}/reality_data_read_access_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-management/reality-data/{rd_id}/readaccess',
+                      json=payload, status=200)
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            r = self.rdh.download_data(rd_id, tmp_dir)
+            assert r.is_error()
+            assert r.get_response_status_code() == 500
+            assert r.error.error.code == "DownloadFailure"
+            assert not os.path.exists(os.path.join(tmp_dir, "a.txt"))
 
     @responses.activate
     def test_delete_data_link_error(self):
@@ -364,6 +416,29 @@ class TestBucketDataHandler:
         assert not r.is_error()
         assert r.get_response_status_code() == 200
         assert r.value == ['file1.txt', 'file2.txt']
+
+    @responses.activate
+    def test_upload_bucket_uses_proxy(self, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        mock_client_instance.upload_blob.side_effect = mock_blob
+
+        itwin_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        with open(f"{self.data_folder}/bucket_get_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-modeling/itwins/{itwin_id}/bucket',
+                      json=payload, status=200)
+
+        self.bdh.set_proxy("proxy.example.com:8080", "user", "password")
+        r = self.bdh.upload_data(itwin_id, os.path.join(self.data_folder, "bucket_get_200.json"))
+        assert not r.is_error()
+        assert mock_client_class.call_args.kwargs["proxies"] == {
+            "https": "http://user:password@proxy.example.com:8080"
+        }
+
+        self.bdh.unset_proxy()
+        self.bdh.list_data(itwin_id)
+        assert mock_client_class.call_args.kwargs["proxies"] == {}
 
     @responses.activate
     def test_upload_bucket_link_error(self):
@@ -491,7 +566,7 @@ class TestBucketDataHandler:
         MyBlob = namedtuple("MyBlob", ["name", "size"])
         mock_client_instance.list_blobs.return_value = [MyBlob("a.txt", 100)]
         mock_stream = MagicMock()
-        mock_stream.readall.return_value = b"mocked file content"
+        mock_stream.readinto.side_effect = mock_readinto_ok
         mock_client_instance.download_blob.return_value = mock_stream
 
         itwin_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
@@ -505,7 +580,31 @@ class TestBucketDataHandler:
             r = self.bdh.download_data(itwin_id, tmp_dir)
             assert not r.is_error()
             assert r.get_response_status_code() == 200
-            assert os.path.exists(os.path.join(tmp_dir, "a.txt"))
+            with open(os.path.join(tmp_dir, "a.txt"), "rb") as f:
+                assert f.read() == b"mocked file content"
+
+    @responses.activate
+    def test_download_bucket_partial_file_removed(self, mock_container_client_default):
+        mock_client_class, mock_client_instance = mock_container_client_default
+        MyBlob = namedtuple("MyBlob", ["name", "size"])
+        mock_client_instance.list_blobs.return_value = [MyBlob("a.txt", 100)]
+        mock_stream = MagicMock()
+        mock_stream.readinto.side_effect = mock_readinto_partial_except
+        mock_client_instance.download_blob.return_value = mock_stream
+
+        itwin_id = "d91751e9-9a24-417a-a29c-071c0dca33f0"
+        with open(f"{self.data_folder}/bucket_get_200.json", 'r') as payload_data:
+            payload = json.load(payload_data)
+        responses.add(responses.GET,
+                      f'https://api.bentley.com/reality-modeling/itwins/{itwin_id}/bucket',
+                      json=payload, status=200)
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            r = self.bdh.download_data(itwin_id, tmp_dir)
+            assert r.is_error()
+            assert r.get_response_status_code() == 500
+            assert r.error.error.code == "DownloadFailure"
+            assert not os.path.exists(os.path.join(tmp_dir, "a.txt"))
 
     @responses.activate
     def test_delete_bucket_link_error(self):

@@ -100,6 +100,11 @@ Classes
     :members:
     :undoc-members:
 
+.. autoclass:: LODSize
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
 .. autoclass:: CesiumCompression
     :show-inheritance:
     :members:
