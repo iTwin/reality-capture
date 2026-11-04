@@ -17,7 +17,7 @@
             "author": "110406974+dbiguenet@users.noreply.github.com",
             "package": "@itwin/reality-capture",
             "commit": "bf8ffac827ba92bdee3735ac9cd5afa3fe39395b",
-            "comment": "Add RAD Gaussian Splats format, PointTransformerV3 Segmentation3D training model, new options for Production jobs. Fix reality data and bucket data download"
+            "comment": "Add RAD Gaussian Splats format, PointTransformerV3 Segmentation3D training model. Fix reality data and bucket data download"
           }
         ]
       }

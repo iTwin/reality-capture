@@ -11,7 +11,7 @@ Wed, 04 Nov 2026 13:17:45 GMT
 ### Minor changes
 
 - Add new mesh options (5690282+cnovel@users.noreply.github.com)
-- Add RAD Gaussian Splats format, PointTransformerV3 Segmentation3D training model, new options for Production jobs. Fix reality data and bucket data download (110406974+dbiguenet@users.noreply.github.com)
+- Add RAD Gaussian Splats format, PointTransformerV3 Segmentation3D training model. Fix reality data and bucket data download (110406974+dbiguenet@users.noreply.github.com)
 
 ## 1.9.0
 
