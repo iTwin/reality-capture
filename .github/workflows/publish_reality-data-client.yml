@@ -3,15 +3,36 @@ name: (ReleaseV1) Publish reality-data-client
 on: workflow_dispatch
 
 jobs:
+  # Fail fast: without these secrets the pipeline would only fail at the publish step.
+  verify_credentials:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify release credentials
+        env:
+          HAS_GH_TOKEN: ${{ secrets.IMJS_ADMIN_GH_TOKEN != '' }}
+          HAS_NPM_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN != '' }}
+        run: |
+          if [ "$HAS_GH_TOKEN" != "true" ]; then
+            echo "::error::The IMJS_ADMIN_GH_TOKEN secret is not configured. It is required to push the version bump commit and tag."
+            exit 1
+          fi
+          if [ "$HAS_NPM_TOKEN" != "true" ]; then
+            echo "::error::The NPMJS_PUBLISH_ITWIN secret is not configured. It is required to publish to npm."
+            exit 1
+          fi
+
   publish:
+    needs: verify_credentials
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
         operating-system: [windows-latest]
     steps:
+      # Check out the exact commit the workflow was started on.
       - name: Checkout
         uses: actions/checkout@v5
         with:
+          ref: ${{ github.sha }}
           token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
           lfs: true
 
@@ -44,9 +65,20 @@ jobs:
 
       - name: Publish packages
         working-directory: ./typescript/packages/reality-data-client
+        shell: pwsh
         run: |
+          $PSNativeCommandUseErrorActionPreference = $true
           git config --local user.email imodeljs-admin@users.noreply.github.com
-          git config --local user.name imodeljs-admin 
-          pnpm publish-packages --new -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+          git config --local user.name imodeljs-admin
+          pnpm version-bump
+          if (-not (git status --porcelain -- .)) { throw "No changeset to release" }
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          $tag = "@itwin/reality-data-client_v$version"
+          git add -A -- .
+          git commit -m "Version bump $tag [skip actions]"
+          pnpm publish-packages
+          git tag $tag
+          git push origin HEAD:${{ github.ref_name }}
+          git push origin $tag
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}

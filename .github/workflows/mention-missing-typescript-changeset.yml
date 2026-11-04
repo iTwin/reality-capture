@@ -1,0 +1,108 @@
+name: Check TypeScript changeset
+
+# Uses pull_request_target so fork PRs also get the reminder.
+# Never check out or execute PR code here: the token has write access.
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+    paths:
+      - "typescript/packages/reality-capture/**"
+      - "typescript/packages/reality-data-client/**"
+    branches:
+      - main
+      - upcoming/*
+
+jobs:
+  check_changeset:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Check for a changeset
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const marker = '<!-- typescript-changeset-check -->';
+            // Each package has its own .changeset folder, see typescript/packages/*/.changeset/config.json
+            const packages = ['reality-capture', 'reality-data-client'];
+            // Mirrors the exclusions of changedFilePatterns in .changeset/config.json
+            const ignoredPattern = /^(\.changeset\/|tsconfig\.[^\/]*$|pnpm-lock\.yaml$|pnpm-workspace\.yaml$|lib\/|dist\/|coverage\/|.*\.log$|.*\.tmp$)/;
+            const changesetPattern = /^\.changeset\/(?!README\.md$)[^\/]+\.md$/;
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            const missing = packages.filter(pkg => {
+              const prefix = `typescript/packages/${pkg}/`;
+              const pkgFiles = files
+                .filter(file => file.filename.startsWith(prefix))
+                .map(file => ({ ...file, relative: file.filename.slice(prefix.length) }));
+
+              const hasChanges = pkgFiles.some(file => !ignoredPattern.test(file.relative));
+              const hasChangeset = pkgFiles.some(file =>
+                file.status === 'added' && changesetPattern.test(file.relative)
+              );
+              return hasChanges && !hasChangeset;
+            });
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            const existingComment = comments.find(comment =>
+              comment.user?.login === 'github-actions[bot]' &&
+              (comment.body || '').includes(marker)
+            );
+
+            if (missing.length === 0) {
+              if (existingComment) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existingComment.id
+                });
+              }
+              return;
+            }
+
+            const body = [
+              marker,
+              'This PR modifies the following TypeScript packages but does not add a changeset for them:',
+              '',
+              ...missing.map(pkg => `- \`typescript/packages/${pkg}/\``),
+              '',
+              'Please add one with `changesets`, from each package folder:',
+              '',
+              '```bash',
+              'pnpm change',
+              '```'
+            ].join('\n');
+
+            if (existingComment) {
+              if (existingComment.body !== body) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existingComment.id,
+                  body
+                });
+              }
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });

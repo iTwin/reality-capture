@@ -3,15 +3,36 @@ name: (DevReleaseV1) Publish reality-data-client dev
 on: workflow_dispatch
 
 jobs:
+  # Fail fast: without these secrets the pipeline would only fail at the publish step.
+  verify_credentials:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify release credentials
+        env:
+          HAS_GH_TOKEN: ${{ secrets.IMJS_ADMIN_GH_TOKEN != '' }}
+          HAS_NPM_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN != '' }}
+        run: |
+          if [ "$HAS_GH_TOKEN" != "true" ]; then
+            echo "::error::The IMJS_ADMIN_GH_TOKEN secret is not configured. It is required to check out the repository."
+            exit 1
+          fi
+          if [ "$HAS_NPM_TOKEN" != "true" ]; then
+            echo "::error::The NPMJS_PUBLISH_ITWIN secret is not configured. It is required to publish to npm."
+            exit 1
+          fi
+
   publish:
+    needs: verify_credentials
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
         operating-system: [windows-latest]
     steps:
+      # Check out the exact commit the workflow was started on.
       - name: Checkout
         uses: actions/checkout@v5
         with:
+          ref: ${{ github.sha }}
           token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
           lfs: true
 
@@ -45,8 +66,7 @@ jobs:
       - name: Publish packages
         working-directory: ./typescript/packages/reality-data-client
         run: |
-          git config --local user.email imodeljs-admin@users.noreply.github.com
-          git config --local user.name imodeljs-admin 
-          pnpm publish-packages-dev -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+          pnpm version-bump-dev
+          pnpm publish-packages-dev
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}

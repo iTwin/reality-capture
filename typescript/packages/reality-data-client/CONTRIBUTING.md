@@ -15,4 +15,14 @@ pnpm lint
 pnpm test:unit
 ```
 
-Create a release change file with `pnpm change` only when a maintainer requests a package release.
+## Release Changes
+
+Every approved fix must include a changeset. Create one from the `typescript/packages/reality-data-client` directory:
+
+```sh
+pnpm change
+```
+
+Follow the prompts to select the version bump and write the release note. Commit the generated `.changeset/*.md` file with the pull request. Run `pnpm check` to verify that a changeset is present.
+
+Pull requests targeting `main` or `upcoming/*` are checked automatically: if they modify this package without adding a changeset, a reminder comment is posted on the pull request.
