@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "Add RAD Gaussian Splats format, PointTransformerV3 Segmentation3D training model, new options for Production jobs. Fix reality data and bucket data download",
+  "packageName": "@itwin/reality-capture",
+  "email": "110406974+dbiguenet@users.noreply.github.com",
+  "dependentChangeType": "minor"
+}
