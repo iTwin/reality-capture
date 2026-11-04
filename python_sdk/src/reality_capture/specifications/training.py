@@ -18,6 +18,7 @@ class TrainingS3DOutputs(BaseModel):
 
 class Segmentation3DTrainingModel(Enum):
     SPLATNET = "SPLATNet"
+    POINT_TRANSFORMER_V3 = "PointTransformerV3"
 
 
 class PointCloudFeature(Enum):
