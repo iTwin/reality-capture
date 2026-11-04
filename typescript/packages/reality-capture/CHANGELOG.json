@@ -2,6 +2,27 @@
   "name": "@itwin/reality-capture",
   "entries": [
     {
+      "date": "Wed, 04 Nov 2026 13:17:45 GMT",
+      "version": "1.10.0",
+      "tag": "@itwin/reality-capture_v1.10.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "5690282+cnovel@users.noreply.github.com",
+            "package": "@itwin/reality-capture",
+            "commit": "bf8ffac827ba92bdee3735ac9cd5afa3fe39395b",
+            "comment": "Add new mesh options"
+          },
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-capture",
+            "commit": "bf8ffac827ba92bdee3735ac9cd5afa3fe39395b",
+            "comment": "Add RAD Gaussian Splats format, PointTransformerV3 Segmentation3D training model, new options for Production jobs. Fix reality data and bucket data download"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 15 Oct 2026 13:36:23 GMT",
       "version": "1.9.0",
       "tag": "@itwin/reality-capture_v1.9.0",
