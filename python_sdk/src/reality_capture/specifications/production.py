@@ -6,18 +6,18 @@ from reality_capture.specifications.tiling import GeometricPrecision
 
 
 class ProductionInputs(BaseModel):
-    scene: str = Field(description="Reality data id of ContextScene to process")
-    modeling_reference: str = Field(description="Reality data id of modeling reference to process",
+    scene: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene to process")
+    modeling_reference: str = Field(description="Reality data ID (cloud) or local path (on-premise) of modeling reference to process",
                                     alias="modelingReference")
-    extent: Optional[str] = Field(None, description="Path in the bucket to region of interest file, "
-                                                    "used for export extent",
-                                  pattern=r"^bkt:.+")
+    extent: Optional[str] = Field(None,
+                                  description="Path to region of interest file (bucket path in cloud, local path on-premise), used for export extent")
     presets: Optional[list[str]] = Field(default=None, description="List of paths to preset")
-    crs_data: Optional[str] = Field(default=None, description="Path in the bucket for CRS data.", alias="crsData",
-                                    pattern=r"^bkt:.+")
+    crs_data: Optional[str] = Field(default=None,
+                                    description="Path to CRS data file (bucket path in cloud, local path on-premise).",
+                                    alias="crsData")
 
 
-class Format(Enum):
+class Format(str, Enum):
     THREED_TILES = "3DTiles"
     OBJ = "OBJ"
     THREEMX = "3MX"
@@ -29,25 +29,25 @@ class Format(Enum):
     ORTHOPHOTO_DSM = "OrthophotoDSM"
 
 
-class ColorSource(Enum):
+class ColorSource(str, Enum):
     NO = "None"
     VISIBLE = "Visible"
     THERMAL = "Thermal"
     RESOLUTION = "Resolution"
 
 
-class ThermalUnit(Enum):
+class ThermalUnit(str, Enum):
     ABSOLUTE = "Absolute"
     CELSIUS = "Celsius"
     FAHRENHEIT = "Fahrenheit"
 
 
-class LODScope(Enum):
+class LODScope(str, Enum):
     TILE_WISE = "TileWise"
     ACROSS_TILES = "AcrossTiles"
 
 
-class LODType(Enum):
+class LODType(str, Enum):
     NONE = "None"
     UNARY = "Unary"
     QUADTREE = "Quadtree"
@@ -56,14 +56,14 @@ class LODType(Enum):
     BING_MAPS = "BingMaps"
 
 
-class LODSize(Enum):
+class LODSize(str, Enum):
     S = "S"
     M = "M"
     L = "L"
     XL = "XL"
 
 
-class CesiumCompression(Enum):
+class CesiumCompression(str, Enum):
     NO = "None"
     DRACO = "Draco"
 
@@ -78,11 +78,14 @@ class Options3DTiles(BaseModel):
                                                           description="Maximum resolution for the texture color source",
                                                           ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
+                                                                     description="Thermal unit for the "
+                                                                                 "texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
+                                                              description="Minimum thermal value for the "
+                                                                          "texture color source")
     texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
+                                                              description="Maximum thermal value for "
+                                                                          "the texture color source")
     crs: Optional[str] = Field(None, description="Coordinate reference system")
     lod_scope: Optional[LODScope] = Field(None, alias="lodScope", description="Level of detail scope")
     lod_size: Optional[LODSize] = Field(None, alias="lodSize", description="Level of detail size")
@@ -101,11 +104,14 @@ class OptionsOBJ(BaseModel):
                                                           description="Maximum resolution for the texture color source",
                                                           ge=0)
     texture_color_source_thermal_unit: Optional[ThermalUnit] = Field(None, alias="textureColorSourceThermalUnit",
-                                                                     description="Thermal unit for the texture color source")
+                                                                     description="Thermal unit for "
+                                                                                 "the texture color source")
     texture_color_source_thermal_min: Optional[float] = Field(None, alias="textureColorSourceThermalMin",
-                                                              description="Minimum thermal value for the texture color source")
+                                                              description="Minimum thermal value for "
+                                                                          "the texture color source")
     texture_color_source_thermal_max: Optional[float] = Field(None, alias="textureColorSourceThermalMax",
-                                                              description="Maximum thermal value for the texture color source")
+                                                              description="Maximum thermal value for "
+                                                                          "the texture color source")
     maximum_texture_size: Optional[int] = Field(None, alias="maximumTextureSize", description="Maximum texture size")
     texture_compression: Optional[int] = Field(None, alias="textureCompression", ge=0, le=100,
                                                description="JPG compression of texture file")
@@ -177,12 +183,12 @@ class OptionsI3S(BaseModel):
     skirt_length: Optional[float] = Field(None, alias="skirtLength", description="Skirt length in meters", ge=0)
 
 
-class SamplingStrategy(Enum):
+class SamplingStrategy(str, Enum):
     RESOLUTION = "Resolution"
     ABSOLUTE = "Absolute"
 
 
-class LasCompression(Enum):
+class LasCompression(str, Enum):
     NONE = "None"
     LAZ = "LAZ"
 
@@ -251,31 +257,31 @@ class OptionsOSGB(BaseModel):
     skirt_length: Optional[float] = Field(None, alias="skirtLength", description="Skirt length in meters", ge=0)
 
 
-class ProjectionMode(Enum):
+class ProjectionMode(str, Enum):
     HIGHEST_POINT = "HighestPoint"
     LOWEST_POINT = "LowestPoint"
 
 
-class OrthoFormat(Enum):
+class OrthoFormat(str, Enum):
     GEOTIFF = "GeoTIFF"
     JPEG = "JPEG"
     NONE = "None"
 
 
-class DSMFormat(Enum):
+class DSMFormat(str, Enum):
     GEOTIFF = "GeoTIFF"
     ASC = "ASC"
     NONE = "None"
 
 
-class OrthoColorSource(Enum):
+class OrthoColorSource(str, Enum):
     REFERENCE_3D_MODEL_VISIBLE = "Reference3dModelVisible"
     OPTIMIZED_COMPUTATION_VISIBLE = "OptimizedComputationVisible"
     REFERENCE_3D_MODEL_THERMAL = "Reference3dModelThermal"
     OPTIMIZED_COMPUTATION_THERMAL = "OptimizedComputationThermal"
 
 
-class OverviewType(Enum):
+class OverviewType(str, Enum):
     NONE = "None"
     EMBEDDED = "Embedded"
     OVR_FILE = "OvrFile"
@@ -337,7 +343,7 @@ class ExportCreate(BaseModel):
 
 
 class Export(ExportCreate):
-    location: str = Field(description="Reality data id of the export")
+    location: str = Field(description="Reality data ID (cloud) or local path (on-premise) of the export")
 
 
 class ProductionOutputs(BaseModel):
@@ -363,3 +369,4 @@ class ProductionCost(BaseModel):
     mpoints: float = Field(description="Number of MegaPoints in the overall inputs.", ge=0)
     geometric_precision: Optional[GeometricPrecision] = Field(None, description="Geometric precision used in Tiling",
                                                               alias="geometricPrecision")
+

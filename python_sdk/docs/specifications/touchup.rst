@@ -38,6 +38,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.touchup
 
 .. autopydantic_model:: TouchUpExportSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: TouchUpExportOutputsCreate
     :show-inheritance:
@@ -45,14 +46,18 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: TouchUpExportSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: TouchUpExportInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: TouchUpExportOptions
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: TouchUpExportOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autoclass:: TouchLevel
@@ -61,6 +66,7 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: TouchUpImportSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: TouchUpImportOutputsCreate
     :show-inheritance:
@@ -68,14 +74,19 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: TouchUpImportSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: TouchUpImportInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: TouchUpImportOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ImportInfo
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: ImportTileInfo
+    :inherited-members: BaseModel
     :model-show-json: False

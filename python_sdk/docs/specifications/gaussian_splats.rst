@@ -23,6 +23,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.gaussian_splats
 
 .. autopydantic_model:: GaussianSplatsSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: GaussianSplatsOutputsCreate
     :show-inheritance:
@@ -30,14 +31,18 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: GaussianSplatsSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: GaussianSplatsInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: GaussianSplatsOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: GaussianSplatsOptions
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autoclass:: GSFormat
