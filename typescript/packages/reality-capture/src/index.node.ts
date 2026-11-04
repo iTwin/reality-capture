@@ -12,6 +12,7 @@ export * from "./service/job";
 export * from "./service/reality_data";
 export * from "./service/response";
 export * from "./service/service";
+export * from "./service/detectors";
 
 export * from "./specifications/calibration";
 export * from "./specifications/change_detection";
