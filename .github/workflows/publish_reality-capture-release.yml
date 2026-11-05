@@ -2,6 +2,11 @@ name: (RCRelease) Publish reality-capture Release
 
 on: workflow_dispatch
 
+# Both TypeScript release workflows push a version commit to the same branch: run them one at a time.
+concurrency:
+  group: typescript-release-${{ github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
   # Fail fast: without these secrets the pipeline would only fail at the publish step,
   # after the whole test matrix has run.

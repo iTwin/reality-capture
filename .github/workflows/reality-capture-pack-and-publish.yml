@@ -55,16 +55,33 @@ jobs:
             pnpm publish-packages-dev
           }
           else {
-            pnpm version-bump
-            if (-not (git status --porcelain -- .)) { throw "No changeset to release" }
-            $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
-            $tag = "@itwin/reality-capture_v$version"
-            git add -A -- .
-            git commit -m "Version bump $tag [skip actions]"
+            # npm versions are immutable: push the version commit and tag first, so that a branch
+            # that moved since this run started makes the push fail before anything is published.
+            $branch = "${{ github.ref_name }}"
+            git fetch --no-tags --depth=2 origin "refs/heads/$branch"
+            $remoteHead = git rev-parse FETCH_HEAD
+            if ($remoteHead -eq $env:GITHUB_SHA) {
+              pnpm version-bump
+              if (-not (git status --porcelain -- .)) { throw "No changeset to release" }
+              $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+              $tag = "@itwin/reality-capture_v$version"
+              git add -A -- .
+              git commit -m "Version bump $tag [skip actions]"
+              git tag $tag
+              git push --atomic origin "HEAD:refs/heads/$branch" "refs/tags/$tag"
+            }
+            else {
+              # Retry of a run whose version commit was pushed but not (fully) published.
+              git checkout --detach FETCH_HEAD
+              $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+              $tag = "@itwin/reality-capture_v$version"
+              $tagSha = ((git ls-remote origin "refs/tags/$tag") -split '\s+')[0]
+              if ((git rev-parse 'HEAD^') -ne $env:GITHUB_SHA -or $tagSha -ne $remoteHead) {
+                throw "$branch has moved since $env:GITHUB_SHA. Start a new release run from the latest commit."
+              }
+            }
+            # changeset publish skips versions that are already on npm.
             pnpm publish-packages
-            git tag $tag
-            git push origin HEAD:${{ github.ref_name }}
-            git push origin $tag
           }
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}

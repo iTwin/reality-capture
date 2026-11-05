@@ -65,7 +65,9 @@ jobs:
 
       - name: Publish packages
         working-directory: ./typescript/packages/reality-data-client
+        shell: pwsh
         run: |
+          $PSNativeCommandUseErrorActionPreference = $true
           pnpm version-bump-dev
           pnpm publish-packages-dev
         env:

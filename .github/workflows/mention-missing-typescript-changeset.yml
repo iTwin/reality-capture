@@ -43,9 +43,16 @@ jobs:
 
             const missing = packages.filter(pkg => {
               const prefix = `typescript/packages/${pkg}/`;
-              const pkgFiles = files
-                .filter(file => file.filename.startsWith(prefix))
-                .map(file => ({ ...file, relative: file.filename.slice(prefix.length) }));
+              // A rename out of the package only shows up in previous_filename
+              const pkgFiles = files.flatMap(file => {
+                const filenames = [file.filename];
+                if (file.status === 'renamed' && file.previous_filename) {
+                  filenames.push(file.previous_filename);
+                }
+                return filenames
+                  .filter(filename => filename.startsWith(prefix))
+                  .map(filename => ({ ...file, relative: filename.slice(prefix.length) }));
+              });
 
               const hasChanges = pkgFiles.some(file => !ignoredPattern.test(file.relative));
               const hasChangeset = pkgFiles.some(file =>
