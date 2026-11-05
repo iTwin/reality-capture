@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Bump @itwin/reality-capture dependency to 1.10.0 and update dependencies",
-  "packageName": "@itwin/reality-data-client",
-  "email": "110406974+dbiguenet@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
