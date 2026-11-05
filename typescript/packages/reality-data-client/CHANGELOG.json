@@ -2,6 +2,21 @@
   "name": "@itwin/reality-data-client",
   "entries": [
     {
+      "date": "Thu, 05 Nov 2026 10:24:36 GMT",
+      "version": "1.6.1",
+      "tag": "@itwin/reality-data-client_v1.6.1",
+      "comments": {
+        "patch": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-data-client",
+            "commit": "62c2dea6ae4d72ea8264237f759b62d613768605",
+            "comment": "Bump @itwin/reality-capture dependency to 1.10.0 and update dependencies"
+          }
+        ]
+      }
+    },
+    {
       "date": "Fri, 11 Sep 2026 16:17:08 GMT",
       "version": "1.6.0",
       "tag": "@itwin/reality-data-client_v1.6.0",
