@@ -59,7 +59,6 @@
   "license": "MIT",
   "dependencies": {
     "@azure/storage-blob": "^12.15.0",
-    "class-validator": "^0.14.0",
     "zod": "^4.6.6"
   },
   "devDependencies": {
