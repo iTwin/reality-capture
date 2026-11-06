@@ -2,6 +2,21 @@
   "name": "@itwin/reality-capture",
   "entries": [
     {
+      "date": "Fri, 06 Nov 2026 09:18:00 GMT",
+      "version": "1.10.1",
+      "tag": "@itwin/reality-capture_v1.10.1",
+      "comments": {
+        "patch": [
+          {
+            "author": "110406974+dbiguenet@users.noreply.github.com",
+            "package": "@itwin/reality-capture",
+            "commit": "f47a4c24509f992c28dc5d013cab042f6b7b5864",
+            "comment": "Export missing detectors and eval_s3d modules, fix download error codes (DownloadInterrupted/DownloadFailure) and remove unused class-validator dependency"
+          }
+        ]
+      }
+    },
+    {
       "date": "Wed, 04 Nov 2026 13:17:45 GMT",
       "version": "1.10.0",
       "tag": "@itwin/reality-capture_v1.10.0",

@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Export missing detectors and eval_s3d modules, fix download error codes (DownloadInterrupted/DownloadFailure) and remove unused class-validator dependency",
-  "packageName": "@itwin/reality-capture",
-  "email": "110406974+dbiguenet@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
