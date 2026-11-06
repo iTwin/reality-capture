@@ -13,6 +13,7 @@ import {
   MessagesSchema,
   MessagesResponseSchema,
   NextLinkSchema,
+  JobResponseSchema,
 } from "../../service/job";
 import { ImportPCOutputsCreate } from "../../specifications/import_point_cloud"; // TODO : mock?
 
@@ -138,7 +139,7 @@ describe("ExecutionSchema", () => {
   });
 });
 
-/*describe("JobResponseSchema", () => {
+describe("JobResponseSchema", () => {
   it("should validate correct job response", () => {
     const data = {
       job: {
@@ -162,7 +163,7 @@ describe("ExecutionSchema", () => {
     };
     expect(() => JobResponseSchema.parse(data)).to.not.throw();
   });
-});*/
+});
 
 describe("ProgressSchema", () => {
   it("should validate correct progress info", () => {
