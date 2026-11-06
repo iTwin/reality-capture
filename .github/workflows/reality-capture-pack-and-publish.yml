@@ -12,9 +12,12 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      # Check out the exact commit that was built and tested by the caller workflow.
       - name: Checkout github repo (+ download lfs dependencies)
         uses: actions/checkout@v5
         with:
+          ref: ${{ github.sha }}
+          token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
           lfs: true
 
       - name: Checkout LFS objects
@@ -43,17 +46,42 @@ jobs:
         working-directory: ./typescript/packages/reality-capture
         shell: pwsh
         run: |
+          $PSNativeCommandUseErrorActionPreference = $true
           git config --local user.email imodeljs-admin@users.noreply.github.com
           git config --local user.name imodeljs-admin
-          # beachball resolves --config from the git root, not the current directory,
-          # so an absolute path is required to load the package-local config.
-          $configName = if ("${{ inputs.prerelease }}" -eq "true") { "beachball.config.dev.js" } else { "beachball.config.js" }
-          $configPath = Join-Path "${{ github.workspace }}" "typescript/packages/reality-capture/$configName"
           if ("${{ inputs.prerelease }}" -eq "true") {
-            pnpm exec beachball publish --config "$configPath" --keep-change-files -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+            # Snapshot release (x.y.z-dev-<datetime>) from pending changesets. Nothing is committed.
+            pnpm version-bump-dev
+            pnpm publish-packages-dev
           }
           else {
-            pnpm exec beachball publish --config "$configPath" -y --branch origin/${{ github.ref_name }} --message "Version bump [skip actions]"
+            # npm versions are immutable: push the version commit and tag first, so that a branch
+            # that moved since this run started makes the push fail before anything is published.
+            $branch = "${{ github.ref_name }}"
+            git fetch --no-tags --depth=2 origin "refs/heads/$branch"
+            $remoteHead = git rev-parse FETCH_HEAD
+            if ($remoteHead -eq $env:GITHUB_SHA) {
+              pnpm version-bump
+              if (-not (git status --porcelain -- .)) { throw "No changeset to release" }
+              $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+              $tag = "@itwin/reality-capture_v$version"
+              git add -A -- .
+              git commit -m "Version bump $tag [skip actions]"
+              git tag $tag
+              git push --atomic origin "HEAD:refs/heads/$branch" "refs/tags/$tag"
+            }
+            else {
+              # Retry of a run whose version commit was pushed but not (fully) published.
+              git checkout --detach FETCH_HEAD
+              $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+              $tag = "@itwin/reality-capture_v$version"
+              $tagSha = ((git ls-remote origin "refs/tags/$tag") -split '\s+')[0]
+              if ((git rev-parse 'HEAD^') -ne $env:GITHUB_SHA -or $tagSha -ne $remoteHead) {
+                throw "$branch has moved since $env:GITHUB_SHA. Start a new release run from the latest commit."
+              }
+            }
+            # changeset publish skips versions that are already on npm.
+            pnpm publish-packages
           }
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
