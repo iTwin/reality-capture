@@ -1,8 +1,16 @@
 # Change Log - @itwin/reality-capture
 
-<!-- This log was last generated on Wed, 04 Nov 2026 13:17:45 GMT and should not be manually modified. -->
+<!-- This log was last generated on Fri, 06 Nov 2026 10:28:45 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 1.10.1
+
+Fri, 06 Nov 2026 10:28:45 GMT
+
+### Patches
+
+- Export missing detectors and eval_s3d modules, fix download error codes (DownloadInterrupted/DownloadFailure) and remove unused class-validator dependency (110406974+dbiguenet@users.noreply.github.com)
 
 ## 1.10.0
 
