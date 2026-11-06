@@ -34,12 +34,12 @@
     "test:unit": "mocha --require ts-node/register ./src/tests/**/*.test.ts --slow 0",
     "coverage": "nyc npm run test:unit",
     "pack": "npm pack --pack-destination ./lib",
-    "change": "beachball change --no-commit",
-    "check": "beachball check",
-    "version-bump": "beachball bump",
-    "publish-packages": "beachball publish",
-    "version-bump-dev": "beachball bump --config beachball.config.dev.js --keep-change-files",
-    "publish-packages-dev": "beachball publish --config beachball.config.dev.js --keep-change-files"
+    "change": "changeset",
+    "check": "changeset status",
+    "version-bump": "changeset version",
+    "publish-packages": "changeset publish --no-git-tag",
+    "version-bump-dev": "changeset version --snapshot dev",
+    "publish-packages-dev": "changeset publish --tag nightly --no-git-tag"
   },
   "keywords": [
     "azure",
@@ -62,13 +62,13 @@
     "zod": "^4.6.6"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
+    "@changesets/cli": "^3.0.3",
     "@types/chai": "^5.0.0",
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.8.0",
     "@types/sinon": "^17.0.0",
-    "beachball": "^2.31.12",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
     "chai": "^6.0.0",
     "eslint": "^8.52.0",
     "mocha": "^11.0.0",

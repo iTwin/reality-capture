@@ -3,7 +3,27 @@ name: (RCPreRelease) Publish reality-capture Pre-Release
 on: workflow_dispatch
 
 jobs:
+  # Fail fast: without these secrets the pipeline would only fail at the publish step,
+  # after the whole test matrix has run.
+  verify_credentials:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify release credentials
+        env:
+          HAS_GH_TOKEN: ${{ secrets.IMJS_ADMIN_GH_TOKEN != '' }}
+          HAS_NPM_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN != '' }}
+        run: |
+          if [ "$HAS_GH_TOKEN" != "true" ]; then
+            echo "::error::The IMJS_ADMIN_GH_TOKEN secret is not configured. It is required to check out the repository."
+            exit 1
+          fi
+          if [ "$HAS_NPM_TOKEN" != "true" ]; then
+            echo "::error::The NPMJS_PUBLISH_ITWIN secret is not configured. It is required to publish to npm."
+            exit 1
+          fi
+
   build_and_test_sdk:
+    needs: verify_credentials
     strategy:
       matrix:
         node-version: [22.x, 24.15.0]
