@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "setuptools == 83.0.0",
+    "setuptools == 84.1.0",
     "setuptools-scm == 8.3.1"
 ]
 build-backend = "setuptools.build_meta"
@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "reality_capture"
 # PEP440, see https://peps.python.org/pep-0440/
-version = "2.8.0"
+version = "2.9.0"
 authors = [
   { name="Bentley Systems" },
 ]
@@ -58,7 +58,7 @@ issue_format = "`#{issue} <https://github.com/iTwin/reality-capture/pull/{issue}
 title_format = "----\n\n{version}"
 
 [tool.bumpversion]
-current_version = "2.8.0"
+current_version = "2.9.0"
 parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
 serialize = ["{major}.{minor}.{patch}"]
 search = "{current_version}"

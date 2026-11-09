@@ -84,13 +84,21 @@ Run `pnpm lint` again afterward to verify that no issues remain.
 
 ### Release Changes
 
-For changes that affect the published package, create a Beachball change file:
+For changes that affect the published package, create a changeset from this directory:
 
 ```sh
 pnpm change
 ```
 
-Follow the prompts to select the affected package, the version bump, and the release note. Commit the generated change file with the pull request.
+Follow the prompts to select the version bump and write the release note. Commit the generated `.changeset/*.md` file with the pull request. To verify that a changeset is present, run `pnpm check` with the branch your pull request targets (`main`, `upcoming/ITCM` or `upcoming/ITME`):
+
+```sh
+pnpm check --since=origin/upcoming/ITCM
+```
+
+Without `--since`, the command compares against `main` and counts every changeset already in the folder, so it can pass even if your branch did not add one.
+
+Pull requests targeting `main` or `upcoming/*` are checked automatically: if they modify this package without adding a changeset, a reminder comment is posted on the pull request.
 
 ### Before Submitting a Pull Request
 
