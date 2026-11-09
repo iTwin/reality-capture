@@ -1,3 +1,4 @@
+import contextlib
 import os.path
 from typing import Callable, Optional
 from reality_capture.service.error import DetailedErrorResponse, DetailedError, Error
@@ -39,9 +40,9 @@ class _DataHandler:
         return min(32, 4 + nb_small_files // 100)  # control number of threads considering quantity of files
 
     @staticmethod
-    def download_data(container_url: str, dst: str, src: str, progress_hook):
+    def download_data(container_url: str, dst: str, src: str, progress_hook, proxies: Optional[dict] = None):
         sas_uri = container_url
-        client = ContainerClient.from_container_url(sas_uri)
+        client = ContainerClient.from_container_url(sas_uri, proxies=proxies)
         blobs_tuple = [(blob.name, blob.size) for blob in client.list_blobs()
                        if blob.name.startswith(src)]
         nb_threads = _DataHandler._get_nb_threads(blobs_tuple)
@@ -61,22 +62,27 @@ class _DataHandler:
                 if not proceed:
                     raise InterruptedError("Download interrupted by callback function")
 
-            data = client.download_blob(
+            downloader = client.download_blob(
                 blob_tuple[0],
                 connection_timeout=60,
                 max_concurrency=16,
                 retry_total=20,
                 retry_connect=10,
                 progress_hook=_download_callback,
-            ).readall()
+            )
 
             rel_path = blob_tuple[0].removeprefix(src) if src != blob_tuple[0] else os.path.basename(src)
             rel_path = rel_path.strip('/')
             download_file_path = os.path.join(dst, rel_path)
             os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
 
-            with open(download_file_path, "wb") as file:
-                file.write(data)
+            try:
+                with open(download_file_path, "wb") as file:
+                    downloader.readinto(file)
+            except Exception:
+                with contextlib.suppress(OSError):
+                    os.remove(download_file_path)
+                raise
             nonlocal downloaded_values
             downloaded_values[blob_tuple[0]] = blob_tuple[1]
 
@@ -94,7 +100,7 @@ class _DataHandler:
         return Response(200, None, None)
 
     @staticmethod
-    def upload_data(container_url, src: str, reality_data_dst: str, progress_hook):
+    def upload_data(container_url, src: str, reality_data_dst: str, progress_hook, proxies: Optional[dict] = None):
         files = _DataHandler._get_files_and_sizes(src)
         nb_threads = _DataHandler._get_nb_threads(files)
         total_size = sum(size for _, size in files)
@@ -113,7 +119,7 @@ class _DataHandler:
                 if not proceed:
                     raise InterruptedError("Upload interrupted by callback function")
 
-            client = ContainerClient.from_container_url(sas_uri)
+            client = ContainerClient.from_container_url(sas_uri, proxies=proxies)
             file_path = os.path.join(src, file_tuple[0]) if os.path.isdir(src) else src
             with open(file_path, "rb") as data:
                 client.upload_blob(
@@ -143,14 +149,14 @@ class _DataHandler:
         return Response(200, None, None)
 
     @staticmethod
-    def list_data(container_url: str) -> Response[list[str]]:
-        client = ContainerClient.from_container_url(container_url)
+    def list_data(container_url: str, proxies: Optional[dict] = None) -> Response[list[str]]:
+        client = ContainerClient.from_container_url(container_url, proxies=proxies)
         blob_names = [name for name in client.list_blob_names()]
         return Response(200, None, blob_names)
 
     @staticmethod
-    def delete_data(container_url: str, files_to_delete: list[str]) -> Response[None]:
-        client = ContainerClient.from_container_url(container_url)
+    def delete_data(container_url: str, files_to_delete: list[str], proxies: Optional[dict] = None) -> Response[None]:
+        client = ContainerClient.from_container_url(container_url, proxies=proxies)
         failed = []
         for file in files_to_delete:
             try:
@@ -209,7 +215,7 @@ class RealityDataHandler:
         if r.is_error():
             return Response(r.status_code, r.error, None)
         resp = _DataHandler.upload_data(rlink.value.links.container_url.href,
-                                        src, reality_data_dst, self._progress_hook)
+                                        src, reality_data_dst, self._progress_hook, self._service._proxies)
         r = self._set_authoring(reality_data_id, False)
         if r.is_error():
             return Response(r.status_code, r.error, None)
@@ -229,7 +235,8 @@ class RealityDataHandler:
         r = self._get_link(reality_data_id, itwin_id, True)
         if r.is_error():
             return Response(r.status_code, r.error, None)
-        return _DataHandler.download_data(r.value.links.container_url.href, dst, reality_data_src, self._progress_hook)
+        return _DataHandler.download_data(r.value.links.container_url.href, dst, reality_data_src, self._progress_hook,
+                                          self._service._proxies)
 
     def list_data(self, reality_data_id, itwin_id: Optional[str] = None) -> Response[list[str]]:
         """
@@ -242,7 +249,7 @@ class RealityDataHandler:
         r = self._get_link(reality_data_id, itwin_id, True)
         if r.is_error():
             return Response(r.status_code, r.error, None)
-        return _DataHandler.list_data(r.value.links.container_url.href)
+        return _DataHandler.list_data(r.value.links.container_url.href, self._service._proxies)
 
     def delete_data(self, reality_data_id, files_to_delete: list[str],
                     itwin_id: Optional[str] = None) -> Response[None]:
@@ -257,7 +264,7 @@ class RealityDataHandler:
         r = self._get_link(reality_data_id, itwin_id, False)
         if r.is_error():
             return Response(r.status_code, r.error, None)
-        return _DataHandler.delete_data(r.value.links.container_url.href, files_to_delete)
+        return _DataHandler.delete_data(r.value.links.container_url.href, files_to_delete, self._service._proxies)
 
     def set_progress_hook(self, hook: Optional[Callable[[float], bool]]) -> None:
         """
@@ -267,6 +274,23 @@ class RealityDataHandler:
          When returning false, the ongoing action will be cancelled. Can be None if no progress hook is needed.
         """
         self._progress_hook = hook
+
+    def set_proxy(self, proxy: str, username: Optional[str] = None, password: Optional[str] = None) -> None:
+        """
+        Set proxy server info, used for both service calls and data transfers.
+
+        :param proxy: Proxy server URL or host and port
+        :param username: Optional username for proxy server
+        :param password: Optional password for proxy server, requires a username
+        :raises ValueError: If the proxy URL is invalid or unsupported, or if a password is given without a username
+        """
+        self._service.set_proxy(proxy, username, password)
+
+    def unset_proxy(self) -> None:
+        """
+        Remove proxy server info.
+        """
+        self._service.unset_proxy()
 
 
 class BucketDataHandler:
@@ -301,7 +325,8 @@ class BucketDataHandler:
         r = self._get_bucket(itwin_id)
         if r.is_error():
             return Response(r.status_code, r.error, None)
-        return _DataHandler.upload_data(r.value.links.container_url.href, src, bucket_dst, self._progress_hook)
+        return _DataHandler.upload_data(r.value.links.container_url.href, src, bucket_dst, self._progress_hook,
+                                        self._service._proxies)
 
     def download_data(self, itwin_id: str, dst: str,
                       bucket_src: str = "") -> Response[None]:
@@ -316,7 +341,8 @@ class BucketDataHandler:
         r = self._get_bucket(itwin_id)
         if r.is_error():
             return Response(r.status_code, r.error, None)
-        return _DataHandler.download_data(r.value.links.container_url.href, dst, bucket_src, self._progress_hook)
+        return _DataHandler.download_data(r.value.links.container_url.href, dst, bucket_src, self._progress_hook,
+                                          self._service._proxies)
 
     def list_data(self, itwin_id: str) -> Response[list[str]]:
         """
@@ -328,7 +354,7 @@ class BucketDataHandler:
         r = self._get_bucket(itwin_id)
         if r.is_error():
             return Response(r.status_code, r.error, None)
-        return _DataHandler.list_data(r.value.links.container_url.href)
+        return _DataHandler.list_data(r.value.links.container_url.href, self._service._proxies)
 
     def delete_data(self, itwin_id, files_to_delete: list[str]) -> Response[None]:
         """
@@ -341,7 +367,7 @@ class BucketDataHandler:
         r = self._get_bucket(itwin_id)
         if r.is_error():
             return Response(r.status_code, r.error, None)
-        return _DataHandler.delete_data(r.value.links.container_url.href, files_to_delete)
+        return _DataHandler.delete_data(r.value.links.container_url.href, files_to_delete, self._service._proxies)
 
     def set_progress_hook(self, hook: Optional[Callable[[float], bool]]) -> None:
         """
@@ -351,3 +377,20 @@ class BucketDataHandler:
          When returning false, the ongoing action will be cancelled. Can be None if no progress hook is needed.
         """
         self._progress_hook = hook
+
+    def set_proxy(self, proxy: str, username: Optional[str] = None, password: Optional[str] = None) -> None:
+        """
+        Set proxy server info, used for both service calls and data transfers.
+
+        :param proxy: Proxy server URL or host and port
+        :param username: Optional username for proxy server
+        :param password: Optional password for proxy server, requires a username
+        :raises ValueError: If the proxy URL is invalid or unsupported, or if a password is given without a username
+        """
+        self._service.set_proxy(proxy, username, password)
+
+    def unset_proxy(self) -> None:
+        """
+        Remove proxy server info.
+        """
+        self._service.unset_proxy()
