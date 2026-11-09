@@ -24,14 +24,19 @@ Classes
 .. currentmodule:: reality_capture.specifications.reconstruction
 
 .. autopydantic_model:: ReconstructionSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: ReconstructionOutputsCreate
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ReconstructionSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: ReconstructionInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ReconstructionOutputs
+    :inherited-members: BaseModel
     :model-show-json: False

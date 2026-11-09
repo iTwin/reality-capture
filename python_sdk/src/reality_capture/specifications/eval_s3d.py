@@ -4,19 +4,20 @@ from enum import Enum
 
 
 class EvalS3DInputs(BaseModel):
-    reference: str = Field(description="Reality data id of ContextScene, "
+    reference: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                        "pointing to segmented point cloud reference")
-    prediction: str = Field(description="Reality data id of ContextScene, "
+    prediction: str = Field(description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                         "pointing to segmented point cloud prediction")
 
 
 class EvalS3DOutputs(BaseModel):
-    report: Optional[str] = Field(None, description="Path in Bucket of json report with confusion matrix",
-                                  pattern=r"^bkt:.+")
+    report: Optional[str] = Field(None,
+                                  description="Path to JSON report file with confusion matrix (bucket path in cloud, local path on-premise)")
     segmented_model_3d: Optional[str] = Field(None, alias="segmentedModel3D",
-                                                 description="Reality data id of segmented 3D model OPC as annotated with confusion matrix index")
+                                              description="Reality data ID (cloud) or local path (on-premise) of segmented 3D model OPC "
+                                                          "as annotated with confusion matrix index")
     segmentation3d: Optional[str] = Field(None, alias="segmentation3D",
-                                          description="Reality data id of ContextScene, "
+                                          description="Reality data ID (cloud) or local path (on-premise) of ContextScene, "
                                                       "pointing to segmented 3D model")
 
 
@@ -34,3 +35,4 @@ class EvalS3DSpecificationsCreate(BaseModel):
 class EvalS3DSpecifications(BaseModel):
     inputs: EvalS3DInputs = Field(description="Inputs")
     outputs: EvalS3DOutputs = Field(description="Outputs")
+

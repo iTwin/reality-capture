@@ -45,6 +45,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.training
 
 .. autopydantic_model:: TrainingS3DSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: TrainingS3DOutputsCreate
     :show-inheritance:
@@ -52,12 +53,16 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: TrainingS3DSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: TrainingS3DInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: TrainingS3DOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: TrainingS3DOptions
+    :inherited-members: BaseModel
     :model-show-json: False
