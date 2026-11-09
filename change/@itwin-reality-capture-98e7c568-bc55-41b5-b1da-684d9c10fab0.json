@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "Add TrainingChangeDetection job and pointCloudChangeDetector, export detectors module from the Node entry point",
+  "packageName": "@itwin/reality-capture",
+  "email": "raphael.gaiffe@bentley.com",
+  "dependentChangeType": "patch"
+}
