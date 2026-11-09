@@ -107,6 +107,15 @@ class TestServiceDetector:
             "https://api.bentley.com/reality-analysis/detectors?%24filter=exports+in+%28%27Polygons%27%29"
 
     @responses.activate
+    def test_get_detectors_change_detector_200(self):
+        payload = {"detectors": [{"name": "my-cd-detector", "type": "PointCloudChangeDetector", "latestVersion": "1.0"}]}
+        responses.add(responses.GET, 'https://api.bentley.com/reality-analysis/detectors',
+                      json=payload, status=200)
+        response = self.rcs.get_detectors()
+        assert not response.is_error()
+        assert response.value.detectors[0].type == DetectorType.POINT_CLOUD_CHANGE_DETECTOR
+
+    @responses.activate
     def test_delete_detector_ill_formed(self):
         responses.add(responses.DELETE, f'https://api.bentley.com/reality-analysis/detectors/mydetector',
                       json={"bad": "response"},

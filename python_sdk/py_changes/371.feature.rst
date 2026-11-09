@@ -1,0 +1,1 @@
+Added the ``TrainingChangeDetection`` job (:class:`~reality_capture.specifications.training.TrainingChangeDetectionSpecificationsCreate`), the ``PointCloudChangeDetector`` detector type and the ``pointCloudChangeDetector`` input to :class:`~reality_capture.specifications.change_detection.ChangeDetectionInputs`.

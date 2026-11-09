@@ -34,6 +34,7 @@ Specifications regroup all the settings used to create jobs with our APIs.
     eval_s3d
     eval_sortho
     training_s3d
+    training_change_detection
     clearance_footprint
     clearance_checker
     pc_conversion
@@ -63,9 +64,10 @@ Analysis
 * :doc:`/specifications/segmentation2d` uses a photo segmentation detector to classify pixels in photos. If photos are oriented, it can project this classification onto reality data like meshes to create 3D features.
 * :doc:`/specifications/segmentation_orthophoto` uses an orthophoto segmentation detector to classify pixels in an orthophoto and create 2D features.
 * :doc:`/specifications/segmentation3d` uses a point cloud segmentation detector to classify each point of a point cloud and create 3D features.
-* :doc:`/specifications/change_detection` will take two point clouds or two meshes to to get 3D regions that capture the changes.
+* :doc:`/specifications/change_detection` will take two point clouds or two meshes to get 3D regions that capture the changes. With a trained change detector, it classifies the points of two point clouds instead.
 * :doc:`/specifications/eval_o2d`, :doc:`/specifications/eval_o3d`, :doc:`/specifications/eval_s2d`, :doc:`/specifications/eval_s3d` and :doc:`/specifications/eval_sortho` will compare a prediction to a reference for a specific detection.
 * :doc:`/specifications/training_s3d` will train a Segmentation 3D detector from ContextScenes
+* :doc:`/specifications/training_change_detection` will train a point cloud change detector from pairs of segmented ContextScenes (times A and B)
 * :doc:`/specifications/clearance_footprint` will use a Segmentation 3D and Objects 3D to project the footprints of one class on another one
 * :doc:`/specifications/clearance_checker` will compute clearance information given a 3D model and footprints.
 
