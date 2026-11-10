@@ -41,7 +41,8 @@ from reality_capture.specifications.vector_optimization import (VectorOptimizati
                                                                 VectorOptimizationSpecifications)
 # from reality_capture.specifications.cs_tiler import (ContextSceneTilerSpecifications,
 #                                                      ContextSceneTilerSpecificationsCreate)
-from reality_capture.specifications.training import (TrainingS3DSpecificationsCreate, TrainingS3DSpecifications)
+from reality_capture.specifications.training import (TrainingO2DSpecificationsCreate, TrainingO2DSpecifications,
+                                                     TrainingS3DSpecificationsCreate, TrainingS3DSpecifications)
 from reality_capture.specifications.gaussian_splats import (GaussianSplatsSpecificationsCreate,
                                                             GaussianSplatsSpecifications)
 from reality_capture.specifications.eval_o2d import (EvalO2DSpecificationsCreate, EvalO2DSpecifications)
@@ -75,6 +76,7 @@ class JobType(Enum):
     TOUCH_UP_IMPORT = "TouchUpImport"
     TOUCH_UP_EXPORT = "TouchUpExport"
     WATER_CONSTRAINTS = "WaterConstraints"
+    TRAINING_O2D = "TrainingO2D"
     TRAINING_S3D = "TrainingS3D"
     CLEARANCE_CHECKER = "ClearanceChecker"
     CLEARANCE_FOOTPRINT = "ClearanceFootprint"
@@ -99,8 +101,8 @@ def _get_appropriate_service(jt: JobType):
         return Service.MODELING
     if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
               JobType.CHANGE_DETECTION, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
-              JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.TRAINING_S3D, JobType.CLEARANCE_CHECKER,
-              JobType.CLEARANCE_FOOTPRINT]:
+              JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.TRAINING_O2D, JobType.TRAINING_S3D,
+              JobType.CLEARANCE_CHECKER, JobType.CLEARANCE_FOOTPRINT]:
         return Service.ANALYSIS
     if jt in [JobType.POINT_CLOUD_CONVERSION, JobType.POINT_CLOUD_OPTIMIZATION, JobType.MESH_SAMPLING,
               JobType.TILE_MAP_OPTIMIZATION, JobType.VECTOR_OPTIMIZATION]: # JobType.CONTEXTSCENE_TILER
@@ -136,7 +138,7 @@ class JobCreate(BaseModel):
                         PointCloudConversionSpecificationsCreate, PCOptimizationSpecificationsCreate,
                         MeshSamplingSpecificationsCreate, TileMapOptimizationSpecificationsCreate,
                         VectorOptimizationSpecificationsCreate, # ContextSceneTilerSpecificationsCreate,
-                        TrainingS3DSpecificationsCreate] = (
+                        TrainingO2DSpecificationsCreate, TrainingS3DSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
@@ -186,7 +188,7 @@ class Job(BaseModel):
                         PointCloudConversionSpecifications, PCOptimizationSpecifications,
                         MeshSamplingSpecifications, TileMapOptimizationSpecifications,
                         VectorOptimizationSpecifications, # ContextSceneTilerSpecifications,
-                        TrainingS3DSpecifications] = (
+                        TrainingO2DSpecifications, TrainingS3DSpecifications] = (
         Field(description="Specifications aligned with the job type."))
 
     @field_validator("specifications", mode="plain")
@@ -238,6 +240,8 @@ class Job(BaseModel):
             specifications = TouchUpImportSpecifications(**raw_dict)
         elif job_type == JobType.WATER_CONSTRAINTS:
             specifications = WaterConstraintsSpecifications(**raw_dict)
+        elif job_type == JobType.TRAINING_O2D:
+            specifications = TrainingO2DSpecifications(**raw_dict)
         elif job_type == JobType.TRAINING_S3D:
             specifications = TrainingS3DSpecifications(**raw_dict)
         elif job_type == JobType.CLEARANCE_CHECKER:
