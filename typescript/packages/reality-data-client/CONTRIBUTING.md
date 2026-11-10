@@ -20,13 +20,13 @@ pnpm test:unit
 Every approved fix must include a changeset. Create one from the `typescript/packages/reality-data-client` directory:
 
 ```sh
-pnpm change
+pnpm run change
 ```
 
-Follow the prompts to select the version bump and write the release note. Commit the generated `.changeset/*.md` file with the pull request. To verify that a changeset is present, run `pnpm check` with the branch your pull request targets (`main`, `upcoming/ITCM` or `upcoming/ITME`):
+Follow the prompts to select the version bump and write the release note. Commit the generated `.changeset/*.md` file with the pull request. To verify that a changeset is present, run `pnpm run check` with the branch your pull request targets (`main`, `upcoming/ITCM` or `upcoming/ITME`):
 
 ```sh
-pnpm check --since=origin/upcoming/ITCM
+pnpm run check --since=origin/upcoming/ITCM
 ```
 
 Without `--since`, the command compares against `main` and counts every changeset already in the folder, so it can pass even if your branch did not add one.

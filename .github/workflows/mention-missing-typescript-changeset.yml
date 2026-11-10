@@ -91,7 +91,7 @@ jobs:
               'Please add one with `changesets`, from each package folder:',
               '',
               '```bash',
-              'pnpm change',
+              'pnpm run change',
               '```'
             ].join('\n');
 
