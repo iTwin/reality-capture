@@ -1,5 +1,6 @@
 import contextlib
 import os.path
+import posixpath
 from typing import Callable, Optional
 from reality_capture.service.error import DetailedErrorResponse, DetailedError, Error
 from reality_capture.service.response import Response
@@ -30,7 +31,9 @@ class _DataHandler:
                 size_path = file_path
                 if os.path.islink(file_path):
                     continue  # Discard symlinks for security reasons
-                files_tuple.append((os.path.relpath(file_path, path), os.path.getsize(size_path)))
+                # Blob names always use "/", whatever the local OS separator is
+                rel_path = os.path.relpath(file_path, path).replace(os.sep, "/")
+                files_tuple.append((rel_path, os.path.getsize(size_path)))
         return files_tuple
 
     @staticmethod
@@ -123,7 +126,7 @@ class _DataHandler:
             file_path = os.path.join(src, file_tuple[0]) if os.path.isdir(src) else src
             with open(file_path, "rb") as data:
                 client.upload_blob(
-                    os.path.join(reality_data_dst, file_tuple[0]),
+                    posixpath.join(reality_data_dst, file_tuple[0]),
                     data,
                     connection_timeout=60,
                     max_concurrency=16,

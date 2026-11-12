@@ -36,7 +36,6 @@
     "src/service/bucket.ts",
     "src/service/detectors.ts",
     "src/service/error.ts",
-    "src/service/estimation.ts",
     "src/service/files.ts",
     "src/service/job.ts",
     "src/service/reality_data.ts",
