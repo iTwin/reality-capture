@@ -30,7 +30,8 @@ class _DataHandler {
           if (itemStats.isDirectory()) {
             walk(fullPath);
           } else if (itemStats.isFile()) {
-            filesTuple.push([path.relative(srcPath, fullPath), itemStats.size]);
+            // Blob names always use "/", whatever the local OS separator is
+            filesTuple.push([path.relative(srcPath, fullPath).split(path.sep).join("/"), itemStats.size]);
           }
         }
       };
@@ -144,7 +145,7 @@ class _DataHandler {
         ? path.join(src, fileName)
         : src;
       const blockBlobClient = client.getBlockBlobClient(
-        path.join(realityDataDst, fileName),
+        path.posix.join(realityDataDst, fileName),
       );
       let loaded = 0;
       const data = fs.readFileSync(filePath);
