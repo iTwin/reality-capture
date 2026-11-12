@@ -8,7 +8,7 @@ import { DetailedError } from "./error";
 import { Response } from "./response";
 import { RealityCaptureService } from "./service";
 import { BucketResponse } from "./bucket";
-import { ContainerDetails } from "./reality_data";
+import { ContainerDetails, RealityData, RealityDataUpdate } from "./reality_data";
 
 type ProgressHook = ((percent: number) => boolean) | null;
 
@@ -260,6 +260,14 @@ export class RealityDataHandler {
     );
   }
 
+  private async _setAuthoring(
+    realityDataId: string,
+    authoring: boolean,
+  ): Promise<Response<RealityData>> {
+    const update: RealityDataUpdate = { authoring };
+    return this._realityCaptureService.updateRealityData(update, realityDataId);
+  }
+
   async uploadData(
     realityDataId: string,
     src: string,
@@ -274,12 +282,20 @@ export class RealityDataHandler {
     if (urlResponse.isError()) {
       return new Response<null>(urlResponse.status_code, urlResponse.error);
     }
+    let authoringResponse = await this._setAuthoring(realityDataId, true);
+    if (authoringResponse.isError()) {
+      return new Response<null>(authoringResponse.status_code, authoringResponse.error);
+    }
     const resp = await _DataHandler.uploadData(
       urlResponse.value!._links.containerUrl.href,
       src,
       realityDataDst,
       this._progressHook,
     );
+    authoringResponse = await this._setAuthoring(realityDataId, false);
+    if (authoringResponse.isError()) {
+      return new Response<null>(authoringResponse.status_code, authoringResponse.error);
+    }
     return resp;
   }
 
