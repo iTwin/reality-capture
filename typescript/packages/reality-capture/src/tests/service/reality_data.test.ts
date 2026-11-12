@@ -384,7 +384,7 @@ describe("RealityCaptureService reality data API calls", function () {
     const create = { iTwinId, displayName: "Test RD", type: Type.CC_IMAGE_COLLECTION };
     const result = await service.createRealityData(create);
     expect(fetchStub.calledOnce).to.equal(true);
-    expect(fetchStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-management/reality-data");
+    expect(fetchStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-management/reality-data/");
     expect(JSON.parse(fetchStub.firstCall.args[1].body)).to.deep.equal(create);
     expect(result.isError()).to.equal(false);
     expect(result.value!.id).to.equal(rdId);
@@ -571,7 +571,7 @@ describe("RealityCaptureService reality data API calls", function () {
     ));
     await service.getRealityDataList({ iTwinId, $top: 10 });
     const calledUrl = new URL(fetchStub.firstCall.args[0]);
-    expect(calledUrl.origin + calledUrl.pathname).to.equal("https://dev-api.bentley.com/reality-management/reality-data");
+    expect(calledUrl.origin + calledUrl.pathname).to.equal("https://dev-api.bentley.com/reality-management/reality-data/");
     expect(calledUrl.searchParams.get("iTwinId")).to.equal(iTwinId);
     expect(calledUrl.searchParams.get("$top")).to.equal("10");
   });
