@@ -57,17 +57,23 @@ class ContainerCache {
       return this._containerWrite;
   }
 
-  public setCache(containerCacheValue: ContainerCacheValue, access: string) {
+  public setCache(containerCacheValue: ContainerCacheValue | undefined, access: string) {
     if (access === "Read")
       this._containerRead = containerCacheValue;
     else
       this._containerWrite = containerCacheValue;
+  }
+
+  public clear() {
+    this._containerRead = undefined;
+    this._containerWrite = undefined;
   }
 }
 
 interface ContainerCacheValue {
   url: URL;
   timeStamp: Date;
+  tokenKey: string;
 }
 
 /** RealityData
@@ -160,6 +166,14 @@ export class ITwinRealityData {
   }
 
   /**
+   * Clears the cached container SAS URLs (Read and Write).
+   * @beta
+   */
+  public clearContainerCache(): void {
+    this._containerCache.clear();
+  }
+
+  /**
      * Gets string url to fetch blob data from. Access is read-only.
      * @param accessToken The client request context.
      * @param blobPath name or path of tile
@@ -203,7 +217,13 @@ export class ITwinRealityData {
 
     try {
 
-      const containerCache = this._containerCache.getCache(access);
+      let containerCache = this._containerCache.getCache(access);
+      const tokenMismatched = containerCache && containerCache.tokenKey !== accessTokenResolved;
+      if (tokenMismatched) {
+        this._containerCache.setCache(undefined, access);
+        containerCache = undefined;
+      }
+
       const blobUrlRequiresRefresh = !containerCache?.timeStamp || (Date.now() - containerCache?.timeStamp.getTime()) > 3000000; // 3 million milliseconds or 50 minutes
 
       if (undefined === containerCache?.url || blobUrlRequiresRefresh) {
@@ -231,13 +251,17 @@ export class ITwinRealityData {
         const newContainerCacheValue: ContainerCacheValue = {
           url: new URL(responseData._links.containerUrl.href),
           timeStamp: new Date(Date.now()),
+          tokenKey: accessTokenResolved,
         };
 
         this._containerCache.setCache(newContainerCacheValue, access);
       }
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return this._containerCache.getCache(access)!.url;
-    } catch {
+    } catch (e: any) {
+      if (e instanceof RealityDataClientError) {
+        throw e;
+      }
       throw new RealityDataClientError(422, "Invalid container request.");
     }
   }
