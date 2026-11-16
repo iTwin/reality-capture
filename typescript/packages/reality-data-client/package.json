@@ -41,7 +41,7 @@
     "publish-packages-dev": "changeset publish --tag nightly --no-git-tag"
   },
   "dependencies": {
-    "@itwin/reality-capture": "1.10.0"
+    "@itwin/reality-capture": "1.10.2"
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
