@@ -268,6 +268,11 @@ class DSMFormat(Enum):
     NONE = "None"
 
 
+class TemperatureMapFormat(Enum):
+    NONE = "None"
+    GEOTIFF = "GeoTIFF"
+
+
 class OrthoColorSource(Enum):
     REFERENCE_3D_MODEL_VISIBLE = "Reference3dModelVisible"
     OPTIMIZED_COMPUTATION_VISIBLE = "OptimizedComputationVisible"
@@ -293,6 +298,12 @@ class OptionsOrthoDSM(BaseModel):
     dsm_format: Optional[DSMFormat] = Field(None, alias="dsmFormat", description="DSM format")
     no_data_value: Optional[float] = Field(None, alias="noDataValue", description="No data value")
     no_data_transparency: Optional[bool] = Field(None, alias="noDataTransparency", description="No data transparency")
+    temperature_map_format: Optional[TemperatureMapFormat] = Field(
+        None, alias="temperatureMapFormat", description="Temperature map output format; None disables output")
+    temperature_map_unit: Optional[ThermalUnit] = Field(
+        None, alias="temperatureMapUnit", description="Temperature map unit; defaults to Celsius")
+    temperature_map_no_data_value: Optional[float] = Field(
+        None, alias="temperatureMapNoDataValue", description="Temperature map no-data value; defaults to -9999")
 
 
 class ExportCreate(BaseModel):
