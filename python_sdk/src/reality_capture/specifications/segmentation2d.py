@@ -41,10 +41,16 @@ class Segmentation2DOutputs(BaseModel):
     polygons3d_as_geojson: Optional[str] = Field(None, alias="polygons3DAsGeoJSON",
                                                  description="Reality data id of 3D polygons "
                                                              "as GeoJSON file, polygons3d output must be defined")
+    segmented_model_3d  : Optional[str] = Field(None, alias="segmentedModel3D",
+                                          description="Reality data id of input 3D model segmented with the 2D segmentation results")
+    segmentation3d: Optional[str] = Field(None, alias="segmentation3D",
+                                          description="Reality data id of ContextScene, pointing to a segmented 3D model generated from the 2D segmentation results")
 
 
 class Segmentation2DOutputsCreate(Enum):
     SEGMENTATION2D = "segmentation2D"
+    SEGMENTATION3D = "segmentation3D"
+    SEGMENTED_MODEL3D = "segmentedModel3D"
     SEGMENTED_PHOTOS = "segmentedPhotos"
     LINES3D = "lines3D"
     LINES3D_AS_3DTILES = "lines3DAs3DTiles"
