@@ -4,10 +4,13 @@ import {
   Format,
   ColorSource,
   ThermalUnit,
+  OrthoColorSource,
+  TemperatureMapFormat,
   LODScope,
   LODType,
   ProductionInputsSchema,
   OptionsOBJSchema,
+  OptionsOrthoDSMSchema,
   ExportCreateSchema,
   ProductionOutputsSchema,
   ProductionSpecificationsSchema,
@@ -73,6 +76,31 @@ describe("OptionsOBJSchema", () => {
       textureCompression: 101,
     };
     expect(() => OptionsOBJSchema.parse(input)).to.throw(z.ZodError);
+  });
+});
+
+describe("OptionsOrthoDSMSchema", () => {
+  it("should validate thermal map options in an ortho DSM export", () => {
+    const input = {
+      format: Format.ORTHOPHOTO_DSM,
+      options: {
+        colorSource: OrthoColorSource.REFERENCE_3D_MODEL_THERMAL,
+        temperatureMapFormat: TemperatureMapFormat.GEOTIFF,
+        temperatureMapUnit: ThermalUnit.CELSIUS,
+        temperatureMapNoDataValue: -9999,
+      },
+    };
+    expect(ExportCreateSchema.parse(input)).to.deep.equal(input);
+  });
+
+  it("should allow thermal map options to be omitted", () => {
+    expect(OptionsOrthoDSMSchema.parse({})).to.deep.equal({});
+  });
+
+  it("should reject unsupported thermal map formats", () => {
+    expect(() =>
+      OptionsOrthoDSMSchema.parse({ temperatureMapFormat: "JPEG" }),
+    ).to.throw(z.ZodError);
   });
 });
 

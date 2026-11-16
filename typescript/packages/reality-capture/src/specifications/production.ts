@@ -80,6 +80,11 @@ export enum DSMFormat {
   NONE = "None",
 }
 
+export enum TemperatureMapFormat {
+  NONE = "None",
+  GEOTIFF = "GeoTIFF",
+}
+
 export enum OrthoColorSource {
   REFERENCE_3D_MODEL_VISIBLE = "Reference3dModelVisible",
   OPTIMIZED_COMPUTATION_VISIBLE = "OptimizedComputationVisible",
@@ -416,6 +421,18 @@ export const OptionsOrthoDSMSchema = z.object({
   dsmFormat: z.nativeEnum(DSMFormat).optional().describe("DSM format"),
   noDataValue: z.number().optional().describe("No data value"),
   noDataTransparency: z.boolean().optional().describe("No data transparency"),
+  temperatureMapFormat: z
+    .nativeEnum(TemperatureMapFormat)
+    .optional()
+    .describe("Temperature map output format; None disables output"),
+  temperatureMapUnit: z
+    .nativeEnum(ThermalUnit)
+    .optional()
+    .describe("Temperature map unit; defaults to Celsius"),
+  temperatureMapNoDataValue: z
+    .number()
+    .optional()
+    .describe("Temperature map no-data value; defaults to -9999"),
 });
 export type OptionsOrthoDSM = z.infer<typeof OptionsOrthoDSMSchema>;
 
