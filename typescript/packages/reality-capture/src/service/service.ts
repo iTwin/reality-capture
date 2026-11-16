@@ -489,7 +489,7 @@ export class RealityCaptureService {
   }
 
   async createRealityData(realityData: RealityDataCreate): Promise<Response<RealityData>> {
-    const url = this._getManagementUrl() + "reality-data";
+    const url = this._getManagementUrl() + "reality-data/";
     try {
       const resp = await this._request("POST", url, { body: realityData, headers: await this._getHeader("v1") });
       return new Response(resp.status, null, resp.data.realityData);
@@ -509,7 +509,7 @@ export class RealityCaptureService {
   }
   
   async getRealityDataList(realityDataFilter?: RealityDataFilter, prefer?: Prefer): Promise<Response<RealityDatas>> {
-    const url = this._getManagementUrl() + "reality-data";
+    const url = this._getManagementUrl() + "reality-data/";
     const params = realityDataFilter ? realityDataFilterAsParams(realityDataFilter) : undefined;
     const headers = {
       ...await this._getHeader("v1"),
