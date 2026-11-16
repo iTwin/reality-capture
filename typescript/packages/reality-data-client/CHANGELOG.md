@@ -1,5 +1,11 @@
 # Change Log - @itwin/reality-data-client
 
+## 1.6.3
+
+### Patch Changes
+
+- 4003daa: Refresh cached container URLs when the access token changes and update dependencies.
+
 ## 1.6.2
 
 ### Patch Changes
