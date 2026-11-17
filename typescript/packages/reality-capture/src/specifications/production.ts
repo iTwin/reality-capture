@@ -428,11 +428,11 @@ export const OptionsOrthoDSMSchema = z.object({
   temperatureMapUnit: z
     .nativeEnum(ThermalUnit)
     .optional()
-    .describe("Temperature map unit; defaults to Celsius"),
+    .describe("Temperature map unit"),
   temperatureMapNoDataValue: z
     .number()
     .optional()
-    .describe("Temperature map no-data value; defaults to -9999"),
+    .describe("Temperature map no-data value"),
 });
 export type OptionsOrthoDSM = z.infer<typeof OptionsOrthoDSMSchema>;
 

@@ -140,15 +140,6 @@ Classes
     :members:
     :undoc-members:
 
-Use ``OptionsOrthoDSM(temperatureMapFormat=TemperatureMapFormat.GEOTIFF)``
-to export a floating-point temperature map. ``TemperatureMapFormat.NONE``
-disables this output. JSON values remain ``"GeoTIFF"`` and ``"None"``.
-
-``temperatureMapUnit`` accepts the ``ThermalUnit`` enum (``ABSOLUTE``,
-``CELSIUS`` or ``FAHRENHEIT``). ``temperatureMapNoDataValue`` sets the
-floating-point no-data value. When omitted, the C++ backend defaults to
-Celsius and -9999 respectively.
-
 .. autoclass:: OverviewType
     :show-inheritance:
     :members:

@@ -301,9 +301,9 @@ class OptionsOrthoDSM(BaseModel):
     temperature_map_format: Optional[TemperatureMapFormat] = Field(
         None, alias="temperatureMapFormat", description="Temperature map output format; None disables output")
     temperature_map_unit: Optional[ThermalUnit] = Field(
-        None, alias="temperatureMapUnit", description="Temperature map unit; defaults to Celsius")
+        None, alias="temperatureMapUnit", description="Temperature map unit")
     temperature_map_no_data_value: Optional[float] = Field(
-        None, alias="temperatureMapNoDataValue", description="Temperature map no-data value; defaults to -9999")
+        None, alias="temperatureMapNoDataValue", description="Temperature map no-data value")
 
 
 class ExportCreate(BaseModel):

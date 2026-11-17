@@ -1,0 +1,1 @@
+Add thermal map format, temperature unit, and no-data value options to OrthoDSM exports.
