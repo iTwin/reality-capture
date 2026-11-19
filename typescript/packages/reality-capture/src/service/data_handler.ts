@@ -287,13 +287,17 @@ export class RealityDataHandler {
     if (authoringResponse.isError()) {
       return new Response<null>(authoringResponse.status_code, authoringResponse.error);
     }
-    const resp = await _DataHandler.uploadData(
-      urlResponse.value!._links.containerUrl.href,
-      src,
-      realityDataDst,
-      this._progressHook,
-    );
-    authoringResponse = await this._setAuthoring(realityDataId, false);
+    let resp: Response<null>;
+    try {
+      resp = await _DataHandler.uploadData(
+        urlResponse.value!._links.containerUrl.href,
+        src,
+        realityDataDst,
+        this._progressHook,
+      );
+    } finally {
+      authoringResponse = await this._setAuthoring(realityDataId, false);
+    }
     if (authoringResponse.isError()) {
       return new Response<null>(authoringResponse.status_code, authoringResponse.error);
     }
