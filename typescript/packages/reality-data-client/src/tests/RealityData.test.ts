@@ -150,4 +150,83 @@ describe("ITwinRealityData getBlobUrl", () => {
     await rd.getBlobUrl("fake-token", "file.json", true);  // write — different cache, must fetch again
     expect(fetchStub.callCount).to.equal(2);
   });
+
+  it("should reuse the cached SAS URL on repeated calls within 50 minutes without extra HTTP requests", async () => {
+    fetchStub.resolves(mockFetchResponse(200, { _links: { containerUrl: { href: sampleContainerUrl } } }));
+    await rd.getBlobUrl("fake-token", "file1.json", false);
+    await rd.getBlobUrl("fake-token", "file2.json", false);
+    await rd.getBlobUrl("fake-token", "file3.json", true);
+    await rd.getBlobUrl("fake-token", "file4.json", true);
+    expect(fetchStub.callCount).to.equal(2); // one for read, one for write
+  });
+
+  it("should invalidate cache and make a new HTTP request when the active token changes via parameter", async () => {
+    fetchStub.resolves(mockFetchResponse(200, { _links: { containerUrl: { href: sampleContainerUrl } } }));
+    await rd.getBlobUrl("fake-token-1", "file1.json", false);
+    expect(fetchStub.callCount).to.equal(1);
+
+    // Change token
+    await rd.getBlobUrl("fake-token-2", "file1.json", false);
+    expect(fetchStub.callCount).to.equal(2);
+  });
+
+  it("should invalidate read and write caches when authorizationClient returns a new token", async () => {
+    let activeToken = "fake-token-1";
+    const clientWithAuth = new RealityDataAccessClient({
+      authorizationClient: {
+        getAccessToken: async () => activeToken,
+      },
+    });
+    const retainedRd = new ITwinRealityData(clientWithAuth, sampleRealityDataPayload, "iTwin-1");
+
+    const containerUrl1 = "https://account.blob.core.windows.net/container?sv=2020-08-04&se=2021-07-22T03%3A50%3A21Z&sr=c&sp=rl&sig=fake1";
+    const containerUrl2 = "https://account.blob.core.windows.net/container?sv=2020-08-04&se=2021-07-22T03%3A50%3A21Z&sr=c&sp=racwdl&sig=fake2";
+    const containerUrl3 = "https://account.blob.core.windows.net/container?sv=2020-08-04&se=2021-07-22T04%3A50%3A21Z&sr=c&sp=rl&sig=fake3";
+    const containerUrl4 = "https://account.blob.core.windows.net/container?sv=2020-08-04&se=2021-07-22T04%3A50%3A21Z&sr=c&sp=racwdl&sig=fake4";
+
+    fetchStub.onCall(0).resolves(mockFetchResponse(200, { _links: { containerUrl: { href: containerUrl1 } } }));
+    fetchStub.onCall(1).resolves(mockFetchResponse(200, { _links: { containerUrl: { href: containerUrl2 } } }));
+    fetchStub.onCall(2).resolves(mockFetchResponse(200, { _links: { containerUrl: { href: containerUrl3 } } }));
+    fetchStub.onCall(3).resolves(mockFetchResponse(200, { _links: { containerUrl: { href: containerUrl4 } } }));
+
+    const firstRead = await retainedRd.getBlobUrl("", "tile.b3dm", false);
+    const firstWrite = await retainedRd.getBlobUrl("", "tile.b3dm", true);
+    expect(firstRead.search).to.include("sig=fake1");
+    expect(firstWrite.search).to.include("sig=fake2");
+    expect(fetchStub.callCount).to.equal(2);
+
+    // Update token returned by authorizationClient
+    activeToken = "fake-token-2";
+    const secondRead = await retainedRd.getBlobUrl("", "tile.b3dm", false);
+    const secondWrite = await retainedRd.getBlobUrl("", "tile.b3dm", true);
+    expect(secondRead.search).to.include("sig=fake3");
+    expect(secondWrite.search).to.include("sig=fake4");
+    expect(fetchStub.callCount).to.equal(4);
+  });
+
+  it("should reject and not return a previously cached URL when a subsequent token call fails", async () => {
+    fetchStub.onFirstCall().resolves(mockFetchResponse(200, { _links: { containerUrl: { href: sampleContainerUrl } } }));
+    await rd.getBlobUrl("fake-token-1", "file1.json", false);
+    expect(fetchStub.callCount).to.equal(1);
+
+    // Change token and simulate 403 response
+    fetchStub.onSecondCall().resolves(mockFetchResponse(403, null));
+    try {
+      await rd.getBlobUrl("fake-token-2", "file1.json", false);
+      expect.fail("should have thrown");
+    } catch (error: any) {
+      expect(error.errorNumber).to.equal(403);
+    }
+    expect(fetchStub.callCount).to.equal(2);
+  });
+
+  it("should force a fresh /readAccess call on the next getBlobUrl when clearContainerCache is called", async () => {
+    fetchStub.resolves(mockFetchResponse(200, { _links: { containerUrl: { href: sampleContainerUrl } } }));
+    await rd.getBlobUrl("fake-token-1", "file1.json", false);
+    expect(fetchStub.callCount).to.equal(1);
+
+    rd.clearContainerCache();
+    await rd.getBlobUrl("fake-token-1", "file2.json", false);
+    expect(fetchStub.callCount).to.equal(2);
+  });
 });

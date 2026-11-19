@@ -1,5 +1,11 @@
 # Change Log - @itwin/reality-capture
 
+## 1.10.2
+
+### Patch Changes
+
+- 5d55b5a: Fix Reality Management trailing slash issue
+
 ## 1.10.1
 
 Fri, 06 Nov 2026 10:28:45 GMT

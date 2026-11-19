@@ -1,5 +1,17 @@
 # Change Log - @itwin/reality-data-client
 
+## 1.6.3
+
+### Patch Changes
+
+- 4003daa: Refresh cached container URLs when the access token changes and update dependencies.
+
+## 1.6.2
+
+### Patch Changes
+
+- 5755c9f: Fix Reality Management trailing slash issue
+
 ## 1.6.1
 
 Thu, 05 Nov 2026 10:24:36 GMT
