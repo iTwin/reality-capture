@@ -34,6 +34,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.constraints
 
 .. autopydantic_model:: ConstraintsSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: ConstraintsOutputsCreate
     :show-inheritance:
@@ -41,14 +42,18 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: ConstraintsSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: ConstraintsInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ConstraintsOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ConstraintToAdd
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autoclass:: ConstraintType
@@ -57,6 +62,7 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: ConstraintsInfo
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: ConstraintInfo
     :model-show-json: False

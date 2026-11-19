@@ -26,29 +26,40 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: JobCreate
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: Execution
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Job
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: JobResponse
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: Progress
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ProgressResponse
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: Message
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Messages
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: MessagesResponse
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: NextPageLink
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Jobs
+    :inherited-members: BaseModel

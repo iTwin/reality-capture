@@ -10,4 +10,5 @@ Classes
 .. currentmodule:: reality_capture.service.utils
 
 .. autopydantic_model:: Link
+    :inherited-members: BaseModel
     :model-show-json: False

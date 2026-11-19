@@ -7,9 +7,10 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 import reality_capture
+import datetime
 
 project = 'Reality Capture'
-copyright = '2025, Bentley Systems'
+copyright = f'{datetime.datetime.now().year}, Bentley Systems'
 author = 'Bentley Systems'
 release = reality_capture.__version__
 

@@ -95,6 +95,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.segmentation2d
 
 .. autopydantic_model:: Segmentation2DSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: Segmentation2DOutputsCreate
     :show-inheritance:
@@ -102,12 +103,16 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: Segmentation2DSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: Segmentation2DInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Segmentation2DOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: Segmentation2DOptions
+    :inherited-members: BaseModel
     :model-show-json: False

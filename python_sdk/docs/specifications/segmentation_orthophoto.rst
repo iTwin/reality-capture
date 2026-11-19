@@ -51,6 +51,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.segmentation_orthophoto
 
 .. autopydantic_model:: SegmentationOrthophotoSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: SegmentationOrthophotoOutputsCreate
     :show-inheritance:
@@ -58,9 +59,12 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: SegmentationOrthophotoSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: SegmentationOrthophotoInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: SegmentationOrthophotoOutputs
+    :inherited-members: BaseModel
     :model-show-json: False

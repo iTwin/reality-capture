@@ -1,0 +1,39 @@
+{
+    "Calibration" : {
+        "inputs" : {
+            "s" : "D:/Projects/TestDB/Project files/Block_4/AT-Internal/Scene0",
+            "crsData" : "D:/Projects/TestDB/Project files/CRSData"
+        },
+        "outputs" : {
+            "r" : "D:/Projects/TestDB/Project files/Block_4/QualityReport",
+            "s" : "D:/Projects/TestDB/Project files/Block_4",
+            "texturedTiePoints" : "D:/Projects/TestDB/Project files/Block_4/Splats"
+        },
+        "options" : {
+            "rigSynchro" : "None",
+            "rotationPolicy" : "Compute",
+            "centerPolicy" : "Compute",
+            "focalPolicy" : "Adjust",
+            "principalPolicy" : "Adjust",
+            "radialPolicy" : "Adjust",
+            "tangentialPolicy" : "Adjust",
+            "fisheyeFocalPolicy" : "Keep",
+            "fisheyeDistortionPolicy" : "Keep",
+            "aspectRatioPolicy" : "Keep",
+            "skewPolicy" : "Keep",
+            "tiepointsPolicy" : "Compute",
+            "pairSelection" : "Default",
+            "pairSelectionDistance" : 3,
+            "keypointsDensity" : "Normal",
+            "precalibration" : false,
+            "colorEqualization" : "BlockWise",
+            "adjustmentConstraints" : [
+                "None"
+            ],
+            "rigidRegistrationPosition" : "PositionMetadata",
+            "rigidRegistrationRotation" : "PositionMetadata",
+            "rigidRegistrationScale" : "PositionMetadata",
+            "workspace" : "D:/Projects/TestDB/Project files"
+        }
+    }
+}

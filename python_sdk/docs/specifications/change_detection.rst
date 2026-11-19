@@ -23,6 +23,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.change_detection
 
 .. autopydantic_model:: ChangeDetectionSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: ChangeDetectionOutputsCreate
     :show-inheritance:
@@ -30,12 +31,16 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: ChangeDetectionSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: ChangeDetectionInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ChangeDetectionOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: ChangeDetectionOptions
+    :inherited-members: BaseModel
     :model-show-json: False

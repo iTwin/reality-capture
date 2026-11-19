@@ -4,12 +4,12 @@ from enum import Enum
 
 
 class TouchUpExportInputs(BaseModel):
-    modeling_reference: str = Field(alias="modelingReference", description="Reality data id of Modeling Reference")
+    modeling_reference: str = Field(alias="modelingReference", description="Reality data ID (cloud) or local path (on-premise) of Modeling Reference")
     tiles_to_touch_up: Optional[list[str]] = Field(None, alias="tilesToTouchUp",
                                                    description="List of tiles to export for touch up")
 
 
-class TouchLevel(Enum):
+class TouchLevel(str, Enum):
     GEOMETRY = "Geometry"
     GEOMETRY_AND_TEXTURE = "GeometryAndTexture"
 
@@ -24,7 +24,8 @@ class TouchUpExportOutputsCreate(Enum):
 
 
 class TouchUpExportOutputs(BaseModel):
-    touch_up_data: str = Field(alias="touchUpData", description="Reality Data id for touch up data")
+    touch_up_data: str = Field(alias="touchUpData",
+                               description="Reality data ID (cloud) or local path (on-premise) for touch up data")
 
 
 class TouchUpExportSpecifications(BaseModel):
@@ -44,8 +45,9 @@ class TouchUpExportCost(BaseModel):
 
 
 class TouchUpImportInputs(BaseModel):
-    modeling_reference: str = Field(alias="modelingReference", description="Reality data id of Modeling Reference")
-    touch_up_data: str = Field(alias="touchUpData", description="Reality Data id for touch up data")
+    modeling_reference: str = Field(alias="modelingReference", description="Reality data ID (cloud) or local path (on-premise) of Modeling Reference")
+    touch_up_data: str = Field(alias="touchUpData",
+                               description="Reality data ID (cloud) or local path (on-premise) for touch up data")
 
 
 class TouchUpImportOutputsCreate(Enum):
@@ -53,9 +55,9 @@ class TouchUpImportOutputsCreate(Enum):
 
 
 class TouchUpImportOutputs(BaseModel):
-    import_info: Optional[str] = Field(None, alias="importInfo", description="Folder in bucket containing the "
-                                                                             "information about what was imported",
-                                       pattern=r"^bkt:.+")
+    import_info: Optional[str] = Field(None, alias="importInfo", description="Folder path containing the "
+                                                                             "information about what was imported "
+                                                                             "(bucket path in cloud, local path on-premise)")
 
 
 class TouchUpImportSpecificationsCreate(BaseModel):
@@ -79,3 +81,4 @@ class ImportTileInfo(BaseModel):
 
 class ImportInfo(BaseModel):
     import_info: list[ImportTileInfo] = Field(alias="importInfo", description="List of tiles imported")
+
