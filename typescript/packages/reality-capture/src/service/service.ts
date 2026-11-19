@@ -8,7 +8,6 @@ import {
   DetectorVersionCreate,
   DetectorVersionWithLinks,
 } from "./detectors";
-import { CostEstimationCreate, CostEstimation } from "./estimation";
 import { Files } from "./files";
 import { Response } from "./response";
 import {
@@ -241,24 +240,6 @@ export class RealityCaptureService {
       return new Response(resp.status, null, resp.data.job as Job);
     } catch (error: any) {
       return this._handleError<Job>(error);
-    }
-  }
-
-  async estimateCost(
-    estimationCreate: CostEstimationCreate,
-  ): Promise<Response<CostEstimation>> {
-    const url = this._getCorrectUrl(
-      getAppropriateService(estimationCreate.type),
-    );
-    try {
-      const resp = await this._request("POST", url + "costs", { body: estimationCreate, headers: await this._getHeader("v2") });
-      return new Response(
-        resp.status,
-        null,
-        resp.data.costEstimation as CostEstimation,
-      );
-    } catch (error: any) {
-      return this._handleError<CostEstimation>(error);
     }
   }
 
