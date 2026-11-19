@@ -4,7 +4,10 @@ from enum import Enum
 
 
 class TrainingO2DInputs(BaseModel):
-    scenes: list[str] = Field(description="List of scenes to train on.")
+    objects_2d: list[str] = Field(
+        description="List of 2D objects to train on.",
+        alias="objects2Ds"
+    )
     preset: Optional[str] = Field(default=None, description="Path to a preset")
     detector_name: str = Field(description="Name of the detector to train", alias="detectorName")
 

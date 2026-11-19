@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const TrainingO2DInputsSchema = z.object({
-  scenes: z.array(z.string()).describe("List of scenes to train on."),
+  objects2Ds: z.array(z.string()).describe("List of 2D objects to train on."),
   preset: z.string().optional().describe("Path to a preset"),
   detectorName: z.string().describe("Name of the detector to train"),
 });

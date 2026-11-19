@@ -21,7 +21,7 @@ Purpose
      - Possible outputs
      - Useful options
    * - Train a photo object detector from annotated ContextScenes
-     - | *scenes*
+     - | *objects2Ds*
        | *detectorName*
        | *preset* (optional)
      - | *detector*
@@ -29,7 +29,8 @@ Purpose
        | *versionNumber*
        | *features*
 
-``scenes`` is the list of scenes to train on, and ``detectorName`` is the name of the detector to train.
+``objects2Ds`` is the list of ContextScene identifiers containing annotated 2D objects to train on,
+and ``detectorName`` is the name of the detector to train.
 An optional ``preset`` supplies the path to a training preset.
 
 All options are optional:

@@ -1,1 +1,1 @@
-Adding specifications for the new TrainingO2D job
+Add specifications for TrainingO2D jobs with the ``objects2Ds`` training input.
