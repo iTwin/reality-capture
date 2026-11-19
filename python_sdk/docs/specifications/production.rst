@@ -150,6 +150,11 @@ Classes
     :members:
     :undoc-members:
 
+.. autoclass:: TemperatureMapFormat
+    :show-inheritance:
+    :members:
+    :undoc-members:
+
 .. autoclass:: OverviewType
     :show-inheritance:
     :members:

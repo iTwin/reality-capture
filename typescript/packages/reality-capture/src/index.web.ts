@@ -21,6 +21,7 @@ export * from "./specifications/constraints";
 export * from "./specifications/eval_o2d";
 export * from "./specifications/eval_o3d";
 export * from "./specifications/eval_s2d";
+export * from "./specifications/eval_s3d";
 export * from "./specifications/eval_sortho";
 export * from "./specifications/fill_image_properties";
 export * from "./specifications/gaussian_splats";

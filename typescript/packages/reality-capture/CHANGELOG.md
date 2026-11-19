@@ -1,8 +1,20 @@
 # Change Log - @itwin/reality-capture
 
-<!-- This log was last generated on Thu, 15 Oct 2026 13:36:23 GMT and should not be manually modified. -->
+## 1.10.1
 
-<!-- Start content -->
+Fri, 06 Nov 2026 10:28:45 GMT
+
+### Patches
+
+- Export missing detectors and eval_s3d modules, fix download error codes (DownloadInterrupted/DownloadFailure) and remove unused class-validator dependency (110406974+dbiguenet@users.noreply.github.com)
+## 1.10.0
+
+Wed, 04 Nov 2026 13:17:45 GMT
+
+### Minor changes
+
+- Add new mesh options (5690282+cnovel@users.noreply.github.com)
+- Add RAD Gaussian Splats format, PointTransformerV3 Segmentation3D training model. Fix reality data and bucket data download (110406974+dbiguenet@users.noreply.github.com)
 
 ## 1.9.0
 

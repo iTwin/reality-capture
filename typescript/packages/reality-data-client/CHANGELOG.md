@@ -1,9 +1,12 @@
 # Change Log - @itwin/reality-data-client
 
-<!-- This log was last generated on Fri, 11 Sep 2026 16:17:08 GMT and should not be manually modified. -->
+## 1.6.1
 
-<!-- Start content -->
+Thu, 05 Nov 2026 10:24:36 GMT
 
+### Patches
+
+- Bump @itwin/reality-capture dependency to 1.10.0 and update dependencies (110406974+dbiguenet@users.noreply.github.com)
 ## 1.6.0
 
 Fri, 11 Sep 2026 16:17:08 GMT

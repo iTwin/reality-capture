@@ -108,14 +108,17 @@ class _DataHandler {
       if (err.message === "Download interrupted by callback function") {
         const de = {
           error: {
-            code: "UploadInterrupted",
-            message: "Upload was interrupted by user.",
+            code: "DownloadInterrupted",
+            message: "Download was interrupted by user.",
           },
         };
         return new Response(499, de, null);
       } else {
         const de = {
-          error: { code: "UploadFailure", message: `Upload failed: ${err}.` },
+          error: {
+            code: "DownloadFailure",
+            message: `Download failed: ${err}.`,
+          },
         };
         return new Response(500, de, null);
       }
