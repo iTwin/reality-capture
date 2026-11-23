@@ -1,0 +1,1 @@
+Enabled job submissions for on-premise engines. See :class:`~reality_capture.on_premise.job_manager.JobManager` for more details.

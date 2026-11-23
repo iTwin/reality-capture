@@ -75,8 +75,8 @@ class Coordinate(BaseModel):
 class Crs(BaseModel):
     id: str = Field(description="Identifier of the coordinate reference system.")
     vertical_id: Optional[str] = Field(None,
-                                         description="Optional identifier of the vertical coordinate reference system.",
-                                         alias="verticalId")
+                                       description="Optional identifier of the vertical coordinate reference system.",
+                                       alias="verticalId")
 
 
 class Extent(BaseModel):

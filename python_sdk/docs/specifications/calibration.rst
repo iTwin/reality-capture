@@ -28,6 +28,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.calibration
 
 .. autopydantic_model:: CalibrationSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: CalibrationOutputsCreate
     :show-inheritance:
@@ -35,14 +36,18 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: CalibrationSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: CalibrationInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: CalibrationOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: CalibrationOptions
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autoclass:: RigSynchro

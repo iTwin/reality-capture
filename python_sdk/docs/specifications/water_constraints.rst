@@ -25,6 +25,7 @@ Classes
 .. currentmodule:: reality_capture.specifications.water_constraints
 
 .. autopydantic_model:: WaterConstraintsSpecificationsCreate
+    :inherited-members: BaseModel
 
 .. autoclass:: WaterConstraintsOutputsCreate
     :show-inheritance:
@@ -32,12 +33,16 @@ Classes
     :undoc-members:
 
 .. autopydantic_model:: WaterConstraintsSpecifications
+    :inherited-members: BaseModel
 
 .. autopydantic_model:: WaterConstraintsInputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: WaterConstraintsOutputs
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: WaterConstraintsOptions
+    :inherited-members: BaseModel
     :model-show-json: False

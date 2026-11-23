@@ -11,6 +11,8 @@ Classes
 .. currentmodule:: reality_capture.service.bucket
 
 .. autopydantic_model:: Bucket
+    :inherited-members: BaseModel
     :model-show-json: False
 
 .. autopydantic_model:: BucketResponse
+    :inherited-members: BaseModel
