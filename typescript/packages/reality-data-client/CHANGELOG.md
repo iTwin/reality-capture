@@ -1,5 +1,11 @@
 # Change Log - @itwin/reality-data-client
 
+## 1.6.4
+
+### Patch Changes
+
+- f2cc35d: Use reality-capture 1.10.3
+
 ## 1.6.3
 
 ### Patch Changes
