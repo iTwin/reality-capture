@@ -14,6 +14,17 @@ This page documents all notable changes to the ``reality_capture`` Python SDK ac
 
 ----
 
+2.9.1
+===========
+
+Bugfixes
+--------
+
+- Fix separators in blob names (`##397 <https://github.com/iTwin/reality-capture/pull/#397>`_)
+
+
+----
+
 2.9.0
 ===========
 
