@@ -1,5 +1,11 @@
 # Change Log - @itwin/reality-capture
 
+## 1.10.3
+
+### Patch Changes
+
+- bc8a0cc: Add authoring in reality data upload. Remove cost estimation and other minor fixes.
+
 ## 1.10.2
 
 ### Patch Changes
