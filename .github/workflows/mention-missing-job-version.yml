@@ -1,0 +1,119 @@
+name: Check Python job specification version
+
+# Do not check out or execute PR code: pull_request_target has write access.
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+      - ready_for_review
+
+concurrency:
+  group: job-version-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check_job_version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+    steps:
+      - name: Check job specification version
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const marker = '<!-- python-job-version-check -->';
+            const prefix = 'python_sdk/src/reality_capture/specifications/';
+            const versionPath = 'python_sdk/src/reality_capture/on_premise/_generic_manager.py';
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner, repo, pull_number: issue_number
+            });
+            const hasSpecifications = files.some(file =>
+              file.filename.startsWith(prefix) ||
+              (file.previous_filename && file.previous_filename.startsWith(prefix))
+            );
+            // The list-files endpoint returns at most 3,000 files.
+            if (!hasSpecifications && files.length >= 3000) {
+              throw new Error('Cannot determine whether the PR changes specifications: file list may be truncated');
+            }
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number
+            });
+            const existingComment = comments.find(comment =>
+              comment.user?.login === 'github-actions[bot]' &&
+              (comment.body || '').includes(marker)
+            );
+
+            let body;
+            if (hasSpecifications) {
+              const { data: pr } = await github.rest.pulls.get({
+                owner, repo, pull_number: issue_number
+              });
+
+              async function readVersion(ref) {
+                const { data } = await github.rest.repos.getContent({
+                  owner,
+                  repo,
+                  path: versionPath,
+                  ref
+                });
+                if (data.type !== 'file' || data.encoding !== 'base64') {
+                  throw new Error(`Cannot read ${versionPath} at ${ref}`);
+                }
+                const content = Buffer.from(data.content, 'base64').toString('utf8');
+                const match = content.match(/^JOB_CURRENT_VERSION\s*=\s*["'](\d+(?:\.\d+)*)["']\s*(?:#.*)?$/m);
+                if (!match) {
+                  throw new Error(`Cannot determine JOB_CURRENT_VERSION at ${ref}`);
+                }
+                return match[1];
+              }
+
+              // PR head commits are available in the base repository, including for forks.
+              const base = await readVersion(pr.base.sha);
+              const head = await readVersion(pr.head.sha);
+              const baseParts = base.split('.').map(BigInt);
+              const headParts = head.split('.').map(BigInt);
+              let comparison = 0;
+              for (let i = 0; i < Math.max(baseParts.length, headParts.length); i++) {
+                const basePart = baseParts[i] ?? 0n;
+                const headPart = headParts[i] ?? 0n;
+                if (headPart !== basePart) {
+                  comparison = headPart > basePart ? 1 : -1;
+                  break;
+                }
+              }
+
+              if (comparison <= 0) {
+                body = [
+                  marker,
+                  'This PR changes Python job specifications but does not bump `JOB_CURRENT_VERSION`.',
+                  `Base: \`${base}\`; PR: \`${head}\`.`,
+                  '',
+                  'Please bump `JOB_CURRENT_VERSION` in `python_sdk/src/reality_capture/on_premise/_generic_manager.py`, aligned with the engine compute version.'
+                ].join('\n');
+              }
+            }
+
+            if (!body) {
+              if (existingComment) {
+                await github.rest.issues.deleteComment({
+                  owner, repo, comment_id: existingComment.id
+                });
+              }
+            } else if (existingComment) {
+              if (existingComment.body !== body) {
+                await github.rest.issues.updateComment({
+                  owner, repo, comment_id: existingComment.id, body
+                });
+              }
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
