@@ -19,6 +19,8 @@ from reality_capture.specifications.segmentation_orthophoto import SegmentationO
 from reality_capture.specifications.tiling import TilingSpecifications
 from reality_capture.specifications.touchup import TouchUpImportSpecifications, TouchUpExportSpecifications
 from reality_capture.specifications.water_constraints import WaterConstraintsSpecifications
+from reality_capture.specifications.training import (TrainingChangeDetectionSpecifications, ChangeDetectionTrainingModel,
+                                                     ChangeDetectionPointCloudFeature)
 from reality_capture.specifications.clearance_checker import ClearanceCheckerSpecifications
 from reality_capture.specifications.clearance_footprint import ClearanceFootprintSpecifications
 from reality_capture.specifications.point_cloud_conversion import PointCloudConversionSpecifications
@@ -105,6 +107,29 @@ class TestJobValidator:
         assert outputs.locations3d_b == "locb_rdid"
         assert outputs.locations3d_b_as_geojson == "geojsonb_rdid"
         assert outputs.locations3d_b_as_shp == "shpb_rdid"
+
+    def test_validation_change_detection_with_detector(self):
+        j = self.j_base.copy()
+        j["type"] = "ChangeDetection"
+        j["specifications"] = {
+            "inputs": {
+                "model3DA": "modela",
+                "model3DB": "modelb",
+                "pointCloudChangeDetector": "detector_rdid"
+            },
+            "outputs": {
+                "segmentation3DA": "rdid_segmentation_a",
+                "segmentation3DB": "rdid_segmentation_b"
+            }
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, ChangeDetectionSpecifications)
+        assert job.specifications.inputs.point_cloud_change_detector == "detector_rdid"
+        assert job.specifications.outputs.segmentation_3d_a == "rdid_segmentation_a"
+        assert job.specifications.outputs.segmentation_3d_b == "rdid_segmentation_b"
+
+        dumped = job.specifications.model_dump(by_alias=True)
+        assert dumped["inputs"]["pointCloudChangeDetector"] == "detector_rdid"
 
     def test_validation_constraints(self):
         j = self.j_base.copy()
@@ -411,6 +436,49 @@ class TestJobValidator:
                 Job, j["specifications"], MagicMock(data={"type": unsupported})
             )
         assert "Unsupported job type" in str(exc_info.value)
+
+    def test_validation_training_change_detection(self):
+        j = self.j_base.copy()
+        j["type"] = "TrainingChangeDetection"
+        j["specifications"] = {
+            "inputs": {
+                "segmentation3DPairs": [
+                    {"segmentation3DA": "rdid_t0_a", "segmentation3DB": "rdid_t1_a"},
+                    {"segmentation3DA": "rdid_t0_b", "segmentation3DB": "rdid_t1_b"}
+                ],
+                "detectorName": "qa-cdptv3-test"
+            },
+            "outputs": {
+                "detector": "detector_rdid"
+            },
+            "options": {
+                "epochs": 5,
+                "spacing": 0.2,
+                "model": "PointTransformerV3",
+                "features": ["RGB", "INTENSITY"],
+                "versionNumber": "1.0"
+            }
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, TrainingChangeDetectionSpecifications)
+        assert len(job.specifications.inputs.segmentation_3d_pairs) == 2
+        assert job.specifications.inputs.segmentation_3d_pairs[0].segmentation_3d_a == "rdid_t0_a"
+        assert job.specifications.inputs.segmentation_3d_pairs[0].segmentation_3d_b == "rdid_t1_a"
+        assert job.specifications.inputs.detector_name == "qa-cdptv3-test"
+        assert job.specifications.outputs.detector == "detector_rdid"
+        assert job.specifications.options.epochs == 5
+        assert job.specifications.options.spacing == 0.2
+        assert job.specifications.options.model == ChangeDetectionTrainingModel.POINT_TRANSFORMER_V3
+        assert job.specifications.options.features == [ChangeDetectionPointCloudFeature.RGB, ChangeDetectionPointCloudFeature.INTENSITY]
+        assert job.specifications.options.version_number == "1.0"
+
+        # Verify camelCase serialization round-trip
+        dumped = job.specifications.model_dump(by_alias=True)
+        assert "segmentation3DPairs" in dumped["inputs"]
+        assert "segmentation3DA" in dumped["inputs"]["segmentation3DPairs"][0]
+        assert "segmentation3DB" in dumped["inputs"]["segmentation3DPairs"][0]
+        assert "detectorName" in dumped["inputs"]
+        assert "versionNumber" in dumped["options"]
 
     def test_validation_pc_conv(self):
         j = self.j_base.copy()

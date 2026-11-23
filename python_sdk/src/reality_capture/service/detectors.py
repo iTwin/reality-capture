@@ -18,6 +18,7 @@ class DetectorType(Enum):
     PHOTO_SEGMENTATION_DETECTOR = "PhotoSegmentationDetector"
     ORTHOPHOTO_SEGMENTATION_DETECTOR = "OrthophotoSegmentationDetector"
     POINT_CLOUD_SEGMENTATION_DETECTOR = "PointCloudSegmentationDetector"
+    POINT_CLOUD_CHANGE_DETECTOR = "PointCloudChangeDetector"
 
 
 class Capabilities(BaseModel):
