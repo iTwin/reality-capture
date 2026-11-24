@@ -21,6 +21,8 @@ from reality_capture.specifications.reconstruction import (ReconstructionSpecifi
                                                            ReconstructionSpecificationsCreate)
 from reality_capture.specifications.segmentation2d import (Segmentation2DSpecifications,
                                                            Segmentation2DSpecificationsCreate)
+from reality_capture.specifications.sam_segmentation2d import (SamSegmentation2DSpecifications,
+                                                               SamSegmentation2DSpecificationsCreate)
 from reality_capture.specifications.segmentation3d import (Segmentation3DSpecifications,
                                                            Segmentation3DSpecificationsCreate)
 from reality_capture.specifications.segmentation_orthophoto import (SegmentationOrthophotoSpecifications,
@@ -69,6 +71,7 @@ class JobType(Enum):
     PRODUCTION = "Production"
     RECONSTRUCTION = "Reconstruction"
     SEGMENTATION_2D = "Segmentation2D"
+    SAM_SEGMENTATION_2D = "SamSegmentation2D"
     SEGMENTATION_3D = "Segmentation3D"
     SEGMENTATION_ORTHOPHOTO = "SegmentationOrthophoto"
     TILING = "Tiling"
@@ -97,7 +100,8 @@ def _get_appropriate_service(jt: JobType):
               JobType.PRODUCTION, JobType.RECONSTRUCTION, JobType.CONSTRAINTS, JobType.TOUCH_UP_EXPORT,
               JobType.TOUCH_UP_IMPORT, JobType.WATER_CONSTRAINTS, JobType.GAUSSIAN_SPLATS]:
         return Service.MODELING
-    if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SEGMENTATION_3D, JobType.SEGMENTATION_ORTHOPHOTO,
+    if jt in [JobType.OBJECTS_2D, JobType.SEGMENTATION_2D, JobType.SAM_SEGMENTATION_2D, JobType.SEGMENTATION_3D,
+              JobType.SEGMENTATION_ORTHOPHOTO,
               JobType.CHANGE_DETECTION, JobType.EVAL_O2D, JobType.EVAL_O3D, JobType.EVAL_S2D,
               JobType.EVAL_S3D, JobType.EVAL_SORTHO, JobType.TRAINING_S3D, JobType.CLEARANCE_CHECKER,
               JobType.CLEARANCE_FOOTPRINT]:
@@ -130,6 +134,7 @@ class JobCreate(BaseModel):
                         GaussianSplatsSpecificationsCreate, ImportPCSpecificationsCreate,
                         Objects2DSpecificationsCreate, ProductionSpecificationsCreate,
                         ReconstructionSpecificationsCreate, Segmentation2DSpecificationsCreate,
+                        SamSegmentation2DSpecificationsCreate,
                         Segmentation3DSpecificationsCreate, SegmentationOrthophotoSpecificationsCreate,
                         TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
                         TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
@@ -180,6 +185,7 @@ class Job(BaseModel):
                         GaussianSplatsSpecifications, ImportPCSpecifications,
                         Objects2DSpecifications, ProductionSpecifications,
                         ReconstructionSpecifications, Segmentation2DSpecifications,
+                        SamSegmentation2DSpecifications,
                         Segmentation3DSpecifications, SegmentationOrthophotoSpecifications,
                         TilingSpecifications, TouchUpExportSpecifications,
                         TouchUpImportSpecifications, WaterConstraintsSpecifications,
@@ -226,6 +232,8 @@ class Job(BaseModel):
             specifications = ReconstructionSpecifications(**raw_dict)
         elif job_type == JobType.SEGMENTATION_2D:
             specifications = Segmentation2DSpecifications(**raw_dict)
+        elif job_type == JobType.SAM_SEGMENTATION_2D:
+            specifications = SamSegmentation2DSpecifications(**raw_dict)
         elif job_type == JobType.SEGMENTATION_3D:
             specifications = Segmentation3DSpecifications(**raw_dict)
         elif job_type == JobType.SEGMENTATION_ORTHOPHOTO:
