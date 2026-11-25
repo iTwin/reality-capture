@@ -38,6 +38,7 @@ export * from "./specifications/training";
 export * from "./specifications/touchup";
 export * from "./specifications/water_constraints";
 export * from "./specifications/mesh_sampling";
+export * from "./specifications/mesh_optimization";
 export * from "./specifications/point_cloud_conversion";
 export * from "./specifications/point_cloud_optimization";
 export * from "./specifications/tile_map_optimization";

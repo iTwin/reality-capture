@@ -104,6 +104,10 @@ import {
   MeshSamplingSpecificationsSchema,
 } from "../specifications/mesh_sampling";
 import {
+  MeshOptimizationSpecificationsCreateSchema,
+  MeshOptimizationSpecificationsSchema,
+} from "../specifications/mesh_optimization";
+import {
   PCOptimizationSpecificationsCreateSchema,
   PCOptimizationSpecificationsSchema,
 } from "../specifications/point_cloud_optimization";
@@ -145,6 +149,7 @@ export enum JobType {
   WATER_CONSTRAINTS = "WaterConstraints",
   POINT_CLOUD_CONVERSION = "PointCloudConversion",
   MESH_SAMPLING = "MeshSampling",
+  MESH_OPTIMIZATION = "MeshOptimization",
   POINT_CLOUD_OPTIMIZATION = "PointCloudOptimization",
   VECTOR_OPTIMIZATION = "VectorOptimization",
   TILE_MAP_OPTIMIZATION = "TileMapOptimization",
@@ -198,6 +203,7 @@ export function getAppropriateService(jt: JobType): Service {
     [
       JobType.POINT_CLOUD_CONVERSION,
       JobType.MESH_SAMPLING,
+      JobType.MESH_OPTIMIZATION,
       JobType.POINT_CLOUD_OPTIMIZATION,
       JobType.VECTOR_OPTIMIZATION,
       JobType.TILE_MAP_OPTIMIZATION,
@@ -219,9 +225,11 @@ export enum JobState {
   CANCELLED = "Cancelled",
 }
 
-export const JobCreateSchema = z.object({
+const LegacyJobCreateSchema = z.object({
   name: z.string().min(3).optional().describe("Displayable job name."),
-  type: z.nativeEnum(JobType).describe("Type of job."),
+  type: z.nativeEnum(JobType)
+    .exclude(["MESH_OPTIMIZATION"])
+    .describe("Type of job."),
   specifications: z
     .union([
       CalibrationSpecificationsCreateSchema,
@@ -262,6 +270,15 @@ export const JobCreateSchema = z.object({
       "iTwin ID, used by the service for finding input reality data and uploading output data.",
     ),
 });
+export const JobCreateSchema = z.union([
+  z.object({
+    name: z.string().min(3).optional().describe("Displayable job name."),
+    type: z.literal(JobType.MESH_OPTIMIZATION).describe("Type of job."),
+    specifications: MeshOptimizationSpecificationsCreateSchema.describe("Specifications aligned with the job type."),
+    iTwinId: z.string().describe("iTwin ID, used by the service for finding input reality data and uploading output data."),
+  }),
+  LegacyJobCreateSchema,
+]);
 export type JobCreate = z.infer<typeof JobCreateSchema>;
 
 export const ExecutionSchema = z.object({
@@ -429,6 +446,11 @@ export const JobSchema = z.discriminatedUnion("type", [
     ...CommonFields,
     type: z.literal("MeshSampling"),
     specifications: MeshSamplingSpecificationsSchema,
+  }),
+  z.object({
+    ...CommonFields,
+    type: z.literal("MeshOptimization"),
+    specifications: MeshOptimizationSpecificationsSchema,
   }),
   z.object({
     ...CommonFields,

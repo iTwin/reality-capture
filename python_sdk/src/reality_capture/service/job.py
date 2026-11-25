@@ -35,6 +35,8 @@ from reality_capture.specifications.point_cloud_conversion import (PointCloudCon
 from reality_capture.specifications.point_cloud_optimization import (PCOptimizationSpecificationsCreate,
                                                                      PCOptimizationSpecifications)
 from reality_capture.specifications.mesh_sampling import MeshSamplingSpecificationsCreate, MeshSamplingSpecifications
+from reality_capture.specifications.mesh_optimization import (MeshOptimizationSpecificationsCreate,
+                                                             MeshOptimizationSpecifications)
 from reality_capture.specifications.tile_map_optimization import (TileMapOptimizationSpecificationsCreate,
                                                                   TileMapOptimizationSpecifications)
 from reality_capture.specifications.vector_optimization import (VectorOptimizationSpecificationsCreate,
@@ -81,6 +83,7 @@ class JobType(Enum):
     POINT_CLOUD_CONVERSION = "PointCloudConversion"
     POINT_CLOUD_OPTIMIZATION = "PointCloudOptimization"
     MESH_SAMPLING = "MeshSampling"
+    MESH_OPTIMIZATION = "MeshOptimization"
     TILE_MAP_OPTIMIZATION = "TileMapOptimization"
     VECTOR_OPTIMIZATION = "VectorOptimization"
     # CONTEXTSCENE_TILER = "ContextSceneTiler"
@@ -103,6 +106,7 @@ def _get_appropriate_service(jt: JobType):
               JobType.CLEARANCE_FOOTPRINT]:
         return Service.ANALYSIS
     if jt in [JobType.POINT_CLOUD_CONVERSION, JobType.POINT_CLOUD_OPTIMIZATION, JobType.MESH_SAMPLING,
+              JobType.MESH_OPTIMIZATION,
               JobType.TILE_MAP_OPTIMIZATION, JobType.VECTOR_OPTIMIZATION]: # JobType.CONTEXTSCENE_TILER
         return Service.CONVERSION
     raise NotImplementedError("Other services not yet implemented")
@@ -134,13 +138,21 @@ class JobCreate(BaseModel):
                         TilingSpecificationsCreate, TouchUpExportSpecificationsCreate,
                         TouchUpImportSpecificationsCreate, WaterConstraintsSpecificationsCreate,
                         PointCloudConversionSpecificationsCreate, PCOptimizationSpecificationsCreate,
-                        MeshSamplingSpecificationsCreate, TileMapOptimizationSpecificationsCreate,
+                        MeshSamplingSpecificationsCreate, MeshOptimizationSpecificationsCreate,
+                        TileMapOptimizationSpecificationsCreate,
                         VectorOptimizationSpecificationsCreate, # ContextSceneTilerSpecificationsCreate,
                         TrainingS3DSpecificationsCreate] = (
         Field(description="Specifications aligned with the job type."))
     itwin_id: str = Field(description="iTwin ID, used by the service for finding "
                                       "input reality data and uploading output data.",
                           alias="iTwinId")
+
+    @field_validator("specifications", mode="before")
+    @classmethod
+    def validate_mesh_optimization_specifications(cls, value: Any, info: ValidationInfo):
+        if info.data.get("type") == JobType.MESH_OPTIMIZATION:
+            return MeshOptimizationSpecificationsCreate.model_validate(value)
+        return value
 
     def get_appropriate_service(self) -> Service:
         """
@@ -184,7 +196,7 @@ class Job(BaseModel):
                         TilingSpecifications, TouchUpExportSpecifications,
                         TouchUpImportSpecifications, WaterConstraintsSpecifications,
                         PointCloudConversionSpecifications, PCOptimizationSpecifications,
-                        MeshSamplingSpecifications, TileMapOptimizationSpecifications,
+                        MeshSamplingSpecifications, MeshOptimizationSpecifications, TileMapOptimizationSpecifications,
                         VectorOptimizationSpecifications, # ContextSceneTilerSpecifications,
                         TrainingS3DSpecifications] = (
         Field(description="Specifications aligned with the job type."))
@@ -250,6 +262,8 @@ class Job(BaseModel):
             specifications = PCOptimizationSpecifications(**raw_dict)
         elif job_type == JobType.MESH_SAMPLING:
             specifications = MeshSamplingSpecifications(**raw_dict)
+        elif job_type == JobType.MESH_OPTIMIZATION:
+            specifications = MeshOptimizationSpecifications(**raw_dict)
         elif job_type == JobType.TILE_MAP_OPTIMIZATION:
             specifications = TileMapOptimizationSpecifications(**raw_dict)
         elif job_type == JobType.VECTOR_OPTIMIZATION:

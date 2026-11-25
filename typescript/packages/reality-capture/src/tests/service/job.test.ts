@@ -16,6 +16,7 @@ import {
   JobResponseSchema,
 } from "../../service/job";
 import { ImportPCOutputsCreate } from "../../specifications/import_point_cloud"; // TODO : mock?
+import { MeshOptimizationFormat } from "../../specifications/mesh_optimization";
 
 describe("getAppropriateService", () => {
   it("should return Service.MODELING for PRODUCTION", () => {
@@ -44,6 +45,10 @@ describe("getAppropriateService", () => {
       Service.CONVERSION,
     );
   });
+
+  it("should return Service.CONVERSION for MESH_OPTIMIZATION", () => {
+    expect(getAppropriateService(JobType.MESH_OPTIMIZATION)).to.equal(Service.CONVERSION);
+  });
 });
 
 describe("JobState Enum", () => {
@@ -53,6 +58,29 @@ describe("JobState Enum", () => {
 });
 
 describe("JobCreateSchema", () => {
+  it("preserves mesh optimization options and accepts null options", () => {
+    const data = {
+      type: JobType.MESH_OPTIMIZATION,
+      iTwinId: "itwin",
+      specifications: {
+        inputs: { meshes: ["mesh-id"] },
+        options: { outputFormat: MeshOptimizationFormat.THREE_D_TILES_1_1, outputCrs: "EPSG:4978" },
+      },
+    };
+    expect(JobCreateSchema.parse(data)).to.deep.equal(data);
+    const noOptions = { ...data, specifications: { inputs: { meshes: ["mesh-id"] }, options: null } };
+    expect(JobCreateSchema.parse(noOptions)).to.deep.equal(noOptions);
+  });
+
+  it("rejects mesh sampling formats for a mesh optimization job", () => {
+    const data = {
+      type: JobType.MESH_OPTIMIZATION,
+      iTwinId: "itwin",
+      specifications: { inputs: { meshes: ["mesh-id"] }, options: { outputFormat: "3DTilesGLBC" } },
+    };
+    expect(() => JobCreateSchema.parse(data)).to.throw(z.ZodError);
+  });
+
   it("should validate a correct job create schema", () => {
     const data = {
       name: "JobName",
@@ -140,6 +168,17 @@ describe("ExecutionSchema", () => {
 });
 
 describe("JobResponseSchema", () => {
+  it("validates a mesh optimization response, including nullable options", () => {
+    const job = {
+      id: "job1", type: JobType.MESH_OPTIMIZATION, itwinId: "itwin", state: JobState.QUEUED,
+      executionInfo: { createdDateTime: new Date().toISOString() }, userId: "user",
+      specifications: { inputs: { meshes: ["mesh-id"] }, output: "output-id",
+        options: { outputFormat: null, outputCrs: null } },
+    };
+    expect(JobResponseSchema.parse({ job }).job.specifications).to.deep.equal(job.specifications);
+    expect(() => JobResponseSchema.parse({ job: { ...job, specifications: { inputs: { meshes: [] } } } }))
+      .to.throw(z.ZodError);
+  });
   it("should validate correct job response", () => {
     const data = {
       job: {

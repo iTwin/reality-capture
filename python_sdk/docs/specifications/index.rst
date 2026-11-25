@@ -39,6 +39,7 @@ Specifications regroup all the settings used to create jobs with our APIs.
     pc_conversion
     pc_optimization
     mesh_sampling
+    mesh_optimization
     tile_map_optimization
     vector_optimization
 
@@ -75,6 +76,7 @@ Conversion
 * :doc:`/specifications/pc_conversion` will convert a single point cloud from one format to another.
 * :doc:`/specifications/pc_optimization` will consolidate multiple point cloud to a given format.
 * :doc:`/specifications/mesh_sampling` will sample meshes and consolidate them to a given format.
+* :doc:`/specifications/mesh_optimization` will optimize mesh data into a single output.
 * :doc:`/specifications/tile_map_optimization` will consolidate tile maps to a given format.
 * :doc:`/specifications/vector_optimization` will consolidate vector data to a given format.
 

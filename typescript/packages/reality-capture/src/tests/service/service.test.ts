@@ -737,6 +737,29 @@ describe("RealityCaptureService API calls tests", function () {
   });
 
   // submitJob tests
+  it("submits a mesh optimization job to the conversion service", async () => {
+    const specifications = {
+      inputs: { meshes: ["mesh-id"] },
+      options: { outputFormat: null, outputCrs: "EPSG:4978" },
+    };
+    const jobCreate: JobCreate = {
+      type: JobType.MESH_OPTIMIZATION, iTwinId, specifications,
+    };
+    fetchStub.resolves(mockFetchResponse(201, {
+      job: {
+        id: "job-id", type: JobType.MESH_OPTIMIZATION, iTwinId, state: "Queued", userId: "user",
+        executionInfo: { createdDateTime: "2025-01-19T14:30:00Z" },
+        specifications: { ...specifications, output: "output-id" },
+      },
+    }));
+
+    const result = await service.submitJob(jobCreate);
+    expect(result.isError()).to.equal(false);
+    expect(result.value!.type).to.equal(JobType.MESH_OPTIMIZATION);
+    expect(fetchStub.firstCall.args[0]).to.equal("https://dev-api.bentley.com/reality-conversion/jobs");
+    expect(JSON.parse(fetchStub.firstCall.args[1].body)).to.deep.equal(jobCreate);
+  });
+
   it("submitJob should call fetch and return a Response<Job>", async () => {
     fetchStub.resolves(mockFetchResponse(200, {
       "job": {

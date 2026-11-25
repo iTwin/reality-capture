@@ -4,6 +4,7 @@ import os
 
 from reality_capture.service.service import RealityCaptureService
 from reality_capture.service.job import Service, Jobs, JobCreate, JobType
+from reality_capture.specifications.mesh_optimization import MeshOptimizationSpecifications
 import reality_capture.specifications.fill_image_properties as fip
 
 
@@ -73,6 +74,24 @@ class TestServiceJobCrud:
         response = self.rcs.submit_job(jc)
         assert not response.is_error()
         assert response.value.id == "796715aa-bc5a-4df5-9554-ceed038babc6"
+
+    @responses.activate
+    def test_submit_mesh_optimization(self):
+        specs = {"inputs": {"meshes": ["mesh-id"]},
+                 "options": {"outputFormat": "3DTiles_1.1", "outputCrs": "EPSG:4978"}}
+        job = JobCreate(type=JobType.MESH_OPTIMIZATION, iTwinId="itwin", specifications=specs)
+        payload = {"job": {
+            "id": "job-id", "type": "MeshOptimization", "iTwinId": "itwin", "state": "Queued",
+            "userId": "user", "executionInfo": {"createdDateTime": "2025-01-19T14:30:00Z"},
+            "specifications": {**specs, "output": "output-id"},
+        }}
+        responses.add(responses.POST, "https://api.bentley.com/reality-conversion/jobs", json=payload, status=201)
+        result = self.rcs.submit_job(job)
+        assert not result.is_error()
+        assert isinstance(result.value.specifications, MeshOptimizationSpecifications)
+        sent = json.loads(responses.calls[0].request.body)
+        assert sent["type"] == "MeshOptimization"
+        assert sent["specifications"] == specs
 
     @responses.activate
     def test_get_job_ill_formed(self):

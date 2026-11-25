@@ -24,6 +24,7 @@ from reality_capture.specifications.clearance_footprint import ClearanceFootprin
 from reality_capture.specifications.point_cloud_conversion import PointCloudConversionSpecifications
 from reality_capture.specifications.point_cloud_optimization import PCOptimizationSpecifications
 from reality_capture.specifications.mesh_sampling import MeshSamplingSpecifications
+from reality_capture.specifications.mesh_optimization import MeshOptimizationSpecifications
 from reality_capture.specifications.tile_map_optimization import TileMapOptimizationSpecifications
 from reality_capture.specifications.vector_optimization import VectorOptimizationSpecifications
 #from reality_capture.specifications.cs_tiler import ContextSceneTilerSpecifications
@@ -447,6 +448,18 @@ class TestJobValidator:
         }
         job = Job(**j)
         assert isinstance(job.specifications, MeshSamplingSpecifications)
+
+    def test_validation_mesh_optimization(self):
+        j = self.j_base.copy()
+        j["type"] = "MeshOptimization"
+        j["specifications"] = {
+            "inputs": {"meshes": ["mId"]},
+            "output": "outId",
+            "options": {"outputFormat": "3DTiles_1.1", "outputCrs": "EPSG:4978"},
+        }
+        job = Job(**j)
+        assert isinstance(job.specifications, MeshOptimizationSpecifications)
+        assert job.model_dump(mode="json", by_alias=True)["specifications"] == j["specifications"]
 
     def test_validation_tm_optim(self):
         j = self.j_base.copy()

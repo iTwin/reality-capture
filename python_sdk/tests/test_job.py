@@ -5,6 +5,8 @@ from reality_capture.service.job import Service, JobCreate, Job, JobType, JobSta
 from reality_capture.specifications.eval_o2d import EvalO2DSpecifications
 from reality_capture.specifications.tiling import TilingOutputsCreate
 from reality_capture.specifications.segmentation3d import Segmentation3DOutputsCreate
+from reality_capture.specifications.mesh_optimization import MeshOptimizationSpecificationsCreate
+from pydantic import ValidationError
 # from reality_capture.specifications.point_cloud_conversion import PCConversionOutputsCreate
 
 
@@ -42,4 +44,24 @@ class TestJob:
         unsupported = MagicMock(name="UnsupportedJobType")
         with pytest.raises(NotImplementedError):
             _get_appropriate_service(unsupported)
+
+    @pytest.mark.parametrize("options, serialized_options", [
+        (None, None),
+        ({"outputCrs": "EPSG:4978"}, {"outputFormat": None, "outputCrs": "EPSG:4978"}),
+        ({"outputFormat": "3DTiles_1.1", "outputCrs": "EPSG:4978"},
+         {"outputFormat": "3DTiles_1.1", "outputCrs": "EPSG:4978"}),
+    ])
+    def test_create_mesh_optimization_uses_correct_specifications(self, options, serialized_options):
+        j = JobCreate(type=JobType.MESH_OPTIMIZATION, iTwinId="itwin",
+                      specifications={"inputs": {"meshes": ["mesh"]}, "options": options})
+        assert isinstance(j.specifications, MeshOptimizationSpecificationsCreate)
+        assert j.get_appropriate_service() == Service.CONVERSION
+        data = j.model_dump(mode="json", by_alias=True)
+        assert data["specifications"] == {"inputs": {"meshes": ["mesh"]}, "options": serialized_options}
+
+    def test_create_mesh_optimization_rejects_mesh_sampling_format(self):
+        with pytest.raises(ValidationError):
+            JobCreate(type=JobType.MESH_OPTIMIZATION, iTwinId="itwin", specifications={
+                "inputs": {"meshes": ["mesh"]}, "options": {"outputFormat": "3DTilesGLBC"}
+            })
 
