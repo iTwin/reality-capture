@@ -1,6 +1,13 @@
 import { expect } from "chai";
 import { z } from "zod";
 import {
+  TrainingO2DInputsSchema,
+  TrainingO2DOutputsSchema,
+  TrainingO2DOptionsSchema,
+  TrainingO2DOutputsCreate,
+  ImageFeature,
+  TrainingO2DSpecificationsCreateSchema,
+  TrainingO2DSpecificationsSchema,
   TrainingS3DInputsSchema,
   TrainingS3DOutputsSchema,
   TrainingS3DOptionsSchema,
@@ -10,6 +17,181 @@ import {
   TrainingS3DSpecificationsCreateSchema,
   TrainingS3DSpecificationsSchema,
 } from "../../specifications/training";
+
+describe("TrainingO2DInputsSchema", () => {
+  it("should validate a correct input", () => {
+    const data = { objects2Ds: ["object-id"], detectorName: "my-detector" };
+    expect(TrainingO2DInputsSchema.parse(data)).to.deep.equal(data);
+  });
+
+  it("should validate multiple 2D objects with a preset", () => {
+    const data = {
+      objects2Ds: ["object-id", "other-object-id"],
+      preset: "path/to/preset",
+      detectorName: "my-detector",
+    };
+    expect(TrainingO2DInputsSchema.parse(data)).to.deep.equal(data);
+  });
+
+  it("should allow an empty objects2Ds list", () => {
+    const data = { objects2Ds: [], detectorName: "my-detector" };
+    expect(TrainingO2DInputsSchema.parse(data)).to.deep.equal(data);
+  });
+
+  it("should fail if objects2Ds is missing", () => {
+    const data = { detectorName: "my-detector" };
+    expect(() => TrainingO2DInputsSchema.parse(data)).to.throw(z.ZodError);
+  });
+
+  it("should fail if scenes is provided instead of objects2Ds", () => {
+    const data = { scenes: ["scene-id"], detectorName: "my-detector" };
+    expect(() => TrainingO2DInputsSchema.parse(data)).to.throw(z.ZodError);
+  });
+
+  it("should fail if detectorName is missing", () => {
+    const data = { objects2Ds: ["object-id"] };
+    expect(() => TrainingO2DInputsSchema.parse(data)).to.throw(z.ZodError);
+  });
+
+  it("should fail if objects2Ds is not a list", () => {
+    const data = { objects2Ds: "object-id", detectorName: "my-detector" };
+    expect(() => TrainingO2DInputsSchema.parse(data)).to.throw(z.ZodError);
+  });
+
+  it("should fail if objects2Ds is not a list of strings", () => {
+    const data = { objects2Ds: [42], detectorName: "my-detector" };
+    expect(() => TrainingO2DInputsSchema.parse(data)).to.throw(z.ZodError);
+  });
+});
+
+describe("TrainingO2DOutputsSchema", () => {
+  it("should validate a detector output", () => {
+    const data = { detector: "my-detector/1.0" };
+    expect(TrainingO2DOutputsSchema.parse(data)).to.deep.equal(data);
+  });
+
+  it("should fail if detector is missing", () => {
+    expect(() => TrainingO2DOutputsSchema.parse({})).to.throw(z.ZodError);
+  });
+
+  it("should not expose the internal metrics output", () => {
+    expect(TrainingO2DOutputsSchema.shape).to.have.all.keys("detector");
+    const data = { detector: "my-detector/1.0", metrics: "metrics.json" };
+    expect(TrainingO2DOutputsSchema.parse(data)).to.deep.equal({ detector: "my-detector/1.0" });
+  });
+});
+
+describe("TrainingO2DOptionsSchema", () => {
+  it("should validate all public options", () => {
+    const data = { epochs: 10, versionNumber: "1.0", features: [ImageFeature.RGB] };
+    expect(TrainingO2DOptionsSchema.parse(data)).to.deep.equal(data);
+  });
+
+  it("should allow all options to be omitted", () => {
+    expect(TrainingO2DOptionsSchema.parse({})).to.deep.equal({});
+  });
+
+  it("should accept a positive epoch count without the S3D upper limit", () => {
+    expect(TrainingO2DOptionsSchema.parse({ epochs: 101 })).to.deep.equal({ epochs: 101 });
+  });
+
+  it("should fail if epochs is not an integer", () => {
+    expect(() => TrainingO2DOptionsSchema.parse({ epochs: 3.5 })).to.throw(z.ZodError);
+  });
+
+  it("should fail if epochs is less than 1", () => {
+    expect(() => TrainingO2DOptionsSchema.parse({ epochs: 0 })).to.throw(z.ZodError);
+    expect(() => TrainingO2DOptionsSchema.parse({ epochs: -1 })).to.throw(z.ZodError);
+  });
+
+  it("should accept a version without a minor number", () => {
+    expect(TrainingO2DOptionsSchema.parse({ versionNumber: "1" })).to.deep.equal({ versionNumber: "1" });
+  });
+
+  it("should fail if versionNumber has an invalid format", () => {
+    expect(() => TrainingO2DOptionsSchema.parse({ versionNumber: "invalid" })).to.throw(z.ZodError);
+    expect(() => TrainingO2DOptionsSchema.parse({ versionNumber: "1.2.3" })).to.throw(z.ZodError);
+  });
+
+  it("should fail if features contains an unsupported image feature", () => {
+    expect(() => TrainingO2DOptionsSchema.parse({ features: ["NORMAL"] })).to.throw(z.ZodError);
+  });
+
+  it("should not expose the internal validation split", () => {
+    expect(TrainingO2DOptionsSchema.shape).to.have.all.keys("epochs", "versionNumber", "features");
+    expect(TrainingO2DOptionsSchema.parse({ epochs: 10, validationSplit: 0.2 })).to.deep.equal({ epochs: 10 });
+  });
+});
+
+describe("TrainingO2DSpecificationsCreateSchema", () => {
+  it("should validate a minimal specification", () => {
+    const data = {
+      inputs: { objects2Ds: ["object-id"], detectorName: "my-detector" },
+      outputs: [TrainingO2DOutputsCreate.DETECTOR],
+    };
+    expect(TrainingO2DSpecificationsCreateSchema.parse(data)).to.deep.equal(data);
+  });
+
+  it("should validate a full specification", () => {
+    const data = {
+      inputs: { objects2Ds: ["object-id"], preset: "path/to/preset", detectorName: "my-detector" },
+      outputs: [TrainingO2DOutputsCreate.DETECTOR],
+      options: { epochs: 10, versionNumber: "1.0", features: [ImageFeature.RGB] },
+    };
+    expect(TrainingO2DSpecificationsCreateSchema.parse(data)).to.deep.equal(data);
+  });
+
+  it("should fail if scenes is provided instead of objects2Ds", () => {
+    const data = {
+      inputs: { scenes: ["scene-id"], detectorName: "my-detector" },
+      outputs: [TrainingO2DOutputsCreate.DETECTOR],
+    };
+    expect(() => TrainingO2DSpecificationsCreateSchema.parse(data)).to.throw(z.ZodError);
+  });
+
+  it("should fail if the internal metrics output is requested", () => {
+    const data = {
+      inputs: { objects2Ds: ["object-id"], detectorName: "my-detector" },
+      outputs: ["detector", "metrics"],
+    };
+    expect(() => TrainingO2DSpecificationsCreateSchema.parse(data)).to.throw(z.ZodError);
+  });
+});
+
+describe("TrainingO2DSpecificationsSchema", () => {
+  it("should validate a minimal specification", () => {
+    const data = {
+      inputs: { objects2Ds: ["object-id"], detectorName: "my-detector" },
+      outputs: { detector: "my-detector/1.0" },
+    };
+    expect(TrainingO2DSpecificationsSchema.parse(data)).to.deep.equal(data);
+  });
+
+  it("should validate a full specification", () => {
+    const data = {
+      inputs: { objects2Ds: ["object-id"], preset: "path/to/preset", detectorName: "my-detector" },
+      outputs: { detector: "my-detector/1.0" },
+      options: { epochs: 10, versionNumber: "1.0", features: [ImageFeature.RGB] },
+    };
+    expect(TrainingO2DSpecificationsSchema.parse(data)).to.deep.equal(data);
+  });
+
+  it("should fail if scenes is provided instead of objects2Ds", () => {
+    const data = {
+      inputs: { scenes: ["scene-id"], detectorName: "my-detector" },
+      outputs: { detector: "my-detector/1.0" },
+    };
+    expect(() => TrainingO2DSpecificationsSchema.parse(data)).to.throw(z.ZodError);
+  });
+
+  it("should fail if the detector output is missing", () => {
+    const data = {
+      inputs: { objects2Ds: ["object-id"], detectorName: "my-detector" },
+      outputs: {},
+    };
+    expect(() => TrainingO2DSpecificationsSchema.parse(data)).to.throw(z.ZodError);
+  });
+});
 
 describe("TrainingS3DInputsSchema", () => {
   it("should validate a correct input", () => {

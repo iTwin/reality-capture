@@ -1,9 +1,46 @@
 import pytest
 from unittest.mock import patch, MagicMock
+from pydantic import ValidationError
 import reality_capture.specifications.production as production
+import reality_capture.specifications.training as training
 
 
 class TestSpecifications:
+
+    @pytest.mark.parametrize("objects2ds", [[], ["objects-id"], ["objects-id", "other-objects-id"]])
+    def test_training_o2d_inputs_round_trip(self, objects2ds):
+        data = {"objects2Ds": objects2ds, "detectorName": "detector"}
+        inputs = training.TrainingO2DInputs(**data)
+        assert inputs.objects2ds == objects2ds
+        assert inputs.model_dump(by_alias=True, exclude_none=True) == data
+
+    @pytest.mark.parametrize("data", [
+        {"detectorName": "detector"},
+        {"scenes": ["scene-id"], "detectorName": "detector"},
+        {"objects2Ds": "objects-id", "detectorName": "detector"},
+        {"objects2Ds": [42], "detectorName": "detector"},
+    ])
+    def test_training_o2d_inputs_require_objects2ds(self, data):
+        with pytest.raises(ValidationError) as exc_info:
+            training.TrainingO2DInputs(**data)
+        assert exc_info.value.errors()[0]["loc"][0] == "objects2Ds"
+
+    @pytest.mark.parametrize("model, outputs", [
+        (training.TrainingO2DSpecificationsCreate, ["detector"]),
+        (training.TrainingO2DSpecifications, {"detector": "detector/1.0"}),
+    ])
+    def test_training_o2d_specifications_round_trip(self, model, outputs):
+        data = {
+            "inputs": {
+                "objects2Ds": ["objects-id"],
+                "preset": "path/to/preset",
+                "detectorName": "detector",
+            },
+            "outputs": outputs,
+        }
+        specifications = model(**data)
+        assert specifications.inputs.objects2ds == ["objects-id"]
+        assert specifications.model_dump(mode="json", by_alias=True, exclude_none=True) == data
 
     def test_export_options_parsing(self):
         export_obj_dict = {"format": "OBJ",
