@@ -422,7 +422,7 @@ class TestJobValidator:
         job = Job(**j)
         assert job.type == JobType.TRAINING_O2D
         assert isinstance(job.specifications, TrainingO2DSpecifications)
-        assert job.specifications.inputs.objects_2d == ["scene_id"]
+        assert job.specifications.inputs.objects2ds == ["scene_id"]
         assert job.specifications.outputs.detector == "detector/1.0"
         assert job.get_appropriate_service() == Service.ANALYSIS
         assert job.model_dump(mode="json", by_alias=True, exclude_none=True)["specifications"] == j["specifications"]

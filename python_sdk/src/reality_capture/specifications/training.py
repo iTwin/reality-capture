@@ -4,7 +4,7 @@ from enum import Enum
 
 
 class TrainingO2DInputs(BaseModel):
-    objects_2d: list[str] = Field(
+    objects2ds: list[str] = Field(
         description="List of 2D objects to train on.",
         alias="objects2Ds"
     )
@@ -85,7 +85,7 @@ class TrainingS3DOptions(BaseModel):
     model: Optional[Segmentation3DTrainingModel] = Field(None, description="Training Model architecture to use.")
     features: Optional[list[PointCloudFeature]] = Field(None, description="Features to use for the training.")
     version_number: Optional[str] = Field(
-        None, 
+        None,
         description="String representing the version number for the newly trained detector.",
         alias="versionNumber",
         pattern=r"^\d+(?:\.\d+)?$"

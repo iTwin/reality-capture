@@ -7,11 +7,11 @@ import reality_capture.specifications.training as training
 
 class TestSpecifications:
 
-    @pytest.mark.parametrize("objects_2d", [[], ["objects-id"], ["objects-id", "other-objects-id"]])
-    def test_training_o2d_inputs_round_trip(self, objects_2d):
-        data = {"objects2Ds": objects_2d, "detectorName": "detector"}
+    @pytest.mark.parametrize("objects2ds", [[], ["objects-id"], ["objects-id", "other-objects-id"]])
+    def test_training_o2d_inputs_round_trip(self, objects2ds):
+        data = {"objects2Ds": objects2ds, "detectorName": "detector"}
         inputs = training.TrainingO2DInputs(**data)
-        assert inputs.objects_2d == objects_2d
+        assert inputs.objects2ds == objects2ds
         assert inputs.model_dump(by_alias=True, exclude_none=True) == data
 
     @pytest.mark.parametrize("data", [
@@ -39,7 +39,7 @@ class TestSpecifications:
             "outputs": outputs,
         }
         specifications = model(**data)
-        assert specifications.inputs.objects_2d == ["objects-id"]
+        assert specifications.inputs.objects2ds == ["objects-id"]
         assert specifications.model_dump(mode="json", by_alias=True, exclude_none=True) == data
 
     def test_export_options_parsing(self):
