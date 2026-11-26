@@ -2,4 +2,4 @@
 "@itwin/reality-data-client": patch
 ---
 
-https://github.com/iTwin/reality-capture/pull/404
+Fix serialize-javascript dep security issue (Upgrade mocha from 11.8 to 12.0)
