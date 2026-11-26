@@ -1,5 +1,11 @@
 # Change Log - @itwin/reality-data-client
 
+## 1.6.5
+
+### Patch Changes
+
+- 306f85b: Fix serialize-javascript dep security issue (Upgrade mocha from 11.8 to 12.0)
+
 ## 1.6.4
 
 ### Patch Changes
