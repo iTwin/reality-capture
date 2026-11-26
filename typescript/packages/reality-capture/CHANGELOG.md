@@ -1,5 +1,11 @@
 # Change Log - @itwin/reality-capture
 
+## 1.10.4
+
+### Patch Changes
+
+- 306f85b: Fix serialize-javascript dep security issue (Upgrade mocha from 11.8 to 12.0)
+
 ## 1.10.3
 
 ### Patch Changes
