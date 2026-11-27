@@ -1,5 +1,11 @@
 # Change Log - @itwin/reality-data-client
 
+## 1.6.6
+
+### Patch Changes
+
+- d2565ec: Fix eslint plugin & parser security issue
+
 ## 1.6.5
 
 ### Patch Changes
