@@ -1,5 +1,11 @@
 # Change Log - @itwin/reality-capture
 
+## 1.10.5
+
+### Patch Changes
+
+- d2565ec: Fix eslint parser & plugin security issue
+
 ## 1.10.4
 
 ### Patch Changes
